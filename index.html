@@ -986,7 +986,7 @@ h2.match-title{
 }
 .ready-badge.ready .dot{background:var(--mint); box-shadow:0 0 8px var(--mint);}
 
-/* CHARGE UP ENERGY EFFECT */
+/* CHARGE UP — minimal & subtle */
 .ready-ring{
   position:absolute; inset:0;
   pointer-events:none;
@@ -996,32 +996,17 @@ h2.match-title{
 }
 .ready-ring.active{opacity:1;}
 
-/* Energy field — pulsing radial gradient at the center, scales + glows with charge */
-.ready-ring .energy-field{
-  position:absolute;
-  top:50%; left:50%;
-  transform: translate(-50%, -50%) scale(var(--charge, 0));
-  width:80%; height:80%;
-  border-radius:50%;
-  background: radial-gradient(circle,
-    var(--charge-color, rgba(255,211,61,.0)) 0%,
-    var(--charge-color, rgba(255,211,61,.4)) 30%,
-    transparent 70%);
-  filter: blur(30px);
-  transition: transform .15s ease-out, background .3s;
-  mix-blend-mode: screen;
-}
-
-/* Vignette intensifies on edges as charge ramps */
+/* Subtle edge vignette — only at edges, doesn't block camera view */
+.ready-ring .energy-field{ display:none; }
 .ready-ring .vignette{
   position:absolute; inset:0;
   border-radius:0;
-  box-shadow: inset 0 0 calc(40px * var(--charge, 0)) calc(20px * var(--charge, 0)) var(--charge-color, var(--amber));
+  box-shadow: inset 0 0 calc(60px * var(--charge, 0)) calc(2px * var(--charge, 0)) var(--charge-color, var(--amber));
   pointer-events:none;
-  transition: box-shadow .15s linear;
+  transition: box-shadow .2s linear;
 }
 
-/* Animated border that traces around the video */
+/* Border that traces around the video — subtle, not glowy */
 .ready-ring svg{
   position:absolute;
   inset:0;
@@ -1031,42 +1016,30 @@ h2.match-title{
 .ready-ring svg rect{
   fill:none;
   stroke: var(--charge-color, var(--amber));
-  stroke-width: calc(2px + 4px * var(--charge, 0));
+  stroke-width: 3px;
   rx:24; ry:24;
-  filter: drop-shadow(0 0 calc(8px + 24px * var(--charge, 0)) var(--charge-color, var(--amber)));
+  filter: drop-shadow(0 0 calc(4px + 6px * var(--charge, 0)) var(--charge-color, var(--amber)));
   stroke-dasharray: var(--len, 100) var(--total, 100);
   stroke-dashoffset: 0;
-  transition: stroke-dasharray .15s linear, stroke-width .25s, filter .25s;
+  transition: stroke-dasharray .15s linear, filter .25s;
 }
 
-/* When fully charged → mint green + extra pulse */
+/* When fully charged → mint green + gentle pulse, NOT distracting */
 .ready-ring.full{
   --charge-color: var(--mint) !important;
 }
 .ready-ring.full svg rect{
   stroke: var(--mint);
-  filter: drop-shadow(0 0 24px var(--mint));
-  animation: chargedPulse 1.2s ease-in-out infinite;
+  stroke-width: 4px;
+  animation: chargedPulse 1.4s ease-in-out infinite;
 }
 @keyframes chargedPulse{
-  0%, 100% { stroke-width: 6px; filter: drop-shadow(0 0 24px var(--mint)); }
-  50% { stroke-width: 9px; filter: drop-shadow(0 0 36px var(--mint)) drop-shadow(0 0 8px #fff); }
-}
-.ready-ring.full .energy-field{
-  animation: energyReadyPulse 1.2s ease-in-out infinite;
-}
-@keyframes energyReadyPulse{
-  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: .8; }
-  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+  0%, 100% { filter: drop-shadow(0 0 8px var(--mint)); }
+  50% { filter: drop-shadow(0 0 14px var(--mint)); }
 }
 
-/* Energy particles canvas — overlays video, drawn dynamically */
-.energy-particles{
-  position:absolute; inset:0;
-  pointer-events:none;
-  z-index:5;
-  width:100%; height:100%;
-}
+/* Hide energy particles canvas — too much visual noise */
+.energy-particles{ display: none; }
 
 /* OBSCURE OPPONENT VIDEO during ready/countdown */
 .opp-obscured{
@@ -1226,6 +1199,261 @@ h2.match-title{
   background:rgba(255,211,61,.06);
 }
 .streak svg{width:12px; height:12px;}
+
+/* Best-of-3 round indicator */
+.round-indicator{
+  display:flex; flex-direction:column;
+  align-items:center; gap:6px;
+  margin-top:10px;
+  padding-top:10px;
+  border-top: 1px solid var(--line-soft);
+}
+.round-label{
+  font-family:var(--font-mono); font-size:10px;
+  color:var(--text-faint); letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.round-dots{
+  display:flex; gap:8px;
+}
+.round-dot{
+  width:14px; height:14px; border-radius:50%;
+  background: var(--surface-3);
+  border: 1.5px solid var(--line);
+  transition: all .35s cubic-bezier(.2,1.6,.4,1);
+}
+.round-dot.you-won{
+  background: var(--mint);
+  border-color: var(--mint);
+  box-shadow: 0 0 12px var(--mint);
+  animation: dotPop .5s cubic-bezier(.2,1.8,.4,1);
+}
+.round-dot.opp-won{
+  background: var(--coral);
+  border-color: var(--coral);
+  box-shadow: 0 0 12px var(--coral);
+  animation: dotPop .5s cubic-bezier(.2,1.8,.4,1);
+}
+.round-dot.draw{
+  background: var(--amber);
+  border-color: var(--amber);
+  box-shadow: 0 0 8px var(--amber);
+}
+.round-dot.current{
+  border-color: var(--text);
+  animation: currentDotPulse 1.5s ease-in-out infinite;
+}
+@keyframes dotPop{
+  0%{ transform: scale(0); }
+  60%{ transform: scale(1.4); }
+  100%{ transform: scale(1); }
+}
+@keyframes currentDotPulse{
+  0%, 100%{ box-shadow: 0 0 0 0 rgba(255,255,255,.4); }
+  50%{ box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+}
+
+/* MATCH RESULT OVERLAY */
+.match-result-overlay{
+  position:fixed; inset:0;
+  z-index:200;
+  background: rgba(15,8,22,.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  display:none;
+  align-items:center; justify-content:center;
+  opacity:0;
+  padding: 24px;
+}
+.match-result-overlay.show{
+  display:flex;
+  animation: matchResultFadeIn .5s ease-out forwards;
+}
+@keyframes matchResultFadeIn{
+  from{ opacity:0; }
+  to{ opacity:1; }
+}
+.match-result-card{
+  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 36px 32px;
+  max-width: 520px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,.6);
+  overflow: hidden;
+  text-align: center;
+}
+.match-result-card::before{
+  content:"";
+  position:absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: conic-gradient(from 0deg,
+    var(--result-color, var(--mint)) 0deg,
+    transparent 60deg,
+    transparent 300deg,
+    var(--result-color, var(--mint)) 360deg);
+  opacity: 0.06;
+  animation: resultRotate 12s linear infinite;
+  pointer-events: none;
+}
+@keyframes resultRotate{ to { transform: rotate(360deg); } }
+
+.match-result-headline{
+  position:relative; z-index:2;
+  font-family:var(--font-display);
+  font-stretch:65%; font-weight:800;
+  font-size: 56px;
+  line-height: .9;
+  letter-spacing:-.04em;
+  text-transform:uppercase;
+  margin-bottom: 8px;
+  animation: matchHeadlineSlam .8s cubic-bezier(.2,1.8,.4,1) both;
+}
+@keyframes matchHeadlineSlam{
+  0% { transform: scale(2.5) rotate(-5deg); opacity: 0; filter: blur(12px); }
+  50% { transform: scale(.95) rotate(2deg); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+.match-result-headline.win{
+  background: linear-gradient(180deg, #fff 5%, var(--mint) 50%, #3edd95 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter: drop-shadow(0 0 24px rgba(93,255,186,.6));
+}
+.match-result-headline.lose{
+  background: linear-gradient(180deg, #fff 5%, var(--coral) 50%, #c01e44 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter: drop-shadow(0 0 24px rgba(255,61,104,.6));
+}
+.match-result-headline.draw{
+  background: linear-gradient(180deg, #fff 5%, var(--amber) 50%, #d8a91d 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter: drop-shadow(0 0 18px rgba(255,211,61,.55));
+}
+
+.match-result-sub{
+  position:relative; z-index:2;
+  font-family:var(--font-mono); font-size:13px;
+  color:var(--text-dim); letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-bottom: 28px;
+}
+.match-result-score{
+  position:relative; z-index:2;
+  display:inline-flex;
+  align-items:center; gap:18px;
+  font-family:var(--font-display);
+  font-stretch:60%; font-weight:700;
+  font-size: 72px;
+  letter-spacing:-.03em;
+  line-height: 1;
+  margin-bottom: 32px;
+  padding: 12px 28px;
+  border-radius: 18px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.match-result-score .you{ color: var(--mint); }
+.match-result-score .opp{ color: var(--coral); }
+.match-result-score .dash{ color: var(--text-faint); font-size: 38px; }
+
+/* Rank progression bar */
+.match-rank-card{
+  position:relative; z-index:2;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px 22px;
+  margin-bottom: 24px;
+  text-align:left;
+}
+.rank-card-head{
+  display:flex; align-items:center; gap:14px;
+  margin-bottom: 14px;
+}
+.rank-card-icon{
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  display:grid; place-items:center;
+  flex-shrink: 0;
+}
+.rank-card-icon svg{
+  width: 32px; height: 32px;
+}
+.rank-card-meta{
+  flex: 1;
+}
+.rank-card-tier{
+  font-family:var(--font-display);
+  font-stretch:60%; font-weight:700;
+  font-size: 22px; letter-spacing:-.02em;
+  line-height: 1;
+}
+.rank-card-rating{
+  display:flex; align-items:baseline; gap:8px;
+  font-family:var(--font-mono); font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+.rank-card-rating .delta{
+  font-size: 14px; font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+.rank-card-rating .delta.up{ color: var(--mint); background: rgba(93,255,186,.1); }
+.rank-card-rating .delta.down{ color: var(--coral); background: rgba(255,61,104,.1); }
+.rank-card-rating .delta.same{ color: var(--text-faint); }
+
+.rank-progress-track{
+  position:relative;
+  height: 10px;
+  background: var(--surface-3);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.rank-progress-fill{
+  position:absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--rank-color, var(--amber)) 0%, var(--rank-color-2, #d8a91d) 100%);
+  border-radius: 999px;
+  transition: width 1.4s cubic-bezier(.4,1,.4,1);
+  box-shadow: 0 0 12px var(--rank-color, var(--amber));
+}
+.rank-progress-fill.animating::after{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.5), transparent);
+  animation: rankShimmer 1.4s ease-out;
+}
+@keyframes rankShimmer{
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.rank-progress-labels{
+  display:flex; justify-content:space-between;
+  font-family:var(--font-mono); font-size: 10px;
+  color: var(--text-faint);
+  margin-top: 6px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.match-result-actions{
+  position:relative; z-index:2;
+  display:flex; gap:10px;
+  justify-content:center;
+  flex-wrap: wrap;
+}
+.match-result-actions .btn{
+  min-width: 130px;
+  padding: 14px 22px;
+  font-size: 13px;
+  font-weight: 700;
+}
 
 .round-stage{
   flex:1;
@@ -2225,6 +2453,9 @@ h2.match-title{
     <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></symbol>
+    <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z M23 9l-6 6 M17 9l6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.48 12c0-.73.13-1.44.36-2.1V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></symbol>
     <!-- RANK ICONS -->
     <symbol id="i-rank-bronze" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/></symbol>
@@ -2257,6 +2488,7 @@ h2.match-title{
         <span id="chipName">—</span>
         <span class="rating" id="chipRating"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
       </div>
+      <button class="btn btn-ghost" id="muteBtn" style="padding:8px;" title="Toggle sound"><svg width="14" height="14" id="muteIcon"><use href="#i-sound-on"/></svg></button>
       <button class="btn btn-ghost" id="signOutBtn" style="display:none; padding:8px;" title="Sign out"><svg width="14" height="14"><use href="#i-out"/></svg></button>
     </div>
   </header>
@@ -2305,10 +2537,12 @@ service cloud.firestore {
     }
     match /queue/{userId} {
       allow read, list: if request.auth != null;
-      allow create, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+      // Allow deleting any queue entry (matchmaking transactions need this)
+      allow delete: if request.auth != null;
     }
     match /matches/{matchId} {
-      allow read: if request.auth != null;
+      allow read, list: if request.auth != null;
       allow create: if request.auth != null;
       allow update, delete: if request.auth != null &&
         (resource.data.caller == request.auth.uid || resource.data.callee == request.auth.uid);
@@ -2334,6 +2568,10 @@ service cloud.firestore {
     match /matchHistory/{histId} {
       allow read, list: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+    }
+    match /reports/{reportId} {
+      allow create: if request.auth != null && request.resource.data.reporter == request.auth.uid;
+      allow read: if false;
     }
   }
 }</span>
@@ -2634,6 +2872,14 @@ const FIREBASE_CONFIG = {
               <span class="num" id="scoreOpp">0</span>
             </div>
           </div>
+          <div class="round-indicator" id="roundIndicator">
+            <span class="round-label">BEST OF 3</span>
+            <div class="round-dots">
+              <span class="round-dot" data-round="1"></span>
+              <span class="round-dot" data-round="2"></span>
+              <span class="round-dot" data-round="3"></span>
+            </div>
+          </div>
           <div class="streak" id="streakBox" style="display:none;">
             <svg><use href="#i-flame"/></svg>
             <span id="streakText">2 win streak</span>
@@ -2677,6 +2923,7 @@ const FIREBASE_CONFIG = {
               <span class="sub" id="oppSub">connecting…</span>
             </div>
           </div>
+          <button class="icon-btn" id="reportBtn" title="Report player" style="margin-left:auto; margin-right:8px;"><svg><use href="#i-flag"/></svg></button>
           <div class="ping" id="oppPingBox"><span class="bars"><span></span><span></span><span></span></span> <span id="oppPing">…</span></div>
         </div>
         <div class="video-wrap" id="oppVideoWrap">
@@ -2740,6 +2987,42 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="promotion-from" id="rankupFrom">from Bronze III</div>
     <div class="continue-hint">click anywhere to continue</div>
+  </div>
+</div>
+
+<!-- MATCH RESULT (best-of-3 end) -->
+<div class="match-result-overlay" id="matchResultOverlay">
+  <div class="match-result-card" id="matchResultCard">
+    <div class="match-result-headline" id="matchResultHeadline">VICTORY</div>
+    <div class="match-result-sub" id="matchResultSub">best of 3 · won 2-0</div>
+    <div class="match-result-score" id="matchResultScore">
+      <span class="you" id="matchResultYouScore">2</span>
+      <span class="dash">·</span>
+      <span class="opp" id="matchResultOppScore">0</span>
+    </div>
+    <div class="match-rank-card">
+      <div class="rank-card-head">
+        <div class="rank-card-icon" id="matchRankIcon"></div>
+        <div class="rank-card-meta">
+          <div class="rank-card-tier" id="matchRankTier">Bronze III</div>
+          <div class="rank-card-rating">
+            <span id="matchRankRating">1000 rating</span>
+            <span class="delta" id="matchRankDelta">+12</span>
+          </div>
+        </div>
+      </div>
+      <div class="rank-progress-track">
+        <div class="rank-progress-fill" id="matchRankFill"></div>
+      </div>
+      <div class="rank-progress-labels">
+        <span id="matchRankCurLabel">Bronze III</span>
+        <span id="matchRankNextLabel">110 to next</span>
+      </div>
+    </div>
+    <div class="match-result-actions">
+      <button type="button" class="btn btn-ghost" id="matchEndExitBtn">Back to lobby</button>
+      <button type="button" class="btn btn-primary" id="matchEndAgainBtn">Play again</button>
+    </div>
   </div>
 </div>
 
@@ -2951,13 +3234,6 @@ const FIREBASE_CONFIG = {
   authDomain: "YOUR_PROJECT.firebaseapp.com",
   projectId: "YOUR_PROJECT",
   appId: "YOUR_APP_ID",
-  apiKey: "AIzaSyCepMBXyr7uxW242CfFYGCp6V2lSJ0dYIo",
-  authDomain: "rosham-26c38.firebaseapp.com",
-  projectId: "rosham-26c38",
-  storageBucket: "rosham-26c38.firebasestorage.app",
-  messagingSenderId: "33374172620",
-  appId: "1:33374172620:web:c6cdc9a630add058b2d969",
-  measurementId: "G-1TCWY3Q58Y",
 };
 
 function isConfigured(){
@@ -3142,6 +3418,11 @@ const state = {
   oppGesture: null,
   scoreYou: 0, scoreOpp: 0,
   streak: 0, streakType: null,
+  // Best-of-3
+  matchRound: 0,            // current round number (1, 2, 3)
+  matchRoundsToWin: 2,      // first to 2 wins the match
+  matchOver: false,
+  muted: false,
   pingTimer: null,
   oppPingMs: null,
   // social
@@ -3206,15 +3487,18 @@ function renderAvatar(el, profile){
   if(!el) return;
   const colorIdx = profile.colorIdx || 0;
   if(profile.photoURL){
+    el.textContent = '';
     el.innerHTML = '';
-    el.style.backgroundImage = `url(${profile.photoURL})`;
+    // Clear ANY prior background then set image
+    el.style.background = '';
+    el.style.backgroundColor = '#000';
+    el.style.backgroundImage = `url("${profile.photoURL}")`;
     el.style.backgroundSize = 'cover';
     el.style.backgroundPosition = 'center';
-    el.style.backgroundColor = 'transparent';
-    el.style.background = `center/cover no-repeat url("${profile.photoURL.replace(/"/g,'\\"')}")`;
+    el.style.backgroundRepeat = 'no-repeat';
   } else {
     el.textContent = initialOf(profile.username);
-    el.style.backgroundImage = 'none';
+    el.style.backgroundImage = '';
     el.style.background = AVATAR_COLORS[colorIdx];
   }
 }
@@ -3266,7 +3550,7 @@ animateParticles();
 let audioCtx = null;
 function ensureAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
 function tone(freq, dur=0.1, type='sine', vol=0.15){
-  if(!audioCtx) return;
+  if(!audioCtx || state.muted) return;
   const t = audioCtx.currentTime;
   const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
   o.frequency.value = freq; o.type = type;
@@ -3423,17 +3707,15 @@ function drawLandmarks(landmarks){
               : state.currentGesture === 'paper' ? '#5dffba'
               : state.currentGesture === 'scissors' ? '#ffd33d'
               : 'rgba(255,255,255,.6)';
-  // calc hand center (average of wrist + middle finger MCP)
-  const cx = (landmarks[0].x + landmarks[9].x) / 2;
-  const cy = (landmarks[0].y + landmarks[9].y) / 2;
-  state.handCenter = { x: cx, y: cy };
-  // intensity scales with charge
-  const charge = state.myReadyTimer / READY_HOLD_MS;
-  const glowSize = 8 + charge * 22;
+  // store hand center for any other UI needs
+  state.handCenter = {
+    x: (landmarks[0].x + landmarks[9].x) / 2,
+    y: (landmarks[0].y + landmarks[9].y) / 2,
+  };
   overlayCtx.strokeStyle = color;
-  overlayCtx.lineWidth = 3 + charge * 2;
+  overlayCtx.lineWidth = 2.5;
   overlayCtx.shadowColor = color;
-  overlayCtx.shadowBlur = glowSize;
+  overlayCtx.shadowBlur = 6;
   overlayCtx.beginPath();
   for(const [a,b] of connections){
     overlayCtx.moveTo(landmarks[a].x*w, landmarks[a].y*h);
@@ -3444,25 +3726,8 @@ function drawLandmarks(landmarks){
   overlayCtx.fillStyle = color;
   for(const p of landmarks){
     overlayCtx.beginPath();
-    overlayCtx.arc(p.x*w, p.y*h, 4 + charge * 2, 0, Math.PI*2);
+    overlayCtx.arc(p.x*w, p.y*h, 3, 0, Math.PI*2);
     overlayCtx.fill();
-  }
-  // halo around hand when charging
-  if(charge > 0.05){
-    const haloX = cx * w, haloY = cy * h;
-    const haloR = 80 + charge * 60;
-    const grad = overlayCtx.createRadialGradient(haloX, haloY, 0, haloX, haloY, haloR);
-    grad.addColorStop(0, color.startsWith('rgb') ? color : color + Math.floor(charge*180).toString(16).padStart(2,'0'));
-    grad.addColorStop(0.4, color);
-    grad.addColorStop(1, 'rgba(0,0,0,0)');
-    overlayCtx.globalAlpha = 0.25 + charge * 0.45;
-    overlayCtx.globalCompositeOperation = 'screen';
-    overlayCtx.fillStyle = grad;
-    overlayCtx.beginPath();
-    overlayCtx.arc(haloX, haloY, haloR, 0, Math.PI*2);
-    overlayCtx.fill();
-    overlayCtx.globalAlpha = 1;
-    overlayCtx.globalCompositeOperation = 'source-over';
   }
 }
 function setCurrentGesture(g){
@@ -4615,16 +4880,20 @@ async function findMatch(){
       }
 
       const opp = candidates[0];
-      // DETERMINISTIC: only the player with lower uid initiates the transaction.
-      // The other player just waits for the match-listener to fire.
-      // This eliminates race conditions where both try to pair simultaneously.
-      if(uid > opp.uid){
+      // Both players attempt the transaction; transaction guards against duplicates.
+      // The transaction will fail for the second player when their queue entry no longer exists.
+      // To reduce wasted writes, lower UID gets first shot — but higher UID retries after delay
+      // (instead of waiting passively, which could deadlock).
+      const isLowerUid = uid < opp.uid;
+
+      // Higher UID waits 800ms before trying — gives lower UID a chance, but still retries
+      if(!isLowerUid && attempts < 2){
         $('#matchFeed').innerHTML = `<span class="blink">●</span> match incoming · ${attempts}s`;
-        return; // peer will create the match
+        return;
       }
 
-      const caller = uid; // I am the lower uid → I create + I am caller
-      const callee = opp.uid;
+      const caller = isLowerUid ? uid : opp.uid;
+      const callee = isLowerUid ? opp.uid : uid;
       const oppQueueRef = doc(state.db, 'queue', opp.uid);
       const myQueueRef = doc(state.db, 'queue', uid);
       const oppProfileRef = doc(state.db, 'users', opp.uid);
@@ -4633,7 +4902,6 @@ async function findMatch(){
         await runTransaction(state.db, async (tx) => {
           const oppQ = await tx.get(oppQueueRef);
           if(!oppQ.exists()) throw new Error('opp gone');
-          // check opp is still fresh
           const oppData = oppQ.data();
           if(Date.now() - (oppData.lastBeat || 0) > STALE_MS) throw new Error('opp stale');
           const meQ = await tx.get(myQueueRef);
@@ -4642,16 +4910,19 @@ async function findMatch(){
           const oppProf = oppProfSnap.exists() ? trimProfile(oppProfSnap.data()) : trimProfile({uid: opp.uid, ...opp});
           tx.set(newMatchRef, {
             caller, callee,
-            callerProfile: trimProfile(state.profile),
-            calleeProfile: oppProf,
+            callerProfile: caller === uid ? trimProfile(state.profile) : oppProf,
+            calleeProfile: callee === uid ? trimProfile(state.profile) : oppProf,
             status: 'pending',
             createdAt: serverTimestamp(),
           });
           tx.delete(oppQueueRef);
           tx.delete(myQueueRef);
         });
-      } catch(err){ /* race / stale, retry next tick */ }
-    } catch(e){ console.warn('queue scan failed', e); }
+        console.log('[match] transaction successful, awaiting listener');
+      } catch(err){
+        console.log('[match] transaction failed:', err.message);
+      }
+    } catch(e){ console.warn('[match] queue scan failed', e); }
   };
 
   const interval = setInterval(tryPair, 1500);
@@ -4734,7 +5005,7 @@ async function enterMatch(matchData){
   cancelMatchmakingResources();
   state.oppProfile = state.isCaller ? matchData.calleeProfile : matchData.callerProfile;
   showScreen('game');
-  resetGameUI();
+  resetMatchUI();
   setupOppPanel();
   setText('#youName', state.profile.username);
   const myRank = rankFromRating(state.profile.rating || 1000);
@@ -4889,101 +5160,9 @@ let lastEnergySpawn = 0;
 let chargeTone = null; // rising frequency oscillator
 let chargeToneGain = null;
 
-function initEnergyParticles(){
-  energyCanvas = $('#energyParticles');
-  if(!energyCanvas) return;
-  energyCtx = energyCanvas.getContext('2d');
-  // size to video wrap
-  const wrap = $('#yourVideoWrap');
-  const resize = () => {
-    if(!wrap || !energyCanvas) return;
-    const rect = wrap.getBoundingClientRect();
-    energyCanvas.width = rect.width;
-    energyCanvas.height = rect.height;
-  };
-  resize();
-  new ResizeObserver(resize).observe(wrap);
-  // run animation loop
-  function loop(){
-    if(energyCtx){
-      energyCtx.clearRect(0,0,energyCanvas.width, energyCanvas.height);
-      const w = energyCanvas.width, h = energyCanvas.height;
-      const charge = state.myReadyTimer / READY_HOLD_MS;
-      // spawn particles at edges, move toward hand center
-      if(charge > 0.04 && state.handCenter && (state.phase === 'idle' || state.phase === 'done')){
-        const now = performance.now();
-        const spawnRate = 30 + charge * 80; // spawns per second
-        const interval = 1000 / spawnRate;
-        while(now - lastEnergySpawn > interval){
-          lastEnergySpawn += interval;
-          spawnEnergyParticle(w, h, charge);
-        }
-      } else {
-        lastEnergySpawn = performance.now();
-      }
-      // mirror handCenter for canvas (video is mirrored)
-      const targetX = state.handCenter ? (1 - state.handCenter.x) * w : w/2;
-      const targetY = state.handCenter ? state.handCenter.y * h : h/2;
-      energyParticles = energyParticles.filter(p => p.life > 0);
-      for(const p of energyParticles){
-        const dx = targetX - p.x;
-        const dy = targetY - p.y;
-        const dist = Math.sqrt(dx*dx + dy*dy);
-        // accelerate toward target
-        const accel = 0.4 + (1 - dist/300) * 0.8;
-        p.vx += (dx/dist) * accel;
-        p.vy += (dy/dist) * accel;
-        // damping
-        p.vx *= 0.94; p.vy *= 0.94;
-        p.x += p.vx; p.y += p.vy;
-        p.life -= 0.02;
-        // kill on arrival
-        if(dist < 20) p.life = Math.min(p.life, 0.2);
-        const alpha = Math.max(0, Math.min(1, p.life)) * 0.9;
-        // particle as small glowing dot
-        energyCtx.globalAlpha = alpha;
-        energyCtx.fillStyle = p.color;
-        energyCtx.shadowColor = p.color;
-        energyCtx.shadowBlur = 8;
-        energyCtx.beginPath();
-        energyCtx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-        energyCtx.fill();
-        // trail
-        energyCtx.globalAlpha = alpha * 0.3;
-        energyCtx.beginPath();
-        energyCtx.arc(p.x - p.vx*2, p.y - p.vy*2, p.size * 0.6, 0, Math.PI*2);
-        energyCtx.fill();
-      }
-      energyCtx.globalAlpha = 1;
-      energyCtx.shadowBlur = 0;
-    }
-    requestAnimationFrame(loop);
-  }
-  loop();
-}
-function spawnEnergyParticle(w, h, charge){
-  // spawn at random edge position
-  const edge = Math.floor(Math.random() * 4);
-  let x, y;
-  if(edge === 0){ x = Math.random() * w; y = -10; }
-  else if(edge === 1){ x = w + 10; y = Math.random() * h; }
-  else if(edge === 2){ x = Math.random() * w; y = h + 10; }
-  else { x = -10; y = Math.random() * h; }
-  // color matches detected gesture
-  let color;
-  if(state.currentGesture === 'rock') color = '#ff3d68';
-  else if(state.currentGesture === 'paper') color = '#5dffba';
-  else if(state.currentGesture === 'scissors') color = '#ffd33d';
-  else color = '#a48bff';
-  energyParticles.push({
-    x, y,
-    vx: (Math.random() - 0.5) * 1,
-    vy: (Math.random() - 0.5) * 1,
-    life: 1.0,
-    size: 1.5 + Math.random() * 2.5,
-    color,
-  });
-}
+// Energy particles disabled — replaced with simple subtle border effect
+function initEnergyParticles(){ /* no-op */ }
+function spawnEnergyParticle(){ /* no-op */ }
 
 // Rising frequency tone while charging
 function startChargeTone(){
@@ -5001,11 +5180,11 @@ function startChargeTone(){
 function updateChargeTone(progress){
   if(!chargeToneGain || !chargeTone) return;
   const now = audioCtx.currentTime;
-  // freq rises from 180 to 880
-  const freq = 180 + progress * 700;
+  // freq rises from 220 to 660 — smaller range, less ear-piercing
+  const freq = 220 + progress * 440;
   chargeTone.frequency.setTargetAtTime(freq, now, 0.05);
-  // volume rises gently
-  const vol = progress * 0.05;
+  // volume very subtle
+  const vol = progress * 0.025;
   chargeToneGain.gain.setTargetAtTime(vol, now, 0.05);
 }
 function stopChargeTone(){
@@ -5163,11 +5342,24 @@ function resetGameUI(){
   updateOppReadyUI(false, 0);
   stopChargeTone();
 }
+function resetMatchUI(){
+  // Called when starting a fresh best-of-3 (new match, not new round)
+  resetGameUI();
+  state.scoreYou = 0;
+  state.scoreOpp = 0;
+  state.streak = 0;
+  state.streakType = null;
+  state.matchOver = false;
+  setText('#scoreYou', 0);
+  setText('#scoreOpp', 0);
+  $('#streakBox').style.display = 'none';
+  resetRoundIndicator();
+}
 function resetRound(){
   resetGameUI();
   $('#handPrompt').style.display = '';
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
-  hideOppVideo(); // anti-cheat: hide opponent during ready
+  hideOppVideo();
 }
 
 function hideOppVideo(){
@@ -5269,7 +5461,8 @@ function doReveal(){
     if(state.streakType === 'L') state.streak++; else { state.streakType='L'; state.streak=1; }
   }
   updateScore();
-  updateProfileStatsAndHistory(result, yourMove, oppMove);
+  updateRoundIndicator(result);
+  // NOTE: stats only updated at MATCH end (not per round) — see endMatch()
 
   const youPickEl = $('#resultYouPick');
   const oppPickEl = $('#resultOppPick');
@@ -5345,9 +5538,20 @@ function doReveal(){
   resultDisplay.classList.add('show');
   setText('#roundState', result === 'draw' ? 'TIE — GO AGAIN' : (result === 'win' ? 'NICE THROW' : 'TOUGH LOSS'));
   state.phase = 'done';
-  setTimeout(() => {
-    if(state.phase === 'done' && state.screen === 'game') resetRound();
-  }, 3200);
+
+  // Check if match is over (someone reached 2 wins)
+  const matchOver = state.scoreYou >= state.matchRoundsToWin || state.scoreOpp >= state.matchRoundsToWin;
+  if(matchOver){
+    state.matchOver = true;
+    // brief delay so round result is visible, then show match end
+    setTimeout(() => {
+      if(state.screen === 'game') endMatch();
+    }, 2500);
+  } else {
+    setTimeout(() => {
+      if(state.phase === 'done' && state.screen === 'game' && !state.matchOver) resetRound();
+    }, 2800);
+  }
 }
 function updateScore(){
   setText('#scoreYou', state.scoreYou);
@@ -5367,6 +5571,220 @@ function updateScore(){
       sb.style.background = 'rgba(255,61,104,.06)';
     }
   } else sb.style.display = 'none';
+}
+
+function updateRoundIndicator(roundResult){
+  // Light up the appropriate dot for the current round
+  const round = state.scoreYou + state.scoreOpp; // 1, 2, or 3 after round ends
+  const dot = document.querySelector(`.round-dot[data-round="${round}"]`);
+  if(!dot) return;
+  // remove "current" indicator from all dots
+  document.querySelectorAll('.round-dot').forEach(d => d.classList.remove('current'));
+  if(roundResult === 'win') dot.classList.add('you-won');
+  else if(roundResult === 'lose' || roundResult === 'forfeit') dot.classList.add('opp-won');
+  else if(roundResult === 'draw') dot.classList.add('draw');
+  // mark next dot as current
+  const matchOver = state.scoreYou >= state.matchRoundsToWin || state.scoreOpp >= state.matchRoundsToWin;
+  if(!matchOver){
+    const nextDot = document.querySelector(`.round-dot[data-round="${round + 1}"]`);
+    if(nextDot) nextDot.classList.add('current');
+  }
+}
+
+function resetRoundIndicator(){
+  document.querySelectorAll('.round-dot').forEach((d, i) => {
+    d.classList.remove('you-won','opp-won','draw','current');
+    if(i === 0) d.classList.add('current');
+  });
+}
+
+// Called when match (best of 3) ends
+async function endMatch(){
+  // Determine match result
+  const youWon = state.scoreYou > state.scoreOpp;
+  const draw = state.scoreYou === state.scoreOpp; // shouldn't happen in bo3 but just in case
+  const result = draw ? 'draw' : (youWon ? 'win' : 'lose');
+
+  // Update profile stats + ELO (once per match, not per round)
+  await updateMatchStats(result);
+
+  // Show the match result overlay with rank progression
+  showMatchResultScreen(result);
+}
+
+// Match-end stats update — single ELO change for the whole bo3
+let updateMatchStats = async function(matchResult){
+  if(!state.user || !state.profile) return;
+  if(state.isBotMatch){
+    // bot games don't affect rating
+    state._lastMatchDelta = 0;
+    state._lastRatingBefore = state.profile.rating || 1000;
+    state._lastRatingAfter = state.profile.rating || 1000;
+    return;
+  }
+  let score = 0.5;
+  if(matchResult === 'win') score = 1;
+  else if(matchResult === 'lose') score = 0;
+  const myRating = state.profile.rating || 1000;
+  const oppRating = state.oppProfile?.rating || 1000;
+  const delta = calcEloDelta(myRating, oppRating, score);
+  const newRating = myRating + delta;
+  state._lastMatchDelta = delta;
+  state._lastRatingBefore = myRating;
+  state._lastRatingAfter = newRating;
+
+  const oldRank = rankFromRating(myRating);
+  const newRank = rankFromRating(newRating);
+  const rankedUp = newRank.index > oldRank.index;
+
+  const updates = { games: increment(1), lastSeen: serverTimestamp(), rating: increment(delta) };
+  if(matchResult === 'win') updates.wins = increment(1);
+  else if(matchResult === 'lose') updates.losses = increment(1);
+  else updates.draws = increment(1);
+  if(matchResult === 'win'){
+    const ns = (state.profile.currentStreak || 0) + 1;
+    updates.currentStreak = ns;
+    if(ns > (state.profile.bestStreak || 0)) updates.bestStreak = ns;
+  } else if(matchResult === 'lose'){
+    updates.currentStreak = 0;
+  }
+
+  try {
+    await updateDoc(doc(state.db, 'users', state.user.uid), updates);
+    if(matchResult === 'win') state.profile.wins = (state.profile.wins||0) + 1;
+    else if(matchResult === 'lose') state.profile.losses = (state.profile.losses||0) + 1;
+    else state.profile.draws = (state.profile.draws||0) + 1;
+    state.profile.games = (state.profile.games||0) + 1;
+    state.profile.rating = newRating;
+    if(matchResult === 'win'){
+      state.profile.currentStreak = (state.profile.currentStreak || 0) + 1;
+      state.profile.bestStreak = Math.max(state.profile.bestStreak || 0, state.profile.currentStreak);
+    } else if(matchResult === 'lose'){
+      state.profile.currentStreak = 0;
+    }
+    refreshStatsUI();
+    updateChipRating();
+
+    // Match history
+    await addDoc(collection(state.db, 'matchHistory'), {
+      uid: state.user.uid,
+      username: state.profile.username,
+      oppUid: state.oppUid,
+      oppUsername: state.oppProfile?.username || '',
+      result: matchResult,
+      delta,
+      score: `${state.scoreYou}-${state.scoreOpp}`,
+      ratingBefore: myRating,
+      ratingAfter: newRating,
+      createdAt: serverTimestamp(),
+    });
+    // Activity feed
+    await addDoc(collection(state.db, 'activity'), {
+      uid: state.user.uid,
+      username: state.profile.username,
+      colorIdx: state.profile.colorIdx || 0,
+      photoURL: state.profile.photoURL || '',
+      result: matchResult,
+      oppUsername: state.oppProfile?.username || '',
+      delta,
+      createdAt: serverTimestamp(),
+    });
+
+    if(rankedUp){
+      state._pendingRankUp = { from: oldRank, to: newRank };
+    }
+  } catch(e){ console.warn('match stat update fail', e); }
+};
+
+function showMatchResultScreen(result){
+  const overlay = $('#matchResultOverlay');
+  const card = $('#matchResultCard');
+  const headline = $('#matchResultHeadline');
+  const sub = $('#matchResultSub');
+
+  // Set header
+  headline.classList.remove('win','lose','draw');
+  if(result === 'win'){
+    headline.textContent = 'VICTORY';
+    headline.classList.add('win');
+    card.style.setProperty('--result-color', 'var(--mint)');
+    sub.textContent = `best of 3 · won ${state.scoreYou}-${state.scoreOpp}`;
+    sfxWin();
+    setTimeout(() => bigBurst('#5dffba'), 300);
+    setTimeout(() => bigBurst('#a48bff'), 600);
+  } else if(result === 'lose'){
+    headline.textContent = 'DEFEAT';
+    headline.classList.add('lose');
+    card.style.setProperty('--result-color', 'var(--coral)');
+    sub.textContent = `best of 3 · lost ${state.scoreYou}-${state.scoreOpp}`;
+    sfxLose();
+  } else {
+    headline.textContent = 'DRAW';
+    headline.classList.add('draw');
+    card.style.setProperty('--result-color', 'var(--amber)');
+    sub.textContent = `best of 3 · tied ${state.scoreYou}-${state.scoreOpp}`;
+    sfxDraw();
+  }
+  setText('#matchResultYouScore', state.scoreYou);
+  setText('#matchResultOppScore', state.scoreOpp);
+
+  // Rank card — show CURRENT rank (before animation), then animate to new
+  const ratingBefore = state._lastRatingBefore ?? (state.profile?.rating || 1000);
+  const ratingAfter = state._lastRatingAfter ?? ratingBefore;
+  const delta = state._lastMatchDelta ?? 0;
+  const rankBefore = rankFromRating(ratingBefore);
+  const rankAfter = rankFromRating(ratingAfter);
+
+  setRankIconEl($('#matchRankIcon'), rankBefore.id);
+  setText('#matchRankTier', rankBefore.tierName);
+  setText('#matchRankRating', `${ratingBefore} rating`);
+  const deltaEl = $('#matchRankDelta');
+  deltaEl.className = 'delta ' + (delta > 0 ? 'up' : delta < 0 ? 'down' : 'same');
+  deltaEl.textContent = state.isBotMatch ? 'BOT · no rating' : (delta > 0 ? '+' + delta : delta === 0 ? '±0' : '' + delta);
+  setText('#matchRankCurLabel', rankBefore.tierName);
+
+  const progBefore = rankProgressToNext(ratingBefore);
+  setText('#matchRankNextLabel', progBefore.nextLabel);
+  const fill = $('#matchRankFill');
+  fill.style.setProperty('--rank-color', rankBefore.color);
+  fill.style.setProperty('--rank-color-2', rankBefore.color2);
+  // Start at "before" progress
+  fill.style.transition = 'none';
+  fill.style.width = (progBefore.progress * 100) + '%';
+  // Show overlay
+  overlay.classList.add('show');
+
+  // After a moment, animate to new rating
+  setTimeout(() => {
+    if(delta === 0 || state.isBotMatch){
+      // no animation needed
+      return;
+    }
+    fill.style.transition = ''; // restore transition
+    const progAfter = rankProgressToNext(ratingAfter);
+    fill.classList.add('animating');
+    // if rank changed during animation, switch colors midway
+    fill.style.width = (progAfter.progress * 100) + '%';
+    fill.style.setProperty('--rank-color', rankAfter.color);
+    fill.style.setProperty('--rank-color-2', rankAfter.color2);
+    // Update rating + labels with a slight delay so they animate too
+    setTimeout(() => {
+      setText('#matchRankRating', `${ratingAfter} rating`);
+      setText('#matchRankTier', rankAfter.tierName);
+      setText('#matchRankCurLabel', rankAfter.tierName);
+      setText('#matchRankNextLabel', progAfter.nextLabel);
+      setRankIconEl($('#matchRankIcon'), rankAfter.id);
+    }, 700);
+    setTimeout(() => fill.classList.remove('animating'), 1500);
+
+    // Trigger rank-up celebration if applicable
+    if(state._pendingRankUp){
+      setTimeout(() => {
+        showRankUp(state._pendingRankUp.from, state._pendingRankUp.to);
+        state._pendingRankUp = null;
+      }, 1800);
+    }
+  }, 900);
 }
 
 function calcEloDelta(myRating, oppRating, score, K=24){
@@ -5532,8 +5950,23 @@ async function handleRemoteLeft(){
   $('#disconnectBanner').classList.add('show');
   $('#oppCamStatus').classList.remove('live');
   $('#oppCamStatus').querySelector('span:last-child').textContent = 'disconnected';
-  addChat('sys', 'opponent left · finding a new one in 2s');
-  setTimeout(() => nextStranger(), 2000);
+  // If match was in progress (and you weren't already losing badly), credit you with the win
+  if(!state.matchOver && !state.isBotMatch && state.oppUid && (state.scoreYou + state.scoreOpp) > 0){
+    addChat('sys', 'opponent left · counted as forfeit · you win the match');
+    // Push your score to roundsToWin (2) for the W
+    while(state.scoreYou < state.matchRoundsToWin && state.scoreOpp < state.matchRoundsToWin){
+      state.scoreYou++;
+    }
+    state.matchOver = true;
+    updateScore();
+    setTimeout(() => endMatch(), 1200);
+  } else {
+    addChat('sys', 'opponent left · returning to lobby');
+    setTimeout(async () => {
+      await teardownMatch();
+      showScreen('landing');
+    }, 1800);
+  }
 }
 function onPeerDisconnected(){ if(state.phase !== 'ended') handleRemoteLeft(); }
 let teardownMatch = async function(){
@@ -5592,28 +6025,36 @@ function openCropper(dataURL){
     cropper.canvas = $('#cropperCanvas');
     cropper.stage = $('#cropperStage');
     cropper.ctx = cropper.canvas.getContext('2d');
-    // size canvas to stage
-    const rect = cropper.stage.getBoundingClientRect();
-    const size = Math.min(rect.width, rect.height);
-    cropper.canvas.width = size;
-    cropper.canvas.height = size;
-    // initial fit: cover (zoom so smaller dim fills)
-    cropper.baseScale = Math.max(size / img.width, size / img.height);
-    cropper.imgScale = 1;
-    cropper.rotation = 0;
-    cropper.tx = 0;
-    cropper.ty = 0;
-    $('#cropZoom').value = 1;
-    drawCropper();
+    // SHOW MODAL FIRST so dimensions are real (was 0×0 before)
     $('#cropperModal').classList.add('show');
+    // Wait one frame for layout, then measure and draw
+    requestAnimationFrame(() => {
+      const rect = cropper.stage.getBoundingClientRect();
+      const size = Math.max(200, Math.min(rect.width || 360, rect.height || 360));
+      cropper.canvas.width = size;
+      cropper.canvas.height = size;
+      // initial fit: cover (zoom so smaller dim fills)
+      cropper.baseScale = Math.max(size / img.width, size / img.height);
+      cropper.imgScale = 1;
+      cropper.rotation = 0;
+      cropper.tx = 0;
+      cropper.ty = 0;
+      $('#cropZoom').value = 1;
+      drawCropper();
+    });
+  };
+  img.onerror = () => {
+    toast('Could not load image — try a different photo', 'error');
   };
   img.src = dataURL;
 }
 
 function drawCropper(){
   const c = cropper.canvas, ctx = cropper.ctx;
-  if(!c || !cropper.img) return;
-  ctx.clearRect(0, 0, c.width, c.height);
+  if(!c || !cropper.img || c.width === 0) return;
+  // dark background so transparent parts are visible
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, c.width, c.height);
   ctx.save();
   ctx.translate(c.width/2 + cropper.tx, c.height/2 + cropper.ty);
   ctx.rotate(cropper.rotation * Math.PI / 180);
@@ -5715,24 +6156,47 @@ function setupCropperEvents(){
   });
 
   $('#cropApplyBtn').addEventListener('click', () => {
-    // export at 256x256 with circular mask (we'll just save the square, mask is visual only via CSS border-radius)
+    if(!cropper.img){ toast('No image loaded', 'error'); return; }
+    // Render directly from the source image at the target resolution
+    // — this avoids any issues with the preview canvas not being initialized
     const out = document.createElement('canvas');
     out.width = 256; out.height = 256;
     const octx = out.getContext('2d');
-    // scale current canvas content to 256
-    octx.drawImage(cropper.canvas, 0, 0, 256, 256);
+    // black background so any blank areas show as black, not transparent
+    octx.fillStyle = '#1a1322';
+    octx.fillRect(0, 0, 256, 256);
+
+    // Replicate cropper transform at 256×256 resolution.
+    // The preview canvas was sized `previewSize`, our output is 256.
+    // We need to scale the offsets (tx, ty) proportionally.
+    const previewSize = cropper.canvas.width || 256;
+    const scaleRatio = 256 / previewSize;
+
+    octx.save();
+    octx.translate(128 + cropper.tx * scaleRatio, 128 + cropper.ty * scaleRatio);
+    octx.rotate(cropper.rotation * Math.PI / 180);
+    const s = cropper.baseScale * cropper.imgScale * scaleRatio;
+    const w = cropper.img.width * s;
+    const h = cropper.img.height * s;
+    octx.drawImage(cropper.img, -w/2, -h/2, w, h);
+    octx.restore();
+
     // JPEG compression for smaller storage
-    const jpeg = out.toDataURL('image/jpeg', 0.85);
+    let jpeg = out.toDataURL('image/jpeg', 0.85);
     if(jpeg.length > 700000){
-      // try harder compression
-      const jpeg2 = out.toDataURL('image/jpeg', 0.65);
-      pendingPhotoDataURL = jpeg2;
-    } else {
-      pendingPhotoDataURL = jpeg;
+      jpeg = out.toDataURL('image/jpeg', 0.65);
     }
+    if(jpeg.length > 900000){
+      // last resort — shrink to 192px
+      const out2 = document.createElement('canvas');
+      out2.width = 192; out2.height = 192;
+      out2.getContext('2d').drawImage(out, 0, 0, 192, 192);
+      jpeg = out2.toDataURL('image/jpeg', 0.7);
+    }
+    pendingPhotoDataURL = jpeg;
     updateEditPhotoPreview(pendingPhotoDataURL);
     $('#cropperModal').classList.remove('show');
-    toast('Photo cropped · save to apply', 'success');
+    toast('Photo ready · click Save to apply', 'success');
   });
 }
 setupCropperEvents();
@@ -5790,7 +6254,7 @@ async function startBotMatch(){
 
 function enterBotMatch(){
   showScreen('game');
-  resetGameUI();
+  resetMatchUI();
   setupOppPanelBot();
   setText('#youName', state.profile.username);
   const myRank = rankFromRating(state.profile.rating || 1000);
@@ -5972,6 +6436,8 @@ updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
 
 // Bot match: when next button is clicked, restart bot match instead of finding stranger
 async function nextStrangerOrBot(){
+  // Hide match result overlay if showing
+  $('#matchResultOverlay').classList.remove('show');
   if(state.isBotMatch){
     await teardownMatch();
     await startBotMatch();
@@ -5979,6 +6445,15 @@ async function nextStrangerOrBot(){
     await nextStranger();
   }
 }
+
+// Match-end buttons
+$('#matchEndAgainBtn').addEventListener('click', nextStrangerOrBot);
+$('#matchEndExitBtn').addEventListener('click', async () => {
+  $('#matchResultOverlay').classList.remove('show');
+  await teardownMatch();
+  state.isBotMatch = false;
+  showScreen('landing');
+});
 
 // Replace next button to handle both modes
 $('#nextBtn').removeEventListener('click', nextStranger);
@@ -6019,7 +6494,14 @@ document.querySelectorAll('.modal-bg').forEach(m => {
 document.addEventListener('keydown', (e) => {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn').click(); }
-  if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStranger(); }
+  if(state.screen === 'landing' && e.code === 'KeyB'){ e.preventDefault(); $('#botBtn').click(); }
+  if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStrangerOrBot(); }
+  if(e.code === 'KeyM'){ e.preventDefault(); $('#muteBtn').click(); }
+  if(e.code === 'Escape'){
+    // close any open modal
+    const open = document.querySelector('.modal-bg.show');
+    if(open) open.classList.remove('show');
+  }
 });
 document.querySelectorAll('.code-block .copy').forEach(b => {
   b.addEventListener('click', () => {
@@ -6047,6 +6529,54 @@ document.addEventListener('visibilitychange', () => {
     try { deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
   }
 });
+
+// Report player button — adds to blocked list + sends a report doc
+$('#reportBtn').addEventListener('click', async () => {
+  if(!state.oppUid || state.isBotMatch){
+    toast("Can't report this player", 'error');
+    return;
+  }
+  if(!confirm(`Report @${state.oppProfile?.username || 'this player'} for inappropriate behavior?\n\nThey will be blocked from future matches with you.`)) return;
+  try {
+    // block them
+    await updateDoc(doc(state.db, 'users', state.user.uid), {
+      blocked: arrayUnion(state.oppUid),
+    });
+    state.profile.blocked = [...(state.profile.blocked||[]), state.oppUid];
+    // record the report
+    await addDoc(collection(state.db, 'reports'), {
+      reporter: state.user.uid,
+      reporterUsername: state.profile.username,
+      reported: state.oppUid,
+      reportedUsername: state.oppProfile?.username || '',
+      createdAt: serverTimestamp(),
+    }).catch(() => {});
+    toast(`Reported & blocked @${state.oppProfile?.username || 'player'}`, 'success');
+    // exit match
+    await teardownMatch();
+    showScreen('landing');
+  } catch(e){ toast('Could not report', 'error'); }
+});
+
+// ============= MUTE / SETTINGS =============
+function updateMuteIcon(){
+  const icon = $('#muteIcon');
+  if(icon){
+    icon.innerHTML = `<use href="#i-sound-${state.muted ? 'off' : 'on'}"/>`;
+  }
+}
+$('#muteBtn').addEventListener('click', () => {
+  state.muted = !state.muted;
+  updateMuteIcon();
+  try { localStorage.setItem('rosham_muted', state.muted ? '1' : '0'); } catch(e){}
+  if(state.muted) stopChargeTone();
+  toast(state.muted ? 'Sound muted' : 'Sound on', 'success');
+});
+// Load mute preference
+try {
+  state.muted = localStorage.getItem('rosham_muted') === '1';
+  updateMuteIcon();
+} catch(e){}
 
 // ============= INIT =============
 setupAuthUI();
