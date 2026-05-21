@@ -4,6 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>ROSHAM — live rock paper scissors with strangers</title>
+<meta name="description" content="Real rock paper scissors against strangers using your webcam. Hand-gesture detection, ranked ELO, friends, leaderboards." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,6 +36,14 @@
   --font-display:"Bricolage Grotesque", ui-sans-serif, system-ui;
   --font-body:"Geist", ui-sans-serif, system-ui;
   --font-mono:"Geist Mono", ui-monospace, monospace;
+  /* rank colors */
+  --rank-bronze:#cd7f32;
+  --rank-silver:#c0c0c0;
+  --rank-gold:#ffd33d;
+  --rank-platinum:#5dffba;
+  --rank-diamond:#5fc9ff;
+  --rank-master:#a48bff;
+  --rank-grandmaster:#ff3d68;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;}
@@ -141,7 +150,7 @@ header{
 
 .user-chip{
   display:flex; align-items:center; gap:8px;
-  padding:6px 10px 6px 6px;
+  padding:6px 12px 6px 6px;
   border:1px solid var(--line);
   border-radius:999px;
   background:var(--surface);
@@ -151,19 +160,20 @@ header{
 }
 .user-chip:hover{background:var(--surface-2);}
 .user-chip .av{
-  width:24px; height:24px; border-radius:50%;
+  width:28px; height:28px; border-radius:50%;
   background:linear-gradient(135deg, var(--coral), var(--violet));
   display:grid; place-items:center;
   font-family:var(--font-display); font-weight:700;
-  font-size:11px;
+  font-size:13px;
   color:#fff;
 }
 .user-chip .rating{
   font-family:var(--font-mono);
-  font-size:10px;
-  color:var(--amber);
+  font-size:11px;
   font-weight:600;
+  display:flex; align-items:center; gap:4px;
 }
+.user-chip .rank-icon{width:14px; height:14px;}
 
 .btn{
   font-family:var(--font-body);
@@ -212,6 +222,12 @@ header{
   font-weight:600;
 }
 .btn-google:hover{background:#f3f3f3;}
+.btn-danger{
+  background:rgba(255,92,111,.08);
+  border-color:rgba(255,92,111,.3);
+  color:var(--error);
+}
+.btn-danger:hover{background:rgba(255,92,111,.15);}
 
 .screens{flex:1; display:flex; flex-direction:column; position:relative;}
 .screen{
@@ -224,10 +240,10 @@ header{
 .screen.active{display:flex; flex-direction:column;}
 @keyframes fadeUp{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
 
-/* ====== SETUP / AUTH ====== */
-#screen-setup, #screen-auth{align-items:center; justify-content:flex-start;}
-.setup-wrap, .auth-wrap{
-  max-width: 720px; width:100%;
+/* ============ NOT CONFIGURED SCREEN ============ */
+#screen-noconfig{align-items:center; justify-content:flex-start;}
+.noconfig-wrap{
+  max-width: 760px; width:100%;
   display:flex; flex-direction:column; gap:22px;
   padding-top:20px;
 }
@@ -311,39 +327,15 @@ h1.section-title .accent{
 }
 .code-block .copy:hover{background:var(--surface-3);}
 
-.config-input{
-  background:var(--bg);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:14px;
-  font-family:var(--font-mono); font-size:12px;
-  color:var(--text);
-  min-height:140px;
-  resize:vertical;
-  width:100%;
-  outline:none;
+/* ====== AUTH ====== */
+#screen-auth{align-items:center; justify-content:center;}
+.auth-wrap{
+  max-width: 460px; width:100%;
+  display:flex; flex-direction:column; gap:18px;
+  align-items:center;
+  text-align:center;
 }
-.config-input:focus{border-color:var(--coral);}
-.config-actions{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
-.error-msg{
-  color:var(--error); font-size:13px;
-  padding:10px 12px;
-  background:rgba(255,92,111,.08);
-  border:1px solid rgba(255,92,111,.3);
-  border-radius:10px;
-  display:none;
-}
-.error-msg.show{display:block;}
-.success-msg{
-  color:var(--mint); font-size:13px;
-  padding:10px 12px;
-  background:rgba(93,255,186,.06);
-  border:1px solid rgba(93,255,186,.3);
-  border-radius:10px;
-  display:none;
-}
-.success-msg.show{display:block;}
-
+.auth-wrap .eyebrow{align-self:center;}
 .auth-tabs{
   display:flex; gap:4px;
   background:var(--surface);
@@ -361,7 +353,7 @@ h1.section-title .accent{
   cursor:pointer;
 }
 .auth-tabs button.active{background:var(--surface-2); color:var(--text);}
-.auth-form{display:flex; flex-direction:column; gap:12px; max-width:380px; width:100%;}
+.auth-form{display:flex; flex-direction:column; gap:12px; max-width:380px; width:100%; text-align:left;}
 .field{display:flex; flex-direction:column; gap:6px;}
 .field label{
   font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
@@ -386,24 +378,35 @@ h1.section-title .accent{
   font-family:var(--font-mono); font-size:11px;
   text-transform:uppercase; letter-spacing:.1em;
   margin:6px 0;
+  width:100%;
+  max-width:380px;
 }
 .divider::before, .divider::after{content:""; flex:1; height:1px; background:var(--line);}
 
-/* ====== LANDING (HUB) ====== */
-#screen-landing{
-  padding-top:24px;
+.error-msg{
+  color:var(--error); font-size:13px;
+  padding:10px 12px;
+  background:rgba(255,92,111,.08);
+  border:1px solid rgba(255,92,111,.3);
+  border-radius:10px;
+  display:none;
+  text-align:left;
 }
+.error-msg.show{display:block;}
+
+/* ============ LANDING (HUB) ============ */
+#screen-landing{padding-top:24px;}
 .landing-hub{
   max-width:1280px;
   width:100%;
   margin:0 auto;
   display:grid;
-  grid-template-columns: 1fr 320px;
+  grid-template-columns: 1fr 340px;
   gap:24px;
   align-items:start;
 }
 .hub-main{display:flex; flex-direction:column; gap:20px;}
-.hub-side{display:flex; flex-direction:column; gap:16px; position:sticky; top:80px;}
+.hub-side{display:flex; flex-direction:column; gap:16px;}
 
 .hero-block{
   background: linear-gradient(180deg, var(--surface), var(--bg-2));
@@ -441,9 +444,7 @@ h1.section-title .accent{
   margin-bottom:24px;
 }
 
-.hand-icons-row{
-  display:flex; gap:14px; margin-bottom:24px; flex-wrap:wrap;
-}
+.hand-icons-row{display:flex; gap:14px; margin-bottom:24px; flex-wrap:wrap;}
 .hand-mini{
   width:64px; height:64px; border-radius:16px;
   display:grid; place-items:center;
@@ -464,10 +465,7 @@ h1.section-title .accent{
 .hand-mini[data-g="paper"] svg{color:var(--mint);}
 .hand-mini[data-g="scissors"] svg{color:var(--amber);}
 
-.match-options{
-  display:flex; gap:8px; flex-wrap:wrap;
-  margin-bottom:18px;
-}
+.match-options{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;}
 .opt-pill{
   font-family:var(--font-mono);
   font-size:11px; letter-spacing:.04em;
@@ -488,9 +486,7 @@ h1.section-title .accent{
 }
 .opt-pill .lab{text-transform:uppercase;}
 
-.cta-find{
-  display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-}
+.cta-find{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
 .btn-cta{
   font-family:var(--font-body); font-weight:700; font-size:16px;
   padding:18px 28px;
@@ -504,6 +500,20 @@ h1.section-title .accent{
 }
 .btn-cta:hover{transform: translateY(-2px); box-shadow: 0 26px 60px -10px rgba(255,61,104,.7), inset 0 1px 0 rgba(255,255,255,.3);}
 .btn-cta svg{width:18px;height:18px}
+
+/* Rank badge */
+.rank-badge{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  font-family:var(--font-mono); font-size:11px;
+  font-weight:600;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+.rank-badge svg{width:14px; height:14px;}
 
 /* Stat tiles */
 .stats-grid{
@@ -526,9 +536,50 @@ h1.section-title .accent{
 .stat-card.w .val{color:var(--mint);}
 .stat-card.l .val{color:var(--coral);}
 .stat-card.d .val{color:var(--amber);}
-.stat-card.r .val{color:var(--violet);}
+.stat-card.r .val{
+  font-family:var(--font-display);
+  font-stretch:65%;
+  font-size:24px;
+  display:flex; align-items:center; gap:6px;
+}
+.stat-card.r .val svg{width:22px; height:22px;}
 
-/* Sidebar panels */
+/* Rank progress bar */
+.rank-progress-card{
+  padding:14px 16px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+}
+.rank-progress-card .head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:8px;
+}
+.rank-progress-card .now{
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--font-display); font-weight:600;
+  font-size:15px;
+}
+.rank-progress-card .now svg{width:18px; height:18px;}
+.rank-progress-card .next{
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--text-faint);
+}
+.rank-bar{
+  height:8px; border-radius:6px;
+  background:var(--surface-3);
+  overflow:hidden;
+  position:relative;
+}
+.rank-bar-fill{
+  height:100%;
+  border-radius:6px;
+  transition: width .8s cubic-bezier(.2,.7,.2,1);
+  background: linear-gradient(90deg, var(--rank-color, var(--coral)), var(--rank-color-2, var(--rose)));
+  box-shadow: 0 0 12px var(--rank-color, var(--coral));
+}
+
+/* Side panels */
 .side-panel{
   background: linear-gradient(180deg, var(--surface), var(--bg-2));
   border:1px solid var(--line);
@@ -544,16 +595,13 @@ h1.section-title .accent{
 .side-head .title{
   font-family:var(--font-display);
   font-weight:600; font-size:14px;
-  letter-spacing:.01em;
   display:flex; align-items:center; gap:8px;
 }
 .side-head .title svg{width:14px; height:14px; color:var(--text-dim);}
-.side-head .ct{
-  font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
-}
+.side-head .ct{font-family:var(--font-mono); font-size:11px; color:var(--text-faint);}
 .side-body{
-  padding:10px 8px;
-  max-height:380px; overflow-y:auto;
+  padding:8px;
+  max-height:340px; overflow-y:auto;
 }
 .side-body::-webkit-scrollbar{width:6px;}
 .side-body::-webkit-scrollbar-thumb{background:var(--surface-3); border-radius:3px;}
@@ -574,15 +622,22 @@ h1.section-title .accent{
 .friend-row:hover, .lb-row:hover, .req-row:hover{background: rgba(255,255,255,.03);}
 .friend-row .av, .lb-row .av, .req-row .av{
   width:32px; height:32px; border-radius:9px;
-  background:linear-gradient(135deg, #2a1f3d, #3b2855);
   display:grid; place-items:center;
   font-family:var(--font-display); font-weight:700; font-size:13px;
   color:#fff; flex-shrink:0;
+  position:relative;
+}
+.friend-row .av .emoji-av, .lb-row .av .emoji-av, .req-row .av .emoji-av{
+  font-size:18px; line-height:1;
 }
 .friend-row .meta, .lb-row .meta, .req-row .meta{flex:1; min-width:0;}
 .friend-row .nm, .lb-row .nm, .req-row .nm{
   font-size:13px; font-weight:600;
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  display:flex; align-items:center; gap:6px;
+}
+.friend-row .nm .rank-mini, .lb-row .nm .rank-mini{
+  width:12px; height:12px; flex-shrink:0;
 }
 .friend-row .sub, .lb-row .sub, .req-row .sub{
   font-family:var(--font-mono); font-size:10px;
@@ -596,18 +651,20 @@ h1.section-title .accent{
 .online-dot.on{background: var(--mint); box-shadow:0 0 8px var(--mint);}
 .online-dot.game{background: var(--amber); box-shadow:0 0 8px var(--amber);}
 
-.lb-row .rank{
+.lb-row .rank-num{
   font-family:var(--font-mono); font-weight:700; font-size:14px;
   color:var(--text-faint);
   min-width:24px; text-align:center;
 }
-.lb-row .rank.gold{color:var(--amber);}
-.lb-row .rank.silver{color:#c0c0c0;}
-.lb-row .rank.bronze{color:#cd7f32;}
+.lb-row .rank-num.gold{color:var(--amber);}
+.lb-row .rank-num.silver{color:#c0c0c0;}
+.lb-row .rank-num.bronze{color:#cd7f32;}
 .lb-row .rating{
   font-family:var(--font-mono); font-size:11px;
-  color:var(--violet); font-weight:600;
+  font-weight:600;
+  display:flex; align-items:center; gap:4px;
 }
+.lb-row .rating svg{width:11px; height:11px;}
 
 .friend-actions, .req-actions{display:flex; gap:4px;}
 .icon-btn{
@@ -645,11 +702,10 @@ h1.section-title .accent{
   padding:8px 12px;
   border-radius:8px;
   font-size:12px; font-weight:600;
-  cursor:pointer; transition: all .15s;
+  cursor:pointer;
 }
 .add-friend-input button:hover{background:var(--surface-3);}
 
-/* Tabs in side panel */
 .side-tabs{
   display:flex; gap:2px;
   padding:6px 8px;
@@ -679,7 +735,35 @@ h1.section-title .accent{
   font-family:var(--font-body);
 }
 
-/* ====== MATCHING ====== */
+/* Activity feed */
+.activity-row{
+  display:flex; align-items:flex-start; gap:10px;
+  padding:8px 10px;
+  border-radius:10px;
+  font-size:12px;
+  line-height:1.4;
+}
+.activity-row .av{
+  width:24px; height:24px; border-radius:7px;
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:700; font-size:11px;
+  color:#fff; flex-shrink:0;
+  margin-top:2px;
+}
+.activity-row .av .emoji-av{font-size:14px;}
+.activity-row .body{flex:1; min-width:0;}
+.activity-row .b-text{color:var(--text);}
+.activity-row .b-text b{font-weight:600;}
+.activity-row .b-text .win{color:var(--mint); font-weight:600;}
+.activity-row .b-text .lose{color:var(--coral); font-weight:600;}
+.activity-row .b-text .draw{color:var(--amber); font-weight:600;}
+.activity-row .b-time{
+  font-family:var(--font-mono); font-size:10px;
+  color:var(--text-faint);
+  margin-top:2px;
+}
+
+/* ============ MATCHING ============ */
 #screen-matching{align-items:center; justify-content:center;}
 .match-wrap{display:flex; flex-direction:column; align-items:center; gap:32px; text-align:center;}
 .searching-ring{
@@ -707,36 +791,24 @@ h1.section-title .accent{
 h2.match-title{
   font-family:var(--font-display);
   font-stretch:70%; font-weight:700;
-  font-size:48px;
-  letter-spacing:-.03em;
-  line-height:1;
+  font-size:48px; letter-spacing:-.03em; line-height:1;
   text-transform:uppercase;
 }
 .match-feed{
   font-family:var(--font-mono);
-  font-size:13px;
-  color:var(--text-dim);
-  min-height:24px;
-  letter-spacing:.02em;
+  font-size:13px; color:var(--text-dim);
+  min-height:24px; letter-spacing:.02em;
 }
 .match-feed .blink{color:var(--coral); animation:soft 1.2s ease-in-out infinite;}
-.queue-count{
-  font-family:var(--font-mono); font-size:12px;
-  color:var(--text-faint);
-}
+.queue-count{font-family:var(--font-mono); font-size:12px; color:var(--text-faint);}
 .queue-count b{color:var(--text); font-weight:600;}
 
-/* Match found celebration */
-.match-found-stage{
-  display:flex; flex-direction:column; align-items:center; gap:24px;
-}
+.match-found-stage{display:flex; flex-direction:column; align-items:center; gap:24px;}
 .match-found-stage .vs-row{
   display:flex; align-items:center; gap:32px;
   animation: scaleIn .6s cubic-bezier(.2,1.6,.4,1);
 }
-.match-found-stage .player-card{
-  display:flex; flex-direction:column; align-items:center; gap:8px;
-}
+.match-found-stage .player-card{display:flex; flex-direction:column; align-items:center; gap:8px;}
 .match-found-stage .player-card .av{
   width:90px; height:90px; border-radius:24px;
   background:linear-gradient(135deg, var(--coral), var(--violet));
@@ -745,16 +817,15 @@ h2.match-title{
   color:#fff;
   box-shadow: 0 20px 50px -10px rgba(0,0,0,.5);
 }
-.match-found-stage .player-card.opp .av{
-  background:linear-gradient(135deg, #3b2855, #5a3d80);
-}
-.match-found-stage .player-card .nm{
-  font-family:var(--font-display); font-weight:600; font-size:16px;
-}
+.match-found-stage .player-card .av .emoji-av{font-size:48px;}
+.match-found-stage .player-card.opp .av{background:linear-gradient(135deg, #3b2855, #5a3d80);}
+.match-found-stage .player-card .nm{font-family:var(--font-display); font-weight:600; font-size:16px;}
 .match-found-stage .player-card .sub{
   font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
   letter-spacing:.04em; text-transform:uppercase;
+  display:flex; align-items:center; gap:6px;
 }
+.match-found-stage .player-card .sub svg{width:12px; height:12px;}
 .match-found-stage .vs-text{
   font-family:var(--font-display);
   font-stretch:60%; font-weight:800;
@@ -782,20 +853,19 @@ h2.match-title{
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
 
-/* ====== GAME ====== */
+/* ============ GAME ============ */
 #screen-game{
   padding:18px 24px;
   display:none;
   gap:18px;
-}
-#screen-game.active{display:grid;}
-#screen-game{
   grid-template-columns: 1fr 360px 1fr;
   grid-template-rows: 1fr auto;
   grid-template-areas:
     "you center opp"
     "chat chat chat";
 }
+#screen-game.active{display:grid;}
+
 .panel{
   background:linear-gradient(180deg, var(--surface), var(--bg-2));
   border:1px solid var(--line);
@@ -821,18 +891,17 @@ h2.match-title{
   font-weight:700; font-size:14px;
   color:#fff;
 }
+.avatar .emoji-av{font-size:18px;}
 .identity .meta{display:flex; flex-direction:column; gap:2px; line-height:1;}
 .identity .name{font-weight:600; font-size:14px; display:flex; align-items:center; gap:6px; transition: color .15s;}
 .identity .name .flag{font-size:14px;}
+.identity .name .rank-mini{width:13px; height:13px;}
 .identity .sub{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.04em; text-transform:uppercase;}
 .live-dot{
   width:7px; height:7px; border-radius:50%; background:var(--coral); box-shadow:0 0 8px var(--coral);
   animation: soft 1.2s ease-in-out infinite;
 }
-.ping{
-  font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
-  display:flex; align-items:center; gap:6px;
-}
+.ping{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); display:flex; align-items:center; gap:6px;}
 .ping .bars{display:flex; gap:2px; align-items:end;}
 .ping .bars span{width:3px; background:var(--mint); border-radius:1px;}
 .ping .bars span:nth-child(1){height:5px;}
@@ -872,9 +941,9 @@ h2.match-title{
   animation: bob 3.4s ease-in-out infinite;
   box-shadow: 0 30px 60px -10px rgba(0,0,0,.5), inset 0 -8px 20px rgba(0,0,0,.3);
 }
+.opp-avatar-big .emoji-av{font-size:80px;}
 @keyframes bob{50%{transform:translateY(-8px) rotate(-1deg);}}
 
-/* Ready badges on video panels */
 .ready-badge{
   position:absolute;
   top:14px; right:14px;
@@ -890,10 +959,7 @@ h2.match-title{
   z-index:6;
   transition: all .25s;
 }
-.ready-badge .dot{
-  width:6px; height:6px; border-radius:50%;
-  background:var(--text-faint);
-}
+.ready-badge .dot{width:6px; height:6px; border-radius:50%; background:var(--text-faint);}
 .ready-badge.charging{
   color:var(--amber);
   border-color:rgba(255,211,61,.4);
@@ -907,7 +973,6 @@ h2.match-title{
 }
 .ready-badge.ready .dot{background:var(--mint); box-shadow:0 0 8px var(--mint);}
 
-/* Ready progress ring around video */
 .ready-ring{
   position:absolute; inset:0;
   pointer-events:none;
@@ -1048,11 +1113,7 @@ h2.match-title{
   font-size:96px;
 }
 
-/* Hand ready prompt */
-.hand-prompt{
-  text-align:center;
-  display:flex; flex-direction:column; align-items:center; gap:14px;
-}
+.hand-prompt{text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px;}
 .hand-prompt h3{
   font-family:var(--font-display);
   font-stretch:65%; font-weight:700;
@@ -1085,21 +1146,11 @@ h2.match-title{
   font-weight:600; font-size:14px;
   color:var(--text-dim);
 }
-.ready-pill.charging{
-  border-color:rgba(255,211,61,.4);
-  background:rgba(255,211,61,.06);
-}
+.ready-pill.charging{border-color:rgba(255,211,61,.4); background:rgba(255,211,61,.06);}
 .ready-pill.charging .st{color:var(--amber);}
-.ready-pill.ready{
-  border-color:rgba(93,255,186,.4);
-  background:rgba(93,255,186,.08);
-}
+.ready-pill.ready{border-color:rgba(93,255,186,.4); background:rgba(93,255,186,.08);}
 .ready-pill.ready .st{color:var(--mint);}
-.ready-vs{
-  font-family:var(--font-display); font-stretch:60%; font-weight:700;
-  font-size:14px; color:var(--text-faint);
-  letter-spacing:.1em;
-}
+.ready-vs{font-family:var(--font-display); font-stretch:60%; font-weight:700; font-size:14px; color:var(--text-faint); letter-spacing:.1em;}
 
 .result-display{display:none; flex-direction:column; align-items:center; gap:12px;}
 .result-display.show{display:flex; animation: resultPop .5s cubic-bezier(.2,1.6,.4,1);}
@@ -1199,7 +1250,7 @@ h2.match-title{
   border-radius:10px;
   width:38px;
   display:grid; place-items:center;
-  cursor:pointer; transition: all .15s;
+  cursor:pointer;
 }
 .chat-input button:hover{background:var(--surface-3);}
 .chat-input button svg{width:14px; height:14px;}
@@ -1221,7 +1272,130 @@ h2.match-title{
   40%, 80% { transform: translateX(6px); }
 }
 
-/* Modal */
+/* ============ RANK UP OVERLAY ============ */
+.rankup-overlay{
+  position:fixed; inset:0;
+  background: radial-gradient(circle at center, rgba(255,61,104,.4), rgba(11,8,18,.95) 70%);
+  display:none;
+  align-items:center; justify-content:center;
+  z-index:500;
+  overflow:hidden;
+}
+.rankup-overlay.show{display:flex; animation: fadeIn .3s;}
+
+.rankup-overlay .bg-rays{
+  position:absolute; inset:0;
+  background: conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg, rgba(255,255,255,.04) 6deg,
+    transparent 12deg, transparent 30deg,
+    rgba(255,255,255,.06) 36deg, transparent 42deg,
+    transparent 60deg, rgba(255,255,255,.04) 66deg,
+    transparent 72deg, transparent 90deg,
+    rgba(255,255,255,.06) 96deg, transparent 102deg,
+    transparent 120deg, rgba(255,255,255,.04) 126deg,
+    transparent 132deg, transparent 150deg,
+    rgba(255,255,255,.06) 156deg, transparent 162deg,
+    transparent 180deg, rgba(255,255,255,.04) 186deg,
+    transparent 192deg, transparent 210deg,
+    rgba(255,255,255,.06) 216deg, transparent 222deg,
+    transparent 240deg, rgba(255,255,255,.04) 246deg,
+    transparent 252deg, transparent 270deg,
+    rgba(255,255,255,.06) 276deg, transparent 282deg,
+    transparent 300deg, rgba(255,255,255,.04) 306deg,
+    transparent 312deg, transparent 330deg,
+    rgba(255,255,255,.06) 336deg, transparent 342deg
+  );
+  animation: spinRays 14s linear infinite;
+  opacity:.85;
+}
+@keyframes spinRays{to{transform:rotate(360deg);}}
+
+.rankup-content{
+  position:relative;
+  display:flex; flex-direction:column; align-items:center; gap:24px;
+  text-align:center;
+  padding:40px 30px;
+  max-width:600px;
+}
+.rankup-overlay .label{
+  font-family:var(--font-mono);
+  font-size:14px; letter-spacing:.4em;
+  color:#fff; opacity:.6;
+  text-transform:uppercase;
+  animation: rankFade 1s .2s both;
+}
+.rankup-overlay h2{
+  font-family:var(--font-display);
+  font-stretch:55%; font-weight:800;
+  font-size: clamp(72px, 12vw, 160px);
+  line-height:.85;
+  letter-spacing:-.05em;
+  text-transform:uppercase;
+  background: linear-gradient(180deg, #fff, var(--rank-color, var(--amber)));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter: drop-shadow(0 0 30px var(--rank-color, var(--amber)));
+  animation: rankSlam 1s cubic-bezier(.2,1.8,.4,1) both;
+}
+@keyframes rankSlam{
+  0%{transform: scale(3) rotate(-8deg); opacity:0; filter: blur(20px) drop-shadow(0 0 0 transparent);}
+  40%{transform: scale(.92) rotate(2deg); opacity:1; filter: blur(0) drop-shadow(0 0 40px var(--rank-color));}
+  70%{transform: scale(1.03) rotate(-1deg);}
+  100%{transform: scale(1) rotate(0); opacity:1; filter: blur(0) drop-shadow(0 0 30px var(--rank-color));}
+}
+@keyframes rankFade{
+  from{opacity:0; transform: translateY(-10px);}
+  to{opacity:.6; transform:none;}
+}
+.rankup-overlay .new-rank-badge{
+  display:flex; align-items:center; gap:14px;
+  padding:16px 26px;
+  border-radius:18px;
+  background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.02));
+  border:2px solid var(--rank-color, var(--amber));
+  box-shadow: 0 0 60px var(--rank-color, var(--amber)), inset 0 1px 0 rgba(255,255,255,.2);
+  animation: rankBadge 1s .4s cubic-bezier(.2,1.6,.4,1) both;
+}
+@keyframes rankBadge{
+  0%{transform: scale(0) rotate(-180deg); opacity:0;}
+  60%{transform: scale(1.15) rotate(10deg); opacity:1;}
+  100%{transform: scale(1) rotate(0);}
+}
+.rankup-overlay .new-rank-badge svg{
+  width:48px; height:48px;
+  color: var(--rank-color);
+  filter: drop-shadow(0 0 8px var(--rank-color));
+}
+.rankup-overlay .new-rank-badge .rname{
+  font-family:var(--font-display); font-stretch:65%; font-weight:700;
+  font-size:36px;
+  text-transform:uppercase;
+  letter-spacing:-.02em;
+  color:#fff;
+}
+.rankup-overlay .new-rank-badge .rtier{
+  font-family:var(--font-mono); font-size:14px;
+  color:var(--text-dim);
+  margin-top:-2px;
+}
+.rankup-overlay .promotion-from{
+  font-family:var(--font-mono);
+  font-size:13px;
+  color:var(--text-dim);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  animation: rankFade 1s .6s both;
+}
+.rankup-overlay .continue-hint{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-top:20px;
+  animation: rankFade 1s 1.2s both;
+}
+
+/* ============ MODALS ============ */
 .modal-bg{
   position:fixed; inset:0;
   background:rgba(5,3,10,.7);
@@ -1238,7 +1412,7 @@ h2.match-title{
   border:1px solid var(--line);
   border-radius:var(--radius-lg);
   padding:28px;
-  max-width:520px;
+  max-width:560px;
   width:100%;
   box-shadow: var(--shadow-lg);
   max-height: 90vh;
@@ -1268,11 +1442,8 @@ h2.match-title{
 .modal-close:hover{background:var(--surface-3);}
 .modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:16px;}
 
-/* Profile view modal */
-.profile-modal .profile-head{
-  display:flex; gap:16px; align-items:center;
-  margin-bottom:16px;
-}
+/* Profile modal */
+.profile-modal .profile-head{display:flex; gap:16px; align-items:center; margin-bottom:16px;}
 .profile-modal .av-xl{
   width:72px; height:72px; border-radius:20px;
   background:linear-gradient(135deg, var(--coral), var(--violet));
@@ -1281,26 +1452,26 @@ h2.match-title{
   color:#fff;
   flex-shrink:0;
 }
+.profile-modal .av-xl .emoji-av{font-size:42px;}
 .profile-modal .pm-name{
   font-family:var(--font-display); font-stretch:65%;
   font-weight:700; font-size:24px;
   letter-spacing:-.02em;
+  display:flex; align-items:center; gap:8px;
 }
-.profile-modal .pm-sub{
-  font-family:var(--font-mono); font-size:12px;
-  color:var(--text-faint);
-  margin-top:2px;
-}
+.profile-modal .pm-name .rank-mini{width:20px; height:20px;}
+.profile-modal .pm-sub{font-family:var(--font-mono); font-size:12px; color:var(--text-faint); margin-top:2px;}
 .profile-modal .pm-rating{
   display:inline-flex; gap:6px; align-items:center;
   font-family:var(--font-mono); font-size:13px;
-  color:var(--amber); font-weight:600;
+  font-weight:600;
   margin-top:6px;
   padding:4px 10px;
   border-radius:999px;
-  background:rgba(255,211,61,.06);
-  border:1px solid rgba(255,211,61,.3);
+  background:var(--surface-2);
+  border:1px solid var(--line);
 }
+.profile-modal .pm-rating svg{width:14px; height:14px;}
 .profile-modal .bio{
   font-size:14px; color:var(--text-dim);
   padding:12px 14px;
@@ -1322,7 +1493,56 @@ h2.match-title{
 .profile-modal .pm-stat .v{font-family:var(--font-display); font-weight:700; font-size:22px;}
 .profile-modal .pm-stat .l{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em;}
 
-/* Avatar color picker (edit profile) */
+/* Match history in profile */
+.match-history{margin-bottom:16px;}
+.match-history h4{
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--text-faint);
+  text-transform:uppercase; letter-spacing:.1em;
+  margin-bottom:8px;
+}
+.match-history .mh-list{display:flex; flex-direction:column; gap:6px;}
+.mh-row{
+  display:flex; align-items:center; gap:10px;
+  padding:8px 10px;
+  border-radius:10px;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  font-size:12px;
+}
+.mh-row .mh-result{
+  font-family:var(--font-mono); font-weight:700;
+  font-size:11px; letter-spacing:.06em;
+  padding:3px 8px; border-radius:6px;
+  text-transform:uppercase;
+  flex-shrink:0;
+}
+.mh-result.win{background:rgba(93,255,186,.1); color:var(--mint);}
+.mh-result.lose{background:rgba(255,61,104,.1); color:var(--coral);}
+.mh-result.draw{background:rgba(255,211,61,.1); color:var(--amber);}
+.mh-row .vs-opp{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.mh-row .vs-opp b{color:var(--text);}
+.mh-row .mh-delta{
+  font-family:var(--font-mono); font-size:11px;
+  font-weight:600;
+}
+.mh-delta.up{color:var(--mint);}
+.mh-delta.down{color:var(--coral);}
+.mh-delta.same{color:var(--text-faint);}
+.mh-row .mh-time{
+  font-family:var(--font-mono); font-size:10px;
+  color:var(--text-faint);
+}
+
+/* Avatar picker (emoji + color) */
+.av-picker-tabs{display:flex; gap:4px; margin-bottom:10px;}
+.av-picker-tabs button{
+  background:var(--surface-2); border:1px solid var(--line);
+  padding:6px 12px; border-radius:8px;
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--text-dim); cursor:pointer;
+}
+.av-picker-tabs button.active{background:var(--surface-3); color:var(--text);}
 .color-pick{display:flex; gap:8px; flex-wrap:wrap;}
 .color-pick button{
   width:32px; height:32px; border-radius:8px;
@@ -1331,6 +1551,18 @@ h2.match-title{
   transition: all .15s;
 }
 .color-pick button.active{border-color:#fff; transform:scale(1.1);}
+
+.emoji-pick{display:grid; grid-template-columns: repeat(8, 1fr); gap:6px;}
+.emoji-pick button{
+  width:36px; height:36px; border-radius:8px;
+  background:var(--surface-2); border:1px solid var(--line);
+  cursor:pointer;
+  font-size:20px;
+  display:grid; place-items:center;
+  transition: all .15s;
+}
+.emoji-pick button:hover{background:var(--surface-3); transform:scale(1.1);}
+.emoji-pick button.active{background:var(--coral); border-color:var(--coral);}
 
 .cam-status{
   position:absolute; left:14px; top:14px;
@@ -1362,16 +1594,6 @@ h2.match-title{
 }
 .disconnect-banner.show{display:block;}
 
-.spinner{
-  width:14px; height:14px;
-  border:2px solid rgba(255,255,255,.2);
-  border-top-color: var(--text);
-  border-radius:50%;
-  animation: spin 0.7s linear infinite;
-  display:inline-block;
-}
-@keyframes spin{to{transform: rotate(360deg);}}
-
 .toast{
   position:fixed; bottom:24px; left:50%;
   transform: translateX(-50%) translateY(20px);
@@ -1390,6 +1612,16 @@ h2.match-title{
 .toast.error{border-color: rgba(255,92,111,.4); color:var(--error);}
 .toast.success{border-color: rgba(93,255,186,.4); color:var(--mint);}
 
+/* SVG rank icon helpers */
+.rank-bronze{color:var(--rank-bronze);}
+.rank-silver{color:var(--rank-silver);}
+.rank-gold{color:var(--rank-gold);}
+.rank-platinum{color:var(--rank-platinum);}
+.rank-diamond{color:var(--rank-diamond);}
+.rank-master{color:var(--rank-master);}
+.rank-grandmaster{color:var(--rank-grandmaster);}
+
+/* RESPONSIVE */
 @media (max-width: 1100px){
   #screen-game{
     grid-template-columns: 1fr 1fr;
@@ -1400,7 +1632,6 @@ h2.match-title{
   }
   .stats-grid{grid-template-columns: repeat(3, 1fr);}
   .landing-hub{grid-template-columns: 1fr;}
-  .hub-side{position:static;}
 }
 @media (max-width: 720px){
   header{padding:14px 18px;}
@@ -1471,7 +1702,18 @@ h2.match-title{
     <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-edit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
     <symbol id="i-sword" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol>
+    <symbol id="i-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.48 12c0-.73.13-1.44.36-2.1V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></symbol>
+    <!-- RANK ICONS -->
+    <symbol id="i-rank-bronze" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/></symbol>
+    <symbol id="i-rank-silver" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/><circle cx="12" cy="12" r="3" fill="rgba(0,0,0,.3)"/></symbol>
+    <symbol id="i-rank-gold" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/><path fill="rgba(255,255,255,.3)" d="M12 5 L13.5 8.5 L17 9 L14.5 11.5 L15 15 L12 13.5 Z"/></symbol>
+    <symbol id="i-rank-platinum" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 L18 4 L22 10 L22 14 L18 20 L12 23 L6 20 L2 14 L2 10 L6 4 Z"/><path fill="rgba(0,0,0,.3)" d="M12 7 L16 12 L12 17 L8 12 Z"/></symbol>
+    <symbol id="i-rank-diamond" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L20 9 L12 22 L4 9 Z"/><path fill="rgba(255,255,255,.3)" d="M12 2 L16 6 L12 12 L8 6 Z M12 12 L20 9 L16 6 Z"/></symbol>
+    <symbol id="i-rank-master" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 L14 7 L20 7 L15 11 L17 17 L12 14 L7 17 L9 11 L4 7 L10 7 Z M12 14 L17 19 L12 23 L7 19 Z"/></symbol>
+    <symbol id="i-rank-grandmaster" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path fill="rgba(0,0,0,.4)" d="M12 4 L14 10 L20 10 L15 14 L17 20 L12 16 L7 20 L9 14 L4 10 L10 10 Z"/></symbol>
   </defs>
 </svg>
 
@@ -1481,7 +1723,7 @@ h2.match-title{
     <div class="logo">
       <span class="dot"></span>
       <span class="word">ROSHAM</span>
-      <span class="tag">v3.0 · ranked multiplayer</span>
+      <span class="tag">v4 · ranked</span>
     </div>
     <div class="live-stats" id="liveStats">
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
@@ -1489,11 +1731,11 @@ h2.match-title{
     </div>
     <div class="header-actions" id="headerActions">
       <button class="btn btn-ghost" id="helpBtn"><svg width="14" height="14"><use href="#i-help"/></svg> How to play</button>
-      <button class="btn" id="nextBtn" style="display:none;"><svg width="14" height="14"><use href="#i-next"/></svg>Next stranger<span class="key">N</span></button>
+      <button class="btn" id="nextBtn" style="display:none;"><svg width="14" height="14"><use href="#i-next"/></svg>Next<span class="key">N</span></button>
       <div class="user-chip" id="userChip" style="display:none;" title="Your profile">
         <div class="av" id="chipAv">?</div>
         <span id="chipName">—</span>
-        <span class="rating" id="chipRating">1000</span>
+        <span class="rating" id="chipRating"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
       </div>
       <button class="btn btn-ghost" id="signOutBtn" style="display:none; padding:8px;" title="Sign out"><svg width="14" height="14"><use href="#i-out"/></svg></button>
     </div>
@@ -1501,50 +1743,45 @@ h2.match-title{
 
   <div class="screens">
 
-    <!-- ====== SETUP ====== -->
-    <section class="screen" id="screen-setup">
-      <div class="setup-wrap">
-        <span class="eyebrow"><span class="dot"></span>one-time setup · ~3 minutes</span>
-        <h1 class="section-title">CONNECT YOUR<br/><span class="accent">backend.</span></h1>
-        <p class="section-sub">ROSHAM needs a free Firebase project to handle login, friends, matchmaking, and WebRTC signaling. Follow the steps below — you only do this once.</p>
+    <!-- ====== NOT CONFIGURED (dev only) ====== -->
+    <section class="screen" id="screen-noconfig">
+      <div class="noconfig-wrap">
+        <span class="eyebrow"><span class="dot"></span>developer · firebase not configured</span>
+        <h1 class="section-title">SETUP <span class="accent">FIREBASE.</span></h1>
+        <p class="section-sub">This app is intended to ship with a Firebase config hard-coded. To configure it, follow these steps and paste your config into the HTML.</p>
 
         <div class="steps">
           <div class="step">
             <div class="n">1</div>
             <div>
               <h4>Create a Firebase project</h4>
-              <p>Go to <a href="https://console.firebase.google.com/" target="_blank" rel="noopener">console.firebase.google.com</a>, click <b>Add project</b>, name it anything, skip Google Analytics.</p>
+              <p>Go to <a href="https://console.firebase.google.com/" target="_blank" rel="noopener">console.firebase.google.com</a>, click <b>Add project</b>.</p>
             </div>
           </div>
           <div class="step">
             <div class="n">2</div>
             <div>
               <h4>Enable Authentication</h4>
-              <p>Sidebar → <b>Build → Authentication → Get started</b>. Under <b>Sign-in method</b>, enable <b>Email/Password</b>, <b>Google</b>, and <b>Anonymous</b>.</p>
-              <p style="margin-top:6px;">For Google sign-in: pick a project support email when prompted. That's it.</p>
+              <p><b>Build → Authentication → Get started</b>. Enable <b>Email/Password</b>, <b>Google</b>, and <b>Anonymous</b>.</p>
             </div>
           </div>
           <div class="step">
             <div class="n">3</div>
             <div>
-              <h4>Enable Firestore</h4>
-              <p>Sidebar → <b>Build → Firestore Database → Create database</b>. Pick a location near you, start in <b>production mode</b>. Under <b>Rules</b>, paste these and click <b>Publish</b>:</p>
+              <h4>Create Firestore</h4>
+              <p><b>Build → Firestore Database → Create</b>. Paste these rules under the <b>Rules</b> tab:</p>
               <div class="code-block">
 <button class="copy" data-copy="rules">copy</button><span id="rules-text">rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
       allow read: if request.auth != null;
-      allow create: if request.auth != null && request.auth.uid == userId;
-      allow update: if request.auth != null && request.auth.uid == userId;
-      allow delete: if false;
+      allow create, update: if request.auth != null && request.auth.uid == userId;
     }
     match /usernames/{name} {
       allow read: if request.auth != null;
-      allow create: if request.auth != null
-        && request.resource.data.uid == request.auth.uid;
-      allow delete: if request.auth != null
-        && resource.data.uid == request.auth.uid;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
     }
     match /queue/{userId} {
       allow read, list: if request.auth != null;
@@ -1559,20 +1796,24 @@ service cloud.firestore {
       match /calleeCandidates/{doc} { allow read, write: if request.auth != null; }
     }
     match /friendRequests/{reqId} {
-      allow read: if request.auth != null &&
-        (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
-      allow list: if request.auth != null;
+      allow read, list: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
       allow update, delete: if request.auth != null &&
         (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
     }
     match /invites/{inviteId} {
-      allow read: if request.auth != null &&
-        (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
-      allow list: if request.auth != null;
+      allow read, list: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
       allow update, delete: if request.auth != null &&
         (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+    }
+    match /activity/{actId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+    }
+    match /matchHistory/{histId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
     }
   }
 }</span>
@@ -1582,25 +1823,23 @@ service cloud.firestore {
           <div class="step">
             <div class="n">4</div>
             <div>
-              <h4>Add your domain to authorized list</h4>
-              <p><b>Authentication → Settings → Authorized domains</b> → if you're running this from a file or localhost, <code>localhost</code> is already there. For deployed sites, add the domain.</p>
+              <h4>Add your domain</h4>
+              <p><b>Authentication → Settings → Authorized domains</b>. Add your GitHub Pages domain (e.g. <code>yourname.github.io</code>).</p>
             </div>
           </div>
           <div class="step">
             <div class="n">5</div>
             <div>
-              <h4>Register a web app &amp; copy config</h4>
-              <p><b>⚙ Project settings → Your apps → &lt;/&gt;</b> → register the app. Copy the <code>firebaseConfig</code> object and paste it below.</p>
-              <textarea class="config-input" id="configInput" placeholder='const firebaseConfig = {
-  apiKey: "AIzaSy...",
-  authDomain: "your-project.firebaseapp.com",
-  projectId: "your-project",
+              <h4>Paste config into the HTML</h4>
+              <p><b>Project settings → Your apps → &lt;/&gt;</b> → register, then copy the <code>firebaseConfig</code> object. Open <code>rosham.html</code>, find the <code>FIREBASE_CONFIG</code> constant near the top of the &lt;script&gt; section, and replace the placeholder object with your real config.</p>
+              <div class="code-block">
+<span style="color:var(--text-faint);">// Find this near the top of the &lt;script type="module"&gt; section:</span>
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
   appId: "1:..."
-};'></textarea>
-              <div class="config-actions" style="margin-top:10px;">
-                <button class="btn btn-primary" id="saveConfigBtn">Connect &amp; continue</button>
-                <span class="error-msg" id="configError"></span>
-                <span class="success-msg" id="configSuccess"></span>
+};
               </div>
             </div>
           </div>
@@ -1613,13 +1852,14 @@ service cloud.firestore {
       <div class="auth-wrap">
         <span class="eyebrow"><span class="dot"></span>sign in to throw hands</span>
         <h1 class="section-title">WELCOME <span class="accent">BACK.</span></h1>
+        <p class="section-sub" style="margin-top:-8px;">Sign in to track your rating, climb the ranks, and play with friends.</p>
 
-        <button class="btn btn-google" id="googleBtn" style="max-width:380px;">
+        <button class="btn btn-google" id="googleBtn" style="max-width:380px; width:100%;">
           <svg width="16" height="16"><use href="#i-google"/></svg>
           Continue with Google
         </button>
 
-        <div class="divider">or</div>
+        <div class="divider">or with email</div>
 
         <div class="auth-tabs">
           <button class="active" data-tab="signin">Sign in</button>
@@ -1662,17 +1902,15 @@ service cloud.firestore {
 
         <div class="divider">or</div>
         <button class="btn" id="guestBtn" style="max-width:380px;"><svg width="14" height="14"><use href="#i-globe"/></svg> Continue as guest</button>
-
-        <button class="btn btn-ghost" id="resetSetupBtn" style="font-size:11px; color:var(--text-faint); align-self:flex-start; margin-top:24px;">Reset Firebase config</button>
       </div>
     </section>
 
-    <!-- ====== POST-GOOGLE SIGNUP (set username) ====== -->
+    <!-- ====== POST-GOOGLE SIGNUP ====== -->
     <section class="screen" id="screen-newuser">
       <div class="auth-wrap">
         <span class="eyebrow"><span class="dot"></span>almost there</span>
         <h1 class="section-title">PICK YOUR <span class="accent">handle.</span></h1>
-        <p class="section-sub">Choose a unique username and country. Other players will see this when they match with you.</p>
+        <p class="section-sub">Choose a unique username and country.</p>
         <form class="auth-form" id="newUserForm">
           <div class="field">
             <label>Username</label>
@@ -1688,7 +1926,7 @@ service cloud.firestore {
       </div>
     </section>
 
-    <!-- ====== LANDING (HUB) ====== -->
+    <!-- ====== LANDING ====== -->
     <section class="screen" id="screen-landing">
       <div class="landing-hub">
 
@@ -1696,7 +1934,7 @@ service cloud.firestore {
           <div class="hero-block">
             <div class="inner">
               <h1 class="hero-headline">THROW <span class="accent">HANDS</span><br/>WITH THE WORLD.</h1>
-              <p class="hero-sub">Hold up your fist. The other player holds up theirs. Three-two-one-shoot. Real strangers, real cameras, real reflex.</p>
+              <p class="hero-sub">Real strangers. Real cameras. Real reflex. Win rounds to climb from Bronze to Grandmaster.</p>
 
               <div class="hand-icons-row">
                 <div class="hand-mini" data-g="rock"><svg><use href="#i-rock"/></svg></div>
@@ -1705,17 +1943,13 @@ service cloud.firestore {
               </div>
 
               <div class="match-options">
-                <span class="opt-pill" data-opt="mode" data-val="quick" id="optQuick">
-                  <svg width="11" height="11"><use href="#i-bolt"/></svg>
-                  <span class="lab">Quick match</span>
-                </span>
-                <span class="opt-pill" data-opt="mode" data-val="ranked" id="optRanked">
-                  <svg width="11" height="11"><use href="#i-trophy"/></svg>
-                  <span class="lab">Ranked (±rating)</span>
-                </span>
-                <span class="opt-pill" data-opt="region" data-val="same" id="optRegion">
+                <span class="opt-pill active" data-opt="region" data-val="same" id="optRegion">
                   <svg width="11" height="11"><use href="#i-globe"/></svg>
                   <span class="lab">Same region</span>
+                </span>
+                <span class="opt-pill" id="optRanged">
+                  <svg width="11" height="11"><use href="#i-trophy"/></svg>
+                  <span class="lab">Similar rank only</span>
                 </span>
               </div>
 
@@ -1729,8 +1963,19 @@ service cloud.firestore {
             </div>
           </div>
 
+          <div class="rank-progress-card" id="rankProgressCard">
+            <div class="head">
+              <div class="now">
+                <svg id="rankIconCurrent"></svg>
+                <span id="rankNameCurrent">Bronze I</span>
+              </div>
+              <div class="next" id="rankNextLabel">— to next</div>
+            </div>
+            <div class="rank-bar"><div class="rank-bar-fill" id="rankBarFill" style="width:0%;"></div></div>
+          </div>
+
           <div class="stats-grid">
-            <div class="stat-card r"><div class="val" id="statRating">1000</div><div class="lab">rating</div></div>
+            <div class="stat-card r"><div class="val" id="statRating"><svg id="statRankIcon"></svg>1000</div><div class="lab">rating</div></div>
             <div class="stat-card w"><div class="val" id="statWins">0</div><div class="lab">wins</div></div>
             <div class="stat-card l"><div class="val" id="statLosses">0</div><div class="lab">losses</div></div>
             <div class="stat-card d"><div class="val" id="statDraws">0</div><div class="lab">draws</div></div>
@@ -1742,7 +1987,8 @@ service cloud.firestore {
           <div class="side-panel">
             <div class="side-tabs">
               <button class="active" data-side="friends">Friends <span class="badge" id="reqBadge" style="display:none;">0</span></button>
-              <button data-side="leaderboard">Leaderboard</button>
+              <button data-side="activity">Activity</button>
+              <button data-side="leaderboard">Top</button>
             </div>
 
             <div data-pane="friends">
@@ -1752,15 +1998,22 @@ service cloud.firestore {
               </div>
               <div class="side-body" id="friendsBody"></div>
               <div class="add-friend-input">
-                <input id="addFriendInput" type="text" placeholder="username to add…" maxlength="20" />
+                <input id="addFriendInput" type="text" placeholder="add by username…" maxlength="20" />
                 <button id="addFriendBtn">Add</button>
               </div>
               <div id="requestsArea" style="display:none; border-top:1px solid var(--line-soft);">
                 <div class="side-head" style="background:rgba(255,61,104,.05);">
-                  <div class="title"><svg><use href="#i-plus"/></svg>Pending requests</div>
+                  <div class="title"><svg><use href="#i-plus"/></svg>Pending</div>
                 </div>
                 <div class="side-body" id="requestsBody"></div>
               </div>
+            </div>
+
+            <div data-pane="activity" style="display:none;">
+              <div class="side-head">
+                <div class="title"><svg><use href="#i-activity"/></svg>Friends' games</div>
+              </div>
+              <div class="side-body" id="activityBody"></div>
             </div>
 
             <div data-pane="leaderboard" style="display:none;">
@@ -1799,13 +2052,13 @@ service cloud.firestore {
           <div class="player-card">
             <div class="av" id="mfYouAv">?</div>
             <div class="nm" id="mfYouName">you</div>
-            <div class="sub" id="mfYouSub">— · 1000</div>
+            <div class="sub" id="mfYouSub"><svg id="mfYouRankIcon"></svg> <span>1000</span></div>
           </div>
           <div class="vs-text">VS</div>
           <div class="player-card opp">
             <div class="av" id="mfOppAv">?</div>
             <div class="nm" id="mfOppName">stranger</div>
-            <div class="sub" id="mfOppSub">— · 1000</div>
+            <div class="sub" id="mfOppSub"><svg id="mfOppRankIcon"></svg> <span>1000</span></div>
           </div>
         </div>
         <div class="match-feed" id="mfFeed"><span class="blink">●</span> establishing connection…</div>
@@ -1830,9 +2083,7 @@ service cloud.firestore {
           <video id="yourVideo" class="local" autoplay playsinline muted></video>
           <canvas id="overlay-canvas"></canvas>
           <div class="ready-ring" id="youReadyRing">
-            <svg viewBox="0 0 100 75" preserveAspectRatio="none">
-              <rect x="2" y="2" width="96" height="71" pathLength="100" />
-            </svg>
+            <svg viewBox="0 0 100 75" preserveAspectRatio="none"><rect x="2" y="2" width="96" height="71" pathLength="100" /></svg>
           </div>
           <div class="ready-badge" id="youReadyBadge"><span class="dot"></span><span>show hand</span></div>
           <div class="cam-status" id="camStatus"><span class="dot"></span><span id="camStatusText">camera…</span></div>
@@ -1895,7 +2146,7 @@ service cloud.firestore {
           <div class="identity" id="oppIdentity" title="Click to view profile">
             <div class="avatar" id="oppAvatar">?</div>
             <div class="meta">
-              <span class="name"><span id="oppName">—</span> <span class="flag" id="oppFlag"></span></span>
+              <span class="name"><span id="oppName">—</span> <span class="flag" id="oppFlag"></span> <svg class="rank-mini" id="oppRankMini"></svg></span>
               <span class="sub" id="oppSub">connecting…</span>
             </div>
           </div>
@@ -1907,14 +2158,10 @@ service cloud.firestore {
             <div class="opp-avatar-big" id="oppAvatarBig">?</div>
           </div>
           <div class="ready-ring" id="oppReadyRing">
-            <svg viewBox="0 0 100 75" preserveAspectRatio="none">
-              <rect x="2" y="2" width="96" height="71" pathLength="100" />
-            </svg>
+            <svg viewBox="0 0 100 75" preserveAspectRatio="none"><rect x="2" y="2" width="96" height="71" pathLength="100" /></svg>
           </div>
           <div class="ready-badge" id="oppReadyBadge"><span class="dot"></span><span>waiting</span></div>
-          <div class="opp-thrown" id="oppThrown" data-g="rock">
-            <svg><use href="#i-rock"/></svg>
-          </div>
+          <div class="opp-thrown" id="oppThrown" data-g="rock"><svg><use href="#i-rock"/></svg></div>
           <div class="cam-status" id="oppCamStatus"><span class="dot"></span><span>connecting</span></div>
           <div class="disconnect-banner" id="disconnectBanner">opponent disconnected · finding a new one…</div>
         </div>
@@ -1939,12 +2186,30 @@ service cloud.firestore {
   </div>
 </div>
 
+<!-- RANK UP OVERLAY -->
+<div class="rankup-overlay" id="rankupOverlay">
+  <div class="bg-rays"></div>
+  <div class="rankup-content">
+    <div class="label">PROMOTION</div>
+    <h2 id="rankupRankName">SILVER</h2>
+    <div class="new-rank-badge" id="rankupBadge">
+      <svg id="rankupIcon"></svg>
+      <div>
+        <div class="rname" id="rankupTierName">SILVER I</div>
+        <div class="rtier" id="rankupSub">1100 RATING</div>
+      </div>
+    </div>
+    <div class="promotion-from" id="rankupFrom">from Bronze III</div>
+    <div class="continue-hint">click anywhere to continue</div>
+  </div>
+</div>
+
 <!-- HOW TO PLAY MODAL -->
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     <button class="modal-close" data-close="helpModal"><svg><use href="#i-close"/></svg></button>
     <h3>HOW TO PLAY</h3>
-    <p>Make a shape with your hand on camera. Both players hold up a hand to ready up — when both hands are steady, the round auto-starts.</p>
+    <p>Make a shape with your hand on camera. Both players hold up a hand to ready up — when both are steady, the round auto-starts.</p>
     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; margin-bottom:18px;">
       <div style="text-align:center; padding:14px; border:1px solid var(--line); border-radius:14px; background: var(--surface-2);">
         <svg style="width:42px; height:42px; color:var(--coral)"><use href="#i-rock"/></svg>
@@ -1962,7 +2227,7 @@ service cloud.firestore {
         <div style="font-size:11px; color:var(--text-faint); font-family:var(--font-mono); margin-top:2px;">2 fingers</div>
       </div>
     </div>
-    <p style="font-size:13px;"><b>Ready system:</b> hold a stable gesture for ~1 second. Once both players are ready, the countdown begins. During 3-2-1 you can still change your gesture. At <b>SHOOT!</b> your current gesture is locked. No gesture = forfeit. Win ranked matches to climb the leaderboard.</p>
+    <p style="font-size:13px;"><b>Ranks:</b> Bronze → Silver → Gold → Platinum → Diamond → Master → Grandmaster. Each rank has 3 tiers. Win to gain ELO, lose to drop. Promotion = celebration.</p>
   </div>
 </div>
 
@@ -1973,9 +2238,9 @@ service cloud.firestore {
     <div class="profile-head">
       <div class="av-xl" id="pmAv">?</div>
       <div>
-        <div class="pm-name" id="pmName">—</div>
+        <div class="pm-name" id="pmName">— <svg class="rank-mini" id="pmRankMini"></svg></div>
         <div class="pm-sub" id="pmSub">—</div>
-        <div class="pm-rating"><svg width="12" height="12"><use href="#i-trophy"/></svg> <span id="pmRating">1000</span></div>
+        <div class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></div>
       </div>
     </div>
     <div class="bio" id="pmBio" style="display:none;">—</div>
@@ -1985,7 +2250,12 @@ service cloud.firestore {
       <div class="pm-stat"><div class="v" id="pmGames">0</div><div class="l">games</div></div>
       <div class="pm-stat"><div class="v" id="pmStreak">0</div><div class="l">best streak</div></div>
     </div>
+    <div class="match-history" id="pmHistorySection" style="display:none;">
+      <h4>RECENT MATCHES</h4>
+      <div class="mh-list" id="pmHistoryList"></div>
+    </div>
     <div class="modal-actions" id="pmActions">
+      <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg width="13" height="13"><use href="#i-block"/></svg> Block</button>
       <button class="btn" id="pmAddFriendBtn" style="display:none;"><svg width="13" height="13"><use href="#i-plus"/></svg> Add friend</button>
       <button class="btn btn-mint" id="pmChallengeBtn" style="display:none;"><svg width="13" height="13"><use href="#i-sword"/></svg> Challenge</button>
     </div>
@@ -2008,21 +2278,37 @@ service cloud.firestore {
       </div>
       <div class="field">
         <label>Bio (optional)</label>
-        <textarea name="bio" maxlength="140" placeholder="tell people something…"></textarea>
+        <textarea name="bio" maxlength="140" placeholder="say something about yourself"></textarea>
       </div>
       <div class="field">
-        <label>Avatar color</label>
-        <div class="color-pick" id="colorPick"></div>
+        <label>Avatar</label>
+        <div class="av-picker-tabs">
+          <button type="button" class="active" data-pickertype="emoji">Emoji</button>
+          <button type="button" data-pickertype="color">Color</button>
+        </div>
+        <div class="emoji-pick" id="emojiPick"></div>
+        <div class="color-pick" id="colorPick" style="display:none;"></div>
       </div>
       <div class="error-msg" id="editError"></div>
-      <div class="modal-actions">
+      <div class="modal-actions" style="justify-content:space-between;">
+        <button type="button" class="btn btn-danger" id="viewBlockedBtn"><svg width="13" height="13"><use href="#i-block"/></svg> Blocked users</button>
         <button type="submit" class="btn btn-primary">Save changes</button>
       </div>
     </form>
   </div>
 </div>
 
-<!-- INCOMING CHALLENGE MODAL -->
+<!-- BLOCKED USERS MODAL -->
+<div class="modal-bg" id="blockedModal">
+  <div class="modal">
+    <button class="modal-close" data-close="blockedModal"><svg><use href="#i-close"/></svg></button>
+    <h3>BLOCKED USERS</h3>
+    <p>Blocked players won't match with you and can't send you challenges or friend requests.</p>
+    <div class="mh-list" id="blockedList"></div>
+  </div>
+</div>
+
+<!-- CHALLENGE MODAL -->
 <div class="modal-bg" id="challengeModal">
   <div class="modal" style="text-align:center;">
     <h3 style="color:var(--coral);">CHALLENGE INCOMING</h3>
@@ -2033,7 +2319,7 @@ service cloud.firestore {
         <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-faint);" id="chalSub">—</div>
       </div>
     </div>
-    <p style="font-size:14px; margin-bottom:0;">wants to throw hands with you. accept?</p>
+    <p style="font-size:14px; margin-bottom:0;">wants to throw hands. accept?</p>
     <div class="modal-actions" style="justify-content:center;">
       <button class="btn" id="chalReject">Decline</button>
       <button class="btn btn-primary" id="chalAccept">Accept &amp; play</button>
@@ -2057,10 +2343,24 @@ import {
   getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, addDoc,
   collection, onSnapshot, serverTimestamp, query, where, getDocs,
   runTransaction, orderBy, limit, increment, writeBatch, documentId,
+  arrayUnion, arrayRemove,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
-/* ROSHAM — ranked multiplayer with friends */
+/* =========================================================
+   ROSHAM v4 — paste your Firebase config below
+   ========================================================= */
+const FIREBASE_CONFIG = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  appId: "YOUR_APP_ID",
+};
 
+function isConfigured(){
+  return FIREBASE_CONFIG.apiKey && FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
+}
+
+// =================== CONSTANTS ===================
 const COUNTRIES = [
   {code:'US', flag:'🇺🇸', name:'United States'},{code:'GB', flag:'🇬🇧', name:'United Kingdom'},
   {code:'CA', flag:'🇨🇦', name:'Canada'},{code:'AU', flag:'🇦🇺', name:'Australia'},
@@ -2092,9 +2392,7 @@ const REGIONS = {
   'SA': ['BR','AR','CL','CO'],
   'EU': ['GB','DE','FR','IT','ES','NL','SE','NO','DK','FI','PL','PT','IE','CH','AT','BE','GR','CZ','RO'],
   'AS': ['JP','KR','CN','IN','SG','TH','VN','PH','ID','AE'],
-  'OC': ['AU','NZ'],
-  'AF': ['ZA','NG','EG'],
-  'ME': ['TR'],
+  'OC': ['AU','NZ'], 'AF': ['ZA','NG','EG'], 'ME': ['TR'],
 };
 function regionOf(country){
   for(const [r, list] of Object.entries(REGIONS)) if(list.includes(country)) return r;
@@ -2112,6 +2410,110 @@ const AVATAR_COLORS = [
   'linear-gradient(135deg, #c0392b, #8e44ad)',
 ];
 
+const AVATAR_EMOJIS = [
+  '🦊','🐺','🦁','🐯','🐻','🐼','🐨','🐸',
+  '🦄','🐲','👽','🤖','👻','💀','🦇','🐙',
+  '🔥','⚡','🌙','⭐','💎','🎯','🎮','🎲',
+  '🥷','🧙','🧛','🧟','🦹','🦸','👑','🤠',
+];
+
+// ============= RANK SYSTEM =============
+// 7 ranks × 3 tiers = 21 levels.
+// Base rating starts at 1000. Bronze covers 0-1099 (so everyone starts Bronze III).
+const RANKS = [
+  { id:'bronze',      name:'Bronze',      icon:'i-rank-bronze',      cls:'rank-bronze',      base:0,    color:'#cd7f32', color2:'#a06424' },
+  { id:'silver',      name:'Silver',      icon:'i-rank-silver',      cls:'rank-silver',      base:1100, color:'#c0c0c0', color2:'#888' },
+  { id:'gold',        name:'Gold',        icon:'i-rank-gold',        cls:'rank-gold',        base:1300, color:'#ffd33d', color2:'#d8a91d' },
+  { id:'platinum',    name:'Platinum',    icon:'i-rank-platinum',    cls:'rank-platinum',    base:1500, color:'#5dffba', color2:'#3edd95' },
+  { id:'diamond',     name:'Diamond',     icon:'i-rank-diamond',     cls:'rank-diamond',     base:1700, color:'#5fc9ff', color2:'#3aa3d9' },
+  { id:'master',      name:'Master',      icon:'i-rank-master',      cls:'rank-master',      base:1900, color:'#a48bff', color2:'#7a5fdc' },
+  { id:'grandmaster', name:'Grandmaster', icon:'i-rank-grandmaster', cls:'rank-grandmaster', base:2100, color:'#ff3d68', color2:'#d8264f' },
+];
+// Tier width within a rank (except Grandmaster which is open-ended top tier)
+const TIER_WIDTHS = {
+  bronze: 100/3, silver: 200/3, gold: 200/3, platinum: 200/3,
+  diamond: 200/3, master: 200/3, grandmaster: 100,
+};
+// Returns {rank, tier, tierName ("Bronze III"), index (0-20)} for a given rating
+function rankFromRating(rating){
+  if(rating < 1100){
+    // Bronze: split 0..1099 into Bronze III (low), II, I (high)
+    const w = 1100/3;
+    let tier;
+    if(rating < w) tier = 3;
+    else if(rating < 2*w) tier = 2;
+    else tier = 1;
+    return packRank('bronze', tier, rating);
+  }
+  for(let i = RANKS.length - 1; i >= 0; i--){
+    const r = RANKS[i];
+    if(rating >= r.base){
+      if(r.id === 'grandmaster'){
+        return packRank('grandmaster', 1, rating);
+      }
+      const next = RANKS[i+1];
+      const span = next.base - r.base;
+      const w = span / 3;
+      // tier III = lowest, I = highest within rank
+      let tier;
+      if(rating < r.base + w) tier = 3;
+      else if(rating < r.base + 2*w) tier = 2;
+      else tier = 1;
+      return packRank(r.id, tier, rating);
+    }
+  }
+  return packRank('bronze', 3, rating);
+}
+function packRank(rankId, tier, rating){
+  const r = RANKS.find(x => x.id === rankId);
+  const tierRoman = tier === 1 ? 'I' : tier === 2 ? 'II' : 'III';
+  // global index 0-20 for compare
+  const index = RANKS.findIndex(x => x.id === rankId) * 3 + (3 - tier);
+  return { id:rankId, name:r.name, icon:r.icon, cls:r.cls, color:r.color, color2:r.color2, tier, tierRoman, tierName: `${r.name} ${tierRoman}`, index, rating };
+}
+function rankProgressToNext(rating){
+  const cur = rankFromRating(rating);
+  // find next tier threshold
+  // construct list of all 21 thresholds
+  const thresholds = [];
+  for(const r of RANKS){
+    if(r.id === 'grandmaster'){
+      thresholds.push({ id:'grandmaster', tier:1, threshold: r.base });
+      continue;
+    }
+    const next = RANKS[RANKS.indexOf(r)+1];
+    const span = next ? next.base - r.base : 200;
+    const w = span / 3;
+    if(r.id === 'bronze'){
+      // bronze has 3 tiers within 0..1099
+      const wb = 1100/3;
+      thresholds.push({ id:'bronze', tier:3, threshold: 0 });
+      thresholds.push({ id:'bronze', tier:2, threshold: Math.floor(wb) });
+      thresholds.push({ id:'bronze', tier:1, threshold: Math.floor(2*wb) });
+    } else {
+      thresholds.push({ id:r.id, tier:3, threshold: r.base });
+      thresholds.push({ id:r.id, tier:2, threshold: r.base + Math.floor(w) });
+      thresholds.push({ id:r.id, tier:1, threshold: r.base + Math.floor(2*w) });
+    }
+  }
+  // find current threshold + next
+  const sorted = thresholds.sort((a,b) => a.threshold - b.threshold);
+  let curIdx = 0;
+  for(let i = sorted.length-1; i >= 0; i--){
+    if(rating >= sorted[i].threshold){ curIdx = i; break; }
+  }
+  const curT = sorted[curIdx];
+  const nextT = sorted[curIdx + 1];
+  if(!nextT){
+    return { progress: 1, toNext: 0, nextLabel: 'Max rank' };
+  }
+  const span = nextT.threshold - curT.threshold;
+  const into = rating - curT.threshold;
+  const progress = Math.max(0, Math.min(1, into / span));
+  return { progress, toNext: nextT.threshold - rating, nextLabel: `${nextT.threshold - rating} to next` };
+}
+
+// =================== STATE ===================
 const state = {
   screen: null,
   fbApp: null, auth: null, db: null,
@@ -2121,8 +2523,8 @@ const state = {
   currentGesture: null,
   recentGestures: [],
   // matchmaking prefs
-  matchMode: 'quick', // quick | ranked
-  sameRegion: false,
+  sameRegion: true,
+  similarRank: false,
   // multiplayer
   matchId: null,
   isCaller: false,
@@ -2136,7 +2538,6 @@ const state = {
   myGestureReady: false,
   oppGestureReady: false,
   myReadyTimer: 0,
-  oppReadyTimer: 0,
   countdownRunning: false,
   myGesture: null,
   oppGesture: null,
@@ -2148,17 +2549,20 @@ const state = {
   unsubFriends: null,
   unsubRequests: null,
   unsubInvites: null,
+  unsubLeaderboard: null,
+  unsubActivity: null,
   friendsList: [],
   pendingRequests: [],
   leaderboard: [],
-  unsubLeaderboard: null,
-  // pending invite/challenge
+  activityFeed: [],
   pendingChallenge: null,
+  // pending rank up to show
+  pendingRankUp: null,
 };
 
 const $ = sel => document.querySelector(sel);
 const screens = {
-  setup: $('#screen-setup'),
+  noconfig: $('#screen-noconfig'),
   auth: $('#screen-auth'),
   newuser: $('#screen-newuser'),
   landing: $('#screen-landing'),
@@ -2171,6 +2575,7 @@ function showScreen(name){
   $('#nextBtn').style.display = name === 'game' ? '' : 'none';
 }
 function setText(sel, text){ const el = $(sel); if(el) el.textContent = text; }
+function setHTML(sel, html){ const el = $(sel); if(el) el.innerHTML = html; }
 function showErr(sel, text){
   const el = $(sel);
   if(!el) return;
@@ -2180,6 +2585,35 @@ function showErr(sel, text){
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const escapeHTML = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initialOf = n => (n||'?')[0].toUpperCase();
+function rankIconSVG(rankId){
+  const r = RANKS.find(x => x.id === rankId);
+  if(!r) return '';
+  return `<use href="#${r.icon}"/>`;
+}
+function setRankIconEl(el, rankId){
+  if(!el) return;
+  const r = RANKS.find(x => x.id === rankId);
+  el.innerHTML = '';
+  if(!r) return;
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', '#' + r.icon);
+  el.appendChild(use);
+  // set class for color
+  RANKS.forEach(x => el.classList.remove(x.cls));
+  el.classList.add(r.cls);
+}
+// Render an avatar's inner content (emoji or initial) and apply background
+function renderAvatar(el, profile){
+  if(!el) return;
+  const colorIdx = profile.colorIdx || 0;
+  if(profile.emoji){
+    el.innerHTML = `<span class="emoji-av">${profile.emoji}</span>`;
+    el.style.background = AVATAR_COLORS[colorIdx];
+  } else {
+    el.textContent = initialOf(profile.username);
+    el.style.background = AVATAR_COLORS[colorIdx];
+  }
+}
 
 function toast(text, kind=''){
   const t = $('#toast');
@@ -2189,7 +2623,7 @@ function toast(text, kind=''){
   t._timer = setTimeout(() => t.classList.remove('show'), 2800);
 }
 
-// ============= PARTICLES + SFX =============
+// =================== PARTICLES + SFX ===================
 const pCanvas = $('#particles');
 const pctx = pCanvas.getContext('2d');
 let particles = [];
@@ -2201,6 +2635,14 @@ function burst(x, y, color, count=80){
     const ang = Math.random()*Math.PI*2;
     const speed = 2 + Math.random()*8;
     particles.push({x,y,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed-2,g:0.2,life:60+Math.random()*40,size:2+Math.random()*4,color});
+  }
+}
+function bigBurst(color){
+  const cx = window.innerWidth/2, cy = window.innerHeight/2;
+  for(let i=0;i<200;i++){
+    const ang = Math.random()*Math.PI*2;
+    const speed = 4 + Math.random()*14;
+    particles.push({x:cx,y:cy,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed-3,g:0.18,life:90+Math.random()*60,size:3+Math.random()*5,color});
   }
 }
 function animateParticles(){
@@ -2238,8 +2680,14 @@ const sfxMessage=()=>tone(740,0.05,'sine',0.08);
 const sfxReady=()=>{tone(523,0.06,'sine',0.10); setTimeout(()=>tone(659,0.08,'sine',0.10),60);}
 const sfxMatch=()=>{tone(523,0.1,'triangle',0.12); setTimeout(()=>tone(659,0.1,'triangle',0.12),120); setTimeout(()=>tone(784,0.18,'triangle',0.14),240);}
 const sfxNotify=()=>{tone(880,0.06,'sine',0.10); setTimeout(()=>tone(660,0.08,'sine',0.10),80);}
+const sfxRankUp=()=>{
+  // ascending fanfare
+  const notes = [523, 659, 784, 1047, 1319];
+  notes.forEach((n, i) => setTimeout(() => tone(n, 0.18, 'triangle', 0.14), i * 90));
+  setTimeout(() => tone(1568, 0.4, 'triangle', 0.16), notes.length * 90);
+};
 
-// ============= GESTURE DETECTION =============
+// =================== GESTURE =================
 const dist = (a,b) => { const dx=a.x-b.x, dy=a.y-b.y; return Math.sqrt(dx*dx+dy*dy); };
 function classifyGesture(landmarks){
   if(!landmarks || landmarks.length < 21) return null;
@@ -2271,11 +2719,10 @@ function stabilizeGesture(g){
   return state.currentGesture;
 }
 
-// ============= CAMERA + MEDIAPIPE =============
+// =================== CAMERA + MEDIAPIPE ===================
 const videoEl = $('#yourVideo');
 const overlayCanvas = $('#overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
-
 async function setupCamera(){
   try{
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -2348,44 +2795,12 @@ function setCurrentGesture(g){
   const det = $('#yourDetected');
   if(g){ det.classList.add('has'); setText('#yourDetectedText', g.toUpperCase()); }
   else { det.classList.remove('has'); setText('#yourDetectedText', '—'); }
-  // ready system tied to gesture stability
   onGestureFrame();
 }
 
-// ============= FIREBASE INIT =============
-const CONFIG_KEY = 'rosham.firebaseConfig.v3';
-
-function parseConfig(text){
-  text = text.trim();
-  if(!text) throw new Error('Empty config');
-  text = text.replace(/^(const|let|var)\s+\w+\s*=\s*/, '').replace(/;\s*$/, '');
-  try { return JSON.parse(text); } catch(e){}
-  try {
-    const obj = new Function(`return (${text})`)();
-    if(typeof obj !== 'object' || obj === null) throw new Error('Not an object');
-    return obj;
-  } catch(e){ throw new Error("Could not parse — make sure it's the firebaseConfig object"); }
-}
-function validateConfig(cfg){
-  for(const k of ['apiKey','authDomain','projectId','appId']) if(!cfg[k]) throw new Error(`Missing "${k}"`);
-  return true;
-}
-async function tryAutoInit(){
-  const stored = localStorage.getItem(CONFIG_KEY);
-  if(!stored) return false;
-  try{
-    const cfg = JSON.parse(stored);
-    validateConfig(cfg);
-    await initFirebase(cfg);
-    return true;
-  } catch(e){
-    console.warn('Stored config bad, removing', e);
-    localStorage.removeItem(CONFIG_KEY);
-    return false;
-  }
-}
-async function initFirebase(cfg){
-  state.fbApp = initializeApp(cfg);
+// =================== FIREBASE ===================
+async function initFirebase(){
+  state.fbApp = initializeApp(FIREBASE_CONFIG);
   state.auth = getAuth(state.fbApp);
   state.db = getFirestore(state.fbApp);
   onAuthStateChanged(state.auth, onAuthChanged);
@@ -2402,58 +2817,100 @@ async function onAuthChanged(user){
     showScreen('auth');
     return;
   }
-  // load profile
   try {
     const ref = doc(state.db, 'users', user.uid);
     const snap = await getDoc(ref);
     if(!snap.exists()){
-      // Google sign-in or anonymous → ask for username if not anon
       if(!user.isAnonymous){
         showScreen('newuser');
-        // pre-fill suggestions
         const suggested = (user.displayName || user.email?.split('@')[0] || 'player').replace(/[^a-zA-Z0-9_]/g,'').slice(0,20);
         $('#newUserForm input[name=username]').value = suggested;
         return;
       } else {
-        // anonymous, create on the fly
         const username = 'guest_' + user.uid.slice(0,6);
         const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
-        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, colorIdx, bio:'', isAnon:true };
+        const emoji = AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)];
+        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, colorIdx, emoji, bio:'', isAnon:true, friends:[], blocked:[] };
         await setDoc(ref, { ...state.profile, createdAt: serverTimestamp(), lastSeen: serverTimestamp() });
       }
     } else {
       state.profile = snap.data();
+      // ensure arrays exist
+      if(!state.profile.friends) state.profile.friends = [];
+      if(!state.profile.blocked) state.profile.blocked = [];
     }
   } catch(e){
     console.error('Profile load failed', e);
-    state.profile = { username:'player', country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, colorIdx:0 };
+    state.profile = { username:'player', country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, colorIdx:0, friends:[], blocked:[] };
   }
-  // Sign out button
   $('#signOutBtn').style.display = '';
-  // Header chip
   $('#userChip').style.display = '';
   setText('#chipName', state.profile.username);
-  $('#chipAv').textContent = initialOf(state.profile.username);
-  $('#chipAv').style.background = AVATAR_COLORS[state.profile.colorIdx || 0];
-  setText('#chipRating', state.profile.rating || 1000);
+  renderAvatar($('#chipAv'), state.profile);
+  updateChipRating();
 
-  // Stats grid
-  setText('#statRating', state.profile.rating || 1000);
-  setText('#statWins', state.profile.wins || 0);
-  setText('#statLosses', state.profile.losses || 0);
-  setText('#statDraws', state.profile.draws || 0);
-  setText('#statBestStreak', state.profile.bestStreak || 0);
+  refreshStatsUI();
 
-  // Update lastSeen periodically
   state._heartbeat = setInterval(async () => {
     try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp() }); } catch(e){}
   }, 30000);
   try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp() }); } catch(e){}
 
-  // Attach social listeners
   attachSocialListeners();
-
+  attachActivityListener();
   showScreen('landing');
+}
+
+function updateChipRating(){
+  const rating = state.profile.rating || 1000;
+  const rank = rankFromRating(rating);
+  const ratingEl = $('#chipRating');
+  ratingEl.innerHTML = '';
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.classList.add('rank-icon');
+  svg.classList.add(rank.cls);
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', '#' + rank.icon);
+  svg.appendChild(use);
+  ratingEl.appendChild(svg);
+  const span = document.createElement('span');
+  span.textContent = ' ' + rating;
+  ratingEl.appendChild(span);
+  ratingEl.style.color = rank.color;
+}
+
+function refreshStatsUI(){
+  const p = state.profile;
+  const rating = p.rating || 1000;
+  const rank = rankFromRating(rating);
+  // rank progress card
+  setRankIconEl($('#rankIconCurrent'), rank.id);
+  setText('#rankNameCurrent', rank.tierName);
+  const prog = rankProgressToNext(rating);
+  setText('#rankNextLabel', prog.nextLabel);
+  const fill = $('#rankBarFill');
+  fill.style.width = (prog.progress * 100) + '%';
+  fill.style.setProperty('--rank-color', rank.color);
+  fill.style.setProperty('--rank-color-2', rank.color2);
+
+  // stat tiles
+  const statRating = $('#statRating');
+  statRating.innerHTML = '';
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.setAttribute('id','statRankIcon');
+  svg.classList.add(rank.cls);
+  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+  use.setAttribute('href', '#' + rank.icon);
+  svg.appendChild(use);
+  statRating.appendChild(svg);
+  const t = document.createTextNode(rating);
+  statRating.appendChild(t);
+  statRating.style.color = rank.color;
+
+  setText('#statWins', p.wins || 0);
+  setText('#statLosses', p.losses || 0);
+  setText('#statDraws', p.draws || 0);
+  setText('#statBestStreak', p.bestStreak || 0);
 }
 
 function detachUserListeners(){
@@ -2461,6 +2918,7 @@ function detachUserListeners(){
   if(state.unsubRequests){ state.unsubRequests(); state.unsubRequests = null; }
   if(state.unsubInvites){ state.unsubInvites(); state.unsubInvites = null; }
   if(state.unsubLeaderboard){ state.unsubLeaderboard(); state.unsubLeaderboard = null; }
+  if(state.unsubActivity){ state.unsubActivity(); state.unsubActivity = null; }
   if(state._heartbeat){ clearInterval(state._heartbeat); state._heartbeat = null; }
 }
 
@@ -2487,41 +2945,48 @@ function setupAuthUI(){
     $('#signupForm').style.display = b.dataset.tab === 'signup' ? '' : 'none';
     showErr('#authError', '');
   }));
-  // populate countries
-  const sel = $('#signupForm select[name=country]');
-  for(const c of COUNTRIES){
-    const o = document.createElement('option');
-    o.value = c.code; o.textContent = `${c.flag} ${c.name}`;
-    sel.appendChild(o);
-  }
-  sel.value = 'US';
-  // populate new user country
-  const newSel = $('#newUserCountry');
-  for(const c of COUNTRIES){
-    const o = document.createElement('option');
-    o.value = c.code; o.textContent = `${c.flag} ${c.name}`;
-    newSel.appendChild(o);
-  }
-  newSel.value = 'US';
-  // populate edit country
-  const editSel = $('#editCountry');
-  for(const c of COUNTRIES){
-    const o = document.createElement('option');
-    o.value = c.code; o.textContent = `${c.flag} ${c.name}`;
-    editSel.appendChild(o);
-  }
-  // populate avatar colors
+  const populate = (sel) => {
+    const s = $(sel); if(!s) return;
+    for(const c of COUNTRIES){
+      const o = document.createElement('option');
+      o.value = c.code; o.textContent = `${c.flag} ${c.name}`;
+      s.appendChild(o);
+    }
+    s.value = 'US';
+  };
+  populate('#signupForm select[name=country]');
+  populate('#newUserCountry');
+  populate('#editCountry');
+
+  // emoji + color pickers
+  const ep = $('#emojiPick');
+  AVATAR_EMOJIS.forEach(e => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = e; b.dataset.emoji = e;
+    b.addEventListener('click', () => {
+      ep.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+    });
+    ep.appendChild(b);
+  });
   const cp = $('#colorPick');
   AVATAR_COLORS.forEach((color, i) => {
     const b = document.createElement('button');
-    b.type = 'button';
-    b.style.background = color;
-    b.dataset.idx = i;
+    b.type = 'button'; b.style.background = color; b.dataset.idx = i;
     b.addEventListener('click', () => {
       cp.querySelectorAll('button').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
     });
     cp.appendChild(b);
+  });
+  document.querySelectorAll('.av-picker-tabs button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.av-picker-tabs button').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      const t = b.dataset.pickertype;
+      $('#emojiPick').style.display = t === 'emoji' ? '' : 'none';
+      $('#colorPick').style.display = t === 'color' ? '' : 'none';
+    });
   });
 
   $('#signinForm').addEventListener('submit', async (e) => {
@@ -2541,8 +3006,7 @@ function setupAuthUI(){
       return;
     }
     try {
-      // reserve username first
-      await reserveUsername(username, /*tempUid*/ null, /*check only*/ true);
+      await reserveUsername(username, null, true);
       const cred = await createUserWithEmailAndPassword(state.auth, fd.get('email'), fd.get('password'));
       try { await updateProfile(cred.user, { displayName: username }); } catch(e){}
       await createProfile(cred.user.uid, username, fd.get('country'));
@@ -2558,22 +3022,13 @@ function setupAuthUI(){
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(state.auth, provider);
-    } catch(err){
-      showErr('#authError', friendlyError(err));
-    }
-  });
-  $('#resetSetupBtn').addEventListener('click', () => {
-    if(confirm('Reset Firebase config? You will need to paste it again.')){
-      localStorage.removeItem(CONFIG_KEY);
-      location.reload();
-    }
+    } catch(err){ showErr('#authError', friendlyError(err)); }
   });
   $('#signOutBtn').addEventListener('click', async () => {
     await teardownMatch();
     if(state.user){ try { await deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){} }
     await signOut(state.auth);
   });
-  // New user form (after Google sign-in)
   $('#newUserForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     showErr('#newUserError', '');
@@ -2586,11 +3041,8 @@ function setupAuthUI(){
     try {
       await reserveUsername(username, state.user.uid);
       await createProfile(state.user.uid, username, fd.get('country'));
-      // re-trigger auth handler to load new profile
       await onAuthChanged(state.user);
-    } catch(err){
-      showErr('#newUserError', friendlyError(err));
-    }
+    } catch(err){ showErr('#newUserError', friendlyError(err)); }
   });
 }
 
@@ -2598,9 +3050,7 @@ async function reserveUsername(username, uid, checkOnly=false){
   const ref = doc(state.db, 'usernames', username.toLowerCase());
   const existing = await getDoc(ref);
   if(existing.exists()){
-    if(checkOnly || existing.data().uid !== uid){
-      throw new Error('Username taken');
-    }
+    if(checkOnly || existing.data().uid !== uid) throw new Error('Username taken');
   } else if(!checkOnly && uid){
     await setDoc(ref, { uid, createdAt: serverTimestamp() });
   }
@@ -2608,18 +3058,17 @@ async function reserveUsername(username, uid, checkOnly=false){
 async function createProfile(uid, username, country){
   await reserveUsername(username, uid);
   const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
+  const emoji = AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)];
   await setDoc(doc(state.db, 'users', uid), {
     uid, username, country,
     wins:0, losses:0, draws:0, games:0,
     rating: 1000, bestStreak: 0, currentStreak: 0,
-    bio: '',
-    colorIdx,
+    bio: '', colorIdx, emoji,
     createdAt: serverTimestamp(),
     lastSeen: serverTimestamp(),
-    friends: [],
+    friends: [], blocked: [],
   });
 }
-
 function friendlyError(err){
   const code = err.code || '';
   if(code.includes('email-already-in-use')) return 'That email is already registered.';
@@ -2627,49 +3076,19 @@ function friendlyError(err){
   if(code.includes('weak-password')) return 'Password too weak (6+ chars).';
   if(code.includes('wrong-password') || code.includes('invalid-credential')) return 'Wrong email or password.';
   if(code.includes('user-not-found')) return 'No account with that email.';
-  if(code.includes('operation-not-allowed')) return 'Sign-in method not enabled in Firebase console.';
+  if(code.includes('operation-not-allowed')) return 'Sign-in method not enabled in Firebase.';
   if(code.includes('admin-restricted-operation')) return 'Anonymous sign-in not enabled in Firebase.';
   if(code.includes('too-many-requests')) return 'Too many attempts, wait a minute.';
-  if(code.includes('popup-closed-by-user')) return 'Sign-in cancelled.';
-  if(code.includes('popup-blocked')) return 'Pop-up blocked — allow pop-ups for this site.';
-  if(code.includes('unauthorized-domain')) return 'Add this domain in Firebase → Authentication → Settings → Authorized domains.';
+  if(code.includes('popup-closed-by-user') || code.includes('cancelled-popup-request')) return 'Sign-in cancelled.';
+  if(code.includes('popup-blocked')) return 'Pop-up blocked — allow pop-ups.';
+  if(code.includes('unauthorized-domain')) return 'Domain not authorized in Firebase Auth settings.';
   return err.message || 'Something went wrong.';
 }
 
-// ============= SETUP UI =============
-function setupSetupUI(){
-  $('#saveConfigBtn').addEventListener('click', async () => {
-    showErr('#configError', '');
-    showErr('#configSuccess', '');
-    let cfg;
-    try { cfg = parseConfig($('#configInput').value); validateConfig(cfg); }
-    catch(e){ showErr('#configError', e.message); return; }
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
-    try {
-      await initFirebase(cfg);
-      $('#configSuccess').textContent = 'Connected!';
-      $('#configSuccess').classList.add('show');
-    } catch(e){
-      localStorage.removeItem(CONFIG_KEY);
-      showErr('#configError', 'Failed to initialise: ' + (e.message || e));
-    }
-  });
-  document.querySelectorAll('.code-block .copy').forEach(b => {
-    b.addEventListener('click', () => {
-      const text = $('#' + b.dataset.copy + '-text').textContent;
-      navigator.clipboard.writeText(text).then(() => {
-        b.textContent = 'copied!';
-        setTimeout(() => b.textContent = 'copy', 1500);
-      });
-    });
-  });
-}
-
-// ============= SOCIAL: FRIENDS, REQUESTS, INVITES =============
+// ============= SOCIAL: FRIENDS / REQUESTS / INVITES =============
 function attachSocialListeners(){
   if(!state.user) return;
   const uid = state.user.uid;
-  // friend requests TO me
   state.unsubRequests = onSnapshot(
     query(collection(state.db, 'friendRequests'), where('to', '==', uid)),
     (snap) => {
@@ -2678,13 +3097,14 @@ function attachSocialListeners(){
       renderRequests();
     }
   );
-  // game invites TO me
   state.unsubInvites = onSnapshot(
     query(collection(state.db, 'invites'), where('to', '==', uid)),
     (snap) => {
       snap.docChanges().forEach(change => {
         if(change.type === 'added'){
           const inv = { id: change.doc.id, ...change.doc.data() };
+          // ignore challenges from blocked users
+          if(state.profile.blocked?.includes(inv.from)) return;
           handleIncomingChallenge(inv);
         }
       });
@@ -2703,20 +3123,14 @@ async function renderFriends(){
     setText('#friendCount', '0');
     return;
   }
-  // batch get user docs
   try {
-    const batches = [];
-    for(let i = 0; i < friendUids.length; i += 10){
-      batches.push(friendUids.slice(i, i+10));
-    }
-    let online = 0;
     const all = [];
-    for(const batch of batches){
+    for(let i = 0; i < friendUids.length; i += 10){
+      const batch = friendUids.slice(i, i+10);
       const q = query(collection(state.db, 'users'), where(documentId(), 'in', batch));
       const snap = await getDocs(q);
       snap.forEach(d => all.push(d.data()));
     }
-    // sort by online status then rating
     const now = Date.now();
     all.sort((a,b) => {
       const aOn = a.lastSeen?.toMillis ? (now - a.lastSeen.toMillis() < 60000) : false;
@@ -2724,16 +3138,21 @@ async function renderFriends(){
       if(aOn !== bOn) return bOn - aOn;
       return (b.rating||1000) - (a.rating||1000);
     });
+    let online = 0;
     for(const f of all){
       const isOn = f.lastSeen?.toMillis ? (now - f.lastSeen.toMillis() < 60000) : false;
       if(isOn) online++;
+      const rank = rankFromRating(f.rating || 1000);
       const row = document.createElement('div');
       row.className = 'friend-row';
+      const avInner = f.emoji
+        ? `<span class="emoji-av">${escapeHTML(f.emoji)}</span>`
+        : escapeHTML(initialOf(f.username));
       row.innerHTML = `
-        <div class="av" style="background:${AVATAR_COLORS[f.colorIdx||0]}">${escapeHTML(initialOf(f.username))}</div>
+        <div class="av" style="background:${AVATAR_COLORS[f.colorIdx||0]}">${avInner}</div>
         <div class="meta">
-          <div class="nm">${escapeHTML(f.username)}</div>
-          <div class="sub">${flagOf(f.country)} · ${f.rating||1000} ELO</div>
+          <div class="nm">${escapeHTML(f.username)} <svg class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+          <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
         </div>
         <div class="online-dot ${isOn ? 'on' : ''}"></div>
         <div class="friend-actions">
@@ -2755,7 +3174,7 @@ async function renderFriends(){
     }
     setText('#friendCount', online + '/' + all.length);
   } catch(e){
-    console.error('renderFriends failed', e);
+    console.error('renderFriends', e);
     body.innerHTML = '<div class="side-empty">could not load friends</div>';
   }
 }
@@ -2764,19 +3183,24 @@ async function renderRequests(){
   const reqArea = $('#requestsArea');
   const body = $('#requestsBody');
   body.innerHTML = '';
-  if(state.pendingRequests.length === 0){
+  // filter out requests from blocked users
+  const visible = state.pendingRequests.filter(r => !state.profile.blocked?.includes(r.from));
+  if(visible.length === 0){
     reqArea.style.display = 'none';
     $('#reqBadge').style.display = 'none';
     return;
   }
   reqArea.style.display = '';
   $('#reqBadge').style.display = '';
-  $('#reqBadge').textContent = state.pendingRequests.length;
-  for(const r of state.pendingRequests){
+  $('#reqBadge').textContent = visible.length;
+  for(const r of visible){
+    const avInner = r.fromEmoji
+      ? `<span class="emoji-av">${escapeHTML(r.fromEmoji)}</span>`
+      : escapeHTML(initialOf(r.fromUsername));
     const row = document.createElement('div');
     row.className = 'req-row';
     row.innerHTML = `
-      <div class="av" style="background:${AVATAR_COLORS[r.fromColorIdx||0]}">${escapeHTML(initialOf(r.fromUsername))}</div>
+      <div class="av" style="background:${AVATAR_COLORS[r.fromColorIdx||0]}">${avInner}</div>
       <div class="meta">
         <div class="nm">${escapeHTML(r.fromUsername)}</div>
         <div class="sub">wants to be your friend</div>
@@ -2797,12 +3221,11 @@ async function addFriendByUsername(username){
   if(!username) return;
   if(username === state.profile.username.toLowerCase()){ toast("Can't add yourself", 'error'); return; }
   try {
-    // look up by username doc
     const unameDoc = await getDoc(doc(state.db, 'usernames', username));
     if(!unameDoc.exists()){ toast('User not found', 'error'); return; }
     const targetUid = unameDoc.data().uid;
     if(state.profile.friends?.includes(targetUid)){ toast('Already friends', 'error'); return; }
-    // check existing request
+    if(state.profile.blocked?.includes(targetUid)){ toast('That user is blocked', 'error'); return; }
     const existing = await getDocs(query(
       collection(state.db, 'friendRequests'),
       where('from', '==', state.user.uid),
@@ -2814,32 +3237,23 @@ async function addFriendByUsername(username){
       to: targetUid,
       fromUsername: state.profile.username,
       fromColorIdx: state.profile.colorIdx || 0,
+      fromEmoji: state.profile.emoji || '',
       createdAt: serverTimestamp(),
     });
     toast('Friend request sent', 'success');
-  } catch(e){
-    console.error(e);
-    toast('Could not send: ' + (e.message || e), 'error');
-  }
+  } catch(e){ toast('Could not send: ' + (e.message || e), 'error'); }
 }
 
 async function acceptFriendRequest(reqId, fromUid){
   try {
-    const batch = writeBatch(state.db);
     const myRef = doc(state.db, 'users', state.user.uid);
     const theirRef = doc(state.db, 'users', fromUid);
-    // arrays via update — use transaction-safe merge
-    const myDoc = await getDoc(myRef);
-    const theirDoc = await getDoc(theirRef);
-    const myFriends = myDoc.data().friends || [];
-    const theirFriends = theirDoc.data().friends || [];
-    if(!myFriends.includes(fromUid)) myFriends.push(fromUid);
-    if(!theirFriends.includes(state.user.uid)) theirFriends.push(state.user.uid);
-    batch.update(myRef, { friends: myFriends });
-    batch.update(theirRef, { friends: theirFriends });
+    const batch = writeBatch(state.db);
+    batch.update(myRef, { friends: arrayUnion(fromUid) });
+    batch.update(theirRef, { friends: arrayUnion(state.user.uid) });
     batch.delete(doc(state.db, 'friendRequests', reqId));
     await batch.commit();
-    state.profile.friends = myFriends;
+    if(!state.profile.friends.includes(fromUid)) state.profile.friends.push(fromUid);
     toast('Friend added', 'success');
     renderFriends();
   } catch(e){
@@ -2847,7 +3261,6 @@ async function acceptFriendRequest(reqId, fromUid){
     toast('Could not accept', 'error');
   }
 }
-
 async function rejectFriendRequest(reqId){
   try { await deleteDoc(doc(state.db, 'friendRequests', reqId)); }
   catch(e){ toast('Could not reject', 'error'); }
@@ -2855,55 +3268,48 @@ async function rejectFriendRequest(reqId){
 
 async function sendChallenge(targetUid){
   try {
-    // ensure camera ready
+    if(state.profile.blocked?.includes(targetUid)){ toast('That user is blocked', 'error'); return; }
     if(!state.cameraReady){
       const ok = await setupCamera(); if(!ok) return;
       await setupHands();
     }
-    // create invite
     await addDoc(collection(state.db, 'invites'), {
       from: state.user.uid,
       to: targetUid,
       fromUsername: state.profile.username,
       fromColorIdx: state.profile.colorIdx || 0,
+      fromEmoji: state.profile.emoji || '',
       fromRating: state.profile.rating || 1000,
       fromCountry: state.profile.country || 'XX',
       createdAt: serverTimestamp(),
       status: 'pending',
     });
     toast('Challenge sent · waiting for response…', 'success');
-  } catch(e){
-    console.error(e);
-    toast('Could not challenge', 'error');
-  }
+  } catch(e){ toast('Could not challenge', 'error'); }
 }
 
 function handleIncomingChallenge(inv){
-  if(state.pendingChallenge) return; // ignore multiple
-  if(inv.status === 'accepted') return; // already handled
+  if(state.pendingChallenge) return;
+  if(inv.status === 'accepted') return;
   state.pendingChallenge = inv;
   setText('#chalName', '@' + inv.fromUsername);
-  setText('#chalSub', `${flagOf(inv.fromCountry)} · ${inv.fromRating || 1000} ELO`);
-  $('#chalAv').style.background = AVATAR_COLORS[inv.fromColorIdx || 0];
-  $('#chalAv').textContent = initialOf(inv.fromUsername);
+  const rank = rankFromRating(inv.fromRating || 1000);
+  setText('#chalSub', `${flagOf(inv.fromCountry)} · ${inv.fromRating || 1000} · ${rank.tierName}`);
+  renderAvatar($('#chalAv'), { username: inv.fromUsername, emoji: inv.fromEmoji, colorIdx: inv.fromColorIdx });
   $('#challengeModal').classList.add('show');
   sfxNotify();
 }
-
 $('#chalAccept').addEventListener('click', async () => {
   const inv = state.pendingChallenge;
   if(!inv) return;
   $('#challengeModal').classList.remove('show');
   state.pendingChallenge = null;
-  // mark accepted
   try { await updateDoc(doc(state.db, 'invites', inv.id), { status: 'accepted' }); } catch(e){}
-  // create match directly
   if(!state.cameraReady){
     const ok = await setupCamera(); if(!ok) return;
     await setupHands();
   }
   await createDirectMatch(inv.from, inv);
-  // cleanup invite
   try { await deleteDoc(doc(state.db, 'invites', inv.id)); } catch(e){}
 });
 $('#chalReject').addEventListener('click', async () => {
@@ -2916,12 +3322,11 @@ $('#chalReject').addEventListener('click', async () => {
 
 async function createDirectMatch(oppUid, inv){
   try {
-    // determine caller deterministically
     const uid = state.user.uid;
     const caller = uid < oppUid ? uid : oppUid;
     const callee = uid < oppUid ? oppUid : uid;
     const oppDoc = await getDoc(doc(state.db, 'users', oppUid));
-    const oppProf = oppDoc.exists() ? oppDoc.data() : { username: inv.fromUsername, country: inv.fromCountry, rating: inv.fromRating, colorIdx: inv.fromColorIdx };
+    const oppProf = oppDoc.exists() ? oppDoc.data() : { username: inv.fromUsername, country: inv.fromCountry, rating: inv.fromRating, colorIdx: inv.fromColorIdx, emoji: inv.fromEmoji };
     const newMatchRef = await addDoc(collection(state.db, 'matches'), {
       caller, callee,
       callerProfile: caller === uid ? trimProfile(state.profile) : trimProfile(oppProf),
@@ -2934,16 +3339,11 @@ async function createDirectMatch(oppUid, inv){
     state.isCaller = (caller === uid);
     state.oppUid = oppUid;
     state.oppProfile = oppProf;
-    // skip "find" screen, jump straight to match found celebration
     showScreen('matching');
     showMatchFound();
     setTimeout(() => enterMatch({ caller, callee, callerProfile: trimProfile(state.profile), calleeProfile: trimProfile(oppProf) }), 2200);
-  } catch(e){
-    console.error('createDirectMatch failed', e);
-    toast('Could not create match', 'error');
-  }
+  } catch(e){ toast('Could not create match', 'error'); }
 }
-
 function trimProfile(p){
   return {
     uid: p.uid || '',
@@ -2951,10 +3351,8 @@ function trimProfile(p){
     country: p.country || 'XX',
     rating: p.rating || 1000,
     colorIdx: p.colorIdx || 0,
-    wins: p.wins || 0,
-    losses: p.losses || 0,
-    games: p.games || 0,
-    bestStreak: p.bestStreak || 0,
+    emoji: p.emoji || '',
+    wins: p.wins || 0, losses: p.losses || 0, games: p.games || 0, bestStreak: p.bestStreak || 0,
     bio: p.bio || '',
   };
 }
@@ -2973,7 +3371,6 @@ function attachLeaderboardListener(){
     );
   } catch(e){ console.warn('leaderboard listen fail', e); }
 }
-
 function renderLeaderboard(){
   const body = $('#leaderboardBody');
   body.innerHTML = '';
@@ -2984,21 +3381,79 @@ function renderLeaderboard(){
   }
   state.leaderboard.forEach((p, i) => {
     const rankCls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    const rank = rankFromRating(p.rating || 1000);
+    const avInner = p.emoji
+      ? `<span class="emoji-av">${escapeHTML(p.emoji)}</span>`
+      : escapeHTML(initialOf(p.username));
     const row = document.createElement('div');
     row.className = 'lb-row';
     row.innerHTML = `
-      <div class="rank ${rankCls}">${i+1}</div>
-      <div class="av" style="background:${AVATAR_COLORS[p.colorIdx||0]}">${escapeHTML(initialOf(p.username))}</div>
+      <div class="rank-num ${rankCls}">${i+1}</div>
+      <div class="av" style="background:${AVATAR_COLORS[p.colorIdx||0]}">${avInner}</div>
       <div class="meta">
-        <div class="nm">${escapeHTML(p.username)}</div>
+        <div class="nm">${escapeHTML(p.username)} <svg class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
         <div class="sub">${flagOf(p.country)} · ${p.wins||0}W ${p.losses||0}L</div>
       </div>
-      <div class="rating">${p.rating||1000}</div>
+      <div class="rating" style="color:${rank.color};"><svg class="${rank.cls}"><use href="#${rank.icon}"/></svg> ${p.rating||1000}</div>
     `;
     row.addEventListener('click', () => openProfile(p.uid));
     body.appendChild(row);
   });
   setText('#lbCount', state.leaderboard.length);
+}
+
+// ============= ACTIVITY FEED =============
+function attachActivityListener(){
+  if(state.unsubActivity) return;
+  // listen for activity from friends
+  state.unsubActivity = onSnapshot(
+    query(collection(state.db, 'activity'), orderBy('createdAt','desc'), limit(40)),
+    (snap) => {
+      state.activityFeed = [];
+      snap.forEach(d => state.activityFeed.push({ id: d.id, ...d.data() }));
+      renderActivity();
+    }
+  );
+}
+function renderActivity(){
+  const body = $('#activityBody');
+  body.innerHTML = '';
+  // filter: only show activity from friends
+  const friends = state.profile?.friends || [];
+  const visible = state.activityFeed.filter(a => friends.includes(a.uid));
+  if(visible.length === 0){
+    body.innerHTML = '<div class="side-empty">add friends to see their games here</div>';
+    return;
+  }
+  for(const a of visible.slice(0, 20)){
+    const avInner = a.emoji
+      ? `<span class="emoji-av">${escapeHTML(a.emoji)}</span>`
+      : escapeHTML(initialOf(a.username));
+    const resultStr = a.result === 'win' ? `<span class="win">won</span>` : a.result === 'lose' ? `<span class="lose">lost</span>` : `<span class="draw">drew</span>`;
+    const oppStr = a.oppUsername ? ` vs <b>${escapeHTML(a.oppUsername)}</b>` : '';
+    const deltaStr = (a.delta != null && a.delta !== 0)
+      ? ` (${a.delta > 0 ? '+' : ''}${a.delta})`
+      : '';
+    const row = document.createElement('div');
+    row.className = 'activity-row';
+    row.innerHTML = `
+      <div class="av" style="background:${AVATAR_COLORS[a.colorIdx||0]}">${avInner}</div>
+      <div class="body">
+        <div class="b-text"><b>${escapeHTML(a.username)}</b> ${resultStr}${oppStr}${deltaStr}</div>
+        <div class="b-time">${timeAgo(a.createdAt)}</div>
+      </div>
+    `;
+    row.addEventListener('click', () => openProfile(a.uid));
+    body.appendChild(row);
+  }
+}
+function timeAgo(ts){
+  if(!ts?.toMillis) return 'just now';
+  const diff = Date.now() - ts.toMillis();
+  if(diff < 60000) return 'just now';
+  if(diff < 3600000) return Math.floor(diff/60000) + 'm ago';
+  if(diff < 86400000) return Math.floor(diff/3600000) + 'h ago';
+  return Math.floor(diff/86400000) + 'd ago';
 }
 
 // Side tabs
@@ -3012,7 +3467,7 @@ document.querySelectorAll('.side-tabs button').forEach(b => {
   });
 });
 
-// Add friend input
+// Add friend
 $('#addFriendBtn').addEventListener('click', () => {
   const v = $('#addFriendInput').value;
   addFriendByUsername(v);
@@ -3022,33 +3477,62 @@ $('#addFriendInput').addEventListener('keydown', e => {
   if(e.key === 'Enter'){ addFriendByUsername(e.target.value); e.target.value = ''; }
 });
 
-// ============= PROFILE VIEW MODAL =============
+// ============= PROFILE VIEW =============
 async function openProfile(uid){
   try {
     const snap = await getDoc(doc(state.db, 'users', uid));
     if(!snap.exists()){ toast('Profile not found', 'error'); return; }
     const p = snap.data();
-    setText('#pmName', '@' + p.username);
+    const rating = p.rating || 1000;
+    const rank = rankFromRating(rating);
+    setText('#pmName', p.username);
+    // need to re-set the rank-mini since textContent erased it
+    const nameEl = $('#pmName');
+    nameEl.innerHTML = escapeHTML(p.username);
+    const miniSvg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    miniSvg.classList.add('rank-mini'); miniSvg.classList.add(rank.cls);
+    const u = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    u.setAttribute('href','#'+rank.icon);
+    miniSvg.appendChild(u);
+    nameEl.appendChild(document.createTextNode(' '));
+    nameEl.appendChild(miniSvg);
+
     setText('#pmSub', `${flagOf(p.country)} ${nameOfCountry(p.country)}`);
-    setText('#pmRating', p.rating || 1000);
-    $('#pmAv').textContent = initialOf(p.username);
-    $('#pmAv').style.background = AVATAR_COLORS[p.colorIdx || 0];
+    setRankIconEl($('#pmRankIcon'), rank.id);
+    setText('#pmRankName', rank.tierName);
+    setText('#pmRating', rating);
+    $('#pmRating').parentElement.style.color = rank.color;
+    renderAvatar($('#pmAv'), p);
+
     if(p.bio){ $('#pmBio').textContent = p.bio; $('#pmBio').style.display = ''; }
     else $('#pmBio').style.display = 'none';
+
     setText('#pmWins', p.wins || 0);
     setText('#pmLosses', p.losses || 0);
     setText('#pmGames', p.games || 0);
     setText('#pmStreak', p.bestStreak || 0);
-    // actions: hide if it's me
+
+    // load match history
+    await loadMatchHistory(uid);
+
+    // actions
     if(uid === state.user.uid){
       $('#pmAddFriendBtn').style.display = 'none';
       $('#pmChallengeBtn').style.display = 'none';
+      $('#pmBlockBtn').style.display = 'none';
     } else {
       const isFriend = state.profile.friends?.includes(uid);
-      $('#pmAddFriendBtn').style.display = isFriend ? 'none' : '';
+      const isBlocked = state.profile.blocked?.includes(uid);
+      $('#pmAddFriendBtn').style.display = (isFriend || isBlocked) ? 'none' : '';
       $('#pmAddFriendBtn').onclick = () => { addFriendByUsername(p.username); $('#profileModal').classList.remove('show'); };
-      $('#pmChallengeBtn').style.display = '';
+      $('#pmChallengeBtn').style.display = isBlocked ? 'none' : '';
       $('#pmChallengeBtn').onclick = () => { sendChallenge(uid); $('#profileModal').classList.remove('show'); };
+      $('#pmBlockBtn').style.display = '';
+      $('#pmBlockBtn').textContent = '';
+      $('#pmBlockBtn').innerHTML = isBlocked
+        ? '<svg width="13" height="13"><use href="#i-check"/></svg> Unblock'
+        : '<svg width="13" height="13"><use href="#i-block"/></svg> Block';
+      $('#pmBlockBtn').onclick = () => toggleBlock(uid, p.username, !isBlocked);
     }
     $('#profileModal').classList.add('show');
   } catch(e){
@@ -3057,7 +3541,72 @@ async function openProfile(uid){
   }
 }
 
-// Open edit profile
+async function loadMatchHistory(uid){
+  const section = $('#pmHistorySection');
+  const list = $('#pmHistoryList');
+  list.innerHTML = '';
+  try {
+    const snap = await getDocs(query(
+      collection(state.db, 'matchHistory'),
+      where('uid', '==', uid),
+      orderBy('createdAt','desc'),
+      limit(10),
+    ));
+    if(snap.empty){
+      section.style.display = 'none';
+      return;
+    }
+    section.style.display = '';
+    snap.forEach(d => {
+      const h = d.data();
+      const cls = h.result === 'win' ? 'win' : h.result === 'lose' ? 'lose' : 'draw';
+      const deltaCls = (h.delta||0) > 0 ? 'up' : (h.delta||0) < 0 ? 'down' : 'same';
+      const deltaStr = h.delta == null ? '' : (h.delta > 0 ? '+' + h.delta : '' + h.delta);
+      const row = document.createElement('div');
+      row.className = 'mh-row';
+      row.innerHTML = `
+        <div class="mh-result ${cls}">${escapeHTML(h.result || '—')}</div>
+        <div class="vs-opp">vs <b>${escapeHTML(h.oppUsername || 'unknown')}</b></div>
+        <div class="mh-delta ${deltaCls}">${deltaStr || '—'}</div>
+        <div class="mh-time">${timeAgo(h.createdAt)}</div>
+      `;
+      if(h.oppUid){
+        row.style.cursor = 'pointer';
+        row.addEventListener('click', () => { $('#profileModal').classList.remove('show'); setTimeout(() => openProfile(h.oppUid), 200); });
+      }
+      list.appendChild(row);
+    });
+  } catch(e){ console.warn('history load fail', e); section.style.display = 'none'; }
+}
+
+async function toggleBlock(uid, username, doBlock){
+  try {
+    const myRef = doc(state.db, 'users', state.user.uid);
+    if(doBlock){
+      // also remove from friends
+      const updates = { blocked: arrayUnion(uid) };
+      if(state.profile.friends?.includes(uid)){
+        updates.friends = arrayRemove(uid);
+      }
+      await updateDoc(myRef, updates);
+      state.profile.blocked = [...(state.profile.blocked||[]), uid];
+      state.profile.friends = (state.profile.friends||[]).filter(x => x !== uid);
+      toast(`Blocked @${username}`, 'success');
+    } else {
+      await updateDoc(myRef, { blocked: arrayRemove(uid) });
+      state.profile.blocked = (state.profile.blocked||[]).filter(x => x !== uid);
+      toast(`Unblocked @${username}`, 'success');
+    }
+    $('#profileModal').classList.remove('show');
+    renderFriends();
+    renderRequests();
+  } catch(e){
+    console.error(e);
+    toast('Could not update block list', 'error');
+  }
+}
+
+// ============= EDIT PROFILE =============
 $('#userChip').addEventListener('click', () => openEditProfile());
 function openEditProfile(){
   const p = state.profile;
@@ -3065,9 +3614,20 @@ function openEditProfile(){
   $('#editCountry').value = p.country || 'XX';
   $('#editProfileForm textarea[name=bio]').value = p.bio || '';
   document.querySelectorAll('#colorPick button').forEach((b, i) => b.classList.toggle('active', i === (p.colorIdx || 0)));
+  document.querySelectorAll('#emojiPick button').forEach(b => b.classList.toggle('active', b.dataset.emoji === p.emoji));
+  // default to emoji tab if has emoji
+  document.querySelectorAll('.av-picker-tabs button').forEach(b => b.classList.remove('active'));
+  if(p.emoji){
+    document.querySelector('.av-picker-tabs button[data-pickertype=emoji]').classList.add('active');
+    $('#emojiPick').style.display = '';
+    $('#colorPick').style.display = 'none';
+  } else {
+    document.querySelector('.av-picker-tabs button[data-pickertype=color]').classList.add('active');
+    $('#emojiPick').style.display = 'none';
+    $('#colorPick').style.display = '';
+  }
   $('#editProfileModal').classList.add('show');
 }
-
 $('#editProfileForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   showErr('#editError', '');
@@ -3077,6 +3637,9 @@ $('#editProfileForm').addEventListener('submit', async (e) => {
   const newBio = (fd.get('bio') || '').trim();
   const activeColor = document.querySelector('#colorPick button.active');
   const newColorIdx = activeColor ? parseInt(activeColor.dataset.idx) : (state.profile.colorIdx || 0);
+  const activeEmoji = document.querySelector('#emojiPick button.active');
+  const activeTab = document.querySelector('.av-picker-tabs button.active').dataset.pickertype;
+  const newEmoji = activeTab === 'emoji' ? (activeEmoji ? activeEmoji.dataset.emoji : '') : '';
 
   if(!/^[a-zA-Z0-9_]{2,20}$/.test(newUsername)){
     showErr('#editError', 'Username must be 2-20 chars (letters, numbers, underscore)');
@@ -3085,25 +3648,56 @@ $('#editProfileForm').addEventListener('submit', async (e) => {
   try {
     const usernameChanged = newUsername.toLowerCase() !== state.profile.username.toLowerCase();
     if(usernameChanged){
-      // try reserve new, delete old
       await reserveUsername(newUsername, state.user.uid);
       try { await deleteDoc(doc(state.db, 'usernames', state.profile.username.toLowerCase())); } catch(e){}
     }
     await updateDoc(doc(state.db, 'users', state.user.uid), {
-      username: newUsername,
-      country: newCountry,
-      bio: newBio,
-      colorIdx: newColorIdx,
+      username: newUsername, country: newCountry, bio: newBio,
+      colorIdx: newColorIdx, emoji: newEmoji,
     });
-    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, colorIdx:newColorIdx };
+    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, colorIdx:newColorIdx, emoji:newEmoji };
     setText('#chipName', newUsername);
-    $('#chipAv').textContent = initialOf(newUsername);
-    $('#chipAv').style.background = AVATAR_COLORS[newColorIdx];
+    renderAvatar($('#chipAv'), state.profile);
+    refreshStatsUI();
     toast('Profile updated', 'success');
     $('#editProfileModal').classList.remove('show');
   } catch(err){
     showErr('#editError', friendlyError(err));
   }
+});
+
+// Blocked list
+$('#viewBlockedBtn').addEventListener('click', async () => {
+  $('#editProfileModal').classList.remove('show');
+  const list = $('#blockedList');
+  list.innerHTML = '';
+  const blocked = state.profile.blocked || [];
+  if(blocked.length === 0){
+    list.innerHTML = '<div class="side-empty">no one blocked · nice</div>';
+  } else {
+    try {
+      for(let i = 0; i < blocked.length; i += 10){
+        const batch = blocked.slice(i, i+10);
+        const q = query(collection(state.db, 'users'), where(documentId(), 'in', batch));
+        const snap = await getDocs(q);
+        snap.forEach(d => {
+          const u = d.data();
+          const row = document.createElement('div');
+          row.className = 'mh-row';
+          row.innerHTML = `
+            <div class="vs-opp"><b>${escapeHTML(u.username)}</b></div>
+            <button class="btn btn-ghost" style="padding:4px 10px; font-size:11px;">Unblock</button>
+          `;
+          row.querySelector('button').addEventListener('click', () => {
+            toggleBlock(u.uid, u.username, false);
+            row.remove();
+          });
+          list.appendChild(row);
+        });
+      }
+    } catch(e){ console.error(e); }
+  }
+  $('#blockedModal').classList.add('show');
 });
 
 // ============= MATCHMAKING =============
@@ -3123,18 +3717,16 @@ async function findMatch(){
       username: state.profile.username,
       country: state.profile.country,
       rating: state.profile.rating || 1000,
-      mode: state.matchMode,
       sameRegion: state.sameRegion,
+      similarRank: state.similarRank,
       colorIdx: state.profile.colorIdx || 0,
+      emoji: state.profile.emoji || '',
+      blocked: state.profile.blocked || [],
       joinedAt: serverTimestamp(),
     });
-  } catch(e){
-    toast('Could not join queue: ' + (e.message || e), 'error');
-    showScreen('landing');
-    return;
-  }
+  } catch(e){ toast('Could not join queue', 'error'); showScreen('landing'); return; }
 
-  // Listen for matches involving me
+  // listen for matches involving me
   const matchesCol = collection(state.db, 'matches');
   const myMatchUnsub = onSnapshot(matchesCol, (snap) => {
     if(state.screen !== 'matching' || state.matchId) return;
@@ -3164,12 +3756,19 @@ async function findMatch(){
     try {
       const qSnap = await getDocs(collection(state.db, 'queue'));
       const others = [];
-      qSnap.forEach(d => { if(d.id !== uid) others.push(d.data()); });
+      qSnap.forEach(d => {
+        if(d.id !== uid){
+          const o = d.data();
+          // exclude blocked
+          if(state.profile.blocked?.includes(o.uid)) return;
+          if(o.blocked?.includes(uid)) return;
+          others.push(o);
+        }
+      });
       if(others.length === 0){
         $('#matchFeed').innerHTML = `<span class="blink">●</span> waiting · ${attempts}s · be the first hand drawn`;
         return;
       }
-      // filter and score candidates
       const myRating = state.profile.rating || 1000;
       const myRegion = regionOf(state.profile.country);
       let candidates = others.slice();
@@ -3177,18 +3776,20 @@ async function findMatch(){
         const sameReg = candidates.filter(c => regionOf(c.country) === myRegion);
         if(sameReg.length > 0) candidates = sameReg;
       }
-      if(state.matchMode === 'ranked'){
-        // sort by rating distance
+      if(state.similarRank){
+        // expanding window
         candidates.sort((a,b) => Math.abs((a.rating||1000)-myRating) - Math.abs((b.rating||1000)-myRating));
-        // expanding window: 100 → 200 → 400 → all
-        const window = 100 + attempts * 100;
+        const window = 100 + attempts * 80;
         candidates = candidates.filter(c => Math.abs((c.rating||1000) - myRating) <= window);
+      } else {
+        // always prefer closer rating but don't filter
+        candidates.sort((a,b) => Math.abs((a.rating||1000)-myRating) - Math.abs((b.rating||1000)-myRating));
       }
       if(candidates.length === 0){
-        $('#matchFeed').innerHTML = `<span class="blink">●</span> expanding search · ${attempts}s · ${others.length} player(s) in queue`;
+        $('#matchFeed').innerHTML = `<span class="blink">●</span> expanding search · ${attempts}s · ${others.length} in queue`;
         return;
       }
-      const opp = candidates[0]; // take best
+      const opp = candidates[0];
       const caller = uid < opp.uid ? uid : opp.uid;
       const callee = uid < opp.uid ? opp.uid : uid;
       const oppQueueRef = doc(state.db, 'queue', opp.uid);
@@ -3207,14 +3808,13 @@ async function findMatch(){
             caller, callee,
             callerProfile: caller === uid ? trimProfile(state.profile) : oppProf,
             calleeProfile: callee === uid ? trimProfile(state.profile) : oppProf,
-            mode: state.matchMode,
             status: 'pending',
             createdAt: serverTimestamp(),
           });
           tx.delete(oppQueueRef);
           tx.delete(myQueueRef);
         });
-      } catch(err){ /* someone else claimed, keep waiting */ }
+      } catch(err){}
     } catch(e){ console.warn('queue scan failed', e); }
   };
   const interval = setInterval(tryPair, 1500);
@@ -3225,20 +3825,38 @@ async function findMatch(){
 function showMatchFound(){
   $('#matchSearchView').style.display = 'none';
   $('#matchFoundView').style.display = '';
-  // me
-  $('#mfYouAv').textContent = initialOf(state.profile.username);
-  $('#mfYouAv').style.background = AVATAR_COLORS[state.profile.colorIdx || 0];
+  renderAvatar($('#mfYouAv'), state.profile);
   setText('#mfYouName', state.profile.username);
-  setText('#mfYouSub', `${flagOf(state.profile.country)} · ${state.profile.rating || 1000}`);
-  // opp
+  const myRank = rankFromRating(state.profile.rating || 1000);
+  setRankIconEl($('#mfYouRankIcon'), myRank.id);
+  $('#mfYouSub').innerHTML = '';
+  const r1 = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  r1.classList.add(myRank.cls);
+  const u1 = document.createElementNS('http://www.w3.org/2000/svg','use');
+  u1.setAttribute('href','#'+myRank.icon);
+  r1.appendChild(u1);
+  $('#mfYouSub').appendChild(r1);
+  const s1 = document.createElement('span');
+  s1.textContent = ' ' + (state.profile.rating || 1000) + ' · ' + myRank.tierName;
+  $('#mfYouSub').appendChild(s1);
+
   const o = state.oppProfile || {};
-  $('#mfOppAv').textContent = initialOf(o.username);
-  $('#mfOppAv').style.background = AVATAR_COLORS[o.colorIdx || 0];
+  renderAvatar($('#mfOppAv'), o);
   setText('#mfOppName', '@' + (o.username || 'stranger'));
-  setText('#mfOppSub', `${flagOf(o.country || 'XX')} · ${o.rating || 1000}`);
-  setText('#mfFeed', '<span class="blink">●</span> establishing webrtc connection…');
+  const oRank = rankFromRating(o.rating || 1000);
+  setRankIconEl($('#mfOppRankIcon'), oRank.id);
+  $('#mfOppSub').innerHTML = '';
+  const r2 = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  r2.classList.add(oRank.cls);
+  const u2 = document.createElementNS('http://www.w3.org/2000/svg','use');
+  u2.setAttribute('href','#'+oRank.icon);
+  r2.appendChild(u2);
+  $('#mfOppSub').appendChild(r2);
+  const s2 = document.createElement('span');
+  s2.textContent = ' ' + (o.rating || 1000) + ' · ' + oRank.tierName;
+  $('#mfOppSub').appendChild(s2);
+
   $('#mfFeed').innerHTML = '<span class="blink">●</span> establishing webrtc connection…';
-  // confetti burst
   burst(window.innerWidth/2, window.innerHeight/2, '#ff3d68', 60);
   burst(window.innerWidth/2, window.innerHeight/2, '#5dffba', 60);
 }
@@ -3268,16 +3886,14 @@ async function enterMatch(matchData){
   resetGameUI();
   setupOppPanel();
   setText('#youName', state.profile.username);
-  setText('#youSub', `${flagOf(state.profile.country)} · ${state.profile.rating || 1000}`);
-  $('#youAvatar').textContent = initialOf(state.profile.username);
-  $('#youAvatar').style.background = AVATAR_COLORS[state.profile.colorIdx || 0];
+  const myRank = rankFromRating(state.profile.rating || 1000);
+  setText('#youSub', `${flagOf(state.profile.country)} · ${myRank.tierName}`);
+  renderAvatar($('#youAvatar'), state.profile);
   setText('#youLabel', state.profile.username.slice(0,12).toUpperCase());
   setText('#roundState', 'CONNECTING…');
 
   state.pc = new RTCPeerConnection(RTC_CONFIG);
-  if(state.localStream){
-    state.localStream.getTracks().forEach(t => state.pc.addTrack(t, state.localStream));
-  }
+  if(state.localStream) state.localStream.getTracks().forEach(t => state.pc.addTrack(t, state.localStream));
   state.remoteStream = new MediaStream();
   $('#oppVideo').srcObject = state.remoteStream;
   state.pc.ontrack = (e) => {
@@ -3314,7 +3930,7 @@ async function enterMatch(matchData){
       if(!state.pc.currentRemoteDescription && data.answer){
         try { await state.pc.setRemoteDescription(new RTCSessionDescription(data.answer)); } catch(e){}
       }
-      if(data.status === 'ended' && state.phase !== 'ended'){ handleRemoteLeft(); }
+      if(data.status === 'ended' && state.phase !== 'ended') handleRemoteLeft();
     });
     state.unsubCalleeCands = onSnapshot(calleeCandsRef, (snap) => {
       snap.docChanges().forEach(async (change) => {
@@ -3339,7 +3955,7 @@ async function enterMatch(matchData){
           await updateDoc(matchRef, { answer: { type: answer.type, sdp: answer.sdp }, status: 'answered' });
         } catch(e){}
       }
-      if(data.status === 'ended' && state.phase !== 'ended'){ handleRemoteLeft(); }
+      if(data.status === 'ended' && state.phase !== 'ended') handleRemoteLeft();
     });
     state.unsubCallerCands = onSnapshot(callerCandsRef, (snap) => {
       snap.docChanges().forEach(async (change) => {
@@ -3355,43 +3971,35 @@ function setupOppPanel(){
   const op = state.oppProfile || {};
   setText('#oppName', '@' + (op.username || 'stranger'));
   setText('#oppFlag', flagOf(op.country || 'XX'));
-  setText('#oppSub', op.country ? `${nameOfCountry(op.country)} · ${op.rating || 1000}` : 'stranger');
+  const oppRank = rankFromRating(op.rating || 1000);
+  setRankIconEl($('#oppRankMini'), oppRank.id);
+  setText('#oppSub', op.country ? `${nameOfCountry(op.country)} · ${oppRank.tierName}` : 'stranger');
   setText('#oppLabel', (op.username || 'OPP').slice(0,12).toUpperCase());
   setText('#readyPillOppLab', op.username || 'opp');
-  $('#oppAvatar').textContent = initialOf(op.username);
-  $('#oppAvatar').style.background = AVATAR_COLORS[op.colorIdx || 0];
-  $('#oppAvatarBig').textContent = initialOf(op.username);
-  $('#oppAvatarBig').style.background = AVATAR_COLORS[op.colorIdx || 0];
+  renderAvatar($('#oppAvatar'), op);
+  renderAvatar($('#oppAvatarBig'), op);
   setText('#chatWithName', '@' + (op.username || 'stranger'));
   $('#oppPlaceholder').style.display = '';
   $('#oppCamStatus').classList.remove('live');
   $('#oppCamStatus').querySelector('span:last-child').textContent = 'connecting';
   $('#disconnectBanner').classList.remove('show');
-  // Make opp identity clickable to open profile
   $('#oppIdentity').onclick = () => state.oppUid && openProfile(state.oppUid);
 }
 
 function setupDataChannel(dc){
-  dc.onopen = () => {
-    addChat('sys', 'connected · show your hand to begin');
-    onPeerConnected();
-  };
+  dc.onopen = () => { addChat('sys', 'connected · show your hand to begin'); onPeerConnected(); };
   dc.onclose = () => { if(state.phase !== 'ended') onPeerDisconnected(); };
   dc.onmessage = (e) => {
     let msg; try{ msg = JSON.parse(e.data); }catch{ return; }
     handlePeerMessage(msg);
   };
 }
-function sendPeer(msg){
-  if(state.dataChannel?.readyState === 'open') state.dataChannel.send(JSON.stringify(msg));
-}
+function sendPeer(msg){ if(state.dataChannel?.readyState === 'open') state.dataChannel.send(JSON.stringify(msg)); }
 function onPeerConnected(){
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
   $('#handPrompt').style.display = '';
   startReadySystem();
-  state.pingTimer = setInterval(() => {
-    sendPeer({type:'ping', t: Date.now()});
-  }, 2000);
+  state.pingTimer = setInterval(() => { sendPeer({type:'ping', t: Date.now()}); }, 2000);
 }
 function handlePeerMessage(msg){
   switch(msg.type){
@@ -3400,26 +4008,11 @@ function handlePeerMessage(msg){
       updateOppReadyUI(msg.ready, msg.progress);
       maybeStartRound();
       break;
-    case 'gesture':
-      state.oppGesture = msg.value;
-      revealIfBothIn();
-      break;
-    case 'chat':
-      addChat('opp', msg.text);
-      break;
-    case 'ping':
-      sendPeer({type:'pong', t: msg.t});
-      break;
-    case 'pong':
-      state.oppPingMs = Date.now() - msg.t;
-      updatePingDisplay();
-      break;
-    case 'start_round':
-      runCountdown();
-      break;
-    case 'reset':
-      resetRound();
-      break;
+    case 'gesture': state.oppGesture = msg.value; revealIfBothIn(); break;
+    case 'chat': addChat('opp', msg.text); break;
+    case 'ping': sendPeer({type:'pong', t: msg.t}); break;
+    case 'pong': state.oppPingMs = Date.now() - msg.t; updatePingDisplay(); break;
+    case 'start_round': runCountdown(); break;
   }
 }
 function updatePingDisplay(){
@@ -3432,12 +4025,9 @@ function updatePingDisplay(){
   else if(p > 100) box.classList.add('weak');
 }
 
-// ============= HAND-READY SYSTEM =============
-// You become "ready" by holding any stable gesture for ~900ms.
-// Both players ready → countdown auto-starts.
+// ============= HAND-READY =============
 const READY_HOLD_MS = 900;
 let lastFrameTime = performance.now();
-let lastSentReady = null;
 let lastSentProgress = -1;
 function startReadySystem(){
   state.myGestureReady = false;
@@ -3462,15 +4052,13 @@ function onGestureFrame(){
   if(isReady !== state.myGestureReady){
     state.myGestureReady = isReady;
     sendPeer({type:'ready_state', ready: isReady, progress });
-    lastSentReady = isReady;
     if(isReady) sfxReady();
     maybeStartRound();
   } else {
-    // throttled progress sync
-    const roundedProgress = Math.round(progress * 10);
-    if(roundedProgress !== lastSentProgress && state.dataChannel?.readyState === 'open'){
+    const r = Math.round(progress * 10);
+    if(r !== lastSentProgress){
       sendPeer({type:'ready_state', ready: isReady, progress });
-      lastSentProgress = roundedProgress;
+      lastSentProgress = r;
     }
   }
 }
@@ -3490,22 +4078,17 @@ function updateYouReadyUI(isReady, progress){
     pill.querySelector('.st').textContent = 'show hand';
   }
   if(isReady){
-    badge.classList.remove('charging');
-    badge.classList.add('ready');
-    pill.classList.remove('charging');
-    pill.classList.add('ready');
+    badge.classList.remove('charging'); badge.classList.add('ready');
+    pill.classList.remove('charging'); pill.classList.add('ready');
     ring.classList.add('active', 'full');
   } else {
-    badge.classList.remove('ready');
-    pill.classList.remove('ready');
+    badge.classList.remove('ready'); pill.classList.remove('ready');
     ring.classList.remove('full');
     if(progress > 0.01){
       ring.classList.add('active');
       ring.style.setProperty('--len', (progress * 100).toFixed(1));
       ring.style.setProperty('--total', '100');
-    } else {
-      ring.classList.remove('active');
-    }
+    } else ring.classList.remove('active');
   }
 }
 function updateOppReadyUI(isReady, progress){
@@ -3513,22 +4096,17 @@ function updateOppReadyUI(isReady, progress){
   const ring = $('#oppReadyRing');
   const pill = $('#readyPillOpp');
   if(isReady){
-    badge.classList.remove('charging');
-    badge.classList.add('ready');
+    badge.classList.remove('charging'); badge.classList.add('ready');
     badge.querySelector('span:last-child').textContent = 'ready!';
-    pill.classList.remove('charging');
-    pill.classList.add('ready');
+    pill.classList.remove('charging'); pill.classList.add('ready');
     pill.querySelector('.st').textContent = 'READY';
     ring.classList.add('active','full');
   } else if(progress > 0){
-    badge.classList.add('charging');
-    badge.classList.remove('ready');
+    badge.classList.add('charging'); badge.classList.remove('ready');
     badge.querySelector('span:last-child').textContent = `charging ${Math.round(progress*100)}%`;
-    pill.classList.add('charging');
-    pill.classList.remove('ready');
+    pill.classList.add('charging'); pill.classList.remove('ready');
     pill.querySelector('.st').textContent = `${Math.round(progress*100)}%`;
-    ring.classList.add('active');
-    ring.classList.remove('full');
+    ring.classList.add('active'); ring.classList.remove('full');
     ring.style.setProperty('--len', (progress * 100).toFixed(1));
     ring.style.setProperty('--total', '100');
   } else {
@@ -3542,14 +4120,11 @@ function updateOppReadyUI(isReady, progress){
 function maybeStartRound(){
   if(state.myGestureReady && state.oppGestureReady && state.phase === 'idle' && !state.countdownRunning){
     state.countdownRunning = true;
-    if(state.isCaller){
-      sendPeer({type:'start_round'});
-      runCountdown();
-    }
+    if(state.isCaller){ sendPeer({type:'start_round'}); runCountdown(); }
   }
 }
 
-// ============= ROUND FLOW =============
+// ============= ROUND =============
 function resetGameUI(){
   state.phase = 'idle';
   state.myGestureReady = false;
@@ -3583,11 +4158,9 @@ async function runCountdown(){
   cd.classList.remove('shoot');
   setText('#roundState', 'GET READY…');
   $('#oppDetected').querySelector('span:last-child').textContent = 'thinking…';
-  for(const b of ['3', '2', '1']){
+  for(const b of ['3','2','1']){
     cd.textContent = b;
-    cd.classList.remove('flash');
-    void cd.offsetWidth;
-    cd.classList.add('flash');
+    cd.classList.remove('flash'); void cd.offsetWidth; cd.classList.add('flash');
     sfxCountdown();
     await sleep(700);
   }
@@ -3595,9 +4168,7 @@ async function runCountdown(){
   cd.textContent = 'SHOOT!';
   cd.classList.add('shoot');
   setText('#roundState', 'THROW NOW');
-  $('#shootFlash').classList.remove('fire');
-  void $('#shootFlash').offsetWidth;
-  $('#shootFlash').classList.add('fire');
+  $('#shootFlash').classList.remove('fire'); void $('#shootFlash').offsetWidth; $('#shootFlash').classList.add('fire');
   sfxShoot();
   await sleep(220);
   state.myGesture = state.currentGesture;
@@ -3618,10 +4189,10 @@ function doReveal(){
   const yourMove = state.myGesture;
   const oppMove = state.oppGesture;
   if(oppMove){
-    const oppThrown = $('#oppThrown');
-    oppThrown.dataset.g = oppMove;
-    oppThrown.querySelector('svg').innerHTML = `<use href="#i-${oppMove}"/>`;
-    oppThrown.classList.add('show');
+    const ot = $('#oppThrown');
+    ot.dataset.g = oppMove;
+    ot.querySelector('svg').innerHTML = `<use href="#i-${oppMove}"/>`;
+    ot.classList.add('show');
     $('#oppDetected').classList.add('has');
     $('#oppDetected').querySelector('span:last-child').textContent = oppMove.toUpperCase();
   } else {
@@ -3647,7 +4218,7 @@ function doReveal(){
     if(state.streakType === 'L') state.streak++; else { state.streakType='L'; state.streak=1; }
   }
   updateScore();
-  updateProfileStats(result);
+  updateProfileStatsAndHistory(result, yourMove, oppMove);
 
   const youPickEl = $('#resultYouPick');
   const oppPickEl = $('#resultOppPick');
@@ -3682,9 +4253,7 @@ function doReveal(){
   setText('#roundState', result === 'draw' ? 'TIE — GO AGAIN' : (result === 'win' ? 'NICE THROW' : 'TOUGH LOSS'));
   state.phase = 'done';
   setTimeout(() => {
-    if(state.phase === 'done' && state.screen === 'game'){
-      resetRound();
-    }
+    if(state.phase === 'done' && state.screen === 'game') resetRound();
   }, 3000);
 }
 function updateScore(){
@@ -3704,48 +4273,38 @@ function updateScore(){
       sb.style.borderColor = 'rgba(255,61,104,.3)';
       sb.style.background = 'rgba(255,61,104,.06)';
     }
-  } else {
-    sb.style.display = 'none';
-  }
+  } else sb.style.display = 'none';
 }
 
-// ELO update
-function calcEloDelta(myRating, oppRating, score /* 1, 0.5, 0 */, K=24){
+function calcEloDelta(myRating, oppRating, score, K=24){
   const expected = 1 / (1 + Math.pow(10, (oppRating - myRating) / 400));
   return Math.round(K * (score - expected));
 }
 
-async function updateProfileStats(result){
+async function updateProfileStatsAndHistory(result, yourMove, oppMove){
   if(!state.user || !state.profile) return;
   let score = 0.5;
   if(result === 'win') score = 1;
   else if(result === 'lose' || result === 'forfeit') score = 0;
   const myRating = state.profile.rating || 1000;
   const oppRating = state.oppProfile?.rating || 1000;
+  const delta = calcEloDelta(myRating, oppRating, score);
 
-  let delta = 0;
-  // only rate-affecting in ranked mode
-  const isRanked = true; // we apply ELO to all matches for simplicity; could check matchMode === 'ranked'
-  if(isRanked){
-    delta = calcEloDelta(myRating, oppRating, score);
-  }
+  const oldRank = rankFromRating(myRating);
+  const newRating = myRating + delta;
+  const newRank = rankFromRating(newRating);
+  const rankedUp = newRank.index > oldRank.index;
+  const rankedDown = newRank.index < oldRank.index;
 
-  const updates = { games: increment(1), lastSeen: serverTimestamp() };
+  const updates = { games: increment(1), lastSeen: serverTimestamp(), rating: increment(delta) };
   if(result === 'win') updates.wins = increment(1);
   else if(result === 'lose' || result === 'forfeit') updates.losses = increment(1);
   else if(result === 'draw') updates.draws = increment(1);
-  if(isRanked) updates.rating = increment(delta);
-
-  // streak tracking
   if(result === 'win'){
-    const newStreak = (state.profile.currentStreak || 0) + 1;
-    updates.currentStreak = newStreak;
-    if(newStreak > (state.profile.bestStreak || 0)){
-      updates.bestStreak = newStreak;
-    }
-  } else if(result === 'lose' || result === 'forfeit'){
-    updates.currentStreak = 0;
-  }
+    const ns = (state.profile.currentStreak || 0) + 1;
+    updates.currentStreak = ns;
+    if(ns > (state.profile.bestStreak || 0)) updates.bestStreak = ns;
+  } else if(result === 'lose' || result === 'forfeit') updates.currentStreak = 0;
 
   try {
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
@@ -3753,28 +4312,96 @@ async function updateProfileStats(result){
     else if(result === 'lose' || result === 'forfeit') state.profile.losses = (state.profile.losses||0) + 1;
     else if(result === 'draw') state.profile.draws = (state.profile.draws||0) + 1;
     state.profile.games = (state.profile.games||0) + 1;
-    state.profile.rating = (state.profile.rating || 1000) + delta;
+    state.profile.rating = newRating;
     if(result === 'win'){
       state.profile.currentStreak = (state.profile.currentStreak || 0) + 1;
       state.profile.bestStreak = Math.max(state.profile.bestStreak || 0, state.profile.currentStreak);
     } else if(result === 'lose' || result === 'forfeit') state.profile.currentStreak = 0;
 
-    setText('#statRating', state.profile.rating);
-    setText('#chipRating', state.profile.rating);
-    setText('#statWins', state.profile.wins);
-    setText('#statLosses', state.profile.losses);
-    setText('#statDraws', state.profile.draws);
-    setText('#statBestStreak', state.profile.bestStreak || 0);
+    refreshStatsUI();
+    updateChipRating();
 
-    // show rating delta
+    // show rating delta in result panel
     if(delta !== 0){
       const rd = $('#ratingDelta');
       rd.classList.remove('up','down');
-      if(delta > 0){ rd.classList.add('up'); rd.textContent = `+${delta} rating · now ${state.profile.rating}`; }
-      else { rd.classList.add('down'); rd.textContent = `${delta} rating · now ${state.profile.rating}`; }
+      if(delta > 0){ rd.classList.add('up'); rd.textContent = `+${delta} rating · now ${newRating}`; }
+      else { rd.classList.add('down'); rd.textContent = `${delta} rating · now ${newRating}`; }
       rd.style.display = '';
     }
+
+    // save match history (one entry per player)
+    await addDoc(collection(state.db, 'matchHistory'), {
+      uid: state.user.uid,
+      username: state.profile.username,
+      oppUid: state.oppUid,
+      oppUsername: state.oppProfile?.username || '',
+      result,
+      delta,
+      myMove: yourMove || null,
+      oppMove: oppMove || null,
+      ratingBefore: myRating,
+      ratingAfter: newRating,
+      createdAt: serverTimestamp(),
+    });
+
+    // save to activity feed (so friends see it)
+    await addDoc(collection(state.db, 'activity'), {
+      uid: state.user.uid,
+      username: state.profile.username,
+      colorIdx: state.profile.colorIdx || 0,
+      emoji: state.profile.emoji || '',
+      result,
+      oppUsername: state.oppProfile?.username || '',
+      delta,
+      createdAt: serverTimestamp(),
+    });
+
+    // rank up?
+    if(rankedUp){
+      state.pendingRankUp = { from: oldRank, to: newRank };
+      // show after result panel has displayed
+      setTimeout(() => showRankUp(oldRank, newRank), 1500);
+    } else if(rankedDown){
+      toast(`Demoted to ${newRank.tierName}`, 'error');
+    }
   } catch(e){ console.warn('stat update fail', e); }
+}
+
+// ============= RANK UP =============
+function showRankUp(oldRank, newRank){
+  const overlay = $('#rankupOverlay');
+  setText('#rankupRankName', newRank.name.toUpperCase());
+  $('#rankupRankName').style.setProperty('--rank-color', newRank.color);
+  $('#rankupBadge').style.setProperty('--rank-color', newRank.color);
+  setRankIconEl($('#rankupIcon'), newRank.id);
+  $('#rankupIcon').style.color = newRank.color;
+  $('#rankupIcon').style.filter = `drop-shadow(0 0 8px ${newRank.color})`;
+  setText('#rankupTierName', newRank.tierName.toUpperCase());
+  setText('#rankupSub', `${state.profile.rating} RATING`);
+  setText('#rankupFrom', `from ${oldRank.tierName}`);
+  overlay.classList.add('show');
+
+  // confetti bursts in rank color
+  setTimeout(() => bigBurst(newRank.color), 200);
+  setTimeout(() => bigBurst(newRank.color2), 500);
+  setTimeout(() => bigBurst('#ffffff'), 800);
+  sfxRankUp();
+
+  // dismiss on click
+  const dismiss = () => {
+    overlay.classList.remove('show');
+    overlay.removeEventListener('click', dismiss);
+    document.removeEventListener('keydown', keydismiss);
+  };
+  const keydismiss = (e) => { if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); } };
+  setTimeout(() => {
+    overlay.addEventListener('click', dismiss);
+    document.addEventListener('keydown', keydismiss);
+  }, 800);
+
+  // auto-dismiss after 6s if no click
+  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 6000);
 }
 
 // ============= CHAT =============
@@ -3816,7 +4443,6 @@ async function handleRemoteLeft(){
   setTimeout(() => nextStranger(), 2000);
 }
 function onPeerDisconnected(){ if(state.phase !== 'ended') handleRemoteLeft(); }
-
 async function teardownMatch(){
   if(state.pingTimer){ clearInterval(state.pingTimer); state.pingTimer = null; }
   if(state.unsubMatch){ state.unsubMatch(); state.unsubMatch = null; }
@@ -3841,37 +4467,26 @@ async function teardownMatch(){
     state.matchId = null;
   }
   state.remoteStream = null;
-  state.oppUid = null;
-  state.oppProfile = null;
-  state.scoreYou = 0;
-  state.scoreOpp = 0;
-  state.streak = 0;
-  state.streakType = null;
+  state.oppUid = null; state.oppProfile = null;
+  state.scoreYou = 0; state.scoreOpp = 0;
+  state.streak = 0; state.streakType = null;
   state.phase = 'idle';
   $('#oppVideo').srcObject = null;
   clearChat();
 }
-
 async function nextStranger(){
   await teardownMatch();
   await findMatch();
 }
 
-// ============= MODE TOGGLES =============
-$('#optQuick').classList.add('active');
-$('#optQuick').addEventListener('click', () => {
-  state.matchMode = 'quick';
-  $('#optQuick').classList.add('active');
-  $('#optRanked').classList.remove('active');
-});
-$('#optRanked').addEventListener('click', () => {
-  state.matchMode = 'ranked';
-  $('#optRanked').classList.add('active');
-  $('#optQuick').classList.remove('active');
-});
+// ============= TOGGLES =============
 $('#optRegion').addEventListener('click', () => {
   state.sameRegion = !state.sameRegion;
   $('#optRegion').classList.toggle('active', state.sameRegion);
+});
+$('#optRanged').addEventListener('click', () => {
+  state.similarRank = !state.similarRank;
+  $('#optRanged').classList.toggle('active', state.similarRank);
 });
 
 // ============= EVENTS =============
@@ -3887,24 +4502,26 @@ $('#findBtn').addEventListener('click', async () => {
 $('#cancelMatchBtn').addEventListener('click', cancelMatchmaking);
 $('#nextBtn').addEventListener('click', nextStranger);
 $('#helpBtn').addEventListener('click', () => $('#helpModal').classList.add('show'));
-
-// modal closes
 document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
 });
 document.querySelectorAll('.modal-bg').forEach(m => {
   m.addEventListener('click', (e) => { if(e.target === m) m.classList.remove('show'); });
 });
-
 document.addEventListener('keydown', (e) => {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  if(state.screen === 'landing' && e.code === 'Space'){
-    e.preventDefault();
-    $('#findBtn').click();
-  }
+  if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn').click(); }
   if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStranger(); }
 });
-
+document.querySelectorAll('.code-block .copy').forEach(b => {
+  b.addEventListener('click', () => {
+    const text = $('#' + b.dataset.copy + '-text').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      b.textContent = 'copied!';
+      setTimeout(() => b.textContent = 'copy', 1500);
+    });
+  });
+});
 window.addEventListener('beforeunload', () => {
   try {
     if(state.user) deleteDoc(doc(state.db, 'queue', state.user.uid));
@@ -3913,12 +4530,12 @@ window.addEventListener('beforeunload', () => {
 });
 
 // ============= INIT =============
-setupSetupUI();
 setupAuthUI();
-(async () => {
-  const auto = await tryAutoInit();
-  if(!auto) showScreen('setup');
-})();
+if(isConfigured()){
+  initFirebase();
+} else {
+  showScreen('noconfig');
+}
 </script>
 </body>
 </html>
