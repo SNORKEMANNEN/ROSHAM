@@ -222,6 +222,19 @@ header{
   font-weight:600;
 }
 .btn-google:hover{background:#f3f3f3;}
+.btn-bot{
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border-color: var(--surface-3);
+  color:var(--text);
+  font-weight:600;
+  padding:14px 20px;
+  font-size:14px;
+}
+.btn-bot:hover{
+  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  border-color: var(--violet);
+  color:var(--violet);
+}
 .btn-danger{
   background:rgba(255,92,111,.08);
   border-color:rgba(255,92,111,.3);
@@ -1552,17 +1565,166 @@ h2.match-title{
 }
 .color-pick button.active{border-color:#fff; transform:scale(1.1);}
 
-.emoji-pick{display:grid; grid-template-columns: repeat(8, 1fr); gap:6px;}
-.emoji-pick button{
-  width:36px; height:36px; border-radius:8px;
-  background:var(--surface-2); border:1px solid var(--line);
+/* Photo upload + cropper */
+.photo-section{display:flex; flex-direction:column; gap:12px;}
+.photo-preview{
+  display:flex; gap:14px; align-items:center;
+}
+.photo-preview .av-show{
+  width:80px; height:80px; border-radius:50%;
+  background-color: var(--surface-2);
+  background-size: cover;
+  background-position: center;
+  border:2px solid var(--line);
+  flex-shrink:0;
+  position:relative;
+  overflow:hidden;
+}
+.photo-preview .av-show.no-photo{
+  display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:700; font-size:32px;
+  color:#fff;
+}
+.photo-actions{display:flex; flex-direction:column; gap:8px; flex:1;}
+.photo-actions .row{display:flex; gap:8px;}
+.btn-upload{
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:10px 14px;
+  border-radius:10px;
+  font-family:var(--font-body); font-weight:600; font-size:13px;
   cursor:pointer;
-  font-size:20px;
+  display:inline-flex; align-items:center; gap:8px;
+  transition: all .15s;
+}
+.btn-upload:hover{background:var(--surface-3); border-color:var(--coral); color:var(--coral);}
+.btn-upload-remove{
+  background:rgba(255,92,111,.08);
+  border:1px solid rgba(255,92,111,.3);
+  color:var(--error);
+}
+.btn-upload-remove:hover{background:rgba(255,92,111,.15); border-color:var(--error);}
+
+/* Cropper modal */
+.cropper-stage{
+  width:100%;
+  aspect-ratio: 1;
+  max-width: 360px;
+  margin: 0 auto 16px;
+  position:relative;
+  background:#000;
+  border-radius:16px;
+  overflow:hidden;
+  cursor:grab;
+  touch-action:none;
+  user-select:none;
+}
+.cropper-stage:active{cursor:grabbing;}
+.cropper-canvas{
+  position:absolute; inset:0;
+  width:100%; height:100%;
+  display:block;
+}
+.cropper-overlay{
+  position:absolute; inset:0;
+  pointer-events:none;
+  background: radial-gradient(circle at center, transparent 49%, rgba(0,0,0,.65) 50%);
+}
+.cropper-overlay::after{
+  content:"";
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width: 98%;
+  height: 98%;
+  border-radius:50%;
+  border:2px dashed rgba(255,255,255,.4);
+  pointer-events:none;
+}
+.cropper-controls{
+  display:flex; align-items:center; gap:10px;
+  margin-bottom:14px;
+}
+.cropper-controls label{
+  font-family:var(--font-mono); font-size:10px;
+  color:var(--text-faint);
+  letter-spacing:.08em; text-transform:uppercase;
+  flex-shrink:0;
+}
+.cropper-controls input[type=range]{
+  flex:1;
+  -webkit-appearance:none; appearance:none;
+  background:var(--surface-2);
+  height:6px;
+  border-radius:3px;
+  outline:none;
+}
+.cropper-controls input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none; appearance:none;
+  width:18px; height:18px;
+  background: var(--coral);
+  border-radius:50%;
+  cursor:pointer;
+  border:2px solid #fff;
+  box-shadow: 0 2px 8px rgba(255,61,104,.5);
+}
+.cropper-controls input[type=range]::-moz-range-thumb{
+  width:18px; height:18px;
+  background: var(--coral);
+  border-radius:50%;
+  cursor:pointer;
+  border:2px solid #fff;
+}
+.cropper-buttons{
+  display:flex; gap:8px; justify-content:center;
+  margin-bottom:14px;
+  flex-wrap:wrap;
+}
+.cropper-iconbtn{
+  width:40px; height:40px;
+  border-radius:10px;
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  color:var(--text);
+  cursor:pointer;
   display:grid; place-items:center;
   transition: all .15s;
 }
-.emoji-pick button:hover{background:var(--surface-3); transform:scale(1.1);}
-.emoji-pick button.active{background:var(--coral); border-color:var(--coral);}
+.cropper-iconbtn:hover{background:var(--surface-3); border-color:var(--coral); color:var(--coral);}
+.cropper-iconbtn svg{width:16px; height:16px;}
+.cropper-hint{
+  font-family:var(--font-mono); font-size:11px;
+  color:var(--text-faint);
+  text-align:center;
+  margin-bottom:14px;
+  letter-spacing:.04em;
+}
+
+/* Bot avatar */
+.opp-avatar-big.bot-av{
+  background: linear-gradient(135deg, #2a1f3d, #5a3d80);
+  display:grid; place-items:center;
+  font-size:80px;
+}
+.bot-vision{
+  position:absolute; inset:0;
+  pointer-events:none;
+}
+.bot-vision::before{
+  content:"";
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:200px; height:200px;
+  border-radius:50%;
+  background: radial-gradient(circle, rgba(164,139,255,.25), transparent 70%);
+  animation: botPulse 2.5s ease-in-out infinite;
+}
+@keyframes botPulse{
+  0%, 100%{transform:translate(-50%,-50%) scale(.8); opacity:.6;}
+  50%{transform:translate(-50%,-50%) scale(1.1); opacity:1;}
+}
 
 .cam-status{
   position:absolute; left:14px; top:14px;
@@ -1705,6 +1867,13 @@ h2.match-title{
     <symbol id="i-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
     <symbol id="i-activity" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
     <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 4v4M8 13h.01M16 13h.01M9 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="12" cy="4" r="1.5" fill="currentColor"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M21 21l-4.3-4.3M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.48 12c0-.73.13-1.44.36-2.1V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></symbol>
     <!-- RANK ICONS -->
     <symbol id="i-rank-bronze" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/></symbol>
@@ -1835,13 +2004,10 @@ service cloud.firestore {
               <div class="code-block">
 <span style="color:var(--text-faint);">// Find this near the top of the &lt;script type="module"&gt; section:</span>
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCepMBXyr7uxW242CfFYGCp6V2lSJ0dYIo",
-  authDomain: "rosham-26c38.firebaseapp.com",
-  projectId: "rosham-26c38",
-  storageBucket: "rosham-26c38.firebasestorage.app",
-  messagingSenderId: "33374172620",
-  appId: "1:33374172620:web:c6cdc9a630add058b2d969",
-  measurementId: "G-1TCWY3Q58Y"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  appId: "1:..."
 };
               </div>
             </div>
@@ -1960,6 +2126,10 @@ const FIREBASE_CONFIG = {
                 <button class="btn-cta" id="findBtn">
                   <svg><use href="#i-play"/></svg>
                   Find a stranger
+                </button>
+                <button class="btn btn-bot" id="botBtn" title="Practice against the AI bot (offline)">
+                  <svg width="14" height="14"><use href="#i-bot"/></svg>
+                  Play vs bot
                 </button>
                 <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-faint);">or press <b style="color:var(--text);">SPACE</b></span>
               </div>
@@ -2284,13 +2454,32 @@ const FIREBASE_CONFIG = {
         <textarea name="bio" maxlength="140" placeholder="say something about yourself"></textarea>
       </div>
       <div class="field">
-        <label>Avatar</label>
-        <div class="av-picker-tabs">
-          <button type="button" class="active" data-pickertype="emoji">Emoji</button>
-          <button type="button" data-pickertype="color">Color</button>
+        <label>Profile photo</label>
+        <div class="photo-section">
+          <div class="photo-preview">
+            <div class="av-show no-photo" id="editAvPreview">?</div>
+            <div class="photo-actions">
+              <div class="row">
+                <button type="button" class="btn-upload" id="pickPhotoBtn">
+                  <svg width="14" height="14"><use href="#i-camera"/></svg>
+                  Upload photo
+                </button>
+                <button type="button" class="btn-upload btn-upload-remove" id="removePhotoBtn" style="display:none;">
+                  <svg width="14" height="14"><use href="#i-trash"/></svg>
+                  Remove
+                </button>
+              </div>
+              <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.04em;">
+                JPG or PNG · max 5MB · square crop
+              </div>
+            </div>
+          </div>
+          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />
         </div>
-        <div class="emoji-pick" id="emojiPick"></div>
-        <div class="color-pick" id="colorPick" style="display:none;"></div>
+      </div>
+      <div class="field">
+        <label>Fallback color (shown if no photo)</label>
+        <div class="color-pick" id="colorPick"></div>
       </div>
       <div class="error-msg" id="editError"></div>
       <div class="modal-actions" style="justify-content:space-between;">
@@ -2308,6 +2497,34 @@ const FIREBASE_CONFIG = {
     <h3>BLOCKED USERS</h3>
     <p>Blocked players won't match with you and can't send you challenges or friend requests.</p>
     <div class="mh-list" id="blockedList"></div>
+  </div>
+</div>
+
+<!-- PHOTO CROPPER MODAL -->
+<div class="modal-bg" id="cropperModal">
+  <div class="modal">
+    <button class="modal-close" data-close="cropperModal"><svg><use href="#i-close"/></svg></button>
+    <h3>CROP YOUR PHOTO</h3>
+    <p>Drag to reposition · use the zoom slider · rotate with the buttons. Photo is cropped to a circle.</p>
+    <div class="cropper-stage" id="cropperStage">
+      <canvas class="cropper-canvas" id="cropperCanvas"></canvas>
+      <div class="cropper-overlay"></div>
+    </div>
+    <div class="cropper-controls">
+      <label>Zoom</label>
+      <input type="range" id="cropZoom" min="1" max="4" step="0.01" value="1" />
+    </div>
+    <div class="cropper-buttons">
+      <button type="button" class="cropper-iconbtn" id="cropRotateLeft" title="Rotate left"><svg style="transform:scaleX(-1);"><use href="#i-rotate"/></svg></button>
+      <button type="button" class="cropper-iconbtn" id="cropZoomOut" title="Zoom out"><svg><use href="#i-zoom-out"/></svg></button>
+      <button type="button" class="cropper-iconbtn" id="cropZoomIn" title="Zoom in"><svg><use href="#i-zoom-in"/></svg></button>
+      <button type="button" class="cropper-iconbtn" id="cropRotateRight" title="Rotate right"><svg><use href="#i-rotate"/></svg></button>
+    </div>
+    <div class="cropper-hint">tip: scroll to zoom, drag to pan</div>
+    <div class="modal-actions">
+      <button type="button" class="btn" data-close="cropperModal">Cancel</button>
+      <button type="button" class="btn btn-primary" id="cropApplyBtn">Apply photo</button>
+    </div>
   </div>
 </div>
 
@@ -2353,13 +2570,10 @@ import {
    ROSHAM v4 — paste your Firebase config below
    ========================================================= */
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCepMBXyr7uxW242CfFYGCp6V2lSJ0dYIo",
-  authDomain: "rosham-26c38.firebaseapp.com",
-  projectId: "rosham-26c38",
-  storageBucket: "rosham-26c38.firebasestorage.app",
-  messagingSenderId: "33374172620",
-  appId: "1:33374172620:web:c6cdc9a630add058b2d969",
-  measurementId: "G-1TCWY3Q58Y",
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  appId: "YOUR_APP_ID",
 };
 
 function isConfigured(){
@@ -2416,12 +2630,7 @@ const AVATAR_COLORS = [
   'linear-gradient(135deg, #c0392b, #8e44ad)',
 ];
 
-const AVATAR_EMOJIS = [
-  '🦊','🐺','🦁','🐯','🐻','🐼','🐨','🐸',
-  '🦄','🐲','👽','🤖','👻','💀','🦇','🐙',
-  '🔥','⚡','🌙','⭐','💎','🎯','🎮','🎲',
-  '🥷','🧙','🧛','🧟','🦹','🦸','👑','🤠',
-];
+const AVATAR_EMOJIS = []; // kept empty for backward-compat references
 
 // ============= RANK SYSTEM =============
 // 7 ranks × 3 tiers = 21 levels.
@@ -2608,15 +2817,20 @@ function setRankIconEl(el, rankId){
   RANKS.forEach(x => el.classList.remove(x.cls));
   el.classList.add(r.cls);
 }
-// Render an avatar's inner content (emoji or initial) and apply background
+// Render an avatar — photo if available, else colored initial
 function renderAvatar(el, profile){
   if(!el) return;
   const colorIdx = profile.colorIdx || 0;
-  if(profile.emoji){
-    el.innerHTML = `<span class="emoji-av">${profile.emoji}</span>`;
-    el.style.background = AVATAR_COLORS[colorIdx];
+  if(profile.photoURL){
+    el.innerHTML = '';
+    el.style.backgroundImage = `url(${profile.photoURL})`;
+    el.style.backgroundSize = 'cover';
+    el.style.backgroundPosition = 'center';
+    el.style.backgroundColor = 'transparent';
+    el.style.background = `center/cover no-repeat url("${profile.photoURL.replace(/"/g,'\\"')}")`;
   } else {
     el.textContent = initialOf(profile.username);
+    el.style.backgroundImage = 'none';
     el.style.background = AVATAR_COLORS[colorIdx];
   }
 }
@@ -2835,8 +3049,7 @@ async function onAuthChanged(user){
       } else {
         const username = 'guest_' + user.uid.slice(0,6);
         const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
-        const emoji = AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)];
-        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, colorIdx, emoji, bio:'', isAnon:true, friends:[], blocked:[] };
+        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, colorIdx, photoURL:'', bio:'', isAnon:true, friends:[], blocked:[] };
         await setDoc(ref, { ...state.profile, createdAt: serverTimestamp(), lastSeen: serverTimestamp() });
       }
     } else {
@@ -2964,17 +3177,7 @@ function setupAuthUI(){
   populate('#newUserCountry');
   populate('#editCountry');
 
-  // emoji + color pickers
-  const ep = $('#emojiPick');
-  AVATAR_EMOJIS.forEach(e => {
-    const b = document.createElement('button');
-    b.type = 'button'; b.textContent = e; b.dataset.emoji = e;
-    b.addEventListener('click', () => {
-      ep.querySelectorAll('button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-    });
-    ep.appendChild(b);
-  });
+  // color picker
   const cp = $('#colorPick');
   AVATAR_COLORS.forEach((color, i) => {
     const b = document.createElement('button');
@@ -2984,15 +3187,6 @@ function setupAuthUI(){
       b.classList.add('active');
     });
     cp.appendChild(b);
-  });
-  document.querySelectorAll('.av-picker-tabs button').forEach(b => {
-    b.addEventListener('click', () => {
-      document.querySelectorAll('.av-picker-tabs button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      const t = b.dataset.pickertype;
-      $('#emojiPick').style.display = t === 'emoji' ? '' : 'none';
-      $('#colorPick').style.display = t === 'color' ? '' : 'none';
-    });
   });
 
   $('#signinForm').addEventListener('submit', async (e) => {
@@ -3064,12 +3258,11 @@ async function reserveUsername(username, uid, checkOnly=false){
 async function createProfile(uid, username, country){
   await reserveUsername(username, uid);
   const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
-  const emoji = AVATAR_EMOJIS[Math.floor(Math.random() * AVATAR_EMOJIS.length)];
   await setDoc(doc(state.db, 'users', uid), {
     uid, username, country,
     wins:0, losses:0, draws:0, games:0,
     rating: 1000, bestStreak: 0, currentStreak: 0,
-    bio: '', colorIdx, emoji,
+    bio: '', colorIdx, photoURL: '',
     createdAt: serverTimestamp(),
     lastSeen: serverTimestamp(),
     friends: [], blocked: [],
@@ -3151,11 +3344,12 @@ async function renderFriends(){
       const rank = rankFromRating(f.rating || 1000);
       const row = document.createElement('div');
       row.className = 'friend-row';
-      const avInner = f.emoji
-        ? `<span class="emoji-av">${escapeHTML(f.emoji)}</span>`
-        : escapeHTML(initialOf(f.username));
+      const avStyle = f.photoURL
+        ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;`
+        : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
+      const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
       row.innerHTML = `
-        <div class="av" style="background:${AVATAR_COLORS[f.colorIdx||0]}">${avInner}</div>
+        <div class="av" style="${avStyle}">${avInner}</div>
         <div class="meta">
           <div class="nm">${escapeHTML(f.username)} <svg class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
           <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
@@ -3200,13 +3394,14 @@ async function renderRequests(){
   $('#reqBadge').style.display = '';
   $('#reqBadge').textContent = visible.length;
   for(const r of visible){
-    const avInner = r.fromEmoji
-      ? `<span class="emoji-av">${escapeHTML(r.fromEmoji)}</span>`
-      : escapeHTML(initialOf(r.fromUsername));
+    const avStyle = r.fromPhotoURL
+      ? `background-image:url('${r.fromPhotoURL}'); background-size:cover; background-position:center;`
+      : `background:${AVATAR_COLORS[r.fromColorIdx||0]};`;
+    const avInner = r.fromPhotoURL ? '' : escapeHTML(initialOf(r.fromUsername));
     const row = document.createElement('div');
     row.className = 'req-row';
     row.innerHTML = `
-      <div class="av" style="background:${AVATAR_COLORS[r.fromColorIdx||0]}">${avInner}</div>
+      <div class="av" style="${avStyle}">${avInner}</div>
       <div class="meta">
         <div class="nm">${escapeHTML(r.fromUsername)}</div>
         <div class="sub">wants to be your friend</div>
@@ -3243,7 +3438,7 @@ async function addFriendByUsername(username){
       to: targetUid,
       fromUsername: state.profile.username,
       fromColorIdx: state.profile.colorIdx || 0,
-      fromEmoji: state.profile.emoji || '',
+      fromPhotoURL: state.profile.photoURL || '',
       createdAt: serverTimestamp(),
     });
     toast('Friend request sent', 'success');
@@ -3284,7 +3479,7 @@ async function sendChallenge(targetUid){
       to: targetUid,
       fromUsername: state.profile.username,
       fromColorIdx: state.profile.colorIdx || 0,
-      fromEmoji: state.profile.emoji || '',
+      fromPhotoURL: state.profile.photoURL || '',
       fromRating: state.profile.rating || 1000,
       fromCountry: state.profile.country || 'XX',
       createdAt: serverTimestamp(),
@@ -3301,7 +3496,7 @@ function handleIncomingChallenge(inv){
   setText('#chalName', '@' + inv.fromUsername);
   const rank = rankFromRating(inv.fromRating || 1000);
   setText('#chalSub', `${flagOf(inv.fromCountry)} · ${inv.fromRating || 1000} · ${rank.tierName}`);
-  renderAvatar($('#chalAv'), { username: inv.fromUsername, emoji: inv.fromEmoji, colorIdx: inv.fromColorIdx });
+  renderAvatar($('#chalAv'), { username: inv.fromUsername, photoURL: inv.fromPhotoURL, colorIdx: inv.fromColorIdx });
   $('#challengeModal').classList.add('show');
   sfxNotify();
 }
@@ -3332,7 +3527,7 @@ async function createDirectMatch(oppUid, inv){
     const caller = uid < oppUid ? uid : oppUid;
     const callee = uid < oppUid ? oppUid : uid;
     const oppDoc = await getDoc(doc(state.db, 'users', oppUid));
-    const oppProf = oppDoc.exists() ? oppDoc.data() : { username: inv.fromUsername, country: inv.fromCountry, rating: inv.fromRating, colorIdx: inv.fromColorIdx, emoji: inv.fromEmoji };
+    const oppProf = oppDoc.exists() ? oppDoc.data() : { username: inv.fromUsername, country: inv.fromCountry, rating: inv.fromRating, colorIdx: inv.fromColorIdx, photoURL: inv.fromPhotoURL };
     const newMatchRef = await addDoc(collection(state.db, 'matches'), {
       caller, callee,
       callerProfile: caller === uid ? trimProfile(state.profile) : trimProfile(oppProf),
@@ -3357,7 +3552,7 @@ function trimProfile(p){
     country: p.country || 'XX',
     rating: p.rating || 1000,
     colorIdx: p.colorIdx || 0,
-    emoji: p.emoji || '',
+    photoURL: p.photoURL || '',
     wins: p.wins || 0, losses: p.losses || 0, games: p.games || 0, bestStreak: p.bestStreak || 0,
     bio: p.bio || '',
   };
@@ -3388,14 +3583,15 @@ function renderLeaderboard(){
   state.leaderboard.forEach((p, i) => {
     const rankCls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
     const rank = rankFromRating(p.rating || 1000);
-    const avInner = p.emoji
-      ? `<span class="emoji-av">${escapeHTML(p.emoji)}</span>`
-      : escapeHTML(initialOf(p.username));
+    const avStyle = p.photoURL
+      ? `background-image:url('${p.photoURL}'); background-size:cover; background-position:center;`
+      : `background:${AVATAR_COLORS[p.colorIdx||0]};`;
+    const avInner = p.photoURL ? '' : escapeHTML(initialOf(p.username));
     const row = document.createElement('div');
     row.className = 'lb-row';
     row.innerHTML = `
       <div class="rank-num ${rankCls}">${i+1}</div>
-      <div class="av" style="background:${AVATAR_COLORS[p.colorIdx||0]}">${avInner}</div>
+      <div class="av" style="${avStyle}">${avInner}</div>
       <div class="meta">
         <div class="nm">${escapeHTML(p.username)} <svg class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
         <div class="sub">${flagOf(p.country)} · ${p.wins||0}W ${p.losses||0}L</div>
@@ -3432,9 +3628,10 @@ function renderActivity(){
     return;
   }
   for(const a of visible.slice(0, 20)){
-    const avInner = a.emoji
-      ? `<span class="emoji-av">${escapeHTML(a.emoji)}</span>`
-      : escapeHTML(initialOf(a.username));
+    const avStyle = a.photoURL
+      ? `background-image:url('${a.photoURL}'); background-size:cover; background-position:center;`
+      : `background:${AVATAR_COLORS[a.colorIdx||0]};`;
+    const avInner = a.photoURL ? '' : escapeHTML(initialOf(a.username));
     const resultStr = a.result === 'win' ? `<span class="win">won</span>` : a.result === 'lose' ? `<span class="lose">lost</span>` : `<span class="draw">drew</span>`;
     const oppStr = a.oppUsername ? ` vs <b>${escapeHTML(a.oppUsername)}</b>` : '';
     const deltaStr = (a.delta != null && a.delta !== 0)
@@ -3443,7 +3640,7 @@ function renderActivity(){
     const row = document.createElement('div');
     row.className = 'activity-row';
     row.innerHTML = `
-      <div class="av" style="background:${AVATAR_COLORS[a.colorIdx||0]}">${avInner}</div>
+      <div class="av" style="${avStyle}">${avInner}</div>
       <div class="body">
         <div class="b-text"><b>${escapeHTML(a.username)}</b> ${resultStr}${oppStr}${deltaStr}</div>
         <div class="b-time">${timeAgo(a.createdAt)}</div>
@@ -3613,6 +3810,8 @@ async function toggleBlock(uid, username, doBlock){
 }
 
 // ============= EDIT PROFILE =============
+let pendingPhotoDataURL = null; // staged photo for save
+
 $('#userChip').addEventListener('click', () => openEditProfile());
 function openEditProfile(){
   const p = state.profile;
@@ -3620,20 +3819,47 @@ function openEditProfile(){
   $('#editCountry').value = p.country || 'XX';
   $('#editProfileForm textarea[name=bio]').value = p.bio || '';
   document.querySelectorAll('#colorPick button').forEach((b, i) => b.classList.toggle('active', i === (p.colorIdx || 0)));
-  document.querySelectorAll('#emojiPick button').forEach(b => b.classList.toggle('active', b.dataset.emoji === p.emoji));
-  // default to emoji tab if has emoji
-  document.querySelectorAll('.av-picker-tabs button').forEach(b => b.classList.remove('active'));
-  if(p.emoji){
-    document.querySelector('.av-picker-tabs button[data-pickertype=emoji]').classList.add('active');
-    $('#emojiPick').style.display = '';
-    $('#colorPick').style.display = 'none';
-  } else {
-    document.querySelector('.av-picker-tabs button[data-pickertype=color]').classList.add('active');
-    $('#emojiPick').style.display = 'none';
-    $('#colorPick').style.display = '';
-  }
+  pendingPhotoDataURL = null;
+  updateEditPhotoPreview(p.photoURL || null);
   $('#editProfileModal').classList.add('show');
 }
+
+function updateEditPhotoPreview(photoURL){
+  const el = $('#editAvPreview');
+  if(photoURL){
+    el.classList.remove('no-photo');
+    el.textContent = '';
+    el.style.backgroundImage = `url(${photoURL})`;
+    $('#removePhotoBtn').style.display = '';
+  } else {
+    el.classList.add('no-photo');
+    el.textContent = initialOf(state.profile.username);
+    el.style.backgroundImage = '';
+    el.style.background = AVATAR_COLORS[state.profile.colorIdx || 0];
+    $('#removePhotoBtn').style.display = 'none';
+  }
+}
+
+$('#pickPhotoBtn').addEventListener('click', () => $('#photoInput').click());
+$('#removePhotoBtn').addEventListener('click', () => {
+  pendingPhotoDataURL = '';
+  updateEditPhotoPreview(null);
+});
+$('#photoInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 5 * 1024 * 1024){
+    toast('Photo too big (max 5MB)', 'error');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    openCropper(ev.target.result);
+  };
+  reader.readAsDataURL(file);
+  e.target.value = ''; // reset so same file can be picked again
+});
+
 $('#editProfileForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   showErr('#editError', '');
@@ -3643,9 +3869,6 @@ $('#editProfileForm').addEventListener('submit', async (e) => {
   const newBio = (fd.get('bio') || '').trim();
   const activeColor = document.querySelector('#colorPick button.active');
   const newColorIdx = activeColor ? parseInt(activeColor.dataset.idx) : (state.profile.colorIdx || 0);
-  const activeEmoji = document.querySelector('#emojiPick button.active');
-  const activeTab = document.querySelector('.av-picker-tabs button.active').dataset.pickertype;
-  const newEmoji = activeTab === 'emoji' ? (activeEmoji ? activeEmoji.dataset.emoji : '') : '';
 
   if(!/^[a-zA-Z0-9_]{2,20}$/.test(newUsername)){
     showErr('#editError', 'Username must be 2-20 chars (letters, numbers, underscore)');
@@ -3657,16 +3880,22 @@ $('#editProfileForm').addEventListener('submit', async (e) => {
       await reserveUsername(newUsername, state.user.uid);
       try { await deleteDoc(doc(state.db, 'usernames', state.profile.username.toLowerCase())); } catch(e){}
     }
-    await updateDoc(doc(state.db, 'users', state.user.uid), {
+    const updates = {
       username: newUsername, country: newCountry, bio: newBio,
-      colorIdx: newColorIdx, emoji: newEmoji,
-    });
-    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, colorIdx:newColorIdx, emoji:newEmoji };
+      colorIdx: newColorIdx,
+    };
+    if(pendingPhotoDataURL !== null){
+      updates.photoURL = pendingPhotoDataURL;
+    }
+    await updateDoc(doc(state.db, 'users', state.user.uid), updates);
+    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, colorIdx:newColorIdx };
+    if(pendingPhotoDataURL !== null) state.profile.photoURL = pendingPhotoDataURL;
     setText('#chipName', newUsername);
     renderAvatar($('#chipAv'), state.profile);
     refreshStatsUI();
     toast('Profile updated', 'success');
     $('#editProfileModal').classList.remove('show');
+    pendingPhotoDataURL = null;
   } catch(err){
     showErr('#editError', friendlyError(err));
   }
@@ -4000,7 +4229,7 @@ function setupDataChannel(dc){
     handlePeerMessage(msg);
   };
 }
-function sendPeer(msg){ if(state.dataChannel?.readyState === 'open') state.dataChannel.send(JSON.stringify(msg)); }
+let sendPeer = function(msg){ if(state.dataChannel?.readyState === 'open') state.dataChannel.send(JSON.stringify(msg)); };
 function onPeerConnected(){
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
   $('#handPrompt').style.display = '';
@@ -4287,7 +4516,7 @@ function calcEloDelta(myRating, oppRating, score, K=24){
   return Math.round(K * (score - expected));
 }
 
-async function updateProfileStatsAndHistory(result, yourMove, oppMove){
+let updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
   if(!state.user || !state.profile) return;
   let score = 0.5;
   if(result === 'win') score = 1;
@@ -4449,7 +4678,7 @@ async function handleRemoteLeft(){
   setTimeout(() => nextStranger(), 2000);
 }
 function onPeerDisconnected(){ if(state.phase !== 'ended') handleRemoteLeft(); }
-async function teardownMatch(){
+let teardownMatch = async function(){
   if(state.pingTimer){ clearInterval(state.pingTimer); state.pingTimer = null; }
   if(state.unsubMatch){ state.unsubMatch(); state.unsubMatch = null; }
   if(state.unsubCallerCands){ state.unsubCallerCands(); state.unsubCallerCands = null; }
@@ -4485,6 +4714,418 @@ async function nextStranger(){
   await findMatch();
 }
 
+// ============= PHOTO CROPPER =============
+const cropper = {
+  img: null,           // HTMLImageElement
+  canvas: null, ctx: null,
+  stage: null,
+  imgScale: 1,         // user zoom (1..4)
+  baseScale: 1,        // fit-to-stage scale
+  rotation: 0,         // degrees
+  tx: 0, ty: 0,        // pan offset in stage pixels
+  dragging: false, lastX: 0, lastY: 0,
+  pinchDist: 0,
+};
+
+function openCropper(dataURL){
+  const img = new Image();
+  img.onload = () => {
+    cropper.img = img;
+    cropper.canvas = $('#cropperCanvas');
+    cropper.stage = $('#cropperStage');
+    cropper.ctx = cropper.canvas.getContext('2d');
+    // size canvas to stage
+    const rect = cropper.stage.getBoundingClientRect();
+    const size = Math.min(rect.width, rect.height);
+    cropper.canvas.width = size;
+    cropper.canvas.height = size;
+    // initial fit: cover (zoom so smaller dim fills)
+    cropper.baseScale = Math.max(size / img.width, size / img.height);
+    cropper.imgScale = 1;
+    cropper.rotation = 0;
+    cropper.tx = 0;
+    cropper.ty = 0;
+    $('#cropZoom').value = 1;
+    drawCropper();
+    $('#cropperModal').classList.add('show');
+  };
+  img.src = dataURL;
+}
+
+function drawCropper(){
+  const c = cropper.canvas, ctx = cropper.ctx;
+  if(!c || !cropper.img) return;
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.save();
+  ctx.translate(c.width/2 + cropper.tx, c.height/2 + cropper.ty);
+  ctx.rotate(cropper.rotation * Math.PI / 180);
+  const s = cropper.baseScale * cropper.imgScale;
+  const w = cropper.img.width * s;
+  const h = cropper.img.height * s;
+  ctx.drawImage(cropper.img, -w/2, -h/2, w, h);
+  ctx.restore();
+}
+
+// Drag to pan
+function setupCropperEvents(){
+  const stage = $('#cropperStage');
+
+  const getEventPos = (e) => {
+    if(e.touches && e.touches[0]) return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    return { x: e.clientX, y: e.clientY };
+  };
+
+  stage.addEventListener('mousedown', (e) => {
+    cropper.dragging = true;
+    const p = getEventPos(e);
+    cropper.lastX = p.x; cropper.lastY = p.y;
+  });
+  stage.addEventListener('touchstart', (e) => {
+    if(e.touches.length === 2){
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      cropper.pinchDist = Math.sqrt(dx*dx + dy*dy);
+      cropper.dragging = false;
+    } else if(e.touches.length === 1){
+      cropper.dragging = true;
+      cropper.lastX = e.touches[0].clientX;
+      cropper.lastY = e.touches[0].clientY;
+    }
+  }, {passive:true});
+
+  window.addEventListener('mousemove', (e) => {
+    if(!cropper.dragging || !$('#cropperModal').classList.contains('show')) return;
+    cropper.tx += e.clientX - cropper.lastX;
+    cropper.ty += e.clientY - cropper.lastY;
+    cropper.lastX = e.clientX; cropper.lastY = e.clientY;
+    drawCropper();
+  });
+  window.addEventListener('touchmove', (e) => {
+    if(!$('#cropperModal').classList.contains('show')) return;
+    if(e.touches.length === 2){
+      e.preventDefault();
+      const dx = e.touches[0].clientX - e.touches[1].clientX;
+      const dy = e.touches[0].clientY - e.touches[1].clientY;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if(cropper.pinchDist > 0){
+        const ratio = d / cropper.pinchDist;
+        cropper.imgScale = Math.max(1, Math.min(4, cropper.imgScale * ratio));
+        $('#cropZoom').value = cropper.imgScale;
+        drawCropper();
+      }
+      cropper.pinchDist = d;
+    } else if(cropper.dragging && e.touches.length === 1){
+      cropper.tx += e.touches[0].clientX - cropper.lastX;
+      cropper.ty += e.touches[0].clientY - cropper.lastY;
+      cropper.lastX = e.touches[0].clientX;
+      cropper.lastY = e.touches[0].clientY;
+      drawCropper();
+    }
+  }, {passive:false});
+  window.addEventListener('mouseup', () => cropper.dragging = false);
+  window.addEventListener('touchend', () => { cropper.dragging = false; cropper.pinchDist = 0; });
+
+  stage.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.08 : 0.92;
+    cropper.imgScale = Math.max(1, Math.min(4, cropper.imgScale * factor));
+    $('#cropZoom').value = cropper.imgScale;
+    drawCropper();
+  }, {passive:false});
+
+  $('#cropZoom').addEventListener('input', (e) => {
+    cropper.imgScale = parseFloat(e.target.value);
+    drawCropper();
+  });
+  $('#cropZoomIn').addEventListener('click', () => {
+    cropper.imgScale = Math.min(4, cropper.imgScale + 0.2);
+    $('#cropZoom').value = cropper.imgScale;
+    drawCropper();
+  });
+  $('#cropZoomOut').addEventListener('click', () => {
+    cropper.imgScale = Math.max(1, cropper.imgScale - 0.2);
+    $('#cropZoom').value = cropper.imgScale;
+    drawCropper();
+  });
+  $('#cropRotateRight').addEventListener('click', () => {
+    cropper.rotation = (cropper.rotation + 90) % 360;
+    drawCropper();
+  });
+  $('#cropRotateLeft').addEventListener('click', () => {
+    cropper.rotation = (cropper.rotation - 90 + 360) % 360;
+    drawCropper();
+  });
+
+  $('#cropApplyBtn').addEventListener('click', () => {
+    // export at 256x256 with circular mask (we'll just save the square, mask is visual only via CSS border-radius)
+    const out = document.createElement('canvas');
+    out.width = 256; out.height = 256;
+    const octx = out.getContext('2d');
+    // scale current canvas content to 256
+    octx.drawImage(cropper.canvas, 0, 0, 256, 256);
+    // JPEG compression for smaller storage
+    const jpeg = out.toDataURL('image/jpeg', 0.85);
+    if(jpeg.length > 700000){
+      // try harder compression
+      const jpeg2 = out.toDataURL('image/jpeg', 0.65);
+      pendingPhotoDataURL = jpeg2;
+    } else {
+      pendingPhotoDataURL = jpeg;
+    }
+    updateEditPhotoPreview(pendingPhotoDataURL);
+    $('#cropperModal').classList.remove('show');
+    toast('Photo cropped · save to apply', 'success');
+  });
+}
+setupCropperEvents();
+
+// ============= BOT MODE =============
+const BOT_NAMES = [
+  { name: 'roshamBot', country: 'XX', rating: 1000 },
+  { name: 'practiceBuddy', country: 'NO', rating: 1100 },
+  { name: 'silverFox', country: 'US', rating: 1250 },
+  { name: 'goldHand', country: 'JP', rating: 1400 },
+];
+
+function pickBotProfile(){
+  // bot rating close to player's so first match isn't lopsided
+  const myRating = state.profile?.rating || 1000;
+  const variants = [
+    { name: 'roshamBot', country: 'XX', rating: myRating },
+    { name: 'trainBot', country: 'NO', rating: myRating + 50 },
+    { name: 'sparBot', country: 'US', rating: myRating - 30 },
+  ];
+  const v = variants[Math.floor(Math.random() * variants.length)];
+  return {
+    uid: 'bot:' + v.name,
+    username: v.name,
+    country: v.country,
+    rating: v.rating,
+    colorIdx: 4, // blue-purple gradient
+    photoURL: '',
+    isBot: true,
+    bio: 'Practice opponent · stats not saved',
+  };
+}
+
+async function startBotMatch(){
+  ensureAudio();
+  if(!state.cameraReady){
+    const ok = await setupCamera();
+    if(!ok) return;
+    await setupHands();
+  }
+  state.isBotMatch = true;
+  state.matchId = null; // no real match
+  state.oppProfile = pickBotProfile();
+  state.oppUid = state.oppProfile.uid;
+  state.isCaller = true; // we drive the round
+
+  // show match-found screen briefly
+  showScreen('matching');
+  showMatchFound();
+  sfxMatch();
+  setText('#mfFeed', '<span class="blink">●</span> warming up the bot…');
+  $('#mfFeed').innerHTML = '<span class="blink">●</span> warming up the bot…';
+  setTimeout(() => enterBotMatch(), 2200);
+}
+
+function enterBotMatch(){
+  showScreen('game');
+  resetGameUI();
+  setupOppPanelBot();
+  setText('#youName', state.profile.username);
+  const myRank = rankFromRating(state.profile.rating || 1000);
+  setText('#youSub', `${flagOf(state.profile.country)} · ${myRank.tierName}`);
+  renderAvatar($('#youAvatar'), state.profile);
+  setText('#youLabel', state.profile.username.slice(0,12).toUpperCase());
+  setText('#roundState', 'PRACTICE MODE · BOT OPPONENT');
+
+  // simulate a "connected" data channel by stubbing it
+  state.dataChannel = {
+    readyState: 'open',
+    send: (data) => {
+      // intercept own messages — bot reacts to gesture/ready
+      try{
+        const msg = JSON.parse(data);
+        if(msg.type === 'gesture'){
+          // bot already decided in its ready logic
+          // reveal will fire when both gestures set
+        }
+      }catch(e){}
+    },
+    close: () => {},
+  };
+  addChat('sys', 'practice mode · this bot is for warming up · stats NOT saved');
+  onPeerConnectedBot();
+  // fake ping
+  setText('#oppPing', '12ms');
+}
+
+function setupOppPanelBot(){
+  const op = state.oppProfile;
+  setText('#oppName', '@' + op.username);
+  setText('#oppFlag', flagOf(op.country));
+  const oppRank = rankFromRating(op.rating);
+  setRankIconEl($('#oppRankMini'), oppRank.id);
+  setText('#oppSub', `BOT · ${oppRank.tierName}`);
+  setText('#oppLabel', op.username.slice(0,12).toUpperCase());
+  setText('#readyPillOppLab', op.username);
+  renderAvatar($('#oppAvatar'), op);
+  // give the big avatar a bot-style look
+  const big = $('#oppAvatarBig');
+  big.classList.add('bot-av');
+  big.textContent = '';
+  big.innerHTML = '<svg style="width:80px; height:80px; color:var(--violet);"><use href="#i-bot"/></svg>';
+  setText('#chatWithName', '@' + op.username);
+  $('#oppPlaceholder').style.display = '';
+  // add pulsing vision overlay
+  if(!$('#oppPlaceholder').querySelector('.bot-vision')){
+    const vision = document.createElement('div');
+    vision.className = 'bot-vision';
+    $('#oppPlaceholder').appendChild(vision);
+  }
+  $('#oppCamStatus').classList.remove('live');
+  $('#oppCamStatus').querySelector('span:last-child').textContent = 'bot · no camera';
+  $('#disconnectBanner').classList.remove('show');
+  $('#oppIdentity').onclick = null;
+}
+
+let botReadyTimer = null;
+function onPeerConnectedBot(){
+  setText('#roundState', 'HOLD UP A HAND TO READY UP');
+  $('#handPrompt').style.display = '';
+  startReadySystem();
+  // bot will ready up shortly after player starts charging
+  scheduleBotReadyWatch();
+}
+
+function scheduleBotReadyWatch(){
+  if(botReadyTimer) clearInterval(botReadyTimer);
+  let botProgress = 0;
+  let isReady = false;
+  let delayUntilCharge = 200 + Math.random() * 700;
+  let started = false;
+  let lastPhase = state.phase;
+  botReadyTimer = setInterval(() => {
+    if(!state.isBotMatch || state.screen !== 'game'){
+      clearInterval(botReadyTimer); botReadyTimer = null; return;
+    }
+    // detect round reset (was done, now idle again)
+    if(lastPhase !== 'idle' && state.phase === 'idle'){
+      botProgress = 0;
+      isReady = false;
+      delayUntilCharge = 200 + Math.random() * 700;
+      started = false;
+      updateOppReadyUI(false, 0);
+    }
+    lastPhase = state.phase;
+    if(state.phase !== 'idle' && state.phase !== 'done'){
+      return; // round in progress
+    }
+    if(state.phase === 'done') return;
+    // only start charging if player has started showing hand
+    if(state.myReadyTimer > 100) started = true;
+    if(!started){
+      state.oppGestureReady = false;
+      updateOppReadyUI(false, 0);
+      return;
+    }
+    delayUntilCharge -= 80;
+    if(delayUntilCharge > 0) return;
+    if(!isReady){
+      botProgress = Math.min(1, botProgress + 0.08 + Math.random() * 0.04);
+      updateOppReadyUI(false, botProgress);
+      if(botProgress >= 1){
+        isReady = true;
+        state.oppGestureReady = true;
+        updateOppReadyUI(true, 1);
+        sfxReady();
+        maybeStartRound();
+      }
+    }
+  }, 80);
+}
+
+// Override maybeStartRound and runCountdown behavior for bot
+function botPickGesture(){
+  // mostly random with slight bias
+  const r = Math.random();
+  if(r < 0.34) return 'rock';
+  if(r < 0.67) return 'paper';
+  return 'scissors';
+}
+
+// Hook into the existing round flow: when caller (us) calls runCountdown, the bot needs to "send" a gesture.
+// We monkey-patch sendPeer for bot mode to detect 'gesture' from us and respond after a delay.
+const origSendPeer = sendPeer;
+sendPeer = function(msg){
+  if(!state.isBotMatch){ origSendPeer(msg); return; }
+  // bot mode: ignore outgoing, simulate bot's response
+  if(msg.type === 'gesture'){
+    // bot reveals its move ~immediately
+    setTimeout(() => {
+      state.oppGesture = botPickGesture();
+      revealIfBothIn();
+    }, 100 + Math.random() * 200);
+  }
+};
+
+// Override teardown to skip Firestore for bot matches
+const origTeardownMatch = teardownMatch;
+teardownMatch = async function(){
+  if(state.isBotMatch){
+    if(state.pingTimer){ clearInterval(state.pingTimer); state.pingTimer = null; }
+    if(botReadyTimer){ clearInterval(botReadyTimer); botReadyTimer = null; }
+    state.isBotMatch = false;
+    state.remoteStream = null;
+    state.oppUid = null; state.oppProfile = null;
+    state.scoreYou = 0; state.scoreOpp = 0;
+    state.streak = 0; state.streakType = null;
+    state.phase = 'idle';
+    state.dataChannel = null;
+    // restore big avatar
+    const big = $('#oppAvatarBig');
+    big.classList.remove('bot-av');
+    big.innerHTML = '';
+    $('#oppVideo').srcObject = null;
+    const vision = $('#oppPlaceholder')?.querySelector('.bot-vision');
+    if(vision) vision.remove();
+    clearChat();
+    return;
+  }
+  return origTeardownMatch();
+};
+
+// Override the stats updater for bot matches — bot games don't affect ELO or get written to Firestore
+const origUpdateProfileStatsAndHistory = updateProfileStatsAndHistory;
+updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
+  if(state.isBotMatch){
+    // show a "practice" badge instead of rating change
+    const rd = $('#ratingDelta');
+    rd.classList.remove('up','down');
+    rd.style.color = 'var(--text-faint)';
+    rd.textContent = 'PRACTICE · no rating change';
+    rd.style.display = '';
+    return;
+  }
+  return origUpdateProfileStatsAndHistory(result, yourMove, oppMove);
+};
+
+// Bot match: when next button is clicked, restart bot match instead of finding stranger
+async function nextStrangerOrBot(){
+  if(state.isBotMatch){
+    await teardownMatch();
+    await startBotMatch();
+  } else {
+    await nextStranger();
+  }
+}
+
+// Replace next button to handle both modes
+$('#nextBtn').removeEventListener('click', nextStranger);
+$('#nextBtn').addEventListener('click', nextStrangerOrBot);
+
 // ============= TOGGLES =============
 $('#optRegion').addEventListener('click', () => {
   state.sameRegion = !state.sameRegion;
@@ -4504,6 +5145,9 @@ $('#findBtn').addEventListener('click', async () => {
     await setupHands();
   }
   findMatch();
+});
+$('#botBtn').addEventListener('click', () => {
+  startBotMatch();
 });
 $('#cancelMatchBtn').addEventListener('click', cancelMatchmaking);
 $('#nextBtn').addEventListener('click', nextStranger);
