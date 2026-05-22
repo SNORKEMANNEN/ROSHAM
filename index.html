@@ -3410,13 +3410,10 @@ import {
    ROSHAM v4 — paste your Firebase config below
    ========================================================= */
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCepMBXyr7uxW242CfFYGCp6V2lSJ0dYIo",
-  authDomain: "rosham-26c38.firebaseapp.com",
-  projectId: "rosham-26c38",
-  storageBucket: "rosham-26c38.firebasestorage.app",
-  messagingSenderId: "33374172620",
-  appId: "1:33374172620:web:c6cdc9a630add058b2d969",
-  measurementId: "G-1TCWY3Q58Y",
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  appId: "YOUR_APP_ID",
 };
 
 function isConfigured(){
@@ -5040,7 +5037,7 @@ async function findMatch(){
       joinedAt: serverTimestamp(),
       lastBeat: Date.now(),
     });
-    console.log('[match] joined queue', uid);
+    console.log('[match] joined queue', uid, '[ROSHAM v5.2 — clock-skew fix]');
   } catch(e){
     console.error('[match] could not join queue', e);
     toast('Could not join queue: ' + (e.code || e.message), 'error');
@@ -5075,32 +5072,23 @@ async function findMatch(){
       // Must not be ended
       if(m.status === 'ended') continue;
 
-      // STRICT zombie filter: require valid createdAt timestamp AND must be created
-      // very recently (within last 30 seconds). This prevents joining stale matches
-      // from previous failed attempts.
+      // ZOMBIE FILTER: only check age. We rely on pre-cleanup (in findMatch) to
+      // delete stale matches involving us BEFORE joining the queue, so anything
+      // we see here that involves us is fresh.
+      // The previous "createdMs < queueJoinedAt" check was buggy due to clock
+      // skew between client (Date.now()) and Firestore server (serverTimestamp).
       const createdMs = m.createdAt?.toMillis ? m.createdAt.toMillis() : null;
-      if(createdMs === null){
-        // No timestamp yet — could be a brand new one OR a broken zombie.
-        // Only accept if this is an 'added' change AND the doc id is one we haven't seen before.
-        // Since we just attached the listener, the initial snapshot will have all old matches as 'added'.
-        // To be safe, skip matches with null timestamps on initial load — we'll catch them on the 'modified' event.
-        if(!state._initialSnapDone){
-          console.log('[match] skipping match with null createdAt during initial snap:', change.doc.id);
-          continue;
-        }
-      } else {
+      if(createdMs !== null){
         const ageMs = Date.now() - createdMs;
-        // Reject anything older than 30s (definitely a zombie)
-        if(ageMs > 30000){
+        // Use a generous threshold (60s) to absorb clock skew while still
+        // rejecting truly old zombies
+        if(ageMs > 60000){
           console.log('[match] ignoring zombie match (age', ageMs, 'ms):', change.doc.id);
           continue;
         }
-        // Reject matches created BEFORE we joined the queue (with 2s grace)
-        if(createdMs < state._queueJoinedAt - 2000){
-          console.log('[match] ignoring match created before queue join:', change.doc.id);
-          continue;
-        }
       }
+      // If createdAt is null, it's a brand-new doc whose serverTimestamp hasn't
+      // resolved yet. We accept it — it's the doc we just created or our peer just created.
 
       console.log('[match] FOUND! id=', change.doc.id, 'isCaller=', m.caller === uid);
       state.matchId = change.doc.id;
@@ -5130,7 +5118,7 @@ async function findMatch(){
 
   $('#matchFeed').innerHTML = '<span class="blink">●</span> scanning for opponents…';
   let attempts = 0;
-  const STALE_MS = 15000;
+  const STALE_MS = 30000; // 30s — more forgiving for clock skew
 
   const tryPair = async () => {
     if(state.screen !== 'matching' || state.matchId) return;
@@ -5227,8 +5215,16 @@ async function findMatch(){
           status: 'pending',
           createdAt: serverTimestamp(),
         };
-        await addDoc(collection(state.db, 'matches'), matchData);
-        console.log('[match] match doc created successfully — both listeners should now fire');
+        const newMatchRef = await addDoc(collection(state.db, 'matches'), matchData);
+        console.log('[match] match doc created successfully:', newMatchRef.id, '— both listeners should now fire');
+        // SAFETY: if peer doesn't join within 10s, delete the match and try again
+        const safetyTimeout = setTimeout(async () => {
+          if(state.matchId === newMatchRef.id || state.matchId) return; // we joined ok
+          console.warn('[match] match abandoned — peer never joined, deleting:', newMatchRef.id);
+          try { await deleteDoc(newMatchRef); } catch(e){}
+        }, 10000);
+        state._safetyCleanups = state._safetyCleanups || [];
+        state._safetyCleanups.push(safetyTimeout);
       } catch(err){
         console.error('[match] could not create match doc:', err.code, err.message);
         if(err.code === 'permission-denied' || err.message?.includes('permission')){
@@ -5312,6 +5308,10 @@ function cancelMatchmakingResources(){
   if(state._myMatchUnsub){ state._myMatchUnsub(); state._myMatchUnsub = null; }
   if(state._inviteWaitUnsub){ state._inviteWaitUnsub(); state._inviteWaitUnsub = null; }
   if(state._queueHeartbeat){ clearInterval(state._queueHeartbeat); state._queueHeartbeat = null; }
+  if(state._safetyCleanups){
+    state._safetyCleanups.forEach(t => clearTimeout(t));
+    state._safetyCleanups = [];
+  }
 }
 
 async function showMatchFound(){
@@ -7085,6 +7085,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
+console.log('%c🪨 ROSHAM v5.2 — clock-skew matchmaking fix loaded', 'color:#5dffba; font-weight:bold; font-size:14px;');
 setupAuthUI();
 if(isConfigured()){
   initFirebase();
