@@ -1200,6 +1200,246 @@ h2.match-title{
 }
 .streak svg{width:12px; height:12px;}
 
+/* ========= NEW ARENA UI ELEMENTS ========= */
+
+/* Match intro card — slides in at match start */
+.match-intro{
+  position:relative;
+  z-index:3;
+  padding: 24px 20px;
+  width: 100%;
+  animation: matchIntroIn .7s cubic-bezier(.2,1.6,.4,1) both;
+}
+@keyframes matchIntroIn{
+  0%{ opacity:0; transform: scale(.85) translateY(20px); }
+  60%{ opacity:1; transform: scale(1.03) translateY(-2px); }
+  100%{ opacity:1; transform: scale(1) translateY(0); }
+}
+.match-intro.fading{ animation: matchIntroOut .4s ease-in both; }
+@keyframes matchIntroOut{
+  to{ opacity:0; transform: scale(.92) translateY(-10px); }
+}
+.intro-vs{
+  display:grid; grid-template-columns: 1fr auto 1fr;
+  gap: 20px; align-items:center;
+  margin-bottom: 16px;
+}
+.intro-player{ text-align:center; }
+.intro-av{
+  width: 76px; height: 76px; border-radius: 18px;
+  margin: 0 auto 10px;
+  background: var(--surface-2);
+  border: 2px solid var(--line);
+  display:grid; place-items:center;
+  font-family: var(--font-display); font-weight:700;
+  font-size: 32px;
+  background-size:cover; background-position:center;
+  box-shadow: 0 6px 20px rgba(0,0,0,.4);
+}
+.intro-name{
+  font-family: var(--font-display); font-stretch:65%; font-weight:700;
+  font-size: 18px; letter-spacing:-.01em;
+  margin-bottom: 2px;
+}
+.intro-rank{
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-dim); letter-spacing:.05em;
+  text-transform: uppercase;
+}
+.intro-vs-text{
+  font-family: var(--font-display); font-stretch:60%; font-weight:800;
+  font-size: 44px; letter-spacing:-.04em; line-height:1;
+  background: linear-gradient(180deg, var(--coral), var(--rose));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 0 20px rgba(255,61,104,.4));
+  animation: vsThrob 1s ease-in-out infinite;
+}
+@keyframes vsThrob{
+  0%, 100%{ transform: scale(1); }
+  50%{ transform: scale(1.08); }
+}
+.intro-history{
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--text-dim); text-align:center;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-2);
+  display: inline-block;
+  margin: 0 auto 14px;
+  letter-spacing: .04em;
+}
+.intro-tagline{
+  font-family: var(--font-display); font-stretch:65%; font-weight:700;
+  font-size: 13px; letter-spacing: .15em; text-transform: uppercase;
+  text-align: center; color: var(--amber);
+  filter: drop-shadow(0 0 8px rgba(255,211,61,.3));
+}
+.intro-history-row{ display:flex; justify-content:center; }
+
+/* Prediction picker */
+.prediction-row{
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line);
+  width: 100%;
+  text-align:center;
+}
+.prediction-label{
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-dim); letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.prediction-bonus{
+  color: var(--mint); font-weight: 700;
+  margin-left: 6px;
+  padding: 2px 6px;
+  background: rgba(93,255,186,.08);
+  border-radius: 4px;
+}
+.prediction-picks{
+  display: flex; gap: 10px;
+  justify-content: center;
+}
+.prediction-btn{
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 2px solid var(--line);
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: all .2s;
+  padding: 0;
+}
+.prediction-btn svg{
+  width: 28px; height: 28px;
+  color: var(--text-dim);
+  transition: color .2s;
+}
+.prediction-btn:hover{
+  border-color: var(--violet);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(164,139,255,.3);
+}
+.prediction-btn:hover svg{ color: var(--text); }
+.prediction-btn.selected{
+  border-color: var(--violet);
+  background: rgba(164,139,255,.12);
+  box-shadow: 0 0 0 3px rgba(164,139,255,.2);
+}
+.prediction-btn.selected svg{ color: var(--violet); }
+.prediction-btn.locked{ pointer-events: none; opacity: .65; }
+
+/* Prediction success badge */
+.prediction-badge{
+  display: none;
+  align-items: center; gap: 8px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(164,139,255,.18), rgba(93,255,186,.18));
+  border: 1px solid var(--violet);
+  font-family: var(--font-display); font-stretch:65%; font-weight: 700;
+  font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--violet);
+  margin-top: 6px;
+}
+.prediction-badge.show{
+  display: inline-flex;
+  animation: predBadgeIn .6s cubic-bezier(.2,1.8,.4,1) both;
+}
+.prediction-badge svg{ width: 14px; height: 14px; }
+@keyframes predBadgeIn{
+  0%{ opacity: 0; transform: scale(0) rotate(-180deg); }
+  60%{ opacity: 1; transform: scale(1.2) rotate(10deg); }
+  100%{ opacity: 1; transform: scale(1) rotate(0); }
+}
+
+/* Commentator box — fun quote after each round */
+.commentator-box{
+  display: none;
+  align-items: center; gap: 12px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  margin-top: 12px;
+  max-width: 380px;
+  position: relative;
+}
+.commentator-box.show{
+  display: flex;
+  animation: commentatorIn .5s cubic-bezier(.2,1.6,.4,1) both;
+}
+@keyframes commentatorIn{
+  from{ opacity: 0; transform: translateY(10px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+.commentator-box::before{
+  content: "";
+  position: absolute;
+  top: -8px; left: 24px;
+  width: 14px; height: 14px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-right: none; border-bottom: none;
+  transform: rotate(45deg);
+}
+.commentator-avatar{
+  font-size: 24px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(255,211,61,.4));
+}
+.commentator-text{
+  font-family: var(--font-body); font-size: 13px;
+  color: var(--text); line-height: 1.4;
+  font-style: italic;
+}
+
+/* On-fire badge — appears on 3+ win streak */
+.on-fire-badge{
+  position: absolute;
+  top: 16px; right: 16px;
+  display: inline-flex;
+  align-items: center; gap: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #ff6b00, #ff3d68);
+  font-family: var(--font-display); font-stretch:65%; font-weight: 800;
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(255,107,0,.4);
+  animation: fireBadgePulse 1.5s ease-in-out infinite;
+  z-index: 5;
+}
+.on-fire-badge .fire-emoji{
+  font-size: 16px;
+  animation: fireDance .8s ease-in-out infinite;
+}
+.on-fire-badge .fire-count{
+  padding: 2px 6px;
+  background: rgba(0,0,0,.3);
+  border-radius: 999px;
+  font-size: 10px;
+}
+@keyframes fireBadgePulse{
+  0%, 100%{ box-shadow: 0 4px 20px rgba(255,107,0,.4); }
+  50%{ box-shadow: 0 4px 30px rgba(255,107,0,.8), 0 0 40px rgba(255,61,104,.4); }
+}
+@keyframes fireDance{
+  0%, 100%{ transform: scale(1) rotate(-5deg); }
+  50%{ transform: scale(1.15) rotate(5deg); }
+}
+
+/* Make the video glow on fire */
+.video-wrap.on-fire{
+  animation: onFireGlow 1.2s ease-in-out infinite;
+}
+@keyframes onFireGlow{
+  0%, 100%{ box-shadow: 0 0 0 2px var(--line), 0 8px 24px rgba(0,0,0,.4); }
+  50%{ box-shadow: 0 0 0 3px #ff6b00, 0 0 40px rgba(255,107,0,.5), 0 8px 24px rgba(0,0,0,.4); }
+}
+
 /* Best-of-3 round indicator */
 .round-indicator{
   display:flex; flex-direction:column;
@@ -3056,15 +3296,44 @@ const FIREBASE_CONFIG = {
         <div class="round-stage">
           <div class="stage-lights" id="stageLights"></div>
           <div class="announcer-banner" id="announcerBanner">PLAYERS — GET READY!</div>
+
+          <!-- NEW: Match intro card — shown when entering a match -->
+          <div class="match-intro" id="matchIntro" style="display:none;">
+            <div class="intro-vs">
+              <div class="intro-player">
+                <div class="intro-av" id="introYouAv">?</div>
+                <div class="intro-name" id="introYouName">YOU</div>
+                <div class="intro-rank" id="introYouRank">Bronze III</div>
+              </div>
+              <div class="intro-vs-text">VS</div>
+              <div class="intro-player">
+                <div class="intro-av" id="introOppAv">?</div>
+                <div class="intro-name" id="introOppName">OPP</div>
+                <div class="intro-rank" id="introOppRank">Bronze III</div>
+              </div>
+            </div>
+            <div class="intro-history" id="introHistory">first time facing this player</div>
+            <div class="intro-tagline" id="introTagline">BEST OF 3 · MAY THE BEST HAND WIN</div>
+          </div>
+
           <div class="round-state" id="roundState">CONNECTING…</div>
 
           <div id="handPrompt" class="hand-prompt" style="display:none;">
-            <h3>HOLD UP <br/>YOUR HAND</h3>
-            <p>Make a rock, paper, or scissors and keep it steady. Round starts when you're both ready.</p>
+            <h3>SHOW <br/>YOUR HAND</h3>
+            <p>Make a rock, paper, or scissors. Hold steady. We start when you're both ready.</p>
             <div class="ready-status-grid">
               <div class="ready-pill" id="readyPillYou"><div class="lab">you</div><div class="st">show hand</div></div>
               <div class="ready-vs">·</div>
               <div class="ready-pill" id="readyPillOpp"><div class="lab" id="readyPillOppLab">opp</div><div class="st">waiting</div></div>
+            </div>
+            <!-- NEW: Prediction picker — guess what opp will throw -->
+            <div class="prediction-row" id="predictionRow">
+              <div class="prediction-label">PREDICT THEIR THROW <span class="prediction-bonus">+1 BONUS IF RIGHT</span></div>
+              <div class="prediction-picks">
+                <button class="prediction-btn" data-predict="rock"><svg><use href="#i-rock"/></svg></button>
+                <button class="prediction-btn" data-predict="paper"><svg><use href="#i-paper"/></svg></button>
+                <button class="prediction-btn" data-predict="scissors"><svg><use href="#i-scissors"/></svg></button>
+              </div>
             </div>
           </div>
 
@@ -3078,7 +3347,24 @@ const FIREBASE_CONFIG = {
             </div>
             <h2 class="result-headline" id="resultHeadline">—</h2>
             <div class="result-detail" id="resultDetail">—</div>
+            <!-- NEW: Commentator quote -->
+            <div class="commentator-box" id="commentatorBox">
+              <div class="commentator-avatar">🎤</div>
+              <div class="commentator-text" id="commentatorText">Let's see it!</div>
+            </div>
+            <!-- NEW: Prediction badge if you guessed right -->
+            <div class="prediction-badge" id="predictionBadge">
+              <svg><use href="#i-star"/></svg>
+              <span>PREDICTED!</span>
+            </div>
             <div class="rating-delta" id="ratingDelta" style="display:none;">—</div>
+          </div>
+
+          <!-- NEW: On-fire indicator on win streaks -->
+          <div class="on-fire-badge" id="onFireBadge" style="display:none;">
+            <span class="fire-emoji">🔥</span>
+            <span>ON FIRE</span>
+            <span class="fire-count" id="fireCount">3</span>
           </div>
         </div>
       </div>
@@ -3605,6 +3891,8 @@ const state = {
   matchRound: 0,            // current round number (1, 2, 3)
   matchRoundsToWin: 2,      // first to 2 wins the match
   matchOver: false,
+  myPrediction: null,       // what you predicted opp would throw
+  _lastPredictionCorrect: false,
   muted: false,
   pingTimer: null,
   oppPingMs: null,
@@ -5407,6 +5695,9 @@ async function enterMatch(matchData){
   setText('#youLabel', state.profile.username.slice(0,12).toUpperCase());
   setText('#roundState', 'CONNECTING…');
 
+  // NEW: Show match intro card (slides in, lasts ~2.8s)
+  showMatchIntro();
+
   state.pc = new RTCPeerConnection(RTC_CONFIG);
   if(state.localStream) state.localStream.getTracks().forEach(t => state.pc.addTrack(t, state.localStream));
   state.remoteStream = new MediaStream();
@@ -5480,6 +5771,71 @@ async function enterMatch(matchData){
       });
     });
   }
+}
+
+// =========== MATCH INTRO + HEAD TO HEAD ===========
+function getHeadToHead(oppUid){
+  try {
+    const data = JSON.parse(localStorage.getItem('rosham_h2h') || '{}');
+    return data[oppUid] || { wins: 0, losses: 0, draws: 0 };
+  } catch(e){ return { wins: 0, losses: 0, draws: 0 }; }
+}
+function updateHeadToHead(oppUid, result){
+  if(!oppUid) return;
+  try {
+    const data = JSON.parse(localStorage.getItem('rosham_h2h') || '{}');
+    if(!data[oppUid]) data[oppUid] = { wins: 0, losses: 0, draws: 0 };
+    if(result === 'win') data[oppUid].wins++;
+    else if(result === 'lose') data[oppUid].losses++;
+    else data[oppUid].draws++;
+    localStorage.setItem('rosham_h2h', JSON.stringify(data));
+  } catch(e){}
+}
+
+function showMatchIntro(){
+  const intro = $('#matchIntro');
+  if(!intro) return;
+  // populate intro card
+  renderAvatar($('#introYouAv'), state.profile);
+  renderAvatar($('#introOppAv'), state.oppProfile || {});
+  setText('#introYouName', '@' + state.profile.username);
+  setText('#introOppName', '@' + (state.oppProfile?.username || 'stranger'));
+  const myRank = rankFromRating(state.profile.rating || 1000);
+  const oppRank = rankFromRating(state.oppProfile?.rating || 1000);
+  setText('#introYouRank', myRank.tierName);
+  setText('#introOppRank', oppRank.tierName);
+
+  // head-to-head history
+  const h2h = getHeadToHead(state.oppUid);
+  const total = h2h.wins + h2h.losses + h2h.draws;
+  if(total === 0){
+    setText('#introHistory', 'FIRST TIME FACING THIS PLAYER');
+  } else {
+    setText('#introHistory', `H2H: ${h2h.wins}W – ${h2h.losses}L${h2h.draws ? ' – ' + h2h.draws + 'D' : ''} (${total} matches)`);
+  }
+
+  // tagline based on rank diff
+  const ratingDiff = (state.oppProfile?.rating || 1000) - (state.profile.rating || 1000);
+  let tagline = 'BEST OF 3 · MAY THE BEST HAND WIN';
+  if(ratingDiff > 200) tagline = 'UNDERDOG MATCH · TIME TO PROVE YOURSELF';
+  else if(ratingDiff < -200) tagline = 'FAVORITE MATCH · DEFEND YOUR CROWN';
+  else if(Math.abs(ratingDiff) < 50) tagline = 'EVENLY MATCHED · MAY THE BEST HAND WIN';
+  setText('#introTagline', tagline);
+
+  // hide other elements during intro
+  $('#handPrompt').style.display = 'none';
+  $('#roundState').style.opacity = '0';
+  intro.style.display = '';
+
+  // hide after 2.8 seconds
+  setTimeout(() => {
+    intro.classList.add('fading');
+    setTimeout(() => {
+      intro.style.display = 'none';
+      intro.classList.remove('fading');
+      $('#roundState').style.opacity = '';
+    }, 400);
+  }, 2800);
 }
 
 function setupOppPanel(){
@@ -5756,16 +6112,35 @@ function resetMatchUI(){
   state.streak = 0;
   state.streakType = null;
   state.matchOver = false;
+  state.myPrediction = null;
   setText('#scoreYou', 0);
   setText('#scoreOpp', 0);
   $('#streakBox').style.display = 'none';
   resetRoundIndicator();
+  resetPredictionPicker();
+  updateOnFireStatus();
+  // hide commentator + prediction badges
+  $('#commentatorBox')?.classList.remove('show');
+  $('#predictionBadge')?.classList.remove('show');
 }
 function resetRound(){
   resetGameUI();
   $('#handPrompt').style.display = '';
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
   hideOppVideo();
+  state.myPrediction = null;
+  resetPredictionPicker();
+  // hide previous round's commentary + prediction badge
+  $('#commentatorBox')?.classList.remove('show');
+  $('#predictionBadge')?.classList.remove('show');
+}
+function resetPredictionPicker(){
+  document.querySelectorAll('.prediction-btn').forEach(b => {
+    b.classList.remove('selected','locked');
+  });
+}
+function lockPredictionPicker(){
+  document.querySelectorAll('.prediction-btn').forEach(b => b.classList.add('locked'));
 }
 
 function hideOppVideo(){
@@ -5796,6 +6171,7 @@ function showAnnouncer(text, ms=1800){
 
 async function runCountdown(){
   state.phase = 'countdown';
+  lockPredictionPicker();
   $('#handPrompt').style.display = 'none';
   $('#resultDisplay').classList.remove('show');
   $('#oppThrown').classList.remove('show');
@@ -5891,6 +6267,10 @@ function doReveal(){
   ) result = 'win';
   else result = 'lose';
 
+  // NEW: Check prediction — did you guess what opp would throw?
+  const predictionCorrect = state.myPrediction && oppMove && state.myPrediction === oppMove;
+  state._lastPredictionCorrect = predictionCorrect;
+
   if(result === 'win') state.scoreYou++;
   else if(result === 'lose' || result === 'forfeit') state.scoreOpp++;
   if(result === 'win'){
@@ -5900,6 +6280,7 @@ function doReveal(){
   }
   updateScore();
   updateRoundIndicator(result);
+  updateOnFireStatus();
   // NOTE: stats only updated at MATCH end (not per round) — see endMatch()
 
   const youPickEl = $('#resultYouPick');
@@ -5987,6 +6368,19 @@ function doReveal(){
     sfxLose();
   }
   resultDisplay.classList.add('show');
+
+  // NEW: Show prediction badge if you got it right
+  const predBadge = $('#predictionBadge');
+  predBadge.classList.remove('show');
+  if(predictionCorrect){
+    setTimeout(() => predBadge.classList.add('show'), 200);
+    // tiny visual celebration
+    burst(window.innerWidth/2, window.innerHeight*0.5, '#a48bff', 30);
+  }
+
+  // NEW: Commentator quote
+  setTimeout(() => showCommentatorQuote(result, yourMove, oppMove, predictionCorrect), 400);
+
   setText('#roundState', result === 'draw' ? 'TIE — GO AGAIN' : (result === 'win' ? 'NICE THROW' : 'TOUGH LOSS'));
   state.phase = 'done';
 
@@ -5997,13 +6391,87 @@ function doReveal(){
     // brief delay so round result is visible, then show match end
     setTimeout(() => {
       if(state.screen === 'game') endMatch();
-    }, 2500);
+    }, 3200);
   } else {
     setTimeout(() => {
       if(state.phase === 'done' && state.screen === 'game' && !state.matchOver) resetRound();
-    }, 2800);
+    }, 3400);
   }
 }
+
+// Commentator system — fun quotes based on round outcome
+function showCommentatorQuote(result, yourMove, oppMove, predicted){
+  const box = $('#commentatorBox');
+  const text = $('#commentatorText');
+  if(!box || !text) return;
+
+  const quotes = {
+    win: [
+      `Beautiful! ${(yourMove||'').toUpperCase()} was the call.`,
+      `Crushing it! That ${(yourMove||'').toUpperCase()} was clutch.`,
+      `Nice read! You saw that ${(oppMove||'').toUpperCase()} coming.`,
+      `Smooth play. Easy point.`,
+      `Boom! ${(yourMove||'').toUpperCase()} for the win.`,
+      `Textbook ${(yourMove||'').toUpperCase()}. Well played.`,
+    ],
+    lose: [
+      `Oof. ${(oppMove||'').toUpperCase()} caught you out.`,
+      `Tough break — that ${(oppMove||'').toUpperCase()} was unexpected.`,
+      `They read you like a book. Shake it off.`,
+      `Brutal call. You'll get them next round.`,
+      `Got outplayed. Time to switch it up.`,
+      `That stings. Adjust and come back stronger.`,
+    ],
+    draw: [
+      `Two great minds! Same throw, same energy.`,
+      `Locked in. You're mirroring each other.`,
+      `Stalemate! Let's break this tie.`,
+      `Sync'd up. Try to throw them off next.`,
+    ],
+    forfeit: [
+      `No call from someone. Hold steady next time!`,
+      `Looks like a hand glitched. Reset and go.`,
+    ],
+  };
+
+  const streakComment = [];
+  if(state.streak >= 5 && state.streakType === 'W'){
+    streakComment.push(`${state.streak} in a row! Unstoppable!`);
+  } else if(state.streak >= 3 && state.streakType === 'W'){
+    streakComment.push(`${state.streak} straight wins — ON FIRE!`);
+  } else if(state.streak >= 3 && state.streakType === 'L'){
+    streakComment.push(`Down ${state.streak}. Time for a comeback.`);
+  }
+
+  let quote;
+  if(predicted && result === 'win'){
+    quote = `Genius! You predicted ${(oppMove||'').toUpperCase()} AND beat it!`;
+  } else if(streakComment.length > 0 && Math.random() < 0.6){
+    quote = streakComment[0];
+  } else {
+    const pool = quotes[result] || quotes.draw;
+    quote = pool[Math.floor(Math.random() * pool.length)];
+  }
+  text.textContent = quote;
+  box.classList.remove('show');
+  void box.offsetWidth;
+  box.classList.add('show');
+}
+
+// On-fire status — show big badge + glow on video when on 3+ win streak
+function updateOnFireStatus(){
+  const badge = $('#onFireBadge');
+  const yourVideo = $('#yourVideoWrap');
+  if(state.streakType === 'W' && state.streak >= 3){
+    badge.style.display = '';
+    setText('#fireCount', state.streak);
+    if(yourVideo) yourVideo.classList.add('on-fire');
+  } else {
+    badge.style.display = 'none';
+    if(yourVideo) yourVideo.classList.remove('on-fire');
+  }
+}
+
 function updateScore(){
   setText('#scoreYou', state.scoreYou);
   setText('#scoreOpp', state.scoreOpp);
@@ -6055,6 +6523,11 @@ async function endMatch(){
   const youWon = state.scoreYou > state.scoreOpp;
   const draw = state.scoreYou === state.scoreOpp; // shouldn't happen in bo3 but just in case
   const result = draw ? 'draw' : (youWon ? 'win' : 'lose');
+
+  // Track head-to-head locally
+  if(state.oppUid && !state.isBotMatch){
+    updateHeadToHead(state.oppUid, result);
+  }
 
   // Update profile stats + ELO (once per match, not per round)
   await updateMatchStats(result);
@@ -6383,6 +6856,23 @@ function addChat(who, text){
 }
 function clearChat(){ $('#chatMessages').innerHTML = ''; }
 $('#chatSendBtn').addEventListener('click', sendChat);
+
+// Prediction picker — pick what you think opp will throw before the round starts
+document.querySelectorAll('.prediction-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if(btn.classList.contains('locked')) return;
+    const choice = btn.dataset.predict;
+    // toggle off if same choice clicked
+    if(state.myPrediction === choice){
+      state.myPrediction = null;
+      btn.classList.remove('selected');
+      return;
+    }
+    state.myPrediction = choice;
+    document.querySelectorAll('.prediction-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
 
 // Emote buttons — show emoji on both videos + send to peer
 document.querySelectorAll('.emote-btn').forEach(btn => {
@@ -7088,7 +7578,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v5.2 — clock-skew matchmaking fix loaded', 'color:#5dffba; font-weight:bold; font-size:14px;');
+console.log('%c🪨 ROSHAM v6.0 — ARENA REDESIGN', 'color:#5dffba; font-weight:bold; font-size:14px;');
 setupAuthUI();
 if(isConfigured()){
   initFirebase();
