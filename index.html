@@ -1475,22 +1475,138 @@ h2.match-title{
   letter-spacing:.16em; text-transform:uppercase;
   margin-bottom:8px;
 }
+/* GAME SHOW COUNTDOWN — dramatic, stage-light-y */
 .countdown{
   font-family:var(--font-display);
   font-stretch:60%; font-weight:800;
-  font-size:172px; line-height:.85;
+  font-size:200px; line-height:.85;
   letter-spacing:-.05em;
-  background:linear-gradient(180deg, #fff, #a48bff);
+  background:linear-gradient(180deg, #fff 0%, #ffd33d 35%, #ff7a3d 70%, var(--coral) 100%);
   -webkit-background-clip:text; background-clip:text; color:transparent;
-  min-height:160px;
+  min-height:200px;
   display:grid; place-items:center;
+  filter: drop-shadow(0 0 30px rgba(255,211,61,.4)) drop-shadow(0 0 60px rgba(255,61,104,.3));
+  position:relative;
 }
-.countdown.flash{animation: flashIn .5s cubic-bezier(.2,1.6,.4,1);}
-@keyframes flashIn{0%{transform:scale(.5); opacity:0;} 60%{transform:scale(1.1); opacity:1;} 100%{transform:scale(1); opacity:1;}}
+.countdown.flash{ animation: gameshowCountdown .65s cubic-bezier(.2,1.8,.4,1); }
+@keyframes gameshowCountdown{
+  0%{ transform:scale(.3) rotate(-15deg); opacity:0; filter: blur(20px); }
+  40%{ transform:scale(1.25) rotate(3deg); opacity:1; filter: blur(0); }
+  60%{ transform:scale(.95) rotate(-1deg); }
+  100%{ transform:scale(1) rotate(0); opacity:1; }
+}
 .countdown.shoot{
-  background:linear-gradient(180deg, var(--coral), var(--rose));
+  background:linear-gradient(180deg, #fff 0%, var(--coral) 50%, #d8264f 100%);
   -webkit-background-clip:text; background-clip:text; color:transparent;
-  font-size:96px;
+  font-size:130px;
+  letter-spacing:-.06em;
+  filter: drop-shadow(0 0 40px rgba(255,61,104,.7)) drop-shadow(0 0 100px rgba(255,255,255,.4));
+  animation: shootSlam .35s cubic-bezier(.2,2,.4,1) !important;
+}
+@keyframes shootSlam{
+  0%{ transform: scale(2.5); opacity:0; filter: blur(15px); }
+  50%{ transform: scale(.9); opacity:1; filter: blur(0); }
+  70%{ transform: scale(1.08); }
+  100%{ transform: scale(1); }
+}
+
+/* Stage lights radiating from the countdown */
+.stage-lights{
+  position:absolute; inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:0;
+  transition: opacity .3s;
+}
+.stage-lights.active{ opacity:1; }
+.stage-lights::before,
+.stage-lights::after{
+  content:"";
+  position:absolute;
+  top:50%; left:50%;
+  width: 1200px; height: 1200px;
+  margin-left: -600px; margin-top: -600px;
+  background:
+    conic-gradient(from 0deg,
+      transparent 0deg, rgba(255,211,61,.12) 5deg, transparent 10deg,
+      transparent 30deg, rgba(255,61,104,.10) 35deg, transparent 40deg,
+      transparent 60deg, rgba(164,139,255,.10) 65deg, transparent 70deg,
+      transparent 90deg, rgba(255,211,61,.10) 95deg, transparent 100deg,
+      transparent 120deg, rgba(255,61,104,.10) 125deg, transparent 130deg,
+      transparent 150deg, rgba(164,139,255,.10) 155deg, transparent 160deg,
+      transparent 180deg, rgba(255,211,61,.10) 185deg, transparent 190deg,
+      transparent 210deg, rgba(255,61,104,.10) 215deg, transparent 220deg,
+      transparent 240deg, rgba(164,139,255,.10) 245deg, transparent 250deg,
+      transparent 270deg, rgba(255,211,61,.10) 275deg, transparent 280deg,
+      transparent 300deg, rgba(255,61,104,.10) 305deg, transparent 310deg,
+      transparent 330deg, rgba(164,139,255,.10) 335deg, transparent 340deg
+    );
+  border-radius:50%;
+  animation: stageLightsRotate 8s linear infinite;
+  filter: blur(8px);
+}
+.stage-lights::after{
+  animation-duration: 12s;
+  animation-direction: reverse;
+  opacity: .5;
+}
+@keyframes stageLightsRotate{
+  to{ transform: rotate(360deg); }
+}
+
+/* Announcer banner over the round */
+.announcer-banner{
+  position:absolute;
+  top: 18%; left: 50%;
+  transform: translateX(-50%);
+  font-family:var(--font-display);
+  font-stretch:65%; font-weight:700;
+  font-size: 16px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 6px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(0,0,0,.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 4;
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.announcer-banner.show{
+  animation: announceFade 2.5s ease-out;
+}
+@keyframes announceFade{
+  0%{ opacity:0; transform: translateX(-50%) translateY(-10px); letter-spacing: .35em; }
+  15%{ opacity:1; transform: translateX(-50%) translateY(0); letter-spacing: .25em; }
+  85%{ opacity:1; }
+  100%{ opacity:0; transform: translateX(-50%) translateY(-10px); letter-spacing: .15em; }
+}
+
+/* Spotlight on YOU on win */
+.spotlight-you{
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 95;
+  opacity: 0;
+  background: radial-gradient(circle at var(--spot-x, 25%) var(--spot-y, 50%),
+    transparent 0%,
+    transparent 200px,
+    rgba(0,0,0,.5) 400px,
+    rgba(0,0,0,.85) 100%);
+}
+.spotlight-you.fire{
+  animation: spotlightSweep 2s ease-out;
+}
+@keyframes spotlightSweep{
+  0%{ opacity:0; }
+  20%{ opacity:.9; }
+  80%{ opacity:.9; }
+  100%{ opacity:0; }
 }
 
 .hand-prompt{text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px;}
@@ -1784,6 +1900,51 @@ h2.match-title{
   display:flex; gap:8px; padding:10px 14px;
   border-top:1px solid var(--line-soft);
   background:rgba(0,0,0,.2);
+}
+
+/* EMOTE BAR */
+.emote-bar{
+  display:flex; gap:4px;
+  padding: 6px 8px;
+  border-top: 1px solid var(--line-soft);
+  background: rgba(0,0,0,.15);
+  justify-content: space-evenly;
+}
+.emote-btn{
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  font-size: 18px;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: transform .15s, background .15s;
+  padding: 0;
+}
+.emote-btn:hover{
+  background: var(--surface-3);
+  transform: scale(1.15) translateY(-2px);
+}
+.emote-btn:active{ transform: scale(.95); }
+
+/* Emote flash — big animated emoji over opponent's video when they send one */
+.emote-flash{
+  position: absolute;
+  top: 50%; left: 50%;
+  font-size: 120px;
+  z-index: 12;
+  pointer-events: none;
+  text-shadow: 0 4px 24px rgba(0,0,0,.6);
+}
+.emote-flash.fire{
+  animation: emoteFlashAnim 2.2s cubic-bezier(.2,1.6,.4,1) forwards;
+}
+@keyframes emoteFlashAnim{
+  0%{ transform: translate(-50%, 80%) scale(.2); opacity: 0; }
+  18%{ transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+  35%{ transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  80%{ transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100%{ transform: translate(-50%, -130%) scale(.8); opacity: 0; }
 }
 .chat-input input{
   flex:1;
@@ -2395,6 +2556,7 @@ h2.match-title{
 <div class="win-vignette" id="winVignette"></div>
 <div class="lose-vignette" id="loseVignette"></div>
 <div class="combo-popup" id="comboPopup"></div>
+<div class="spotlight-you" id="spotlightYou"></div>
 <canvas id="particles"></canvas>
 <div class="toast" id="toast"></div>
 
@@ -2856,6 +3018,7 @@ const FIREBASE_CONFIG = {
           </div>
           <div class="ready-badge" id="youReadyBadge"><span class="dot"></span><span>show hand</span></div>
           <div class="cam-status" id="camStatus"><span class="dot"></span><span id="camStatusText">camera…</span></div>
+          <div class="emote-flash" id="youEmoteFlash"></div>
         </div>
         <div class="vp-footer">
           <span>detected gesture</span>
@@ -2891,6 +3054,8 @@ const FIREBASE_CONFIG = {
         </div>
 
         <div class="round-stage">
+          <div class="stage-lights" id="stageLights"></div>
+          <div class="announcer-banner" id="announcerBanner">PLAYERS — GET READY!</div>
           <div class="round-state" id="roundState">CONNECTING…</div>
 
           <div id="handPrompt" class="hand-prompt" style="display:none;">
@@ -2954,6 +3119,7 @@ const FIREBASE_CONFIG = {
           <div class="opp-thrown" id="oppThrown" data-g="rock"><svg><use href="#i-rock"/></svg></div>
           <div class="cam-status" id="oppCamStatus"><span class="dot"></span><span>connecting</span></div>
           <div class="disconnect-banner" id="disconnectBanner">opponent disconnected · finding a new one…</div>
+          <div class="emote-flash" id="oppEmoteFlash"></div>
         </div>
         <div class="vp-footer">
           <span><span class="live-dot"></span>live</span>
@@ -2967,6 +3133,16 @@ const FIREBASE_CONFIG = {
           <div>be cool · be quick</div>
         </div>
         <div class="chat-messages" id="chatMessages"></div>
+        <div class="emote-bar" id="emoteBar">
+          <button class="emote-btn" data-emote="👋" title="wave">👋</button>
+          <button class="emote-btn" data-emote="🔥" title="fire">🔥</button>
+          <button class="emote-btn" data-emote="💀" title="dead">💀</button>
+          <button class="emote-btn" data-emote="😂" title="laugh">😂</button>
+          <button class="emote-btn" data-emote="🤝" title="gg">🤝</button>
+          <button class="emote-btn" data-emote="👏" title="clap">👏</button>
+          <button class="emote-btn" data-emote="🤔" title="hmm">🤔</button>
+          <button class="emote-btn" data-emote="😡" title="angry">😡</button>
+        </div>
         <div class="chat-input">
           <input id="chatInput" type="text" placeholder="say gg, talk trash, anything…" maxlength="120" />
           <button id="chatSendBtn"><svg><use href="#i-send"/></svg></button>
@@ -3752,6 +3928,24 @@ async function initFirebase(){
   state.db = getFirestore(state.fbApp);
   onAuthStateChanged(state.auth, onAuthChanged);
   watchGlobalStats();
+  // Periodic global cleanup: anyone signed in cleans up matches >2min old
+  setInterval(async () => {
+    if(!state.user || state.screen === 'game') return;
+    try {
+      const oldSnap = await getDocs(collection(state.db, 'matches'));
+      const now = Date.now();
+      for(const d of oldSnap.docs){
+        const m = d.data();
+        const created = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
+        if(!created || now - created > 120000){
+          // Only delete matches I'm involved in (rules require this)
+          if(m.caller === state.user.uid || m.callee === state.user.uid){
+            try { await deleteDoc(d.ref); console.log('[cleanup] deleted old match', d.id); } catch(e){}
+          }
+        }
+      }
+    } catch(e){}
+  }, 30000);
 }
 
 async function onAuthChanged(user){
@@ -3891,14 +4085,32 @@ function detachUserListeners(){
 function watchGlobalStats(){
   try {
     onSnapshot(collection(state.db, 'queue'), (snap) => {
-      setText('#onlineCount', snap.size);
-      setText('#queueSize', snap.size);
+      // Count only fresh queue entries (heartbeat within last 15s)
+      let active = 0;
+      const now = Date.now();
+      snap.forEach(d => {
+        const lb = d.data().lastBeat || 0;
+        if(now - lb < 15000) active++;
+      });
+      setText('#onlineCount', active);
+      setText('#queueSize', active);
     }, (err) => {
       console.error('global stats queue listener failed:', err);
       if(err.code === 'permission-denied' && typeof showRulesError === 'function') showRulesError();
     });
     onSnapshot(collection(state.db, 'matches'), (snap) => {
-      setText('#matchCount', snap.size);
+      // Count only recent, in-progress matches (created within last 5 min)
+      let active = 0;
+      const now = Date.now();
+      snap.forEach(d => {
+        const m = d.data();
+        if(m.status === 'ended') return;
+        const created = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
+        if(!created) return;
+        if(now - created > 300000) return; // 5 min cap
+        active++;
+      });
+      setText('#matchCount', active);
     }, (err) => {
       console.error('global stats matches listener failed:', err);
       if(err.code === 'permission-denied' && typeof showRulesError === 'function') showRulesError();
@@ -4788,10 +5000,28 @@ async function findMatch(){
   showScreen('matching');
   $('#matchSearchView').style.display = '';
   $('#matchFoundView').style.display = 'none';
-  setText('#matchFeed', 'joining the queue…');
+  setText('#matchFeed', 'cleaning up…');
 
   const uid = state.user.uid;
   const queueRef = doc(state.db, 'queue', uid);
+
+  // AGGRESSIVE CLEANUP: delete any zombie matches involving me before starting fresh.
+  // This prevents joining a stale match from a previous session.
+  try {
+    const [callerQ, calleeQ] = await Promise.all([
+      getDocs(query(collection(state.db, 'matches'), where('caller', '==', uid))),
+      getDocs(query(collection(state.db, 'matches'), where('callee', '==', uid))),
+    ]);
+    const idsToDelete = new Set();
+    callerQ.forEach(d => idsToDelete.add(d.id));
+    calleeQ.forEach(d => idsToDelete.add(d.id));
+    console.log('[match] cleaning up', idsToDelete.size, 'zombie matches before joining queue');
+    for(const id of idsToDelete){
+      try { await deleteDoc(doc(state.db, 'matches', id)); } catch(e){}
+    }
+  } catch(e){ console.warn('[match] zombie cleanup failed:', e); }
+
+  setText('#matchFeed', 'joining the queue…');
 
   // Track when WE joined the queue so we can filter out matches created BEFORE we joined
   const joinedMs = Date.now();
@@ -4833,6 +5063,8 @@ async function findMatch(){
   const myMatchUnsub = onSnapshot(matchesCol, async (snap) => {
     if(state.screen !== 'matching' || state.matchId) return;
     for(const change of snap.docChanges()){
+      // Only join via 'added' events for matches that didn't exist before our listener attached.
+      // 'modified' fires when serverTimestamp gets filled in, but we should already have joined by then.
       if(change.type !== 'added' && change.type !== 'modified') continue;
       const m = change.doc.data();
       if(!m) continue;
@@ -4840,14 +5072,35 @@ async function findMatch(){
       if(m.caller !== uid && m.callee !== uid) continue;
       // Must not already be joined
       if(state.matchId) continue;
-      // Match must be created AFTER we joined the queue (avoid zombies)
-      const createdMs = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
-      if(createdMs && createdMs < state._queueJoinedAt - 5000){
-        console.log('[match] ignoring zombie match (created before queue join)');
-        continue;
-      }
       // Must not be ended
       if(m.status === 'ended') continue;
+
+      // STRICT zombie filter: require valid createdAt timestamp AND must be created
+      // very recently (within last 30 seconds). This prevents joining stale matches
+      // from previous failed attempts.
+      const createdMs = m.createdAt?.toMillis ? m.createdAt.toMillis() : null;
+      if(createdMs === null){
+        // No timestamp yet — could be a brand new one OR a broken zombie.
+        // Only accept if this is an 'added' change AND the doc id is one we haven't seen before.
+        // Since we just attached the listener, the initial snapshot will have all old matches as 'added'.
+        // To be safe, skip matches with null timestamps on initial load — we'll catch them on the 'modified' event.
+        if(!state._initialSnapDone){
+          console.log('[match] skipping match with null createdAt during initial snap:', change.doc.id);
+          continue;
+        }
+      } else {
+        const ageMs = Date.now() - createdMs;
+        // Reject anything older than 30s (definitely a zombie)
+        if(ageMs > 30000){
+          console.log('[match] ignoring zombie match (age', ageMs, 'ms):', change.doc.id);
+          continue;
+        }
+        // Reject matches created BEFORE we joined the queue (with 2s grace)
+        if(createdMs < state._queueJoinedAt - 2000){
+          console.log('[match] ignoring match created before queue join:', change.doc.id);
+          continue;
+        }
+      }
 
       console.log('[match] FOUND! id=', change.doc.id, 'isCaller=', m.caller === uid);
       state.matchId = change.doc.id;
@@ -4862,6 +5115,8 @@ async function findMatch(){
       setTimeout(() => enterMatch(m), 1800);
       return;
     }
+    // After processing first snapshot batch, mark as done
+    if(!state._initialSnapDone) state._initialSnapDone = true;
   }, (err) => {
     console.error('[match] match listener error:', err);
     if(err.code === 'permission-denied'){
@@ -4870,6 +5125,7 @@ async function findMatch(){
       toast('Listener error: ' + err.code, 'error');
     }
   });
+  state._initialSnapDone = false;
   state._myMatchUnsub = myMatchUnsub;
 
   $('#matchFeed').innerHTML = '<span class="blink">●</span> scanning for opponents…';
@@ -5267,9 +5523,22 @@ function handlePeerMessage(msg){
       break;
     case 'gesture': state.oppGesture = msg.value; revealIfBothIn(); break;
     case 'chat': addChat('opp', msg.text); break;
+    case 'emote': showEmoteFlash($('#oppEmoteFlash'), msg.emoji); break;
     case 'ping': sendPeer({type:'pong', t: msg.t}); break;
     case 'pong': state.oppPingMs = Date.now() - msg.t; updatePingDisplay(); break;
     case 'start_round': runCountdown(); break;
+  }
+}
+function showEmoteFlash(el, emoji){
+  if(!el) return;
+  el.textContent = emoji;
+  el.classList.remove('fire');
+  void el.offsetWidth;
+  el.classList.add('fire');
+  // gentle sound
+  if(audioCtx && !state.muted){
+    tone(880, 0.08, 'sine', 0.06);
+    setTimeout(() => tone(1100, 0.08, 'sine', 0.06), 70);
   }
 }
 function updatePingDisplay(){
@@ -5512,19 +5781,48 @@ function showOppVideo(){
   if(ph) ph.style.visibility = '';
 }
 
+function showAnnouncer(text, ms=1800){
+  const b = $('#announcerBanner');
+  if(!b) return;
+  b.textContent = text;
+  b.classList.remove('show');
+  void b.offsetWidth;
+  b.classList.add('show');
+  setTimeout(() => b.classList.remove('show'), ms);
+}
+
 async function runCountdown(){
   state.phase = 'countdown';
   $('#handPrompt').style.display = 'none';
   $('#resultDisplay').classList.remove('show');
   $('#oppThrown').classList.remove('show');
-  hideOppVideo(); // ensure hidden during countdown
+  hideOppVideo();
   const cd = $('#countdown');
+  const stage = $('#stageLights');
   cd.style.display = '';
   cd.classList.remove('shoot');
+  stopChargeTone();
+
+  // Game-show pre-announce
+  const announceLines = [
+    'PLAYERS — GET READY!',
+    'HANDS UP!',
+    'HERE WE GO!',
+    'ROUND TIME!',
+  ];
+  const roundNum = state.scoreYou + state.scoreOpp + 1;
+  const isFinal = roundNum >= state.matchRoundsToWin && (state.scoreYou === state.matchRoundsToWin - 1 || state.scoreOpp === state.matchRoundsToWin - 1);
+  if(isFinal){
+    showAnnouncer('FINAL ROUND — WINNER TAKES ALL!');
+  } else {
+    showAnnouncer(`ROUND ${roundNum} OF 3 — ${announceLines[Math.floor(Math.random()*announceLines.length)]}`);
+  }
   setText('#roundState', 'GET READY…');
   $('#oppDetected').querySelector('span:last-child').textContent = 'thinking…';
-  // also stop charge tone
-  stopChargeTone();
+
+  if(stage) stage.classList.add('active');
+  await sleep(600);
+
   for(const b of ['3','2','1']){
     cd.textContent = b;
     cd.classList.remove('flash'); void cd.offsetWidth; cd.classList.add('flash');
@@ -5537,12 +5835,15 @@ async function runCountdown(){
   setText('#roundState', 'THROW NOW');
   $('#shootFlash').classList.remove('fire'); void $('#shootFlash').offsetWidth; $('#shootFlash').classList.add('fire');
   sfxShoot();
-  // haptic feedback on mobile
+  // brighter spotlight burst at SHOOT
+  burst(window.innerWidth/2, window.innerHeight*0.4, '#ffd33d', 40);
+  burst(window.innerWidth/2, window.innerHeight*0.4, '#ff3d68', 40);
   try { if(navigator.vibrate) navigator.vibrate(30); } catch(e){}
   await sleep(220);
   state.myGesture = state.currentGesture;
   sendPeer({type:'gesture', value: state.myGesture});
   await sleep(180);
+  if(stage) stage.classList.remove('active');
   revealIfBothIn();
 }
 function revealIfBothIn(){
@@ -5621,6 +5922,12 @@ function doReveal(){
     youPickEl.classList.add('winner');
     if(oppMove) oppPickEl.classList.add('loser');
     sfxWin();
+    showAnnouncer('NICE ONE! POINT FOR YOU!', 2200);
+    // Spotlight on YOUR side (left)
+    const spot = $('#spotlightYou');
+    spot.style.setProperty('--spot-x', '25%');
+    spot.style.setProperty('--spot-y', '50%');
+    spot.classList.remove('fire'); void spot.offsetWidth; spot.classList.add('fire');
     // big confetti + flying mint particles
     burst(window.innerWidth/2, window.innerHeight*0.4, '#5dffba', 80);
     burst(window.innerWidth/2, window.innerHeight*0.4, '#a48bff', 60);
@@ -5652,6 +5959,12 @@ function doReveal(){
     if(oppMove) oppPickEl.classList.add('winner');
     youPickEl.classList.add('loser');
     sfxLose();
+    showAnnouncer('TOUGH BREAK! THEY GOT YOU.', 2200);
+    // Spotlight on OPPONENT side (right)
+    const spot = $('#spotlightYou');
+    spot.style.setProperty('--spot-x', '75%');
+    spot.style.setProperty('--spot-y', '50%');
+    spot.classList.remove('fire'); void spot.offsetWidth; spot.classList.add('fire');
     screen.classList.add('shake');
     setTimeout(()=>screen.classList.remove('shake'), 600);
     const lv = $('#loseVignette');
@@ -5662,6 +5975,7 @@ function doReveal(){
     detail.textContent = oppMove ? `BOTH THREW ${oppMove.toUpperCase()}` : 'BOTH FORFEITED';
     resultDisplay.classList.add('draw');
     sfxDraw();
+    showAnnouncer('A DRAW! GO AGAIN!', 2000);
     try { if(navigator.vibrate) navigator.vibrate(40); } catch(e){}
   } else {
     headline.textContent = 'FORFEIT'; headline.classList.add('lose');
@@ -6066,6 +6380,24 @@ function addChat(who, text){
 }
 function clearChat(){ $('#chatMessages').innerHTML = ''; }
 $('#chatSendBtn').addEventListener('click', sendChat);
+
+// Emote buttons — show emoji on both videos + send to peer
+document.querySelectorAll('.emote-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const emoji = btn.dataset.emote;
+    showEmoteFlash($('#youEmoteFlash'), emoji);
+    if(state.dataChannel?.readyState === 'open' && !state.isBotMatch){
+      sendPeer({ type: 'emote', emoji });
+    } else if(state.isBotMatch){
+      // bot reacts with a random emote sometimes
+      setTimeout(() => {
+        const reactions = ['👋','🔥','💀','😂','🤝','👏','🤔','😡'];
+        const reply = reactions[Math.floor(Math.random()*reactions.length)];
+        showEmoteFlash($('#oppEmoteFlash'), reply);
+      }, 600 + Math.random() * 800);
+    }
+  });
+});
 $('#chatInput').addEventListener('keydown', e => { if(e.key === 'Enter') sendChat(); });
 function sendChat(){
   const inp = $('#chatInput');
