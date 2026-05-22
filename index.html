@@ -2805,7 +2805,11 @@ const FIREBASE_CONFIG = {
           <div class="match-feed" id="matchFeed"><span class="blink">●</span> joining the queue…</div>
         </div>
         <div class="queue-count"><b id="queueSize">—</b> player(s) currently looking</div>
-        <button class="btn" id="cancelMatchBtn">Cancel</button>
+        <div id="matchDebug" style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); max-width:380px; text-align:left; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2); display:none; white-space:pre-wrap; max-height:140px; overflow-y:auto;"></div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn" id="cancelMatchBtn">Cancel</button>
+          <button class="btn btn-ghost" id="debugMatchBtn" style="font-size:11px;">Show debug info</button>
+        </div>
       </div>
 
       <div class="match-found-stage" id="matchFoundView" style="display:none;">
@@ -3889,9 +3893,15 @@ function watchGlobalStats(){
     onSnapshot(collection(state.db, 'queue'), (snap) => {
       setText('#onlineCount', snap.size);
       setText('#queueSize', snap.size);
+    }, (err) => {
+      console.error('global stats queue listener failed:', err);
+      if(err.code === 'permission-denied' && typeof showRulesError === 'function') showRulesError();
     });
     onSnapshot(collection(state.db, 'matches'), (snap) => {
       setText('#matchCount', snap.size);
+    }, (err) => {
+      console.error('global stats matches listener failed:', err);
+      if(err.code === 'permission-denied' && typeof showRulesError === 'function') showRulesError();
     });
   } catch(e){ console.warn('global stats fail', e); }
 }
@@ -4376,13 +4386,14 @@ async function createDirectMatch(oppUid, inv){
   }
 }
 function trimProfile(p){
+  // NOTE: We intentionally do NOT include photoURL here — base64 images can be huge,
+  // and match docs need to be small. Photos are loaded lazily from users/ collection.
   return {
     uid: p.uid || '',
     username: p.username || 'player',
     country: p.country || 'XX',
     rating: p.rating || 1000,
     colorIdx: p.colorIdx || 0,
-    photoURL: p.photoURL || '',
     wins: p.wins || 0, losses: p.losses || 0, games: p.games || 0, bestStreak: p.bestStreak || 0,
     bio: p.bio || '',
   };
@@ -4782,6 +4793,10 @@ async function findMatch(){
   const uid = state.user.uid;
   const queueRef = doc(state.db, 'queue', uid);
 
+  // Track when WE joined the queue so we can filter out matches created BEFORE we joined
+  const joinedMs = Date.now();
+  state._queueJoinedAt = joinedMs;
+
   try {
     await setDoc(queueRef, {
       uid,
@@ -4791,55 +4806,75 @@ async function findMatch(){
       sameRegion: state.sameRegion,
       similarRank: state.similarRank,
       colorIdx: state.profile.colorIdx || 0,
-      photoURL: state.profile.photoURL || '',
       blocked: state.profile.blocked || [],
       joinedAt: serverTimestamp(),
-      lastBeat: Date.now(), // client-side ms for stale detection
+      lastBeat: Date.now(),
     });
-  } catch(e){ toast('Could not join queue', 'error'); showScreen('landing'); return; }
+    console.log('[match] joined queue', uid);
+  } catch(e){
+    console.error('[match] could not join queue', e);
+    toast('Could not join queue: ' + (e.code || e.message), 'error');
+    showScreen('landing');
+    return;
+  }
 
-  // Heartbeat: refresh lastBeat every 4s so others know we're alive
+  // Heartbeat: refresh lastBeat every 3s so others know we're alive
   state._queueHeartbeat = setInterval(async () => {
     if(state.screen !== 'matching' || state.matchId){
       clearInterval(state._queueHeartbeat); state._queueHeartbeat = null;
       return;
     }
-    try { await updateDoc(queueRef, { lastBeat: Date.now() }); } catch(e){}
-  }, 4000);
+    try { await updateDoc(queueRef, { lastBeat: Date.now() }); }
+    catch(e){ console.warn('[match] heartbeat failed', e); }
+  }, 3000);
 
-  // listen for matches involving me (filtered by caller OR callee)
+  // Listen for matches involving me — this is HOW BOTH players join the same match
   const matchesCol = collection(state.db, 'matches');
   const myMatchUnsub = onSnapshot(matchesCol, async (snap) => {
     if(state.screen !== 'matching' || state.matchId) return;
     for(const change of snap.docChanges()){
       if(change.type !== 'added' && change.type !== 'modified') continue;
       const m = change.doc.data();
-      if((m.caller === uid || m.callee === uid) && !state.matchId){
-        // sanity: only join recent matches (avoid stale zombie matches)
-        const ageMs = m.createdAt?.toMillis ? (Date.now() - m.createdAt.toMillis()) : 0;
-        if(ageMs > 30000){ continue; }
-        // sanity: status must be pending or in-flight (not ended)
-        if(m.status === 'ended'){ continue; }
-        state.matchId = change.doc.id;
-        state.isCaller = (m.caller === uid);
-        state.oppUid = state.isCaller ? m.callee : m.caller;
-        state.oppProfile = state.isCaller ? m.calleeProfile : m.callerProfile;
-        myMatchUnsub();
-        // delete my queue entry
-        try { await deleteDoc(queueRef); } catch(e){}
-        showMatchFound();
-        sfxMatch();
-        setTimeout(() => enterMatch(m), 1800);
-        return;
+      if(!m) continue;
+      // Match must involve me
+      if(m.caller !== uid && m.callee !== uid) continue;
+      // Must not already be joined
+      if(state.matchId) continue;
+      // Match must be created AFTER we joined the queue (avoid zombies)
+      const createdMs = m.createdAt?.toMillis ? m.createdAt.toMillis() : 0;
+      if(createdMs && createdMs < state._queueJoinedAt - 5000){
+        console.log('[match] ignoring zombie match (created before queue join)');
+        continue;
       }
+      // Must not be ended
+      if(m.status === 'ended') continue;
+
+      console.log('[match] FOUND! id=', change.doc.id, 'isCaller=', m.caller === uid);
+      state.matchId = change.doc.id;
+      state.isCaller = (m.caller === uid);
+      state.oppUid = state.isCaller ? m.callee : m.caller;
+      state.oppProfile = state.isCaller ? m.calleeProfile : m.callerProfile;
+      myMatchUnsub();
+      // delete my queue entry (everyone deletes their own)
+      try { await deleteDoc(queueRef); } catch(e){ console.warn('[match] cleanup queue failed', e); }
+      showMatchFound();
+      sfxMatch();
+      setTimeout(() => enterMatch(m), 1800);
+      return;
+    }
+  }, (err) => {
+    console.error('[match] match listener error:', err);
+    if(err.code === 'permission-denied'){
+      showRulesError();
+    } else {
+      toast('Listener error: ' + err.code, 'error');
     }
   });
   state._myMatchUnsub = myMatchUnsub;
 
-  setText('#matchFeed', '<span class="blink">●</span> scanning for opponents…');
   $('#matchFeed').innerHTML = '<span class="blink">●</span> scanning for opponents…';
   let attempts = 0;
-  const STALE_MS = 12000; // ignore entries that haven't heartbeated in 12s
+  const STALE_MS = 15000;
 
   const tryPair = async () => {
     if(state.screen !== 'matching' || state.matchId) return;
@@ -4851,18 +4886,24 @@ async function findMatch(){
       qSnap.forEach(d => {
         if(d.id === uid) return;
         const o = d.data();
-        // skip stale entries (no recent heartbeat)
+        if(!o || !o.uid) return;
         const beat = o.lastBeat || 0;
-        if(now - beat > STALE_MS) return;
-        // skip blocked
+        if(now - beat > STALE_MS){
+          console.log('[match] skipping stale entry:', o.uid, 'age=', now-beat);
+          return;
+        }
         if(state.profile.blocked?.includes(o.uid)) return;
         if(o.blocked?.includes(uid)) return;
         others.push(o);
       });
+
+      console.log(`[match] scan attempt ${attempts}: found ${others.length} candidates`);
+
       if(others.length === 0){
         $('#matchFeed').innerHTML = `<span class="blink">●</span> waiting · ${attempts}s · be the first hand drawn`;
         return;
       }
+
       const myRating = state.profile.rating || 1000;
       const myRegion = regionOf(state.profile.country);
       let candidates = others.slice();
@@ -4883,54 +4924,131 @@ async function findMatch(){
       }
 
       const opp = candidates[0];
-      // Both players attempt the transaction; transaction guards against duplicates.
-      // The transaction will fail for the second player when their queue entry no longer exists.
-      // To reduce wasted writes, lower UID gets first shot — but higher UID retries after delay
-      // (instead of waiting passively, which could deadlock).
-      const isLowerUid = uid < opp.uid;
 
-      // Higher UID waits 800ms before trying — gives lower UID a chance, but still retries
-      if(!isLowerUid && attempts < 2){
-        $('#matchFeed').innerHTML = `<span class="blink">●</span> match incoming · ${attempts}s`;
+      // DETERMINISTIC: only the player with LOWER uid creates the match doc.
+      // The higher-uid player just waits for the listener to fire.
+      // This avoids ALL race conditions and permission issues with multi-doc transactions.
+      if(uid >= opp.uid){
+        $('#matchFeed').innerHTML = `<span class="blink">●</span> opponent found · waiting for them to create match · ${attempts}s`;
         return;
       }
 
-      const caller = isLowerUid ? uid : opp.uid;
-      const callee = isLowerUid ? opp.uid : uid;
-      const oppQueueRef = doc(state.db, 'queue', opp.uid);
-      const myQueueRef = doc(state.db, 'queue', uid);
-      const oppProfileRef = doc(state.db, 'users', opp.uid);
-      const newMatchRef = doc(collection(state.db, 'matches'));
+      // I am the lower UID — I create the match doc directly (no transaction needed)
+      console.log('[match] I am lower UID, creating match with', opp.uid);
+
+      // Load opponent profile
+      let oppProf;
       try {
-        await runTransaction(state.db, async (tx) => {
-          const oppQ = await tx.get(oppQueueRef);
-          if(!oppQ.exists()) throw new Error('opp gone');
-          const oppData = oppQ.data();
-          if(Date.now() - (oppData.lastBeat || 0) > STALE_MS) throw new Error('opp stale');
-          const meQ = await tx.get(myQueueRef);
-          if(!meQ.exists()) throw new Error('we left');
-          const oppProfSnap = await tx.get(oppProfileRef);
-          const oppProf = oppProfSnap.exists() ? trimProfile(oppProfSnap.data()) : trimProfile({uid: opp.uid, ...opp});
-          tx.set(newMatchRef, {
-            caller, callee,
-            callerProfile: caller === uid ? trimProfile(state.profile) : oppProf,
-            calleeProfile: callee === uid ? trimProfile(state.profile) : oppProf,
-            status: 'pending',
-            createdAt: serverTimestamp(),
-          });
-          tx.delete(oppQueueRef);
-          tx.delete(myQueueRef);
-        });
-        console.log('[match] transaction successful, awaiting listener');
-      } catch(err){
-        console.log('[match] transaction failed:', err.message);
+        const oppProfSnap = await getDoc(doc(state.db, 'users', opp.uid));
+        oppProf = oppProfSnap.exists() ? trimProfile(oppProfSnap.data()) : trimProfile({uid: opp.uid, ...opp});
+      } catch(e){
+        oppProf = trimProfile({uid: opp.uid, ...opp});
       }
-    } catch(e){ console.warn('[match] queue scan failed', e); }
+
+      // Check opp queue is still fresh just before creating
+      try {
+        const oppQSnap = await getDoc(doc(state.db, 'queue', opp.uid));
+        if(!oppQSnap.exists()){
+          console.log('[match] opp left before we could create');
+          return;
+        }
+        const oppQData = oppQSnap.data();
+        if(Date.now() - (oppQData.lastBeat || 0) > STALE_MS){
+          console.log('[match] opp went stale');
+          return;
+        }
+      } catch(e){
+        console.warn('[match] could not verify opp', e);
+      }
+
+      // Create the match document — both my listener and theirs will pick it up
+      try {
+        const matchData = {
+          caller: uid,
+          callee: opp.uid,
+          callerProfile: trimProfile(state.profile),
+          calleeProfile: oppProf,
+          status: 'pending',
+          createdAt: serverTimestamp(),
+        };
+        await addDoc(collection(state.db, 'matches'), matchData);
+        console.log('[match] match doc created successfully — both listeners should now fire');
+      } catch(err){
+        console.error('[match] could not create match doc:', err.code, err.message);
+        if(err.code === 'permission-denied' || err.message?.includes('permission')){
+          showRulesError();
+          // Stop trying — rules are wrong
+          if(state._pairInterval){ clearInterval(state._pairInterval); state._pairInterval = null; }
+        } else {
+          toast('Match creation failed: ' + (err.code || err.message), 'error');
+        }
+      }
+    } catch(e){
+      console.error('[match] queue scan failed:', e.code, e.message);
+    }
   };
 
   const interval = setInterval(tryPair, 1500);
   state._pairInterval = interval;
-  tryPair();
+  // run first attempt after a short delay so heartbeat has time to register
+  setTimeout(tryPair, 300);
+}
+
+// Show a big visible error when Firestore rules block matchmaking
+function showRulesError(){
+  if($('#rulesErrorOverlay')) return; // already shown
+  const overlay = document.createElement('div');
+  overlay.id = 'rulesErrorOverlay';
+  overlay.style.cssText = `
+    position:fixed; inset:0; z-index:300;
+    background: rgba(15,8,22,.96);
+    backdrop-filter: blur(20px);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+  `;
+  overlay.innerHTML = `
+    <div style="max-width:560px; background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid var(--coral); border-radius:24px; padding:32px; box-shadow:0 32px 80px rgba(255,61,104,.3);">
+      <div style="font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:32px; letter-spacing:-.02em; color:var(--coral); margin-bottom:8px;">FIRESTORE RULES PROBLEM</div>
+      <p style="color:var(--text); margin-bottom:14px; line-height:1.5;">
+        Matchmaking failed because your Firestore Rules are blocking match creation (<code style="background:var(--surface-2); padding:2px 6px; border-radius:4px; font-size:12px;">permission-denied</code>).
+      </p>
+      <p style="color:var(--text-dim); margin-bottom:14px; line-height:1.5; font-size:14px;">
+        <b>How to fix:</b><br>
+        1. Open <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--mint);">Firebase Console</a> → your project<br>
+        2. <b>Firestore Database → Rules</b> tab<br>
+        3. <b>Replace ALL the rules</b> with the block below<br>
+        4. Click <b>Publish</b><br>
+        5. Come back here and click "Find a stranger" again
+      </p>
+      <div style="background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:14px; position:relative; margin-bottom:18px;">
+        <button id="copyEmergencyRulesBtn" style="position:absolute; top:8px; right:8px; padding:6px 12px; font-size:11px; background:var(--mint); color:#000; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-family:var(--font-mono);">COPY</button>
+        <pre id="emergencyRulesText" style="font-family:var(--font-mono); font-size:11px; color:var(--text); white-space:pre-wrap; margin:0; padding-right:60px;">rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}</pre>
+      </div>
+      <p style="color:var(--text-faint); font-size:11px; line-height:1.5; margin-bottom:18px; font-family:var(--font-mono);">
+        These permissive rules let any signed-in user read/write everything. Good for testing. Once matchmaking works, switch to the stricter rules in the setup guide.
+      </p>
+      <button id="closeRulesErrorBtn" style="width:100%; padding:14px; background:var(--coral); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;">OK, I'll fix it</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#copyEmergencyRulesBtn').addEventListener('click', () => {
+    const text = overlay.querySelector('#emergencyRulesText').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      overlay.querySelector('#copyEmergencyRulesBtn').textContent = 'COPIED!';
+      setTimeout(() => overlay.querySelector('#copyEmergencyRulesBtn').textContent = 'COPY', 1500);
+    });
+  });
+  overlay.querySelector('#closeRulesErrorBtn').addEventListener('click', () => {
+    overlay.remove();
+    cancelMatchmaking();
+  });
 }
 
 function cancelMatchmakingResources(){
@@ -4940,7 +5058,7 @@ function cancelMatchmakingResources(){
   if(state._queueHeartbeat){ clearInterval(state._queueHeartbeat); state._queueHeartbeat = null; }
 }
 
-function showMatchFound(){
+async function showMatchFound(){
   $('#matchSearchView').style.display = 'none';
   $('#matchFoundView').style.display = '';
   renderAvatar($('#mfYouAv'), state.profile);
@@ -4959,6 +5077,19 @@ function showMatchFound(){
   $('#mfYouSub').appendChild(s1);
 
   const o = state.oppProfile || {};
+  // Lazy-load opponent photo since it's no longer embedded in match docs
+  if(!o.photoURL && o.uid && !state.isBotMatch){
+    try {
+      const oppSnap = await getDoc(doc(state.db, 'users', o.uid));
+      if(oppSnap.exists()){
+        const d = oppSnap.data();
+        if(d.photoURL){
+          o.photoURL = d.photoURL;
+          state.oppProfile.photoURL = d.photoURL;
+        }
+      }
+    } catch(e){ /* ignore — fall back to color */ }
+  }
   renderAvatar($('#mfOppAv'), o);
   setText('#mfOppName', '@' + (o.username || 'stranger'));
   const oRank = rankFromRating(o.rating || 1000);
@@ -6486,6 +6617,46 @@ $('#botBtn').addEventListener('click', () => {
   startBotMatch();
 });
 $('#cancelMatchBtn').addEventListener('click', cancelMatchmaking);
+$('#debugMatchBtn').addEventListener('click', async () => {
+  const dbg = $('#matchDebug');
+  dbg.style.display = dbg.style.display === 'none' ? 'block' : 'none';
+  if(dbg.style.display === 'block'){
+    refreshDebugInfo();
+  }
+});
+async function refreshDebugInfo(){
+  const dbg = $('#matchDebug');
+  if(!dbg || dbg.style.display === 'none') return;
+  try {
+    const uid = state.user?.uid || '?';
+    const lines = [`my uid: ${uid.slice(0,12)}…`];
+    lines.push(`my photoURL: ${state.profile?.photoURL ? 'set ('+(state.profile.photoURL.length)+' chars)' : 'none'}`);
+    lines.push(`queue heartbeat: ${state._queueHeartbeat ? 'active' : 'inactive'}`);
+    lines.push(`match listener: ${state._myMatchUnsub ? 'active' : 'inactive'}`);
+    lines.push(`---`);
+    const qSnap = await getDocs(collection(state.db, 'queue'));
+    lines.push(`queue size: ${qSnap.size}`);
+    const now = Date.now();
+    qSnap.forEach(d => {
+      const o = d.data();
+      const age = now - (o.lastBeat || 0);
+      const me = d.id === uid ? ' (ME)' : '';
+      lines.push(`  ${o.username || '?'} (${d.id.slice(0,8)}…) age=${(age/1000).toFixed(1)}s${me}`);
+    });
+    lines.push(`---`);
+    const mSnap = await getDocs(query(collection(state.db, 'matches'), orderBy('createdAt','desc'), limit(5)));
+    lines.push(`recent matches: ${mSnap.size}`);
+    mSnap.forEach(d => {
+      const m = d.data();
+      const inv = m.caller === uid || m.callee === uid ? ' (involves me)' : '';
+      const age = m.createdAt?.toMillis ? `${((now - m.createdAt.toMillis())/1000).toFixed(1)}s ago` : 'no timestamp';
+      lines.push(`  ${m.callerProfile?.username||'?'} vs ${m.calleeProfile?.username||'?'} · ${m.status} · ${age}${inv}`);
+    });
+    dbg.textContent = lines.join('\n');
+  } catch(e){ dbg.textContent = 'debug error: ' + e.message; }
+}
+// Auto-refresh debug info every 2s while visible
+setInterval(() => { if($('#matchDebug')?.style.display === 'block') refreshDebugInfo(); }, 2000);
 $('#nextBtn').addEventListener('click', nextStranger);
 $('#helpBtn').addEventListener('click', () => $('#helpModal').classList.add('show'));
 document.querySelectorAll('[data-close]').forEach(b => {
