@@ -9105,8 +9105,8 @@ function setupOppPanel(){
   renderAvatar($('#oppAvatar'), op);
   renderAvatar($('#oppAvatarBig'), op);
   setText('#chatWithName', '@' + (op.username || 'stranger'));
-  const op = $('#oppPlaceholder');
-  if(op) op.style.display = '';
+  const oppPh = $('#oppPlaceholder');
+  if(oppPh) oppPh.style.display = '';
   const cs = $('#oppCamStatus');
   if(cs){
     cs.classList.remove('live');
@@ -11170,7 +11170,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v8.0 — LAUNCH READY', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v8.1 — DUPLICATE-FREE', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
 try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
 try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
 try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
