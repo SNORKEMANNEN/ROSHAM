@@ -6996,6 +6996,14 @@ async function onAuthChanged(user){
     showScreen('auth');
     return;
   }
+  // CRITICAL: Force-refresh the auth token. For brand-new sessions
+  // (signup, incognito sign-in), the token may not have propagated
+  // to Firestore yet, causing permission-denied errors on the first
+  // few operations. Force-refresh ensures the token is fully ready.
+  try {
+    await user.getIdToken(true);
+    console.log('[auth] token refreshed for', user.uid);
+  } catch(e){ console.warn('[auth] token refresh failed', e); }
   // Clean up any zombie queue entries / matches from previous sessions for this user
   try {
     await deleteDoc(doc(state.db, 'queue', user.uid));
@@ -7131,7 +7139,9 @@ function watchGlobalStats(){
       setText('#queueSize', active);
     }, (err) => {
       console.error('global stats queue listener failed:', err);
-      if(err.code === 'permission-denied' && typeof showRulesError === 'function') showRulesError();
+      // NOTE: do NOT call showRulesError here — global stats are non-critical
+      // and a transient permission error on a fresh auth session shouldn't
+      // scare the user with a "RULES PROBLEM" overlay.
     });
     onSnapshot(collection(state.db, 'matches'), (snap) => {
       // Count only recent, in-progress matches (created within last 5 min)
@@ -7148,7 +7158,7 @@ function watchGlobalStats(){
       setText('#matchCount', active);
     }, (err) => {
       console.error('global stats matches listener failed:', err);
-      if(err.code === 'permission-denied' && typeof showRulesError === 'function') showRulesError();
+      // NOTE: do NOT call showRulesError here — non-critical listener
     });
   } catch(e){ console.warn('global stats fail', e); }
 }
@@ -7967,11 +7977,31 @@ async function addFriendByUsername(username){
 
 async function acceptFriendRequest(reqId, fromUid){
   try {
+    // Force-refresh auth token in case session is fresh
+    if(state.user?.getIdToken){
+      try { await state.user.getIdToken(true); } catch(e){}
+    }
     // Strategy: Update own friends list AND mark the friendRequest as accepted.
     // The sender's side will pick up the 'accepted' state in their listener
     // and add the friend on their end (since rules only allow each user to write their own doc).
     const myRef = doc(state.db, 'users', state.user.uid);
-    await updateDoc(myRef, { friends: arrayUnion(fromUid) });
+    // Retry on permission-denied
+    let updated = false;
+    for(let attempt = 1; attempt <= 3; attempt++){
+      try {
+        if(attempt > 1){
+          try { await state.user.getIdToken(true); } catch(e){}
+          await sleep(400 * attempt);
+        }
+        await updateDoc(myRef, { friends: arrayUnion(fromUid) });
+        updated = true;
+        break;
+      } catch(e){
+        console.warn(`[accept-friend] attempt ${attempt} failed:`, e.code, e.message);
+        if(e.code !== 'permission-denied' && !e.message?.includes('permission')) throw e;
+      }
+    }
+    if(!updated) throw new Error('permission-denied');
     // Mark request as accepted (so sender can complete their side)
     try {
       await updateDoc(doc(state.db, 'friendRequests', reqId), {
@@ -8573,7 +8603,11 @@ async function findMatch(){
   state._queueJoinedAt = joinedMs;
 
   try {
-    await setDoc(queueRef, {
+    // Force-refresh auth token to avoid permission-denied on fresh sessions
+    if(state.user.getIdToken){
+      try { await state.user.getIdToken(true); } catch(e){}
+    }
+    const queueData = {
       uid,
       username: state.profile.username,
       country: state.profile.country,
@@ -8584,11 +8618,36 @@ async function findMatch(){
       blocked: state.profile.blocked || [],
       joinedAt: serverTimestamp(),
       lastBeat: Date.now(),
-    });
-    console.log('[match] joined queue', uid, '[ROSHAM v5.2 — clock-skew fix]');
+    };
+    // RETRY: queue join can fail with permission-denied on fresh sessions
+    let joined = false;
+    let lastErr = null;
+    for(let attempt = 1; attempt <= 3; attempt++){
+      try {
+        if(attempt > 1){
+          try { await state.user.getIdToken(true); } catch(e){}
+          await sleep(500 * attempt);
+        }
+        await setDoc(queueRef, queueData);
+        joined = true;
+        break;
+      } catch(e){
+        lastErr = e;
+        console.warn(`[match] queue join attempt ${attempt} failed:`, e.code, e.message);
+        if(e.code !== 'permission-denied' && !e.message?.includes('permission')) break;
+      }
+    }
+    if(!joined){
+      throw lastErr || new Error('Could not join queue');
+    }
+    console.log('[match] joined queue', uid, '[ROSHAM v8.2 — auth-token-refresh]');
   } catch(e){
     console.error('[match] could not join queue', e);
-    toast('Could not join queue: ' + (e.code || e.message), 'error');
+    if(e.code === 'permission-denied' || e.message?.includes('permission')){
+      showRulesError();
+    } else {
+      toast('Could not join queue: ' + (e.code || e.message), 'error');
+    }
     showScreen('landing');
     return;
   }
@@ -8763,25 +8822,50 @@ async function findMatch(){
           status: 'pending',
           createdAt: serverTimestamp(),
         };
-        const newMatchRef = await addDoc(collection(state.db, 'matches'), matchData);
-        console.log('[match] match doc created successfully:', newMatchRef.id, '— both listeners should now fire');
-        // SAFETY: if peer doesn't join within 10s, delete the match and try again
-        const safetyTimeout = setTimeout(async () => {
-          if(state.matchId === newMatchRef.id || state.matchId) return; // we joined ok
-          console.warn('[match] match abandoned — peer never joined, deleting:', newMatchRef.id);
-          try { await deleteDoc(newMatchRef); } catch(e){}
-        }, 10000);
-        state._safetyCleanups = state._safetyCleanups || [];
-        state._safetyCleanups.push(safetyTimeout);
-      } catch(err){
-        console.error('[match] could not create match doc:', err.code, err.message);
-        if(err.code === 'permission-denied' || err.message?.includes('permission')){
-          showRulesError();
-          // Stop trying — rules are wrong
-          if(state._pairInterval){ clearInterval(state._pairInterval); state._pairInterval = null; }
-        } else {
-          toast('Match creation failed: ' + (err.code || err.message), 'error');
+        // RETRY ON PERMISSION-DENIED: New users may experience auth token
+        // propagation delays. Retry up to 3 times before declaring rules problem.
+        let newMatchRef = null;
+        let lastErr = null;
+        const maxAttempts = 3;
+        for(let attempt = 1; attempt <= maxAttempts; attempt++){
+          try {
+            // Refresh the auth token before each attempt — fixes new-user token-propagation issues
+            if(attempt > 1 && state.user){
+              try { await state.user.getIdToken(true); } catch(e){}
+              await sleep(500 * attempt); // exponential-ish backoff
+            }
+            newMatchRef = await addDoc(collection(state.db, 'matches'), matchData);
+            console.log(`[match] match doc created (attempt ${attempt}):`, newMatchRef.id);
+            break; // success
+          } catch(err){
+            lastErr = err;
+            console.warn(`[match] create attempt ${attempt} failed:`, err.code, err.message);
+            if(err.code !== 'permission-denied' && !err.message?.includes('permission')){
+              break; // non-permission error — don't retry
+            }
+          }
         }
+        if(!newMatchRef){
+          console.error('[match] could not create match doc after retries:', lastErr?.code, lastErr?.message);
+          if(lastErr?.code === 'permission-denied' || lastErr?.message?.includes('permission')){
+            showRulesError();
+            if(state._pairInterval){ clearInterval(state._pairInterval); state._pairInterval = null; }
+          } else {
+            toast('Match creation failed: ' + (lastErr?.code || lastErr?.message || 'unknown'), 'error');
+          }
+        } else {
+          // SAFETY: if peer doesn't join within 10s, delete the match and try again
+          const safetyTimeout = setTimeout(async () => {
+            if(state.matchId === newMatchRef.id || state.matchId) return; // we joined ok
+            console.warn('[match] match abandoned — peer never joined, deleting:', newMatchRef.id);
+            try { await deleteDoc(newMatchRef); } catch(e){}
+          }, 10000);
+          state._safetyCleanups = state._safetyCleanups || [];
+          state._safetyCleanups.push(safetyTimeout);
+        }
+      } catch(err){
+        console.error('[match] outer match creation error:', err.code, err.message);
+        toast('Match creation failed: ' + (err.code || err.message), 'error');
       }
     } catch(e){
       console.error('[match] queue scan failed:', e.code, e.message);
@@ -8808,17 +8892,17 @@ function showRulesError(){
   `;
   overlay.innerHTML = `
     <div style="max-width:560px; background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid var(--coral); border-radius:24px; padding:32px; box-shadow:0 32px 80px rgba(255,61,104,.3);">
-      <div style="font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:32px; letter-spacing:-.02em; color:var(--coral); margin-bottom:8px;">FIRESTORE RULES PROBLEM</div>
+      <div style="font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:32px; letter-spacing:-.02em; color:var(--coral); margin-bottom:8px;">CONNECTION ISSUE</div>
       <p style="color:var(--text); margin-bottom:14px; line-height:1.5;">
-        Matchmaking failed because your Firestore Rules are blocking match creation (<code style="background:var(--surface-2); padding:2px 6px; border-radius:4px; font-size:12px;">permission-denied</code>).
+        Matchmaking failed with a permission error. This sometimes happens to brand-new sessions when the auth token hasn't propagated yet — <b>try again</b> first.
       </p>
       <p style="color:var(--text-dim); margin-bottom:14px; line-height:1.5; font-size:14px;">
-        <b>How to fix:</b><br>
+        <b>If "Try Again" keeps failing, your Firestore Rules need updating:</b><br>
         1. Open <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--mint);">Firebase Console</a> → your project<br>
         2. <b>Firestore Database → Rules</b> tab<br>
         3. <b>Replace ALL the rules</b> with the block below<br>
         4. Click <b>Publish</b><br>
-        5. Come back here and click "Find a stranger" again
+        5. Come back here and click "Try Again"
       </p>
       <div style="background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:14px; position:relative; margin-bottom:18px;">
         <button id="copyEmergencyRulesBtn" style="position:absolute; top:8px; right:8px; padding:6px 12px; font-size:11px; background:var(--mint); color:#000; border:none; border-radius:6px; cursor:pointer; font-weight:700; font-family:var(--font-mono);">COPY</button>
@@ -8834,7 +8918,10 @@ service cloud.firestore {
       <p style="color:var(--text-faint); font-size:11px; line-height:1.5; margin-bottom:18px; font-family:var(--font-mono);">
         These permissive rules let any signed-in user read/write everything. Good for testing. Once matchmaking works, switch to the stricter rules in the setup guide.
       </p>
-      <button id="closeRulesErrorBtn" style="width:100%; padding:14px; background:var(--coral); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;">OK, I'll fix it</button>
+      <div style="display:flex; gap:10px;">
+        <button id="closeRulesErrorBtn" style="flex:1; padding:14px; background:var(--surface-2); color:var(--text); border:1px solid var(--line); border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;">Cancel</button>
+        <button id="retryRulesErrorBtn" style="flex:2; padding:14px; background:var(--coral); color:#fff; border:none; border-radius:10px; font-weight:700; font-size:14px; cursor:pointer;">Try Again</button>
+      </div>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -8848,6 +8935,22 @@ service cloud.firestore {
   overlay.querySelector('#closeRulesErrorBtn').addEventListener('click', () => {
     overlay.remove();
     cancelMatchmaking();
+  });
+  // NEW: Try Again button — force-refresh auth token and retry findMatch
+  overlay.querySelector('#retryRulesErrorBtn').addEventListener('click', async () => {
+    const btn = overlay.querySelector('#retryRulesErrorBtn');
+    btn.textContent = 'Retrying...';
+    btn.disabled = true;
+    try {
+      if(state.user){
+        await state.user.getIdToken(true); // force token refresh
+        await sleep(800);
+      }
+    } catch(e){ console.warn('[retry] token refresh failed', e); }
+    overlay.remove();
+    cancelMatchmakingResources();
+    // Restart matchmaking
+    findMatch();
   });
 }
 
@@ -11170,7 +11273,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v8.1 — DUPLICATE-FREE', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v8.2 — AUTH TOKEN REFRESH', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
 try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
 try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
 try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
