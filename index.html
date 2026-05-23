@@ -154,6 +154,84 @@ body::after{
   color: #fff;
 }
 
+/* ============ REMATCH OFFER POPUP ============ */
+.rematch-offer{
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(40px);
+  z-index: 250;
+  opacity: 0;
+  transition: all .35s cubic-bezier(.2,1.6,.4,1);
+  pointer-events: none;
+}
+.rematch-offer.show{
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+.rematch-offer-inner{
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--mint);
+  border-radius: 18px;
+  padding: 16px 20px;
+  box-shadow: 0 24px 60px -10px var(--mint-glow), var(--shadow-xl);
+  backdrop-filter: blur(20px);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 480px;
+}
+.rematch-offer-text{
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text);
+}
+.rematch-offer-text strong{
+  color: var(--mint);
+  font-weight: 700;
+}
+.rematch-offer-actions{
+  display: flex;
+  gap: 8px;
+}
+.rematch-offer-actions .btn{
+  padding: 8px 14px;
+  font-size: 12px;
+}
+
+/* ============ ACCESSIBILITY MODES ============ */
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  animation-duration: 0.001s !important;
+  animation-delay: 0s !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.05s !important;
+}
+body.reduce-motion .grain,
+body.reduce-motion .noise,
+body.reduce-motion body::before,
+body.reduce-motion body::after { animation: none !important; }
+
+body.high-contrast{
+  --text: #ffffff;
+  --text-dim: #e0e0e0;
+  --text-faint: #b0b0b0;
+  --line: #555570;
+  --line-bright: #7a7a95;
+  --coral: #ff4d7a;
+  --mint: #5dffc8;
+  --amber: #ffd955;
+}
+body.high-contrast .btn{
+  border-width: 2px;
+}
+body.high-contrast .btn-primary{
+  background: #ff2d6b;
+  border: 2px solid #fff;
+}
+
 /* Focus visible for accessibility */
 *:focus-visible{
   outline: 2px solid var(--coral);
@@ -605,6 +683,533 @@ h1.section-title .accent{
 }
 .hub-main{display:flex; flex-direction:column; gap:24px;}
 .hub-side{display:flex; flex-direction:column; gap:18px;}
+
+/* ============ STATS SUMMARY CARD ============ */
+.stats-summary-card{
+  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.stats-summary-card::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  opacity: .5;
+}
+.stats-summary-head{
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.stats-summary-head .title{
+  font-family: var(--font-display);
+  font-stretch: 80%; font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.view-full-stats{
+  background: none;
+  border: none;
+  color: var(--coral);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all .15s;
+}
+.view-full-stats:hover{ color: var(--text); transform: translateX(2px); }
+.stats-summary-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.stat-mini{
+  text-align: center;
+  padding: 10px 4px;
+  background: rgba(0,0,0,.25);
+  border-radius: 10px;
+  border: 1px solid var(--line-soft);
+  transition: all .2s;
+}
+.stat-mini:hover{
+  background: rgba(255,255,255,.03);
+  transform: translateY(-2px);
+}
+.stat-mini-val{
+  font-family: var(--font-display);
+  font-stretch: 70%; font-weight: 800;
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: -.02em;
+  background: linear-gradient(180deg, #fff, var(--text-dim));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stat-mini-lbl{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+/* ============ DAILY CHALLENGE CARD ============ */
+.daily-challenge-card{
+  background:
+    radial-gradient(circle at 90% 10%, rgba(255,206,61,.15), transparent 50%),
+    linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 16px 18px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.daily-challenge-card::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  opacity: .6;
+}
+.daily-head{
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.daily-icon{
+  font-size: 16px;
+  filter: drop-shadow(0 0 8px var(--amber-glow));
+}
+.daily-title{
+  font-family: var(--font-display);
+  font-stretch: 75%; font-weight: 700;
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  flex: 1;
+}
+.daily-streak{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255,107,0,.15);
+  border: 1px solid rgba(255,107,0,.4);
+  color: #ff6b00;
+}
+.daily-text{
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+.daily-progress-bar{
+  height: 8px;
+  background: rgba(0,0,0,.4);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.4);
+}
+.daily-progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber), #ff6b00);
+  border-radius: 4px;
+  transition: width .8s cubic-bezier(.2,.7,.2,1);
+  box-shadow: 0 0 12px var(--amber-glow);
+}
+.daily-progress-fill.complete{
+  background: linear-gradient(90deg, var(--mint), #25c186);
+  box-shadow: 0 0 16px var(--mint-glow);
+}
+.daily-meta{
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.daily-meta span:first-child{
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.daily-reward{
+  color: var(--mint);
+  font-weight: 700;
+}
+
+/* ============ SIDE TABS ============ */
+.side-tabs{
+  display: flex;
+  padding: 6px;
+  background: rgba(0,0,0,.3);
+  border-bottom: 1px solid var(--line-soft);
+  gap: 2px;
+}
+.side-tabs button{
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 8px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .2s;
+  position: relative;
+}
+.side-tabs button:hover{ color: var(--text); background: rgba(255,255,255,.03); }
+.side-tabs button.active{
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  color: var(--coral);
+  box-shadow: 0 2px 6px rgba(0,0,0,.3);
+}
+.side-tabs .badge{
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 5px;
+  background: var(--coral);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+/* ============ ADD FRIEND INPUT ============ */
+.add-friend-input{
+  display: flex;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--line-soft);
+  background: rgba(0,0,0,.2);
+}
+.add-friend-input input{
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 9px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  outline: none;
+  transition: all .2s;
+}
+.add-friend-input input:focus{
+  border-color: var(--coral);
+  box-shadow: 0 0 0 2px rgba(255,45,107,.12);
+}
+.add-friend-input button{
+  background: linear-gradient(180deg, var(--coral), #d4194e);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 9px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+}
+.add-friend-input button:hover{ transform: translateY(-1px); box-shadow: 0 4px 12px var(--coral-glow); }
+
+/* ============ STATS MODAL ============ */
+.big-rating-display{
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px;
+  background: linear-gradient(135deg, rgba(255,45,107,.12), rgba(176,140,255,.08));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.big-rating-display::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--coral), transparent);
+  opacity: .5;
+}
+.big-rating-icon{
+  width: 64px; height: 64px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+}
+.big-rating-icon svg{ width: 56px; height: 56px; }
+.big-rating-info{ flex: 1; }
+.big-rating-tier{
+  font-family: var(--font-display);
+  font-stretch: 70%; font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -.02em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.big-rating-num{
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-dim);
+}
+.big-rating-num #statsBigRating{
+  font-family: var(--font-display);
+  font-stretch: 70%; font-weight: 800;
+  font-size: 28px;
+  color: var(--text);
+  margin-right: 6px;
+}
+.big-rating-num .rating-label{
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.big-rating-next{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mint);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.stats-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.stat-card{
+  text-align: center;
+  padding: 14px 10px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  transition: all .25s cubic-bezier(.2,.8,.2,1);
+}
+.stat-card:hover{
+  transform: translateY(-3px);
+  border-color: var(--line-bright);
+  box-shadow: var(--shadow-md);
+}
+.stat-card-icon{
+  font-size: 22px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.3));
+}
+.stat-card-val{
+  font-family: var(--font-display);
+  font-stretch: 70%; font-weight: 800;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: -.02em;
+  margin-bottom: 4px;
+  background: linear-gradient(180deg, #fff, var(--text-dim));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.stat-card-lbl{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Throw distribution bars */
+.throw-bars{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.throw-bar-row{
+  display: grid;
+  grid-template-columns: 28px 90px 1fr 50px;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+}
+.throw-bar-icon{ display: grid; place-items: center; }
+.throw-bar-label{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.throw-bar-track{
+  height: 10px;
+  background: rgba(0,0,0,.4);
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.4);
+}
+.throw-bar-fill{
+  height: 100%;
+  border-radius: 5px;
+  transition: width .8s cubic-bezier(.2,.7,.2,1);
+  box-shadow: 0 0 8px currentColor;
+}
+.throw-bar-val{
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ============ SETTINGS MODAL ============ */
+.settings-section{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.settings-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  transition: all .2s;
+}
+.settings-row:hover{
+  border-color: var(--line-bright);
+}
+.settings-row-info{ flex: 1; }
+.settings-row-title{
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+.settings-row-sub{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: .02em;
+}
+
+/* Toggle switch */
+.toggle-switch{
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  flex-shrink: 0;
+}
+.toggle-switch input{
+  opacity: 0;
+  width: 0; height: 0;
+}
+.toggle-slider{
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: var(--surface-3);
+  border-radius: 999px;
+  transition: all .3s;
+  border: 1px solid var(--line);
+}
+.toggle-slider::before{
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 2px;
+  top: 2px;
+  background: var(--text-dim);
+  border-radius: 50%;
+  transition: all .3s cubic-bezier(.2,1.6,.4,1);
+  box-shadow: 0 2px 4px rgba(0,0,0,.4);
+}
+.toggle-switch input:checked + .toggle-slider{
+  background: linear-gradient(135deg, var(--coral), #d4194e);
+  border-color: var(--coral);
+  box-shadow: 0 0 12px var(--coral-glow);
+}
+.toggle-switch input:checked + .toggle-slider::before{
+  transform: translateX(20px);
+  background: #fff;
+}
+
+/* ============ ACHIEVEMENTS MODAL ============ */
+.achievements-grid{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.achievement-card{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 10px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  text-align: center;
+  transition: all .25s cubic-bezier(.2,.8,.2,1);
+}
+.achievement-card.unlocked{
+  background: linear-gradient(180deg, rgba(60,255,185,.1), rgba(60,255,185,.02));
+  border-color: var(--mint);
+  box-shadow: 0 0 16px var(--mint-glow);
+}
+.achievement-card.locked{
+  opacity: .4;
+  filter: grayscale(.8);
+}
+.achievement-card:hover{
+  transform: translateY(-2px);
+}
+.achievement-card .icon{
+  font-size: 32px;
+  margin-bottom: 4px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.4));
+}
+.achievement-card .title{
+  font-family: var(--font-display);
+  font-stretch: 75%; font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -.005em;
+  text-transform: uppercase;
+}
+.achievement-card .desc{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+  line-height: 1.4;
+}
+
+@media (max-width: 600px){
+  .stats-grid{ grid-template-columns: repeat(2, 1fr); }
+  .achievements-grid{ grid-template-columns: repeat(2, 1fr); }
+}
 
 .hero-block{
   background:
@@ -2441,11 +3046,6 @@ h2.match-title{
   .dock-predict-label{ display: none; }
 }
 
-#screen-game.active{
-  display: flex;
-  flex-direction: column;
-}
-
 .panel{
   background:linear-gradient(180deg, var(--surface), var(--bg-2));
   border:1px solid var(--line);
@@ -3346,6 +3946,32 @@ h2.match-title{
   padding: 14px 22px;
   font-size: 13px;
   font-weight: 700;
+}
+.match-result-extra{
+  display: flex; gap: 8px; justify-content: center;
+  margin-top: 14px;
+  position: relative; z-index: 2;
+}
+.extra-action{
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line);
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: all .2s;
+  font-weight: 600;
+}
+.extra-action:hover{
+  background: rgba(255,255,255,.08);
+  border-color: var(--line-bright);
+  color: var(--text);
+  transform: translateY(-1px);
 }
 
 .round-stage{
@@ -4657,7 +5283,7 @@ h2.match-title{
     <div class="logo">
       <span class="dot"></span>
       <span class="word">ROSHAM</span>
-      <span class="tag">v4 · ranked</span>
+      <span class="tag">v7 · ranked</span>
     </div>
     <div class="live-stats" id="liveStats">
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
@@ -4671,6 +5297,8 @@ h2.match-title{
         <span id="chipName">—</span>
         <span class="rating" id="chipRating"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
       </div>
+      <button class="btn btn-ghost" id="achievementsBtn" style="padding:8px; display:none;" title="Achievements"><svg width="14" height="14"><use href="#i-trophy"/></svg></button>
+      <button class="btn btn-ghost" id="settingsBtn" style="padding:8px; display:none;" title="Settings"><svg width="14" height="14"><use href="#i-edit"/></svg></button>
       <button class="btn btn-ghost" id="muteBtn" style="padding:8px;" title="Toggle sound"><svg width="14" height="14" id="muteIcon"><use href="#i-sound-on"/></svg></button>
       <button class="btn btn-ghost" id="signOutBtn" style="display:none; padding:8px;" title="Sign out"><svg width="14" height="14"><use href="#i-out"/></svg></button>
     </div>
@@ -4930,11 +5558,57 @@ const FIREBASE_CONFIG = {
         </div>
 
         <aside class="hub-side">
+          <!-- NEW: Quick stats summary card -->
+          <div class="stats-summary-card">
+            <div class="stats-summary-head">
+              <div class="title">YOUR STATS</div>
+              <button class="view-full-stats" id="viewFullStatsBtn">View all →</button>
+            </div>
+            <div class="stats-summary-grid">
+              <div class="stat-mini">
+                <div class="stat-mini-val" id="summaryRating">—</div>
+                <div class="stat-mini-lbl">RATING</div>
+              </div>
+              <div class="stat-mini">
+                <div class="stat-mini-val" id="summaryWins">—</div>
+                <div class="stat-mini-lbl">WINS</div>
+              </div>
+              <div class="stat-mini">
+                <div class="stat-mini-val" id="summaryWR">—</div>
+                <div class="stat-mini-lbl">WIN %</div>
+              </div>
+              <div class="stat-mini">
+                <div class="stat-mini-val" id="summaryStreak">—</div>
+                <div class="stat-mini-lbl">STREAK</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- NEW: Daily challenge card -->
+          <div class="daily-challenge-card" id="dailyChallengeCard">
+            <div class="daily-head">
+              <span class="daily-icon">⚡</span>
+              <span class="daily-title">DAILY CHALLENGE</span>
+              <span class="daily-streak" id="dailyStreakBadge">🔥 0</span>
+            </div>
+            <div class="daily-body">
+              <div class="daily-text" id="dailyChallengeText">Win 3 ranked matches today</div>
+              <div class="daily-progress-bar">
+                <div class="daily-progress-fill" id="dailyProgressFill" style="width:0%"></div>
+              </div>
+              <div class="daily-meta">
+                <span id="dailyProgressText">0/3</span>
+                <span class="daily-reward">+50 ELO bonus</span>
+              </div>
+            </div>
+          </div>
+
           <div class="side-panel">
             <div class="side-tabs">
               <button class="active" data-side="friends">Friends <span class="badge" id="reqBadge" style="display:none;">0</span></button>
               <button data-side="activity">Activity</button>
               <button data-side="leaderboard">Top</button>
+              <button data-side="recent">Recent</button>
             </div>
 
             <div data-pane="friends">
@@ -4968,6 +5642,16 @@ const FIREBASE_CONFIG = {
                 <div class="ct" id="lbCount">—</div>
               </div>
               <div class="side-body" id="leaderboardBody"></div>
+            </div>
+
+            <!-- NEW: Recent players tab -->
+            <div data-pane="recent" style="display:none;">
+              <div class="side-head">
+                <div class="title"><svg><use href="#i-clock"/></svg>Recent</div>
+              </div>
+              <div class="side-body" id="recentBody">
+                <div class="side-empty">no matches yet · play to fill this list</div>
+              </div>
             </div>
           </div>
         </aside>
@@ -5061,6 +5745,19 @@ const FIREBASE_CONFIG = {
               <span id="oppSub">connecting…</span>
             </div>
           </div>
+        </div>
+
+        <!-- ARENA CONTROLS: leave match, more options -->
+        <div class="arena-controls">
+          <button class="arena-ctrl-btn" id="addFriendInGameBtn" title="Add as friend">
+            <svg><use href="#i-plus"/></svg>
+          </button>
+          <button class="arena-ctrl-btn" id="reportBtn" title="Report player">
+            <svg><use href="#i-flag"/></svg>
+          </button>
+          <button class="arena-ctrl-btn danger" id="leaveMatchBtn" title="Leave match (-25 ELO)">
+            <svg><use href="#i-out"/></svg>
+          </button>
         </div>
       </div>
 
@@ -5280,7 +5977,16 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="match-result-actions">
       <button type="button" class="btn btn-ghost" id="matchEndExitBtn">Back to lobby</button>
+      <button type="button" class="btn btn-ghost" id="matchEndRematchBtn">Rematch</button>
       <button type="button" class="btn btn-primary" id="matchEndAgainBtn">Play again</button>
+    </div>
+    <div class="match-result-extra" id="matchResultExtra">
+      <button class="extra-action" id="matchEndAddFriend" title="Add friend">
+        <svg width="14" height="14"><use href="#i-plus"/></svg> Add friend
+      </button>
+      <button class="extra-action" id="matchEndShare" title="Share result">
+        <svg width="14" height="14"><use href="#i-out"/></svg> Share
+      </button>
     </div>
   </div>
 </div>
@@ -5309,6 +6015,208 @@ const FIREBASE_CONFIG = {
       </div>
     </div>
     <p style="font-size:13px;"><b>Ranks:</b> Bronze → Silver → Gold → Platinum → Diamond → Master → Grandmaster. Each rank has 3 tiers. Win to gain ELO, lose to drop. Promotion = celebration.</p>
+    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; color:var(--text-faint); text-transform:uppercase; margin-top:18px; margin-bottom:10px; font-weight:700;">KEYBOARD SHORTCUTS</h4>
+    <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; font-size:12px;">
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Find match</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">SPACE</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Play bot</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">B</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Next match</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">N</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Leave match</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">L</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Predict rock</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">1</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Predict paper</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">2</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Predict scissors</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">3</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Add friend</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">F</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Mute</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">M</kbd></div>
+      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Help</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">?</kbd></div>
+    </div>
+  </div>
+</div>
+
+<!-- FULL STATS MODAL -->
+<div class="modal-bg" id="statsModal">
+  <div class="modal" style="max-width:680px;">
+    <button class="modal-close" data-close="statsModal"><svg><use href="#i-close"/></svg></button>
+    <h3>YOUR STATS</h3>
+    <p style="margin-bottom:20px;">All-time performance.</p>
+
+    <!-- Big rating display -->
+    <div class="big-rating-display">
+      <div class="big-rating-icon"><svg id="statsBigRankIcon"></svg></div>
+      <div class="big-rating-info">
+        <div class="big-rating-tier" id="statsBigTier">Bronze I</div>
+        <div class="big-rating-num"><span id="statsBigRating">1000</span> <span class="rating-label">ELO</span></div>
+        <div class="big-rating-next" id="statsBigNext">25 to next tier</div>
+      </div>
+    </div>
+
+    <!-- Detailed stats grid -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-card-icon">🏆</div>
+        <div class="stat-card-val" id="statsWins">0</div>
+        <div class="stat-card-lbl">total wins</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">💀</div>
+        <div class="stat-card-val" id="statsLosses">0</div>
+        <div class="stat-card-lbl">total losses</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">🤝</div>
+        <div class="stat-card-val" id="statsDraws">0</div>
+        <div class="stat-card-lbl">draws</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">🎮</div>
+        <div class="stat-card-val" id="statsGames">0</div>
+        <div class="stat-card-lbl">games played</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">📈</div>
+        <div class="stat-card-val" id="statsWR">0%</div>
+        <div class="stat-card-lbl">win rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">🔥</div>
+        <div class="stat-card-val" id="statsBestStreak">0</div>
+        <div class="stat-card-lbl">best streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">⚡</div>
+        <div class="stat-card-val" id="statsCurStreak">0</div>
+        <div class="stat-card-lbl">current streak</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-icon">📅</div>
+        <div class="stat-card-val" id="statsDailyStreak">0</div>
+        <div class="stat-card-lbl">daily streak</div>
+      </div>
+    </div>
+
+    <!-- Throw distribution -->
+    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:24px 0 12px; font-weight:700;">THROW DISTRIBUTION</h4>
+    <div class="throw-bars" id="throwBars">
+      <div class="throw-bar-row">
+        <span class="throw-bar-icon" style="color:var(--coral);"><svg width="18" height="18"><use href="#i-rock"/></svg></span>
+        <span class="throw-bar-label">ROCK</span>
+        <div class="throw-bar-track"><div class="throw-bar-fill" style="background:var(--coral)" id="rockBar"></div></div>
+        <span class="throw-bar-val" id="rockCount">0</span>
+      </div>
+      <div class="throw-bar-row">
+        <span class="throw-bar-icon" style="color:var(--mint);"><svg width="18" height="18"><use href="#i-paper"/></svg></span>
+        <span class="throw-bar-label">PAPER</span>
+        <div class="throw-bar-track"><div class="throw-bar-fill" style="background:var(--mint)" id="paperBar"></div></div>
+        <span class="throw-bar-val" id="paperCount">0</span>
+      </div>
+      <div class="throw-bar-row">
+        <span class="throw-bar-icon" style="color:var(--amber);"><svg width="18" height="18"><use href="#i-scissors"/></svg></span>
+        <span class="throw-bar-label">SCISSORS</span>
+        <div class="throw-bar-track"><div class="throw-bar-fill" style="background:var(--amber)" id="scissorsBar"></div></div>
+        <span class="throw-bar-val" id="scissorsCount">0</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" data-close="settingsModal"><svg><use href="#i-close"/></svg></button>
+    <h3>SETTINGS</h3>
+    <p>Customize your ROSHAM experience.</p>
+
+    <div class="settings-section">
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Sound effects</div>
+          <div class="settings-row-sub">Round countdown, win/lose sounds</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingsSoundToggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Camera flip</div>
+          <div class="settings-row-sub">Mirror your video horizontally</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingsFlipToggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Show hand skeleton</div>
+          <div class="settings-row-sub">Display the MediaPipe tracking dots on your camera</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingsSkeletonToggle" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Accept challenges</div>
+          <div class="settings-row-sub">Allow other players to challenge you directly</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingsChallengeToggle" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Reduce motion</div>
+          <div class="settings-row-sub">Tones down animations and effects</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingsReduceMotionToggle" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-title">High contrast</div>
+          <div class="settings-row-sub">Boosts color contrast for accessibility</div>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="settingsContrastToggle" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:20px 0 12px; font-weight:700;">DATA & PRIVACY</h4>
+    <div class="settings-section">
+      <button class="btn btn-ghost" id="exportDataBtn" style="width:100%; justify-content:center; margin-bottom:8px;">
+        <svg width="14" height="14"><use href="#i-out"/></svg> Export my data
+      </button>
+      <button class="btn btn-ghost" id="clearLocalBtn" style="width:100%; justify-content:center; margin-bottom:8px;">
+        <svg width="14" height="14"><use href="#i-trash"/></svg> Clear local data
+      </button>
+      <button class="btn btn-ghost" id="viewBlockedSettingsBtn" style="width:100%; justify-content:center;">
+        <svg width="14" height="14"><use href="#i-block"/></svg> View blocked users
+      </button>
+    </div>
+
+    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:20px 0 12px; font-weight:700;">ACCOUNT</h4>
+    <button class="btn btn-ghost" id="settingsEditProfileBtn" style="width:100%; justify-content:center; margin-bottom:8px;">
+      <svg width="14" height="14"><use href="#i-edit"/></svg> Edit profile
+    </button>
+    <button class="btn btn-ghost" id="settingsSignOutBtn" style="width:100%; justify-content:center; color:var(--coral);">
+      Sign out
+    </button>
+  </div>
+</div>
+
+<!-- ACHIEVEMENTS MODAL -->
+<div class="modal-bg" id="achievementsModal">
+  <div class="modal" style="max-width:680px;">
+    <button class="modal-close" data-close="achievementsModal"><svg><use href="#i-close"/></svg></button>
+    <h3>ACHIEVEMENTS</h3>
+    <p>Earn badges by playing and winning matches.</p>
+    <div class="achievements-grid" id="achievementsGrid"></div>
   </div>
 </div>
 
@@ -5715,9 +6623,30 @@ const screens = {
 };
 function showScreen(name){
   state.screen = name;
-  Object.entries(screens).forEach(([k, el]) => el && el.classList.toggle('active', k === name));
-  $('#nextBtn').style.display = name === 'game' ? '' : 'none';
+  try {
+    Object.entries(screens).forEach(([k, el]) => el && el.classList.toggle('active', k === name));
+  } catch(e){ console.error('[showScreen]', e); }
+  try {
+    const nb = $('#nextBtn');
+    if(nb) nb.style.display = name === 'game' ? '' : 'none';
+  } catch(e){}
+  console.log('[screen] →', name);
 }
+
+// Safe event listener — won't crash if element is missing
+function on(selOrEl, evt, fn){
+  const el = typeof selOrEl === 'string' ? $(selOrEl) : selOrEl;
+  if(el && el.addEventListener) el.addEventListener(evt, fn);
+  else console.warn('[on] missing element:', selOrEl);
+}
+
+// Global error handler — prevents JS errors from breaking everything
+window.addEventListener('error', e => {
+  console.error('[global error]', e.error || e.message, e.filename, e.lineno);
+});
+window.addEventListener('unhandledrejection', e => {
+  console.error('[unhandled promise]', e.reason);
+});
 function setText(sel, text){ const el = $(sel); if(el) el.textContent = text; }
 function setHTML(sel, html){ const el = $(sel); if(el) el.innerHTML = html; }
 function showErr(sel, text){
@@ -5996,17 +6925,33 @@ function drawLandmarks(landmarks){
 }
 function setCurrentGesture(g){
   state.currentGesture = g;
+  // Track recent gesture history for fault-tolerant SHOOT timing
+  if(g){
+    state._lastValidGesture = g;
+    state._lastValidGestureAt = Date.now();
+  }
   const det = $('#yourDetected');
   if(g){
-    det.style.display = 'flex';
-    det.className = 'duel-gesture-indicator ' + g;
-    setText('#yourDetectedText', g.toUpperCase());
-    const icon = $('#yourDetectedIcon');
-    if(icon) icon.innerHTML = `<svg><use href="#i-${g}"/></svg>`;
+    if(det){
+      det.style.display = 'flex';
+      det.className = 'duel-gesture-indicator ' + g;
+      setText('#yourDetectedText', g.toUpperCase());
+      const icon = $('#yourDetectedIcon');
+      if(icon) icon.innerHTML = `<svg><use href="#i-${g}"/></svg>`;
+    }
   } else {
-    det.style.display = 'none';
+    if(det) det.style.display = 'none';
   }
   onGestureFrame();
+}
+function getGestureForShoot(){
+  // Returns most recent valid gesture if detected within last 1.5s
+  // This prevents false forfeits when hand detection drops a frame mid-shoot
+  if(state.currentGesture) return state.currentGesture;
+  if(state._lastValidGesture && state._lastValidGestureAt && (Date.now() - state._lastValidGestureAt < 1500)){
+    return state._lastValidGesture;
+  }
+  return null;
 }
 
 // =================== FIREBASE ===================
@@ -6092,6 +7037,8 @@ async function onAuthChanged(user){
   }
   $('#signOutBtn').style.display = '';
   $('#userChip').style.display = '';
+  const ab = $('#achievementsBtn'); if(ab) ab.style.display = '';
+  const sb = $('#settingsBtn'); if(sb) sb.style.display = '';
   setText('#chipName', state.profile.username);
   renderAvatar($('#chipAv'), state.profile);
   updateChipRating();
@@ -6358,8 +7305,35 @@ function attachSocialListeners(){
     query(collection(state.db, 'friendRequests'), where('to', '==', uid)),
     (snap) => {
       state.pendingRequests = [];
-      snap.forEach(d => state.pendingRequests.push({ id:d.id, ...d.data() }));
+      // Only show requests still pending
+      snap.forEach(d => {
+        const data = d.data();
+        if(data.status !== 'accepted') state.pendingRequests.push({ id:d.id, ...data });
+      });
       renderRequests();
+    }
+  );
+  // NEW: Listen for OUR sent friend requests being accepted, so we add the friend on our side
+  state.unsubSentRequests = onSnapshot(
+    query(collection(state.db, 'friendRequests'), where('from', '==', uid)),
+    (snap) => {
+      snap.docChanges().forEach(async change => {
+        const data = change.doc.data();
+        if(data.status === 'accepted'){
+          const friendUid = data.to;
+          try {
+            if(!state.profile.friends) state.profile.friends = [];
+            if(!state.profile.friends.includes(friendUid)){
+              await updateDoc(doc(state.db, 'users', uid), { friends: arrayUnion(friendUid) });
+              state.profile.friends.push(friendUid);
+              toast(`@${data.toUsername || 'friend'} accepted your friend request!`, 'success');
+              renderFriends();
+            }
+            // clean up the accepted request
+            await deleteDoc(doc(state.db, 'friendRequests', change.doc.id)).catch(() => {});
+          } catch(e){ console.error('[sent-req-accepted]', e); }
+        }
+      });
     }
   );
   state.unsubInvites = onSnapshot(
@@ -6380,6 +7354,10 @@ function attachSocialListeners(){
 }
 
 async function renderFriends(){
+  // refresh stats summary + daily challenge at same time
+  refreshStatsSummary();
+  refreshDailyChallenge();
+  refreshRecentPlayers();
   const body = $('#friendsBody');
   body.innerHTML = '';
   const friendUids = state.profile?.friends || [];
@@ -6443,6 +7421,477 @@ async function renderFriends(){
     console.error('renderFriends', e);
     body.innerHTML = '<div class="side-empty">could not load friends</div>';
   }
+}
+
+// ============= STATS SUMMARY CARD =============
+function refreshStatsSummary(){
+  if(!state.profile) return;
+  const p = state.profile;
+  setText('#summaryRating', p.rating || 1000);
+  setText('#summaryWins', p.wins || 0);
+  const games = (p.games || 0);
+  const wr = games > 0 ? Math.round((p.wins / games) * 100) : 0;
+  setText('#summaryWR', wr + '%');
+  setText('#summaryStreak', p.currentStreak || 0);
+}
+
+// ============= FULL STATS MODAL =============
+function openStatsModal(){
+  if(!state.profile){ toast('Sign in to view stats', 'error'); return; }
+  const p = state.profile;
+  const rating = p.rating || 1000;
+  const rank = rankFromRating(rating);
+  const progress = rankProgressToNext(rating);
+
+  setText('#statsBigTier', rank.tierName);
+  setText('#statsBigRating', rating);
+  setText('#statsBigNext', progress.toNext > 0 ? `${progress.toNext} to next tier` : 'TOP RANK!');
+  const iconEl = $('#statsBigRankIcon');
+  if(iconEl) iconEl.innerHTML = rankIconSVG(rank.id);
+
+  setText('#statsWins', p.wins || 0);
+  setText('#statsLosses', p.losses || 0);
+  setText('#statsDraws', p.draws || 0);
+  setText('#statsGames', p.games || 0);
+  const games = p.games || 0;
+  const wr = games > 0 ? Math.round((p.wins / games) * 100) : 0;
+  setText('#statsWR', wr + '%');
+  setText('#statsBestStreak', p.bestStreak || 0);
+  setText('#statsCurStreak', p.currentStreak || 0);
+  setText('#statsDailyStreak', getDailyStreak());
+
+  // Throw distribution from local stats
+  const throwStats = getThrowStats();
+  const total = throwStats.rock + throwStats.paper + throwStats.scissors || 1;
+  $('#rockBar').style.width = (throwStats.rock / total * 100) + '%';
+  $('#paperBar').style.width = (throwStats.paper / total * 100) + '%';
+  $('#scissorsBar').style.width = (throwStats.scissors / total * 100) + '%';
+  setText('#rockCount', throwStats.rock);
+  setText('#paperCount', throwStats.paper);
+  setText('#scissorsCount', throwStats.scissors);
+
+  $('#statsModal').classList.add('show');
+}
+
+function getThrowStats(){
+  try { return JSON.parse(localStorage.getItem('rosham_throws') || '{"rock":0,"paper":0,"scissors":0}'); }
+  catch(e){ return { rock:0, paper:0, scissors:0 }; }
+}
+
+function recordThrow(gesture){
+  if(!gesture) return;
+  try {
+    const stats = getThrowStats();
+    stats[gesture] = (stats[gesture] || 0) + 1;
+    localStorage.setItem('rosham_throws', JSON.stringify(stats));
+  } catch(e){}
+}
+
+// ============= ACHIEVEMENTS =============
+const ACHIEVEMENTS = [
+  { id: 'first_win', icon: '🏆', title: 'First Blood', desc: 'Win your first match', check: p => (p.wins||0) >= 1 },
+  { id: 'win_10', icon: '⚔️', title: 'Veteran', desc: 'Win 10 matches', check: p => (p.wins||0) >= 10 },
+  { id: 'win_50', icon: '🛡️', title: 'Warrior', desc: 'Win 50 matches', check: p => (p.wins||0) >= 50 },
+  { id: 'win_100', icon: '👑', title: 'Centurion', desc: 'Win 100 matches', check: p => (p.wins||0) >= 100 },
+  { id: 'streak_3', icon: '🔥', title: 'Heating Up', desc: '3-win streak', check: p => (p.bestStreak||0) >= 3 },
+  { id: 'streak_5', icon: '💥', title: 'On Fire', desc: '5-win streak', check: p => (p.bestStreak||0) >= 5 },
+  { id: 'streak_10', icon: '⚡', title: 'Unstoppable', desc: '10-win streak', check: p => (p.bestStreak||0) >= 10 },
+  { id: 'silver', icon: '🥈', title: 'Silver Tier', desc: 'Reach Silver rank', check: p => (p.rating||1000) >= 1100 },
+  { id: 'gold', icon: '🥇', title: 'Gold Tier', desc: 'Reach Gold rank', check: p => (p.rating||1000) >= 1200 },
+  { id: 'platinum', icon: '💎', title: 'Platinum Tier', desc: 'Reach Platinum rank', check: p => (p.rating||1000) >= 1400 },
+  { id: 'diamond', icon: '💠', title: 'Diamond Tier', desc: 'Reach Diamond rank', check: p => (p.rating||1000) >= 1600 },
+  { id: 'master', icon: '🌟', title: 'Master', desc: 'Reach Master rank', check: p => (p.rating||1000) >= 1800 },
+  { id: 'gm', icon: '👁️', title: 'Grandmaster', desc: 'Reach Grandmaster', check: p => (p.rating||1000) >= 2000 },
+  { id: 'games_100', icon: '🎮', title: 'Centurion Player', desc: 'Play 100 matches', check: p => (p.games||0) >= 100 },
+  { id: 'social', icon: '🤝', title: 'Social Butterfly', desc: 'Have 5+ friends', check: p => (p.friends?.length||0) >= 5 },
+  { id: 'daily_3', icon: '📅', title: 'Daily Grind', desc: '3-day daily streak', check: p => getDailyStreak() >= 3 },
+  { id: 'daily_7', icon: '🗓️', title: 'Week Warrior', desc: '7-day daily streak', check: p => getDailyStreak() >= 7 },
+  { id: 'win_rate_70', icon: '📈', title: 'Sharp', desc: '70%+ win rate (50+ games)', check: p => (p.games||0) >= 50 && (p.wins||0)/(p.games||1) >= 0.7 },
+];
+
+function openAchievementsModal(){
+  const grid = $('#achievementsGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+  const p = state.profile || {};
+  let unlocked = 0;
+  for(const a of ACHIEVEMENTS){
+    const isUnlocked = a.check(p);
+    if(isUnlocked) unlocked++;
+    const card = document.createElement('div');
+    card.className = 'achievement-card ' + (isUnlocked ? 'unlocked' : 'locked');
+    card.innerHTML = `
+      <div class="icon">${a.icon}</div>
+      <div class="title">${escapeHTML(a.title)}</div>
+      <div class="desc">${escapeHTML(a.desc)}</div>
+    `;
+    grid.appendChild(card);
+  }
+  $('#achievementsModal').classList.add('show');
+}
+
+// ============= SETTINGS MODAL =============
+const SETTINGS_KEY = 'rosham_settings';
+function getSettings(){
+  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); }
+  catch(e){ return {}; }
+}
+function saveSettings(s){
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch(e){}
+}
+function applySettings(){
+  const s = getSettings();
+  // sound (use mute state)
+  if(s.sound === false){
+    state.muted = true;
+    try { localStorage.setItem('rosham_muted', '1'); } catch(e){}
+    updateMuteIcon();
+  }
+  // flip
+  if(s.flip === false){
+    const v = document.getElementById('yourVideo');
+    if(v) v.style.transform = 'none';
+    const c = document.getElementById('overlay-canvas');
+    if(c) c.style.transform = 'none';
+  }
+  // skeleton
+  state._showSkeleton = !!s.skeleton;
+  // reduce motion
+  if(s.reduceMotion){
+    document.body.classList.add('reduce-motion');
+  } else {
+    document.body.classList.remove('reduce-motion');
+  }
+  // high contrast
+  if(s.contrast){
+    document.body.classList.add('high-contrast');
+  } else {
+    document.body.classList.remove('high-contrast');
+  }
+}
+
+function openSettingsModal(){
+  const s = getSettings();
+  $('#settingsSoundToggle').checked = s.sound !== false;
+  $('#settingsFlipToggle').checked = s.flip !== false;
+  $('#settingsSkeletonToggle').checked = !!s.skeleton;
+  $('#settingsChallengeToggle').checked = state.profile?.acceptChallenges !== false;
+  $('#settingsReduceMotionToggle').checked = !!s.reduceMotion;
+  $('#settingsContrastToggle').checked = !!s.contrast;
+  $('#settingsModal').classList.add('show');
+}
+
+// Wire up settings toggles
+function wireSettings(){
+  const sync = (id, key) => {
+    on('#'+id, 'change', e => {
+      const s = getSettings();
+      s[key] = e.target.checked;
+      saveSettings(s);
+      applySettings();
+    });
+  };
+  sync('settingsSoundToggle', 'sound');
+  sync('settingsFlipToggle', 'flip');
+  sync('settingsSkeletonToggle', 'skeleton');
+  sync('settingsReduceMotionToggle', 'reduceMotion');
+  sync('settingsContrastToggle', 'contrast');
+
+  // Accept challenges syncs to profile
+  on('#settingsChallengeToggle', 'change', async e => {
+    if(state.user && state.profile){
+      state.profile.acceptChallenges = e.target.checked;
+      try {
+        await updateDoc(doc(state.db, 'users', state.user.uid), {
+          acceptChallenges: e.target.checked,
+        });
+        toast(e.target.checked ? 'Challenges enabled' : 'Challenges disabled', 'success');
+      } catch(err){
+        console.error(err);
+        toast('Could not update', 'error');
+      }
+    }
+  });
+
+  on('#exportDataBtn', 'click', () => {
+    if(!state.profile){ toast('Not signed in', 'error'); return; }
+    const data = {
+      profile: state.profile,
+      throws: getThrowStats(),
+      recent: getRecentPlayers(),
+      daily: getDailyChallenge(),
+      dailyStreak: getDailyStreak(),
+      settings: getSettings(),
+      exportedAt: new Date().toISOString(),
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `rosham-${state.profile.username || 'data'}-${getTodayKey()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 100);
+    toast('Data exported', 'success');
+  });
+
+  on('#clearLocalBtn', 'click', () => {
+    if(!confirm('Clear all local data (recent players, daily challenges, throw stats, settings)?\n\nYour account and rank stay intact.')) return;
+    try {
+      ['rosham_recent','rosham_daily','rosham_daily_streak','rosham_daily_last','rosham_throws','rosham_settings','rosham_h2h','rosham_muted'].forEach(k => localStorage.removeItem(k));
+      toast('Local data cleared', 'success');
+      refreshStatsSummary();
+      refreshDailyChallenge();
+      refreshRecentPlayers();
+    } catch(e){ toast('Could not clear', 'error'); }
+  });
+
+  on('#viewBlockedSettingsBtn', 'click', () => {
+    $('#settingsModal').classList.remove('show');
+    setTimeout(() => $('#viewBlockedBtn')?.click(), 200);
+  });
+
+  on('#settingsEditProfileBtn', 'click', () => {
+    $('#settingsModal').classList.remove('show');
+    setTimeout(() => openEditProfile(), 200);
+  });
+
+  on('#settingsSignOutBtn', 'click', () => {
+    $('#settingsModal').classList.remove('show');
+    setTimeout(() => $('#signOutBtn')?.click(), 200);
+  });
+}
+
+// Wire up "View all stats" + "open achievements" + new social buttons
+on('#viewFullStatsBtn', 'click', openStatsModal);
+on('#settingsBtn', 'click', openSettingsModal);
+on('#achievementsBtn', 'click', openAchievementsModal);
+
+// GLOBAL: modal close button + click-outside-to-close
+document.addEventListener('click', (e) => {
+  // Close button with data-close attribute
+  const closeBtn = e.target.closest('[data-close]');
+  if(closeBtn){
+    const modalId = closeBtn.dataset.close;
+    const modal = document.getElementById(modalId);
+    if(modal) modal.classList.remove('show');
+    return;
+  }
+  // Click on modal-bg backdrop (but not on the modal content itself)
+  if(e.target.classList && e.target.classList.contains('modal-bg')){
+    e.target.classList.remove('show');
+  }
+});
+
+// Click on stat-mini cards opens full stats
+document.querySelectorAll('.stat-mini').forEach(c => {
+  c.style.cursor = 'pointer';
+  c.addEventListener('click', openStatsModal);
+});
+
+// Daily challenge card click → show toast with info
+document.addEventListener('click', e => {
+  const card = e.target.closest('.daily-challenge-card');
+  if(card){
+    const data = getDailyChallenge();
+    const left = Math.max(0, data.challenge.goal - data.progress);
+    if(data.completed){
+      toast('✓ Daily challenge complete! Come back tomorrow for a new one.', 'success');
+    } else {
+      toast(`${data.challenge.text} — ${left} to go`, 'success');
+    }
+  }
+});
+
+// ============= DAILY CHALLENGE =============
+const DAILY_CHALLENGES = [
+  { id: 'win3', text: 'Win 3 ranked matches today', goal: 3, type: 'wins' },
+  { id: 'play5', text: 'Play 5 matches today', goal: 5, type: 'games' },
+  { id: 'streak3', text: 'Get a 3-win streak today', goal: 3, type: 'streak' },
+  { id: 'predict3', text: 'Correctly predict 3 throws today', goal: 3, type: 'predicts' },
+  { id: 'rock_w', text: 'Win 5 rounds with ROCK', goal: 5, type: 'rockWin' },
+  { id: 'paper_w', text: 'Win 5 rounds with PAPER', goal: 5, type: 'paperWin' },
+  { id: 'scissors_w', text: 'Win 5 rounds with SCISSORS', goal: 5, type: 'scissorsWin' },
+];
+
+function getTodayKey(){
+  return new Date().toISOString().split('T')[0];
+}
+
+function getDailyChallenge(){
+  const today = getTodayKey();
+  let data;
+  try { data = JSON.parse(localStorage.getItem('rosham_daily') || '{}'); }
+  catch(e){ data = {}; }
+  if(data.date !== today){
+    // pick a new challenge for today
+    const challenge = DAILY_CHALLENGES[Math.floor(Math.random() * DAILY_CHALLENGES.length)];
+    data = {
+      date: today,
+      challenge,
+      progress: 0,
+      completed: false,
+      claimedBonus: false,
+    };
+    localStorage.setItem('rosham_daily', JSON.stringify(data));
+  }
+  return data;
+}
+
+function getDailyStreak(){
+  try {
+    return parseInt(localStorage.getItem('rosham_daily_streak') || '0');
+  } catch(e){ return 0; }
+}
+
+function refreshDailyChallenge(){
+  const data = getDailyChallenge();
+  const streak = getDailyStreak();
+  setText('#dailyChallengeText', data.challenge.text);
+  const pct = Math.min(100, (data.progress / data.challenge.goal) * 100);
+  const fill = $('#dailyProgressFill');
+  if(fill){
+    fill.style.width = pct + '%';
+    fill.classList.toggle('complete', data.completed);
+  }
+  setText('#dailyProgressText', `${Math.min(data.progress, data.challenge.goal)}/${data.challenge.goal}`);
+  setText('#dailyStreakBadge', `🔥 ${streak}`);
+}
+
+function updateDailyChallengeProgress(matchResult, roundDetails){
+  // matchResult: 'win' | 'lose' | 'draw'
+  // roundDetails: { wonRounds, withMoves: ['rock','paper','rock'], predictedCorrect: N }
+  if(state.isBotMatch) return;
+  const data = getDailyChallenge();
+  if(data.completed) return;
+
+  const c = data.challenge;
+  let delta = 0;
+  switch(c.type){
+    case 'wins':
+      if(matchResult === 'win') delta = 1;
+      break;
+    case 'games':
+      delta = 1;
+      break;
+    case 'streak':
+      // tracked via state.profile.currentStreak
+      const cs = state.profile.currentStreak || 0;
+      data.progress = Math.max(data.progress, cs);
+      delta = 0;
+      break;
+    case 'predicts':
+      delta = roundDetails?.predictedCorrect || 0;
+      break;
+    case 'rockWin':
+      delta = (roundDetails?.withMoves || []).filter(m => m === 'rock_win').length;
+      break;
+    case 'paperWin':
+      delta = (roundDetails?.withMoves || []).filter(m => m === 'paper_win').length;
+      break;
+    case 'scissorsWin':
+      delta = (roundDetails?.withMoves || []).filter(m => m === 'scissors_win').length;
+      break;
+  }
+  data.progress += delta;
+  if(data.progress >= c.goal && !data.completed){
+    data.completed = true;
+    toast(`🎉 Daily challenge complete: ${c.text}!`, 'success');
+    // increment streak
+    const lastStreakDate = localStorage.getItem('rosham_daily_last') || '';
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    const today = getTodayKey();
+    let streak = getDailyStreak();
+    if(lastStreakDate === yesterday) streak++;
+    else if(lastStreakDate !== today) streak = 1;
+    try {
+      localStorage.setItem('rosham_daily_streak', streak.toString());
+      localStorage.setItem('rosham_daily_last', today);
+    } catch(e){}
+  }
+  try { localStorage.setItem('rosham_daily', JSON.stringify(data)); } catch(e){}
+  refreshDailyChallenge();
+}
+
+// ============= RECENT PLAYERS =============
+function getRecentPlayers(){
+  try { return JSON.parse(localStorage.getItem('rosham_recent') || '[]'); }
+  catch(e){ return []; }
+}
+
+function addRecentPlayer(uid, profile, result){
+  if(!uid || state.isBotMatch) return;
+  try {
+    let recent = getRecentPlayers();
+    recent = recent.filter(r => r.uid !== uid); // remove existing entry
+    recent.unshift({
+      uid,
+      username: profile?.username || 'stranger',
+      photoURL: profile?.photoURL,
+      colorIdx: profile?.colorIdx || 0,
+      rating: profile?.rating || 1000,
+      country: profile?.country || 'XX',
+      lastResult: result,
+      lastPlayedAt: Date.now(),
+    });
+    recent = recent.slice(0, 20);
+    localStorage.setItem('rosham_recent', JSON.stringify(recent));
+  } catch(e){ console.error('[addRecent]', e); }
+}
+
+function refreshRecentPlayers(){
+  const body = $('#recentBody');
+  if(!body) return;
+  const recent = getRecentPlayers();
+  if(recent.length === 0){
+    body.innerHTML = '<div class="side-empty">no matches yet · play to fill this list</div>';
+    return;
+  }
+  body.innerHTML = '';
+  for(const r of recent){
+    const avStyle = r.photoURL
+      ? `background-image:url('${r.photoURL}'); background-size:cover; background-position:center;`
+      : `background:${AVATAR_COLORS[r.colorIdx||0]};`;
+    const avInner = r.photoURL ? '' : escapeHTML(initialOf(r.username));
+    const resultEmoji = r.lastResult === 'win' ? '✓' : r.lastResult === 'lose' ? '✗' : '~';
+    const resultColor = r.lastResult === 'win' ? 'var(--mint)' : r.lastResult === 'lose' ? 'var(--coral)' : 'var(--amber)';
+    const ago = timeAgo(r.lastPlayedAt);
+    const row = document.createElement('div');
+    row.className = 'friend-row';
+    row.innerHTML = `
+      <div class="av" style="${avStyle}">${avInner}</div>
+      <div class="meta">
+        <div class="nm">@${escapeHTML(r.username)} <span class="flag">${flagOf(r.country)}</span></div>
+        <div class="sub">${ago} · <span style="color:${resultColor};font-weight:700;">${resultEmoji} ${r.lastResult}</span></div>
+      </div>
+      <div class="friend-actions">
+        <button class="icon-btn" data-action="profile" title="View profile"><svg><use href="#i-eye-off"/></svg></button>
+        <button class="icon-btn" data-action="challenge" title="Challenge"><svg><use href="#i-sword"/></svg></button>
+      </div>
+    `;
+    row.querySelector('[data-action=profile]').addEventListener('click', e => {
+      e.stopPropagation();
+      openUserProfile(r.uid);
+    });
+    row.querySelector('[data-action=challenge]').addEventListener('click', e => {
+      e.stopPropagation();
+      sendChallenge(r.uid);
+    });
+    row.addEventListener('click', () => openUserProfile(r.uid));
+    body.appendChild(row);
+  }
+}
+
+function timeAgo(timestamp){
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if(seconds < 60) return 'just now';
+  const minutes = Math.floor(seconds / 60);
+  if(minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if(hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if(days < 7) return `${days}d ago`;
+  return new Date(timestamp).toLocaleDateString();
 }
 
 async function renderRequests(){
@@ -6513,19 +7962,28 @@ async function addFriendByUsername(username){
 
 async function acceptFriendRequest(reqId, fromUid){
   try {
+    // Strategy: Update own friends list AND mark the friendRequest as accepted.
+    // The sender's side will pick up the 'accepted' state in their listener
+    // and add the friend on their end (since rules only allow each user to write their own doc).
     const myRef = doc(state.db, 'users', state.user.uid);
-    const theirRef = doc(state.db, 'users', fromUid);
-    const batch = writeBatch(state.db);
-    batch.update(myRef, { friends: arrayUnion(fromUid) });
-    batch.update(theirRef, { friends: arrayUnion(state.user.uid) });
-    batch.delete(doc(state.db, 'friendRequests', reqId));
-    await batch.commit();
+    await updateDoc(myRef, { friends: arrayUnion(fromUid) });
+    // Mark request as accepted (so sender can complete their side)
+    try {
+      await updateDoc(doc(state.db, 'friendRequests', reqId), {
+        status: 'accepted',
+        acceptedAt: serverTimestamp(),
+      });
+    } catch(e){
+      // if update fails (e.g. rules), at least try to delete it
+      await deleteDoc(doc(state.db, 'friendRequests', reqId)).catch(() => {});
+    }
+    if(!state.profile.friends) state.profile.friends = [];
     if(!state.profile.friends.includes(fromUid)) state.profile.friends.push(fromUid);
-    toast('Friend added', 'success');
+    toast('Friend added!', 'success');
     renderFriends();
   } catch(e){
-    console.error(e);
-    toast('Could not accept', 'error');
+    console.error('[accept-friend]', e);
+    toast('Could not accept friend request: ' + (e.message || 'try again'), 'error');
   }
 }
 async function rejectFriendRequest(reqId){
@@ -6630,7 +8088,7 @@ async function handleIncomingChallenge(inv){
   $('#challengeModal').classList.add('show');
   sfxNotify();
 }
-$('#chalAccept').addEventListener('click', async () => {
+on('#chalAccept', 'click', async () => {
   const inv = state.pendingChallenge;
   if(!inv) return;
   $('#challengeModal').classList.remove('show');
@@ -6642,7 +8100,7 @@ $('#chalAccept').addEventListener('click', async () => {
   // Create the match document FIRST, then update invite with matchId
   await createDirectMatch(inv.from, inv);
 });
-$('#chalReject').addEventListener('click', async () => {
+on('#chalReject', 'click', async () => {
   const inv = state.pendingChallenge;
   if(!inv) return;
   $('#challengeModal').classList.remove('show');
@@ -6808,16 +8266,18 @@ document.querySelectorAll('.side-tabs button').forEach(b => {
     const which = b.dataset.side;
     document.querySelectorAll('[data-pane]').forEach(p => p.style.display = p.dataset.pane === which ? '' : 'none');
     if(which === 'leaderboard') attachLeaderboardListener();
+    if(which === 'recent') refreshRecentPlayers();
   });
 });
 
 // Add friend
-$('#addFriendBtn').addEventListener('click', () => {
-  const v = $('#addFriendInput').value;
-  addFriendByUsername(v);
-  $('#addFriendInput').value = '';
+on('#addFriendBtn', 'click', () => {
+  const inp = $('#addFriendInput');
+  if(!inp) return;
+  addFriendByUsername(inp.value);
+  inp.value = '';
 });
-$('#addFriendInput').addEventListener('keydown', e => {
+on('#addFriendInput', 'keydown', e => {
   if(e.key === 'Enter'){ addFriendByUsername(e.target.value); e.target.value = ''; }
 });
 
@@ -6953,7 +8413,7 @@ async function toggleBlock(uid, username, doBlock){
 // ============= EDIT PROFILE =============
 let pendingPhotoDataURL = null; // staged photo for save
 
-$('#userChip').addEventListener('click', () => openEditProfile());
+on('#userChip', 'click', () => openEditProfile());
 function openEditProfile(){
   const p = state.profile;
   $('#editProfileForm input[name=username]').value = p.username;
@@ -6983,12 +8443,12 @@ function updateEditPhotoPreview(photoURL){
   }
 }
 
-$('#pickPhotoBtn').addEventListener('click', () => $('#photoInput').click());
-$('#removePhotoBtn').addEventListener('click', () => {
+on('#pickPhotoBtn', 'click', () => { const i = $('#photoInput'); if(i) i.click(); });
+on('#removePhotoBtn', 'click', () => {
   pendingPhotoDataURL = '';
   updateEditPhotoPreview(null);
 });
-$('#photoInput').addEventListener('change', (e) => {
+on('#photoInput', 'change', (e) => {
   const file = e.target.files[0];
   if(!file) return;
   if(file.size > 5 * 1024 * 1024){
@@ -7003,7 +8463,7 @@ $('#photoInput').addEventListener('change', (e) => {
   e.target.value = ''; // reset so same file can be picked again
 });
 
-$('#editProfileForm').addEventListener('submit', async (e) => {
+on('#editProfileForm', 'submit', async (e) => {
   e.preventDefault();
   showErr('#editError', '');
   const fd = new FormData(e.target);
@@ -7047,7 +8507,7 @@ $('#editProfileForm').addEventListener('submit', async (e) => {
 });
 
 // Blocked list
-$('#viewBlockedBtn').addEventListener('click', async () => {
+on('#viewBlockedBtn', 'click', async () => {
   $('#editProfileModal').classList.remove('show');
   const list = $('#blockedList');
   list.innerHTML = '';
@@ -7648,11 +9108,22 @@ function setupOppPanel(){
   renderAvatar($('#oppAvatar'), op);
   renderAvatar($('#oppAvatarBig'), op);
   setText('#chatWithName', '@' + (op.username || 'stranger'));
-  $('#oppPlaceholder').style.display = '';
-  $('#oppCamStatus').classList.remove('live');
-  $('#oppCamStatus').querySelector('span:last-child').textContent = 'connecting';
-  $('#disconnectBanner').classList.remove('show');
-  $('#oppIdentity').onclick = () => state.oppUid && openProfile(state.oppUid);
+  const op = $('#oppPlaceholder');
+  if(op) op.style.display = '';
+  const cs = $('#oppCamStatus');
+  if(cs){
+    cs.classList.remove('live');
+    const lastSpan = cs.querySelector('span:last-child');
+    if(lastSpan) lastSpan.textContent = 'connecting';
+  }
+  const db = $('#disconnectBanner');
+  if(db) db.classList.remove('show');
+  // Make opp player block clickable to view profile
+  const oppBlock = $('#arenaPlayerOpp');
+  if(oppBlock){
+    oppBlock.style.cursor = 'pointer';
+    oppBlock.onclick = () => state.oppUid && openProfile(state.oppUid);
+  }
   hideOppVideo(); // hide initially — only revealed during result
 }
 
@@ -7667,7 +9138,7 @@ function setupDataChannel(dc){
 let sendPeer = function(msg){ if(state.dataChannel?.readyState === 'open') state.dataChannel.send(JSON.stringify(msg)); };
 function onPeerConnected(){
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
-  $('#handPrompt').style.display = '';
+  $('#handPrompt').classList.add('show');
   startReadySystem();
   state.pingTimer = setInterval(() => { sendPeer({type:'ping', t: Date.now()}); }, 2000);
 }
@@ -7684,8 +9155,107 @@ function handlePeerMessage(msg){
     case 'ping': sendPeer({type:'pong', t: msg.t}); break;
     case 'pong': state.oppPingMs = Date.now() - msg.t; updatePingDisplay(); break;
     case 'start_round': runCountdown(); break;
+    // NEW: match-end sync — when peer's endMatch fires, force ours too if we haven't yet
+    case 'match_end':
+      console.log('[peer] received match_end signal');
+      if(!state.matchOver && state.screen === 'game'){
+        // their scores are authoritative — but they SHOULD match ours
+        // force end the match on our side
+        state.matchOver = true;
+        setTimeout(() => endMatch(), 100);
+      }
+      break;
+    // NEW: leave/forfeit — peer is forfeiting voluntarily
+    case 'forfeit':
+      console.log('[peer] opponent forfeited');
+      if(!state.matchOver && state.screen === 'game'){
+        // award us the match
+        state.scoreYou = state.matchRoundsToWin;
+        state.matchOver = true;
+        toast(`@${state.oppProfile?.username || 'opponent'} left the match — you win!`, 'success');
+        setTimeout(() => endMatch(), 600);
+      }
+      break;
+    // NEW: rematch request
+    case 'rematch_request':
+      showRematchOffer();
+      break;
+    case 'rematch_accept':
+      toast('Rematch accepted! Starting new match...', 'success');
+      // Reset state and restart from match intro
+      try {
+        resetMatchUI();
+        setTimeout(() => {
+          showMatchIntro();
+          // Caller restarts the round
+          if(state.isCaller){
+            setTimeout(() => runCountdown(), 3000);
+          }
+        }, 400);
+      } catch(e){ console.error('[rematch_accept]', e); }
+      break;
+    case 'rematch_decline':
+      toast('Rematch declined', 'error');
+      const rb = $('#matchEndRematchBtn');
+      if(rb){ rb.disabled = false; rb.textContent = 'Rematch'; }
+      break;
+    // NEW: peer profile updates (used for real-time score display)
+    case 'profile_meta':
+      if(msg.profile && state.oppProfile){
+        Object.assign(state.oppProfile, msg.profile);
+      }
+      break;
   }
 }
+function showRematchOffer(){
+  // Opponent requested a rematch. Show a prompt with accept/decline.
+  const oppName = state.oppProfile?.username || 'opponent';
+  // Use a custom inline toast/banner since we don't have a native modal for this
+  const existing = document.getElementById('rematchOfferBox');
+  if(existing) existing.remove();
+  const box = document.createElement('div');
+  box.id = 'rematchOfferBox';
+  box.className = 'rematch-offer';
+  box.innerHTML = `
+    <div class="rematch-offer-inner">
+      <div class="rematch-offer-text">
+        <strong>@${escapeHTML(oppName)}</strong> wants a rematch!
+      </div>
+      <div class="rematch-offer-actions">
+        <button class="btn btn-ghost" id="rematchDeclineBtn">Decline</button>
+        <button class="btn btn-mint" id="rematchAcceptBtn">Accept</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(box);
+  setTimeout(() => box.classList.add('show'), 10);
+  document.getElementById('rematchAcceptBtn').addEventListener('click', () => {
+    try { sendPeer({type: 'rematch_accept'}); } catch(e){}
+    box.remove();
+    $('#matchResultOverlay').classList.remove('show');
+    try {
+      resetMatchUI();
+      setTimeout(() => {
+        showMatchIntro();
+        if(state.isCaller){
+          setTimeout(() => runCountdown(), 3000);
+        }
+      }, 400);
+    } catch(e){ console.error('[rematch_accept_local]', e); }
+  });
+  document.getElementById('rematchDeclineBtn').addEventListener('click', () => {
+    try { sendPeer({type: 'rematch_decline'}); } catch(e){}
+    box.remove();
+  });
+  // Auto-decline after 15s
+  setTimeout(() => {
+    if(document.getElementById('rematchOfferBox')){
+      try { sendPeer({type: 'rematch_decline'}); } catch(e){}
+      box.remove();
+    }
+  }, 15000);
+}
+
 function showEmoteFlash(el, emoji){
   if(!el) return;
   el.textContent = emoji;
@@ -7702,10 +9272,12 @@ function updatePingDisplay(){
   const p = state.oppPingMs;
   if(p == null){ setText('#oppPing', '…'); return; }
   setText('#oppPing', p + 'ms');
-  const box = $('#oppPingBox');
-  box.classList.remove('weak','bad');
-  if(p > 200) box.classList.add('bad');
-  else if(p > 100) box.classList.add('weak');
+  const dot = $('#oppPingDot');
+  if(dot){
+    dot.classList.remove('weak','bad');
+    if(p > 200) dot.classList.add('bad');
+    else if(p > 100) dot.classList.add('weak');
+  }
 }
 
 // ============= HAND-READY =============
@@ -7923,6 +9495,9 @@ function resetMatchUI(){
   state.streak = 0;
   state.streakType = null;
   state.matchOver = false;
+  state._endMatchCalled = false; // reset for new match
+  state._matchPredictionsCorrect = 0;
+  state._matchWinningMoves = [];
   state.myPrediction = null;
   setText('#scoreYou', 0);
   setText('#scoreOpp', 0);
@@ -8027,7 +9602,9 @@ async function runCountdown(){
   burst(window.innerWidth/2, window.innerHeight*0.4, '#ff3d68', 40);
   try { if(navigator.vibrate) navigator.vibrate(30); } catch(e){}
   await sleep(220);
-  state.myGesture = state.currentGesture;
+  state.myGesture = getGestureForShoot();
+  // Track throw stats locally
+  if(state.myGesture) recordThrow(state.myGesture);
   sendPeer({type:'gesture', value: state.myGesture});
   await sleep(180);
   revealIfBothIn();
@@ -8055,13 +9632,24 @@ function doReveal(){
   const oppMove = state.oppGesture;
   if(oppMove){
     const ot = $('#oppThrown');
-    ot.dataset.g = oppMove;
-    ot.querySelector('svg').innerHTML = `<use href="#i-${oppMove}"/>`;
-    ot.classList.add('show');
-    $('#oppDetected').classList.add('has');
-    $('#oppDetected').querySelector('span:last-child').textContent = oppMove.toUpperCase();
+    if(ot){
+      ot.dataset.g = oppMove;
+      const svg = ot.querySelector('svg');
+      if(svg) svg.innerHTML = `<use href="#i-${oppMove}"/>`;
+      ot.classList.add('show');
+    }
+    const det = $('#oppDetected');
+    if(det){
+      det.style.display = 'flex';
+      det.className = 'duel-gesture-indicator ' + oppMove;
+      const txt = $('#oppDetectedText');
+      if(txt) txt.textContent = oppMove.toUpperCase();
+      const icon = $('#oppDetectedIcon');
+      if(icon) icon.innerHTML = `<svg><use href="#i-${oppMove}"/></svg>`;
+    }
   } else {
-    $('#oppDetected').querySelector('span:last-child').textContent = '—';
+    const det = $('#oppDetected');
+    if(det) det.style.display = 'none';
   }
   let result;
   if(!yourMove && !oppMove) result = 'draw';
@@ -8078,9 +9666,16 @@ function doReveal(){
   // NEW: Check prediction — did you guess what opp would throw?
   const predictionCorrect = state.myPrediction && oppMove && state.myPrediction === oppMove;
   state._lastPredictionCorrect = predictionCorrect;
+  // Track for daily challenges
+  if(predictionCorrect) state._matchPredictionsCorrect = (state._matchPredictionsCorrect || 0) + 1;
 
   if(result === 'win') state.scoreYou++;
   else if(result === 'lose' || result === 'forfeit') state.scoreOpp++;
+  // Track winning moves for daily challenges
+  if(result === 'win' && yourMove){
+    if(!state._matchWinningMoves) state._matchWinningMoves = [];
+    state._matchWinningMoves.push(yourMove + '_win');
+  }
   if(result === 'win'){
     if(state.streakType === 'W') state.streak++; else { state.streakType='W'; state.streak=1; }
   } else if(result === 'lose' || result === 'forfeit'){
@@ -8321,9 +9916,16 @@ function resetRoundIndicator(){
 
 // Called when match (best of 3) ends
 async function endMatch(){
+  if(state._endMatchCalled) return; // prevent double-call
+  state._endMatchCalled = true;
+
+  // SYNC: notify opponent that our side is ending the match
+  // (if they haven't ended on their side yet)
+  try { sendPeer({type: 'match_end', scoreYou: state.scoreYou, scoreOpp: state.scoreOpp}); } catch(e){}
+
   // Determine match result
   const youWon = state.scoreYou > state.scoreOpp;
-  const draw = state.scoreYou === state.scoreOpp; // shouldn't happen in bo3 but just in case
+  const draw = state.scoreYou === state.scoreOpp;
   const result = draw ? 'draw' : (youWon ? 'win' : 'lose');
 
   // Track head-to-head locally
@@ -8331,11 +9933,82 @@ async function endMatch(){
     updateHeadToHead(state.oppUid, result);
   }
 
+  // NEW: Add to recent players list
+  if(state.oppUid && state.oppProfile && !state.isBotMatch){
+    addRecentPlayer(state.oppUid, state.oppProfile, result);
+  }
+
+  // NEW: Update daily challenge progress
+  try { updateDailyChallengeProgress(result, {
+    predictedCorrect: state._matchPredictionsCorrect || 0,
+    withMoves: state._matchWinningMoves || [],
+  }); } catch(e){ console.error('[daily]', e); }
+
   // Update profile stats + ELO (once per match, not per round)
   await updateMatchStats(result);
 
+  // Refresh the stats summary card
+  try { refreshStatsSummary(); } catch(e){}
+
   // Show the match result overlay with rank progression
   showMatchResultScreen(result);
+}
+
+// NEW: Leave match voluntarily — counts as forfeit with -25 ELO penalty
+async function forfeitMatch(){
+  if(state.screen !== 'game' || state.matchOver) return;
+  if(!confirm('Leave this match?\n\nYou will lose -25 ELO as a forfeit penalty. Use only if you must leave.')) return;
+
+  state.matchOver = true;
+  state._endMatchCalled = true;
+
+  // Notify opponent
+  try { sendPeer({type: 'forfeit'}); } catch(e){}
+
+  // Award opponent the match
+  state.scoreYou = 0;
+  state.scoreOpp = state.matchRoundsToWin;
+
+  // Apply -25 ELO penalty (in addition to normal loss)
+  if(!state.isBotMatch && state.user && state.profile){
+    const myRating = state.profile.rating || 1000;
+    const oppRating = state.oppProfile?.rating || 1000;
+    const normalLoss = calcEloDelta(myRating, oppRating, 0);
+    const forfeitPenalty = -25;
+    const totalDelta = normalLoss + forfeitPenalty;
+    const newRating = Math.max(0, myRating + totalDelta);
+    state._lastMatchDelta = totalDelta;
+    state._lastRatingBefore = myRating;
+    state._lastRatingAfter = newRating;
+
+    try {
+      await updateDoc(doc(state.db, 'users', state.user.uid), {
+        rating: newRating,
+        losses: (state.profile.losses || 0) + 1,
+        games: (state.profile.games || 0) + 1,
+        currentStreak: 0,
+      });
+      state.profile.rating = newRating;
+      state.profile.losses = (state.profile.losses || 0) + 1;
+      state.profile.games = (state.profile.games || 0) + 1;
+      state.profile.currentStreak = 0;
+    } catch(e){ console.error('[forfeit] could not update rating', e); }
+
+    // record activity
+    try {
+      await addDoc(collection(state.db, 'activity'), {
+        uid: state.user.uid,
+        username: state.profile.username,
+        type: 'forfeit',
+        opponent: state.oppProfile?.username || 'stranger',
+        delta: totalDelta,
+        createdAt: serverTimestamp(),
+      });
+    } catch(e){}
+  }
+
+  toast('You forfeited the match (-25 ELO penalty)', 'error');
+  showMatchResultScreen('lose');
 }
 
 // Match-end stats update — single ELO change for the whole bo3
@@ -8657,7 +10330,7 @@ function addChat(who, text){
   if(who !== 'you' && who !== 'sys') sfxMessage();
 }
 function clearChat(){ $('#chatMessages').innerHTML = ''; }
-$('#chatSendBtn').addEventListener('click', sendChat);
+on('#chatSendBtn', 'click', sendChat);
 
 // Prediction picker — pick what you think opp will throw before the round starts
 document.querySelectorAll('.prediction-btn').forEach(btn => {
@@ -8693,7 +10366,7 @@ document.querySelectorAll('.emote-btn').forEach(btn => {
     }
   });
 });
-$('#chatInput').addEventListener('keydown', e => { if(e.key === 'Enter') sendChat(); });
+on('#chatInput', 'keydown', e => { if(e.key === 'Enter') sendChat(); });
 function sendChat(){
   const inp = $('#chatInput');
   const v = inp.value.trim();
@@ -8708,19 +10381,31 @@ function sendChat(){
 async function handleRemoteLeft(){
   if(state.phase === 'ended') return;
   state.phase = 'ended';
-  $('#disconnectBanner').classList.add('show');
-  $('#oppCamStatus').classList.remove('live');
-  $('#oppCamStatus').querySelector('span:last-child').textContent = 'disconnected';
-  // If match was in progress (and you weren't already losing badly), credit you with the win
-  if(!state.matchOver && !state.isBotMatch && state.oppUid && (state.scoreYou + state.scoreOpp) > 0){
+  const banner = $('#disconnectBanner');
+  if(banner) banner.classList.add('show');
+  const cs = $('#oppCamStatus');
+  if(cs){
+    cs.classList.remove('live');
+    const lastSpan = cs.querySelector('span:last-child');
+    if(lastSpan) lastSpan.textContent = 'disconnected';
+  }
+  // If a match is in progress (even before any round was played), credit you with the win
+  if(!state.matchOver && !state.isBotMatch && state.oppUid){
     addChat('sys', 'opponent left · counted as forfeit · you win the match');
     // Push your score to roundsToWin (2) for the W
-    while(state.scoreYou < state.matchRoundsToWin && state.scoreOpp < state.matchRoundsToWin){
+    while(state.scoreYou < state.matchRoundsToWin){
       state.scoreYou++;
     }
     state.matchOver = true;
     updateScore();
     setTimeout(() => endMatch(), 1200);
+  } else if(state.matchOver){
+    // match was already ended — return to lobby
+    addChat('sys', 'opponent left');
+    setTimeout(async () => {
+      await teardownMatch();
+      showScreen('landing');
+    }, 1800);
   } else {
     addChat('sys', 'opponent left · returning to lobby');
     setTimeout(async () => {
@@ -9068,16 +10753,22 @@ function setupOppPanelBot(){
     vision.className = 'bot-vision';
     $('#oppPlaceholder').appendChild(vision);
   }
-  $('#oppCamStatus').classList.remove('live');
-  $('#oppCamStatus').querySelector('span:last-child').textContent = 'bot · no camera';
-  $('#disconnectBanner').classList.remove('show');
-  $('#oppIdentity').onclick = null;
+  const cs2 = $('#oppCamStatus');
+  if(cs2){
+    cs2.classList.remove('live');
+    const lastSpan = cs2.querySelector('span:last-child');
+    if(lastSpan) lastSpan.textContent = 'bot · no camera';
+  }
+  const db2 = $('#disconnectBanner');
+  if(db2) db2.classList.remove('show');
+  const oppBlock2 = $('#arenaPlayerOpp');
+  if(oppBlock2) oppBlock2.onclick = null;
 }
 
 let botReadyTimer = null;
 function onPeerConnectedBot(){
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
-  $('#handPrompt').style.display = '';
+  $('#handPrompt').classList.add('show');
   startReadySystem();
   // bot will ready up shortly after player starts charging
   scheduleBotReadyWatch();
@@ -9208,30 +10899,89 @@ async function nextStrangerOrBot(){
 }
 
 // Match-end buttons
-$('#matchEndAgainBtn').addEventListener('click', nextStrangerOrBot);
-$('#matchEndExitBtn').addEventListener('click', async () => {
+on('#matchEndAgainBtn', 'click', nextStrangerOrBot);
+on('#matchEndExitBtn', 'click', async () => {
   $('#matchResultOverlay').classList.remove('show');
   await teardownMatch();
   state.isBotMatch = false;
   showScreen('landing');
 });
+// NEW: Rematch button — request rematch with same opponent
+on('#matchEndRematchBtn', 'click', async () => {
+  if(state.isBotMatch){
+    // For bot: just start a new bot match
+    $('#matchResultOverlay').classList.remove('show');
+    await teardownMatch();
+    setTimeout(() => startBotMatch(), 200);
+    return;
+  }
+  if(!state.oppUid){
+    toast('No opponent to rematch', 'error');
+    return;
+  }
+  try { sendPeer({type: 'rematch_request'}); } catch(e){}
+  toast('Rematch requested — waiting for opponent...', 'success');
+  $('#matchEndRematchBtn').disabled = true;
+  $('#matchEndRematchBtn').textContent = 'Waiting...';
+  // 10s timeout
+  setTimeout(() => {
+    const btn = $('#matchEndRematchBtn');
+    if(btn){ btn.disabled = false; btn.textContent = 'Rematch'; }
+  }, 10000);
+});
+// NEW: Add friend from match-end
+on('#matchEndAddFriend', 'click', async () => {
+  if(!state.oppUid || state.isBotMatch){ toast("Can't add this player", 'error'); return; }
+  if(state.profile.friends?.includes(state.oppUid)){ toast('Already friends', 'success'); return; }
+  try {
+    await addDoc(collection(state.db, 'friendRequests'), {
+      from: state.user.uid,
+      fromUsername: state.profile.username,
+      to: state.oppUid,
+      toUsername: state.oppProfile?.username || '',
+      createdAt: serverTimestamp(),
+      status: 'pending',
+    });
+    toast(`Friend request sent to @${state.oppProfile?.username}`, 'success');
+  } catch(e){
+    console.error('[match-end-friend]', e);
+    toast('Could not send request', 'error');
+  }
+});
+// NEW: Share result
+on('#matchEndShare', 'click', async () => {
+  const youWon = state.scoreYou > state.scoreOpp;
+  const draw = state.scoreYou === state.scoreOpp;
+  const verb = draw ? 'tied' : (youWon ? 'won' : 'lost');
+  const txt = `I just ${verb} a ROSHAM match ${state.scoreYou}-${state.scoreOpp}${state.isBotMatch ? ' vs a bot' : ''}! 🪨📄✂️`;
+  if(navigator.share){
+    try { await navigator.share({ title: 'ROSHAM', text: txt }); }
+    catch(e){ /* user cancelled */ }
+  } else {
+    try {
+      await navigator.clipboard.writeText(txt);
+      toast('Result copied to clipboard!', 'success');
+    } catch(e){ toast('Could not share', 'error'); }
+  }
+});
 
 // Replace next button to handle both modes
-$('#nextBtn').removeEventListener('click', nextStranger);
-$('#nextBtn').addEventListener('click', nextStrangerOrBot);
+const nb = $('#nextBtn');
+if(nb) nb.removeEventListener('click', nextStranger);
+on('#nextBtn', 'click', nextStrangerOrBot);
 
 // ============= TOGGLES =============
-$('#optRegion').addEventListener('click', () => {
+on('#optRegion', 'click', () => {
   state.sameRegion = !state.sameRegion;
   $('#optRegion').classList.toggle('active', state.sameRegion);
 });
-$('#optRanged').addEventListener('click', () => {
+on('#optRanged', 'click', () => {
   state.similarRank = !state.similarRank;
   $('#optRanged').classList.toggle('active', state.similarRank);
 });
 
 // ============= EVENTS =============
-$('#findBtn').addEventListener('click', async () => {
+on('#findBtn', 'click', async () => {
   ensureAudio();
   if(!state.cameraReady){
     const ok = await setupCamera();
@@ -9240,11 +10990,11 @@ $('#findBtn').addEventListener('click', async () => {
   }
   findMatch();
 });
-$('#botBtn').addEventListener('click', () => {
+on('#botBtn', 'click', () => {
   startBotMatch();
 });
-$('#cancelMatchBtn').addEventListener('click', cancelMatchmaking);
-$('#debugMatchBtn').addEventListener('click', async () => {
+on('#cancelMatchBtn', 'click', cancelMatchmaking);
+on('#debugMatchBtn', 'click', async () => {
   const dbg = $('#matchDebug');
   dbg.style.display = dbg.style.display === 'none' ? 'block' : 'none';
   if(dbg.style.display === 'block'){
@@ -9284,8 +11034,8 @@ async function refreshDebugInfo(){
 }
 // Auto-refresh debug info every 2s while visible
 setInterval(() => { if($('#matchDebug')?.style.display === 'block') refreshDebugInfo(); }, 2000);
-$('#nextBtn').addEventListener('click', nextStranger);
-$('#helpBtn').addEventListener('click', () => $('#helpModal').classList.add('show'));
+on('#nextBtn', 'click', nextStranger);
+on('#helpBtn', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
 document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
 });
@@ -9294,15 +11044,31 @@ document.querySelectorAll('.modal-bg').forEach(m => {
 });
 document.addEventListener('keydown', (e) => {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn').click(); }
-  if(state.screen === 'landing' && e.code === 'KeyB'){ e.preventDefault(); $('#botBtn').click(); }
-  if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStrangerOrBot(); }
-  if(e.code === 'KeyM'){ e.preventDefault(); $('#muteBtn').click(); }
-  if(e.code === 'Escape'){
-    // close any open modal
-    const open = document.querySelector('.modal-bg.show');
-    if(open) open.classList.remove('show');
-  }
+  try {
+    if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn')?.click(); }
+    if(state.screen === 'landing' && e.code === 'KeyB'){ e.preventDefault(); $('#botBtn')?.click(); }
+    if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStrangerOrBot(); }
+    if(e.code === 'KeyM'){ e.preventDefault(); $('#muteBtn')?.click(); }
+    // NEW: Quick predictions during game (1=Rock, 2=Paper, 3=Scissors)
+    if(state.screen === 'game' && state.phase === 'idle'){
+      if(e.code === 'Digit1'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=rock]')?.click(); }
+      if(e.code === 'Digit2'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=paper]')?.click(); }
+      if(e.code === 'Digit3'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=scissors]')?.click(); }
+    }
+    // NEW: L = Leave match (forfeit)
+    if(state.screen === 'game' && e.code === 'KeyL'){ e.preventDefault(); forfeitMatch(); }
+    // NEW: F = Send friend request to opp
+    if(state.screen === 'game' && e.code === 'KeyF'){ e.preventDefault(); $('#addFriendInGameBtn')?.click(); }
+    // NEW: R = Report opp
+    if(state.screen === 'game' && e.code === 'KeyR'){ e.preventDefault(); $('#reportBtn')?.click(); }
+    // NEW: ? = Open help
+    if(e.code === 'Slash' && e.shiftKey){ e.preventDefault(); $('#helpBtn')?.click(); }
+    if(e.code === 'Escape'){
+      // close any open modal
+      const open = document.querySelector('.modal-bg.show');
+      if(open) open.classList.remove('show');
+    }
+  } catch(err){ console.error('[keydown]', err); }
 });
 document.querySelectorAll('.code-block .copy').forEach(b => {
   b.addEventListener('click', () => {
@@ -9331,20 +11097,18 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
-// Report player button — adds to blocked list + sends a report doc
-$('#reportBtn').addEventListener('click', async () => {
+// Report player — exposed as helper for any UI element to call
+async function reportPlayer(){
   if(!state.oppUid || state.isBotMatch){
     toast("Can't report this player", 'error');
     return;
   }
   if(!confirm(`Report @${state.oppProfile?.username || 'this player'} for inappropriate behavior?\n\nThey will be blocked from future matches with you.`)) return;
   try {
-    // block them
     await updateDoc(doc(state.db, 'users', state.user.uid), {
       blocked: arrayUnion(state.oppUid),
     });
     state.profile.blocked = [...(state.profile.blocked||[]), state.oppUid];
-    // record the report
     await addDoc(collection(state.db, 'reports'), {
       reporter: state.user.uid,
       reporterUsername: state.profile.username,
@@ -9353,10 +11117,39 @@ $('#reportBtn').addEventListener('click', async () => {
       createdAt: serverTimestamp(),
     }).catch(() => {});
     toast(`Reported & blocked @${state.oppProfile?.username || 'player'}`, 'success');
-    // exit match
     await teardownMatch();
     showScreen('landing');
   } catch(e){ toast('Could not report', 'error'); }
+}
+on('#reportBtn', 'click', reportPlayer);
+
+// NEW: Leave match button (forfeit with ELO penalty)
+on('#leaveMatchBtn', 'click', forfeitMatch);
+
+// NEW: Add friend in-game button (sends friend request to opp)
+on('#addFriendInGameBtn', 'click', async () => {
+  if(!state.oppUid || state.isBotMatch){
+    toast("Can't add this player", 'error');
+    return;
+  }
+  if(state.profile.friends?.includes(state.oppUid)){
+    toast('Already friends', 'success');
+    return;
+  }
+  try {
+    await addDoc(collection(state.db, 'friendRequests'), {
+      from: state.user.uid,
+      fromUsername: state.profile.username,
+      to: state.oppUid,
+      toUsername: state.oppProfile?.username || '',
+      createdAt: serverTimestamp(),
+      status: 'pending',
+    });
+    toast(`Friend request sent to @${state.oppProfile?.username || 'player'}`, 'success');
+  } catch(e){
+    console.error('[add-friend]', e);
+    toast('Could not send friend request', 'error');
+  }
 });
 
 // ============= MUTE / SETTINGS =============
@@ -9366,7 +11159,7 @@ function updateMuteIcon(){
     icon.innerHTML = `<use href="#i-sound-${state.muted ? 'off' : 'on'}"/>`;
   }
 }
-$('#muteBtn').addEventListener('click', () => {
+on('#muteBtn', 'click', () => {
   state.muted = !state.muted;
   updateMuteIcon();
   try { localStorage.setItem('rosham_muted', state.muted ? '1' : '0'); } catch(e){}
@@ -9380,8 +11173,10 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v7.0 — DUEL ARENA REDESIGN', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
-setupAuthUI();
+console.log('%c🪨 ROSHAM v8.0 — LAUNCH READY', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
+try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
+try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
 if(isConfigured()){
   initFirebase();
 } else {
