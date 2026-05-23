@@ -1717,97 +1717,254 @@ h1.section-title .accent{
 /* ============ MATCHING ============ */
 #screen-matching{align-items:center; justify-content:center;}
 .match-wrap{
-  display:flex; flex-direction:column; align-items:center; gap:36px;
+  display:flex; flex-direction:column; align-items:center; gap:32px;
   text-align:center;
   position: relative;
+  max-width: 480px;
+  width: 100%;
+  padding: 24px;
 }
-.searching-ring{
-  width:280px; height:280px; position:relative;
-  display:grid; place-items:center;
+
+/* CLEAN SEARCHING ORB — minimal, no over-the-top effects */
+.searching-orb{
+  position: relative;
+  width: 200px;
+  height: 200px;
+  display: grid;
+  place-items: center;
 }
-.searching-ring .ring{
-  position:absolute; inset:0; border-radius:50%;
-  border:2px solid var(--line);
+.orb-ring{
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  opacity: 0;
+  animation: orbRing 2.4s ease-out infinite;
 }
-.searching-ring .ring.r1{animation: ringPulse 2.4s ease-out infinite;}
-.searching-ring .ring.r2{animation: ringPulse 2.4s ease-out .6s infinite;}
-.searching-ring .ring.r3{animation: ringPulse 2.4s ease-out 1.2s infinite;}
-@keyframes ringPulse{
-  0%{transform:scale(.35); opacity:.8; border-color:var(--coral); border-width: 3px;}
-  100%{transform:scale(1.3); opacity:0; border-color:var(--coral); border-width: 1px;}
+.orb-ring.r2{
+  animation-delay: 1.2s;
 }
-.searching-ring .core{
-  width:120px; height:120px; border-radius:50%;
+@keyframes orbRing{
+  0%{ transform: scale(.4); opacity: .9; border-color: var(--coral); }
+  100%{ transform: scale(1.1); opacity: 0; border-color: var(--coral); }
+}
+.orb-core{
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
   background:
-    radial-gradient(circle at 30% 30%, #ffafc8 0%, var(--coral) 50%, #b01443 100%);
-  display:grid; place-items:center;
-  font-size:48px;
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,.15) 0%, transparent 50%),
+    linear-gradient(135deg, var(--coral), #c01546);
+  display: grid;
+  place-items: center;
   box-shadow:
-    0 30px 80px -10px var(--coral-glow),
-    0 0 60px -10px var(--coral-glow),
-    inset 0 -10px 24px rgba(0,0,0,.3),
-    inset 0 4px 12px rgba(255,255,255,.3);
-  animation: coreFloat 3s ease-in-out infinite;
+    0 16px 40px -8px var(--coral-glow),
+    inset 0 -4px 12px rgba(0,0,0,.3),
+    inset 0 2px 6px rgba(255,255,255,.2);
+  animation: orbBreath 3s ease-in-out infinite;
 }
-@keyframes coreFloat{
-  0%, 100%{ transform: translateY(0); }
-  50%{ transform: translateY(-6px); }
+.orb-hand{
+  font-size: 38px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
+  animation: orbHand 1.6s ease-in-out infinite;
+}
+@keyframes orbBreath{
+  0%, 100%{ transform: scale(1); }
+  50%{ transform: scale(1.04); }
+}
+@keyframes orbHand{
+  0%, 100%{ transform: translateY(0) rotate(0); }
+  50%{ transform: translateY(-2px) rotate(-6deg); }
+}
+
+.match-search-text{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
 }
 h2.match-title{
-  font-family:var(--font-display);
-  font-stretch:60%; font-weight:800;
-  font-size:56px; letter-spacing:-.04em; line-height:1;
-  text-transform:uppercase;
-  background:linear-gradient(180deg, #fff 30%, var(--coral) 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter: drop-shadow(0 4px 24px var(--coral-glow));
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--text);
 }
 .match-feed{
-  font-family:var(--font-mono);
-  font-size:13px; color:var(--text-dim);
-  min-height:24px; letter-spacing:.04em;
-  padding: 8px 16px;
-  border-radius: 999px;
-  background: rgba(0,0,0,.3);
-  border: 1px solid var(--line);
-  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-faint);
+  min-height: 18px;
+  letter-spacing: .04em;
+  font-weight: 600;
 }
-.match-feed .blink{color:var(--coral); animation:soft 1.2s ease-in-out infinite;}
+
+.match-search-stats{
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 12px 20px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  margin-bottom: 4px;
+}
+.search-stat{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 0 20px;
+  min-width: 80px;
+}
+.search-stat-val{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 20px;
+  color: var(--text);
+  letter-spacing: -.02em;
+  line-height: 1;
+}
+.search-stat-lbl{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.search-stat-divider{
+  width: 1px;
+  height: 24px;
+  background: var(--line-soft);
+}
+
+.match-search-actions{
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
 .queue-count{
   font-family:var(--font-mono); font-size:12px;
   color:var(--text-faint);
-  padding: 6px 14px;
-  border-radius: 999px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid var(--line-soft);
 }
 .queue-count b{color:var(--text); font-weight:700;}
 
-.match-found-stage{display:flex; flex-direction:column; align-items:center; gap:28px;}
-.match-found-stage .vs-row{
-  display:flex; align-items:center; gap:40px;
-  animation: scaleIn .6s cubic-bezier(.2,1.6,.4,1);
+/* MATCH FOUND — cleaner reveal */
+.match-found-stage{
+  display:flex; flex-direction:column; align-items:center; gap:24px;
+  animation: matchFoundIn .5s cubic-bezier(.2,1.6,.4,1);
 }
-.match-found-stage .player-card{display:flex; flex-direction:column; align-items:center; gap:10px;}
+@keyframes matchFoundIn{
+  from{ opacity: 0; transform: scale(.9); }
+  to{ opacity: 1; transform: scale(1); }
+}
+.match-found-banner{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(60,255,185,.15), rgba(60,255,185,.05));
+  border: 1px solid var(--mint);
+  color: var(--mint);
+  box-shadow: 0 0 20px var(--mint-glow);
+  animation: matchFoundBannerPulse 1.4s ease-in-out infinite;
+}
+@keyframes matchFoundBannerPulse{
+  0%, 100%{ box-shadow: 0 0 20px var(--mint-glow); }
+  50%{ box-shadow: 0 0 32px var(--mint-glow); }
+}
+.match-found-stage .vs-row{
+  display:flex; align-items:center; gap:32px;
+}
+.match-found-stage .player-card{
+  display:flex; flex-direction:column; align-items:center; gap:10px;
+  animation: playerCardIn .6s cubic-bezier(.2,1.6,.4,1);
+}
+.match-found-stage .player-card.opp{
+  animation-delay: .15s;
+  animation-fill-mode: both;
+}
+@keyframes playerCardIn{
+  from{ opacity: 0; transform: translateY(20px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
 .match-found-stage .player-card .av{
-  width:104px; height:104px; border-radius:28px;
-  background:linear-gradient(135deg, var(--coral), var(--violet));
-  display:grid; place-items:center;
-  font-family:var(--font-display); font-weight:700; font-size:42px;
-  color:#fff;
+  width: 88px; height: 88px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, var(--coral), var(--violet));
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 36px;
+  color: #fff;
   background-size: cover;
   background-position: center;
   box-shadow:
-    0 24px 60px -12px rgba(0,0,0,.6),
-    inset 0 1px 0 rgba(255,255,255,.2);
-  border: 2px solid rgba(255,255,255,.1);
+    0 16px 40px -8px rgba(0,0,0,.5),
+    inset 0 1px 0 rgba(255,255,255,.15);
+  border: 2px solid rgba(255,255,255,.08);
 }
-.match-found-stage .player-card .av .emoji-av{font-size:54px;}
-.match-found-stage .player-card.opp .av{background:linear-gradient(135deg, #3b2855, #5a3d80); background-size: cover; background-position: center;}
-.match-found-stage .player-card .nm{font-family:var(--font-display); font-weight:700; font-size:18px;}
+.match-found-stage .player-card .av .emoji-av{ font-size: 44px; }
+.match-found-stage .player-card.opp .av{
+  background: linear-gradient(135deg, #3b2855, #5a3d80);
+  background-size: cover;
+  background-position: center;
+}
+.match-found-stage .player-card .nm{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -.01em;
+}
 .match-found-stage .player-card .sub{
-  font-family:var(--font-mono); font-size:11px; color:var(--text-faint);
-  letter-spacing:.06em; text-transform:uppercase;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+.match-found-stage .vs-text{
+  font-family: var(--font-display);
+  font-stretch: 60%;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -.02em;
+  color: var(--text-faint);
+  opacity: .5;
+}
+
+/* Progress bar that fills as connection establishes */
+.match-found-progress{
+  width: 240px;
+  height: 3px;
+  background: rgba(255,255,255,.05);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.match-found-progress-fill{
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--mint), var(--coral));
+  border-radius: 2px;
+  transition: width .8s ease-out;
+  box-shadow: 0 0 8px currentColor;
+}
   display:flex; align-items:center; gap:6px;
 }
 .match-found-stage .player-card .sub svg{width:12px; height:12px;}
@@ -2360,33 +2517,50 @@ h2.match-title{
 .duel-countdown{
   position: absolute;
   font-family: var(--font-display);
-  font-stretch: 55%;
+  font-stretch: 65%;
   font-weight: 800;
-  font-size: clamp(180px, 24vw, 320px);
-  line-height: .85;
-  letter-spacing: -.06em;
-  background: linear-gradient(180deg, #fff 0%, var(--amber) 35%, var(--coral) 75%, #c01546 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 60px var(--coral-glow)) drop-shadow(0 0 100px rgba(255,206,61,.4));
+  font-size: clamp(80px, 11vw, 140px);
+  line-height: 1;
+  letter-spacing: -.04em;
+  color: var(--text);
   display: none;
+  text-align: center;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(8,5,15,.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255,255,255,.08);
 }
-.duel-countdown.show{ display: block; }
-.duel-countdown.flash{ animation: countdownFlash .65s cubic-bezier(.2,1.8,.4,1); }
+.duel-countdown.show{ display: flex; }
+.duel-countdown.flash{
+  animation: countdownFlash .6s cubic-bezier(.2,1.8,.4,1);
+}
 @keyframes countdownFlash{
-  0%{ transform: scale(.3) rotate(-12deg); opacity: 0; filter: blur(30px); }
-  40%{ transform: scale(1.25) rotate(4deg); opacity: 1; filter: blur(0); }
-  100%{ transform: scale(1) rotate(0); opacity: 1; }
+  0%{ transform: scale(.7); opacity: 0; }
+  50%{ transform: scale(1.05); opacity: 1; }
+  100%{ transform: scale(1); opacity: 1; }
 }
 .duel-countdown.shoot{
-  font-size: clamp(120px, 16vw, 220px);
-  background: linear-gradient(180deg, #fff 0%, var(--coral) 50%, #c01546 100%);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 80px var(--coral-glow));
+  font-size: clamp(38px, 6vw, 64px);
+  width: auto;
+  height: auto;
+  padding: 18px 36px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--coral), #c01546);
+  border-color: rgba(255,255,255,.15);
+  color: #fff;
+  letter-spacing: .04em;
   animation: countdownShoot .35s cubic-bezier(.2,2,.4,1);
+  box-shadow: 0 16px 40px var(--coral-glow);
 }
 @keyframes countdownShoot{
-  0%{ transform: scale(2.8); opacity: 0; filter: blur(20px); }
-  50%{ transform: scale(.9); opacity: 1; filter: blur(0); }
+  0%{ transform: scale(1.8); opacity: 0; }
+  60%{ transform: scale(1); opacity: 1; }
   100%{ transform: scale(1); opacity: 1; }
 }
 
@@ -2763,55 +2937,45 @@ h2.match-title{
 }
 
 /* BOTTOM DOCK — prediction + emotes + chat */
+/* DOCK — minimal floating row */
 .duel-dock{
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 12px;
-  padding: 12px 24px;
-  background: linear-gradient(0deg, rgba(8,5,15,.95), rgba(20,12,42,.9));
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-top: 1px solid var(--line-soft);
+  display: flex;
   align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: rgba(8,5,15,.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--line-soft);
   position: relative;
   z-index: 10;
 }
-.duel-dock::before{
-  content: "";
-  position: absolute;
-  left: 10%; right: 10%; top: -1px; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--violet), var(--mint), var(--coral), transparent);
-  opacity: .4;
-  filter: blur(1px);
-}
 
-/* Prediction in dock */
+/* Predict — just buttons, no label box */
 .dock-predict{
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
-  border: 1px solid var(--line);
+  flex-shrink: 0;
 }
 .dock-predict-label{
   font-family: var(--font-mono);
   font-size: 9px;
   color: var(--text-faint);
-  letter-spacing: .1em;
+  letter-spacing: .14em;
   text-transform: uppercase;
   font-weight: 700;
+  margin-right: 2px;
 }
 .dock-predict-btns{
   display: flex;
-  gap: 4px;
+  gap: 3px;
 }
 .dock-predict-btn{
-  width: 36px; height: 36px;
-  border-radius: 10px;
-  background: var(--surface-3);
-  border: 1.5px solid var(--line);
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-soft);
   cursor: pointer;
   display: grid;
   place-items: center;
@@ -2819,103 +2983,90 @@ h2.match-title{
   padding: 0;
   color: var(--text-dim);
 }
-.dock-predict-btn svg{ width: 18px; height: 18px; }
+.dock-predict-btn svg{ width: 16px; height: 16px; }
 .dock-predict-btn:hover{
   border-color: var(--violet);
-  background: rgba(176,140,255,.1);
-  transform: translateY(-2px);
+  background: rgba(176,140,255,.08);
+  color: var(--violet);
 }
 .dock-predict-btn.selected{
-  background: rgba(176,140,255,.18);
+  background: rgba(176,140,255,.2);
   border-color: var(--violet);
   color: var(--violet);
-  box-shadow: 0 0 12px var(--violet-glow);
 }
 .dock-predict-btn.locked{ pointer-events: none; opacity: .5; }
 
-/* Chat in dock */
+/* Divider between sections */
+.dock-divider{
+  width: 1px;
+  height: 22px;
+  background: var(--line-soft);
+  margin: 0 4px;
+}
+
+/* Chat — flat, fills middle */
 .dock-chat{
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
-  border: 1px solid var(--line);
+  flex: 1;
   min-width: 0;
 }
 .dock-chat-history{
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-width: 0;
-  max-height: 36px;
-  overflow: hidden;
-  font-size: 12px;
+  display: none; /* hidden — chat appears as floating bubbles instead */
 }
-.dock-chat-msg{
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.3;
-}
-.dock-chat-msg .who{
-  font-weight: 700;
-  margin-right: 4px;
-}
-.dock-chat-msg .who.you{ color: var(--mint); }
-.dock-chat-msg .who.opp{ color: var(--coral); }
-.dock-chat-msg .who.sys{ color: var(--text-faint); font-family: var(--font-mono); font-size: 10px; }
 .dock-chat-input-wrap{
   display: flex;
   align-items: center;
   gap: 6px;
   flex: 1;
-  min-width: 200px;
+  min-width: 0;
 }
 .dock-chat-input-wrap input{
   flex: 1;
-  background: var(--surface-3);
-  border: 1px solid var(--line);
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-soft);
   color: var(--text);
-  padding: 8px 12px;
-  border-radius: 9px;
+  padding: 8px 14px;
+  border-radius: 999px;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 13px;
   outline: none;
   transition: all .2s;
 }
 .dock-chat-input-wrap input:focus{
   border-color: var(--coral);
-  box-shadow: 0 0 0 2px rgba(255,45,107,.12);
+  background: rgba(255,255,255,.05);
+  box-shadow: 0 0 0 2px rgba(255,45,107,.1);
+}
+.dock-chat-input-wrap input::placeholder{
+  color: var(--text-faint);
 }
 .dock-chat-input-wrap button{
-  background: linear-gradient(180deg, var(--coral), #d4194e);
+  background: var(--coral);
   border: none;
   color: #fff;
-  border-radius: 9px;
-  width: 34px; height: 34px;
+  border-radius: 50%;
+  width: 32px; height: 32px;
   display: grid; place-items: center;
   cursor: pointer;
   transition: all .2s;
+  flex-shrink: 0;
 }
-.dock-chat-input-wrap button:hover{ transform: translateY(-1px); }
-.dock-chat-input-wrap button svg{ width: 14px; height: 14px; }
+.dock-chat-input-wrap button:hover{ background: #ff4a85; transform: scale(1.08); }
+.dock-chat-input-wrap button svg{ width: 13px; height: 13px; }
 
-/* Emote bar in dock */
+/* Emote bar — minimal, no box */
 .dock-emotes{
   display: flex;
-  gap: 4px;
-  padding: 6px 10px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
-  border: 1px solid var(--line);
+  gap: 2px;
+  flex-shrink: 0;
 }
 .dock-emote-btn{
   background: transparent;
   border: none;
-  font-size: 22px;
-  width: 36px; height: 36px;
+  font-size: 18px;
+  width: 30px; height: 30px;
   border-radius: 8px;
   cursor: pointer;
   display: grid;
@@ -2924,10 +3075,72 @@ h2.match-title{
   padding: 0;
 }
 .dock-emote-btn:hover{
-  background: var(--surface-3);
-  transform: scale(1.2) translateY(-2px);
+  background: rgba(255,255,255,.06);
+  transform: scale(1.25);
 }
 .dock-emote-btn:active{ transform: scale(.95); }
+
+/* FLOATING CHAT BUBBLES — appears above dock as messages come in */
+.floating-chat{
+  position: absolute;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 6px;
+  z-index: 11;
+  pointer-events: none;
+  max-width: 70%;
+  width: auto;
+}
+.floating-chat-msg{
+  background: rgba(8,5,15,.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  max-width: 100%;
+  word-break: break-word;
+  animation: floatChatIn .4s cubic-bezier(.2,1.6,.4,1);
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+.floating-chat-msg.fading{
+  animation: floatChatOut .6s ease-in forwards;
+}
+.floating-chat-msg .who{
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-right: 6px;
+  opacity: .8;
+}
+.floating-chat-msg .who.you{ color: var(--mint); }
+.floating-chat-msg .who.opp{ color: var(--coral); }
+.floating-chat-msg.sys{
+  background: rgba(0,0,0,.6);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.floating-chat-msg.sys .who{ display: none; }
+@keyframes floatChatIn{
+  from{ opacity: 0; transform: translateY(20px) scale(.9); }
+  to{ opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes floatChatOut{
+  from{ opacity: 1; }
+  to{ opacity: 0; transform: translateY(-10px); }
+}
 
 /* Match controls floating in arena bar */
 .arena-controls{
@@ -5669,26 +5882,43 @@ const FIREBASE_CONFIG = {
     <!-- ====== MATCHING ====== -->
     <section class="screen" id="screen-matching">
       <div class="match-wrap" id="matchSearchView">
-        <div class="searching-ring">
-          <div class="ring r1"></div>
-          <div class="ring r2"></div>
-          <div class="ring r3"></div>
-          <div class="core">✊</div>
+        <!-- Minimal searching state -->
+        <div class="searching-orb">
+          <div class="orb-ring"></div>
+          <div class="orb-ring r2"></div>
+          <div class="orb-core">
+            <div class="orb-hand">✊</div>
+          </div>
         </div>
-        <div>
-          <h2 class="match-title">FINDING A STRANGER</h2>
-          <div class="match-feed" id="matchFeed"><span class="blink">●</span> joining the queue…</div>
+        <div class="match-search-text">
+          <h2 class="match-title">FINDING OPPONENT</h2>
+          <div class="match-feed" id="matchFeed">searching the world…</div>
         </div>
-        <div class="queue-count"><b id="queueSize">—</b> player(s) currently looking</div>
+        <div class="match-search-stats">
+          <div class="search-stat">
+            <span class="search-stat-val" id="queueSize">—</span>
+            <span class="search-stat-lbl">searching</span>
+          </div>
+          <div class="search-stat-divider"></div>
+          <div class="search-stat">
+            <span class="search-stat-val" id="searchElapsed">0s</span>
+            <span class="search-stat-lbl">elapsed</span>
+          </div>
+          <div class="search-stat-divider"></div>
+          <div class="search-stat">
+            <span class="search-stat-val">±100</span>
+            <span class="search-stat-lbl">elo range</span>
+          </div>
+        </div>
         <div id="matchDebug" style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); max-width:380px; text-align:left; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2); display:none; white-space:pre-wrap; max-height:140px; overflow-y:auto;"></div>
-        <div style="display:flex; gap:8px;">
-          <button class="btn" id="cancelMatchBtn">Cancel</button>
-          <button class="btn btn-ghost" id="debugMatchBtn" style="font-size:11px;">Show debug info</button>
+        <div class="match-search-actions">
+          <button class="btn btn-ghost" id="cancelMatchBtn">Cancel</button>
+          <button class="btn btn-ghost" id="debugMatchBtn" style="font-size:11px; opacity:.6;">Debug</button>
         </div>
       </div>
 
       <div class="match-found-stage" id="matchFoundView" style="display:none;">
-        <div class="match-found-title">MATCH FOUND</div>
+        <div class="match-found-banner">MATCH FOUND</div>
         <div class="vs-row">
           <div class="player-card">
             <div class="av" id="mfYouAv">?</div>
@@ -5702,7 +5932,10 @@ const FIREBASE_CONFIG = {
             <div class="sub" id="mfOppSub"><svg id="mfOppRankIcon"></svg> <span>1000</span></div>
           </div>
         </div>
-        <div class="match-feed" id="mfFeed"><span class="blink">●</span> establishing connection…</div>
+        <div class="match-feed" id="mfFeed">establishing connection…</div>
+        <div class="match-found-progress">
+          <div class="match-found-progress-fill" id="matchFoundProgress"></div>
+        </div>
       </div>
     </section>
 
@@ -5896,7 +6129,10 @@ const FIREBASE_CONFIG = {
         <div id="oppLabel" style="display:none;"></div>
       </div>
 
-      <!-- BOTTOM DOCK: prediction + emotes + chat -->
+      <!-- FLOATING CHAT BUBBLES — show above dock -->
+      <div class="floating-chat" id="floatingChat"></div>
+
+      <!-- BOTTOM DOCK: cleaner layout -->
       <div class="duel-dock">
 
         <div class="dock-predict">
@@ -5908,13 +6144,17 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
+        <span class="dock-divider"></span>
+
         <div class="dock-chat">
           <div class="dock-chat-history" id="chatMessages"></div>
           <div class="dock-chat-input-wrap">
-            <input id="chatInput" type="text" placeholder="say something to @opp…" maxlength="120" />
+            <input id="chatInput" type="text" placeholder="message…" maxlength="120" />
             <button id="chatSendBtn"><svg><use href="#i-send"/></svg></button>
           </div>
         </div>
+
+        <span class="dock-divider"></span>
 
         <div class="dock-emotes" id="emoteBar">
           <button class="dock-emote-btn emote-btn" data-emote="👋" title="wave">👋</button>
@@ -10472,11 +10712,44 @@ function addChat(who, text){
     m.innerHTML = `<span class="who ${who}">${escapeHTML(label)}</span><span class="text">${escapeHTML(text)}</span>`;
   }
   const wrap = $('#chatMessages');
-  wrap.appendChild(m);
-  wrap.scrollTop = wrap.scrollHeight;
+  if(wrap){
+    wrap.appendChild(m);
+    wrap.scrollTop = wrap.scrollHeight;
+  }
+  // Also push as floating bubble for visibility during game
+  pushFloatingChat(who, text);
   if(who !== 'you' && who !== 'sys') sfxMessage();
 }
-function clearChat(){ $('#chatMessages').innerHTML = ''; }
+
+function pushFloatingChat(who, text){
+  const container = $('#floatingChat');
+  if(!container) return;
+  const bubble = document.createElement('div');
+  bubble.className = 'floating-chat-msg' + (who === 'sys' ? ' sys' : '');
+  if(who === 'sys'){
+    bubble.innerHTML = escapeHTML(text);
+  } else {
+    const label = who === 'you' ? '@' + (state.profile?.username || 'you') : '@' + (state.oppProfile?.username || 'stranger');
+    bubble.innerHTML = `<span class="who ${who}">${escapeHTML(label)}</span>${escapeHTML(text)}`;
+  }
+  container.appendChild(bubble);
+  // Keep only last 4 bubbles visible
+  while(container.children.length > 4){
+    container.removeChild(container.firstChild);
+  }
+  // Fade and remove after 5 seconds
+  const lifetime = who === 'sys' ? 3500 : 5500;
+  setTimeout(() => {
+    bubble.classList.add('fading');
+    setTimeout(() => bubble.remove(), 600);
+  }, lifetime);
+}
+function clearChat(){
+  const wrap = $('#chatMessages');
+  if(wrap) wrap.innerHTML = '';
+  const fc = $('#floatingChat');
+  if(fc) fc.innerHTML = '';
+}
 on('#chatSendBtn', 'click', sendChat);
 
 // Prediction picker — pick what you think opp will throw before the round starts
