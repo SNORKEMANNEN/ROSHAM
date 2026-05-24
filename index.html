@@ -1113,6 +1113,63 @@ h1.section-title .accent{
   letter-spacing: .02em;
 }
 
+/* Slider rows — for camera controls */
+.settings-row-slider{
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+}
+.settings-row-slider .settings-row-info{
+  margin-bottom: 0;
+}
+.slider-wrap{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.settings-slider{
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--surface-3);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.settings-slider::-webkit-slider-thumb{
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--coral);
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255,45,107,.4);
+  transition: transform .15s;
+}
+.settings-slider::-webkit-slider-thumb:hover{
+  transform: scale(1.2);
+}
+.settings-slider::-moz-range-thumb{
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--coral);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(255,45,107,.4);
+}
+.slider-val{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-dim);
+  min-width: 50px;
+  text-align: right;
+  letter-spacing: .02em;
+}
+
 /* Toggle switch */
 .toggle-switch{
   position: relative;
@@ -5989,6 +6046,9 @@ const FIREBASE_CONFIG = {
 
         <!-- ARENA CONTROLS: leave match, more options -->
         <div class="arena-controls">
+          <button class="arena-ctrl-btn" id="cameraAdjustBtn" title="Adjust camera">
+            <svg><use href="#i-camera"/></svg>
+          </button>
           <button class="arena-ctrl-btn" id="addFriendInGameBtn" title="Add as friend">
             <svg><use href="#i-plus"/></svg>
           </button>
@@ -6371,6 +6431,58 @@ const FIREBASE_CONFIG = {
     <h3>SETTINGS</h3>
     <p>Customize your ROSHAM experience.</p>
 
+    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:8px 0 12px; font-weight:700;">CAMERA</h4>
+    <div class="settings-section">
+      <div class="settings-row settings-row-slider">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Brightness</div>
+          <div class="settings-row-sub">Lighten or darken your camera image</div>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" min="50" max="200" value="100" id="cameraBrightness" class="settings-slider" />
+          <span class="slider-val" id="cameraBrightnessVal">100%</span>
+        </div>
+      </div>
+      <div class="settings-row settings-row-slider">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Contrast</div>
+          <div class="settings-row-sub">Make darks darker and lights lighter</div>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" min="50" max="200" value="100" id="cameraContrast" class="settings-slider" />
+          <span class="slider-val" id="cameraContrastVal">100%</span>
+        </div>
+      </div>
+      <div class="settings-row settings-row-slider">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Saturation</div>
+          <div class="settings-row-sub">Color intensity — 0% is black & white</div>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" min="0" max="200" value="100" id="cameraSaturation" class="settings-slider" />
+          <span class="slider-val" id="cameraSaturationVal">100%</span>
+        </div>
+      </div>
+      <div class="settings-row settings-row-slider">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Exposure boost</div>
+          <div class="settings-row-sub">Extra brightness for very dark rooms</div>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" min="0" max="50" value="0" id="cameraExposure" class="settings-slider" />
+          <span class="slider-val" id="cameraExposureVal">0%</span>
+        </div>
+      </div>
+      <div class="settings-row">
+        <div class="settings-row-info">
+          <div class="settings-row-title">Reset camera adjustments</div>
+          <div class="settings-row-sub">Restore default brightness, contrast, and saturation</div>
+        </div>
+        <button class="btn btn-ghost" id="resetCameraBtn" style="padding:8px 14px; font-size:12px;">Reset</button>
+      </div>
+    </div>
+
+    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:20px 0 12px; font-weight:700;">DISPLAY & SOUND</h4>
     <div class="settings-section">
       <div class="settings-row">
         <div class="settings-row-info">
@@ -7176,12 +7288,19 @@ function setCurrentGesture(g){
   if(g){
     state._lastValidGesture = g;
     state._lastValidGestureAt = Date.now();
-    // Stability buffer — keep last 20 frames worth of gestures
+    // Stability buffer — keep last 5s of gestures (longer than countdown duration)
     if(!state._gestureBuffer) state._gestureBuffer = [];
     state._gestureBuffer.push({ g, t: Date.now() });
-    // Prune entries older than 3s
-    const cutoff = Date.now() - 3000;
+    // Prune entries older than 5s
+    const cutoff = Date.now() - 5000;
     state._gestureBuffer = state._gestureBuffer.filter(e => e.t > cutoff);
+    // Snapshot: if user just READIED UP, record this as their committed gesture
+    // (this way even if hand goes out of frame during countdown, we know what they chose)
+    if(state.myGestureReady && !state._readyUpGesture){
+      state._readyUpGesture = g;
+      state._readyUpGestureAt = Date.now();
+      console.log('[gesture] locked in ready-up gesture:', g);
+    }
   }
   const det = $('#yourDetected');
   if(g){
@@ -7198,28 +7317,39 @@ function setCurrentGesture(g){
   onGestureFrame();
 }
 function getGestureForShoot(){
-  // Priority 1: current frame has a detected gesture — use it
-  if(state.currentGesture) return state.currentGesture;
-  // Priority 2: very recent detection (within 800ms) — use last valid
-  if(state._lastValidGesture && state._lastValidGestureAt && (Date.now() - state._lastValidGestureAt < 800)){
+  // ROCK-SOLID GESTURE RESOLUTION at SHOOT time:
+  // Priority 1: current frame has a detected gesture — use it directly
+  if(state.currentGesture){
+    console.log('[gesture] SHOOT uses current frame:', state.currentGesture);
+    return state.currentGesture;
+  }
+  // Priority 2: very recent detection (within 1.2s) — likely a 1-frame blip
+  if(state._lastValidGesture && state._lastValidGestureAt && (Date.now() - state._lastValidGestureAt < 1200)){
+    console.log('[gesture] SHOOT uses last-valid (within 1.2s):', state._lastValidGesture);
     return state._lastValidGesture;
   }
-  // Priority 3: any detection in the last 3 seconds — use most common gesture
+  // Priority 3: the gesture we LOCKED IN when we readied up — most reliable
+  // (if you held a hand long enough to ready up, this is what you "meant" to throw)
+  if(state._readyUpGesture && state._readyUpGestureAt && (Date.now() - state._readyUpGestureAt < 8000)){
+    console.log('[gesture] SHOOT uses ready-up snapshot:', state._readyUpGesture);
+    return state._readyUpGesture;
+  }
+  // Priority 4: vote from the buffer (last 5s of detections)
   if(state._gestureBuffer && state._gestureBuffer.length > 0){
-    const cutoff = Date.now() - 3000;
+    const cutoff = Date.now() - 5000;
     const recent = state._gestureBuffer.filter(e => e.t > cutoff);
-    if(recent.length > 0){
-      // Vote: which gesture appeared most often in the last 3s?
+    if(recent.length >= 3){ // need at least 3 frames to trust a vote
       const counts = { rock: 0, paper: 0, scissors: 0 };
       for(const e of recent) counts[e.g] = (counts[e.g] || 0) + 1;
       let winner = null, max = 0;
       for(const [k, v] of Object.entries(counts)){
         if(v > max){ max = v; winner = k; }
       }
-      console.log('[gesture] SHOOT fallback to buffer vote:', winner, counts);
+      console.log('[gesture] SHOOT uses buffer vote:', winner, counts);
       return winner;
     }
   }
+  console.warn('[gesture] SHOOT: no gesture available — will forfeit');
   return null;
 }
 
@@ -7847,6 +7977,25 @@ function applySettings(){
   } else {
     document.body.classList.remove('high-contrast');
   }
+  // Camera adjustments
+  applyCameraFilters();
+}
+
+// Apply camera adjustments to the live video via CSS filter
+function applyCameraFilters(){
+  const s = getSettings();
+  const brightness = s.camBrightness ?? 100;
+  const contrast = s.camContrast ?? 100;
+  const saturation = s.camSaturation ?? 100;
+  const exposure = s.camExposure ?? 0;
+  // Combine brightness + exposure boost (exposure is additive multiplier)
+  const totalBrightness = brightness + exposure;
+  const filterStr = `brightness(${totalBrightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+  const yv = document.getElementById('yourVideo');
+  if(yv) yv.style.filter = filterStr;
+  // Also apply to the hand-tracking canvas so debug overlay matches
+  const oc = document.getElementById('overlay-canvas');
+  if(oc) oc.style.filter = filterStr;
 }
 
 function openSettingsModal(){
@@ -7857,6 +8006,16 @@ function openSettingsModal(){
   $('#settingsChallengeToggle').checked = state.profile?.acceptChallenges !== false;
   $('#settingsReduceMotionToggle').checked = !!s.reduceMotion;
   $('#settingsContrastToggle').checked = !!s.contrast;
+  // Populate camera sliders
+  const setSlider = (id, valId, val, suffix='%') => {
+    const el = $('#'+id);
+    if(el) el.value = val;
+    setText('#'+valId, val + suffix);
+  };
+  setSlider('cameraBrightness', 'cameraBrightnessVal', s.camBrightness ?? 100);
+  setSlider('cameraContrast', 'cameraContrastVal', s.camContrast ?? 100);
+  setSlider('cameraSaturation', 'cameraSaturationVal', s.camSaturation ?? 100);
+  setSlider('cameraExposure', 'cameraExposureVal', s.camExposure ?? 0);
   $('#settingsModal').classList.add('show');
 }
 
@@ -7875,6 +8034,42 @@ function wireSettings(){
   sync('settingsSkeletonToggle', 'skeleton');
   sync('settingsReduceMotionToggle', 'reduceMotion');
   sync('settingsContrastToggle', 'contrast');
+
+  // Camera sliders — apply in real-time + persist
+  const wireSlider = (id, valId, key, suffix='%') => {
+    on('#'+id, 'input', e => {
+      const v = parseInt(e.target.value, 10);
+      setText('#'+valId, v + suffix);
+      const s = getSettings();
+      s[key] = v;
+      saveSettings(s);
+      applyCameraFilters();
+    });
+  };
+  wireSlider('cameraBrightness', 'cameraBrightnessVal', 'camBrightness');
+  wireSlider('cameraContrast', 'cameraContrastVal', 'camContrast');
+  wireSlider('cameraSaturation', 'cameraSaturationVal', 'camSaturation');
+  wireSlider('cameraExposure', 'cameraExposureVal', 'camExposure');
+
+  on('#resetCameraBtn', 'click', () => {
+    const s = getSettings();
+    delete s.camBrightness;
+    delete s.camContrast;
+    delete s.camSaturation;
+    delete s.camExposure;
+    saveSettings(s);
+    // re-populate sliders to defaults
+    $('#cameraBrightness').value = 100;
+    setText('#cameraBrightnessVal', '100%');
+    $('#cameraContrast').value = 100;
+    setText('#cameraContrastVal', '100%');
+    $('#cameraSaturation').value = 100;
+    setText('#cameraSaturationVal', '100%');
+    $('#cameraExposure').value = 0;
+    setText('#cameraExposureVal', '0%');
+    applyCameraFilters();
+    toast('Camera adjustments reset', 'success');
+  });
 
   // Accept challenges syncs to profile
   on('#settingsChallengeToggle', 'change', async e => {
@@ -9546,6 +9741,28 @@ function handlePeerMessage(msg){
       maybeStartRound();
       break;
     case 'gesture': state.oppGesture = msg.value; revealIfBothIn(); break;
+    // NEW: authoritative round result from the caller
+    // The caller computes the outcome and broadcasts. The callee applies it
+    // verbatim so both sides display identical results — no more "I see WIN, they see DRAW".
+    case 'round_result':
+      console.log('[peer] received authoritative round result:', msg.result);
+      if(state.isCaller) break; // caller already applied locally
+      // Translate caller's perspective into callee's perspective:
+      // - msg.result is from caller's perspective ('win' = caller won)
+      // - For callee: caller's win = callee's lose, caller's lose = callee's win
+      // - draw stays draw, forfeit needs special handling (which side forfeited?)
+      let calleeResult;
+      if(msg.result === 'win') calleeResult = 'lose';        // caller won, so callee lost
+      else if(msg.result === 'lose') calleeResult = 'win';   // caller lost, so callee won
+      else if(msg.result === 'draw') calleeResult = 'draw';
+      else if(msg.result === 'forfeit'){
+        // caller's perspective: forfeit means caller didn't throw → caller loses
+        // for callee: that means callee won (opp forfeited)
+        calleeResult = 'win';
+      } else calleeResult = msg.result;
+      // From callee's perspective, "yourMove" = calleeMove, "oppMove" = callerMove
+      applyRoundResult(calleeResult, msg.calleeMove, msg.callerMove);
+      break;
     case 'chat': addChat('opp', msg.text); break;
     case 'emote': showEmoteFlash($('#oppEmoteFlash'), msg.emoji); break;
     case 'ping': sendPeer({type:'pong', t: msg.t}); break;
@@ -9866,6 +10083,13 @@ function resetGameUI(){
   state.countdownRunning = false;
   state.myGesture = null;
   state.oppGesture = null;
+  // CRITICAL: reset round-result flags so the next round can apply cleanly
+  state._roundResultApplied = false;
+  state._pendingRoundResult = null;
+  if(state._roundResultTimer){ clearTimeout(state._roundResultTimer); state._roundResultTimer = null; }
+  // Reset ready-up gesture snapshot — needs fresh recording each round
+  state._readyUpGesture = null;
+  state._readyUpGestureAt = null;
   $('#countdown').classList.remove('show','flash','shoot');
   const rd = $('#resultDisplay');
   rd.classList.remove('show');
@@ -9891,6 +10115,7 @@ function resetMatchUI(){
   state.streak = 0;
   state.streakType = null;
   state.matchOver = false;
+  state.matchRoundsToWin = 2; // best of 3 default — may grow during overtime
   state._endMatchCalled = false; // reset for new match
   state._matchPredictionsCorrect = 0;
   state._matchWinningMoves = [];
@@ -10065,10 +10290,20 @@ function doReveal(){
     const det = $('#oppDetected');
     if(det) det.style.display = 'none';
   }
+
+  // AUTHORITATIVE RESULT COMPUTATION
+  // The caller is the source of truth. Both peers compute the same result, but
+  // if there's any discrepancy (network glitch, missing gesture), the caller's
+  // decision wins. This eliminates all 1v1 desync bugs.
   let result;
+  // Bot matches: local-only, compute normally
+  // Non-bot matches: caller decides, sends 'round_result' message; callee waits
+  // briefly for that message before computing fallback.
+
+  // Local computation (caller uses this directly, callee uses as fallback)
   if(!yourMove && !oppMove) result = 'draw';
-  else if(!yourMove) result = 'forfeit';
-  else if(!oppMove) result = 'win';
+  else if(!yourMove) result = 'forfeit'; // you didn't throw
+  else if(!oppMove) result = 'win';       // they didn't throw
   else if(yourMove === oppMove) result = 'draw';
   else if(
     (yourMove === 'rock' && oppMove === 'scissors') ||
@@ -10077,29 +10312,70 @@ function doReveal(){
   ) result = 'win';
   else result = 'lose';
 
-  // NEW: Check prediction — did you guess what opp would throw?
+  // If we're the caller (or it's a bot match), apply immediately and broadcast.
+  // If we're the callee, defer briefly and wait for the caller's authoritative
+  // message — but fall back to local result if no message arrives in 400ms.
+  if(state.isCaller || state.isBotMatch){
+    applyRoundResult(result, yourMove, oppMove);
+    if(!state.isBotMatch){
+      try {
+        sendPeer({
+          type: 'round_result',
+          result,
+          callerMove: yourMove,  // what the caller threw (from caller's perspective: yourMove)
+          calleeMove: oppMove,   // what the callee threw (from caller's perspective: oppMove)
+        });
+      } catch(e){ console.warn('[round] could not broadcast result', e); }
+    }
+  } else {
+    // CALLEE PATH: wait for caller's authoritative result
+    state._pendingRoundResult = { result, yourMove, oppMove }; // fallback if caller never responds
+    state._roundResultTimer = setTimeout(() => {
+      if(state._pendingRoundResult){
+        console.warn('[round] no caller result in 600ms, using local fallback');
+        const f = state._pendingRoundResult;
+        state._pendingRoundResult = null;
+        applyRoundResult(f.result, f.yourMove, f.oppMove);
+      }
+    }, 600);
+  }
+}
+
+// Apply a finalized round result — both peers run this with identical data.
+// Updates score, streak, UI, and decides whether to advance / end match.
+function applyRoundResult(result, yourMove, oppMove){
+  // Prevent double-apply (caller→fallback or caller→authoritative race)
+  if(state._roundResultApplied) return;
+  state._roundResultApplied = true;
+  if(state._roundResultTimer){ clearTimeout(state._roundResultTimer); state._roundResultTimer = null; }
+  state._pendingRoundResult = null;
+
+  // Check prediction — did you guess what opp would throw?
   const predictionCorrect = state.myPrediction && oppMove && state.myPrediction === oppMove;
   state._lastPredictionCorrect = predictionCorrect;
-  // Track for daily challenges
   if(predictionCorrect) state._matchPredictionsCorrect = (state._matchPredictionsCorrect || 0) + 1;
 
-  if(result === 'win') state.scoreYou++;
-  else if(result === 'lose' || result === 'forfeit') state.scoreOpp++;
-  // Track winning moves for daily challenges
-  if(result === 'win' && yourMove){
-    if(!state._matchWinningMoves) state._matchWinningMoves = [];
-    state._matchWinningMoves.push(yourMove + '_win');
-  }
-  if(result === 'win'){
-    if(state.streakType === 'W') state.streak++; else { state.streakType='W'; state.streak=1; }
-  } else if(result === 'lose' || result === 'forfeit'){
-    if(state.streakType === 'L') state.streak++; else { state.streakType='L'; state.streak=1; }
-  }
-  updateScore();
-  updateRoundIndicator(result);
-  updateOnFireStatus();
-  // NOTE: stats only updated at MATCH end (not per round) — see endMatch()
+  // DRAW HANDLING: a draw does NOT count as a completed round — no score change, replay
+  const isDraw = result === 'draw';
 
+  if(!isDraw){
+    if(result === 'win') state.scoreYou++;
+    else if(result === 'lose' || result === 'forfeit') state.scoreOpp++;
+    if(result === 'win' && yourMove){
+      if(!state._matchWinningMoves) state._matchWinningMoves = [];
+      state._matchWinningMoves.push(yourMove + '_win');
+    }
+    if(result === 'win'){
+      if(state.streakType === 'W') state.streak++; else { state.streakType='W'; state.streak=1; }
+    } else if(result === 'lose' || result === 'forfeit'){
+      if(state.streakType === 'L') state.streak++; else { state.streakType='L'; state.streak=1; }
+    }
+    updateScore();
+    updateRoundIndicator(result);
+    updateOnFireStatus();
+  }
+
+  // Result UI
   const youPickEl = $('#resultYouPick');
   const oppPickEl = $('#resultOppPick');
   youPickEl.className = 'duel-result-pick ' + (yourMove || '');
@@ -10110,107 +10386,144 @@ function doReveal(){
   const detail = $('#resultDetail');
   const resultDisplay = $('#resultDisplay');
   const resultInner = $('#resultInner');
-  // Clean previous classes
-  headline.classList.remove('win','lose','draw');
-  resultDisplay.classList.remove('show');
-  resultInner.classList.remove('win','lose','draw');
-  // remove any leftover win-stars
-  const oldStars = resultDisplay.querySelector('.win-stars');
-  if(oldStars) oldStars.remove();
+  if(resultInner) resultInner.classList.remove('win','lose','draw');
 
-  if(result === 'win'){
-    headline.textContent = 'YOU WIN'; headline.classList.add('win');
-    detail.textContent = oppMove ? `${(yourMove||'').toUpperCase()} BEATS ${oppMove.toUpperCase()}` : 'OPPONENT FORFEITED';
-    resultInner.classList.add('win');
-    youPickEl.classList.add('winner');
-    if(oppMove) oppPickEl.classList.add('loser');
-    sfxWin();
-    showAnnouncer('NICE ONE! POINT FOR YOU!', 2200);
-    // Highlight YOUR side of the arena
-    document.querySelector('.duel-video.you')?.classList.add('active');
-    setTimeout(()=>document.querySelector('.duel-video.you')?.classList.remove('active'), 2400);
-    // big confetti
-    burst(window.innerWidth/2, window.innerHeight*0.4, '#5dffba', 80);
-    burst(window.innerWidth/2, window.innerHeight*0.4, '#a48bff', 60);
-    setTimeout(() => bigBurst('#5dffba'), 200);
-    // screen vignette flash
-    const wv = $('#winVignette');
-    wv.classList.remove('fire'); void wv.offsetWidth; wv.classList.add('fire');
-    // stars around the headline
-    const starWrap = document.createElement('div');
-    starWrap.className = 'win-stars';
-    for(let i = 0; i < 8; i++){
-      const s = document.createElement('span');
-      s.style.setProperty('--angle', (i * 45) + 'deg');
-      s.style.animationDelay = (i * 0.04) + 's';
-      s.innerHTML = '<svg width="28" height="28"><use href="#i-star"/></svg>';
-      starWrap.appendChild(s);
-    }
-    resultDisplay.appendChild(starWrap);
-    // haptic
-    try { if(navigator.vibrate) navigator.vibrate([60, 30, 100]); } catch(e){}
-    // combo callouts
-    if(state.streakType === 'W' && state.streak >= 3){
-      showComboPopup(state.streak);
-    }
-  } else if(result === 'lose'){
-    headline.textContent = 'YOU LOSE'; headline.classList.add('lose');
-    detail.textContent = `${oppMove.toUpperCase()} BEATS ${(yourMove||'').toUpperCase()}`;
-    resultInner.classList.add('lose');
-    if(oppMove) oppPickEl.classList.add('winner');
-    youPickEl.classList.add('loser');
-    sfxLose();
-    showAnnouncer('TOUGH BREAK! THEY GOT YOU.', 2200);
-    // Highlight OPPONENT side
-    document.querySelector('.duel-video.opp')?.classList.add('active');
-    setTimeout(()=>document.querySelector('.duel-video.opp')?.classList.remove('active'), 2400);
-    screen.classList.add('shake');
-    setTimeout(()=>screen.classList.remove('shake'), 600);
-    const lv = $('#loseVignette');
-    if(lv){ lv.classList.remove('fire'); void lv.offsetWidth; lv.classList.add('fire'); }
-    try { if(navigator.vibrate) navigator.vibrate([120, 60, 40]); } catch(e){}
-  } else if(result === 'draw'){
-    headline.textContent = 'DRAW'; headline.classList.add('draw');
-    detail.textContent = oppMove ? `BOTH THREW ${oppMove.toUpperCase()}` : 'BOTH FORFEITED';
-    resultInner.classList.add('draw');
-    sfxDraw();
-    showAnnouncer('A DRAW! GO AGAIN!', 2000);
-    try { if(navigator.vibrate) navigator.vibrate(40); } catch(e){}
-  } else {
-    headline.textContent = 'FORFEIT'; headline.classList.add('lose');
-    detail.textContent = 'NO GESTURE DETECTED — SHARPEN UP';
-    resultInner.classList.add('lose');
-    sfxLose();
-  }
-  resultDisplay.classList.add('show');
+  showRoundResultUI(result, yourMove, oppMove, predictionCorrect);
 
-  // NEW: Show prediction badge if you got it right
-  const predBadge = $('#predictionBadge');
-  predBadge.classList.remove('show');
-  if(predictionCorrect){
-    setTimeout(() => predBadge.classList.add('show'), 200);
-    // tiny visual celebration
-    burst(window.innerWidth/2, window.innerHeight*0.5, '#a48bff', 30);
-  }
-
-  // NEW: Commentator quote
-  setTimeout(() => showCommentatorQuote(result, yourMove, oppMove, predictionCorrect), 400);
-
-  setText('#roundState', result === 'draw' ? 'TIE — GO AGAIN' : (result === 'win' ? 'NICE THROW' : 'TOUGH LOSS'));
+  setText('#roundState', result === 'draw' ? 'DRAW — REPLAY' : (result === 'win' ? 'NICE THROW' : 'TOUGH ROUND'));
   state.phase = 'done';
 
-  // Check if match is over (someone reached 2 wins)
-  const matchOver = state.scoreYou >= state.matchRoundsToWin || state.scoreOpp >= state.matchRoundsToWin;
+  // OVERTIME RULES:
+  // Base mode = best of 3 (matchRoundsToWin = 2)
+  // BUT: draws never count, so we just replay the round.
+  // Match is over when one player is strictly ahead with at least matchRoundsToWin points.
+  // i.e. if it's 2-2 after some draws, neither side has won — keep playing until margin of 1
+  // and at least matchRoundsToWin points have been reached.
+  // Actually: simpler rule — match ends when score is (>= matchRoundsToWin) AND ahead.
+  // The user wants: "when both reach 2 points, overtime until one reaches 3."
+  // So: matchRoundsToWin=2 normally. If both reach 2, raise the bar to 3. Both reach 3? raise to 4. etc.
+  // Implementation: matchRoundsToWin grows with the max score whenever the trailing player ties up.
+  if(state.scoreYou >= state.matchRoundsToWin && state.scoreOpp >= state.matchRoundsToWin){
+    // Both have hit the current threshold — raise it by 1 (overtime)
+    state.matchRoundsToWin = Math.max(state.scoreYou, state.scoreOpp) + 1;
+    console.log('[match] OVERTIME — both at threshold, new target:', state.matchRoundsToWin);
+    // Visual signal of overtime
+    try { showAnnouncer('OVERTIME — FIRST TO ' + state.matchRoundsToWin); } catch(e){}
+  }
+
+  const matchOver = !isDraw && (
+    (state.scoreYou >= state.matchRoundsToWin && state.scoreYou > state.scoreOpp) ||
+    (state.scoreOpp >= state.matchRoundsToWin && state.scoreOpp > state.scoreYou)
+  );
+
   if(matchOver){
     state.matchOver = true;
-    // brief delay so round result is visible, then show match end
     setTimeout(() => {
       if(state.screen === 'game') endMatch();
     }, 3200);
   } else {
+    // Replay/advance — for draws, the round number doesn't increment in score but UI does replay
     setTimeout(() => {
       if(state.phase === 'done' && state.screen === 'game' && !state.matchOver) resetRound();
-    }, 3400);
+    }, isDraw ? 2400 : 3400);
+  }
+
+  // Commentator quote
+  setTimeout(() => showCommentatorQuote(result, yourMove, oppMove, predictionCorrect), 400);
+}
+
+// Show result UI (with full visual fireworks)
+function showRoundResultUI(result, yourMove, oppMove, predictionCorrect){
+  const youPickEl = $('#resultYouPick');
+  const oppPickEl = $('#resultOppPick');
+  if(youPickEl) youPickEl.className = 'duel-result-pick ' + (yourMove || '');
+  if(oppPickEl) oppPickEl.className = 'duel-result-pick ' + (oppMove || '');
+  if(youPickEl) youPickEl.querySelector('svg').innerHTML = yourMove ? `<use href="#i-${yourMove}"/>` : '';
+  if(oppPickEl) oppPickEl.querySelector('svg').innerHTML = oppMove ? `<use href="#i-${oppMove}"/>` : '';
+  const headline = $('#resultHeadline');
+  const detail = $('#resultDetail');
+  const resultDisplay = $('#resultDisplay');
+  const resultInner = $('#resultInner');
+  const screen = $('#screen-game');
+  // Clean previous classes
+  if(headline) headline.classList.remove('win','lose','draw');
+  if(resultDisplay) resultDisplay.classList.remove('show');
+  if(resultInner) resultInner.classList.remove('win','lose','draw');
+  if(youPickEl) youPickEl.classList.remove('winner','loser');
+  if(oppPickEl) oppPickEl.classList.remove('winner','loser');
+  const oldStars = resultDisplay?.querySelector('.win-stars');
+  if(oldStars) oldStars.remove();
+
+  if(result === 'win'){
+    if(headline){ headline.textContent = 'YOU WIN'; headline.classList.add('win'); }
+    if(detail) detail.textContent = oppMove ? `${(yourMove||'').toUpperCase()} BEATS ${oppMove.toUpperCase()}` : 'OPPONENT FORFEITED';
+    if(resultInner) resultInner.classList.add('win');
+    if(youPickEl) youPickEl.classList.add('winner');
+    if(oppMove && oppPickEl) oppPickEl.classList.add('loser');
+    sfxWin();
+    showAnnouncer('NICE ONE! POINT FOR YOU!', 2200);
+    document.querySelector('.duel-video.you')?.classList.add('active');
+    setTimeout(()=>document.querySelector('.duel-video.you')?.classList.remove('active'), 2400);
+    burst(window.innerWidth/2, window.innerHeight*0.4, '#5dffba', 80);
+    burst(window.innerWidth/2, window.innerHeight*0.4, '#a48bff', 60);
+    setTimeout(() => bigBurst('#5dffba'), 200);
+    const wv = $('#winVignette');
+    if(wv){ wv.classList.remove('fire'); void wv.offsetWidth; wv.classList.add('fire'); }
+    if(resultDisplay){
+      const starWrap = document.createElement('div');
+      starWrap.className = 'win-stars';
+      for(let i = 0; i < 8; i++){
+        const s = document.createElement('span');
+        s.style.setProperty('--angle', (i * 45) + 'deg');
+        s.style.animationDelay = (i * 0.04) + 's';
+        s.innerHTML = '<svg width="28" height="28"><use href="#i-star"/></svg>';
+        starWrap.appendChild(s);
+      }
+      resultDisplay.appendChild(starWrap);
+    }
+    try { if(navigator.vibrate) navigator.vibrate([60, 30, 100]); } catch(e){}
+    if(state.streakType === 'W' && state.streak >= 3){
+      showComboPopup(state.streak);
+    }
+  } else if(result === 'lose'){
+    if(headline){ headline.textContent = 'YOU LOSE'; headline.classList.add('lose'); }
+    if(detail) detail.textContent = oppMove ? `${oppMove.toUpperCase()} BEATS ${(yourMove||'').toUpperCase()}` : 'YOU FORFEITED';
+    if(resultInner) resultInner.classList.add('lose');
+    if(oppMove && oppPickEl) oppPickEl.classList.add('winner');
+    if(youPickEl) youPickEl.classList.add('loser');
+    sfxLose();
+    showAnnouncer('TOUGH BREAK! THEY GOT YOU.', 2200);
+    document.querySelector('.duel-video.opp')?.classList.add('active');
+    setTimeout(()=>document.querySelector('.duel-video.opp')?.classList.remove('active'), 2400);
+    if(screen){
+      screen.classList.add('shake');
+      setTimeout(()=>screen.classList.remove('shake'), 600);
+    }
+    const lv = $('#loseVignette');
+    if(lv){ lv.classList.remove('fire'); void lv.offsetWidth; lv.classList.add('fire'); }
+    try { if(navigator.vibrate) navigator.vibrate([120, 60, 40]); } catch(e){}
+  } else if(result === 'draw'){
+    if(headline){ headline.textContent = 'DRAW'; headline.classList.add('draw'); }
+    if(detail) detail.textContent = oppMove ? `BOTH THREW ${oppMove.toUpperCase()} — REPLAY` : 'NO THROWS — REPLAY';
+    if(resultInner) resultInner.classList.add('draw');
+    sfxDraw();
+    showAnnouncer('DRAW — REPLAY THE ROUND', 2000);
+    try { if(navigator.vibrate) navigator.vibrate(40); } catch(e){}
+  } else if(result === 'forfeit'){
+    if(headline){ headline.textContent = 'FORFEIT'; headline.classList.add('lose'); }
+    if(detail) detail.textContent = 'NO GESTURE DETECTED';
+    if(resultInner) resultInner.classList.add('lose');
+    sfxLose();
+  }
+  if(resultDisplay) resultDisplay.classList.add('show');
+
+  const predBadge = $('#predictionBadge');
+  if(predBadge){
+    predBadge.classList.remove('show');
+    if(predictionCorrect){
+      setTimeout(() => predBadge.classList.add('show'), 200);
+      burst(window.innerWidth/2, window.innerHeight*0.5, '#a48bff', 30);
+    }
   }
 }
 
@@ -11573,6 +11886,16 @@ on('#reportBtn', 'click', reportPlayer);
 // NEW: Leave match button (forfeit with ELO penalty)
 on('#leaveMatchBtn', 'click', forfeitMatch);
 
+// NEW: Camera adjust button in arena (opens settings modal at camera section)
+on('#cameraAdjustBtn', 'click', () => {
+  openSettingsModal();
+  // Scroll to top of settings (camera section is first)
+  setTimeout(() => {
+    const m = $('#settingsModal .modal');
+    if(m) m.scrollTop = 0;
+  }, 50);
+});
+
 // NEW: Add friend in-game button (sends friend request to opp)
 on('#addFriendInGameBtn', 'click', async () => {
   if(!state.oppUid || state.isBotMatch){
@@ -11620,7 +11943,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v8.4 — MINIMAL', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v8.5 — ROCK SOLID', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
 try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
 try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
 try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
