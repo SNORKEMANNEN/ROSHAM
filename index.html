@@ -483,6 +483,19 @@ header::after{
   border-color: var(--violet);
   color:var(--violet);
 }
+.btn-camera{
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border-color: var(--line-bright);
+  color:var(--text);
+  font-weight:700;
+  padding:14px 22px;
+  font-size:14px;
+}
+.btn-camera:hover{
+  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  border-color: var(--mint);
+  color:var(--mint);
+}
 .btn-danger{
   background:rgba(255,92,111,.08);
   border-color:rgba(255,92,111,.3);
@@ -1118,6 +1131,66 @@ h1.section-title .accent{
   flex-direction: column;
   align-items: stretch;
   gap: 10px;
+}
+
+/* ============ CAMERA MODAL ============ */
+.camera-modal{
+  max-width: 640px;
+}
+.camera-preview-wrap{
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.03), 0 8px 24px rgba(0,0,0,.4);
+}
+.camera-preview-wrap video{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scaleX(-1); /* mirror like the main game */
+  background: #000;
+  transition: filter .15s linear;
+}
+.camera-preview-overlay{
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  color: var(--text-faint);
+  text-align: center;
+  padding: 20px;
+  transition: opacity .3s;
+}
+.camera-preview-overlay.hidden{
+  opacity: 0;
+  pointer-events: none;
+}
+.camera-preview-label{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: .04em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+.camera-preview-sub{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+  max-width: 280px;
+  line-height: 1.4;
 }
 .settings-row-slider .settings-row-info{
   margin-bottom: 0;
@@ -5809,6 +5882,10 @@ const FIREBASE_CONFIG = {
                   <svg width="14" height="14"><use href="#i-bot"/></svg>
                   Play vs bot
                 </button>
+                <button class="btn btn-camera" id="cameraSetupBtn" title="Adjust your camera before playing">
+                  <svg width="14" height="14"><use href="#i-camera"/></svg>
+                  Camera
+                </button>
                 <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-faint);">or press <b style="color:var(--text);">SPACE</b></span>
               </div>
             </div>
@@ -6425,22 +6502,38 @@ const FIREBASE_CONFIG = {
 </div>
 
 <!-- SETTINGS MODAL -->
-<div class="modal-bg" id="settingsModal">
-  <div class="modal">
-    <button class="modal-close" data-close="settingsModal"><svg><use href="#i-close"/></svg></button>
-    <h3>SETTINGS</h3>
-    <p>Customize your ROSHAM experience.</p>
+<!-- DEDICATED CAMERA MODAL — with live preview -->
+<div class="modal-bg" id="cameraModal">
+  <div class="modal camera-modal">
+    <button class="modal-close" data-close="cameraModal"><svg><use href="#i-close"/></svg></button>
+    <h3>CAMERA SETUP</h3>
+    <p>Adjust your camera to get the best gesture detection. Changes apply live.</p>
 
-    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:8px 0 12px; font-weight:700;">CAMERA</h4>
-    <div class="settings-section">
+    <div class="camera-preview-wrap">
+      <video id="cameraPreviewVideo" autoplay playsinline muted></video>
+      <div class="camera-preview-overlay" id="cameraPreviewOverlay">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.5;">
+          <path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/>
+          <circle cx="12" cy="13" r="3"/>
+        </svg>
+        <div class="camera-preview-label">CAMERA OFF</div>
+        <div class="camera-preview-sub">Allow camera access to start preview</div>
+        <button class="btn btn-primary" id="startCameraPreviewBtn" style="margin-top:14px;">
+          <svg width="14" height="14"><use href="#i-camera"/></svg>
+          Start camera
+        </button>
+      </div>
+    </div>
+
+    <div class="settings-section" style="margin-top:18px;">
       <div class="settings-row settings-row-slider">
         <div class="settings-row-info">
           <div class="settings-row-title">Brightness</div>
           <div class="settings-row-sub">Lighten or darken your camera image</div>
         </div>
         <div class="slider-wrap">
-          <input type="range" min="50" max="200" value="100" id="cameraBrightness" class="settings-slider" />
-          <span class="slider-val" id="cameraBrightnessVal">100%</span>
+          <input type="range" min="50" max="200" value="100" id="camModalBrightness" class="settings-slider" />
+          <span class="slider-val" id="camModalBrightnessVal">100%</span>
         </div>
       </div>
       <div class="settings-row settings-row-slider">
@@ -6449,8 +6542,8 @@ const FIREBASE_CONFIG = {
           <div class="settings-row-sub">Make darks darker and lights lighter</div>
         </div>
         <div class="slider-wrap">
-          <input type="range" min="50" max="200" value="100" id="cameraContrast" class="settings-slider" />
-          <span class="slider-val" id="cameraContrastVal">100%</span>
+          <input type="range" min="50" max="200" value="100" id="camModalContrast" class="settings-slider" />
+          <span class="slider-val" id="camModalContrastVal">100%</span>
         </div>
       </div>
       <div class="settings-row settings-row-slider">
@@ -6459,8 +6552,8 @@ const FIREBASE_CONFIG = {
           <div class="settings-row-sub">Color intensity — 0% is black & white</div>
         </div>
         <div class="slider-wrap">
-          <input type="range" min="0" max="200" value="100" id="cameraSaturation" class="settings-slider" />
-          <span class="slider-val" id="cameraSaturationVal">100%</span>
+          <input type="range" min="0" max="200" value="100" id="camModalSaturation" class="settings-slider" />
+          <span class="slider-val" id="camModalSaturationVal">100%</span>
         </div>
       </div>
       <div class="settings-row settings-row-slider">
@@ -6469,17 +6562,33 @@ const FIREBASE_CONFIG = {
           <div class="settings-row-sub">Extra brightness for very dark rooms</div>
         </div>
         <div class="slider-wrap">
-          <input type="range" min="0" max="50" value="0" id="cameraExposure" class="settings-slider" />
-          <span class="slider-val" id="cameraExposureVal">0%</span>
+          <input type="range" min="0" max="50" value="0" id="camModalExposure" class="settings-slider" />
+          <span class="slider-val" id="camModalExposureVal">0%</span>
         </div>
       </div>
-      <div class="settings-row">
-        <div class="settings-row-info">
-          <div class="settings-row-title">Reset camera adjustments</div>
-          <div class="settings-row-sub">Restore default brightness, contrast, and saturation</div>
-        </div>
-        <button class="btn btn-ghost" id="resetCameraBtn" style="padding:8px 14px; font-size:12px;">Reset</button>
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn btn-ghost" id="camModalResetBtn" style="flex:1;">Reset to defaults</button>
+      <button class="btn btn-primary" id="camModalDoneBtn" style="flex:2;">Done</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <button class="modal-close" data-close="settingsModal"><svg><use href="#i-close"/></svg></button>
+    <h3>SETTINGS</h3>
+    <p>Customize your ROSHAM experience.</p>
+
+    <div class="settings-row" style="margin-bottom:8px;">
+      <div class="settings-row-info">
+        <div class="settings-row-title">Camera adjustments</div>
+        <div class="settings-row-sub">Brightness, contrast, saturation, exposure</div>
       </div>
+      <button class="btn btn-ghost" id="openCameraFromSettingsBtn" style="padding:8px 14px; font-size:12px;">
+        <svg width="12" height="12"><use href="#i-camera"/></svg> Adjust
+      </button>
     </div>
 
     <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:20px 0 12px; font-weight:700;">DISPLAY & SOUND</h4>
@@ -8006,17 +8115,84 @@ function openSettingsModal(){
   $('#settingsChallengeToggle').checked = state.profile?.acceptChallenges !== false;
   $('#settingsReduceMotionToggle').checked = !!s.reduceMotion;
   $('#settingsContrastToggle').checked = !!s.contrast;
-  // Populate camera sliders
+  $('#settingsModal').classList.add('show');
+}
+
+// ============= CAMERA MODAL — dedicated with live preview =============
+let cameraPreviewStream = null;
+
+async function openCameraModal(){
+  const s = getSettings();
+  // Populate sliders from saved values
   const setSlider = (id, valId, val, suffix='%') => {
     const el = $('#'+id);
     if(el) el.value = val;
     setText('#'+valId, val + suffix);
   };
-  setSlider('cameraBrightness', 'cameraBrightnessVal', s.camBrightness ?? 100);
-  setSlider('cameraContrast', 'cameraContrastVal', s.camContrast ?? 100);
-  setSlider('cameraSaturation', 'cameraSaturationVal', s.camSaturation ?? 100);
-  setSlider('cameraExposure', 'cameraExposureVal', s.camExposure ?? 0);
-  $('#settingsModal').classList.add('show');
+  setSlider('camModalBrightness', 'camModalBrightnessVal', s.camBrightness ?? 100);
+  setSlider('camModalContrast', 'camModalContrastVal', s.camContrast ?? 100);
+  setSlider('camModalSaturation', 'camModalSaturationVal', s.camSaturation ?? 100);
+  setSlider('camModalExposure', 'camModalExposureVal', s.camExposure ?? 0);
+  // Apply current filter to preview video
+  applyCameraPreviewFilter();
+
+  $('#cameraModal').classList.add('show');
+
+  // Try to attach the live preview
+  await attachCameraPreview();
+}
+
+async function attachCameraPreview(){
+  const video = document.getElementById('cameraPreviewVideo');
+  const overlay = document.getElementById('cameraPreviewOverlay');
+  if(!video) return;
+
+  // If main game already has a camera stream, reuse it (no need to open a second one)
+  if(state.localStream){
+    video.srcObject = state.localStream;
+    if(overlay) overlay.classList.add('hidden');
+    applyCameraPreviewFilter();
+    return;
+  }
+
+  // Otherwise try to start a fresh stream just for the preview
+  try {
+    if(!cameraPreviewStream){
+      cameraPreviewStream = await navigator.mediaDevices.getUserMedia({
+        video: { width: { ideal: 640 }, height: { ideal: 480 } },
+        audio: false,
+      });
+    }
+    video.srcObject = cameraPreviewStream;
+    if(overlay) overlay.classList.add('hidden');
+    applyCameraPreviewFilter();
+  } catch(e){
+    console.warn('[camera-preview] could not start preview:', e);
+    if(overlay) overlay.classList.remove('hidden');
+  }
+}
+
+function detachCameraPreview(){
+  const video = document.getElementById('cameraPreviewVideo');
+  if(video) video.srcObject = null;
+  // Only stop the stream if it's the preview-only one (not the shared game stream)
+  if(cameraPreviewStream && cameraPreviewStream !== state.localStream){
+    cameraPreviewStream.getTracks().forEach(t => t.stop());
+    cameraPreviewStream = null;
+  }
+  cameraPreviewStream = null;
+}
+
+function applyCameraPreviewFilter(){
+  const s = getSettings();
+  const brightness = s.camBrightness ?? 100;
+  const contrast = s.camContrast ?? 100;
+  const saturation = s.camSaturation ?? 100;
+  const exposure = s.camExposure ?? 0;
+  const totalBrightness = brightness + exposure;
+  const filterStr = `brightness(${totalBrightness}%) contrast(${contrast}%) saturate(${saturation}%)`;
+  const v = document.getElementById('cameraPreviewVideo');
+  if(v) v.style.filter = filterStr;
 }
 
 // Wire up settings toggles
@@ -8035,23 +8211,25 @@ function wireSettings(){
   sync('settingsReduceMotionToggle', 'reduceMotion');
   sync('settingsContrastToggle', 'contrast');
 
-  // Camera sliders — apply in real-time + persist
-  const wireSlider = (id, valId, key, suffix='%') => {
+  // CAMERA MODAL sliders — apply in real-time + persist + update live preview
+  const wireCamSlider = (id, valId, key, suffix='%') => {
     on('#'+id, 'input', e => {
       const v = parseInt(e.target.value, 10);
       setText('#'+valId, v + suffix);
       const s = getSettings();
       s[key] = v;
       saveSettings(s);
-      applyCameraFilters();
+      applyCameraFilters();      // applies to in-game video
+      applyCameraPreviewFilter(); // applies to camera modal preview
     });
   };
-  wireSlider('cameraBrightness', 'cameraBrightnessVal', 'camBrightness');
-  wireSlider('cameraContrast', 'cameraContrastVal', 'camContrast');
-  wireSlider('cameraSaturation', 'cameraSaturationVal', 'camSaturation');
-  wireSlider('cameraExposure', 'cameraExposureVal', 'camExposure');
+  wireCamSlider('camModalBrightness', 'camModalBrightnessVal', 'camBrightness');
+  wireCamSlider('camModalContrast', 'camModalContrastVal', 'camContrast');
+  wireCamSlider('camModalSaturation', 'camModalSaturationVal', 'camSaturation');
+  wireCamSlider('camModalExposure', 'camModalExposureVal', 'camExposure');
 
-  on('#resetCameraBtn', 'click', () => {
+  // Reset camera adjustments
+  on('#camModalResetBtn', 'click', () => {
     const s = getSettings();
     delete s.camBrightness;
     delete s.camContrast;
@@ -8059,17 +8237,26 @@ function wireSettings(){
     delete s.camExposure;
     saveSettings(s);
     // re-populate sliders to defaults
-    $('#cameraBrightness').value = 100;
-    setText('#cameraBrightnessVal', '100%');
-    $('#cameraContrast').value = 100;
-    setText('#cameraContrastVal', '100%');
-    $('#cameraSaturation').value = 100;
-    setText('#cameraSaturationVal', '100%');
-    $('#cameraExposure').value = 0;
-    setText('#cameraExposureVal', '0%');
+    const reset = (id, valId, val, suffix='%') => {
+      const el = $('#'+id);
+      if(el) el.value = val;
+      setText('#'+valId, val + suffix);
+    };
+    reset('camModalBrightness', 'camModalBrightnessVal', 100);
+    reset('camModalContrast', 'camModalContrastVal', 100);
+    reset('camModalSaturation', 'camModalSaturationVal', 100);
+    reset('camModalExposure', 'camModalExposureVal', 0);
     applyCameraFilters();
+    applyCameraPreviewFilter();
     toast('Camera adjustments reset', 'success');
   });
+
+  on('#camModalDoneBtn', 'click', () => {
+    $('#cameraModal').classList.remove('show');
+    detachCameraPreview();
+  });
+
+  on('#startCameraPreviewBtn', 'click', () => attachCameraPreview());
 
   // Accept challenges syncs to profile
   on('#settingsChallengeToggle', 'change', async e => {
@@ -11886,14 +12073,24 @@ on('#reportBtn', 'click', reportPlayer);
 // NEW: Leave match button (forfeit with ELO penalty)
 on('#leaveMatchBtn', 'click', forfeitMatch);
 
-// NEW: Camera adjust button in arena (opens settings modal at camera section)
-on('#cameraAdjustBtn', 'click', () => {
-  openSettingsModal();
-  // Scroll to top of settings (camera section is first)
-  setTimeout(() => {
-    const m = $('#settingsModal .modal');
-    if(m) m.scrollTop = 0;
-  }, 50);
+// Camera buttons — all open the dedicated camera modal with live preview
+on('#cameraAdjustBtn', 'click', openCameraModal);   // in-arena camera button
+on('#cameraSetupBtn', 'click', openCameraModal);    // landing-page camera button (next to find/bot)
+on('#openCameraFromSettingsBtn', 'click', () => {   // from settings modal
+  $('#settingsModal').classList.remove('show');
+  setTimeout(openCameraModal, 200);
+});
+
+// Close camera modal cleans up preview stream
+document.addEventListener('click', (e) => {
+  const closeBtn = e.target.closest('[data-close="cameraModal"]');
+  if(closeBtn){
+    detachCameraPreview();
+  }
+  // Backdrop click
+  if(e.target.id === 'cameraModal'){
+    detachCameraPreview();
+  }
 });
 
 // NEW: Add friend in-game button (sends friend request to opp)
@@ -11943,7 +12140,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v8.5 — ROCK SOLID', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v8.6 — CAMERA PREVIEW', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
 try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
 try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
 try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
