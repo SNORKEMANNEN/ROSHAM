@@ -5503,7 +5503,7 @@ h2.match-title{
     <div class="logo">
       <span class="dot"></span>
       <span class="word">ROSHAM</span>
-      <span class="tag">v7 · ranked</span>
+      <span class="tag">v8 · ranked</span>
     </div>
     <div class="live-stats" id="liveStats">
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
@@ -8846,6 +8846,21 @@ async function findMatch(){
   $('#matchFoundView').style.display = 'none';
   setText('#matchFeed', 'cleaning up…');
 
+  // NEW: start elapsed-time counter for matchmaking screen
+  state._searchStartedAt = Date.now();
+  if(state._searchTimer) clearInterval(state._searchTimer);
+  state._searchTimer = setInterval(() => {
+    if(!state._searchStartedAt){
+      clearInterval(state._searchTimer);
+      return;
+    }
+    const elapsed = Math.floor((Date.now() - state._searchStartedAt) / 1000);
+    const m = Math.floor(elapsed / 60);
+    const s = elapsed % 60;
+    const txt = m > 0 ? `${m}m ${s}s` : `${s}s`;
+    setText('#searchElapsed', txt);
+  }, 200);
+
   const uid = state.user.uid;
   const queueRef = doc(state.db, 'queue', uid);
 
@@ -9228,6 +9243,8 @@ function cancelMatchmakingResources(){
   if(state._myMatchUnsub){ state._myMatchUnsub(); state._myMatchUnsub = null; }
   if(state._inviteWaitUnsub){ state._inviteWaitUnsub(); state._inviteWaitUnsub = null; }
   if(state._queueHeartbeat){ clearInterval(state._queueHeartbeat); state._queueHeartbeat = null; }
+  if(state._searchTimer){ clearInterval(state._searchTimer); state._searchTimer = null; }
+  state._searchStartedAt = null;
   if(state._safetyCleanups){
     state._safetyCleanups.forEach(t => clearTimeout(t));
     state._safetyCleanups = [];
@@ -9281,9 +9298,19 @@ async function showMatchFound(){
   s2.textContent = ' ' + (o.rating || 1000) + ' · ' + oRank.tierName;
   $('#mfOppSub').appendChild(s2);
 
-  $('#mfFeed').innerHTML = '<span class="blink">●</span> establishing webrtc connection…';
-  burst(window.innerWidth/2, window.innerHeight/2, '#ff3d68', 60);
-  burst(window.innerWidth/2, window.innerHeight/2, '#5dffba', 60);
+  $('#mfFeed').textContent = 'establishing connection…';
+  // Animate progress bar to indicate connection in progress
+  const prog = $('#matchFoundProgress');
+  if(prog){
+    prog.style.width = '0%';
+    setTimeout(() => { prog.style.width = '40%'; }, 100);
+    setTimeout(() => { prog.style.width = '70%'; }, 800);
+    // Will reach 100% when entering the game (handled by enterMatch)
+  }
+  // Stop the search timer — we found a match
+  if(state._searchTimer){ clearInterval(state._searchTimer); state._searchTimer = null; }
+  state._searchStartedAt = null;
+  burst(window.innerWidth/2, window.innerHeight/2, '#5dffba', 50);
 }
 
 async function cancelMatchmaking(){
@@ -11593,7 +11620,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v8.3 — CLEAN UI', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v8.4 — MINIMAL', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
 try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
 try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
 try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
