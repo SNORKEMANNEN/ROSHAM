@@ -1368,6 +1368,413 @@ h1.section-title .accent{
 }
 .hero-block .inner{position:relative; z-index:1;}
 
+/* ============ MODERN HERO CARD (v8.7 redesign) ============ */
+.hero-card{
+  background:
+    radial-gradient(circle at 85% 15%, rgba(255,45,107,.15), transparent 50%),
+    radial-gradient(circle at 15% 85%, rgba(176,140,255,.08), transparent 50%),
+    linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  padding: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+.hero-card::before{
+  content:""; position:absolute;
+  top: 0; left: 10%; right: 10%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--coral), transparent);
+  opacity: .5;
+}
+.hero-card-inner{
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 36px;
+  align-items: stretch;
+  position: relative;
+  z-index: 1;
+}
+.hero-card-left{
+  display: flex;
+  flex-direction: column;
+}
+.hero-card-right{
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: space-between;
+}
+
+/* Compact headline for the new card */
+.hero-card .hero-headline{
+  font-size: clamp(38px, 5.5vw, 64px);
+  line-height: 0.88;
+  margin-bottom: 12px;
+}
+.hero-card .hero-sub{
+  font-size: 14px;
+  margin-bottom: 20px;
+  max-width: 480px;
+}
+
+/* RANK DISPLAY — big visual anchor on right */
+.rank-display{
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 18px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--line-soft);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.rank-display::before{
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 30%, rgba(255,206,61,.08), transparent 60%);
+  pointer-events: none;
+}
+.rank-display-icon{
+  width: 64px; height: 64px;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.rank-display-icon svg{ width: 56px; height: 56px; }
+.rank-display-info{
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+.rank-display-tier{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -.01em;
+  line-height: 1;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.rank-display-rating{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.rank-display-rating #heroRating{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--text);
+  margin-right: 4px;
+}
+.rank-display-rating .elo-label{
+  font-size: 9px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.rank-display-progress .rank-bar{
+  height: 5px;
+  background: rgba(0,0,0,.4);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.rank-display-progress .rank-bar-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--coral), var(--amber));
+  border-radius: 3px;
+  transition: width .8s cubic-bezier(.2,.7,.2,1);
+  box-shadow: 0 0 8px var(--coral-glow);
+}
+.rank-progress-text{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* COMPACT STATS ROW */
+.hero-stats-row{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.hero-stat{
+  text-align: center;
+  padding: 12px 4px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--line-soft);
+  border-radius: 11px;
+  transition: all .2s;
+}
+.hero-stat:hover{
+  background: rgba(255,255,255,.04);
+  border-color: var(--line);
+  transform: translateY(-2px);
+}
+.hero-stat-val{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1;
+  letter-spacing: -.02em;
+  background: linear-gradient(180deg, #fff, var(--text-dim));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  margin-bottom: 3px;
+}
+.hero-stat-lbl{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* MATCH OPTION PILLS in the new layout */
+.hero-card .match-options{
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+/* CTA SECTION — bigger find btn, smaller secondary */
+.hero-card .cta-find{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.hero-card .btn-cta{
+  width: 100%;
+  justify-content: center;
+  font-size: 16px;
+  padding: 18px 28px;
+}
+.cta-secondary{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-icon-action{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-soft);
+  color: var(--text-dim);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-icon-action:hover{
+  background: rgba(255,255,255,.07);
+  border-color: var(--line-bright);
+  color: var(--text);
+  transform: translateY(-1px);
+}
+.cta-hint{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  margin-left: auto;
+  letter-spacing: .04em;
+}
+.cta-hint kbd{
+  background: rgba(255,255,255,.06);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text);
+  border: 1px solid var(--line-soft);
+}
+
+/* ============ DAILY CHALLENGE STRIP ============ */
+.daily-strip{
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 18px;
+  align-items: center;
+  padding: 14px 20px;
+  background:
+    radial-gradient(circle at 95% 50%, rgba(255,206,61,.1), transparent 60%),
+    linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all .2s;
+}
+.daily-strip:hover{
+  border-color: var(--amber);
+  background:
+    radial-gradient(circle at 95% 50%, rgba(255,206,61,.15), transparent 60%),
+    linear-gradient(180deg, var(--surface-2), var(--surface));
+}
+.daily-strip-icon{
+  font-size: 24px;
+  filter: drop-shadow(0 0 12px var(--amber-glow));
+  flex-shrink: 0;
+}
+.daily-strip-text{
+  min-width: 0;
+}
+.daily-strip-title{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.daily-streak-mini{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,107,0,.15);
+  border: 1px solid rgba(255,107,0,.4);
+  color: #ff6b00;
+  letter-spacing: 0;
+}
+.daily-strip-goal{
+  font-size: 14px;
+  color: var(--text);
+  font-weight: 500;
+}
+.daily-strip-progress{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+.daily-strip-progress .daily-progress-bar{
+  height: 6px;
+  background: rgba(0,0,0,.4);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.daily-strip-progress .daily-progress-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber), #ff6b00);
+  border-radius: 3px;
+  transition: width .8s cubic-bezier(.2,.7,.2,1);
+  box-shadow: 0 0 10px var(--amber-glow);
+}
+.daily-strip-progress .daily-progress-fill.complete{
+  background: linear-gradient(90deg, var(--mint), #25c186);
+  box-shadow: 0 0 12px var(--mint-glow);
+}
+.daily-strip-meta{
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.daily-strip-meta span:first-child{ color: var(--text-dim); font-weight: 700; }
+.daily-strip-meta .daily-reward{ color: var(--mint); font-weight: 700; }
+
+/* ============ SOCIAL PANEL (right sidebar) ============ */
+.social-panel{
+  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.social-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--line-soft);
+  background: rgba(255,255,255,.02);
+}
+.social-title{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.social-title svg{
+  color: var(--coral);
+}
+.social-counter{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.social-counter .live-dot{
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 6px var(--mint);
+  animation: liveDotPulse 1.5s ease-in-out infinite;
+}
+
+/* RESPONSIVE: stack hero on narrow screens */
+@media (max-width: 1100px){
+  .hero-card-inner{
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .hero-card-right{
+    flex-direction: column;
+  }
+}
+@media (max-width: 900px){
+  .landing-hub{
+    grid-template-columns: 1fr;
+  }
+  .hero-stats-row{
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .daily-strip{
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .daily-strip-icon{ font-size: 20px; }
+}
+
+
 .hero-eyebrow{
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--font-mono);
@@ -5850,114 +6257,123 @@ const FIREBASE_CONFIG = {
       <div class="landing-hub">
 
         <div class="hub-main">
-          <div class="hero-block">
-            <div class="inner">
-              <div class="hero-eyebrow"><span class="live-dot"></span><span>LIVE WORLDWIDE</span></div>
-              <h1 class="hero-headline">THROW <span class="accent">HANDS</span><br/>WITH THE WORLD.</h1>
-              <p class="hero-sub">Real strangers. Real cameras. Real reflexes. Win rounds, climb ranks, from Bronze to Grandmaster.</p>
+          <!-- COMPACT HERO + ACTIONS COMBINED INTO ONE CARD -->
+          <div class="hero-card">
+            <div class="hero-card-inner">
+              <div class="hero-card-left">
+                <div class="hero-eyebrow"><span class="live-dot"></span><span>LIVE WORLDWIDE</span></div>
+                <h1 class="hero-headline">THROW <span class="accent">HANDS</span>.</h1>
+                <p class="hero-sub">Real strangers. Real cameras. Real reflexes.</p>
 
-              <div class="hand-icons-row">
-                <div class="hand-mini" data-g="rock"><svg><use href="#i-rock"/></svg></div>
-                <div class="hand-mini" data-g="paper"><svg><use href="#i-paper"/></svg></div>
-                <div class="hand-mini" data-g="scissors"><svg><use href="#i-scissors"/></svg></div>
+                <div class="match-options">
+                  <span class="opt-pill active" data-opt="region" data-val="same" id="optRegion">
+                    <svg width="11" height="11"><use href="#i-globe"/></svg>
+                    <span class="lab">Same region</span>
+                  </span>
+                  <span class="opt-pill" id="optRanged">
+                    <svg width="11" height="11"><use href="#i-trophy"/></svg>
+                    <span class="lab">Similar rank only</span>
+                  </span>
+                </div>
+
+                <div class="cta-find">
+                  <button class="btn-cta" id="findBtn">
+                    <svg><use href="#i-play"/></svg>
+                    Find a stranger
+                  </button>
+                  <div class="cta-secondary">
+                    <button class="btn-icon-action" id="botBtn" title="Practice against the AI bot (offline)">
+                      <svg width="14" height="14"><use href="#i-bot"/></svg>
+                      <span>Bot</span>
+                    </button>
+                    <button class="btn-icon-action" id="cameraSetupBtn" title="Adjust your camera">
+                      <svg width="14" height="14"><use href="#i-camera"/></svg>
+                      <span>Camera</span>
+                    </button>
+                    <span class="cta-hint">or press <kbd>SPACE</kbd></span>
+                  </div>
+                </div>
               </div>
 
-              <div class="match-options">
-                <span class="opt-pill active" data-opt="region" data-val="same" id="optRegion">
-                  <svg width="11" height="11"><use href="#i-globe"/></svg>
-                  <span class="lab">Same region</span>
-                </span>
-                <span class="opt-pill" id="optRanged">
-                  <svg width="11" height="11"><use href="#i-trophy"/></svg>
-                  <span class="lab">Similar rank only</span>
-                </span>
-              </div>
+              <div class="hero-card-right">
+                <!-- RANK DISPLAY — bigger, more prominent -->
+                <div class="rank-display">
+                  <div class="rank-display-icon">
+                    <svg id="rankIconCurrent"></svg>
+                  </div>
+                  <div class="rank-display-info">
+                    <div class="rank-display-tier" id="rankNameCurrent">Bronze I</div>
+                    <div class="rank-display-rating"><span id="heroRating">1000</span> <span class="elo-label">ELO</span></div>
+                    <div class="rank-display-progress">
+                      <div class="rank-bar"><div class="rank-bar-fill" id="rankBarFill" style="width:0%;"></div></div>
+                      <div class="rank-progress-text" id="rankNextLabel">— to next</div>
+                    </div>
+                  </div>
+                </div>
 
-              <div class="cta-find">
-                <button class="btn-cta" id="findBtn">
-                  <svg><use href="#i-play"/></svg>
-                  Find a stranger
-                </button>
-                <button class="btn btn-bot" id="botBtn" title="Practice against the AI bot (offline)">
-                  <svg width="14" height="14"><use href="#i-bot"/></svg>
-                  Play vs bot
-                </button>
-                <button class="btn btn-camera" id="cameraSetupBtn" title="Adjust your camera before playing">
-                  <svg width="14" height="14"><use href="#i-camera"/></svg>
-                  Camera
-                </button>
-                <span style="font-family:var(--font-mono); font-size:11px; color:var(--text-faint);">or press <b style="color:var(--text);">SPACE</b></span>
+                <!-- COMPACT STATS ROW -->
+                <div class="hero-stats-row">
+                  <div class="hero-stat">
+                    <div class="hero-stat-val" id="statWins">0</div>
+                    <div class="hero-stat-lbl">WINS</div>
+                  </div>
+                  <div class="hero-stat">
+                    <div class="hero-stat-val" id="statLosses">0</div>
+                    <div class="hero-stat-lbl">LOSSES</div>
+                  </div>
+                  <div class="hero-stat">
+                    <div class="hero-stat-val" id="statDraws">0</div>
+                    <div class="hero-stat-lbl">DRAWS</div>
+                  </div>
+                  <div class="hero-stat">
+                    <div class="hero-stat-val" id="statBestStreak">0</div>
+                    <div class="hero-stat-lbl">BEST</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <div class="rank-progress-card" id="rankProgressCard">
-            <div class="head">
-              <div class="now">
-                <svg id="rankIconCurrent"></svg>
-                <span id="rankNameCurrent">Bronze I</span>
-              </div>
-              <div class="next" id="rankNextLabel">— to next</div>
+          <!-- DAILY CHALLENGE strip — full width -->
+          <div class="daily-strip" id="dailyChallengeCard">
+            <div class="daily-strip-icon">⚡</div>
+            <div class="daily-strip-text">
+              <div class="daily-strip-title">DAILY CHALLENGE <span class="daily-streak-mini" id="dailyStreakBadge">🔥 0</span></div>
+              <div class="daily-strip-goal" id="dailyChallengeText">Win 3 ranked matches today</div>
             </div>
-            <div class="rank-bar"><div class="rank-bar-fill" id="rankBarFill" style="width:0%;"></div></div>
+            <div class="daily-strip-progress">
+              <div class="daily-progress-bar">
+                <div class="daily-progress-fill" id="dailyProgressFill" style="width:0%"></div>
+              </div>
+              <div class="daily-strip-meta">
+                <span id="dailyProgressText">0/3</span>
+                <span class="daily-reward">+50 ELO</span>
+              </div>
+            </div>
           </div>
 
-          <div class="stats-grid">
-            <div class="stat-card r"><div class="val" id="statRating"><svg id="statRankIcon"></svg>1000</div><div class="lab">rating</div></div>
-            <div class="stat-card w"><div class="val" id="statWins">0</div><div class="lab">wins</div></div>
-            <div class="stat-card l"><div class="val" id="statLosses">0</div><div class="lab">losses</div></div>
-            <div class="stat-card d"><div class="val" id="statDraws">0</div><div class="lab">draws</div></div>
-            <div class="stat-card"><div class="val" id="statBestStreak">0</div><div class="lab">best streak</div></div>
+          <!-- Hidden — kept for backward-compat with viewFullStatsBtn references -->
+          <div style="display:none;">
+            <button id="viewFullStatsBtn">View all</button>
+            <span id="statRating">1000</span>
+            <span id="summaryRating">—</span>
+            <span id="summaryWins">—</span>
+            <span id="summaryWR">—</span>
+            <span id="summaryStreak">—</span>
+            <svg id="statRankIcon"></svg>
           </div>
         </div>
 
         <aside class="hub-side">
-          <!-- NEW: Quick stats summary card -->
-          <div class="stats-summary-card">
-            <div class="stats-summary-head">
-              <div class="title">YOUR STATS</div>
-              <button class="view-full-stats" id="viewFullStatsBtn">View all →</button>
+          <!-- SOCIAL PANEL — combines friends/activity/top/recent -->
+          <div class="social-panel">
+            <div class="social-header">
+              <div class="social-title">
+                <svg width="14" height="14"><use href="#i-people"/></svg>
+                <span>COMMUNITY</span>
+              </div>
+              <div class="social-counter" id="onlineCounter"><span class="live-dot"></span><span id="friendCount">0/0</span> online</div>
             </div>
-            <div class="stats-summary-grid">
-              <div class="stat-mini">
-                <div class="stat-mini-val" id="summaryRating">—</div>
-                <div class="stat-mini-lbl">RATING</div>
-              </div>
-              <div class="stat-mini">
-                <div class="stat-mini-val" id="summaryWins">—</div>
-                <div class="stat-mini-lbl">WINS</div>
-              </div>
-              <div class="stat-mini">
-                <div class="stat-mini-val" id="summaryWR">—</div>
-                <div class="stat-mini-lbl">WIN %</div>
-              </div>
-              <div class="stat-mini">
-                <div class="stat-mini-val" id="summaryStreak">—</div>
-                <div class="stat-mini-lbl">STREAK</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- NEW: Daily challenge card -->
-          <div class="daily-challenge-card" id="dailyChallengeCard">
-            <div class="daily-head">
-              <span class="daily-icon">⚡</span>
-              <span class="daily-title">DAILY CHALLENGE</span>
-              <span class="daily-streak" id="dailyStreakBadge">🔥 0</span>
-            </div>
-            <div class="daily-body">
-              <div class="daily-text" id="dailyChallengeText">Win 3 ranked matches today</div>
-              <div class="daily-progress-bar">
-                <div class="daily-progress-fill" id="dailyProgressFill" style="width:0%"></div>
-              </div>
-              <div class="daily-meta">
-                <span id="dailyProgressText">0/3</span>
-                <span class="daily-reward">+50 ELO bonus</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="side-panel">
             <div class="side-tabs">
               <button class="active" data-side="friends">Friends <span class="badge" id="reqBadge" style="display:none;">0</span></button>
               <button data-side="activity">Activity</button>
@@ -5966,27 +6382,20 @@ const FIREBASE_CONFIG = {
             </div>
 
             <div data-pane="friends">
-              <div class="side-head">
-                <div class="title"><svg><use href="#i-people"/></svg>Online</div>
-                <div class="ct" id="friendCount">0</div>
-              </div>
               <div class="side-body" id="friendsBody"></div>
               <div class="add-friend-input">
-                <input id="addFriendInput" type="text" placeholder="add by username…" maxlength="20" />
+                <input id="addFriendInput" type="text" placeholder="Add friend by username…" maxlength="20" />
                 <button id="addFriendBtn">Add</button>
               </div>
               <div id="requestsArea" style="display:none; border-top:1px solid var(--line-soft);">
                 <div class="side-head" style="background:rgba(255,61,104,.05);">
-                  <div class="title"><svg><use href="#i-plus"/></svg>Pending</div>
+                  <div class="title"><svg><use href="#i-plus"/></svg>Pending requests</div>
                 </div>
                 <div class="side-body" id="requestsBody"></div>
               </div>
             </div>
 
             <div data-pane="activity" style="display:none;">
-              <div class="side-head">
-                <div class="title"><svg><use href="#i-activity"/></svg>Friends' games</div>
-              </div>
               <div class="side-body" id="activityBody"></div>
             </div>
 
@@ -5998,11 +6407,7 @@ const FIREBASE_CONFIG = {
               <div class="side-body" id="leaderboardBody"></div>
             </div>
 
-            <!-- NEW: Recent players tab -->
             <div data-pane="recent" style="display:none;">
-              <div class="side-head">
-                <div class="title"><svg><use href="#i-clock"/></svg>Recent</div>
-              </div>
               <div class="side-body" id="recentBody">
                 <div class="side-empty">no matches yet · play to fill this list</div>
               </div>
@@ -7603,19 +8008,32 @@ function refreshStatsUI(){
   fill.style.setProperty('--rank-color', rank.color);
   fill.style.setProperty('--rank-color-2', rank.color2);
 
-  // stat tiles
+  // Update the NEW rank-display icon
+  const rankIcon = $('#rankIconCurrent');
+  if(rankIcon){
+    rankIcon.innerHTML = '';
+    const svg2 = document.createElementNS('http://www.w3.org/2000/svg','use');
+    svg2.setAttribute('href', '#' + rank.icon);
+    rankIcon.appendChild(svg2);
+    rankIcon.setAttribute('class', rank.cls);
+  }
+  setText('#heroRating', rating);
+
+  // legacy stat tiles (now hidden but kept for back-compat)
   const statRating = $('#statRating');
-  statRating.innerHTML = '';
-  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  svg.setAttribute('id','statRankIcon');
-  svg.classList.add(rank.cls);
-  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-  use.setAttribute('href', '#' + rank.icon);
-  svg.appendChild(use);
-  statRating.appendChild(svg);
-  const t = document.createTextNode(rating);
-  statRating.appendChild(t);
-  statRating.style.color = rank.color;
+  if(statRating){
+    statRating.innerHTML = '';
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('id','statRankIcon');
+    svg.classList.add(rank.cls);
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', '#' + rank.icon);
+    svg.appendChild(use);
+    statRating.appendChild(svg);
+    const t = document.createTextNode(rating);
+    statRating.appendChild(t);
+    statRating.style.color = rank.color;
+  }
 
   setText('#statWins', p.wins || 0);
   setText('#statLosses', p.losses || 0);
@@ -7881,7 +8299,7 @@ async function renderFriends(){
   const friendUids = state.profile?.friends || [];
   if(friendUids.length === 0){
     body.innerHTML = '<div class="side-empty">no friends yet · add some by username</div>';
-    setText('#friendCount', '0');
+    setText('#friendCount', '0/0');
     return;
   }
   try {
@@ -12140,7 +12558,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v8.6 — CAMERA PREVIEW', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v8.7 — DASHBOARD REDESIGN', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
 try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
 try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
 try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
