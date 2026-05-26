@@ -5491,13 +5491,14 @@ h2.match-title{
 .match-result-overlay{
   position:fixed; inset:0;
   z-index:200;
-  background: rgba(15,8,22,.94);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(8,7,13,.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   display:none;
   align-items:center; justify-content:center;
   opacity:0;
-  padding: 24px;
+  padding: 20px;
+  overflow-y: auto;
 }
 .match-result-overlay.show{
   display:flex;
@@ -5506,6 +5507,334 @@ h2.match-title{
 @keyframes matchResultFadeIn{
   from{ opacity:0; }
   to{ opacity:1; }
+}
+
+/* Animated background for result overlay */
+.mr-bg{
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(50vw 40vw at 50% 0%, var(--result-color-glow, rgba(34,211,163,.15)), transparent 60%),
+    radial-gradient(40vw 40vw at 50% 100%, rgba(155,123,255,.06), transparent 60%);
+  pointer-events: none;
+}
+
+/* ============ MATCH RESULT CARD v2 ============ */
+.match-result-card-v2{
+  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  max-width: 580px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04);
+  overflow: hidden;
+  animation: mrCardIn .6s cubic-bezier(.2,1.6,.4,1) both;
+}
+@keyframes mrCardIn{
+  from{ transform: scale(.92) translateY(20px); opacity: 0; }
+  to{ transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* HEADLINE STRIP */
+.mr-headline-strip{
+  position: relative;
+  padding: 24px 28px;
+  background: var(--result-color-gradient, linear-gradient(180deg, var(--mint), #18b88c));
+  color: #fff;
+  overflow: hidden;
+}
+.mr-headline-strip.win{
+  --result-color-gradient: linear-gradient(180deg, var(--mint) 0%, #15a079 100%);
+}
+.mr-headline-strip.lose{
+  --result-color-gradient: linear-gradient(180deg, var(--coral) 0%, var(--coral-dim) 100%);
+}
+.mr-headline-strip.draw{
+  --result-color-gradient: linear-gradient(180deg, var(--violet) 0%, #7755e0 100%);
+}
+.mr-headline-content{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mr-headline-icon{
+  flex-shrink: 0;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.3));
+  animation: mrHeadlineIconIn .8s cubic-bezier(.2,1.8,.4,1) .2s both;
+}
+@keyframes mrHeadlineIconIn{
+  from{ transform: scale(.3) rotate(-30deg); opacity: 0; }
+  to{ transform: scale(1) rotate(0); opacity: 1; }
+}
+.mr-headline-text{ flex: 1; }
+.match-result-card-v2 .match-result-headline{
+  font-family: var(--font-display);
+  font-stretch: 65%;
+  font-weight: 800;
+  font-size: 38px;
+  letter-spacing: -.03em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+}
+.match-result-card-v2 .match-result-sub{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  opacity: .9;
+  margin-top: 4px;
+  font-weight: 600;
+}
+/* Animated burst behind headline */
+.mr-headline-burst{
+  position: absolute;
+  top: 50%; right: -50px;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,.25), transparent 70%);
+  transform: translateY(-50%);
+  animation: mrBurstSlide 8s ease-in-out infinite;
+}
+@keyframes mrBurstSlide{
+  0%, 100%{ transform: translateY(-50%) translateX(0); }
+  50%{ transform: translateY(-50%) translateX(-30px); }
+}
+
+/* VS HEADER */
+.mr-vs-header{
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 20px;
+  align-items: center;
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.mr-vs-player{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.mr-vs-av-wrap{
+  position: relative;
+}
+.mr-vs-av{
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 26px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.15);
+}
+.mr-vs-player.you .mr-vs-av:not([style*="background-image"]){
+  background: linear-gradient(135deg, var(--mint), #15a079);
+}
+.mr-vs-player.opp .mr-vs-av:not([style*="background-image"]){
+  background: linear-gradient(135deg, var(--coral), var(--coral-dim));
+}
+.mr-vs-name{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -.005em;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mr-vs-score-block{
+  text-align: center;
+}
+.match-result-card-v2 .match-result-score{
+  font-family: var(--font-display);
+  font-stretch: 60%;
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 1;
+  letter-spacing: -.04em;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  justify-content: center;
+}
+.match-result-card-v2 .match-result-score .you{ color: var(--mint); }
+.match-result-card-v2 .match-result-score .opp{ color: var(--coral); }
+.match-result-card-v2 .match-result-score .dash{
+  color: var(--text-faint);
+  font-size: 32px;
+  opacity: .5;
+}
+.mr-vs-best-of{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* ROUNDS LIST */
+.mr-rounds{
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.mr-section-label{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.mr-section-label svg{ color: var(--text-faint); }
+.mr-rounds-list{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mr-round{
+  display: grid;
+  grid-template-columns: auto 1fr auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 14px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
+  animation: mrRoundIn .5s cubic-bezier(.2,1.4,.4,1) both;
+}
+.mr-round.win{
+  border-color: rgba(34,211,163,.3);
+  background: linear-gradient(90deg, rgba(34,211,163,.06), transparent);
+}
+.mr-round.lose{
+  border-color: rgba(255,51,88,.3);
+  background: linear-gradient(90deg, transparent, rgba(255,51,88,.06));
+}
+.mr-round.draw{
+  border-color: rgba(155,123,255,.3);
+}
+@keyframes mrRoundIn{
+  from{ transform: translateX(-12px); opacity: 0; }
+  to{ transform: translateX(0); opacity: 1; }
+}
+.mr-round-num{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-faint);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  min-width: 24px;
+}
+.mr-round-pick{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.mr-round-pick .pick-icon{
+  width: 24px; height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  background: rgba(255,255,255,.05);
+}
+.mr-round-pick .pick-icon svg{ width: 16px; height: 16px; }
+.mr-round-pick.you{ justify-content: flex-end; }
+.mr-round-pick.opp{ justify-content: flex-start; }
+.mr-round-pick.you.win .pick-icon{ background: rgba(34,211,163,.15); color: var(--mint); }
+.mr-round-pick.opp.win .pick-icon{ background: rgba(255,51,88,.15); color: var(--coral); }
+.mr-round-pick.draw .pick-icon{ background: rgba(155,123,255,.12); color: var(--violet); }
+.mr-round-vs{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-faint);
+  letter-spacing: .1em;
+}
+.mr-round-result{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 5px;
+  min-width: 40px;
+  text-align: center;
+}
+.mr-round.win .mr-round-result{ background: rgba(34,211,163,.15); color: var(--mint); }
+.mr-round.lose .mr-round-result{ background: rgba(255,51,88,.15); color: var(--coral); }
+.mr-round.draw .mr-round-result{ background: rgba(155,123,255,.15); color: var(--violet); }
+
+/* STATS GRID */
+.mr-stats-grid{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.mr-stat{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+}
+.mr-stat-icon{
+  color: var(--coral);
+  flex-shrink: 0;
+}
+.mr-stat-info{ min-width: 0; }
+.mr-stat-val{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: -.01em;
+  margin-bottom: 2px;
+}
+.mr-stat-lbl{
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-faint);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px){
+  .match-result-card-v2{ max-width: 100%; }
+  .mr-headline-strip{ padding: 18px 20px; }
+  .match-result-card-v2 .match-result-headline{ font-size: 28px; }
+  .mr-vs-header{ padding: 18px 20px; grid-template-columns: 1fr auto 1fr; gap: 12px; }
+  .mr-vs-av{ width: 48px; height: 48px; font-size: 20px; }
+  .match-result-card-v2 .match-result-score{ font-size: 40px; }
+  .mr-stats-grid{ grid-template-columns: repeat(2, 1fr); }
+  .mr-rounds{ padding: 14px 20px; }
 }
 .match-result-card{
   background: linear-gradient(180deg, var(--surface), var(--bg-2));
@@ -7863,16 +8192,95 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
-<!-- MATCH RESULT (best-of-3 end) -->
+<!-- MATCH RESULT (best-of-3 end) — REDESIGNED v9 -->
 <div class="match-result-overlay" id="matchResultOverlay">
-  <div class="match-result-card" id="matchResultCard">
-    <div class="match-result-headline" id="matchResultHeadline">VICTORY</div>
-    <div class="match-result-sub" id="matchResultSub">best of 3 · won 2-0</div>
-    <div class="match-result-score" id="matchResultScore">
-      <span class="you" id="matchResultYouScore">2</span>
-      <span class="dash">·</span>
-      <span class="opp" id="matchResultOppScore">0</span>
+  <!-- Animated background -->
+  <div class="mr-bg"></div>
+
+  <div class="match-result-card-v2" id="matchResultCard">
+
+    <!-- BIG HEADLINE STRIP -->
+    <div class="mr-headline-strip" id="matchResultHeadlineStrip">
+      <div class="mr-headline-content">
+        <svg class="mr-headline-icon" width="36" height="36" id="matchResultIcon"><use href="#i-trophy"/></svg>
+        <div class="mr-headline-text">
+          <div class="match-result-headline" id="matchResultHeadline">VICTORY</div>
+          <div class="match-result-sub" id="matchResultSub">Best of 3 · won 2–0</div>
+        </div>
+      </div>
+      <div class="mr-headline-burst"></div>
     </div>
+
+    <!-- VS HEADER: avatars + score -->
+    <div class="mr-vs-header">
+      <div class="mr-vs-player you">
+        <div class="mr-vs-av-wrap">
+          <div class="mr-vs-av" id="mrYouAv">?</div>
+        </div>
+        <div class="mr-vs-name" id="mrYouName">you</div>
+      </div>
+
+      <div class="mr-vs-score-block">
+        <div class="match-result-score" id="matchResultScore">
+          <span class="you" id="matchResultYouScore">2</span>
+          <span class="dash">–</span>
+          <span class="opp" id="matchResultOppScore">0</span>
+        </div>
+        <div class="mr-vs-best-of" id="mrBestOf">BEST OF 3</div>
+      </div>
+
+      <div class="mr-vs-player opp">
+        <div class="mr-vs-av-wrap">
+          <div class="mr-vs-av" id="mrOppAv">?</div>
+        </div>
+        <div class="mr-vs-name" id="mrOppName">@stranger</div>
+      </div>
+    </div>
+
+    <!-- ROUND-BY-ROUND BREAKDOWN -->
+    <div class="mr-rounds">
+      <div class="mr-section-label">
+        <svg width="11" height="11"><use href="#i-swords"/></svg>
+        <span>ROUNDS</span>
+      </div>
+      <div class="mr-rounds-list" id="mrRoundsList">
+        <!-- populated by JS -->
+      </div>
+    </div>
+
+    <!-- KEY STATS GRID -->
+    <div class="mr-stats-grid">
+      <div class="mr-stat">
+        <svg width="13" height="13" class="mr-stat-icon"><use href="#i-target"/></svg>
+        <div class="mr-stat-info">
+          <div class="mr-stat-val" id="mrStatAccuracy">—</div>
+          <div class="mr-stat-lbl">Predictions</div>
+        </div>
+      </div>
+      <div class="mr-stat">
+        <svg width="13" height="13" class="mr-stat-icon"><use href="#i-clock"/></svg>
+        <div class="mr-stat-info">
+          <div class="mr-stat-val" id="mrStatDuration">—</div>
+          <div class="mr-stat-lbl">Duration</div>
+        </div>
+      </div>
+      <div class="mr-stat">
+        <svg width="13" height="13" class="mr-stat-icon" data-anim="flicker"><use href="#i-flame"/></svg>
+        <div class="mr-stat-info">
+          <div class="mr-stat-val" id="mrStatStreak">—</div>
+          <div class="mr-stat-lbl">Win streak</div>
+        </div>
+      </div>
+      <div class="mr-stat">
+        <svg width="13" height="13" class="mr-stat-icon"><use href="#i-handshake"/></svg>
+        <div class="mr-stat-info">
+          <div class="mr-stat-val" id="mrStatH2H">—</div>
+          <div class="mr-stat-lbl">vs this player</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RANK PROGRESS -->
     <div class="match-rank-card">
       <div class="rank-card-head">
         <div class="rank-card-icon" id="matchRankIcon"></div>
@@ -7892,10 +8300,21 @@ const FIREBASE_CONFIG = {
         <span id="matchRankNextLabel">110 to next</span>
       </div>
     </div>
+
+    <!-- ACTIONS -->
     <div class="match-result-actions">
-      <button type="button" class="btn btn-ghost" id="matchEndExitBtn">Back to lobby</button>
-      <button type="button" class="btn btn-ghost" id="matchEndRematchBtn">Rematch</button>
-      <button type="button" class="btn btn-primary" id="matchEndAgainBtn">Play again</button>
+      <button type="button" class="btn btn-ghost" id="matchEndExitBtn">
+        <svg width="13" height="13"><use href="#i-out"/></svg>
+        Lobby
+      </button>
+      <button type="button" class="btn btn-ghost" id="matchEndRematchBtn">
+        <svg width="13" height="13"><use href="#i-rotate"/></svg>
+        Rematch
+      </button>
+      <button type="button" class="btn btn-primary" id="matchEndAgainBtn">
+        <svg width="13" height="13"><use href="#i-play"/></svg>
+        Play again
+      </button>
     </div>
     <div class="match-result-extra" id="matchResultExtra">
       <button class="extra-action" id="matchEndAddFriend" title="Add friend">
@@ -11239,21 +11658,31 @@ function cancelMatchmakingResources(){
 async function showMatchFound(){
   $('#matchSearchView').style.display = 'none';
   $('#matchFoundView').style.display = '';
+
+  // ===== YOU =====
   renderAvatar($('#mfYouAv'), state.profile);
-  setText('#mfYouName', state.profile.username);
+  setText('#mfYouName', '@' + (state.profile.username || 'you'));
   const myRank = rankFromRating(state.profile.rating || 1000);
   setRankIconEl($('#mfYouRankIcon'), myRank.id);
-  $('#mfYouSub').innerHTML = '';
-  const r1 = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  r1.classList.add(myRank.cls);
-  const u1 = document.createElementNS('http://www.w3.org/2000/svg','use');
-  u1.setAttribute('href','#'+myRank.icon);
-  r1.appendChild(u1);
-  $('#mfYouSub').appendChild(r1);
-  const s1 = document.createElement('span');
-  s1.textContent = ' ' + (state.profile.rating || 1000) + ' · ' + myRank.tierName;
-  $('#mfYouSub').appendChild(s1);
+  // ensure the rank icon sits at the right size (38x38)
+  const myRankSvg = $('#mfYouRankIcon');
+  if(myRankSvg){
+    myRankSvg.setAttribute('width', '38');
+    myRankSvg.setAttribute('height', '38');
+    myRankSvg.style.color = myRank.color || '';
+  }
+  setText('#mfYouTier', (myRank.tierName || 'Bronze I').toUpperCase());
+  setText('#mfYouElo', state.profile.rating || 1000);
+  setText('#mfYouWins', state.profile.wins || 0);
+  const myGames = state.profile.games || ((state.profile.wins||0) + (state.profile.losses||0) + (state.profile.draws||0));
+  const myWr = myGames > 0 ? Math.round(((state.profile.wins||0) / myGames) * 100) : 0;
+  setText('#mfYouWinrate', myWr + '%');
+  const myStreakLabel = state.profile.currentStreak && state.profile.streakType === 'W'
+    ? state.profile.currentStreak
+    : (state.profile.bestStreak || 0);
+  setText('#mfYouStreak', myStreakLabel);
 
+  // ===== OPP =====
   const o = state.oppProfile || {};
   // Lazy-load opponent photo since it's no longer embedded in match docs
   if(!o.photoURL && o.uid && !state.isBotMatch){
@@ -11272,30 +11701,65 @@ async function showMatchFound(){
   setText('#mfOppName', '@' + (o.username || 'stranger'));
   const oRank = rankFromRating(o.rating || 1000);
   setRankIconEl($('#mfOppRankIcon'), oRank.id);
-  $('#mfOppSub').innerHTML = '';
-  const r2 = document.createElementNS('http://www.w3.org/2000/svg','svg');
-  r2.classList.add(oRank.cls);
-  const u2 = document.createElementNS('http://www.w3.org/2000/svg','use');
-  u2.setAttribute('href','#'+oRank.icon);
-  r2.appendChild(u2);
-  $('#mfOppSub').appendChild(r2);
-  const s2 = document.createElement('span');
-  s2.textContent = ' ' + (o.rating || 1000) + ' · ' + oRank.tierName;
-  $('#mfOppSub').appendChild(s2);
+  const oppRankSvg = $('#mfOppRankIcon');
+  if(oppRankSvg){
+    oppRankSvg.setAttribute('width', '38');
+    oppRankSvg.setAttribute('height', '38');
+    oppRankSvg.style.color = oRank.color || '';
+  }
+  setText('#mfOppTier', (oRank.tierName || 'Bronze I').toUpperCase());
+  setText('#mfOppElo', o.rating || 1000);
+  setText('#mfOppWins', o.wins || 0);
+  const oGames = o.games || ((o.wins||0) + (o.losses||0) + (o.draws||0));
+  const oWr = oGames > 0 ? Math.round(((o.wins||0) / oGames) * 100) : 0;
+  setText('#mfOppWinrate', oWr + '%');
+  const oppRegion = state.isBotMatch ? 'BOT' : (o.country || '—').toUpperCase();
+  setText('#mfOppRegion', oppRegion);
 
-  $('#mfFeed').textContent = 'establishing connection…';
+  // ===== HEAD-TO-HEAD =====
+  let h2hYou = 0, h2hOpp = 0, h2hLabel = 'first encounter';
+  try {
+    if(o.uid && state.user?.uid && !state.isBotMatch){
+      // Look up prior matches
+      const histSnap = await getDocs(query(
+        collection(state.db, 'matchHistory'),
+        where('participants', 'array-contains', state.user.uid),
+        limit(50)
+      ));
+      histSnap.forEach(d => {
+        const m = d.data();
+        if(!m.participants || !m.participants.includes(o.uid)) return;
+        if(m.winner === state.user.uid) h2hYou++;
+        else if(m.winner === o.uid) h2hOpp++;
+      });
+      if(h2hYou + h2hOpp > 0){
+        h2hLabel = (h2hYou + h2hOpp) + ' previous ' + ((h2hYou + h2hOpp) === 1 ? 'match' : 'matches');
+      }
+    } else if(state.isBotMatch){
+      h2hLabel = 'practice match';
+    }
+  } catch(e){ /* H2H is decorative — silently fail */ }
+  setText('#mfH2HYouWins', h2hYou);
+  setText('#mfH2HOppWins', h2hOpp);
+  setText('#mfH2HLabel', h2hLabel);
+
+  $('#mfFeed').textContent = state.isBotMatch ? 'warming up the bot…' : 'establishing connection…';
+
   // Animate progress bar to indicate connection in progress
   const prog = $('#matchFoundProgress');
   if(prog){
     prog.style.width = '0%';
-    setTimeout(() => { prog.style.width = '40%'; }, 100);
-    setTimeout(() => { prog.style.width = '70%'; }, 800);
+    setTimeout(() => { prog.style.width = '35%'; }, 100);
+    setTimeout(() => { prog.style.width = '65%'; }, 800);
+    setTimeout(() => { prog.style.width = '90%'; }, 1800);
     // Will reach 100% when entering the game (handled by enterMatch)
   }
   // Stop the search timer — we found a match
   if(state._searchTimer){ clearInterval(state._searchTimer); state._searchTimer = null; }
   state._searchStartedAt = null;
-  burst(window.innerWidth/2, window.innerHeight/2, '#5dffba', 50);
+  // Burst at center where VS appears
+  burst(window.innerWidth/2, window.innerHeight/2, '#22d3a3', 40);
+  setTimeout(() => burst(window.innerWidth/2, window.innerHeight/2, '#ff3358', 40), 200);
 }
 
 async function cancelMatchmaking(){
