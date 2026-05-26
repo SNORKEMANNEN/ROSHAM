@@ -8176,19 +8176,49 @@ const FIREBASE_CONFIG = {
 
 <!-- RANK UP OVERLAY -->
 <div class="rankup-overlay" id="rankupOverlay">
-  <div class="bg-rays"></div>
+  <!-- Animated rays background -->
+  <div class="rankup-rays"></div>
+  <div class="rankup-rays r2"></div>
+
+  <!-- Particle field -->
+  <div class="rankup-particles" id="rankupParticles"></div>
+
   <div class="rankup-content">
-    <div class="label">PROMOTION</div>
-    <h2 id="rankupRankName">SILVER</h2>
-    <div class="new-rank-badge" id="rankupBadge">
-      <svg id="rankupIcon"></svg>
-      <div>
-        <div class="rname" id="rankupTierName">SILVER I</div>
-        <div class="rtier" id="rankupSub">1100 RATING</div>
+    <!-- Step 1 label -->
+    <div class="rankup-label" id="rankupLabel">PROMOTION</div>
+
+    <!-- Rank display — shows OLD first, then transitions to NEW -->
+    <div class="rankup-stage">
+      <!-- Old rank (left) -->
+      <div class="rankup-rank-slot old" id="rankupOldSlot">
+        <div class="rankup-rank-glow"></div>
+        <svg class="rankup-rank-icon" id="rankupOldIcon"></svg>
+        <div class="rankup-rank-name" id="rankupOldName">Bronze III</div>
+      </div>
+
+      <!-- Arrow / transition indicator -->
+      <div class="rankup-arrow" id="rankupArrow">
+        <svg width="40" height="40"><use href="#i-arrow-right"/></svg>
+      </div>
+
+      <!-- New rank (right, larger, with light sweep) -->
+      <div class="rankup-rank-slot new" id="rankupNewSlot">
+        <div class="rankup-rank-glow new-glow"></div>
+        <svg class="rankup-rank-icon big" id="rankupIcon"></svg>
+        <div class="rankup-light-sweep"></div>
+        <div class="rankup-rank-name" id="rankupTierName">Silver I</div>
       </div>
     </div>
-    <div class="promotion-from" id="rankupFrom">from Bronze III</div>
-    <div class="continue-hint">click anywhere to continue</div>
+
+    <!-- Big tier name underneath -->
+    <h2 id="rankupRankName">SILVER</h2>
+    <div class="rankup-sub" id="rankupSub">1100 RATING</div>
+
+    <div class="rankup-from" id="rankupFrom">Promoted from Bronze III</div>
+
+    <div class="rankup-continue-hint">
+      <kbd>SPACE</kbd> to continue
+    </div>
   </div>
 </div>
 
@@ -12372,7 +12402,10 @@ function resetMatchUI(){
   state.matchRoundsToWin = 2; // best of 3 default — may grow during overtime
   state._endMatchCalled = false; // reset for new match
   state._matchPredictionsCorrect = 0;
+  state._matchPredictionsTotal = 0;
   state._matchWinningMoves = [];
+  state._matchRoundHistory = [];        // NEW — round-by-round log for result screen
+  state._matchStartedAt = Date.now();   // NEW — for duration display
   state.myPrediction = null;
   setText('#scoreYou', 0);
   setText('#scoreOpp', 0);
@@ -12609,8 +12642,19 @@ function applyRoundResult(result, yourMove, oppMove){
   state._lastPredictionCorrect = predictionCorrect;
   if(predictionCorrect) state._matchPredictionsCorrect = (state._matchPredictionsCorrect || 0) + 1;
 
+  // Track prediction attempts for accuracy %
+  if(state.myPrediction) state._matchPredictionsTotal = (state._matchPredictionsTotal || 0) + 1;
+
   // DRAW HANDLING: a draw does NOT count as a completed round — no score change, replay
   const isDraw = result === 'draw';
+
+  // ROUND HISTORY — used by match-result screen for round-by-round breakdown
+  if(!state._matchRoundHistory) state._matchRoundHistory = [];
+  state._matchRoundHistory.push({
+    result, yourMove, oppMove, isDraw,
+    timestamp: Date.now(),
+    predictionCorrect
+  });
 
   if(!isDraw){
     if(result === 'win') state.scoreYou++;
@@ -13081,32 +13125,144 @@ function showMatchResultScreen(result){
   const card = $('#matchResultCard');
   const headline = $('#matchResultHeadline');
   const sub = $('#matchResultSub');
+  const strip = $('#matchResultHeadlineStrip');
+  const iconEl = $('#matchResultIcon');
 
-  // Set header
+  // Set header strip + icon by result
   headline.classList.remove('win','lose','draw');
+  if(strip) strip.classList.remove('win','lose','draw');
+
   if(result === 'win'){
     headline.textContent = 'VICTORY';
     headline.classList.add('win');
+    if(strip) strip.classList.add('win');
+    if(iconEl) iconEl.querySelector('use')?.setAttribute('href', '#i-trophy');
+    overlay.style.setProperty('--result-color-glow', 'rgba(34,211,163,.18)');
     card.style.setProperty('--result-color', 'var(--mint)');
-    sub.textContent = `best of 3 · won ${state.scoreYou}-${state.scoreOpp}`;
+    sub.textContent = `Best of 3 · won ${state.scoreYou}–${state.scoreOpp}`;
     sfxWin();
-    setTimeout(() => bigBurst('#5dffba'), 300);
-    setTimeout(() => bigBurst('#a48bff'), 600);
+    setTimeout(() => bigBurst('#22d3a3'), 300);
+    setTimeout(() => bigBurst('#9b7bff'), 600);
   } else if(result === 'lose'){
     headline.textContent = 'DEFEAT';
     headline.classList.add('lose');
+    if(strip) strip.classList.add('lose');
+    if(iconEl) iconEl.querySelector('use')?.setAttribute('href', '#i-shield');
+    overlay.style.setProperty('--result-color-glow', 'rgba(255,51,88,.18)');
     card.style.setProperty('--result-color', 'var(--coral)');
-    sub.textContent = `best of 3 · lost ${state.scoreYou}-${state.scoreOpp}`;
+    sub.textContent = `Best of 3 · lost ${state.scoreYou}–${state.scoreOpp}`;
     sfxLose();
   } else {
     headline.textContent = 'DRAW';
     headline.classList.add('draw');
-    card.style.setProperty('--result-color', 'var(--amber)');
-    sub.textContent = `best of 3 · tied ${state.scoreYou}-${state.scoreOpp}`;
+    if(strip) strip.classList.add('draw');
+    if(iconEl) iconEl.querySelector('use')?.setAttribute('href', '#i-handshake');
+    overlay.style.setProperty('--result-color-glow', 'rgba(155,123,255,.18)');
+    card.style.setProperty('--result-color', 'var(--violet)');
+    sub.textContent = `Best of 3 · tied ${state.scoreYou}–${state.scoreOpp}`;
     sfxDraw();
   }
   setText('#matchResultYouScore', state.scoreYou);
   setText('#matchResultOppScore', state.scoreOpp);
+
+  // Best-of-N label (handles overtime)
+  const target = state.matchRoundsToWin || 2;
+  if(target > 2){
+    setText('#mrBestOf', `OVERTIME · FIRST TO ${target}`);
+  } else {
+    setText('#mrBestOf', 'BEST OF 3');
+  }
+
+  // Player avatars + names
+  try { renderAvatar($('#mrYouAv'), state.profile); } catch(e){}
+  setText('#mrYouName', '@' + (state.profile?.username || 'you'));
+  if(state.oppProfile){
+    try { renderAvatar($('#mrOppAv'), state.oppProfile); } catch(e){}
+  } else if(state.isBotMatch){
+    const oppAv = $('#mrOppAv');
+    if(oppAv){
+      oppAv.style.backgroundImage = '';
+      oppAv.textContent = 'B';
+    }
+  }
+  setText('#mrOppName', state.isBotMatch ? '@roshamBot' : ('@' + (state.oppProfile?.username || 'stranger')));
+
+  // ROUND-BY-ROUND BREAKDOWN
+  const list = $('#mrRoundsList');
+  if(list){
+    list.innerHTML = '';
+    const history = state._matchRoundHistory || [];
+    // Filter out draws if you want only "real" rounds, but include them as replay rows
+    let scoreCounter = 0;
+    history.forEach((h, idx) => {
+      const r = document.createElement('div');
+      const isDraw = h.isDraw || h.result === 'draw';
+      r.className = 'mr-round ' + (isDraw ? 'draw' : (h.result === 'win' ? 'win' : 'lose'));
+      r.style.animationDelay = (idx * 60) + 'ms';
+      const yourIcon = h.yourMove ? `<svg><use href="#i-${h.yourMove}"/></svg>` : '<span style="color:var(--text-faint); font-size:11px;">—</span>';
+      const oppIcon = h.oppMove ? `<svg><use href="#i-${h.oppMove}"/></svg>` : '<span style="color:var(--text-faint); font-size:11px;">—</span>';
+
+      const youWonRound = h.result === 'win';
+      const oppWonRound = h.result === 'lose' || h.result === 'forfeit';
+      const youCls = youWonRound ? 'win' : (isDraw ? 'draw' : '');
+      const oppCls = oppWonRound ? 'win' : (isDraw ? 'draw' : '');
+
+      const resultText = isDraw ? 'DRAW' : (h.result === 'win' ? 'YOU' : (h.result === 'forfeit' ? 'FFT' : 'OPP'));
+      const roundLabel = isDraw ? `R${idx + 1}` : `R${idx + 1}`;
+
+      r.innerHTML = `
+        <span class="mr-round-num">${roundLabel}</span>
+        <div class="mr-round-pick you ${youCls}">
+          <span class="pick-icon">${yourIcon}</span>
+        </div>
+        <span class="mr-round-vs">vs</span>
+        <div class="mr-round-pick opp ${oppCls}">
+          <span class="pick-icon">${oppIcon}</span>
+        </div>
+        <span class="mr-round-result">${resultText}</span>
+      `;
+      list.appendChild(r);
+    });
+    if(history.length === 0){
+      list.innerHTML = '<div style="text-align:center; padding:14px; color:var(--text-faint); font-size:12px; font-family:var(--font-mono);">No rounds played</div>';
+    }
+  }
+
+  // STATS
+  // Prediction accuracy
+  const predTotal = state._matchPredictionsTotal || 0;
+  const predCorrect = state._matchPredictionsCorrect || 0;
+  if(predTotal === 0){
+    setText('#mrStatAccuracy', '—');
+  } else {
+    const pct = Math.round((predCorrect / predTotal) * 100);
+    setText('#mrStatAccuracy', `${predCorrect}/${predTotal}`);
+  }
+
+  // Duration
+  if(state._matchStartedAt){
+    const secs = Math.round((Date.now() - state._matchStartedAt) / 1000);
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    setText('#mrStatDuration', m > 0 ? `${m}m ${s}s` : `${s}s`);
+  } else {
+    setText('#mrStatDuration', '—');
+  }
+
+  // Win streak (current)
+  const cs = state.profile?.currentStreak || 0;
+  const csType = state.profile?.streakType;
+  setText('#mrStatStreak', csType === 'W' && cs > 0 ? `${cs}W` : '—');
+
+  // H2H
+  const h2h = state.profile?.headToHead?.[state.oppUid];
+  if(h2h){
+    setText('#mrStatH2H', `${h2h.wins || 0}–${h2h.losses || 0}`);
+  } else if(state.isBotMatch){
+    setText('#mrStatH2H', 'BOT');
+  } else {
+    setText('#mrStatH2H', '1st');
+  }
 
   // Rank card — show CURRENT rank (before animation), then animate to new
   const ratingBefore = state._lastRatingBefore ?? (state.profile?.rating || 1000);
