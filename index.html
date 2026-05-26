@@ -12,47 +12,59 @@
 
 <style>
 :root{
-  /* Deeper, more atmospheric base */
-  --bg:#08050f;
-  --bg-2:#0d0918;
-  --bg-3:#15102a;
-  --surface:#1a1230;
-  --surface-2:#241a3f;
-  --surface-3:#2f2350;
-  --line:#332454;
-  --line-soft:#1f1638;
-  --line-bright:#4a3675;
-  --text:#f8f4ff;
-  --text-dim:#b3a8cc;
-  --text-faint:#796e95;
-  /* Vivid accent palette */
-  --coral:#ff2d6b;
-  --coral-glow:rgba(255,45,107,.4);
-  --mint:#3cffb9;
-  --mint-glow:rgba(60,255,185,.4);
-  --amber:#ffce3d;
-  --amber-glow:rgba(255,206,61,.4);
-  --violet:#b08cff;
-  --violet-glow:rgba(176,140,255,.4);
+  /* v9 — REFINED MODERN PALETTE
+   * Inspired by Linear/Vercel: less neon, more deliberate */
+
+  /* Surfaces — deep neutral base with subtle warm tint */
+  --bg:#08070d;
+  --bg-2:#0d0c14;
+  --bg-3:#13111c;
+  --surface:#181722;
+  --surface-2:#21202d;
+  --surface-3:#2b2939;
+  --line:#2a2838;
+  --line-soft:#1c1b27;
+  --line-bright:#403d52;
+
+  /* Text — high contrast, neutral */
+  --text:#fafafa;
+  --text-dim:#a8a7b3;
+  --text-faint:#6e6c7a;
+
+  /* Accent palette — refined, deliberate */
+  --coral:#ff3358;         /* primary action — rosy red */
+  --coral-glow:rgba(255,51,88,.35);
+  --coral-dim:#cc2747;
+  --mint:#22d3a3;          /* success — teal-mint */
+  --mint-glow:rgba(34,211,163,.30);
+  --amber:#f5b431;         /* warning/streak — warm amber */
+  --amber-glow:rgba(245,180,49,.30);
+  --violet:#9b7bff;        /* secondary/draw */
+  --violet-glow:rgba(155,123,255,.30);
   --cyan:#3dd7ff;
   --rose:#ff7aa3;
-  --live:#ff2d6b;
-  --error:#ff4757;
-  /* Radii */
-  --radius:14px;
+  --live:#ff3358;
+  --error:#f24e5a;
+
+  /* Radii — consistent, modern scale */
+  --radius:12px;
   --radius-sm:8px;
-  --radius-lg:22px;
-  --radius-xl:32px;
-  /* Layered shadows for depth */
-  --shadow-sm: 0 2px 8px rgba(0,0,0,.3);
-  --shadow-md: 0 8px 24px rgba(0,0,0,.4);
-  --shadow-lg: 0 24px 64px -16px rgba(0,0,0,.7), 0 8px 24px -6px rgba(0,0,0,.5);
-  --shadow-xl: 0 40px 100px -20px rgba(0,0,0,.8), 0 16px 40px -10px rgba(0,0,0,.5);
-  --shadow-glow: 0 0 60px -10px var(--coral-glow);
-  /* Typography */
+  --radius-md:14px;
+  --radius-lg:18px;
+  --radius-xl:24px;
+
+  /* Shadows — softer, less drama */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,.45);
+  --shadow-lg: 0 12px 32px -8px rgba(0,0,0,.65), 0 4px 12px -4px rgba(0,0,0,.5);
+  --shadow-xl: 0 24px 60px -16px rgba(0,0,0,.75), 0 8px 20px -6px rgba(0,0,0,.5);
+  --shadow-glow: 0 0 40px -8px var(--coral-glow);
+
+  /* Typography — keep the existing well-curated fonts */
   --font-display:"Bricolage Grotesque", ui-sans-serif, system-ui;
   --font-body:"Geist", ui-sans-serif, system-ui;
   --font-mono:"Geist Mono", ui-monospace, monospace;
+
   /* Rank palette */
   --rank-bronze:#d18a3c;
   --rank-silver:#c8c8d4;
@@ -75,18 +87,16 @@ body{
   font-feature-settings:"ss01","ss02","cv11";
   letter-spacing:-0.005em;
 }
-/* Animated, atmospheric background */
+/* Static, subtle background — less distracting animation */
 body::before{
   content:"";
   position:fixed; inset:0;
   background:
-    radial-gradient(80vw 60vw at 15% 5%, rgba(255,45,107,.22), transparent 55%),
-    radial-gradient(70vw 70vw at 90% 95%, rgba(60,255,185,.13), transparent 60%),
-    radial-gradient(50vw 50vw at 100% 0%, rgba(176,140,255,.15), transparent 65%),
-    radial-gradient(60vw 60vw at 0% 100%, rgba(61,215,255,.08), transparent 65%),
+    radial-gradient(60vw 50vw at 18% 8%, rgba(255,51,88,.08), transparent 60%),
+    radial-gradient(50vw 50vw at 88% 92%, rgba(34,211,163,.04), transparent 65%),
+    radial-gradient(40vw 40vw at 100% 0%, rgba(155,123,255,.05), transparent 65%),
     linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 60%, var(--bg-3) 100%);
   z-index:-3;
-  animation: ambientPulse 18s ease-in-out infinite alternate;
 }
 @keyframes ambientPulse{
   0%{ filter: hue-rotate(0deg) brightness(1); }
@@ -257,160 +267,135 @@ html{ scroll-behavior: smooth; }
 
 header{
   display:flex; align-items:center; justify-content:space-between;
-  padding:16px 28px;
+  padding:14px 24px;
   border-bottom:1px solid var(--line-soft);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  background:rgba(8,5,15,.65);
+  backdrop-filter: blur(20px) saturate(140%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  background:rgba(8,7,13,.7);
   position:sticky; top:0; z-index:50;
-}
-header::after{
-  content: "";
-  position: absolute;
-  left: 0; right: 0; bottom: -1px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--coral-glow), transparent);
-  opacity: .5;
 }
 .logo{
   font-family:var(--font-display);
-  font-weight:800; font-stretch:70%;
-  font-size:32px;
-  letter-spacing:-.025em;
+  font-weight:800; font-stretch:75%;
+  font-size:24px;
+  letter-spacing:-.02em;
   line-height:1;
-  display:flex; align-items:center; gap:12px;
+  display:flex; align-items:center; gap:10px;
   text-transform:uppercase;
-  position:relative;
 }
 .logo .dot{
-  width:12px; height:12px; border-radius:50%;
-  background: radial-gradient(circle at 30% 30%, #fff 0%, var(--coral) 50%, #c01546 100%);
-  animation: livePulse 1.6s ease-out infinite;
-  box-shadow: 0 0 16px var(--coral-glow);
+  width:8px; height:8px; border-radius:50%;
+  background: var(--coral);
+  box-shadow: 0 0 10px var(--coral-glow);
+  animation: livePulse 1.8s ease-out infinite;
 }
 @keyframes livePulse{
-  0%{box-shadow:0 0 0 0 rgba(255,45,107,.7), 0 0 16px var(--coral-glow)}
-  100%{box-shadow:0 0 0 18px rgba(255,45,107,0), 0 0 16px var(--coral-glow)}
+  0%{box-shadow:0 0 0 0 rgba(255,51,88,.5), 0 0 10px var(--coral-glow)}
+  100%{box-shadow:0 0 0 10px rgba(255,51,88,0), 0 0 10px var(--coral-glow)}
 }
 .logo .word{
-  background:linear-gradient(180deg,#fff 5%, var(--coral) 60%, #c01546 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter: drop-shadow(0 2px 10px rgba(255,45,107,.25));
+  color: var(--text);
 }
 .logo .tag{
   font-family:var(--font-mono);
   font-size:9px;
-  padding:4px 8px;
+  padding:3px 7px;
   border:1px solid var(--line);
-  border-radius:6px;
-  color:var(--text-dim);
-  letter-spacing:.12em;
+  border-radius:5px;
+  color:var(--text-faint);
+  letter-spacing:.1em;
   text-transform:uppercase;
-  margin-left:6px;
+  margin-left:4px;
   background: var(--surface);
   position: relative;
-  top: -2px;
+  top: -1px;
+  font-weight: 600;
 }
 .live-stats{
-  display:flex; align-items:center; gap:20px;
+  display:flex; align-items:center; gap:8px;
   font-family:var(--font-mono);
   font-size:11px;
   color:var(--text-dim);
-  letter-spacing: .04em;
+  letter-spacing: .02em;
 }
 .live-stats .stat{
-  display:flex; align-items:center; gap:8px;
-  padding: 6px 12px;
+  display:flex; align-items:center; gap:7px;
+  padding: 5px 11px;
   border-radius: 999px;
-  background: rgba(255,255,255,.02);
+  background: var(--surface);
   border: 1px solid var(--line-soft);
-  transition: all .2s;
+  transition: all .15s;
+  font-weight: 500;
 }
 .live-stats .stat:hover{
-  background: rgba(255,255,255,.04);
+  background: var(--surface-2);
   border-color: var(--line);
 }
-.live-stats .stat b{color:var(--text); font-weight:700; font-size: 12px;}
+.live-stats .stat b{color:var(--text); font-weight:700; font-size: 11px;}
 .live-stats .pulse{
-  width:7px; height:7px; border-radius:50%;
+  width:6px; height:6px; border-radius:50%;
   background:var(--mint);
-  box-shadow:0 0 10px var(--mint);
-  animation:soft 1.4s ease-in-out infinite;
+  box-shadow:0 0 6px var(--mint);
+  animation:soft 1.6s ease-in-out infinite;
 }
-@keyframes soft{50%{opacity:.4; transform: scale(.85);}}
-.header-actions{display:flex; gap:8px; align-items:center;}
+@keyframes soft{50%{opacity:.45; transform: scale(.8);}}
+.header-actions{display:flex; gap:6px; align-items:center;}
 
 .user-chip{
   display:flex; align-items:center; gap:10px;
-  padding:5px 16px 5px 5px;
+  padding:4px 14px 4px 4px;
   border:1px solid var(--line);
   border-radius:999px;
-  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  background: var(--surface);
   font-size:13px;
   font-weight: 600;
   cursor:pointer;
-  transition: all .2s cubic-bezier(.2,.8,.2,1);
-  box-shadow: 0 4px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.04);
+  transition: all .15s cubic-bezier(.2,.8,.2,1);
 }
 .user-chip:hover{
-  background: linear-gradient(180deg, var(--surface-2), var(--surface-3));
+  background: var(--surface-2);
   border-color: var(--line-bright);
-  transform: translateY(-1px);
 }
 .user-chip .av{
-  width:32px; height:32px; border-radius:50%;
-  background:linear-gradient(135deg, var(--coral), var(--violet));
+  width:28px; height:28px; border-radius:50%;
+  background: var(--coral);
   display:grid; place-items:center;
   font-family:var(--font-display); font-weight:700;
-  font-size:14px;
+  font-size:13px;
   color:#fff;
   background-size: cover;
   background-position: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.1);
 }
 .user-chip .rating{
   font-family:var(--font-mono);
   font-size:11px;
   font-weight:700;
   display:flex; align-items:center; gap:5px;
-  letter-spacing: .04em;
+  letter-spacing: .02em;
 }
-.user-chip .rank-icon{width:15px; height:15px;}
+.user-chip .rank-icon{width:14px; height:14px;}
 
 .btn{
   font-family:var(--font-body);
   font-weight:600;
   font-size:13px;
-  padding:10px 16px;
+  padding:9px 16px;
   border-radius:10px;
   border:1px solid var(--line);
-  background: linear-gradient(180deg, var(--surface), var(--surface-2));
+  background: var(--surface);
   color:var(--text);
   cursor:pointer;
-  transition: all .2s cubic-bezier(.2,.8,.2,1);
+  transition: all .15s cubic-bezier(.2,.8,.2,1);
   display:inline-flex; align-items:center; gap:8px;
   letter-spacing:-.005em;
   position: relative;
-  overflow: hidden;
-}
-.btn::before{
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,.06), transparent);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .2s;
 }
 .btn:hover{
-  background: linear-gradient(180deg, var(--surface-2), var(--surface-3));
+  background: var(--surface-2);
   border-color: var(--line-bright);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px -6px rgba(0,0,0,.5);
 }
-.btn:hover::before{ opacity: 1; }
-.btn:active{transform: translateY(0); transition-duration: .05s;}
-.btn:disabled{opacity:.45; cursor:not-allowed; transform:none;}
+.btn:active{transform: translateY(1px); transition-duration: .05s;}
+.btn:disabled{opacity:.4; cursor:not-allowed; transform:none;}
 .btn .key{
   font-family:var(--font-mono);
   font-size:10px;
@@ -422,82 +407,65 @@ header::after{
   background: rgba(0,0,0,.2);
 }
 .btn-primary{
-  background:linear-gradient(180deg, var(--coral) 0%, #d4194e 100%);
-  border-color:transparent;
-  box-shadow:
-    0 10px 28px -6px var(--coral-glow),
-    inset 0 1px 0 rgba(255,255,255,.3),
-    inset 0 -1px 0 rgba(0,0,0,.2);
+  background: var(--coral);
+  border-color: transparent;
   color:#fff;
-  font-weight: 700;
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 4px 12px -4px var(--coral-glow);
 }
 .btn-primary:hover{
-  background:linear-gradient(180deg, #ff4577 0%, #e02055 100%);
-  transform:translateY(-2px);
-  box-shadow:
-    0 14px 36px -6px var(--coral-glow),
-    inset 0 1px 0 rgba(255,255,255,.35),
-    inset 0 -1px 0 rgba(0,0,0,.2);
+  background: #ff4d6e;
+  box-shadow: 0 1px 0 rgba(255,255,255,.2) inset, 0 6px 16px -4px var(--coral-glow);
 }
-.btn-primary:active{ transform: translateY(0); }
+.btn-primary:active{ background: var(--coral-dim); }
 .btn-ghost{
   background:transparent;
   border-color: var(--line-soft);
 }
 .btn-ghost:hover{
-  background: rgba(255,255,255,.03);
+  background: rgba(255,255,255,.04);
   border-color: var(--line);
 }
 .btn-mint{
-  background:linear-gradient(180deg, #2bb87f 0%, #1a8a5c 100%);
-  border-color:transparent;
-  color:#fff;
-  font-weight: 700;
-  box-shadow:
-    0 10px 28px -6px var(--mint-glow),
-    inset 0 1px 0 rgba(255,255,255,.25);
+  background: var(--mint);
+  border-color: transparent;
+  color:#0a1f17;
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(255,255,255,.2) inset, 0 4px 12px -4px var(--mint-glow);
 }
-.btn-mint:hover{
-  background:linear-gradient(180deg, #3cd690 0%, #20a06d 100%);
-  transform:translateY(-2px);
-}
+.btn-mint:hover{ background: #2ee9b8; }
 .btn-google{
   background:#fff;
   color:#1a1a1a;
   border:none;
   font-weight:600;
-  padding: 12px 18px;
-  box-shadow: 0 4px 14px rgba(255,255,255,.1);
+  padding: 11px 18px;
 }
-.btn-google:hover{ background:#f3f3f3; transform: translateY(-2px); }
+.btn-google:hover{ background:#f3f3f3; }
 .btn-bot{
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
-  border-color: var(--line-bright);
+  background: var(--surface);
+  border-color: var(--line);
   color:var(--text);
-  font-weight:700;
-  padding:14px 22px;
-  font-size:14px;
+  font-weight:600;
 }
 .btn-bot:hover{
-  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  background: var(--surface-2);
   border-color: var(--violet);
   color:var(--violet);
 }
 .btn-camera{
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
-  border-color: var(--line-bright);
+  background: var(--surface);
+  border-color: var(--line);
   color:var(--text);
-  font-weight:700;
-  padding:14px 22px;
-  font-size:14px;
+  font-weight:600;
 }
 .btn-camera:hover{
-  background: linear-gradient(180deg, var(--surface-3), var(--surface-2));
+  background: var(--surface-2);
   border-color: var(--mint);
   color:var(--mint);
 }
 .btn-danger{
-  background:rgba(255,92,111,.08);
+  background:rgba(242,78,90,.08);
   border-color:rgba(255,92,111,.3);
   color:var(--error);
 }
@@ -2389,41 +2357,27 @@ h1.section-title .accent{
 .cta-find{display:flex; gap:12px; align-items:center; flex-wrap:wrap;}
 .btn-cta{
   font-family:var(--font-display);
-  font-weight:800; font-size:18px; font-stretch: 70%;
-  letter-spacing:.02em;
-  text-transform: uppercase;
-  padding:20px 32px;
-  border-radius:16px;
-  background:
-    linear-gradient(180deg, var(--coral) 0%, #d4194e 100%);
+  font-weight:700; font-size:16px; font-stretch: 75%;
+  letter-spacing:.01em;
+  padding:14px 28px;
+  border-radius:12px;
+  background: var(--coral);
   color:#fff; border:none; cursor:pointer;
-  display:inline-flex; align-items:center; gap:12px;
+  display:inline-flex; align-items:center; gap:10px;
   box-shadow:
-    0 24px 60px -14px var(--coral-glow),
-    0 8px 20px -4px var(--coral-glow),
-    inset 0 1px 0 rgba(255,255,255,.3),
-    inset 0 -2px 0 rgba(0,0,0,.2);
-  transition: all .25s cubic-bezier(.2,.8,.2,1);
+    0 1px 0 rgba(255,255,255,.18) inset,
+    0 8px 24px -8px var(--coral-glow);
+  transition: all .15s cubic-bezier(.2,.8,.2,1);
   position: relative;
-  overflow: hidden;
-}
-.btn-cta::before{
-  content: "";
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, transparent 40%, rgba(255,255,255,.2) 50%, transparent 60%);
-  transform: translateX(-100%);
-  transition: transform .6s;
 }
 .btn-cta:hover{
-  transform: translateY(-3px);
+  background: #ff4d6e;
   box-shadow:
-    0 30px 70px -10px var(--coral-glow),
-    0 12px 30px -4px var(--coral-glow),
-    inset 0 1px 0 rgba(255,255,255,.35);
+    0 1px 0 rgba(255,255,255,.22) inset,
+    0 12px 28px -8px var(--coral-glow);
 }
-.btn-cta:hover::before{ transform: translateX(100%); }
-.btn-cta:active{ transform: translateY(-1px); }
-.btn-cta svg{width:20px;height:20px}
+.btn-cta:active{ background: var(--coral-dim); }
+.btn-cta svg{width:18px;height:18px}
 
 /* Rank badge */
 .rank-badge{
@@ -6503,37 +6457,60 @@ h2.match-title{
         <path d="M45 28c0-2 1.5-3.5 3.5-3.5S52 26 52 28v14c0 10-7 18-18 18S16 52 16 42v-8h32V28z"/>
       </g>
     </symbol>
-    <symbol id="i-send" viewBox="0 0 24 24"><path fill="currentColor" d="M3 11.5L21 3l-8.5 18-2-7.5-7.5-2z"/></symbol>
-    <symbol id="i-next" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="M4 7l5 5-5 5M13 7l5 5-5 5"/></symbol>
-    <symbol id="i-flame" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2s4 4 4 9-2 7-2 7 6-2 6-9c0-3-2-5-2-5s1 4-2 4-1-6-4-6zm-2 11s-3 1-3 5 2 4 2 4-1-3 1-5 4 0 4 0-1 4-2 5 4-1 4-5-3-7-3-7-3 3-3 3z"/></symbol>
-    <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M6 4l14 8-14 8z"/></symbol>
-    <symbol id="i-help" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 9a3 3 0 1 1 4.5 2.6c-.9.5-1.5 1.2-1.5 2.4M12 17.5h.01"/><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
-    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" fill="none"/><path fill="none" stroke="currentColor" stroke-width="2" d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
-    <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></symbol>
-    <symbol id="i-out" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 17l5-5-5-5M21 12H9M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18"/></symbol>
-    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" d="M5 12l5 5L20 7"/></symbol>
-    <symbol id="i-people" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M8.5 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
-    <symbol id="i-trophy" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 4h10v6a5 5 0 0 1-10 0V4zM7 4H4v3a3 3 0 0 0 3 3M17 4h3v3a3 3 0 0 1-3 3M9 20h6M12 15v5"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-edit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></symbol>
-    <symbol id="i-sword" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 17.5L3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol>
-    <symbol id="i-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
-    <symbol id="i-activity" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 12h-4l-3 9L9 3l-3 9H2"/></symbol>
-    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><polyline points="12 6 12 12 16 14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-bot" viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="3" stroke="currentColor" stroke-width="2" fill="none"/><path d="M12 4v4M8 13h.01M16 13h.01M9 17h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/><circle cx="12" cy="4" r="1.5" fill="currentColor"/></symbol>
-    <symbol id="i-camera" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" fill="none"/></symbol>
-    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-rotate" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M21 21l-4.3-4.3M11 8v6M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
-    <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2" fill="none"/><path d="M21 21l-4.3-4.3M8 11h6" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></symbol>
-    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-eye-off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24M1 1l22 22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m21.854 2.147-10.94 10.939"/></symbol>
+    <symbol id="i-next" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 17 5-5-5-5M13 17l5-5-5-5"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21 6 3" fill="currentColor"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 17h.01"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20"/></symbol>
+    <symbol id="i-bolt" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-people" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-trophy" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0V2Z"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5v14"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m15 5 4 4"/></symbol>
+    <symbol id="i-sword" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 17.5 3 6V3h3l11.5 11.5M13 19l6-6M16 16l4 4M19 21l2-2"/></symbol>
+    <symbol id="i-block" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m4.9 4.9 14.2 14.2"/></symbol>
+    <symbol id="i-activity" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.5.5 0 0 1-.96 0L9.24 2.18a.5.5 0 0 0-.96 0l-2.35 8.36A2 2 0 0 1 4 12H2"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><polyline points="12 6 12 12 16 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-bot" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2 14h2M20 14h2M15 13v2M9 13v2"/></symbol>
+    <symbol id="i-camera" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+    <symbol id="i-rotate" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8M3 3v5h5"/></symbol>
+    <symbol id="i-zoom-in" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m21 21-4.3-4.3M11 8v6M8 11h6"/></symbol>
+    <symbol id="i-zoom-out" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m21 21-4.3-4.3M8 11h6"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9.88 9.88a3 3 0 1 0 4.24 4.24M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61M2 2l20 20"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/></symbol>
-    <symbol id="i-sound-on" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z M15.54 8.46a5 5 0 0 1 0 7.07 M19.07 4.93a10 10 0 0 1 0 14.14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-sound-off" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z M23 9l-6 6 M17 9l6 6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-flag" viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-sound-on" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5 6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol>
+    <symbol id="i-sound-off" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5 6 9H2v6h4l5 4V5zM22 9l-6 6M16 9l6 6"/></symbol>
+    <symbol id="i-flag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V15"/></symbol>
     <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.48 12c0-.73.13-1.44.36-2.1V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></symbol>
+    <!-- Additional Lucide icons used in the redesign -->
+    <symbol id="i-settings" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24"><path fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-trending-up" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="16 7 22 7 22 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-medal" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7.21 15 2.66 7.14a2 2 0 0 1 .13-2.2L4.4 2.8A2 2 0 0 1 6 2h12a2 2 0 0 1 1.6.8l1.6 2.14a2 2 0 0 1 .14 2.2L16.79 15M11 12 5.12 2.2M13 12l5.88-9.8M8 7h8"/><circle cx="12" cy="17" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 18v-2h-.5"/></symbol>
+    <symbol id="i-swords" viewBox="0 0 24 24"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="13" x2="19" y1="19" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" x2="20" y1="16" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="19" x2="21" y1="21" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="5" x2="9" y1="14" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" x2="4" y1="17" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" x2="5" y1="19" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 17V9M13 17V5M8 17v-3"/></symbol>
+    <symbol id="i-arrow-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M19 17v4M3 5h4M17 19h4"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
+    <symbol id="i-crown" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294zM5 21h14"/></symbol>
+    <symbol id="i-gem" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 3h12l4 6-10 13L2 9z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 3 8 9l4 13 4-13-3-6M2 9h20"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m15.477 12.89 1.515 8.526a.5.5 0 0 1-.81.47l-3.58-2.687a1 1 0 0 0-1.197 0l-3.586 2.687a.5.5 0 0 1-.81-.469l1.514-8.526"/><circle cx="12" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 16v-4M12 8h.01"/></symbol>
+    <symbol id="i-chevron-right" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-circle-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="currentColor"/></symbol>
+    <symbol id="i-handshake" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m11 17 2 2a1 1 0 1 0 3-3"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4M21 3v9M3 21l1.5-1.5"/></symbol>
     <!-- RANK ICONS -->
     <symbol id="i-rank-bronze" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/></symbol>
     <symbol id="i-rank-silver" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/><circle cx="12" cy="12" r="3" fill="rgba(0,0,0,.3)"/></symbol>
