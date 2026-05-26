@@ -5745,23 +5745,35 @@ h2.match-title{
 .mr-round-pick{
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 12px;
   color: var(--text-dim);
 }
 .mr-round-pick .pick-icon{
-  width: 24px; height: 24px;
+  width: 28px; height: 28px;
   display: grid;
   place-items: center;
-  border-radius: 7px;
-  background: rgba(255,255,255,.05);
+  border-radius: 8px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--line-soft);
+  flex-shrink: 0;
 }
-.mr-round-pick .pick-icon svg{ width: 16px; height: 16px; }
+.mr-round-pick .pick-icon svg{ width: 18px; height: 18px; }
+.mr-round-pick .pick-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
 .mr-round-pick.you{ justify-content: flex-end; }
 .mr-round-pick.opp{ justify-content: flex-start; }
-.mr-round-pick.you.win .pick-icon{ background: rgba(34,211,163,.15); color: var(--mint); }
-.mr-round-pick.opp.win .pick-icon{ background: rgba(255,51,88,.15); color: var(--coral); }
-.mr-round-pick.draw .pick-icon{ background: rgba(155,123,255,.12); color: var(--violet); }
+.mr-round-pick.you.win .pick-icon{ background: rgba(34,211,163,.15); border-color: rgba(34,211,163,.35); color: var(--mint); }
+.mr-round-pick.you.win .pick-label{ color: var(--mint); }
+.mr-round-pick.opp.win .pick-icon{ background: rgba(255,51,88,.15); border-color: rgba(255,51,88,.35); color: var(--coral); }
+.mr-round-pick.opp.win .pick-label{ color: var(--coral); }
+.mr-round-pick.draw .pick-icon{ background: rgba(155,123,255,.12); border-color: rgba(155,123,255,.3); color: var(--violet); }
+.mr-round-pick.draw .pick-label{ color: var(--violet); }
 .mr-round-vs{
   font-family: var(--font-mono);
   font-size: 10px;
@@ -5823,6 +5835,111 @@ h2.match-title{
   letter-spacing: .12em;
   text-transform: uppercase;
   font-weight: 700;
+}
+
+/* DAILY CHALLENGE in match result */
+.mr-daily{
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line-soft);
+  background: radial-gradient(circle at 80% 50%, rgba(245,180,49,.06), transparent 70%);
+}
+.mr-daily .mr-section-label{
+  margin-bottom: 10px;
+}
+.mr-daily .mr-section-label svg{
+  color: var(--amber);
+}
+.mr-daily-tag{
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(34,211,163,.12);
+  color: var(--mint);
+  border: 1px solid rgba(34,211,163,.3);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.mr-daily-tag.complete{
+  background: rgba(34,211,163,.18);
+  color: var(--mint);
+  border-color: var(--mint);
+  box-shadow: 0 0 12px rgba(34,211,163,.3);
+}
+.mr-daily-tag.none{
+  background: rgba(255,255,255,.04);
+  color: var(--text-faint);
+  border-color: var(--line-soft);
+}
+.mr-daily-body{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 14px;
+  align-items: center;
+}
+.mr-daily-info{
+  min-width: 0;
+}
+.mr-daily-goal{
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.mr-daily-progress-row{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mr-daily-bar{
+  flex: 1;
+  height: 6px;
+  background: rgba(0,0,0,.5);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.mr-daily-bar-fill{
+  height: 100%;
+  background: linear-gradient(90deg, var(--amber), #ff8a00);
+  border-radius: 3px;
+  box-shadow: 0 0 8px var(--amber-glow);
+  transition: width .8s cubic-bezier(.2,.7,.2,1);
+}
+.mr-daily-bar-fill.complete{
+  background: linear-gradient(90deg, var(--mint), #15a079);
+  box-shadow: 0 0 10px var(--mint-glow);
+}
+.mr-daily-counter{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: -.005em;
+  min-width: 32px;
+  text-align: right;
+}
+.mr-daily-reward{
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(34,211,163,.08);
+  border: 1px solid rgba(34,211,163,.25);
+  border-radius: 10px;
+  color: var(--mint);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+.mr-daily-reward.claimed{
+  background: rgba(34,211,163,.18);
+  border-color: var(--mint);
 }
 
 /* RESPONSIVE */
@@ -6739,170 +6856,244 @@ h2.match-title{
 }
 
 /* STAGE — old rank → arrow → new rank */
-.rankup-stage{
-  display: flex;
-  align-items: center;
-  gap: 28px;
-  margin: 16px 0 8px;
+/* ============ FORTNITE-STYLE CENTER STAGE ============ */
+.rankup-center-stage{
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 8px 0 16px;
+  display: grid;
+  place-items: center;
 }
 
-/* Slot — wraps each rank */
-.rankup-rank-slot{
-  position: relative;
+/* SCREEN FLASH — the moment of transition */
+.rankup-flash{
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, #fff 0%, rgba(255,255,255,.6) 30%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 5;
+  animation: rankupFlash .5s 2s ease-out forwards;
+}
+@keyframes rankupFlash{
+  0%{ opacity: 0; transform: scale(.3); }
+  30%{ opacity: 1; transform: scale(1.2); }
+  100%{ opacity: 0; transform: scale(2.5); }
+}
+
+/* OLD RANK — centered, then shatters away */
+.rankup-old-rank{
+  position: absolute;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  width: 140px;
+  gap: 16px;
+  z-index: 2;
+  /* Phase 1: dramatic appearance (0 → 1.4s) */
+  /* Phase 2: hold (1.4 → 2.0s) */
+  /* Phase 3: shatter — opacity to 0 + scale up, blur out */
+  animation:
+    rankupOldEnter 1s 0s cubic-bezier(.2,1.6,.4,1) both,
+    rankupOldShatter .6s 1.9s cubic-bezier(.4,0,.6,1) forwards;
 }
-.rankup-rank-slot.old{
-  animation: rankupOldFade 2s 2.4s forwards;
-  /* slot starts visible, fades after the transition */
-}
-@keyframes rankupOldFade{
-  0%{ opacity: 1; transform: scale(1); filter: blur(0); }
-  100%{ opacity: .3; transform: scale(.85); filter: blur(2px); }
-}
-.rankup-rank-slot.new{
-  opacity: 0;
-  animation: rankupNewAppear 1s 2.3s cubic-bezier(.2,1.8,.4,1) forwards;
-}
-@keyframes rankupNewAppear{
-  0%{ opacity: 0; transform: scale(.4) rotate(-20deg); }
-  60%{ opacity: 1; transform: scale(1.15) rotate(4deg); }
+@keyframes rankupOldEnter{
+  0%{ opacity: 0; transform: scale(.4) rotate(-15deg); }
+  60%{ opacity: 1; transform: scale(1.1) rotate(3deg); }
   100%{ opacity: 1; transform: scale(1) rotate(0); }
 }
-
-/* Rank glow halo */
-.rankup-rank-glow{
+@keyframes rankupOldShatter{
+  0%{ opacity: 1; transform: scale(1); filter: blur(0) brightness(1); }
+  40%{ opacity: 1; transform: scale(1.4); filter: blur(2px) brightness(2); }
+  100%{ opacity: 0; transform: scale(3) rotate(15deg); filter: blur(20px) brightness(3); }
+}
+.rankup-old-glow{
   position: absolute;
-  inset: -20px -20px 30px -20px;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
-  filter: blur(30px);
-  opacity: .5;
-  z-index: 0;
-}
-.rankup-rank-slot.old .rankup-rank-glow{
   background: var(--rank-color-old, var(--text-faint));
+  filter: blur(40px);
   opacity: .25;
+  z-index: 0;
+  pointer-events: none;
 }
-.rankup-rank-slot.new .rankup-rank-glow.new-glow{
-  background: var(--rank-color, var(--amber));
-  opacity: 0;
-  animation: rankupGlowIn 1.2s 2.5s ease-out forwards, rankupGlowPulse 2s 3.7s ease-in-out infinite;
-}
-@keyframes rankupGlowIn{
-  from{ opacity: 0; transform: scale(.6); }
-  to{ opacity: .7; transform: scale(1); }
-}
-@keyframes rankupGlowPulse{
-  0%, 100%{ opacity: .5; transform: scale(1); }
-  50%{ opacity: .8; transform: scale(1.1); }
-}
-
-/* Rank icons */
-.rankup-rank-icon{
-  width: 80px;
-  height: 80px;
+.rankup-old-icon{
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,.5));
-}
-.rankup-rank-icon.big{
-  width: 120px;
-  height: 120px;
-}
-.rankup-rank-slot.old .rankup-rank-icon{
+  filter: drop-shadow(0 8px 24px rgba(0,0,0,.5));
   color: var(--rank-color-old, var(--text-faint));
 }
-.rankup-rank-slot.new .rankup-rank-icon{
-  color: var(--rank-color, var(--amber));
-  animation: rankupIconFloat 3s 3s ease-in-out infinite;
-}
-@keyframes rankupIconFloat{
-  0%, 100%{ transform: translateY(0); }
-  50%{ transform: translateY(-4px); }
-}
-
-/* LIGHT SWEEP — diagonal white shimmer that crosses the new rank icon */
-.rankup-light-sweep{
-  position: absolute;
-  top: -20%;
-  left: -50%;
-  width: 60%;
-  height: 140%;
-  background: linear-gradient(115deg,
-    transparent 30%,
-    rgba(255,255,255,.0) 40%,
-    rgba(255,255,255,.4) 50%,
-    rgba(255,255,255,.0) 60%,
-    transparent 70%
-  );
-  transform: skewX(-20deg);
-  pointer-events: none;
-  z-index: 2;
-  opacity: 0;
-  animation: rankupLightSweep 2s 3.2s ease-out forwards;
-}
-@keyframes rankupLightSweep{
-  0%{ opacity: 0; transform: translateX(-100%) skewX(-20deg); }
-  20%{ opacity: 1; }
-  100%{ opacity: 0; transform: translateX(300%) skewX(-20deg); }
-}
-/* second sweep right after the first */
-.rankup-rank-slot.new::after{
-  content: "";
-  position: absolute;
-  top: -20%;
-  left: -50%;
-  width: 50%;
-  height: 140%;
-  background: linear-gradient(115deg,
-    transparent 30%,
-    rgba(255,255,255,.0) 40%,
-    rgba(255,255,255,.25) 50%,
-    rgba(255,255,255,.0) 60%,
-    transparent 70%
-  );
-  transform: skewX(-20deg);
-  pointer-events: none;
-  z-index: 2;
-  opacity: 0;
-  animation: rankupLightSweep 1.6s 4.4s ease-out forwards;
-}
-
-.rankup-rank-name{
+.rankup-old-tier{
   font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 700;
   letter-spacing: .14em;
   text-transform: uppercase;
-  font-weight: 600;
-}
-.rankup-rank-slot.old .rankup-rank-name{
   color: var(--text-faint);
 }
 
-/* Arrow between ranks */
-.rankup-arrow{
+/* SHATTER SHARDS — JS spawns triangular fragments that fly outward */
+.rankup-shards{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+}
+.rankup-shard{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: var(--rank-color-old, var(--text-faint));
+  opacity: 0;
+  transform-origin: center;
+  animation: rankupShardFly .8s 2s cubic-bezier(.2,.4,.8,1) forwards;
+}
+@keyframes rankupShardFly{
+  0%{ opacity: 0; transform: translate(-50%, -50%) rotate(0deg) translate(0); }
+  20%{ opacity: 1; }
+  100%{
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--shard-rot, 180deg)) translate(var(--shard-dist, 200px)) rotate(var(--shard-rot-end, 360deg));
+  }
+}
+
+/* NEW RANK — dramatic zoom in from depth */
+.rankup-new-rank{
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 4;
+  opacity: 0;
+  /* Starts BEHIND the old rank (small + blurred), zooms forward as old shatters */
+  animation: rankupNewZoom 1.2s 2.2s cubic-bezier(.15,1.4,.4,1) forwards;
+}
+@keyframes rankupNewZoom{
+  0%{
+    opacity: 0;
+    transform: scale(.15) rotate(-20deg);
+    filter: blur(16px) brightness(2);
+  }
+  30%{
+    opacity: 1;
+    transform: scale(.8) rotate(-5deg);
+    filter: blur(4px) brightness(1.5);
+  }
+  60%{
+    opacity: 1;
+    transform: scale(1.18) rotate(3deg);
+    filter: blur(0) brightness(1.2);
+  }
+  80%{
+    transform: scale(.96) rotate(-1deg);
+  }
+  100%{
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+    filter: blur(0) brightness(1);
+  }
+}
+
+/* Wrapper around the new icon — holds the light sweep too */
+.rankup-sweep-wrap{
+  position: relative;
   display: grid;
   place-items: center;
-  color: var(--text-faint);
+  width: 240px;
+  height: 240px;
+  overflow: hidden;
+  border-radius: 50%;
+}
+/* Background glow halo behind new icon — pulses continuously */
+.rankup-sweep-wrap::before{
+  content: "";
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle, var(--rank-color, var(--amber)) 0%, transparent 60%);
+  filter: blur(40px);
   opacity: 0;
-  animation: rankupArrowIn 1s 1.5s ease-out forwards, rankupArrowSwoosh .6s 2s cubic-bezier(.2,1.8,.4,1);
+  z-index: 0;
+  animation: rankupNewHalo 1.5s 2.6s ease-out forwards, rankupHaloPulse 2.5s 4.1s ease-in-out infinite;
 }
-@keyframes rankupArrowIn{
-  from{ opacity: 0; transform: translateX(-20px); }
-  to{ opacity: .6; transform: translateX(0); }
+@keyframes rankupNewHalo{
+  from{ opacity: 0; transform: scale(.5); }
+  to{ opacity: .55; transform: scale(1); }
 }
-@keyframes rankupArrowSwoosh{
-  0%{ transform: translateX(0) scale(1); color: var(--text-faint); }
-  50%{ transform: translateX(8px) scale(1.4); color: var(--rank-color, var(--amber)); filter: drop-shadow(0 0 12px var(--rank-color)); }
-  100%{ transform: translateX(0) scale(1); color: var(--text-faint); }
+@keyframes rankupHaloPulse{
+  0%, 100%{ opacity: .45; transform: scale(1); }
+  50%{ opacity: .75; transform: scale(1.15); }
 }
-.rankup-arrow svg{
-  width: 32px;
-  height: 32px;
+
+.rankup-new-icon{
+  position: relative;
+  z-index: 1;
+  color: var(--rank-color, var(--amber));
+  filter:
+    drop-shadow(0 0 24px var(--rank-color, var(--amber)))
+    drop-shadow(0 8px 24px rgba(0,0,0,.5));
+}
+/* Continuous gentle float after entrance */
+.rankup-new-rank.settled .rankup-new-icon{
+  animation: rankupNewIconFloat 3s ease-in-out infinite;
+}
+@keyframes rankupNewIconFloat{
+  0%, 100%{ transform: translateY(0); }
+  50%{ transform: translateY(-5px); }
+}
+
+.rankup-new-tier{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -.01em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-shadow: 0 0 16px var(--rank-color, var(--amber));
+}
+
+/* LIGHT SWEEP — diagonal white shine that crosses the new icon */
+.rankup-light-sweep{
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(115deg,
+    transparent 35%,
+    rgba(255,255,255,0) 42%,
+    rgba(255,255,255,.6) 50%,
+    rgba(255,255,255,0) 58%,
+    transparent 65%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation: rankupLightSweep 1.2s 3.4s ease-out forwards;
+}
+.rankup-light-sweep.s2{
+  width: 40%;
+  background: linear-gradient(115deg,
+    transparent 35%,
+    rgba(255,255,255,0) 42%,
+    rgba(255,255,255,.3) 50%,
+    rgba(255,255,255,0) 58%,
+    transparent 65%
+  );
+  animation-delay: 4.8s;
+  animation-duration: 1.6s;
+}
+@keyframes rankupLightSweep{
+  0%{ opacity: 0; transform: translateX(0) skewX(-20deg); }
+  10%{ opacity: 1; }
+  100%{ opacity: 0; transform: translateX(400%) skewX(-20deg); }
 }
 
 /* The big tier title underneath */
@@ -6917,7 +7108,7 @@ h2.match-title{
   -webkit-background-clip:text; background-clip:text; color:transparent;
   filter: drop-shadow(0 0 30px var(--rank-color, var(--amber)));
   opacity: 0;
-  animation: rankupTitleIn 1s 2.6s cubic-bezier(.2,1.8,.4,1) forwards;
+  animation: rankupTitleIn 1s 2.8s cubic-bezier(.2,1.8,.4,1) forwards;
   margin: 8px 0 0;
 }
 @keyframes rankupTitleIn{
@@ -6934,7 +7125,7 @@ h2.match-title{
   color: var(--text-dim);
   font-weight: 600;
   opacity: 0;
-  animation: rankupFadeUp 1s 3s forwards;
+  animation: rankupFadeUp 1s 3.2s forwards;
 }
 @keyframes rankupFadeUp{
   from{ opacity: 0; transform: translateY(8px); }
@@ -6949,7 +7140,7 @@ h2.match-title{
   text-transform:uppercase;
   font-weight: 600;
   opacity: 0;
-  animation: rankupFadeUp 1s 3.4s forwards;
+  animation: rankupFadeUp 1s 3.6s forwards;
 }
 
 .rankup-continue-hint{
@@ -6960,7 +7151,7 @@ h2.match-title{
   text-transform:uppercase;
   margin-top:24px;
   opacity: 0;
-  animation: rankupFadeUp 1s 4.2s forwards;
+  animation: rankupFadeUp 1s 4.4s forwards;
 }
 .rankup-continue-hint kbd{
   background: rgba(255,255,255,.06);
@@ -6975,11 +7166,10 @@ h2.match-title{
 }
 
 @media (max-width: 600px){
-  .rankup-stage{ flex-direction: column; gap: 16px; }
-  .rankup-rank-slot{ width: auto; }
-  .rankup-arrow{ transform: rotate(90deg); }
-  .rankup-rank-icon{ width: 64px; height: 64px; }
-  .rankup-rank-icon.big{ width: 92px; height: 92px; }
+  .rankup-center-stage{ width: 240px; height: 240px; }
+  .rankup-old-icon{ width: 130px !important; height: 130px !important; }
+  .rankup-new-icon{ width: 170px !important; height: 170px !important; }
+  .rankup-sweep-wrap{ width: 180px; height: 180px; }
 }
 
 /* ============ MODALS ============ */
@@ -8401,37 +8591,41 @@ const FIREBASE_CONFIG = {
   <!-- Particle field -->
   <div class="rankup-particles" id="rankupParticles"></div>
 
+  <!-- Screen flash for the transition moment -->
+  <div class="rankup-flash" id="rankupFlash"></div>
+
   <div class="rankup-content">
-    <!-- Step 1 label -->
+    <!-- Top label — "PROMOTION" pill -->
     <div class="rankup-label" id="rankupLabel">PROMOTION</div>
 
-    <!-- Rank display — shows OLD first, then transitions to NEW -->
-    <div class="rankup-stage">
-      <!-- Old rank (left) -->
-      <div class="rankup-rank-slot old" id="rankupOldSlot">
-        <div class="rankup-rank-glow"></div>
-        <svg class="rankup-rank-icon" id="rankupOldIcon"></svg>
-        <div class="rankup-rank-name" id="rankupOldName">Bronze III</div>
+    <!-- BIG CENTRAL STAGE: old rank → shatters → new rank zooms in -->
+    <div class="rankup-center-stage">
+
+      <!-- OLD RANK (front center initially, then shatters away) -->
+      <div class="rankup-old-rank" id="rankupOldRank">
+        <div class="rankup-old-glow"></div>
+        <svg class="rankup-old-icon" id="rankupOldIcon" width="180" height="180"></svg>
+        <div class="rankup-old-tier" id="rankupOldName">Bronze III</div>
       </div>
 
-      <!-- Arrow / transition indicator -->
-      <div class="rankup-arrow" id="rankupArrow">
-        <svg width="40" height="40"><use href="#i-arrow-right"/></svg>
-      </div>
+      <!-- Shatter shards spawned by JS -->
+      <div class="rankup-shards" id="rankupShards"></div>
 
-      <!-- New rank (right, larger, with light sweep) -->
-      <div class="rankup-rank-slot new" id="rankupNewSlot">
-        <div class="rankup-rank-glow new-glow"></div>
-        <svg class="rankup-rank-icon big" id="rankupIcon"></svg>
-        <div class="rankup-light-sweep"></div>
-        <div class="rankup-rank-name" id="rankupTierName">Silver I</div>
+      <!-- NEW RANK (zooms in from depth) -->
+      <div class="rankup-new-rank" id="rankupNewRank">
+        <!-- Light sweep across the new icon -->
+        <div class="rankup-sweep-wrap">
+          <svg class="rankup-new-icon" id="rankupIcon" width="220" height="220"></svg>
+          <div class="rankup-light-sweep"></div>
+          <div class="rankup-light-sweep s2"></div>
+        </div>
+        <div class="rankup-new-tier" id="rankupTierName">Silver I</div>
       </div>
     </div>
 
     <!-- Big tier name underneath -->
     <h2 id="rankupRankName">SILVER</h2>
     <div class="rankup-sub" id="rankupSub">1100 RATING</div>
-
     <div class="rankup-from" id="rankupFrom">Promoted from Bronze III</div>
 
     <div class="rankup-continue-hint">
@@ -8524,6 +8718,30 @@ const FIREBASE_CONFIG = {
         <div class="mr-stat-info">
           <div class="mr-stat-val" id="mrStatH2H">—</div>
           <div class="mr-stat-lbl">vs this player</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY CHALLENGE PROGRESS -->
+    <div class="mr-daily" id="mrDailyChallenge">
+      <div class="mr-section-label">
+        <svg width="11" height="11"><use href="#i-zap"/></svg>
+        <span>DAILY CHALLENGE</span>
+        <span class="mr-daily-tag" id="mrDailyTag">+1 PROGRESS</span>
+      </div>
+      <div class="mr-daily-body">
+        <div class="mr-daily-info">
+          <div class="mr-daily-goal" id="mrDailyGoal">Win 3 ranked matches today</div>
+          <div class="mr-daily-progress-row">
+            <div class="mr-daily-bar">
+              <div class="mr-daily-bar-fill" id="mrDailyFill" style="width:0%"></div>
+            </div>
+            <div class="mr-daily-counter" id="mrDailyCounter">0/3</div>
+          </div>
+        </div>
+        <div class="mr-daily-reward" id="mrDailyReward">
+          <svg width="14" height="14"><use href="#i-trophy"/></svg>
+          <span>+50 ELO</span>
         </div>
       </div>
     </div>
@@ -10646,6 +10864,7 @@ function refreshDailyChallenge(){
 function updateDailyChallengeProgress(matchResult, roundDetails){
   // matchResult: 'win' | 'lose' | 'draw'
   // roundDetails: { wonRounds, withMoves: ['rock','paper','rock'], predictedCorrect: N }
+  state._dailyProgressGained = 0; // reset for this match
   if(state.isBotMatch) return;
   const data = getDailyChallenge();
   if(data.completed) return;
@@ -10678,6 +10897,7 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
       delta = (roundDetails?.withMoves || []).filter(m => m === 'scissors_win').length;
       break;
   }
+  state._dailyProgressGained = delta;
   data.progress += delta;
   if(data.progress >= c.goal && !data.completed){
     data.completed = true;
@@ -13420,24 +13640,32 @@ function showMatchResultScreen(result){
       const isDraw = h.isDraw || h.result === 'draw';
       r.className = 'mr-round ' + (isDraw ? 'draw' : (h.result === 'win' ? 'win' : 'lose'));
       r.style.animationDelay = (idx * 60) + 'ms';
-      const yourIcon = h.yourMove ? `<svg><use href="#i-${h.yourMove}"/></svg>` : '<span style="color:var(--text-faint); font-size:11px;">—</span>';
-      const oppIcon = h.oppMove ? `<svg><use href="#i-${h.oppMove}"/></svg>` : '<span style="color:var(--text-faint); font-size:11px;">—</span>';
+
+      const yourMoveLabel = h.yourMove ? h.yourMove.toUpperCase() : '—';
+      const oppMoveLabel = h.oppMove ? h.oppMove.toUpperCase() : (h.result === 'win' ? 'FORFEIT' : '—');
+      const yourIcon = h.yourMove
+        ? `<svg viewBox="0 0 64 64" width="20" height="20"><use href="#i-${h.yourMove}"/></svg>`
+        : '<span style="font-size:10px; color:var(--text-faint);">×</span>';
+      const oppIcon = h.oppMove
+        ? `<svg viewBox="0 0 64 64" width="20" height="20"><use href="#i-${h.oppMove}"/></svg>`
+        : '<span style="font-size:10px; color:var(--text-faint);">×</span>';
 
       const youWonRound = h.result === 'win';
       const oppWonRound = h.result === 'lose' || h.result === 'forfeit';
       const youCls = youWonRound ? 'win' : (isDraw ? 'draw' : '');
       const oppCls = oppWonRound ? 'win' : (isDraw ? 'draw' : '');
 
-      const resultText = isDraw ? 'DRAW' : (h.result === 'win' ? 'YOU' : (h.result === 'forfeit' ? 'FFT' : 'OPP'));
-      const roundLabel = isDraw ? `R${idx + 1}` : `R${idx + 1}`;
+      const resultText = isDraw ? 'DRAW' : (h.result === 'win' ? 'WIN' : (h.result === 'forfeit' ? 'FORFEIT' : 'LOSS'));
 
       r.innerHTML = `
-        <span class="mr-round-num">${roundLabel}</span>
+        <span class="mr-round-num">R${idx + 1}</span>
         <div class="mr-round-pick you ${youCls}">
           <span class="pick-icon">${yourIcon}</span>
+          <span class="pick-label">${yourMoveLabel}</span>
         </div>
         <span class="mr-round-vs">vs</span>
         <div class="mr-round-pick opp ${oppCls}">
+          <span class="pick-label">${oppMoveLabel}</span>
           <span class="pick-icon">${oppIcon}</span>
         </div>
         <span class="mr-round-result">${resultText}</span>
@@ -13447,6 +13675,42 @@ function showMatchResultScreen(result){
     if(history.length === 0){
       list.innerHTML = '<div style="text-align:center; padding:14px; color:var(--text-faint); font-size:12px; font-family:var(--font-mono);">No rounds played</div>';
     }
+  }
+
+  // DAILY CHALLENGE PROGRESS
+  try {
+    const dc = getDailyChallenge();
+    if(dc && dc.challenge){
+      setText('#mrDailyGoal', dc.challenge.text);
+      const pct = Math.min(100, (dc.progress / dc.challenge.goal) * 100);
+      const fill = $('#mrDailyFill');
+      if(fill){
+        fill.style.width = pct + '%';
+        fill.classList.toggle('complete', dc.completed);
+      }
+      setText('#mrDailyCounter', `${Math.min(dc.progress, dc.challenge.goal)}/${dc.challenge.goal}`);
+      // Tag — show "+1 PROGRESS" if this match contributed, "COMPLETE" if done, or "—" if no progress
+      const tagEl = $('#mrDailyTag');
+      const rewardEl = $('#mrDailyReward');
+      if(tagEl){
+        tagEl.classList.remove('complete','none');
+        if(dc.completed){
+          tagEl.textContent = '✓ COMPLETED';
+          tagEl.classList.add('complete');
+          if(rewardEl) rewardEl.classList.add('claimed');
+        } else if(state._dailyProgressGained > 0){
+          tagEl.textContent = `+${state._dailyProgressGained} PROGRESS`;
+        } else {
+          tagEl.textContent = 'NO PROGRESS';
+          tagEl.classList.add('none');
+        }
+      }
+    } else {
+      $('#mrDailyChallenge').style.display = 'none';
+    }
+  } catch(e){
+    console.warn('[result] daily challenge display failed', e);
+    $('#mrDailyChallenge').style.display = 'none';
   }
 
   // STATS
@@ -13645,12 +13909,12 @@ function showRankUp(oldRank, newRank){
   overlay.style.setProperty('--rank-color-2', newRank.color2 || newRank.color);
   overlay.style.setProperty('--rank-color-old', oldRank.color);
 
-  // OLD rank slot
+  // OLD rank — full size in center
   setRankIconEl($('#rankupOldIcon'), oldRank.id);
   $('#rankupOldIcon').style.color = oldRank.color;
   setText('#rankupOldName', oldRank.tierName);
 
-  // NEW rank slot
+  // NEW rank — zooms in after old shatters
   setRankIconEl($('#rankupIcon'), newRank.id);
   $('#rankupIcon').style.color = newRank.color;
   setText('#rankupTierName', newRank.tierName);
@@ -13660,31 +13924,74 @@ function showRankUp(oldRank, newRank){
   setText('#rankupSub', `${state.profile.rating} RATING`);
   setText('#rankupFrom', `Promoted from ${oldRank.tierName}`);
 
-  // Spawn particles around the new rank slot
+  // Spawn ambient particles around the stage
   const particles = $('#rankupParticles');
   if(particles){
     particles.innerHTML = '';
-    for(let i = 0; i < 24; i++){
+    for(let i = 0; i < 40; i++){
       const p = document.createElement('div');
       p.className = 'particle';
       p.style.left = (Math.random() * 100) + '%';
       p.style.top = (Math.random() * 100) + '%';
-      p.style.animationDelay = (2.5 + Math.random() * 2) + 's';
-      p.style.animationDuration = (2 + Math.random() * 2) + 's';
+      p.style.animationDelay = (2.5 + Math.random() * 3) + 's';
+      p.style.animationDuration = (2 + Math.random() * 2.5) + 's';
       particles.appendChild(p);
+    }
+  }
+
+  // Spawn SHATTER SHARDS — triangular fragments that fly outward when old rank breaks
+  const shards = $('#rankupShards');
+  if(shards){
+    shards.innerHTML = '';
+    const shardCount = 20;
+    for(let i = 0; i < shardCount; i++){
+      const sh = document.createElement('div');
+      sh.className = 'rankup-shard';
+      const angle = (i / shardCount) * 360 + (Math.random() * 20 - 10);
+      const dist = 180 + Math.random() * 120;
+      const size = 6 + Math.random() * 14;
+      const rotEnd = Math.random() * 720 - 360;
+      sh.style.setProperty('--shard-rot', angle + 'deg');
+      sh.style.setProperty('--shard-dist', dist + 'px');
+      sh.style.setProperty('--shard-rot-end', rotEnd + 'deg');
+      sh.style.width = size + 'px';
+      sh.style.height = size + 'px';
+      sh.style.background = oldRank.color;
+      sh.style.boxShadow = `0 0 10px ${oldRank.color}`;
+      // Slight delay variation for organic feel
+      sh.style.animationDelay = (1.9 + Math.random() * 0.15) + 's';
+      shards.appendChild(sh);
     }
   }
 
   overlay.classList.add('show');
 
-  // Choreographed bursts timed with the transition:
-  // - 2.4s: new rank appears
-  // - 3.2s: light sweep across new rank
-  // - 4.4s: second light sweep
+  // FORTNITE-STYLE CHOREOGRAPHY:
+  // 0.0s - PROMOTION pill + rays appear
+  // 0.0–1.0s - Old rank dramatic entrance (zoom + rotate)
+  // 1.0–1.9s - Old rank holds in place
+  // 1.9–2.5s - Old rank shatters into shards flying outward
+  // 2.0s - Screen flash (peak of transition)
+  // 2.2–3.4s - NEW rank zooms in from depth (small + blurred → full size)
+  // 3.4s - Light sweep across new icon
+  // 4.8s - Second light sweep
+  // 2.8s - Big tier title appears
   setTimeout(() => sfxRankUp(), 100);
-  setTimeout(() => bigBurst(newRank.color), 2400);
-  setTimeout(() => bigBurst('#ffffff'), 3000);
-  setTimeout(() => bigBurst(newRank.color2 || newRank.color), 3600);
+  // Initial whoosh when old rank lands
+  setTimeout(() => sfxReady && sfxReady(), 700);
+  // SHATTER moment burst (white flash)
+  setTimeout(() => bigBurst('#ffffff'), 2000);
+  setTimeout(() => bigBurst(oldRank.color), 2100);
+  // New rank arrival burst
+  setTimeout(() => bigBurst(newRank.color), 2700);
+  setTimeout(() => bigBurst(newRank.color2 || newRank.color), 3000);
+  // Light sweep follow-up
+  setTimeout(() => bigBurst('#ffffff'), 3400);
+
+  // After the new-rank entry animation settles, add .settled so it starts floating
+  setTimeout(() => {
+    $('#rankupNewRank')?.classList.add('settled');
+  }, 3500);
 
   // dismiss controls
   const dismiss = () => {
@@ -13697,10 +14004,10 @@ function showRankUp(oldRank, newRank){
   setTimeout(() => {
     overlay.addEventListener('click', dismiss);
     document.addEventListener('keydown', keydismiss);
-  }, 4500);
+  }, 4800);
 
-  // auto-dismiss after 9s if no input
-  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 9000);
+  // auto-dismiss after 10s if no input
+  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 10000);
 }
 
 // ============= CHAT =============
@@ -14707,44 +15014,71 @@ function replaceLucideIcon(svgEl){
   if(!lucideName) return; // keep custom icon (rock/paper/scissors/rank/google)
 
   const icons = getLucideIcons();
-  if(!icons) return;
-  // Lucide UMD exposes icons under PascalCase keys
-  const iconData = icons[lucidePascal(lucideName)];
+  if(!icons) return; // Lucide not loaded — keep inline symbol fallback
+
+  // Try multiple possible key formats
+  const pascal = lucidePascal(lucideName);
+  let iconData = icons[pascal] || icons[lucideName] || icons[ourName];
   if(!iconData) return;
 
-  // iconData format: [tag, attrs, children?] where children is array of [tag, attrs] arrays
-  // OR: { iconNode: [[tag, attrs], ...] } depending on version
-  const nodes = iconData.iconNode || (Array.isArray(iconData) && iconData[2]) || null;
-  if(!nodes) return;
+  // Lucide format variants
+  let nodes = null;
+  if(Array.isArray(iconData)){
+    nodes = iconData[2];
+  } else if(iconData.iconNode){
+    nodes = iconData.iconNode;
+  } else if(Array.isArray(iconData.children)){
+    nodes = iconData.children;
+  }
 
-  // Preserve any existing width/height/class on the wrapper svg
-  const w = svgEl.getAttribute('width');
-  const h = svgEl.getAttribute('height');
-  const cls = svgEl.getAttribute('class');
-  const style = svgEl.getAttribute('style');
-  const id = svgEl.getAttribute('id');
+  if(!nodes || !Array.isArray(nodes) || nodes.length === 0){
+    // No usable data — keep inline <use> fallback intact
+    return;
+  }
 
-  // Build child elements (Lucide ships nodes as ['line', {x1, x2, ...}], etc.)
+  // BUILD REPLACEMENT IN A FRAGMENT FIRST — only commit if successful
+  const fragment = document.createDocumentFragment();
+  let buildOk = true;
+  for(const node of nodes){
+    let tag, attrs;
+    if(Array.isArray(node)){
+      tag = node[0];
+      attrs = node[1] || {};
+    } else if(node && node.tag){
+      tag = node.tag;
+      attrs = node.attrs || {};
+    } else {
+      buildOk = false;
+      break;
+    }
+    try {
+      const child = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for(const [k, v] of Object.entries(attrs)){
+        if(k === 'key') continue;
+        child.setAttribute(k, v);
+      }
+      fragment.appendChild(child);
+    } catch(e){
+      buildOk = false;
+      break;
+    }
+  }
+
+  if(!buildOk || fragment.childNodes.length === 0){
+    // Build failed — keep inline <use> fallback intact, do NOT modify svgEl
+    return;
+  }
+
+  // Commit — preserve sizing attributes
+  const sw = svgEl.getAttribute('stroke-width');
   svgEl.innerHTML = '';
   svgEl.setAttribute('viewBox', '0 0 24 24');
   svgEl.setAttribute('fill', 'none');
   svgEl.setAttribute('stroke', 'currentColor');
-  svgEl.setAttribute('stroke-width', svgEl.getAttribute('stroke-width') || '2');
+  svgEl.setAttribute('stroke-width', sw || '2');
   svgEl.setAttribute('stroke-linecap', 'round');
   svgEl.setAttribute('stroke-linejoin', 'round');
-  if(w) svgEl.setAttribute('width', w);
-  if(h) svgEl.setAttribute('height', h);
-  if(cls) svgEl.setAttribute('class', cls);
-  if(style) svgEl.setAttribute('style', style);
-  if(id) svgEl.setAttribute('id', id);
-
-  for(const node of nodes){
-    const tag = node[0];
-    const attrs = node[1] || {};
-    const child = document.createElementNS('http://www.w3.org/2000/svg', tag);
-    for(const [k, v] of Object.entries(attrs)) child.setAttribute(k, v);
-    svgEl.appendChild(child);
-  }
+  svgEl.appendChild(fragment);
   svgEl.dataset.lucideIcon = lucideName;
   svgEl.dataset.lucideReplaced = '1';
 }
