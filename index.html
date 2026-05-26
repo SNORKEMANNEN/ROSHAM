@@ -409,6 +409,22 @@ header{
   background-size: cover;
   background-position: center;
 }
+.user-chip .av-wrap-mini{
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.user-chip .online-dot{
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--mint);
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 4px var(--mint);
+}
 .user-chip .rating{
   font-family:var(--font-mono);
   font-size:11px;
@@ -417,6 +433,41 @@ header{
   letter-spacing: .02em;
 }
 .user-chip .rank-icon{width:14px; height:14px;}
+
+/* ============ BUTTON LOADING STATE ============ */
+.btn.loading{
+  cursor: not-allowed;
+  opacity: .6;
+  position: relative;
+  pointer-events: none;
+}
+.btn.loading::after{
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+  margin-top: -6px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: btnSpin .6s linear infinite;
+}
+@keyframes btnSpin{ to { transform: rotate(360deg); } }
+
+/* Danger button variant */
+.btn-danger{
+  background: var(--coral);
+  color: #fff;
+  border-color: transparent;
+  font-weight: 600;
+  box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 4px 12px -4px var(--coral-glow);
+}
+.btn-danger:hover{
+  background: #ff4d6e;
+  box-shadow: 0 1px 0 rgba(255,255,255,.2) inset, 0 6px 16px -4px var(--coral-glow);
+}
 
 .btn{
   font-family:var(--font-body);
@@ -7204,6 +7255,170 @@ h2.match-title{
   from{ opacity: 0; transform: scale(.94) translateY(20px); }
   to{ opacity: 1; transform: scale(1) translateY(0); }
 }
+
+/* ============ SHORTCUTS MODAL ============ */
+.shortcuts-section{
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line-soft);
+}
+.shortcuts-section:first-of-type{ border-top: none; padding-top: 0; }
+.shortcuts-section-title{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-faint);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.shortcut-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.shortcut-row span{
+  margin-left: 4px;
+}
+.shortcut-row kbd, kbd.kbd-inline{
+  display: inline-block;
+  min-width: 22px;
+  text-align: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-bottom: 2px solid var(--line);
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ============ HISTORY MODAL ============ */
+.history-tabs{
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(0,0,0,.25);
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+.history-tabs button{
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 8px 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.history-tabs button:hover{ color: var(--text); background: rgba(255,255,255,.03); }
+.history-tabs button.active{
+  background: var(--surface-2);
+  color: var(--coral);
+}
+.history-list{
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.history-row{
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  font-size: 13px;
+  transition: all .15s;
+  cursor: pointer;
+}
+.history-row:hover{
+  background: rgba(255,255,255,.04);
+  border-color: var(--line);
+  transform: translateX(2px);
+}
+.history-row.win{ border-left: 3px solid var(--mint); }
+.history-row.lose{ border-left: 3px solid var(--coral); }
+.history-row.draw{ border-left: 3px solid var(--violet); }
+.history-row .h-result{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 5px;
+  min-width: 50px;
+  text-align: center;
+}
+.history-row.win .h-result{ background: rgba(34,211,163,.15); color: var(--mint); }
+.history-row.lose .h-result{ background: rgba(255,51,88,.15); color: var(--coral); }
+.history-row.draw .h-result{ background: rgba(155,123,255,.15); color: var(--violet); }
+.history-row .h-opp{
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.history-row .h-score{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: -.01em;
+}
+.history-row .h-delta{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 36px;
+  text-align: right;
+}
+.history-row .h-delta.pos{ color: var(--mint); }
+.history-row .h-delta.neg{ color: var(--coral); }
+.history-row .h-delta.zero{ color: var(--text-faint); }
+.history-row .h-time{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+}
+
+/* ============ CONFIRM MODAL ============ */
+.confirm-modal{
+  max-width: 420px;
+  text-align: center;
+}
+.confirm-modal h3{
+  font-size: 22px !important;
+}
+.confirm-actions{
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 20px;
+}
+.confirm-actions .btn{
+  min-width: 110px;
+  justify-content: center;
+}
+
 .modal::before{
   content: "";
   position: absolute;
@@ -7793,12 +8008,17 @@ h2.match-title{
     <div class="header-actions" id="headerActions">
       <button class="btn btn-ghost" id="helpBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg> How to play</button>
       <button class="btn" id="nextBtn" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-next"/></svg>Next<span class="key">N</span></button>
-      <div class="user-chip" id="userChip" style="display:none;" title="Your profile">
-        <div class="av" id="chipAv">?</div>
+      <div class="user-chip" id="userChip" style="display:none;" title="Click to open profile">
+        <div class="av-wrap-mini">
+          <div class="av" id="chipAv">?</div>
+          <span class="online-dot" id="chipOnlineDot"></span>
+        </div>
         <span id="chipName">—</span>
         <span class="rating" id="chipRating"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
       </div>
+      <button class="btn btn-ghost" id="historyBtn" style="padding:8px; display:none;" title="Match history (H)"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-clock"/></svg></button>
       <button class="btn btn-ghost" id="achievementsBtn" style="padding:8px; display:none;" title="Achievements"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg></button>
+      <button class="btn btn-ghost" id="shortcutsBtn" style="padding:8px;" title="Keyboard shortcuts (?)"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-zap"/></svg></button>
       <button class="btn btn-ghost" id="settingsBtn" style="padding:8px; display:none;" title="Settings"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-edit"/></svg></button>
       <button class="btn btn-ghost" id="muteBtn" style="padding:8px;" title="Toggle sound"><svg viewBox="0 0 24 24" width="14" height="14" id="muteIcon"><use href="#i-sound-on"/></svg></button>
       <button class="btn btn-ghost" id="signOutBtn" style="display:none; padding:8px;" title="Sign out"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-out"/></svg></button>
@@ -8789,6 +9009,76 @@ const FIREBASE_CONFIG = {
       <button class="extra-action" id="matchEndShare" title="Share result">
         <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-out"/></svg> Share
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- KEYBOARD SHORTCUTS MODAL -->
+<div class="modal-bg" id="shortcutsModal">
+  <div class="modal">
+    <button class="modal-close" data-close="shortcutsModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3>KEYBOARD SHORTCUTS</h3>
+    <p>Move faster with these hotkeys. Press <kbd class="kbd-inline">?</kbd> any time to open this list.</p>
+
+    <div class="shortcuts-section">
+      <div class="shortcuts-section-title">GLOBAL</div>
+      <div class="shortcut-row"><kbd>?</kbd> <span>Show this help</span></div>
+      <div class="shortcut-row"><kbd>M</kbd> <span>Toggle sound</span></div>
+      <div class="shortcut-row"><kbd>Esc</kbd> <span>Close modal</span></div>
+    </div>
+
+    <div class="shortcuts-section">
+      <div class="shortcuts-section-title">LANDING</div>
+      <div class="shortcut-row"><kbd>Space</kbd> <span>Find a stranger</span></div>
+      <div class="shortcut-row"><kbd>B</kbd> <span>Play vs bot</span></div>
+      <div class="shortcut-row"><kbd>C</kbd> <span>Open camera setup</span></div>
+    </div>
+
+    <div class="shortcuts-section">
+      <div class="shortcuts-section-title">IN GAME</div>
+      <div class="shortcut-row"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <span>Predict rock / paper / scissors</span></div>
+      <div class="shortcut-row"><kbd>L</kbd> <span>Leave match (forfeit)</span></div>
+      <div class="shortcut-row"><kbd>F</kbd> <span>Add opponent as friend</span></div>
+      <div class="shortcut-row"><kbd>N</kbd> <span>Next opponent</span></div>
+      <div class="shortcut-row"><kbd>Enter</kbd> <span>Focus chat input</span></div>
+    </div>
+
+    <div class="shortcuts-section">
+      <div class="shortcuts-section-title">EMOTES</div>
+      <div class="shortcut-row"><kbd>Q</kbd> <span>👋 Wave</span></div>
+      <div class="shortcut-row"><kbd>W</kbd> <span>🔥 Fire</span></div>
+      <div class="shortcut-row"><kbd>E</kbd> <span>😂 Laugh</span></div>
+      <div class="shortcut-row"><kbd>R</kbd> <span>🤝 GG</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MATCH HISTORY MODAL -->
+<div class="modal-bg" id="historyModal">
+  <div class="modal">
+    <button class="modal-close" data-close="historyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3>MATCH HISTORY</h3>
+    <p>Your last 20 ranked matches. Click a row to see details.</p>
+    <div class="history-tabs">
+      <button class="active" data-history-filter="all">All</button>
+      <button data-history-filter="win">Wins</button>
+      <button data-history-filter="lose">Losses</button>
+      <button data-history-filter="draw">Draws</button>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="side-empty">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<!-- GENERIC CONFIRM DIALOG -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal confirm-modal">
+    <h3 id="confirmTitle">Confirm action</h3>
+    <p id="confirmBody">Are you sure?</p>
+    <div class="confirm-actions">
+      <button class="btn btn-ghost" id="confirmCancelBtn">Cancel</button>
+      <button class="btn btn-primary" id="confirmOkBtn">Confirm</button>
     </div>
   </div>
 </div>
@@ -9977,6 +10267,7 @@ async function onAuthChanged(user){
   $('#userChip').style.display = '';
   const ab = $('#achievementsBtn'); if(ab) ab.style.display = '';
   const sb = $('#settingsBtn'); if(sb) sb.style.display = '';
+  const hb = $('#historyBtn'); if(hb) hb.style.display = '';
   setText('#chipName', state.profile.username);
   renderAvatar($('#chipAv'), state.profile);
   updateChipRating();
@@ -10183,23 +10474,30 @@ function setupAuthUI(){
     } catch(err){ showErr('#authError', friendlyError(err)); }
   });
   $('#signOutBtn').addEventListener('click', async () => {
-    cancelMatchmakingResources();
-    await teardownMatch();
-    if(state.user){
-      try { await deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
-      // also clean any zombie matches I'm part of
-      try {
-        const callerQ = await getDocs(query(collection(state.db, 'matches'), where('caller', '==', state.user.uid)));
-        const calleeQ = await getDocs(query(collection(state.db, 'matches'), where('callee', '==', state.user.uid)));
-        const ids = new Set();
-        callerQ.forEach(d => ids.add(d.id));
-        calleeQ.forEach(d => ids.add(d.id));
-        for(const id of ids){
-          try { await deleteDoc(doc(state.db, 'matches', id)); } catch(e){}
+    confirmDialog(
+      'Sign out?',
+      'You\'ll need to sign in again to play.',
+      async () => {
+        cancelMatchmakingResources();
+        await teardownMatch();
+        if(state.user){
+          try { await deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
+          // also clean any zombie matches I'm part of
+          try {
+            const callerQ = await getDocs(query(collection(state.db, 'matches'), where('caller', '==', state.user.uid)));
+            const calleeQ = await getDocs(query(collection(state.db, 'matches'), where('callee', '==', state.user.uid)));
+            const ids = new Set();
+            callerQ.forEach(d => ids.add(d.id));
+            calleeQ.forEach(d => ids.add(d.id));
+            for(const id of ids){
+              try { await deleteDoc(doc(state.db, 'matches', id)); } catch(e){}
+            }
+          } catch(e){}
         }
-      } catch(e){}
-    }
-    await signOut(state.auth);
+        await signOut(state.auth);
+      },
+      { okLabel: 'Sign out' }
+    );
   });
   $('#newUserForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -14682,19 +14980,7 @@ on('#matchEndAddFriend', 'click', async () => {
 });
 // NEW: Share result
 on('#matchEndShare', 'click', async () => {
-  const youWon = state.scoreYou > state.scoreOpp;
-  const draw = state.scoreYou === state.scoreOpp;
-  const verb = draw ? 'tied' : (youWon ? 'won' : 'lost');
-  const txt = `I just ${verb} a ROSHAM match ${state.scoreYou}-${state.scoreOpp}${state.isBotMatch ? ' vs a bot' : ''}! 🪨📄✂️`;
-  if(navigator.share){
-    try { await navigator.share({ title: 'ROSHAM', text: txt }); }
-    catch(e){ /* user cancelled */ }
-  } else {
-    try {
-      await navigator.clipboard.writeText(txt);
-      toast('Result copied to clipboard!', 'success');
-    } catch(e){ toast('Could not share', 'error'); }
-  }
+  copyMatchResult();
 });
 
 // Replace next button to handle both modes
@@ -14768,6 +15054,183 @@ async function refreshDebugInfo(){
 setInterval(() => { if($('#matchDebug')?.style.display === 'block') refreshDebugInfo(); }, 2000);
 on('#nextBtn', 'click', nextStranger);
 on('#helpBtn', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
+
+// NEW: Shortcuts button
+on('#shortcutsBtn', 'click', () => { const m = $('#shortcutsModal'); if(m) m.classList.add('show'); });
+
+// NEW: Match history button
+on('#historyBtn', 'click', openHistoryModal);
+
+// NEW: Click user chip → open stats modal (your full profile)
+on('#userChip', 'click', () => { try { openStatsModal(); } catch(e){ console.warn('[chip] stats failed', e); } });
+
+// ============= QoL: GENERIC CONFIRM DIALOG =============
+function confirmDialog(title, body, onOk, opts){
+  opts = opts || {};
+  const modal = $('#confirmModal');
+  if(!modal) return;
+  setText('#confirmTitle', title);
+  const bodyEl = $('#confirmBody');
+  if(bodyEl) bodyEl.textContent = body;
+
+  const okBtn = $('#confirmOkBtn');
+  const cancelBtn = $('#confirmCancelBtn');
+  if(opts.okLabel) okBtn.textContent = opts.okLabel;
+  else okBtn.textContent = 'Confirm';
+  if(opts.cancelLabel) cancelBtn.textContent = opts.cancelLabel;
+  else cancelBtn.textContent = 'Cancel';
+
+  // Style ok button: danger or primary
+  okBtn.className = 'btn ' + (opts.danger ? 'btn-danger' : 'btn-primary');
+
+  modal.classList.add('show');
+
+  const cleanup = () => {
+    modal.classList.remove('show');
+    okBtn.removeEventListener('click', okHandler);
+    cancelBtn.removeEventListener('click', cancelHandler);
+  };
+  const okHandler = () => { cleanup(); if(onOk) onOk(); };
+  const cancelHandler = () => { cleanup(); if(opts.onCancel) opts.onCancel(); };
+  okBtn.addEventListener('click', okHandler);
+  cancelBtn.addEventListener('click', cancelHandler);
+}
+
+// ============= QoL: MATCH HISTORY =============
+let _historyCache = null;
+let _historyFilter = 'all';
+
+async function openHistoryModal(){
+  const modal = $('#historyModal');
+  if(!modal) return;
+  modal.classList.add('show');
+  const list = $('#historyList');
+  if(list) list.innerHTML = '<div class="side-empty">Loading…</div>';
+  await loadHistory();
+  renderHistory();
+}
+
+async function loadHistory(){
+  if(!state.user || !state.db){
+    _historyCache = [];
+    return;
+  }
+  try {
+    const snap = await getDocs(query(
+      collection(state.db, 'matchHistory'),
+      where('participants', 'array-contains', state.user.uid),
+      orderBy('endedAt', 'desc'),
+      limit(20)
+    ));
+    _historyCache = [];
+    snap.forEach(d => {
+      const m = d.data();
+      const isMe = m.winner === state.user.uid;
+      const isDraw = !m.winner || m.winner === 'draw';
+      const oppUid = (m.participants || []).find(u => u !== state.user.uid);
+      const oppName = oppUid === m.callerUid ? (m.callerName || '?') : (m.calleeName || '?');
+      const yourScore = m.callerUid === state.user.uid ? (m.callerScore || 0) : (m.calleeScore || 0);
+      const oppScore = m.callerUid === state.user.uid ? (m.calleeScore || 0) : (m.callerScore || 0);
+      const delta = m.callerUid === state.user.uid ? (m.callerDelta || 0) : (m.calleeDelta || 0);
+      _historyCache.push({
+        result: isDraw ? 'draw' : (isMe ? 'win' : 'lose'),
+        opp: oppName,
+        yourScore, oppScore, delta,
+        endedAt: m.endedAt?.toMillis ? m.endedAt.toMillis() : 0,
+        id: d.id
+      });
+    });
+  } catch(e){
+    console.warn('[history] load failed', e);
+    _historyCache = [];
+  }
+}
+
+function renderHistory(){
+  const list = $('#historyList');
+  if(!list) return;
+  let items = _historyCache || [];
+  if(_historyFilter !== 'all') items = items.filter(m => m.result === _historyFilter);
+  if(items.length === 0){
+    list.innerHTML = '<div class="side-empty">No matches yet — go play some!</div>';
+    return;
+  }
+  list.innerHTML = '';
+  items.forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'history-row ' + m.result;
+    const resultText = m.result === 'win' ? 'WIN' : m.result === 'lose' ? 'LOSS' : 'DRAW';
+    const deltaCls = m.delta > 0 ? 'pos' : m.delta < 0 ? 'neg' : 'zero';
+    const deltaText = m.delta > 0 ? `+${m.delta}` : m.delta === 0 ? '±0' : `${m.delta}`;
+    row.innerHTML = `
+      <span class="h-result">${resultText}</span>
+      <span class="h-opp">@${escapeHTML(m.opp || 'unknown')}</span>
+      <span class="h-score">${m.yourScore}–${m.oppScore}</span>
+      <span class="h-delta ${deltaCls}">${deltaText}</span>
+      <span class="h-time">${timeAgo({ toMillis: () => m.endedAt })}</span>
+    `;
+    list.appendChild(row);
+  });
+}
+
+// History tab switching
+document.querySelectorAll('[data-history-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-history-filter]').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    _historyFilter = btn.dataset.historyFilter;
+    renderHistory();
+  });
+});
+
+// ============= QoL: COPY MATCH RESULT TO CLIPBOARD =============
+function copyMatchResult(){
+  if(!state._matchRoundHistory || state._matchRoundHistory.length === 0) return;
+  const opp = state.oppProfile?.username || (state.isBotMatch ? 'roshamBot' : 'stranger');
+  const result = state.scoreYou > state.scoreOpp ? 'WIN' : state.scoreYou < state.scoreOpp ? 'LOSS' : 'DRAW';
+  const lines = [
+    `🪨📄✂️ ROSHAM — ${result}`,
+    `vs @${opp}`,
+    `Score: ${state.scoreYou}–${state.scoreOpp}`,
+    ''
+  ];
+  state._matchRoundHistory.forEach((h, idx) => {
+    const emoji = h.yourMove === 'rock' ? '✊' : h.yourMove === 'paper' ? '✋' : h.yourMove === 'scissors' ? '✌️' : '❓';
+    const oppEmoji = h.oppMove === 'rock' ? '✊' : h.oppMove === 'paper' ? '✋' : h.oppMove === 'scissors' ? '✌️' : '❓';
+    const res = h.isDraw ? 'DRAW' : h.result === 'win' ? 'WIN' : 'LOSS';
+    lines.push(`R${idx + 1}: ${emoji} vs ${oppEmoji} → ${res}`);
+  });
+  if(state._lastMatchDelta){
+    lines.push('');
+    lines.push(`ELO: ${state._lastMatchDelta > 0 ? '+' : ''}${state._lastMatchDelta}`);
+  }
+  lines.push('');
+  lines.push('Play at rosham.live');
+  const text = lines.join('\n');
+  try {
+    navigator.clipboard.writeText(text).then(() => {
+      toast('Match result copied!', 'success');
+    });
+  } catch(e){
+    toast('Copy failed', 'error');
+  }
+}
+
+// ============= QoL: BUTTON LOADING STATES =============
+function setBtnLoading(btn, loading, originalText){
+  if(!btn) return;
+  if(loading){
+    btn.disabled = true;
+    btn.dataset.origText = btn.textContent;
+    btn.classList.add('loading');
+  } else {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    if(originalText) btn.textContent = originalText;
+    else if(btn.dataset.origText) btn.textContent = btn.dataset.origText;
+  }
+}
+
 document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
 });
@@ -14779,22 +15242,48 @@ document.addEventListener('keydown', (e) => {
   try {
     if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn')?.click(); }
     if(state.screen === 'landing' && e.code === 'KeyB'){ e.preventDefault(); $('#botBtn')?.click(); }
+    // NEW: C = Camera setup on landing
+    if(state.screen === 'landing' && e.code === 'KeyC'){ e.preventDefault(); $('#cameraSetupBtn')?.click(); }
     if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStrangerOrBot(); }
     if(e.code === 'KeyM'){ e.preventDefault(); $('#muteBtn')?.click(); }
-    // NEW: Quick predictions during game (1=Rock, 2=Paper, 3=Scissors)
+    // Quick predictions during game (1=Rock, 2=Paper, 3=Scissors)
     if(state.screen === 'game' && state.phase === 'idle'){
       if(e.code === 'Digit1'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=rock]')?.click(); }
       if(e.code === 'Digit2'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=paper]')?.click(); }
       if(e.code === 'Digit3'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=scissors]')?.click(); }
     }
-    // NEW: L = Leave match (forfeit)
-    if(state.screen === 'game' && e.code === 'KeyL'){ e.preventDefault(); forfeitMatch(); }
-    // NEW: F = Send friend request to opp
+    // NEW: Emote shortcuts in-game (Q W E R)
+    if(state.screen === 'game'){
+      if(e.code === 'KeyQ'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="wave"]')?.click(); }
+      if(e.code === 'KeyW'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="fire"]')?.click(); }
+      if(e.code === 'KeyE'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="laugh"]')?.click(); }
+      if(e.code === 'KeyR'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="gg"]')?.click(); }
+    }
+    // L = Leave match (forfeit) — now with confirm
+    if(state.screen === 'game' && e.code === 'KeyL'){
+      e.preventDefault();
+      confirmDialog(
+        'Forfeit match?',
+        'Leaving counts as a loss and may cost you ELO. Are you sure?',
+        () => forfeitMatch(),
+        { danger: true, okLabel: 'Forfeit' }
+      );
+    }
+    // F = Send friend request to opp
     if(state.screen === 'game' && e.code === 'KeyF'){ e.preventDefault(); $('#addFriendInGameBtn')?.click(); }
-    // NEW: R = Report opp
-    if(state.screen === 'game' && e.code === 'KeyR'){ e.preventDefault(); $('#reportBtn')?.click(); }
-    // NEW: ? = Open help
-    if(e.code === 'Slash' && e.shiftKey){ e.preventDefault(); $('#helpBtn')?.click(); }
+    // NEW: Enter on game screen = focus chat
+    if(state.screen === 'game' && e.code === 'Enter' && !e.shiftKey){
+      const chatInput = document.querySelector('#dockChatInput, #chatInput');
+      if(chatInput){ e.preventDefault(); chatInput.focus(); }
+    }
+    // ? = Open keyboard shortcuts (UPDATED — opens shortcutsModal not helpModal)
+    if(e.code === 'Slash' && e.shiftKey){
+      e.preventDefault();
+      const m = $('#shortcutsModal');
+      if(m) m.classList.add('show');
+    }
+    // NEW: H = Match history
+    if(state.screen === 'landing' && e.code === 'KeyH'){ e.preventDefault(); openHistoryModal(); }
     if(e.code === 'Escape'){
       // close any open modal
       const open = document.querySelector('.modal-bg.show');
@@ -14925,7 +15414,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.2 — FORTNITE RANKUP', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.3 — QOL UPDATE', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= LUCIDE ICON BRIDGE =============
 // Internal icon name → Lucide kebab-case name. Rock/paper/scissors and rank icons
