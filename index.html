@@ -6644,124 +6644,342 @@ h2.match-title{
 /* ============ RANK UP OVERLAY ============ */
 .rankup-overlay{
   position:fixed; inset:0;
-  background: radial-gradient(circle at center, rgba(255,61,104,.4), rgba(11,8,18,.95) 70%);
+  background:
+    radial-gradient(circle at center, rgba(0,0,0,.5), rgba(0,0,0,.95) 70%),
+    rgba(8,7,13,.98);
   display:none;
   align-items:center; justify-content:center;
   z-index:500;
   overflow:hidden;
 }
-.rankup-overlay.show{display:flex; animation: fadeIn .3s;}
+.rankup-overlay.show{display:flex; animation: fadeIn .4s;}
 
-.rankup-overlay .bg-rays{
-  position:absolute; inset:0;
+/* Animated rays — two layers spinning opposite directions */
+.rankup-rays{
+  position:absolute;
+  inset:-50%;
   background: conic-gradient(from 0deg at 50% 50%,
-    transparent 0deg, rgba(255,255,255,.04) 6deg,
-    transparent 12deg, transparent 30deg,
-    rgba(255,255,255,.06) 36deg, transparent 42deg,
-    transparent 60deg, rgba(255,255,255,.04) 66deg,
-    transparent 72deg, transparent 90deg,
-    rgba(255,255,255,.06) 96deg, transparent 102deg,
-    transparent 120deg, rgba(255,255,255,.04) 126deg,
-    transparent 132deg, transparent 150deg,
-    rgba(255,255,255,.06) 156deg, transparent 162deg,
-    transparent 180deg, rgba(255,255,255,.04) 186deg,
-    transparent 192deg, transparent 210deg,
-    rgba(255,255,255,.06) 216deg, transparent 222deg,
-    transparent 240deg, rgba(255,255,255,.04) 246deg,
-    transparent 252deg, transparent 270deg,
-    rgba(255,255,255,.06) 276deg, transparent 282deg,
-    transparent 300deg, rgba(255,255,255,.04) 306deg,
-    transparent 312deg, transparent 330deg,
-    rgba(255,255,255,.06) 336deg, transparent 342deg
+    transparent 0deg, var(--rank-color, var(--amber)) 4deg,
+    transparent 8deg, transparent 30deg,
+    var(--rank-color, var(--amber)) 34deg, transparent 38deg,
+    transparent 60deg, var(--rank-color, var(--amber)) 64deg,
+    transparent 68deg, transparent 90deg,
+    var(--rank-color, var(--amber)) 94deg, transparent 98deg,
+    transparent 120deg, var(--rank-color, var(--amber)) 124deg,
+    transparent 128deg, transparent 150deg,
+    var(--rank-color, var(--amber)) 154deg, transparent 158deg,
+    transparent 180deg, var(--rank-color, var(--amber)) 184deg,
+    transparent 188deg, transparent 210deg,
+    var(--rank-color, var(--amber)) 214deg, transparent 218deg,
+    transparent 240deg, var(--rank-color, var(--amber)) 244deg,
+    transparent 248deg, transparent 270deg,
+    var(--rank-color, var(--amber)) 274deg, transparent 278deg,
+    transparent 300deg, var(--rank-color, var(--amber)) 304deg,
+    transparent 308deg, transparent 330deg,
+    var(--rank-color, var(--amber)) 334deg, transparent 338deg
   );
-  animation: spinRays 14s linear infinite;
-  opacity:.85;
+  animation: rankupSpinRays 18s linear infinite;
+  opacity:.18;
+  filter: blur(2px);
+  mask-image: radial-gradient(ellipse 60% 60% at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at center, black 30%, transparent 80%);
 }
-@keyframes spinRays{to{transform:rotate(360deg);}}
+.rankup-rays.r2{
+  animation: rankupSpinRays 24s linear infinite reverse;
+  opacity:.12;
+  transform: scale(1.2);
+}
+@keyframes rankupSpinRays{to{transform:rotate(360deg);}}
+
+/* Particle field — uses pre-positioned dots */
+.rankup-particles{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.rankup-particles .particle{
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--rank-color, var(--amber));
+  box-shadow: 0 0 6px var(--rank-color, var(--amber));
+  opacity: 0;
+  animation: rankupParticle 3s ease-out infinite;
+}
+@keyframes rankupParticle{
+  0%{ opacity: 0; transform: translateY(20px) scale(0); }
+  20%{ opacity: 1; transform: translateY(0) scale(1); }
+  100%{ opacity: 0; transform: translateY(-100px) scale(.3); }
+}
 
 .rankup-content{
   position:relative;
-  display:flex; flex-direction:column; align-items:center; gap:24px;
+  display:flex; flex-direction:column; align-items:center; gap:18px;
   text-align:center;
   padding:40px 30px;
-  max-width:600px;
+  max-width:760px;
+  z-index: 2;
 }
-.rankup-overlay .label{
+.rankup-label{
   font-family:var(--font-mono);
-  font-size:14px; letter-spacing:.4em;
-  color:#fff; opacity:.6;
+  font-size:11px; letter-spacing:.4em;
+  color:#fff; opacity:.55;
   text-transform:uppercase;
-  animation: rankFade 1s .2s both;
+  font-weight: 700;
+  padding: 6px 16px;
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 999px;
+  background: rgba(0,0,0,.3);
+  animation: rankupLabelIn 1s .1s both;
 }
+@keyframes rankupLabelIn{
+  from{opacity:0; transform: translateY(-12px);}
+  to{opacity:.7; transform:none;}
+}
+
+/* STAGE — old rank → arrow → new rank */
+.rankup-stage{
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin: 16px 0 8px;
+}
+
+/* Slot — wraps each rank */
+.rankup-rank-slot{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 140px;
+}
+.rankup-rank-slot.old{
+  animation: rankupOldFade 2s 2.4s forwards;
+  /* slot starts visible, fades after the transition */
+}
+@keyframes rankupOldFade{
+  0%{ opacity: 1; transform: scale(1); filter: blur(0); }
+  100%{ opacity: .3; transform: scale(.85); filter: blur(2px); }
+}
+.rankup-rank-slot.new{
+  opacity: 0;
+  animation: rankupNewAppear 1s 2.3s cubic-bezier(.2,1.8,.4,1) forwards;
+}
+@keyframes rankupNewAppear{
+  0%{ opacity: 0; transform: scale(.4) rotate(-20deg); }
+  60%{ opacity: 1; transform: scale(1.15) rotate(4deg); }
+  100%{ opacity: 1; transform: scale(1) rotate(0); }
+}
+
+/* Rank glow halo */
+.rankup-rank-glow{
+  position: absolute;
+  inset: -20px -20px 30px -20px;
+  border-radius: 50%;
+  filter: blur(30px);
+  opacity: .5;
+  z-index: 0;
+}
+.rankup-rank-slot.old .rankup-rank-glow{
+  background: var(--rank-color-old, var(--text-faint));
+  opacity: .25;
+}
+.rankup-rank-slot.new .rankup-rank-glow.new-glow{
+  background: var(--rank-color, var(--amber));
+  opacity: 0;
+  animation: rankupGlowIn 1.2s 2.5s ease-out forwards, rankupGlowPulse 2s 3.7s ease-in-out infinite;
+}
+@keyframes rankupGlowIn{
+  from{ opacity: 0; transform: scale(.6); }
+  to{ opacity: .7; transform: scale(1); }
+}
+@keyframes rankupGlowPulse{
+  0%, 100%{ opacity: .5; transform: scale(1); }
+  50%{ opacity: .8; transform: scale(1.1); }
+}
+
+/* Rank icons */
+.rankup-rank-icon{
+  width: 80px;
+  height: 80px;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.5));
+}
+.rankup-rank-icon.big{
+  width: 120px;
+  height: 120px;
+}
+.rankup-rank-slot.old .rankup-rank-icon{
+  color: var(--rank-color-old, var(--text-faint));
+}
+.rankup-rank-slot.new .rankup-rank-icon{
+  color: var(--rank-color, var(--amber));
+  animation: rankupIconFloat 3s 3s ease-in-out infinite;
+}
+@keyframes rankupIconFloat{
+  0%, 100%{ transform: translateY(0); }
+  50%{ transform: translateY(-4px); }
+}
+
+/* LIGHT SWEEP — diagonal white shimmer that crosses the new rank icon */
+.rankup-light-sweep{
+  position: absolute;
+  top: -20%;
+  left: -50%;
+  width: 60%;
+  height: 140%;
+  background: linear-gradient(115deg,
+    transparent 30%,
+    rgba(255,255,255,.0) 40%,
+    rgba(255,255,255,.4) 50%,
+    rgba(255,255,255,.0) 60%,
+    transparent 70%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation: rankupLightSweep 2s 3.2s ease-out forwards;
+}
+@keyframes rankupLightSweep{
+  0%{ opacity: 0; transform: translateX(-100%) skewX(-20deg); }
+  20%{ opacity: 1; }
+  100%{ opacity: 0; transform: translateX(300%) skewX(-20deg); }
+}
+/* second sweep right after the first */
+.rankup-rank-slot.new::after{
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -50%;
+  width: 50%;
+  height: 140%;
+  background: linear-gradient(115deg,
+    transparent 30%,
+    rgba(255,255,255,.0) 40%,
+    rgba(255,255,255,.25) 50%,
+    rgba(255,255,255,.0) 60%,
+    transparent 70%
+  );
+  transform: skewX(-20deg);
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  animation: rankupLightSweep 1.6s 4.4s ease-out forwards;
+}
+
+.rankup-rank-name{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.rankup-rank-slot.old .rankup-rank-name{
+  color: var(--text-faint);
+}
+
+/* Arrow between ranks */
+.rankup-arrow{
+  display: grid;
+  place-items: center;
+  color: var(--text-faint);
+  opacity: 0;
+  animation: rankupArrowIn 1s 1.5s ease-out forwards, rankupArrowSwoosh .6s 2s cubic-bezier(.2,1.8,.4,1);
+}
+@keyframes rankupArrowIn{
+  from{ opacity: 0; transform: translateX(-20px); }
+  to{ opacity: .6; transform: translateX(0); }
+}
+@keyframes rankupArrowSwoosh{
+  0%{ transform: translateX(0) scale(1); color: var(--text-faint); }
+  50%{ transform: translateX(8px) scale(1.4); color: var(--rank-color, var(--amber)); filter: drop-shadow(0 0 12px var(--rank-color)); }
+  100%{ transform: translateX(0) scale(1); color: var(--text-faint); }
+}
+.rankup-arrow svg{
+  width: 32px;
+  height: 32px;
+}
+
+/* The big tier title underneath */
 .rankup-overlay h2{
   font-family:var(--font-display);
   font-stretch:55%; font-weight:800;
-  font-size: clamp(72px, 12vw, 160px);
-  line-height:.85;
-  letter-spacing:-.05em;
+  font-size: clamp(56px, 10vw, 120px);
+  line-height:.9;
+  letter-spacing:-.04em;
   text-transform:uppercase;
   background: linear-gradient(180deg, #fff, var(--rank-color, var(--amber)));
   -webkit-background-clip:text; background-clip:text; color:transparent;
   filter: drop-shadow(0 0 30px var(--rank-color, var(--amber)));
-  animation: rankSlam 1s cubic-bezier(.2,1.8,.4,1) both;
+  opacity: 0;
+  animation: rankupTitleIn 1s 2.6s cubic-bezier(.2,1.8,.4,1) forwards;
+  margin: 8px 0 0;
 }
-@keyframes rankSlam{
-  0%{transform: scale(3) rotate(-8deg); opacity:0; filter: blur(20px) drop-shadow(0 0 0 transparent);}
-  40%{transform: scale(.92) rotate(2deg); opacity:1; filter: blur(0) drop-shadow(0 0 40px var(--rank-color));}
-  70%{transform: scale(1.03) rotate(-1deg);}
-  100%{transform: scale(1) rotate(0); opacity:1; filter: blur(0) drop-shadow(0 0 30px var(--rank-color));}
+@keyframes rankupTitleIn{
+  0%{ opacity: 0; transform: scale(.6) translateY(20px); filter: blur(8px) drop-shadow(0 0 0 transparent); }
+  60%{ opacity: 1; transform: scale(1.05) translateY(0); filter: blur(0) drop-shadow(0 0 50px var(--rank-color)); }
+  100%{ opacity: 1; transform: scale(1) translateY(0); filter: blur(0) drop-shadow(0 0 30px var(--rank-color)); }
 }
-@keyframes rankFade{
-  from{opacity:0; transform: translateY(-10px);}
-  to{opacity:.6; transform:none;}
+
+.rankup-sub{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 600;
+  opacity: 0;
+  animation: rankupFadeUp 1s 3s forwards;
 }
-.rankup-overlay .new-rank-badge{
-  display:flex; align-items:center; gap:14px;
-  padding:16px 26px;
-  border-radius:18px;
-  background: linear-gradient(180deg, rgba(255,255,255,.1), rgba(255,255,255,.02));
-  border:2px solid var(--rank-color, var(--amber));
-  box-shadow: 0 0 60px var(--rank-color, var(--amber)), inset 0 1px 0 rgba(255,255,255,.2);
-  animation: rankBadge 1s .4s cubic-bezier(.2,1.6,.4,1) both;
+@keyframes rankupFadeUp{
+  from{ opacity: 0; transform: translateY(8px); }
+  to{ opacity: 1; transform: none; }
 }
-@keyframes rankBadge{
-  0%{transform: scale(0) rotate(-180deg); opacity:0;}
-  60%{transform: scale(1.15) rotate(10deg); opacity:1;}
-  100%{transform: scale(1) rotate(0);}
-}
-.rankup-overlay .new-rank-badge svg{
-  width:48px; height:48px;
-  color: var(--rank-color);
-  filter: drop-shadow(0 0 8px var(--rank-color));
-}
-.rankup-overlay .new-rank-badge .rname{
-  font-family:var(--font-display); font-stretch:65%; font-weight:700;
-  font-size:36px;
-  text-transform:uppercase;
-  letter-spacing:-.02em;
-  color:#fff;
-}
-.rankup-overlay .new-rank-badge .rtier{
-  font-family:var(--font-mono); font-size:14px;
-  color:var(--text-dim);
-  margin-top:-2px;
-}
-.rankup-overlay .promotion-from{
-  font-family:var(--font-mono);
-  font-size:13px;
-  color:var(--text-dim);
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  animation: rankFade 1s .6s both;
-}
-.rankup-overlay .continue-hint{
+
+.rankup-from{
   font-family:var(--font-mono);
   font-size:11px;
   color:var(--text-faint);
-  letter-spacing:.1em;
+  letter-spacing:.16em;
   text-transform:uppercase;
-  margin-top:20px;
-  animation: rankFade 1s 1.2s both;
+  font-weight: 600;
+  opacity: 0;
+  animation: rankupFadeUp 1s 3.4s forwards;
+}
+
+.rankup-continue-hint{
+  font-family:var(--font-mono);
+  font-size:11px;
+  color:var(--text-faint);
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  margin-top:24px;
+  opacity: 0;
+  animation: rankupFadeUp 1s 4.2s forwards;
+}
+.rankup-continue-hint kbd{
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin: 0 4px;
+}
+
+@media (max-width: 600px){
+  .rankup-stage{ flex-direction: column; gap: 16px; }
+  .rankup-rank-slot{ width: auto; }
+  .rankup-arrow{ transform: rotate(90deg); }
+  .rankup-rank-icon{ width: 64px; height: 64px; }
+  .rankup-rank-icon.big{ width: 92px; height: 92px; }
 }
 
 /* ============ MODALS ============ */
@@ -9119,6 +9337,9 @@ function setRankIconEl(el, rankId){
   const r = RANKS.find(x => x.id === rankId);
   el.innerHTML = '';
   if(!r) return;
+  // CRITICAL: SVG must have viewBox so width/height scale correctly,
+  // otherwise the icon renders at its natural size (huge!)
+  if(!el.getAttribute('viewBox')) el.setAttribute('viewBox', '0 0 24 24');
   const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
   use.setAttribute('href', '#' + r.icon);
   el.appendChild(use);
@@ -13418,37 +13639,68 @@ let updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
 // ============= RANK UP =============
 function showRankUp(oldRank, newRank){
   const overlay = $('#rankupOverlay');
-  setText('#rankupRankName', newRank.name.toUpperCase());
-  $('#rankupRankName').style.setProperty('--rank-color', newRank.color);
-  $('#rankupBadge').style.setProperty('--rank-color', newRank.color);
+
+  // Set rank color variables — drives the entire animation palette
+  overlay.style.setProperty('--rank-color', newRank.color);
+  overlay.style.setProperty('--rank-color-2', newRank.color2 || newRank.color);
+  overlay.style.setProperty('--rank-color-old', oldRank.color);
+
+  // OLD rank slot
+  setRankIconEl($('#rankupOldIcon'), oldRank.id);
+  $('#rankupOldIcon').style.color = oldRank.color;
+  setText('#rankupOldName', oldRank.tierName);
+
+  // NEW rank slot
   setRankIconEl($('#rankupIcon'), newRank.id);
   $('#rankupIcon').style.color = newRank.color;
-  $('#rankupIcon').style.filter = `drop-shadow(0 0 8px ${newRank.color})`;
-  setText('#rankupTierName', newRank.tierName.toUpperCase());
+  setText('#rankupTierName', newRank.tierName);
+
+  // Big title
+  setText('#rankupRankName', newRank.name.toUpperCase());
   setText('#rankupSub', `${state.profile.rating} RATING`);
-  setText('#rankupFrom', `from ${oldRank.tierName}`);
+  setText('#rankupFrom', `Promoted from ${oldRank.tierName}`);
+
+  // Spawn particles around the new rank slot
+  const particles = $('#rankupParticles');
+  if(particles){
+    particles.innerHTML = '';
+    for(let i = 0; i < 24; i++){
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.top = (Math.random() * 100) + '%';
+      p.style.animationDelay = (2.5 + Math.random() * 2) + 's';
+      p.style.animationDuration = (2 + Math.random() * 2) + 's';
+      particles.appendChild(p);
+    }
+  }
+
   overlay.classList.add('show');
 
-  // confetti bursts in rank color
-  setTimeout(() => bigBurst(newRank.color), 200);
-  setTimeout(() => bigBurst(newRank.color2), 500);
-  setTimeout(() => bigBurst('#ffffff'), 800);
-  sfxRankUp();
+  // Choreographed bursts timed with the transition:
+  // - 2.4s: new rank appears
+  // - 3.2s: light sweep across new rank
+  // - 4.4s: second light sweep
+  setTimeout(() => sfxRankUp(), 100);
+  setTimeout(() => bigBurst(newRank.color), 2400);
+  setTimeout(() => bigBurst('#ffffff'), 3000);
+  setTimeout(() => bigBurst(newRank.color2 || newRank.color), 3600);
 
-  // dismiss on click
+  // dismiss controls
   const dismiss = () => {
     overlay.classList.remove('show');
     overlay.removeEventListener('click', dismiss);
     document.removeEventListener('keydown', keydismiss);
   };
   const keydismiss = (e) => { if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); } };
+  // Wait until the animation has played before letting them dismiss
   setTimeout(() => {
     overlay.addEventListener('click', dismiss);
     document.addEventListener('keydown', keydismiss);
-  }, 800);
+  }, 4500);
 
-  // auto-dismiss after 6s if no click
-  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 6000);
+  // auto-dismiss after 9s if no input
+  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 9000);
 }
 
 // ============= CHAT =============
@@ -14363,7 +14615,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.0 — LUCIDE ICONS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.1 — MATCH & RANKUP', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= LUCIDE ICON BRIDGE =============
 // Internal icon name → Lucide kebab-case name. Rock/paper/scissors and rank icons
