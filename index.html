@@ -263,6 +263,49 @@ html{ scroll-behavior: smooth; }
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='.85'/></svg>");
 }
 
+/* ============ LUCIDE ICON ANIMATIONS ============
+ * Add data-anim="spin|pulse|bounce|wiggle|ping" to any svg or class
+ * .anim-spin etc. for arbitrary elements
+ */
+[data-anim="spin"], .anim-spin{ animation: lucideSpin 1.6s linear infinite; }
+[data-anim="pulse"], .anim-pulse{ animation: lucidePulse 1.6s ease-in-out infinite; }
+[data-anim="bounce"], .anim-bounce{ animation: lucideBounce 1.2s ease-in-out infinite; }
+[data-anim="wiggle"], .anim-wiggle{ animation: lucideWiggle 1.8s ease-in-out infinite; }
+[data-anim="ping"], .anim-ping{ animation: lucidePing 1.6s ease-out infinite; }
+[data-anim="flicker"], .anim-flicker{ animation: lucideFlicker 1.4s ease-in-out infinite; }
+[data-anim="bot-blink"], .anim-bot-blink{ animation: lucideBotBlink 3.2s steps(1) infinite; }
+[data-anim="zap"], .anim-zap{ animation: lucideZap 2.8s ease-in-out infinite; }
+@keyframes lucideSpin{ to { transform: rotate(360deg); } }
+@keyframes lucidePulse{ 0%, 100%{ opacity: 1; } 50%{ opacity: .5; } }
+@keyframes lucideBounce{
+  0%, 100%{ transform: translateY(0); }
+  50%{ transform: translateY(-3px); }
+}
+@keyframes lucideWiggle{
+  0%, 100%{ transform: rotate(0deg); }
+  25%{ transform: rotate(-8deg); }
+  75%{ transform: rotate(8deg); }
+}
+@keyframes lucidePing{
+  0%{ transform: scale(1); opacity: 1; }
+  100%{ transform: scale(1.8); opacity: 0; }
+}
+@keyframes lucideFlicker{
+  0%, 100%{ opacity: 1; filter: drop-shadow(0 0 0 currentColor); }
+  50%{ opacity: .85; filter: drop-shadow(0 0 8px currentColor); }
+}
+@keyframes lucideBotBlink{
+  0%, 90%, 100%{ opacity: 1; }
+  92%, 96%{ opacity: .35; }
+}
+@keyframes lucideZap{
+  0%, 100%{ transform: rotate(0deg) scale(1); }
+  10%{ transform: rotate(-6deg) scale(1.08); filter: drop-shadow(0 0 6px currentColor); }
+  20%{ transform: rotate(0) scale(1); }
+}
+/* Icons inside buttons should never inherit stroke wider than needed */
+svg[data-lucide-icon]{ flex-shrink: 0; }
+
 .app{position:relative; z-index:2; min-height:100vh; display:flex; flex-direction:column;}
 
 header{
@@ -828,8 +871,9 @@ h1.section-title .accent{
   gap: 8px;
 }
 .daily-icon-inline{
-  font-size: 14px;
-  filter: drop-shadow(0 0 8px var(--amber-glow));
+  color: var(--amber);
+  filter: drop-shadow(0 0 6px var(--amber-glow));
+  vertical-align: -2px;
 }
 .info-card-action{
   font-family: var(--font-mono);
@@ -2766,17 +2810,12 @@ h1.section-title .accent{
   animation: orbBreath 3s ease-in-out infinite;
 }
 .orb-hand{
-  font-size: 38px;
+  color: #fff;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.5));
-  animation: orbHand 1.6s ease-in-out infinite;
 }
 @keyframes orbBreath{
   0%, 100%{ transform: scale(1); }
   50%{ transform: scale(1.04); }
-}
-@keyframes orbHand{
-  0%, 100%{ transform: translateY(0) rotate(0); }
-  50%{ transform: translateY(-2px) rotate(-6deg); }
 }
 
 .match-search-text{
@@ -2977,6 +3016,486 @@ h2.match-title{
   background:linear-gradient(180deg, var(--coral), var(--rose));
   -webkit-background-clip:text; background-clip:text; color:transparent;
   animation: vsSlam .8s cubic-bezier(.2,1.6,.4,1);
+}
+
+/* ============ MATCH FOUND v2 — RICH FULLSCREEN ============ */
+.match-found-v2{
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(60vw 50vw at 0% 50%, rgba(34,211,163,.10), transparent 60%),
+    radial-gradient(60vw 50vw at 100% 50%, rgba(255,51,88,.10), transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 50%, var(--bg) 100%);
+  animation: mfFadeIn .4s ease-out;
+  overflow: hidden;
+}
+@keyframes mfFadeIn{
+  from{ opacity: 0; }
+  to{ opacity: 1; }
+}
+
+/* Grid background */
+.mf-bg-grid{
+  position: absolute;
+  inset: -20px;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: mfGridSlide 12s linear infinite;
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse 70% 70% at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at center, black 30%, transparent 80%);
+}
+@keyframes mfGridSlide{
+  from{ transform: translate(0, 0); }
+  to{ transform: translate(40px, 40px); }
+}
+
+/* Side glow accents */
+.mf-bg-glow{
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  opacity: .5;
+}
+.mf-bg-glow.you{
+  left: -150px; top: 50%; transform: translateY(-50%);
+  background: var(--mint);
+  animation: mfGlowPulse 3s ease-in-out infinite;
+}
+.mf-bg-glow.opp{
+  right: -150px; top: 50%; transform: translateY(-50%);
+  background: var(--coral);
+  animation: mfGlowPulse 3s ease-in-out infinite .5s;
+}
+@keyframes mfGlowPulse{
+  0%, 100%{ opacity: .35; }
+  50%{ opacity: .55; }
+}
+
+/* TOP BANNER */
+.mf-banner{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 24px;
+  border-radius: 999px;
+  background: rgba(34,211,163,.08);
+  border: 1px solid var(--mint);
+  color: var(--mint);
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  box-shadow: 0 0 30px var(--mint-glow), inset 0 1px 0 rgba(255,255,255,.1);
+  margin-bottom: 50px;
+  animation: mfBannerDrop .6s cubic-bezier(.2,1.8,.4,1) both;
+}
+@keyframes mfBannerDrop{
+  from{ transform: translateY(-40px); opacity: 0; }
+  to{ transform: translateY(0); opacity: 1; }
+}
+.mf-banner-dot{
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+  animation: liveDotPulse 1.4s ease-in-out infinite;
+}
+
+/* STAGE */
+.mf-stage{
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 60px;
+  align-items: center;
+  max-width: 1100px;
+  width: 100%;
+  padding: 0 40px;
+}
+
+/* PLAYER CARDS */
+.mf-player{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+  position: relative;
+  padding: 28px 32px;
+  background: linear-gradient(180deg, rgba(24,23,34,.85), rgba(13,12,20,.85));
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 24px 60px -16px rgba(0,0,0,.6);
+  animation: mfPlayerSlide .8s cubic-bezier(.2,1.4,.4,1) both;
+}
+.mf-player.you{
+  animation-name: mfPlayerSlideLeft;
+  border-color: rgba(34,211,163,.35);
+}
+.mf-player.opp{
+  animation-name: mfPlayerSlideRight;
+  animation-delay: .15s;
+  border-color: rgba(255,51,88,.35);
+}
+@keyframes mfPlayerSlideLeft{
+  from{ transform: translateX(-80px); opacity: 0; }
+  to{ transform: translateX(0); opacity: 1; }
+}
+@keyframes mfPlayerSlideRight{
+  from{ transform: translateX(80px); opacity: 0; }
+  to{ transform: translateX(0); opacity: 1; }
+}
+.mf-player.you::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--mint), transparent);
+  border-radius: 3px;
+}
+.mf-player.opp::before{
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--coral), transparent);
+  border-radius: 3px;
+}
+.mf-player-side-label{
+  position: absolute;
+  top: -10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .22em;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+.mf-player.you .mf-player-side-label{
+  color: var(--mint);
+  border-color: var(--mint);
+}
+.mf-player.opp .mf-player-side-label{
+  color: var(--coral);
+  border-color: var(--coral);
+}
+
+/* AVATAR */
+.mf-avatar-wrap{
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin-top: 4px;
+}
+.mf-avatar-glow{
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: .5;
+  animation: mfAvatarPulse 2.2s ease-in-out infinite;
+}
+.mf-player.you .mf-avatar-glow{ background: var(--mint); }
+.mf-player.opp .mf-avatar-glow{ background: var(--coral); }
+@keyframes mfAvatarPulse{
+  0%, 100%{ opacity: .35; transform: scale(.95); }
+  50%{ opacity: .6; transform: scale(1.05); }
+}
+.mf-avatar{
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 28px;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 44px;
+  color: #fff;
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.5),
+    inset 0 2px 0 rgba(255,255,255,.15),
+    0 0 0 2px rgba(255,255,255,.06);
+  z-index: 1;
+}
+.mf-player.you .mf-avatar:not([style*="background-image"]){
+  background: linear-gradient(135deg, var(--mint) 0%, #22a37e 100%);
+}
+.mf-player.opp .mf-avatar:not([style*="background-image"]){
+  background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dim) 100%);
+}
+/* RANK BADGE — small floating icon on bottom-right of avatar */
+.mf-avatar-rank{
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  width: 38px;
+  height: 38px;
+  z-index: 2;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.6));
+  background: var(--bg);
+  border: 2px solid var(--line-bright);
+  border-radius: 50%;
+  padding: 5px;
+}
+
+/* NAME */
+.mf-name{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -.015em;
+  color: var(--text);
+  line-height: 1;
+  margin-top: 6px;
+}
+
+/* RANK LINE */
+.mf-rank-line{
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+.mf-tier{ color: var(--text); font-weight: 700; }
+.mf-elo{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--text);
+}
+.mf-elo-unit{
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .14em;
+}
+.mf-rating-sep{ color: var(--text-faint); }
+
+/* MINI STATS */
+.mf-stats-mini{
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  width: 100%;
+  justify-content: center;
+}
+.mf-stat-mini{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: .02em;
+  font-weight: 600;
+}
+.mf-stat-mini svg{ color: var(--text-faint); }
+.mf-stat-mini b{ color: var(--text); font-weight: 700; margin-right: 1px; }
+
+/* CENTER (VS + H2H) */
+.mf-center{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  animation: mfCenterPop .9s cubic-bezier(.2,1.8,.4,1) both;
+  animation-delay: .3s;
+}
+@keyframes mfCenterPop{
+  from{ transform: scale(.5); opacity: 0; }
+  60%{ transform: scale(1.08); opacity: 1; }
+  to{ transform: scale(1); opacity: 1; }
+}
+
+/* VS — big dramatic letters */
+.mf-vs{
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-family: var(--font-display);
+  font-stretch: 60%;
+  font-weight: 800;
+  font-size: 100px;
+  line-height: 1;
+  letter-spacing: -.06em;
+}
+.mf-vs-letter{
+  display: inline-block;
+  position: relative;
+}
+.mf-vs-letter.l{
+  background: linear-gradient(135deg, var(--mint), #18b88c);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px var(--mint-glow);
+  animation: mfVsLetterL 1.2s cubic-bezier(.2,1.6,.4,1) both;
+  animation-delay: .5s;
+}
+.mf-vs-letter.r{
+  background: linear-gradient(135deg, var(--coral), var(--coral-dim));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  text-shadow: 0 0 40px var(--coral-glow);
+  animation: mfVsLetterR 1.2s cubic-bezier(.2,1.6,.4,1) both;
+  animation-delay: .55s;
+}
+@keyframes mfVsLetterL{
+  from{ transform: translateX(-40px) scale(.5) rotate(-15deg); opacity: 0; }
+  to{ transform: translateX(0) scale(1) rotate(0); opacity: 1; }
+}
+@keyframes mfVsLetterR{
+  from{ transform: translateX(40px) scale(.5) rotate(15deg); opacity: 0; }
+  to{ transform: translateX(0) scale(1) rotate(0); opacity: 1; }
+}
+.mf-vs-clash{
+  position: absolute;
+  inset: 50% 0 0 0;
+  height: 4px;
+  margin-top: -2px;
+  background: linear-gradient(90deg, transparent, #fff, transparent);
+  filter: blur(2px);
+  opacity: 0;
+  animation: mfVsClash .8s ease-out 1s both;
+}
+@keyframes mfVsClash{
+  0%{ opacity: 0; transform: scaleX(0); }
+  30%{ opacity: 1; transform: scaleX(1.4); }
+  100%{ opacity: 0; transform: scaleX(1); }
+}
+
+/* H2H — head-to-head card */
+.mf-h2h{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 24px;
+  background: rgba(0,0,0,.4);
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+  min-width: 200px;
+}
+.mf-h2h-title{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 700;
+}
+.mf-h2h-row{
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.mf-h2h-score{
+  font-family: var(--font-display);
+  font-stretch: 65%;
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+.mf-h2h-score.you{ color: var(--mint); }
+.mf-h2h-score.opp{ color: var(--coral); }
+.mf-h2h-sep{
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+}
+.mf-h2h-label{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* FOOTER — status + progress */
+.mf-footer{
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 360px;
+  animation: mfFooterFadeIn .6s ease-out 1s both;
+}
+@keyframes mfFooterFadeIn{
+  from{ opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to{ opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.mf-status{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.mf-status svg{ color: var(--coral); }
+.mf-progress{
+  width: 100%;
+  height: 3px;
+  background: rgba(0,0,0,.5);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.mf-progress-fill{
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--mint), var(--coral));
+  border-radius: 2px;
+  transition: width .8s cubic-bezier(.2,.7,.2,1);
+  box-shadow: 0 0 12px var(--mint-glow);
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px){
+  .mf-stage{ grid-template-columns: 1fr; gap: 24px; padding: 0 16px; }
+  .mf-center{ order: -1; }
+  .mf-vs{ font-size: 64px; }
+  .mf-player{ padding: 20px 24px; }
+  .mf-banner{ margin-bottom: 24px; }
 }
 @keyframes vsSlam{
   0%{transform:scale(2) rotate(-20deg); opacity:0;}
@@ -6771,7 +7290,7 @@ const FIREBASE_CONFIG = {
               </button>
               <div class="hero-cta-row">
                 <button class="btn-icon-action" id="botBtn" title="Practice against the AI bot (offline)">
-                  <svg width="14" height="14"><use href="#i-bot"/></svg>
+                  <svg width="14" height="14" data-anim="bot-blink"><use href="#i-bot"/></svg>
                   <span>Play vs bot</span>
                 </button>
                 <button class="btn-icon-action" id="cameraSetupBtn" title="Adjust your camera">
@@ -6815,7 +7334,7 @@ const FIREBASE_CONFIG = {
           <!-- Card 2: Daily challenge -->
           <div class="info-card daily-card" id="dailyChallengeCard">
             <div class="info-card-head">
-              <span class="info-card-eyebrow"><span class="daily-icon-inline">⚡</span> DAILY CHALLENGE</span>
+              <span class="info-card-eyebrow"><svg class="daily-icon-inline" width="14" height="14" data-anim="flicker"><use href="#i-zap"/></svg> DAILY CHALLENGE</span>
               <span class="daily-streak-mini" id="dailyStreakBadge">🔥 0</span>
             </div>
             <div class="daily-card-goal" id="dailyChallengeText">Win 3 ranked matches today</div>
@@ -6947,7 +7466,7 @@ const FIREBASE_CONFIG = {
           <div class="orb-ring"></div>
           <div class="orb-ring r2"></div>
           <div class="orb-core">
-            <div class="orb-hand">✊</div>
+            <svg class="orb-hand" width="44" height="44" data-anim="wiggle"><use href="#i-swords"/></svg>
           </div>
         </div>
         <div class="match-search-text">
@@ -6977,24 +7496,112 @@ const FIREBASE_CONFIG = {
         </div>
       </div>
 
-      <div class="match-found-stage" id="matchFoundView" style="display:none;">
-        <div class="match-found-banner">MATCH FOUND</div>
-        <div class="vs-row">
-          <div class="player-card">
-            <div class="av" id="mfYouAv">?</div>
-            <div class="nm" id="mfYouName">you</div>
-            <div class="sub" id="mfYouSub"><svg id="mfYouRankIcon"></svg> <span>1000</span></div>
+      <div class="match-found-v2" id="matchFoundView" style="display:none;">
+        <!-- Animated background layers -->
+        <div class="mf-bg-grid"></div>
+        <div class="mf-bg-glow you"></div>
+        <div class="mf-bg-glow opp"></div>
+
+        <!-- Top banner -->
+        <div class="mf-banner">
+          <div class="mf-banner-dot"></div>
+          <span>MATCH FOUND</span>
+          <div class="mf-banner-dot"></div>
+        </div>
+
+        <!-- Main stage: two players on either side, dramatic VS in middle -->
+        <div class="mf-stage">
+
+          <!-- LEFT (YOU) — slides in from left -->
+          <div class="mf-player you" id="mfYouCard">
+            <div class="mf-player-side-label">YOU</div>
+            <div class="mf-avatar-wrap">
+              <div class="mf-avatar-glow"></div>
+              <div class="mf-avatar" id="mfYouAv">?</div>
+              <svg class="mf-avatar-rank" id="mfYouRankIcon" width="38" height="38"></svg>
+            </div>
+            <div class="mf-name" id="mfYouName">you</div>
+            <div class="mf-rank-line">
+              <span class="mf-tier" id="mfYouTier">BRONZE I</span>
+              <span class="mf-rating-sep">·</span>
+              <span class="mf-elo" id="mfYouElo">1000</span>
+              <span class="mf-elo-unit">ELO</span>
+            </div>
+            <div class="mf-stats-mini">
+              <div class="mf-stat-mini">
+                <svg width="11" height="11"><use href="#i-trophy"/></svg>
+                <span><b id="mfYouWins">—</b> W</span>
+              </div>
+              <div class="mf-stat-mini">
+                <svg width="11" height="11"><use href="#i-trending-up"/></svg>
+                <span><b id="mfYouWinrate">—</b> WR</span>
+              </div>
+              <div class="mf-stat-mini">
+                <svg width="11" height="11" data-anim="flicker"><use href="#i-flame"/></svg>
+                <span><b id="mfYouStreak">—</b> streak</span>
+              </div>
+            </div>
           </div>
-          <div class="vs-text">VS</div>
-          <div class="player-card opp">
-            <div class="av" id="mfOppAv">?</div>
-            <div class="nm" id="mfOppName">stranger</div>
-            <div class="sub" id="mfOppSub"><svg id="mfOppRankIcon"></svg> <span>1000</span></div>
+
+          <!-- CENTER — VS, head-to-head, region -->
+          <div class="mf-center">
+            <div class="mf-vs">
+              <span class="mf-vs-letter l">V</span>
+              <span class="mf-vs-letter r">S</span>
+              <div class="mf-vs-clash"></div>
+            </div>
+            <div class="mf-h2h" id="mfH2H">
+              <div class="mf-h2h-title">HEAD-TO-HEAD</div>
+              <div class="mf-h2h-row">
+                <span class="mf-h2h-score you" id="mfH2HYouWins">0</span>
+                <span class="mf-h2h-sep">—</span>
+                <span class="mf-h2h-score opp" id="mfH2HOppWins">0</span>
+              </div>
+              <div class="mf-h2h-label" id="mfH2HLabel">first encounter</div>
+            </div>
+          </div>
+
+          <!-- RIGHT (OPP) — slides in from right -->
+          <div class="mf-player opp" id="mfOppCard">
+            <div class="mf-player-side-label">OPPONENT</div>
+            <div class="mf-avatar-wrap">
+              <div class="mf-avatar-glow"></div>
+              <div class="mf-avatar" id="mfOppAv">?</div>
+              <svg class="mf-avatar-rank" id="mfOppRankIcon" width="38" height="38"></svg>
+            </div>
+            <div class="mf-name" id="mfOppName">stranger</div>
+            <div class="mf-rank-line">
+              <span class="mf-tier" id="mfOppTier">BRONZE I</span>
+              <span class="mf-rating-sep">·</span>
+              <span class="mf-elo" id="mfOppElo">1000</span>
+              <span class="mf-elo-unit">ELO</span>
+            </div>
+            <div class="mf-stats-mini">
+              <div class="mf-stat-mini">
+                <svg width="11" height="11"><use href="#i-trophy"/></svg>
+                <span><b id="mfOppWins">—</b> W</span>
+              </div>
+              <div class="mf-stat-mini">
+                <svg width="11" height="11"><use href="#i-trending-up"/></svg>
+                <span><b id="mfOppWinrate">—</b> WR</span>
+              </div>
+              <div class="mf-stat-mini">
+                <svg width="11" height="11"><use href="#i-globe"/></svg>
+                <span id="mfOppRegion">—</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="match-feed" id="mfFeed">establishing connection…</div>
-        <div class="match-found-progress">
-          <div class="match-found-progress-fill" id="matchFoundProgress"></div>
+
+        <!-- Bottom: connection progress -->
+        <div class="mf-footer">
+          <div class="mf-status">
+            <svg width="12" height="12" data-anim="spin"><use href="#i-circle-dot"/></svg>
+            <span id="mfFeed">establishing connection…</span>
+          </div>
+          <div class="mf-progress">
+            <div class="mf-progress-fill" id="matchFoundProgress"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -7177,7 +7784,7 @@ const FIREBASE_CONFIG = {
 
         <!-- ON FIRE BADGE (floats top right of battle stage) -->
         <div class="duel-fire-badge" id="onFireBadge">
-          <span class="emoji">🔥</span>
+          <svg width="14" height="14" data-anim="flicker"><use href="#i-flame"/></svg>
           <span>ON FIRE</span>
           <span class="count" id="fireCount">3</span>
         </div>
@@ -7771,6 +8378,7 @@ const FIREBASE_CONFIG = {
 <!-- MediaPipe -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
@@ -13135,7 +13743,178 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v8.8 — FULL DASHBOARD', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08050f; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.0 — LUCIDE ICONS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+
+// ============= LUCIDE ICON BRIDGE =============
+// Internal icon name → Lucide kebab-case name. Rock/paper/scissors and rank icons
+// stay as our custom SVG symbols. Everything else gets swapped with real Lucide.
+const LUCIDE_MAP = {
+  'send': 'send-horizontal',
+  'next': 'chevrons-right',
+  'flame': 'flame',
+  'play': 'play',
+  'help': 'help-circle',
+  'globe': 'globe',
+  'bolt': 'zap',
+  'out': 'log-out',
+  'close': 'x',
+  'check': 'check',
+  'people': 'users',
+  'trophy': 'trophy',
+  'plus': 'plus',
+  'edit': 'pencil',
+  'sword': 'sword',
+  'swords': 'swords',
+  'block': 'ban',
+  'activity': 'activity',
+  'clock': 'clock',
+  'bot': 'bot',
+  'camera': 'camera',
+  'upload': 'upload',
+  'rotate': 'rotate-cw',
+  'zoom-in': 'zoom-in',
+  'zoom-out': 'zoom-out',
+  'trash': 'trash-2',
+  'eye-off': 'eye-off',
+  'eye': 'eye',
+  'star': 'star',
+  'sound-on': 'volume-2',
+  'sound-off': 'volume-x',
+  'flag': 'flag',
+  'settings': 'settings',
+  'zap': 'zap',
+  'target': 'target',
+  'trending-up': 'trending-up',
+  'user': 'user',
+  'message': 'message-circle',
+  'search': 'search',
+  'medal': 'medal',
+  'chart': 'bar-chart-3',
+  'arrow-right': 'arrow-right',
+  'sparkles': 'sparkles',
+  'shield': 'shield',
+  'crown': 'crown',
+  'gem': 'gem',
+  'award': 'award',
+  'info': 'info',
+  'chevron-right': 'chevron-right',
+  'chevron-down': 'chevron-down',
+  'circle-dot': 'circle-dot',
+  'handshake': 'handshake',
+  // 'google' stays as our custom multi-color SVG — Lucide doesn't have a color Google logo
+  // Rock/paper/scissors hand designs stay custom — Lucide's 'hand-rock' etc. aren't as good
+  // Rank icons (i-rank-bronze etc.) stay custom — they're styled medal designs
+};
+
+let _lucideIcons = null;
+function getLucideIcons(){
+  if(_lucideIcons) return _lucideIcons;
+  try {
+    if(typeof lucide !== 'undefined' && lucide.icons){
+      _lucideIcons = lucide.icons;
+      return _lucideIcons;
+    }
+  } catch(e){}
+  return null;
+}
+
+// kebab-case 'send-horizontal' → PascalCase 'SendHorizontal' (how Lucide UMD exposes icons)
+function lucidePascal(kebab){
+  return kebab.split('-').map(s => s.charAt(0).toUpperCase() + s.slice(1)).join('');
+}
+
+// Replace a <svg><use href="#i-NAME"/></svg> with a proper Lucide SVG element
+function replaceLucideIcon(svgEl){
+  if(!svgEl || svgEl.dataset.lucideReplaced) return;
+  const use = svgEl.querySelector('use');
+  if(!use) return;
+  const href = use.getAttribute('href') || use.getAttribute('xlink:href');
+  if(!href || !href.startsWith('#i-')) return;
+  const ourName = href.slice(3); // strip '#i-'
+  const lucideName = LUCIDE_MAP[ourName];
+  if(!lucideName) return; // keep custom icon (rock/paper/scissors/rank/google)
+
+  const icons = getLucideIcons();
+  if(!icons) return;
+  // Lucide UMD exposes icons under PascalCase keys
+  const iconData = icons[lucidePascal(lucideName)];
+  if(!iconData) return;
+
+  // iconData format: [tag, attrs, children?] where children is array of [tag, attrs] arrays
+  // OR: { iconNode: [[tag, attrs], ...] } depending on version
+  const nodes = iconData.iconNode || (Array.isArray(iconData) && iconData[2]) || null;
+  if(!nodes) return;
+
+  // Preserve any existing width/height/class on the wrapper svg
+  const w = svgEl.getAttribute('width');
+  const h = svgEl.getAttribute('height');
+  const cls = svgEl.getAttribute('class');
+  const style = svgEl.getAttribute('style');
+  const id = svgEl.getAttribute('id');
+
+  // Build child elements (Lucide ships nodes as ['line', {x1, x2, ...}], etc.)
+  svgEl.innerHTML = '';
+  svgEl.setAttribute('viewBox', '0 0 24 24');
+  svgEl.setAttribute('fill', 'none');
+  svgEl.setAttribute('stroke', 'currentColor');
+  svgEl.setAttribute('stroke-width', svgEl.getAttribute('stroke-width') || '2');
+  svgEl.setAttribute('stroke-linecap', 'round');
+  svgEl.setAttribute('stroke-linejoin', 'round');
+  if(w) svgEl.setAttribute('width', w);
+  if(h) svgEl.setAttribute('height', h);
+  if(cls) svgEl.setAttribute('class', cls);
+  if(style) svgEl.setAttribute('style', style);
+  if(id) svgEl.setAttribute('id', id);
+
+  for(const node of nodes){
+    const tag = node[0];
+    const attrs = node[1] || {};
+    const child = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for(const [k, v] of Object.entries(attrs)) child.setAttribute(k, v);
+    svgEl.appendChild(child);
+  }
+  svgEl.dataset.lucideIcon = lucideName;
+  svgEl.dataset.lucideReplaced = '1';
+}
+
+function refreshLucideIcons(root){
+  if(!getLucideIcons()) return;
+  const scope = root || document;
+  scope.querySelectorAll('svg').forEach(svg => {
+    if(!svg.dataset.lucideReplaced) replaceLucideIcon(svg);
+  });
+}
+
+// Wait for Lucide to load, then do initial pass + observe for new icons
+function initLucide(){
+  const tryReplace = () => {
+    if(!getLucideIcons()){
+      setTimeout(tryReplace, 100);
+      return;
+    }
+    refreshLucideIcons(document);
+    // Watch for new icons added dynamically (modals, lists, etc.)
+    const obs = new MutationObserver((mutations) => {
+      for(const m of mutations){
+        for(const node of m.addedNodes){
+          if(node.nodeType !== 1) continue;
+          if(node.tagName === 'svg' || node.tagName === 'SVG'){
+            replaceLucideIcon(node);
+          } else if(node.querySelectorAll){
+            node.querySelectorAll('svg').forEach(s => {
+              if(!s.dataset.lucideReplaced) replaceLucideIcon(s);
+            });
+          }
+        }
+      }
+    });
+    obs.observe(document.body, { childList: true, subtree: true });
+    console.log('[lucide] icon bridge initialized');
+  };
+  tryReplace();
+}
+try { initLucide(); } catch(e){ console.warn('[lucide] init failed', e); }
+
 try { setupAuthUI(); } catch(e){ console.error('[init] setupAuthUI failed', e); }
 try { wireSettings(); } catch(e){ console.error('[init] wireSettings failed', e); }
 try { applySettings(); } catch(e){ console.error('[init] applySettings failed', e); }
