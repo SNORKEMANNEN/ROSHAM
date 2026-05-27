@@ -409,22 +409,6 @@ header{
   background-size: cover;
   background-position: center;
 }
-.user-chip .av-wrap-mini{
-  position: relative;
-  display: grid;
-  place-items: center;
-}
-.user-chip .online-dot{
-  position: absolute;
-  bottom: -1px;
-  right: -1px;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  background: var(--mint);
-  border: 2px solid var(--bg);
-  box-shadow: 0 0 4px var(--mint);
-}
 .user-chip .rating{
   font-family:var(--font-mono);
   font-size:11px;
@@ -433,41 +417,6 @@ header{
   letter-spacing: .02em;
 }
 .user-chip .rank-icon{width:14px; height:14px;}
-
-/* ============ BUTTON LOADING STATE ============ */
-.btn.loading{
-  cursor: not-allowed;
-  opacity: .6;
-  position: relative;
-  pointer-events: none;
-}
-.btn.loading::after{
-  content: "";
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  margin-top: -6px;
-  border: 2px solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: btnSpin .6s linear infinite;
-}
-@keyframes btnSpin{ to { transform: rotate(360deg); } }
-
-/* Danger button variant */
-.btn-danger{
-  background: var(--coral);
-  color: #fff;
-  border-color: transparent;
-  font-weight: 600;
-  box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 4px 12px -4px var(--coral-glow);
-}
-.btn-danger:hover{
-  background: #ff4d6e;
-  box-shadow: 0 1px 0 rgba(255,255,255,.2) inset, 0 6px 16px -4px var(--coral-glow);
-}
 
 .btn{
   font-family:var(--font-body);
@@ -5590,19 +5539,19 @@ h2.match-title{
 /* HEADLINE STRIP */
 .mr-headline-strip{
   position: relative;
-  padding: 24px 28px;
+  padding: 26px 30px;
   background: var(--result-color-gradient, linear-gradient(180deg, var(--mint), #18b88c));
   color: #fff;
   overflow: hidden;
 }
 .mr-headline-strip.win{
-  --result-color-gradient: linear-gradient(180deg, var(--mint) 0%, #15a079 100%);
+  --result-color-gradient: linear-gradient(135deg, #17a079 0%, #0e7556 100%);
 }
 .mr-headline-strip.lose{
-  --result-color-gradient: linear-gradient(180deg, var(--coral) 0%, var(--coral-dim) 100%);
+  --result-color-gradient: linear-gradient(135deg, #c41f44 0%, #8c1530 100%);
 }
 .mr-headline-strip.draw{
-  --result-color-gradient: linear-gradient(180deg, var(--violet) 0%, #7755e0 100%);
+  --result-color-gradient: linear-gradient(135deg, #7a5cd8 0%, #5840a0 100%);
 }
 .mr-headline-content{
   position: relative;
@@ -5625,20 +5574,28 @@ h2.match-title{
   font-family: var(--font-display);
   font-stretch: 65%;
   font-weight: 800;
-  font-size: 38px;
+  font-size: 44px;
   letter-spacing: -.03em;
   line-height: 1;
   text-transform: uppercase;
-  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+  color: #fff !important;
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow:
+    0 2px 12px rgba(0,0,0,.6),
+    0 1px 2px rgba(0,0,0,.8),
+    0 0 1px rgba(0,0,0,.9);
 }
 .match-result-card-v2 .match-result-sub{
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: .12em;
+  font-size: 12px;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  opacity: .9;
-  margin-top: 4px;
-  font-weight: 600;
+  color: rgba(255,255,255,.95);
+  margin-top: 6px;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0,0,0,.4);
 }
 /* Animated burst behind headline */
 .mr-headline-burst{
@@ -6178,39 +6135,66 @@ h2.match-title{
   display:flex; gap:10px;
   justify-content:center;
   flex-wrap: wrap;
+  padding: 20px 28px 12px;
+  border-top: 1px solid var(--line-soft);
 }
 .match-result-actions .btn{
   min-width: 130px;
-  padding: 14px 22px;
+  padding: 13px 20px;
   font-size: 13px;
   font-weight: 700;
+  justify-content: center;
 }
 .match-result-extra{
-  display: flex; gap: 8px; justify-content: center;
-  margin-top: 14px;
+  display: flex; gap: 10px; justify-content: center;
+  padding: 0 28px 20px;
   position: relative; z-index: 2;
 }
 .extra-action{
   background: rgba(255,255,255,.04);
   border: 1px solid var(--line);
   color: var(--text-dim);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: 7px 14px;
-  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: -.005em;
+  padding: 9px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  display: inline-flex; align-items: center; gap: 6px;
-  transition: all .2s;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: all .15s cubic-bezier(.2,.8,.2,1);
   font-weight: 600;
+}
+.extra-action svg{
+  color: var(--text-faint);
+  transition: color .15s;
 }
 .extra-action:hover{
   background: rgba(255,255,255,.08);
   border-color: var(--line-bright);
   color: var(--text);
-  transform: translateY(-1px);
 }
+.extra-action:hover svg{ color: var(--coral); }
+.extra-action:active{ transform: translateY(1px); }
+#matchEndAddFriend{
+  background: rgba(34,211,163,.06);
+  border-color: rgba(34,211,163,.2);
+}
+#matchEndAddFriend:hover{
+  background: rgba(34,211,163,.12);
+  border-color: var(--mint);
+  color: var(--mint);
+}
+#matchEndAddFriend:hover svg{ color: var(--mint); }
+#matchEndShare{
+  background: rgba(155,123,255,.05);
+  border-color: rgba(155,123,255,.18);
+}
+#matchEndShare:hover{
+  background: rgba(155,123,255,.12);
+  border-color: var(--violet);
+  color: var(--violet);
+}
+#matchEndShare:hover svg{ color: var(--violet); }
 
 .round-stage{
   flex:1;
@@ -7256,169 +7240,6 @@ h2.match-title{
   to{ opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* ============ SHORTCUTS MODAL ============ */
-.shortcuts-section{
-  margin-top: 18px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line-soft);
-}
-.shortcuts-section:first-of-type{ border-top: none; padding-top: 0; }
-.shortcuts-section-title{
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-faint);
-  letter-spacing: .18em;
-  text-transform: uppercase;
-  margin-bottom: 10px;
-}
-.shortcut-row{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 0;
-  font-size: 13px;
-  color: var(--text-dim);
-}
-.shortcut-row span{
-  margin-left: 4px;
-}
-.shortcut-row kbd, kbd.kbd-inline{
-  display: inline-block;
-  min-width: 22px;
-  text-align: center;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
-  border-bottom: 2px solid var(--line);
-  padding: 2px 8px;
-  border-radius: 5px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-/* ============ HISTORY MODAL ============ */
-.history-tabs{
-  display: flex;
-  gap: 4px;
-  padding: 4px;
-  background: rgba(0,0,0,.25);
-  border-radius: 12px;
-  margin-bottom: 14px;
-}
-.history-tabs button{
-  flex: 1;
-  background: transparent;
-  border: none;
-  color: var(--text-faint);
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  padding: 8px 6px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all .15s;
-}
-.history-tabs button:hover{ color: var(--text); background: rgba(255,255,255,.03); }
-.history-tabs button.active{
-  background: var(--surface-2);
-  color: var(--coral);
-}
-.history-list{
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 50vh;
-  overflow-y: auto;
-}
-.history-row{
-  display: grid;
-  grid-template-columns: auto 1fr auto auto auto;
-  gap: 10px;
-  align-items: center;
-  padding: 10px 12px;
-  background: rgba(255,255,255,.02);
-  border: 1px solid var(--line-soft);
-  border-radius: 10px;
-  font-size: 13px;
-  transition: all .15s;
-  cursor: pointer;
-}
-.history-row:hover{
-  background: rgba(255,255,255,.04);
-  border-color: var(--line);
-  transform: translateX(2px);
-}
-.history-row.win{ border-left: 3px solid var(--mint); }
-.history-row.lose{ border-left: 3px solid var(--coral); }
-.history-row.draw{ border-left: 3px solid var(--violet); }
-.history-row .h-result{
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 5px;
-  min-width: 50px;
-  text-align: center;
-}
-.history-row.win .h-result{ background: rgba(34,211,163,.15); color: var(--mint); }
-.history-row.lose .h-result{ background: rgba(255,51,88,.15); color: var(--coral); }
-.history-row.draw .h-result{ background: rgba(155,123,255,.15); color: var(--violet); }
-.history-row .h-opp{
-  font-weight: 600;
-  color: var(--text);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.history-row .h-score{
-  font-family: var(--font-display);
-  font-stretch: 70%;
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: -.01em;
-}
-.history-row .h-delta{
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  min-width: 36px;
-  text-align: right;
-}
-.history-row .h-delta.pos{ color: var(--mint); }
-.history-row .h-delta.neg{ color: var(--coral); }
-.history-row .h-delta.zero{ color: var(--text-faint); }
-.history-row .h-time{
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-faint);
-  letter-spacing: .04em;
-}
-
-/* ============ CONFIRM MODAL ============ */
-.confirm-modal{
-  max-width: 420px;
-  text-align: center;
-}
-.confirm-modal h3{
-  font-size: 22px !important;
-}
-.confirm-actions{
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-top: 20px;
-}
-.confirm-actions .btn{
-  min-width: 110px;
-  justify-content: center;
-}
-
 .modal::before{
   content: "";
   position: absolute;
@@ -7982,6 +7803,8 @@ h2.match-title{
     <symbol id="i-chevron-down" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-circle-dot" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="2" fill="currentColor"/></symbol>
     <symbol id="i-handshake" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m11 17 2 2a1 1 0 1 0 3-3"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4M21 3v9M3 21l1.5-1.5"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></symbol>
+    <symbol id="i-user-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 8v6M22 11h-6"/></symbol>
     <!-- RANK ICONS -->
     <symbol id="i-rank-bronze" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/></symbol>
     <symbol id="i-rank-silver" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/><circle cx="12" cy="12" r="3" fill="rgba(0,0,0,.3)"/></symbol>
@@ -8008,17 +7831,12 @@ h2.match-title{
     <div class="header-actions" id="headerActions">
       <button class="btn btn-ghost" id="helpBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg> How to play</button>
       <button class="btn" id="nextBtn" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-next"/></svg>Next<span class="key">N</span></button>
-      <div class="user-chip" id="userChip" style="display:none;" title="Click to open profile">
-        <div class="av-wrap-mini">
-          <div class="av" id="chipAv">?</div>
-          <span class="online-dot" id="chipOnlineDot"></span>
-        </div>
+      <div class="user-chip" id="userChip" style="display:none;" title="Your profile">
+        <div class="av" id="chipAv">?</div>
         <span id="chipName">—</span>
         <span class="rating" id="chipRating"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
       </div>
-      <button class="btn btn-ghost" id="historyBtn" style="padding:8px; display:none;" title="Match history (H)"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-clock"/></svg></button>
       <button class="btn btn-ghost" id="achievementsBtn" style="padding:8px; display:none;" title="Achievements"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg></button>
-      <button class="btn btn-ghost" id="shortcutsBtn" style="padding:8px;" title="Keyboard shortcuts (?)"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-zap"/></svg></button>
       <button class="btn btn-ghost" id="settingsBtn" style="padding:8px; display:none;" title="Settings"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-edit"/></svg></button>
       <button class="btn btn-ghost" id="muteBtn" style="padding:8px;" title="Toggle sound"><svg viewBox="0 0 24 24" width="14" height="14" id="muteIcon"><use href="#i-sound-on"/></svg></button>
       <button class="btn btn-ghost" id="signOutBtn" style="display:none; padding:8px;" title="Sign out"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-out"/></svg></button>
@@ -9004,81 +8822,11 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="match-result-extra" id="matchResultExtra">
       <button class="extra-action" id="matchEndAddFriend" title="Add friend">
-        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-plus"/></svg> Add friend
+        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-user-plus"/></svg> Add friend
       </button>
       <button class="extra-action" id="matchEndShare" title="Share result">
-        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-out"/></svg> Share
+        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-share"/></svg> Share
       </button>
-    </div>
-  </div>
-</div>
-
-<!-- KEYBOARD SHORTCUTS MODAL -->
-<div class="modal-bg" id="shortcutsModal">
-  <div class="modal">
-    <button class="modal-close" data-close="shortcutsModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <h3>KEYBOARD SHORTCUTS</h3>
-    <p>Move faster with these hotkeys. Press <kbd class="kbd-inline">?</kbd> any time to open this list.</p>
-
-    <div class="shortcuts-section">
-      <div class="shortcuts-section-title">GLOBAL</div>
-      <div class="shortcut-row"><kbd>?</kbd> <span>Show this help</span></div>
-      <div class="shortcut-row"><kbd>M</kbd> <span>Toggle sound</span></div>
-      <div class="shortcut-row"><kbd>Esc</kbd> <span>Close modal</span></div>
-    </div>
-
-    <div class="shortcuts-section">
-      <div class="shortcuts-section-title">LANDING</div>
-      <div class="shortcut-row"><kbd>Space</kbd> <span>Find a stranger</span></div>
-      <div class="shortcut-row"><kbd>B</kbd> <span>Play vs bot</span></div>
-      <div class="shortcut-row"><kbd>C</kbd> <span>Open camera setup</span></div>
-    </div>
-
-    <div class="shortcuts-section">
-      <div class="shortcuts-section-title">IN GAME</div>
-      <div class="shortcut-row"><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <span>Predict rock / paper / scissors</span></div>
-      <div class="shortcut-row"><kbd>L</kbd> <span>Leave match (forfeit)</span></div>
-      <div class="shortcut-row"><kbd>F</kbd> <span>Add opponent as friend</span></div>
-      <div class="shortcut-row"><kbd>N</kbd> <span>Next opponent</span></div>
-      <div class="shortcut-row"><kbd>Enter</kbd> <span>Focus chat input</span></div>
-    </div>
-
-    <div class="shortcuts-section">
-      <div class="shortcuts-section-title">EMOTES</div>
-      <div class="shortcut-row"><kbd>Q</kbd> <span>👋 Wave</span></div>
-      <div class="shortcut-row"><kbd>W</kbd> <span>🔥 Fire</span></div>
-      <div class="shortcut-row"><kbd>E</kbd> <span>😂 Laugh</span></div>
-      <div class="shortcut-row"><kbd>R</kbd> <span>🤝 GG</span></div>
-    </div>
-  </div>
-</div>
-
-<!-- MATCH HISTORY MODAL -->
-<div class="modal-bg" id="historyModal">
-  <div class="modal">
-    <button class="modal-close" data-close="historyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <h3>MATCH HISTORY</h3>
-    <p>Your last 20 ranked matches. Click a row to see details.</p>
-    <div class="history-tabs">
-      <button class="active" data-history-filter="all">All</button>
-      <button data-history-filter="win">Wins</button>
-      <button data-history-filter="lose">Losses</button>
-      <button data-history-filter="draw">Draws</button>
-    </div>
-    <div class="history-list" id="historyList">
-      <div class="side-empty">Loading…</div>
-    </div>
-  </div>
-</div>
-
-<!-- GENERIC CONFIRM DIALOG -->
-<div class="modal-bg" id="confirmModal">
-  <div class="modal confirm-modal">
-    <h3 id="confirmTitle">Confirm action</h3>
-    <p id="confirmBody">Are you sure?</p>
-    <div class="confirm-actions">
-      <button class="btn btn-ghost" id="confirmCancelBtn">Cancel</button>
-      <button class="btn btn-primary" id="confirmOkBtn">Confirm</button>
     </div>
   </div>
 </div>
@@ -10267,7 +10015,6 @@ async function onAuthChanged(user){
   $('#userChip').style.display = '';
   const ab = $('#achievementsBtn'); if(ab) ab.style.display = '';
   const sb = $('#settingsBtn'); if(sb) sb.style.display = '';
-  const hb = $('#historyBtn'); if(hb) hb.style.display = '';
   setText('#chipName', state.profile.username);
   renderAvatar($('#chipAv'), state.profile);
   updateChipRating();
@@ -10474,30 +10221,23 @@ function setupAuthUI(){
     } catch(err){ showErr('#authError', friendlyError(err)); }
   });
   $('#signOutBtn').addEventListener('click', async () => {
-    confirmDialog(
-      'Sign out?',
-      'You\'ll need to sign in again to play.',
-      async () => {
-        cancelMatchmakingResources();
-        await teardownMatch();
-        if(state.user){
-          try { await deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
-          // also clean any zombie matches I'm part of
-          try {
-            const callerQ = await getDocs(query(collection(state.db, 'matches'), where('caller', '==', state.user.uid)));
-            const calleeQ = await getDocs(query(collection(state.db, 'matches'), where('callee', '==', state.user.uid)));
-            const ids = new Set();
-            callerQ.forEach(d => ids.add(d.id));
-            calleeQ.forEach(d => ids.add(d.id));
-            for(const id of ids){
-              try { await deleteDoc(doc(state.db, 'matches', id)); } catch(e){}
-            }
-          } catch(e){}
+    cancelMatchmakingResources();
+    await teardownMatch();
+    if(state.user){
+      try { await deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
+      // also clean any zombie matches I'm part of
+      try {
+        const callerQ = await getDocs(query(collection(state.db, 'matches'), where('caller', '==', state.user.uid)));
+        const calleeQ = await getDocs(query(collection(state.db, 'matches'), where('callee', '==', state.user.uid)));
+        const ids = new Set();
+        callerQ.forEach(d => ids.add(d.id));
+        calleeQ.forEach(d => ids.add(d.id));
+        for(const id of ids){
+          try { await deleteDoc(doc(state.db, 'matches', id)); } catch(e){}
         }
-        await signOut(state.auth);
-      },
-      { okLabel: 'Sign out' }
-    );
+      } catch(e){}
+    }
+    await signOut(state.auth);
   });
   $('#newUserForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -12820,6 +12560,12 @@ function handlePeerMessage(msg){
       toast('Rematch accepted! Starting new match...', 'success');
       // Reset state and restart from match intro
       try {
+        // CRITICAL: hide match result overlay on initiator's screen too —
+        // initiator pressed rematch but result was still showing
+        $('#matchResultOverlay')?.classList.remove('show');
+        // Re-enable rematch button for future use
+        const rbAcc = $('#matchEndRematchBtn');
+        if(rbAcc){ rbAcc.disabled = false; rbAcc.textContent = 'Rematch'; }
         resetMatchUI();
         setTimeout(() => {
           showMatchIntro();
@@ -13722,7 +13468,15 @@ async function endMatch(){
 async function forfeitMatch(){
   if(state.screen !== 'game' || state.matchOver) return;
   if(!confirm('Leave this match?\n\nYou will lose -25 ELO as a forfeit penalty. Use only if you must leave.')) return;
+  await applyForfeitPenalty(false);
+  toast('You forfeited the match (-25 ELO penalty)', 'error');
+  showMatchResultScreen('lose');
+}
 
+// NEW: Silent forfeit — used by beforeunload/refresh handler.
+// `silent` skips UI changes (toast, result overlay) since the page is closing.
+async function applyForfeitPenalty(silent){
+  if(state.matchOver) return;
   state.matchOver = true;
   state._endMatchCalled = true;
 
@@ -13758,7 +13512,7 @@ async function forfeitMatch(){
       state.profile.currentStreak = 0;
     } catch(e){ console.error('[forfeit] could not update rating', e); }
 
-    // record activity
+    // Record activity
     try {
       await addDoc(collection(state.db, 'activity'), {
         uid: state.user.uid,
@@ -13769,10 +13523,34 @@ async function forfeitMatch(){
         createdAt: serverTimestamp(),
       });
     } catch(e){}
-  }
 
-  toast('You forfeited the match (-25 ELO penalty)', 'error');
-  showMatchResultScreen('lose');
+    // Write match history entry so the loss shows up in stats
+    try {
+      await addDoc(collection(state.db, 'matchHistory'), {
+        uid: state.user.uid,
+        username: state.profile.username,
+        oppUid: state.oppUid || '',
+        oppUsername: state.oppProfile?.username || 'stranger',
+        result: 'forfeit',
+        delta: totalDelta,
+        score: `0-${state.matchRoundsToWin}`,
+        createdAt: serverTimestamp(),
+        forfeit: true,
+        endedAt: serverTimestamp(),
+      });
+    } catch(e){}
+
+    // CRITICAL: also mark the match doc as ended so the opponent's
+    // listener fires `handleRemoteLeft` and they get awarded the win.
+    if(state.matchId){
+      try {
+        await updateDoc(doc(state.db, 'matches', state.matchId), {
+          status: 'ended',
+          forfeitBy: state.user.uid,
+        });
+      } catch(e){}
+    }
+  }
 }
 
 // Match-end stats update — single ELO change for the whole bo3
@@ -14446,10 +14224,19 @@ async function handleRemoteLeft(){
 }
 function onPeerDisconnected(){ if(state.phase !== 'ended') handleRemoteLeft(); }
 let teardownMatch = async function(){
+  console.log('[teardown] starting cleanup');
+  // CRITICAL: set phase to 'ended' BEFORE closing pc/dc, so the close handlers
+  // (oniceconnectionstatechange / dc.onclose / unsubMatch's status-listener)
+  // see phase==='ended' and skip handleRemoteLeft. Without this, closing the
+  // connection during Play Again triggers handleRemoteLeft → showScreen('landing')
+  // which kicks the user back to the lobby right after entering matchmaking.
+  state.phase = 'ended';
   if(state.pingTimer){ clearInterval(state.pingTimer); state.pingTimer = null; }
   if(state.unsubMatch){ state.unsubMatch(); state.unsubMatch = null; }
   if(state.unsubCallerCands){ state.unsubCallerCands(); state.unsubCallerCands = null; }
   if(state.unsubCalleeCands){ state.unsubCalleeCands(); state.unsubCalleeCands = null; }
+  // CRITICAL: also cancel matchmaking listeners that may still be alive
+  cancelMatchmakingResources();
   if(state.dataChannel){ try{ state.dataChannel.close(); }catch(e){} state.dataChannel = null; }
   if(state.pc){ try{ state.pc.close(); }catch(e){} state.pc = null; }
   if(state.matchId){
@@ -14472,9 +14259,25 @@ let teardownMatch = async function(){
   state.oppUid = null; state.oppProfile = null;
   state.scoreYou = 0; state.scoreOpp = 0;
   state.streak = 0; state.streakType = null;
+  // CRITICAL: reset phase to idle AFTER all close events have fired
+  // (close handlers check phase !== 'ended' to detect actual disconnect)
   state.phase = 'idle';
+  // reset match-over flags so the NEXT match doesn't auto-end immediately
+  state.matchOver = false;
+  state._endMatchCalled = false;
+  state.matchRoundsToWin = 2;
+  state.myGesture = null;
+  state.oppGesture = null;
+  state.myGestureReady = false;
+  state.oppGestureReady = false;
+  state.countdownRunning = false;
+  state._roundResultApplied = false;
+  state._pendingRoundResult = null;
+  state.myPrediction = null;
+  state.isCaller = false;
   $('#oppVideo').srcObject = null;
   clearChat();
+  console.log('[teardown] complete');
 }
 async function nextStranger(){
   await teardownMatch();
@@ -14879,6 +14682,7 @@ sendPeer = function(msg){
 const origTeardownMatch = teardownMatch;
 teardownMatch = async function(){
   if(state.isBotMatch){
+    console.log('[teardown] bot match');
     if(state.pingTimer){ clearInterval(state.pingTimer); state.pingTimer = null; }
     if(botReadyTimer){ clearInterval(botReadyTimer); botReadyTimer = null; }
     state.isBotMatch = false;
@@ -14888,6 +14692,20 @@ teardownMatch = async function(){
     state.streak = 0; state.streakType = null;
     state.phase = 'idle';
     state.dataChannel = null;
+    // CRITICAL: reset same flags as the non-bot version so a follow-up
+    // ranked match doesn't auto-end immediately
+    state.matchOver = false;
+    state._endMatchCalled = false;
+    state.matchRoundsToWin = 2;
+    state.myGesture = null;
+    state.oppGesture = null;
+    state.myGestureReady = false;
+    state.oppGestureReady = false;
+    state.countdownRunning = false;
+    state._roundResultApplied = false;
+    state._pendingRoundResult = null;
+    state.myPrediction = null;
+    state.isCaller = false;
     // restore big avatar
     const big = $('#oppAvatarBig');
     big.classList.remove('bot-av');
@@ -14980,7 +14798,19 @@ on('#matchEndAddFriend', 'click', async () => {
 });
 // NEW: Share result
 on('#matchEndShare', 'click', async () => {
-  copyMatchResult();
+  const youWon = state.scoreYou > state.scoreOpp;
+  const draw = state.scoreYou === state.scoreOpp;
+  const verb = draw ? 'tied' : (youWon ? 'won' : 'lost');
+  const txt = `I just ${verb} a ROSHAM match ${state.scoreYou}-${state.scoreOpp}${state.isBotMatch ? ' vs a bot' : ''}! 🪨📄✂️`;
+  if(navigator.share){
+    try { await navigator.share({ title: 'ROSHAM', text: txt }); }
+    catch(e){ /* user cancelled */ }
+  } else {
+    try {
+      await navigator.clipboard.writeText(txt);
+      toast('Result copied to clipboard!', 'success');
+    } catch(e){ toast('Could not share', 'error'); }
+  }
 });
 
 // Replace next button to handle both modes
@@ -15054,183 +14884,6 @@ async function refreshDebugInfo(){
 setInterval(() => { if($('#matchDebug')?.style.display === 'block') refreshDebugInfo(); }, 2000);
 on('#nextBtn', 'click', nextStranger);
 on('#helpBtn', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
-
-// NEW: Shortcuts button
-on('#shortcutsBtn', 'click', () => { const m = $('#shortcutsModal'); if(m) m.classList.add('show'); });
-
-// NEW: Match history button
-on('#historyBtn', 'click', openHistoryModal);
-
-// NEW: Click user chip → open stats modal (your full profile)
-on('#userChip', 'click', () => { try { openStatsModal(); } catch(e){ console.warn('[chip] stats failed', e); } });
-
-// ============= QoL: GENERIC CONFIRM DIALOG =============
-function confirmDialog(title, body, onOk, opts){
-  opts = opts || {};
-  const modal = $('#confirmModal');
-  if(!modal) return;
-  setText('#confirmTitle', title);
-  const bodyEl = $('#confirmBody');
-  if(bodyEl) bodyEl.textContent = body;
-
-  const okBtn = $('#confirmOkBtn');
-  const cancelBtn = $('#confirmCancelBtn');
-  if(opts.okLabel) okBtn.textContent = opts.okLabel;
-  else okBtn.textContent = 'Confirm';
-  if(opts.cancelLabel) cancelBtn.textContent = opts.cancelLabel;
-  else cancelBtn.textContent = 'Cancel';
-
-  // Style ok button: danger or primary
-  okBtn.className = 'btn ' + (opts.danger ? 'btn-danger' : 'btn-primary');
-
-  modal.classList.add('show');
-
-  const cleanup = () => {
-    modal.classList.remove('show');
-    okBtn.removeEventListener('click', okHandler);
-    cancelBtn.removeEventListener('click', cancelHandler);
-  };
-  const okHandler = () => { cleanup(); if(onOk) onOk(); };
-  const cancelHandler = () => { cleanup(); if(opts.onCancel) opts.onCancel(); };
-  okBtn.addEventListener('click', okHandler);
-  cancelBtn.addEventListener('click', cancelHandler);
-}
-
-// ============= QoL: MATCH HISTORY =============
-let _historyCache = null;
-let _historyFilter = 'all';
-
-async function openHistoryModal(){
-  const modal = $('#historyModal');
-  if(!modal) return;
-  modal.classList.add('show');
-  const list = $('#historyList');
-  if(list) list.innerHTML = '<div class="side-empty">Loading…</div>';
-  await loadHistory();
-  renderHistory();
-}
-
-async function loadHistory(){
-  if(!state.user || !state.db){
-    _historyCache = [];
-    return;
-  }
-  try {
-    const snap = await getDocs(query(
-      collection(state.db, 'matchHistory'),
-      where('participants', 'array-contains', state.user.uid),
-      orderBy('endedAt', 'desc'),
-      limit(20)
-    ));
-    _historyCache = [];
-    snap.forEach(d => {
-      const m = d.data();
-      const isMe = m.winner === state.user.uid;
-      const isDraw = !m.winner || m.winner === 'draw';
-      const oppUid = (m.participants || []).find(u => u !== state.user.uid);
-      const oppName = oppUid === m.callerUid ? (m.callerName || '?') : (m.calleeName || '?');
-      const yourScore = m.callerUid === state.user.uid ? (m.callerScore || 0) : (m.calleeScore || 0);
-      const oppScore = m.callerUid === state.user.uid ? (m.calleeScore || 0) : (m.callerScore || 0);
-      const delta = m.callerUid === state.user.uid ? (m.callerDelta || 0) : (m.calleeDelta || 0);
-      _historyCache.push({
-        result: isDraw ? 'draw' : (isMe ? 'win' : 'lose'),
-        opp: oppName,
-        yourScore, oppScore, delta,
-        endedAt: m.endedAt?.toMillis ? m.endedAt.toMillis() : 0,
-        id: d.id
-      });
-    });
-  } catch(e){
-    console.warn('[history] load failed', e);
-    _historyCache = [];
-  }
-}
-
-function renderHistory(){
-  const list = $('#historyList');
-  if(!list) return;
-  let items = _historyCache || [];
-  if(_historyFilter !== 'all') items = items.filter(m => m.result === _historyFilter);
-  if(items.length === 0){
-    list.innerHTML = '<div class="side-empty">No matches yet — go play some!</div>';
-    return;
-  }
-  list.innerHTML = '';
-  items.forEach(m => {
-    const row = document.createElement('div');
-    row.className = 'history-row ' + m.result;
-    const resultText = m.result === 'win' ? 'WIN' : m.result === 'lose' ? 'LOSS' : 'DRAW';
-    const deltaCls = m.delta > 0 ? 'pos' : m.delta < 0 ? 'neg' : 'zero';
-    const deltaText = m.delta > 0 ? `+${m.delta}` : m.delta === 0 ? '±0' : `${m.delta}`;
-    row.innerHTML = `
-      <span class="h-result">${resultText}</span>
-      <span class="h-opp">@${escapeHTML(m.opp || 'unknown')}</span>
-      <span class="h-score">${m.yourScore}–${m.oppScore}</span>
-      <span class="h-delta ${deltaCls}">${deltaText}</span>
-      <span class="h-time">${timeAgo({ toMillis: () => m.endedAt })}</span>
-    `;
-    list.appendChild(row);
-  });
-}
-
-// History tab switching
-document.querySelectorAll('[data-history-filter]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-history-filter]').forEach(x => x.classList.remove('active'));
-    btn.classList.add('active');
-    _historyFilter = btn.dataset.historyFilter;
-    renderHistory();
-  });
-});
-
-// ============= QoL: COPY MATCH RESULT TO CLIPBOARD =============
-function copyMatchResult(){
-  if(!state._matchRoundHistory || state._matchRoundHistory.length === 0) return;
-  const opp = state.oppProfile?.username || (state.isBotMatch ? 'roshamBot' : 'stranger');
-  const result = state.scoreYou > state.scoreOpp ? 'WIN' : state.scoreYou < state.scoreOpp ? 'LOSS' : 'DRAW';
-  const lines = [
-    `🪨📄✂️ ROSHAM — ${result}`,
-    `vs @${opp}`,
-    `Score: ${state.scoreYou}–${state.scoreOpp}`,
-    ''
-  ];
-  state._matchRoundHistory.forEach((h, idx) => {
-    const emoji = h.yourMove === 'rock' ? '✊' : h.yourMove === 'paper' ? '✋' : h.yourMove === 'scissors' ? '✌️' : '❓';
-    const oppEmoji = h.oppMove === 'rock' ? '✊' : h.oppMove === 'paper' ? '✋' : h.oppMove === 'scissors' ? '✌️' : '❓';
-    const res = h.isDraw ? 'DRAW' : h.result === 'win' ? 'WIN' : 'LOSS';
-    lines.push(`R${idx + 1}: ${emoji} vs ${oppEmoji} → ${res}`);
-  });
-  if(state._lastMatchDelta){
-    lines.push('');
-    lines.push(`ELO: ${state._lastMatchDelta > 0 ? '+' : ''}${state._lastMatchDelta}`);
-  }
-  lines.push('');
-  lines.push('Play at rosham.live');
-  const text = lines.join('\n');
-  try {
-    navigator.clipboard.writeText(text).then(() => {
-      toast('Match result copied!', 'success');
-    });
-  } catch(e){
-    toast('Copy failed', 'error');
-  }
-}
-
-// ============= QoL: BUTTON LOADING STATES =============
-function setBtnLoading(btn, loading, originalText){
-  if(!btn) return;
-  if(loading){
-    btn.disabled = true;
-    btn.dataset.origText = btn.textContent;
-    btn.classList.add('loading');
-  } else {
-    btn.disabled = false;
-    btn.classList.remove('loading');
-    if(originalText) btn.textContent = originalText;
-    else if(btn.dataset.origText) btn.textContent = btn.dataset.origText;
-  }
-}
-
 document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
 });
@@ -15242,8 +14895,6 @@ document.addEventListener('keydown', (e) => {
   try {
     if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn')?.click(); }
     if(state.screen === 'landing' && e.code === 'KeyB'){ e.preventDefault(); $('#botBtn')?.click(); }
-    // NEW: C = Camera setup on landing
-    if(state.screen === 'landing' && e.code === 'KeyC'){ e.preventDefault(); $('#cameraSetupBtn')?.click(); }
     if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStrangerOrBot(); }
     if(e.code === 'KeyM'){ e.preventDefault(); $('#muteBtn')?.click(); }
     // Quick predictions during game (1=Rock, 2=Paper, 3=Scissors)
@@ -15252,38 +14903,14 @@ document.addEventListener('keydown', (e) => {
       if(e.code === 'Digit2'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=paper]')?.click(); }
       if(e.code === 'Digit3'){ e.preventDefault(); document.querySelector('.prediction-btn[data-predict=scissors]')?.click(); }
     }
-    // NEW: Emote shortcuts in-game (Q W E R)
-    if(state.screen === 'game'){
-      if(e.code === 'KeyQ'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="wave"]')?.click(); }
-      if(e.code === 'KeyW'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="fire"]')?.click(); }
-      if(e.code === 'KeyE'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="laugh"]')?.click(); }
-      if(e.code === 'KeyR'){ e.preventDefault(); document.querySelector('.emote-btn[data-emote="gg"]')?.click(); }
-    }
-    // L = Leave match (forfeit) — now with confirm
-    if(state.screen === 'game' && e.code === 'KeyL'){
-      e.preventDefault();
-      confirmDialog(
-        'Forfeit match?',
-        'Leaving counts as a loss and may cost you ELO. Are you sure?',
-        () => forfeitMatch(),
-        { danger: true, okLabel: 'Forfeit' }
-      );
-    }
+    // L = Leave match (forfeit)
+    if(state.screen === 'game' && e.code === 'KeyL'){ e.preventDefault(); forfeitMatch(); }
     // F = Send friend request to opp
     if(state.screen === 'game' && e.code === 'KeyF'){ e.preventDefault(); $('#addFriendInGameBtn')?.click(); }
-    // NEW: Enter on game screen = focus chat
-    if(state.screen === 'game' && e.code === 'Enter' && !e.shiftKey){
-      const chatInput = document.querySelector('#dockChatInput, #chatInput');
-      if(chatInput){ e.preventDefault(); chatInput.focus(); }
-    }
-    // ? = Open keyboard shortcuts (UPDATED — opens shortcutsModal not helpModal)
-    if(e.code === 'Slash' && e.shiftKey){
-      e.preventDefault();
-      const m = $('#shortcutsModal');
-      if(m) m.classList.add('show');
-    }
-    // NEW: H = Match history
-    if(state.screen === 'landing' && e.code === 'KeyH'){ e.preventDefault(); openHistoryModal(); }
+    // R = Report opp
+    if(state.screen === 'game' && e.code === 'KeyR'){ e.preventDefault(); $('#reportBtn')?.click(); }
+    // ? = Open help
+    if(e.code === 'Slash' && e.shiftKey){ e.preventDefault(); $('#helpBtn')?.click(); }
     if(e.code === 'Escape'){
       // close any open modal
       const open = document.querySelector('.modal-bg.show');
@@ -15414,7 +15041,38 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.3 — QOL UPDATE', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.4 — BUG FIXES', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+
+// ============= ELO FORFEIT ON REFRESH/CLOSE =============
+// If the user closes the tab / refreshes / navigates away mid-match,
+// apply the -25 forfeit penalty so they can't escape ELO loss by leaving.
+// Uses 'pagehide' which is more reliable than 'beforeunload' on mobile.
+function _shouldForfeit(){
+  return state.screen === 'game'
+    && !state.matchOver
+    && !state.isBotMatch
+    && state.user
+    && state.profile
+    && state.oppUid;
+}
+window.addEventListener('beforeunload', (e) => {
+  if(!_shouldForfeit()) return;
+  // Best-effort: fire the forfeit. Most browsers will run sync writes that
+  // initiate before the unload completes. Firestore SDK queues these.
+  try { applyForfeitPenalty(true); } catch(err){}
+  // Standard "Are you sure you want to leave?" prompt
+  e.preventDefault();
+  e.returnValue = 'Leaving will count as a loss and cost you -25 ELO. Are you sure?';
+  return e.returnValue;
+});
+// pagehide fires more reliably on mobile + when actually navigating away
+window.addEventListener('pagehide', () => {
+  if(!_shouldForfeit()) return;
+  try { applyForfeitPenalty(true); } catch(err){}
+});
+// visibilitychange catches tab-switch / app-backgrounded — but DON'T forfeit
+// here, since the user might come back. Just log it.
+// (Browsers vary on what fires when; pagehide+beforeunload is the right combo.)
 
 // ============= LUCIDE ICON BRIDGE =============
 // Internal icon name → Lucide kebab-case name. Rock/paper/scissors and rank icons
@@ -15472,6 +15130,8 @@ const LUCIDE_MAP = {
   'chevron-down': 'chevron-down',
   'circle-dot': 'circle-dot',
   'handshake': 'handshake',
+  'share': 'share',
+  'user-plus': 'user-plus',
   // 'google' stays as our custom multi-color SVG — Lucide doesn't have a color Google logo
   // Rock/paper/scissors hand designs stay custom — Lucide's 'hand-rock' etc. aren't as good
   // Rank icons (i-rank-bronze etc.) stay custom — they're styled medal designs
