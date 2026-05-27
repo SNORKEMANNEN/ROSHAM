@@ -5694,7 +5694,7 @@ h2.match-title{
 
 /* ROUNDS LIST */
 .mr-rounds{
-  padding: 18px 28px;
+  padding: 16px 24px;
   border-bottom: 1px solid var(--line-soft);
 }
 .mr-section-label{
@@ -5707,23 +5707,39 @@ h2.match-title{
   letter-spacing: .18em;
   text-transform: uppercase;
   font-weight: 700;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .mr-section-label svg{ color: var(--text-faint); }
+.mr-section-label .round-count{
+  margin-left: auto;
+  color: var(--text-dim);
+  letter-spacing: .08em;
+  font-weight: 600;
+}
 .mr-rounds-list{
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-bright) transparent;
+}
+.mr-rounds-list::-webkit-scrollbar{ width: 6px; }
+.mr-rounds-list::-webkit-scrollbar-thumb{
+  background: var(--line-bright);
+  border-radius: 3px;
 }
 .mr-round{
   display: grid;
   grid-template-columns: auto 1fr auto 1fr auto;
-  gap: 12px;
+  gap: 10px;
   align-items: center;
-  padding: 10px 14px;
+  padding: 8px 12px;
   background: rgba(255,255,255,.02);
   border: 1px solid var(--line-soft);
-  border-radius: 12px;
+  border-radius: 10px;
   animation: mrRoundIn .5s cubic-bezier(.2,1.4,.4,1) both;
 }
 .mr-round.win{
@@ -7207,6 +7223,245 @@ h2.match-title{
   .rankup-sweep-wrap{ width: 180px; height: 180px; }
 }
 
+/* ============ RANK DOWN OVERLAY ============ */
+.rankdown-overlay{
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255,51,88,.18), rgba(8,7,13,.97) 70%),
+    rgba(8,7,13,.98);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  overflow: hidden;
+  animation: fadeIn .4s ease-out;
+}
+.rankdown-overlay.show{ display: flex; }
+
+.rankdown-rays{
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg, rgba(255,51,88,.6) 4deg, transparent 8deg,
+    transparent 60deg, rgba(255,51,88,.6) 64deg, transparent 68deg,
+    transparent 120deg, rgba(255,51,88,.6) 124deg, transparent 128deg,
+    transparent 180deg, rgba(255,51,88,.6) 184deg, transparent 188deg,
+    transparent 240deg, rgba(255,51,88,.6) 244deg, transparent 248deg,
+    transparent 300deg, rgba(255,51,88,.6) 304deg, transparent 308deg
+  );
+  filter: blur(2px);
+  opacity: .12;
+  animation: rankupSpinRays 24s linear infinite reverse;
+  mask-image: radial-gradient(ellipse 60% 60% at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 60% at center, black 30%, transparent 80%);
+  pointer-events: none;
+}
+
+.rankdown-particles{
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.rankdown-particles .down-particle{
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 6px var(--coral);
+  opacity: 0;
+  animation: rankdownParticle 4s ease-in infinite;
+}
+@keyframes rankdownParticle{
+  0%{ opacity: 0; transform: translateY(-100px) scale(.3); }
+  20%{ opacity: 1; }
+  100%{ opacity: 0; transform: translateY(0) scale(1); }
+}
+
+.rankdown-content{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 30px;
+  max-width: 480px;
+  text-align: center;
+}
+
+.rankdown-warning{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  background: rgba(255,51,88,.1);
+  border: 1px solid rgba(255,51,88,.4);
+  color: var(--coral);
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  box-shadow: 0 0 20px rgba(255,51,88,.25);
+  animation: rankdownPillIn .6s cubic-bezier(.2,1.6,.4,1) both;
+}
+@keyframes rankdownPillIn{
+  from{ transform: translateY(-30px); opacity: 0; }
+  to{ transform: translateY(0); opacity: 1; }
+}
+
+.rankdown-icon-stage{
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 200px;
+  height: 200px;
+  margin: 8px 0;
+  animation: rankdownIconIn .9s cubic-bezier(.2,1.4,.4,1) both;
+  animation-delay: .2s;
+}
+@keyframes rankdownIconIn{
+  0%{ opacity: 0; transform: scale(.5) rotate(8deg); filter: blur(8px); }
+  60%{ opacity: 1; transform: scale(1.08) rotate(-2deg); filter: blur(0); }
+  100%{ opacity: 1; transform: scale(1) rotate(0); filter: blur(0); }
+}
+.rankdown-icon-glow{
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  background: var(--coral);
+  filter: blur(40px);
+  opacity: .35;
+  animation: rankdownGlowPulse 2.4s ease-in-out infinite;
+}
+@keyframes rankdownGlowPulse{
+  0%, 100%{ opacity: .25; transform: scale(.95); }
+  50%{ opacity: .45; transform: scale(1.08); }
+}
+.rankdown-icon{
+  position: relative;
+  z-index: 1;
+  filter:
+    drop-shadow(0 8px 24px rgba(0,0,0,.6))
+    drop-shadow(0 0 18px rgba(255,51,88,.4))
+    grayscale(.3);
+}
+.rankdown-arrow{
+  position: absolute;
+  bottom: -8px;
+  right: 8px;
+  width: 48px;
+  height: 48px;
+  background: var(--coral);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  border: 3px solid var(--bg);
+  box-shadow: 0 8px 20px rgba(255,51,88,.5);
+  animation: rankdownArrowBounce 1.8s ease-in-out infinite;
+}
+@keyframes rankdownArrowBounce{
+  0%, 100%{ transform: translateY(0); }
+  50%{ transform: translateY(4px); }
+}
+
+.rankdown-overlay h2{
+  font-family: var(--font-display);
+  font-stretch: 55%;
+  font-weight: 800;
+  font-size: clamp(40px, 8vw, 64px);
+  line-height: .9;
+  letter-spacing: -.04em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 4px 24px rgba(255,51,88,.4);
+  margin: 0;
+  animation: rankdownFadeUp 1s .8s both;
+}
+
+.rankdown-sub{
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 4px;
+  animation: rankdownFadeUp 1s 1s both;
+}
+.rankdown-delta{
+  font-family: var(--font-display);
+  font-stretch: 65%;
+  font-weight: 800;
+  font-size: 56px;
+  line-height: 1;
+  color: var(--coral);
+  letter-spacing: -.03em;
+  text-shadow: 0 0 24px rgba(255,51,88,.5);
+}
+.rankdown-elo-label{
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-dim);
+  letter-spacing: .12em;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+@keyframes rankdownFadeUp{
+  from{ opacity: 0; transform: translateY(12px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+.rankdown-detail{
+  padding: 16px 22px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255,255,255,.02);
+  margin-top: 12px;
+  opacity: 0;
+  animation: rankdownFadeUp 1s 1.3s forwards;
+}
+.rankdown-ratings{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 22px;
+}
+.rankdown-rating-before{
+  color: var(--text-dim);
+  text-decoration: line-through;
+  text-decoration-color: rgba(255,51,88,.5);
+  text-decoration-thickness: 2px;
+}
+.rankdown-rating-after{
+  color: var(--coral);
+}
+.rankdown-arrow-icon{
+  color: var(--text-faint);
+}
+.rankdown-reason{
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin-top: 10px;
+  max-width: 380px;
+}
+
+.rankdown-dismiss{
+  margin-top: 18px;
+  padding: 14px 28px !important;
+  font-size: 14px !important;
+  opacity: 0;
+  animation: rankdownFadeUp 1s 1.7s forwards;
+}
+
 /* ============ MODALS ============ */
 .modal-bg{
   position:fixed; inset:0;
@@ -7247,6 +7502,240 @@ h2.match-title{
   background: linear-gradient(90deg, transparent, var(--coral), transparent);
   opacity: .6;
   filter: blur(1px);
+}
+
+/* ============ CHALLENGE INCOMING MODAL ============ */
+.challenge-modal{
+  max-width: 460px;
+  padding: 0 !important;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255,51,88,.15), transparent 60%),
+    linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
+  border-color: rgba(255,51,88,.3) !important;
+}
+.ci-glow-strip{
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--coral) 30%, #ff7a3d 50%, var(--coral) 70%, transparent);
+  filter: blur(.5px);
+  animation: ciStripPulse 2s ease-in-out infinite;
+}
+@keyframes ciStripPulse{
+  0%, 100%{ opacity: .8; }
+  50%{ opacity: 1; }
+}
+.ci-header{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 24px 6px;
+}
+.ci-pulse-dot{
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 10px var(--coral-glow);
+  animation: liveDotPulse 1.4s ease-in-out infinite;
+}
+.ci-label{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--coral);
+  text-shadow: 0 0 12px var(--coral-glow);
+}
+
+.ci-profile{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px 18px;
+  text-align: center;
+}
+.ci-avatar-wrap{
+  position: relative;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 4px;
+}
+.ci-avatar-glow{
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: var(--coral);
+  filter: blur(20px);
+  opacity: .35;
+  animation: ciAvGlow 2.4s ease-in-out infinite;
+}
+@keyframes ciAvGlow{
+  0%, 100%{ opacity: .25; transform: scale(.95); }
+  50%{ opacity: .45; transform: scale(1.05); }
+}
+.challenge-modal .ci-avatar.av-xl{
+  position: relative;
+  z-index: 1;
+  width: 88px;
+  height: 88px;
+  border-radius: 24px;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 38px;
+  color: #fff;
+  box-shadow:
+    0 12px 32px rgba(0,0,0,.5),
+    inset 0 2px 0 rgba(255,255,255,.15),
+    0 0 0 2px rgba(255,255,255,.06);
+}
+.ci-rank-badge{
+  position: absolute;
+  bottom: -6px;
+  right: -6px;
+  width: 32px;
+  height: 32px;
+  z-index: 2;
+  background: var(--bg);
+  border: 2px solid var(--line-bright);
+  border-radius: 50%;
+  padding: 4px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.6));
+}
+.ci-name{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -.015em;
+  color: var(--text);
+  line-height: 1;
+}
+.ci-handle{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 600;
+  letter-spacing: .02em;
+}
+.ci-meta{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .04em;
+  font-weight: 600;
+}
+.ci-meta-item{ display: inline-flex; align-items: center; gap: 4px; }
+.ci-meta-sep{ color: var(--text-faint); }
+.ci-rating b{ color: var(--text); font-weight: 800; }
+.ci-tier{ color: var(--text); font-weight: 700; }
+
+.ci-stats{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 0 24px 16px;
+}
+.ci-stat{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 6px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+}
+.ci-stat svg{ color: var(--coral); }
+.ci-stat-val{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1;
+}
+.ci-stat-lbl{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.ci-tagline{
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-dim);
+  margin: 0 24px 12px !important;
+  font-style: italic;
+}
+
+.ci-countdown{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 0;
+  margin: 0 24px 14px;
+  background: rgba(255,51,88,.06);
+  border: 1px solid rgba(255,51,88,.18);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.ci-countdown-num{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--coral);
+  margin: 0 2px;
+}
+
+.ci-actions{
+  display: flex;
+  gap: 10px;
+  padding: 0 24px 24px;
+}
+.ci-actions .btn{
+  flex: 1;
+  justify-content: center;
+  padding: 13px 18px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.ci-decline{
+  background: rgba(255,255,255,.03);
+  border-color: var(--line);
+}
+.ci-decline:hover{
+  background: rgba(255,255,255,.06);
+  border-color: var(--line-bright);
+}
+.ci-accept{
+  background: linear-gradient(135deg, var(--coral) 0%, #ff7a3d 100%);
+  font-weight: 800;
+  letter-spacing: .005em;
+}
+.ci-accept:hover{
+  background: linear-gradient(135deg, #ff4d6e 0%, #ff8c50 100%);
 }
 .modal::-webkit-scrollbar{width:6px;}
 .modal::-webkit-scrollbar-thumb{background:var(--surface-3); border-radius:3px;}
@@ -7724,29 +8213,60 @@ h2.match-title{
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-rock" viewBox="0 0 64 64">
+      <!-- Closed fist: thumb on side, knuckles visible, wrist underneath -->
       <g fill="currentColor">
-        <path d="M22 16c0-3 2-5 5-5s5 2 5 5v14h-2V18c0-1.7-1.3-3-3-3s-3 1.3-3 3v17"/>
-        <path d="M30 14c0-2.8 2.2-5 5-5s5 2.2 5 5v18h-2V14c0-1.7-1.3-3-3-3s-3 1.3-3 3v16"/>
-        <path d="M38 16c0-2.8 2.2-5 5-5s5 2.2 5 5v18h-2V16c0-1.7-1.3-3-3-3s-3 1.3-3 3v16"/>
-        <path d="M14 32c0-3 2-5 5-5s5 2 5 5v6h-2v-4c0-1.7-1.3-3-3-3s-3 1.3-3 3v8"/>
-        <path d="M12 36c-1 4-2 8-2 13 0 9 7 16 18 16s20-7 20-18V20c0-1.7-1.3-3-3-3s-3 1.3-3 3v14h-22c-3 0-6 1-8 2z"/>
+        <!-- Wrist/arm -->
+        <path d="M22 56c-2 0-3-1-3-3v-6c0-1 1-2 2-2h22c1 0 2 1 2 2v6c0 2-1 3-3 3H22z" opacity=".7"/>
+        <!-- Main fist shape -->
+        <path d="M18 30c0-3 2-5 5-5h22c4 0 7 3 7 7v15c0 2-1 3-3 3H21c-2 0-3-1-3-3V30z"/>
+        <!-- Top fingers knuckles ridge -->
+        <path d="M22 28c0-4 2-7 6-7h2c2 0 3 1 3 3v6h-11v-2z" fill="currentColor" opacity=".9"/>
+        <path d="M33 24c0-4 2-7 6-7h2c2 0 3 1 3 3v8h-11v-4z" fill="currentColor" opacity=".95"/>
+        <!-- Thumb tucked at side -->
+        <path d="M14 38c0-3 2-5 5-5h2v10h-4c-2 0-3-1-3-3v-2z"/>
+        <!-- Subtle knuckle bumps -->
+        <ellipse cx="26" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
+        <ellipse cx="32" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
+        <ellipse cx="38" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
+        <ellipse cx="44" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
       </g>
     </symbol>
     <symbol id="i-paper" viewBox="0 0 64 64">
+      <!-- Open hand: 4 fingers up, thumb to side -->
       <g fill="currentColor">
-        <path d="M14 32V14c0-2 1.5-3.5 3.5-3.5S21 12 21 14v18h-7z"/>
-        <path d="M21 30V8c0-2 1.5-3.5 3.5-3.5S28 6 28 8v22h-7z"/>
-        <path d="M28 30V6c0-2 1.5-3.5 3.5-3.5S35 4 35 6v24h-7z"/>
-        <path d="M35 32V12c0-2 1.5-3.5 3.5-3.5S42 10 42 12v20h-7z"/>
-        <path d="M42 22c0-2 1.5-3.5 3.5-3.5S49 20 49 22v18c0 11-7 18-18 18S14 51 14 39v-7h28v-10z"/>
+        <!-- Pinky -->
+        <path d="M14 26V13c0-2 1.5-3.5 3.5-3.5S21 11 21 13v17h-7z"/>
+        <!-- Ring -->
+        <path d="M20 28V8c0-2 1.5-3.5 3.5-3.5S27 6 27 8v22h-7z"/>
+        <!-- Middle (tallest) -->
+        <path d="M26 30V5c0-2 1.5-3.5 3.5-3.5S33 3 33 5v25h-7z"/>
+        <!-- Index -->
+        <path d="M32 30V7c0-2 1.5-3.5 3.5-3.5S39 5 39 7v23h-7z"/>
+        <!-- Thumb -->
+        <path d="M40 32V18c0-2 1.5-3.5 3.5-3.5S47 16 47 18v14c0 1-1 2-2 2h-3c-1 0-2-1-2-2z" transform="rotate(15 43.5 25)"/>
+        <!-- Palm -->
+        <path d="M12 32h36c1 0 2 1 2 2v8c0 11-8 19-19 19h-2c-11 0-19-8-19-19v-8c0-1 1-2 2-2z"/>
+        <!-- Palm shading for depth -->
+        <path d="M16 38c8 0 16 0 28 0v4c0 2-1 3-3 3H19c-2 0-3-1-3-3v-4z" fill="rgba(0,0,0,.12)"/>
       </g>
     </symbol>
     <symbol id="i-scissors" viewBox="0 0 64 64">
+      <!-- Peace sign: index and middle finger up in V, rest curled -->
       <g fill="currentColor">
-        <path d="M18 30V12c0-2 1.5-3.5 3.5-3.5S25 10 25 12v18h-7z" transform="rotate(-12 21.5 19)"/>
-        <path d="M30 30V8c0-2 1.5-3.5 3.5-3.5S37 6 37 8v22h-7z" transform="rotate(12 33.5 17)"/>
-        <path d="M37 32c0-2 1.5-3.5 3.5-3.5S44 30 44 32v6h-7z"/>
-        <path d="M45 28c0-2 1.5-3.5 3.5-3.5S52 26 52 28v14c0 10-7 18-18 18S16 52 16 42v-8h32V28z"/>
+        <!-- Index finger (left side of V) -->
+        <path d="M22 30V8c0-2 1.5-3.5 3.5-3.5S29 6 29 8v22h-7z" transform="rotate(-15 25.5 19)"/>
+        <!-- Middle finger (right side of V) -->
+        <path d="M34 30V6c0-2 1.5-3.5 3.5-3.5S41 4 41 6v24h-7z" transform="rotate(15 37.5 18)"/>
+        <!-- Curled ring finger (folded down) -->
+        <path d="M41 32V22c0-2 1.5-3.5 3.5-3.5S48 20 48 22v10h-7z"/>
+        <!-- Curled pinky (folded down) -->
+        <path d="M14 36V28c0-2 1.5-3.5 3.5-3.5S21 26 21 28v8h-7z"/>
+        <!-- Palm/fist base -->
+        <path d="M12 34h40c1 0 2 1 2 2v6c0 12-9 22-22 22S10 54 10 42v-6c0-1 1-2 2-2z"/>
+        <!-- Thumb bulge on side -->
+        <path d="M48 38c2 0 4 2 4 4v4c0 2-2 3-4 3h-2v-11h2z" fill="currentColor" opacity=".85"/>
+        <!-- Palm shading -->
+        <path d="M14 40c12 0 28 0 36 0v3c0 2-1 3-3 3H17c-2 0-3-1-3-3v-3z" fill="rgba(0,0,0,.12)"/>
       </g>
     </symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m21.854 2.147-10.94 10.939"/></symbol>
@@ -8672,6 +9192,59 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- RANK DOWN overlay — shown when user forfeited via refresh -->
+<div class="rankdown-overlay" id="rankdownOverlay">
+  <!-- Red warning rays + particles -->
+  <div class="rankdown-rays"></div>
+  <div class="rankdown-particles" id="rankdownParticles"></div>
+
+  <div class="rankdown-content">
+    <!-- Warning header -->
+    <div class="rankdown-warning">
+      <svg viewBox="0 0 24 24" width="14" height="14" data-anim="pulse"><use href="#i-flag"/></svg>
+      <span>FORFEIT PENALTY</span>
+      <svg viewBox="0 0 24 24" width="14" height="14" data-anim="pulse"><use href="#i-flag"/></svg>
+    </div>
+
+    <!-- Rank icon (current — possibly down-ranked) -->
+    <div class="rankdown-icon-stage">
+      <div class="rankdown-icon-glow"></div>
+      <svg class="rankdown-icon" id="rankdownIcon" width="160" height="160"></svg>
+      <!-- Down arrow overlay -->
+      <div class="rankdown-arrow">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Headline -->
+    <h2 id="rankdownTitle">RATING LOST</h2>
+    <div class="rankdown-sub">
+      <span class="rankdown-delta" id="rankdownDelta">−49</span>
+      <span class="rankdown-elo-label">ELO</span>
+    </div>
+
+    <!-- Detail block -->
+    <div class="rankdown-detail">
+      <div class="rankdown-ratings">
+        <span class="rankdown-rating-before" id="rankdownBefore">1893</span>
+        <svg viewBox="0 0 24 24" width="20" height="20" class="rankdown-arrow-icon"><use href="#i-arrow-right"/></svg>
+        <span class="rankdown-rating-after" id="rankdownAfter">1844</span>
+      </div>
+      <div class="rankdown-reason" id="rankdownReason">
+        You left an active match by closing or refreshing the browser. This counts as a forfeit and costs −25 ELO on top of the normal loss.
+      </div>
+    </div>
+
+    <!-- Dismiss button -->
+    <button class="btn btn-primary rankdown-dismiss" id="rankdownDismissBtn">
+      <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-check"/></svg>
+      I understand
+    </button>
+  </div>
+</div>
+
 <!-- MATCH RESULT (best-of-3 end) — REDESIGNED v9 -->
 <div class="match-result-overlay" id="matchResultOverlay">
   <!-- Animated background -->
@@ -8722,6 +9295,7 @@ const FIREBASE_CONFIG = {
       <div class="mr-section-label">
         <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-swords"/></svg>
         <span>ROUNDS</span>
+        <span class="round-count" id="mrRoundCount"></span>
       </div>
       <div class="mr-rounds-list" id="mrRoundsList">
         <!-- populated by JS -->
@@ -9281,19 +9855,74 @@ const FIREBASE_CONFIG = {
 
 <!-- CHALLENGE MODAL -->
 <div class="modal-bg" id="challengeModal">
-  <div class="modal" style="text-align:center;">
-    <h3 style="color:var(--coral);">CHALLENGE INCOMING</h3>
-    <div style="display:flex; align-items:center; gap:16px; justify-content:center; margin: 20px 0;">
-      <div class="av-xl" id="chalAv">?</div>
-      <div style="text-align:left;">
-        <div style="font-family:var(--font-display); font-size:20px; font-weight:600;" id="chalName">—</div>
-        <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-faint);" id="chalSub">—</div>
+  <div class="modal challenge-modal">
+    <!-- Animated top glow strip -->
+    <div class="ci-glow-strip"></div>
+
+    <!-- Top: pulsing dot + label -->
+    <div class="ci-header">
+      <div class="ci-pulse-dot"></div>
+      <span class="ci-label">CHALLENGE INCOMING</span>
+      <div class="ci-pulse-dot"></div>
+    </div>
+
+    <!-- Profile card -->
+    <div class="ci-profile">
+      <div class="ci-avatar-wrap">
+        <div class="ci-avatar-glow"></div>
+        <div class="ci-avatar av-xl" id="chalAv">?</div>
+        <svg class="ci-rank-badge" id="chalRankIcon" width="32" height="32"></svg>
+      </div>
+      <div class="ci-name" id="chalName">—</div>
+      <div class="ci-handle" id="chalHandle">@stranger</div>
+      <div class="ci-meta">
+        <span class="ci-meta-item" id="chalCountry">—</span>
+        <span class="ci-meta-sep">·</span>
+        <span class="ci-meta-item ci-rating"><b id="chalRating">—</b> ELO</span>
+        <span class="ci-meta-sep">·</span>
+        <span class="ci-meta-item ci-tier" id="chalTier">—</span>
       </div>
     </div>
-    <p style="font-size:14px; margin-bottom:0;">wants to throw hands. accept?</p>
-    <div class="modal-actions" style="justify-content:center;">
-      <button class="btn" id="chalReject">Decline</button>
-      <button class="btn btn-primary" id="chalAccept">Accept &amp; play</button>
+
+    <!-- Stats row -->
+    <div class="ci-stats" id="chalStats">
+      <div class="ci-stat">
+        <svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-trophy"/></svg>
+        <span class="ci-stat-val" id="chalWins">—</span>
+        <span class="ci-stat-lbl">Wins</span>
+      </div>
+      <div class="ci-stat">
+        <svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-trending-up"/></svg>
+        <span class="ci-stat-val" id="chalWR">—</span>
+        <span class="ci-stat-lbl">Win rate</span>
+      </div>
+      <div class="ci-stat">
+        <svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-flame"/></svg>
+        <span class="ci-stat-val" id="chalStreak">—</span>
+        <span class="ci-stat-lbl">Best streak</span>
+      </div>
+    </div>
+
+    <!-- Tagline -->
+    <p class="ci-tagline">wants to throw hands with you</p>
+
+    <!-- Countdown -->
+    <div class="ci-countdown" id="chalCountdown">
+      <span class="ci-countdown-text">Auto-declining in</span>
+      <span class="ci-countdown-num" id="chalCountdownNum">30</span>
+      <span class="ci-countdown-text">s</span>
+    </div>
+
+    <!-- Actions -->
+    <div class="ci-actions">
+      <button class="btn btn-ghost ci-decline" id="chalReject">
+        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg>
+        Decline
+      </button>
+      <button class="btn btn-primary ci-accept" id="chalAccept">
+        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-play"/></svg>
+        Accept &amp; play
+      </button>
     </div>
   </div>
 </div>
@@ -9593,12 +10222,24 @@ function setRankIconEl(el, rankId){
   const r = RANKS.find(x => x.id === rankId);
   el.innerHTML = '';
   if(!r) return;
-  // CRITICAL: SVG must have viewBox so width/height scale correctly,
-  // otherwise the icon renders at its natural size (huge!)
-  if(!el.getAttribute('viewBox')) el.setAttribute('viewBox', '0 0 24 24');
-  const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-  use.setAttribute('href', '#' + r.icon);
-  el.appendChild(use);
+  // Detect element type — SVGs get <use> directly, anything else needs a child SVG
+  const isSvg = el.tagName && el.tagName.toLowerCase() === 'svg';
+  if(isSvg){
+    if(!el.getAttribute('viewBox')) el.setAttribute('viewBox', '0 0 24 24');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', '#' + r.icon);
+    el.appendChild(use);
+  } else {
+    // It's a <div> or similar — wrap in an SVG so <use> resolves
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('width', '100%');
+    svg.setAttribute('height', '100%');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', '#' + r.icon);
+    svg.appendChild(use);
+    el.appendChild(svg);
+  }
   // set class for color
   RANKS.forEach(x => el.classList.remove(x.cls));
   el.classList.add(r.cls);
@@ -10029,6 +10670,9 @@ async function onAuthChanged(user){
   attachSocialListeners();
   attachActivityListener();
   showScreen('landing');
+
+  // Check for pending forfeit notice (set by beforeunload during a previous session)
+  checkForfeitNotice();
 }
 
 function updateChipRating(){
@@ -11173,6 +11817,8 @@ async function sendChallenge(targetUid){
       await setupHands();
     }
     // Create invite document
+    const myGames = state.profile.games || ((state.profile.wins||0) + (state.profile.losses||0) + (state.profile.draws||0));
+    const myWr = myGames > 0 ? Math.round(((state.profile.wins || 0) / myGames) * 100) : 0;
     const inviteRef = await addDoc(collection(state.db, 'invites'), {
       from: state.user.uid,
       to: targetUid,
@@ -11181,6 +11827,9 @@ async function sendChallenge(targetUid){
       fromPhotoURL: state.profile.photoURL || '',
       fromRating: state.profile.rating || 1000,
       fromCountry: state.profile.country || 'XX',
+      fromWins: state.profile.wins || 0,
+      fromWinrate: myWr,
+      fromBestStreak: state.profile.bestStreak || 0,
       createdAt: serverTimestamp(),
       status: 'pending',
     });
@@ -11249,16 +11898,68 @@ async function handleIncomingChallenge(inv){
     }
   }
   state.pendingChallenge = inv;
-  setText('#chalName', '@' + inv.fromUsername);
+
+  // Populate new richer popup
   const rank = rankFromRating(inv.fromRating || 1000);
-  setText('#chalSub', `${flagOf(inv.fromCountry)} · ${inv.fromRating || 1000} · ${rank.tierName}`);
+  setText('#chalName', inv.fromUsername || 'stranger');
+  setText('#chalHandle', '@' + (inv.fromUsername || 'stranger'));
+  setText('#chalCountry', flagOf(inv.fromCountry) + ' ' + (inv.fromCountry || '—').toUpperCase());
+  setText('#chalRating', inv.fromRating || 1000);
+  setText('#chalTier', rank.tierName.toUpperCase());
+
+  // Avatar + rank badge
   renderAvatar($('#chalAv'), { username: inv.fromUsername, photoURL: inv.fromPhotoURL, colorIdx: inv.fromColorIdx });
+  setRankIconEl($('#chalRankIcon'), rank.id);
+  const rankSvg = $('#chalRankIcon');
+  if(rankSvg){
+    rankSvg.setAttribute('width', '32');
+    rankSvg.setAttribute('height', '32');
+    rankSvg.style.color = rank.color || '';
+  }
+
+  // Stats — load from Firestore if needed (inv may not have all fields)
+  setText('#chalWins', inv.fromWins ?? '—');
+  setText('#chalWR', inv.fromWinrate ? inv.fromWinrate + '%' : '—');
+  setText('#chalStreak', inv.fromBestStreak ?? '—');
+  // Lazy-load if missing
+  if(inv.from && (inv.fromWins === undefined || inv.fromWinrate === undefined)){
+    try {
+      getDoc(doc(state.db, 'users', inv.from)).then(snap => {
+        if(snap.exists() && state.pendingChallenge?.id === inv.id){
+          const d = snap.data();
+          const w = d.wins || 0;
+          const games = d.games || ((d.wins||0) + (d.losses||0) + (d.draws||0));
+          const wr = games > 0 ? Math.round((w / games) * 100) : 0;
+          setText('#chalWins', w);
+          setText('#chalWR', wr + '%');
+          setText('#chalStreak', d.bestStreak || 0);
+        }
+      });
+    } catch(e){}
+  }
+
+  // Countdown — auto-decline after 30s
+  let timeLeft = 30;
+  setText('#chalCountdownNum', timeLeft);
+  if(state._chalCountdown) clearInterval(state._chalCountdown);
+  state._chalCountdown = setInterval(() => {
+    timeLeft--;
+    setText('#chalCountdownNum', Math.max(0, timeLeft));
+    if(timeLeft <= 0){
+      clearInterval(state._chalCountdown);
+      state._chalCountdown = null;
+      // Auto-decline
+      $('#chalReject')?.click();
+    }
+  }, 1000);
+
   $('#challengeModal').classList.add('show');
   sfxNotify();
 }
 on('#chalAccept', 'click', async () => {
   const inv = state.pendingChallenge;
   if(!inv) return;
+  if(state._chalCountdown){ clearInterval(state._chalCountdown); state._chalCountdown = null; }
   $('#challengeModal').classList.remove('show');
   state.pendingChallenge = null;
   if(!state.cameraReady){
@@ -11271,6 +11972,7 @@ on('#chalAccept', 'click', async () => {
 on('#chalReject', 'click', async () => {
   const inv = state.pendingChallenge;
   if(!inv) return;
+  if(state._chalCountdown){ clearInterval(state._chalCountdown); state._chalCountdown = null; }
   $('#challengeModal').classList.remove('show');
   state.pendingChallenge = null;
   try { await deleteDoc(doc(state.db, 'invites', inv.id)); } catch(e){}
@@ -11752,8 +12454,18 @@ on('#viewBlockedBtn', 'click', async () => {
 // ============= MATCHMAKING =============
 async function findMatch(){
   if(!state.user || !state.cameraReady) return;
+  console.log('[match] findMatch START — current state.matchId=', state.matchId, 'screen=', state.screen, 'phase=', state.phase);
   // Clean up any prior matchmaking listeners/timers
   cancelMatchmakingResources();
+  // DEFENSIVE: ensure no leftover state from previous match could cause listeners to skip
+  state.matchId = null;
+  state.phase = 'idle';
+  state.matchOver = false;
+  state._endMatchCalled = false;
+  state.oppUid = null;
+  state.oppProfile = null;
+  state.isCaller = false;
+  state._matchListenerSkipLogged = false;
   showScreen('matching');
   $('#matchSearchView').style.display = '';
   $('#matchFoundView').style.display = 'none';
@@ -11862,7 +12574,14 @@ async function findMatch(){
   // Listen for matches involving me — this is HOW BOTH players join the same match
   const matchesCol = collection(state.db, 'matches');
   const myMatchUnsub = onSnapshot(matchesCol, async (snap) => {
-    if(state.screen !== 'matching' || state.matchId) return;
+    if(state.screen !== 'matching' || state.matchId){
+      // log first skipped event for debugging
+      if(!state._matchListenerSkipLogged){
+        state._matchListenerSkipLogged = true;
+        console.log('[match] listener firing but skipping — screen=', state.screen, 'matchId=', state.matchId);
+      }
+      return;
+    }
     for(const change of snap.docChanges()){
       // Only join via 'added' events for matches that didn't exist before our listener attached.
       // 'modified' fires when serverTimestamp gets filled in, but we should already have joined by then.
@@ -13524,6 +14243,28 @@ async function applyForfeitPenalty(silent){
       });
     } catch(e){}
 
+    // RANK-DOWN NOTICE: if the forfeit was silent (refresh/close), save a
+    // notice to localStorage so on next login we can show a popup explaining
+    // the rating drop. We key by uid so multi-user testing works on same machine.
+    if(silent){
+      try {
+        const oldRank = rankFromRating(myRating);
+        const newRank = rankFromRating(newRating);
+        const notice = {
+          uid: state.user.uid,
+          ratingBefore: myRating,
+          ratingAfter: newRating,
+          delta: totalDelta,
+          opp: state.oppProfile?.username || 'stranger',
+          oldRankId: oldRank.id,
+          newRankId: newRank.id,
+          rankChanged: oldRank.id !== newRank.id,
+          timestamp: Date.now(),
+        };
+        localStorage.setItem('rosham_forfeit_notice_' + state.user.uid, JSON.stringify(notice));
+      } catch(e){ console.warn('[forfeit] could not save notice', e); }
+    }
+
     // Write match history entry so the loss shows up in stats
     try {
       await addDoc(collection(state.db, 'matchHistory'), {
@@ -13709,6 +14450,8 @@ function showMatchResultScreen(result){
   if(list){
     list.innerHTML = '';
     const history = state._matchRoundHistory || [];
+    // Show count badge in section label
+    setText('#mrRoundCount', history.length > 0 ? `${history.length} TOTAL` : '');
     // Filter out draws if you want only "real" rounds, but include them as replay rows
     let scoreCounter = 0;
     history.forEach((h, idx) => {
@@ -14089,6 +14832,96 @@ function showRankUp(oldRank, newRank){
   setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 10000);
 }
 
+// ============= RANK-DOWN POPUP (after forfeit-by-refresh) =============
+function showRankDown(notice){
+  const overlay = $('#rankdownOverlay');
+  if(!overlay || !notice) return;
+
+  // Use the AFTER rank (current rating's rank) as the displayed icon
+  const newRank = RANKS.find(x => x.id === notice.newRankId) || RANKS[0];
+  setRankIconEl($('#rankdownIcon'), newRank.id);
+  const iconEl = $('#rankdownIcon');
+  if(iconEl) iconEl.style.color = newRank.color;
+
+  // Populate text
+  setText('#rankdownTitle', notice.rankChanged ? 'RANK LOST' : 'RATING LOST');
+  setText('#rankdownDelta', notice.delta > 0 ? '+' + notice.delta : '' + notice.delta);
+  setText('#rankdownBefore', notice.ratingBefore);
+  setText('#rankdownAfter', notice.ratingAfter);
+
+  // Customize reason text
+  const reasonEl = $('#rankdownReason');
+  if(reasonEl){
+    if(notice.rankChanged){
+      const oldR = RANKS.find(x => x.id === notice.oldRankId) || RANKS[0];
+      reasonEl.innerHTML = `You forfeited an active match (against <b>@${escapeHTML(notice.opp || 'stranger')}</b>) by closing or refreshing the browser. You dropped from <b>${oldR.tierName}</b> to <b>${newRank.tierName}</b> — that's −25 ELO on top of the normal loss.`;
+    } else {
+      reasonEl.innerHTML = `You forfeited an active match (against <b>@${escapeHTML(notice.opp || 'stranger')}</b>) by closing or refreshing the browser. This counts as a forfeit and costs −25 ELO on top of the normal loss.`;
+    }
+  }
+
+  // Spawn falling particles
+  const particles = $('#rankdownParticles');
+  if(particles){
+    particles.innerHTML = '';
+    for(let i = 0; i < 20; i++){
+      const p = document.createElement('div');
+      p.className = 'down-particle';
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.top = (Math.random() * 80) + '%';
+      p.style.animationDelay = (Math.random() * 4) + 's';
+      p.style.animationDuration = (2 + Math.random() * 3) + 's';
+      particles.appendChild(p);
+    }
+  }
+
+  overlay.classList.add('show');
+  try { sfxLose && sfxLose(); } catch(e){}
+
+  const dismiss = () => {
+    overlay.classList.remove('show');
+    overlay.removeEventListener('click', clickDismiss);
+    document.removeEventListener('keydown', keyDismiss);
+    // Clear the notice
+    try { localStorage.removeItem('rosham_forfeit_notice_' + (notice.uid || state.user?.uid)); } catch(e){}
+  };
+  const clickDismiss = (e) => {
+    // Only dismiss on background click or dismiss button — not on the content card
+    if(e.target.id === 'rankdownOverlay' || e.target.closest('#rankdownDismissBtn')) dismiss();
+  };
+  const keyDismiss = (e) => {
+    if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){
+      e.preventDefault();
+      dismiss();
+    }
+  };
+
+  // Wait for animation before enabling dismiss
+  setTimeout(() => {
+    overlay.addEventListener('click', clickDismiss);
+    document.addEventListener('keydown', keyDismiss);
+  }, 1500);
+}
+
+// Check for pending forfeit notice on login — call after auth + profile load
+function checkForfeitNotice(){
+  if(!state.user) return;
+  try {
+    const key = 'rosham_forfeit_notice_' + state.user.uid;
+    const raw = localStorage.getItem(key);
+    if(!raw) return;
+    const notice = JSON.parse(raw);
+    if(!notice || !notice.ratingBefore) return;
+    // Skip very old notices (>24h)
+    if(Date.now() - (notice.timestamp || 0) > 24 * 60 * 60 * 1000){
+      localStorage.removeItem(key);
+      return;
+    }
+    // Delay slightly so landing screen has rendered
+    setTimeout(() => showRankDown(notice), 800);
+  } catch(e){ console.warn('[forfeit] check failed', e); }
+}
+
 // ============= CHAT =============
 function addChat(who, text){
   const m = document.createElement('div');
@@ -14280,7 +15113,12 @@ let teardownMatch = async function(){
   console.log('[teardown] complete');
 }
 async function nextStranger(){
+  console.log('[next-stranger] starting teardown + findMatch');
   await teardownMatch();
+  // Give Firestore writes (delete match doc, queue heartbeat) a brief moment to settle
+  // before starting the new search. Prevents stale listener fires from poisoning new state.
+  await sleep(300);
+  console.log('[next-stranger] teardown settled, starting findMatch');
   await findMatch();
 }
 
@@ -15041,7 +15879,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.4 — BUG FIXES', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.5 — RANKDOWN + CHALLENGE REDESIGN', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
