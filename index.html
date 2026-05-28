@@ -991,23 +991,6 @@ header{
   padding: 11px 18px;
 }
 .btn-google:hover{ background:#f3f3f3; }
-.social-signin-row{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  max-width: 380px;
-  width: 100%;
-}
-.social-signin-row .btn{ width: 100%; justify-content: center; }
-.btn-apple{
-  background: #000;
-  color: #fff;
-  border: 1px solid rgba(255,255,255,.18);
-  font-weight: 600;
-  padding: 11px 18px;
-}
-.btn-apple:hover{ background: #1a1a1a; }
-.btn-apple svg{ color: #fff; }
 .btn-bot{
   background: var(--surface);
   border-color: var(--line);
@@ -9711,16 +9694,10 @@ const FIREBASE_CONFIG = {
         <h1 class="section-title">WELCOME <span class="accent">BACK.</span></h1>
         <p class="section-sub" style="margin-top:-8px;">Sign in to track your rating, climb the ranks, and play with friends.</p>
 
-        <div class="social-signin-row">
-          <button class="btn btn-google" id="googleBtn">
-            <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-google"/></svg>
-            Continue with Google
-          </button>
-          <button class="btn btn-apple" id="appleBtn">
-            <svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-apple"/></svg>
-            Continue with Apple
-          </button>
-        </div>
+        <button class="btn btn-google" id="googleBtn" style="max-width:380px; width:100%;">
+          <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-google"/></svg>
+          Continue with Google
+        </button>
 
         <div class="divider">or with email</div>
 
@@ -11256,7 +11233,7 @@ import {
   getAuth, onAuthStateChanged,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signInAnonymously, signOut, updateProfile,
-  GoogleAuthProvider, signInWithPopup, OAuthProvider,
+  GoogleAuthProvider, signInWithPopup,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
   getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, addDoc,
@@ -12120,6 +12097,9 @@ function updateSidebarProfile(){
   const tEl = $('#sidebarTitle');
   if(tEl){ tEl.textContent = title.name; tEl.style.color = title.color; }
 }
+
+function refreshStatsUI(){
+  if(!state.profile) return;
   const p = state.profile;
   const rating = p.rating || 1000;
   const rank = rankFromRating(rating);
@@ -12129,9 +12109,11 @@ function updateSidebarProfile(){
   const prog = rankProgressToNext(rating);
   setText('#rankNextLabel', prog.nextLabel);
   const fill = $('#rankBarFill');
-  fill.style.width = (prog.progress * 100) + '%';
-  fill.style.setProperty('--rank-color', rank.color);
-  fill.style.setProperty('--rank-color-2', rank.color2);
+  if(fill){
+    fill.style.width = (prog.progress * 100) + '%';
+    fill.style.setProperty('--rank-color', rank.color);
+    fill.style.setProperty('--rank-color-2', rank.color2);
+  }
 
   // Update the NEW rank-display icon
   const rankIcon = $('#rankIconCurrent');
@@ -12188,6 +12170,7 @@ function updateSidebarProfile(){
   setText('#heroXpText', `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
   const lvlFill = $('#levelBarFill');
   if(lvlFill) lvlFill.style.width = (lvl.progress * 100) + '%';
+  updateSidebarProfile();
 }
 
 function detachUserListeners(){
@@ -12316,20 +12299,6 @@ function setupAuthUI(){
       const provider = new GoogleAuthProvider();
       await signInWithPopup(state.auth, provider);
     } catch(err){ showErr('#authError', friendlyError(err)); }
-  });
-  const appleBtn = $('#appleBtn');
-  if(appleBtn) appleBtn.addEventListener('click', async () => {
-    showErr('#authError', '');
-    try {
-      const provider = new OAuthProvider('apple.com');
-      provider.addScope('email');
-      provider.addScope('name');
-      await signInWithPopup(state.auth, provider);
-    } catch(err){
-      // Apple often requires extra config in Firebase console; show a clear message
-      console.warn('[apple-signin]', err);
-      showErr('#authError', friendlyError(err));
-    }
   });
   $('#signOutBtn').addEventListener('click', async () => {
     cancelMatchmakingResources();
