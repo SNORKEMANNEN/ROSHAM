@@ -3249,6 +3249,7 @@ h2.match-title{
   transition: width .8s ease-out;
   box-shadow: 0 0 8px currentColor;
 }
+.match-found-stage .player-card .sub{
   display:flex; align-items:center; gap:6px;
 }
 .match-found-stage .player-card .sub svg{width:12px; height:12px;}
@@ -5766,42 +5767,41 @@ h2.match-title{
 .match-result-card-v2{
   background: linear-gradient(180deg, var(--surface), var(--bg-2));
   border: 1px solid var(--line);
-  border-radius: 24px;
-  max-width: 580px;
+  border-radius: 22px;
+  max-width: 460px;
   width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
   position: relative;
   box-shadow: 0 32px 80px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.04);
   overflow: hidden;
-  animation: mrCardIn .6s cubic-bezier(.2,1.6,.4,1) both;
+  animation: mrCardIn .5s cubic-bezier(.2,1.4,.4,1) both;
 }
 @keyframes mrCardIn{
-  from{ transform: scale(.92) translateY(20px); opacity: 0; }
+  from{ transform: scale(.94) translateY(16px); opacity: 0; }
   to{ transform: scale(1) translateY(0); opacity: 1; }
 }
 
-/* HEADLINE STRIP */
+/* COMPACT HEADER STRIP */
 .mr-headline-strip{
   position: relative;
-  padding: 26px 30px;
-  background: var(--result-color-gradient, linear-gradient(180deg, var(--mint), #18b88c));
+  padding: 18px 22px 16px;
+  background: var(--result-color-gradient, linear-gradient(135deg, #17a079, #0e7556));
   color: #fff;
   overflow: hidden;
+  flex-shrink: 0;
 }
-.mr-headline-strip.win{
-  --result-color-gradient: linear-gradient(135deg, #17a079 0%, #0e7556 100%);
-}
-.mr-headline-strip.lose{
-  --result-color-gradient: linear-gradient(135deg, #c41f44 0%, #8c1530 100%);
-}
-.mr-headline-strip.draw{
-  --result-color-gradient: linear-gradient(135deg, #7a5cd8 0%, #5840a0 100%);
-}
-.mr-headline-content{
+.mr-headline-strip.win{ --result-color-gradient: linear-gradient(135deg, #17a079 0%, #0e7556 100%); }
+.mr-headline-strip.lose{ --result-color-gradient: linear-gradient(135deg, #c41f44 0%, #8c1530 100%); }
+.mr-headline-strip.draw{ --result-color-gradient: linear-gradient(135deg, #7a5cd8 0%, #5840a0 100%); }
+.mrc-top{
   position: relative;
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  margin-bottom: 14px;
 }
 .mr-headline-icon{
   flex-shrink: 0;
@@ -5812,41 +5812,36 @@ h2.match-title{
   from{ transform: scale(.3) rotate(-30deg); opacity: 0; }
   to{ transform: scale(1) rotate(0); opacity: 1; }
 }
-.mr-headline-text{ flex: 1; }
+.mr-headline-text{ flex: 1; min-width: 0; }
 .match-result-card-v2 .match-result-headline{
   font-family: var(--font-display);
   font-stretch: 65%;
   font-weight: 800;
-  font-size: 44px;
+  font-size: 30px;
   letter-spacing: -.03em;
   line-height: 1;
   text-transform: uppercase;
   color: #fff !important;
   background: none !important;
-  -webkit-background-clip: initial !important;
   -webkit-text-fill-color: #fff !important;
-  text-shadow:
-    0 2px 12px rgba(0,0,0,.6),
-    0 1px 2px rgba(0,0,0,.8),
-    0 0 1px rgba(0,0,0,.9);
+  text-shadow: 0 2px 10px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.8);
 }
 .match-result-card-v2 .match-result-sub{
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: .14em;
+  font-size: 10px;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.95);
-  margin-top: 6px;
+  color: rgba(255,255,255,.9);
+  margin-top: 4px;
   font-weight: 700;
   text-shadow: 0 1px 4px rgba(0,0,0,.4);
 }
-/* Animated burst behind headline */
 .mr-headline-burst{
   position: absolute;
   top: 50%; right: -50px;
   width: 200px; height: 200px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.25), transparent 70%);
+  background: radial-gradient(circle, rgba(255,255,255,.22), transparent 70%);
   transform: translateY(-50%);
   animation: mrBurstSlide 8s ease-in-out infinite;
 }
@@ -5855,90 +5850,174 @@ h2.match-title{
   50%{ transform: translateY(-50%) translateX(-30px); }
 }
 
-/* VS HEADER */
-.mr-vs-header{
+/* Scoreline within header — avatars + score inline */
+.mrc-scoreline{
+  position: relative;
+  z-index: 2;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  gap: 20px;
   align-items: center;
-  padding: 24px 28px;
-  border-bottom: 1px solid var(--line-soft);
+  gap: 12px;
 }
-.mr-vs-player{
+.mrc-player{
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
 }
-.mr-vs-av-wrap{
-  position: relative;
-}
-.mr-vs-av{
-  width: 64px; height: 64px;
-  border-radius: 16px;
+.mrc-player.opp{ flex-direction: row-reverse; }
+.mrc-av{
+  width: 40px; height: 40px;
+  border-radius: 11px;
   background-size: cover;
   background-position: center;
   display: grid;
   place-items: center;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 26px;
+  font-size: 17px;
   color: #fff;
-  box-shadow: 0 8px 20px rgba(0,0,0,.4), inset 0 2px 0 rgba(255,255,255,.15);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.2);
+  background-color: rgba(255,255,255,.15);
 }
-.mr-vs-player.you .mr-vs-av:not([style*="background-image"]){
-  background: linear-gradient(135deg, var(--mint), #15a079);
-}
-.mr-vs-player.opp .mr-vs-av:not([style*="background-image"]){
-  background: linear-gradient(135deg, var(--coral), var(--coral-dim));
-}
-.mr-vs-name{
+.mrc-pname{
   font-family: var(--font-display);
-  font-stretch: 75%;
+  font-stretch: 78%;
   font-weight: 700;
-  font-size: 13px;
+  font-size: 12px;
+  color: #fff;
   letter-spacing: -.005em;
-  max-width: 130px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0,0,0,.4);
 }
-.mr-vs-score-block{
-  text-align: center;
-}
-.match-result-card-v2 .match-result-score{
+.mrc-score{
   font-family: var(--font-display);
   font-stretch: 60%;
   font-weight: 800;
-  font-size: 56px;
+  font-size: 38px;
   line-height: 1;
   letter-spacing: -.04em;
   display: flex;
   align-items: baseline;
+  gap: 6px;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+.mrc-score .dash{ opacity: .55; font-size: 24px; }
+
+/* BODY */
+.mrc-body{
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scrollbar-width: thin;
+}
+.mrc-body::-webkit-scrollbar{ width: 6px; }
+.mrc-body::-webkit-scrollbar-thumb{ background: var(--line-bright); border-radius: 3px; }
+
+/* Rank + Level row */
+.mrc-progress-row{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
-  justify-content: center;
 }
-.match-result-card-v2 .match-result-score .you{ color: var(--mint); }
-.match-result-card-v2 .match-result-score .opp{ color: var(--coral); }
-.match-result-card-v2 .match-result-score .dash{
-  color: var(--text-faint);
-  font-size: 32px;
-  opacity: .5;
+@media (max-width: 480px){
+  .mrc-progress-row{ grid-template-columns: 1fr; }
 }
-.mr-vs-best-of{
-  font-family: var(--font-mono);
-  font-size: 9px;
-  color: var(--text-faint);
-  letter-spacing: .18em;
-  text-transform: uppercase;
+.mrc-rank, .mrc-level{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 13px;
+  border: 1px solid var(--line-soft);
+  background: rgba(255,255,255,.02);
+}
+.mrc-rank .rank-card-icon{
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+.mrc-rank .rank-card-icon svg{ width: 34px; height: 34px; }
+.mrc-rank-info, .mrc-level-info{ flex: 1; min-width: 0; }
+.mrc-rank-tier{
+  font-family: var(--font-display);
+  font-stretch: 75%;
   font-weight: 700;
-  margin-top: 6px;
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: -.01em;
+}
+.mrc-rank-rating{
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  margin: 2px 0 5px;
+}
+.mrc-rank-rating .delta{ font-weight: 700; font-size: 10px; }
+.mrc-rank-rating .delta.up, .mrc-rank-rating .delta{ color: var(--mint); }
+.mrc-rank-rating .delta.down{ color: var(--coral); }
+.mrc-level-top{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px;
+  margin-bottom: 5px;
+}
+.mrc-level .mxp-level-badge{
+  width: 40px; height: 40px;
+  flex-shrink: 0;
+  border-radius: 11px;
+  font-size: 19px;
+}
+
+/* Collapsible toggle */
+.mrc-toggle{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 9px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid var(--line-soft);
+  border-radius: 10px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all .15s;
+}
+.mrc-toggle:hover{ background: rgba(255,255,255,.05); color: var(--text); }
+.mrc-toggle-chevron{ transition: transform .25s; }
+.mrc-toggle.open .mrc-toggle-chevron{ transform: rotate(180deg); }
+.mrc-details{
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: mrcDetailsIn .3s ease-out;
+}
+@keyframes mrcDetailsIn{
+  from{ opacity: 0; transform: translateY(-6px); }
+  to{ opacity: 1; transform: translateY(0); }
 }
 
 /* ROUNDS LIST */
 .mr-rounds{
-  padding: 16px 24px;
-  border-bottom: 1px solid var(--line-soft);
+  padding: 0;
 }
 .mr-section-label{
   display: flex;
@@ -6066,10 +6145,9 @@ h2.match-title{
 /* STATS GRID */
 .mr-stats-grid{
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 8px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line-soft);
+  padding: 0;
 }
 .mr-stat{
   display: flex;
@@ -6106,8 +6184,9 @@ h2.match-title{
 
 /* DAILY CHALLENGE in match result */
 .mr-daily{
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line-soft);
+  padding: 14px;
+  border: 1px solid var(--line-soft);
+  border-radius: 12px;
   background: radial-gradient(circle at 80% 50%, rgba(245,180,49,.06), transparent 70%);
 }
 .mr-daily .mr-section-label{
@@ -9806,147 +9885,141 @@ const FIREBASE_CONFIG = {
 
   <div class="match-result-card-v2" id="matchResultCard">
 
-    <!-- BIG HEADLINE STRIP -->
+    <!-- COMPACT HEADER: result + score + avatars in one band -->
     <div class="mr-headline-strip" id="matchResultHeadlineStrip">
-      <div class="mr-headline-content">
-        <svg viewBox="0 0 24 24" class="mr-headline-icon" width="36" height="36" id="matchResultIcon"><use href="#i-trophy"/></svg>
+      <div class="mrc-top">
+        <svg viewBox="0 0 24 24" class="mr-headline-icon" width="28" height="28" id="matchResultIcon"><use href="#i-trophy"/></svg>
         <div class="mr-headline-text">
           <div class="match-result-headline" id="matchResultHeadline">VICTORY</div>
           <div class="match-result-sub" id="matchResultSub">Best of 3 · won 2–0</div>
         </div>
       </div>
-      <div class="mr-headline-burst"></div>
-    </div>
-
-    <!-- VS HEADER: avatars + score -->
-    <div class="mr-vs-header">
-      <div class="mr-vs-player you">
-        <div class="mr-vs-av-wrap">
-          <div class="mr-vs-av" id="mrYouAv">?</div>
+      <div class="mrc-scoreline">
+        <div class="mrc-player you">
+          <div class="mrc-av" id="mrYouAv">?</div>
+          <span class="mrc-pname" id="mrYouName">you</span>
         </div>
-        <div class="mr-vs-name" id="mrYouName">you</div>
-      </div>
-
-      <div class="mr-vs-score-block">
-        <div class="match-result-score" id="matchResultScore">
+        <div class="mrc-score">
           <span class="you" id="matchResultYouScore">2</span>
           <span class="dash">–</span>
           <span class="opp" id="matchResultOppScore">0</span>
         </div>
-        <div class="mr-vs-best-of" id="mrBestOf">BEST OF 3</div>
-      </div>
-
-      <div class="mr-vs-player opp">
-        <div class="mr-vs-av-wrap">
-          <div class="mr-vs-av" id="mrOppAv">?</div>
+        <div class="mrc-player opp">
+          <div class="mrc-av" id="mrOppAv">?</div>
+          <span class="mrc-pname" id="mrOppName">@stranger</span>
         </div>
-        <div class="mr-vs-name" id="mrOppName">@stranger</div>
       </div>
+      <div class="mr-headline-burst"></div>
     </div>
 
-    <!-- ROUND-BY-ROUND BREAKDOWN -->
-    <div class="mr-rounds">
-      <div class="mr-section-label">
-        <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-swords"/></svg>
-        <span>ROUNDS</span>
-        <span class="round-count" id="mrRoundCount"></span>
-      </div>
-      <div class="mr-rounds-list" id="mrRoundsList">
-        <!-- populated by JS -->
-      </div>
-    </div>
+    <!-- BODY: scrollable content -->
+    <div class="mrc-body">
 
-    <!-- KEY STATS GRID -->
-    <div class="mr-stats-grid">
-      <div class="mr-stat">
-        <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon"><use href="#i-target"/></svg>
-        <div class="mr-stat-info">
-          <div class="mr-stat-val" id="mrStatAccuracy">—</div>
-          <div class="mr-stat-lbl">Predictions</div>
-        </div>
-      </div>
-      <div class="mr-stat">
-        <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon"><use href="#i-clock"/></svg>
-        <div class="mr-stat-info">
-          <div class="mr-stat-val" id="mrStatDuration">—</div>
-          <div class="mr-stat-lbl">Duration</div>
-        </div>
-      </div>
-      <div class="mr-stat">
-        <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon" data-anim="flicker"><use href="#i-flame"/></svg>
-        <div class="mr-stat-info">
-          <div class="mr-stat-val" id="mrStatStreak">—</div>
-          <div class="mr-stat-lbl">Win streak</div>
-        </div>
-      </div>
-      <div class="mr-stat">
-        <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon"><use href="#i-handshake"/></svg>
-        <div class="mr-stat-info">
-          <div class="mr-stat-val" id="mrStatH2H">—</div>
-          <div class="mr-stat-lbl">vs this player</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- DAILY CHALLENGE PROGRESS -->
-    <div class="mr-daily" id="mrDailyChallenge">
-      <div class="mr-section-label">
-        <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-zap"/></svg>
-        <span>DAILY CHALLENGE</span>
-        <span class="mr-daily-tag" id="mrDailyTag">+1 PROGRESS</span>
-      </div>
-      <div class="mr-daily-body">
-        <div class="mr-daily-info">
-          <div class="mr-daily-goal" id="mrDailyGoal">Win 3 ranked matches today</div>
-          <div class="mr-daily-progress-row">
-            <div class="mr-daily-bar">
-              <div class="mr-daily-bar-fill" id="mrDailyFill" style="width:0%"></div>
+      <!-- RATING + XP COMBINED ROW -->
+      <div class="mrc-progress-row">
+        <!-- Rank chip -->
+        <div class="mrc-rank">
+          <div class="rank-card-icon" id="matchRankIcon"></div>
+          <div class="mrc-rank-info">
+            <div class="mrc-rank-tier" id="matchRankTier">Bronze III</div>
+            <div class="mrc-rank-rating">
+              <span id="matchRankRating">1000</span>
+              <span class="delta" id="matchRankDelta">+12</span>
             </div>
-            <div class="mr-daily-counter" id="mrDailyCounter">0/3</div>
+            <div class="rank-progress-track"><div class="rank-progress-fill" id="matchRankFill"></div></div>
           </div>
         </div>
-        <div class="mr-daily-reward" id="mrDailyReward">
-          <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg>
-          <span>+50 ELO</span>
+        <!-- Level chip -->
+        <div class="mrc-level" id="matchXpCard">
+          <div class="mxp-level-badge" id="mxpLevelBadge">1</div>
+          <div class="mrc-level-info">
+            <div class="mrc-level-top">
+              <span class="mxp-title" id="mxpTitle">Rookie</span>
+              <span class="mxp-gain" id="mxpGain">+0 XP</span>
+            </div>
+            <div class="mxp-bar"><div class="mxp-bar-fill" id="mxpBarFill" style="width:0%"></div></div>
+            <div class="mxp-sub" id="mxpSub">0 / 200 XP</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- RANK PROGRESS -->
-    <div class="match-rank-card">
-      <div class="rank-card-head">
-        <div class="rank-card-icon" id="matchRankIcon"></div>
-        <div class="rank-card-meta">
-          <div class="rank-card-tier" id="matchRankTier">Bronze III</div>
-          <div class="rank-card-rating">
-            <span id="matchRankRating">1000 rating</span>
-            <span class="delta" id="matchRankDelta">+12</span>
-          </div>
-        </div>
-      </div>
-      <div class="rank-progress-track">
-        <div class="rank-progress-fill" id="matchRankFill"></div>
-      </div>
-      <div class="rank-progress-labels">
-        <span id="matchRankCurLabel">Bronze III</span>
-        <span id="matchRankNextLabel">110 to next</span>
-      </div>
-    </div>
-
-    <!-- XP GAIN CARD -->
-    <div class="match-xp-card" id="matchXpCard">
-      <div class="mxp-head">
-        <div class="mxp-level-badge" id="mxpLevelBadge">1</div>
-        <div class="mxp-head-info">
-          <div class="mxp-title-row">
-            <span class="mxp-title" id="mxpTitle">Rookie</span>
-            <span class="mxp-gain" id="mxpGain">+0 XP</span>
-          </div>
-          <div class="mxp-bar"><div class="mxp-bar-fill" id="mxpBarFill" style="width:0%"></div></div>
-          <div class="mxp-sub" id="mxpSub">0 / 200 XP</div>
-        </div>
-      </div>
+      <!-- XP BREAKDOWN chips -->
       <div class="mxp-breakdown" id="mxpBreakdown"></div>
+
+      <!-- COLLAPSIBLE: rounds + stats + daily -->
+      <button type="button" class="mrc-toggle" id="mrcToggleDetails">
+        <span>Match details</span>
+        <svg viewBox="0 0 24 24" width="14" height="14" class="mrc-toggle-chevron"><use href="#i-chevron-down"/></svg>
+      </button>
+      <div class="mrc-details" id="mrcDetails" style="display:none;">
+
+        <!-- ROUNDS -->
+        <div class="mr-rounds">
+          <div class="mr-section-label">
+            <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-swords"/></svg>
+            <span>ROUNDS</span>
+            <span class="round-count" id="mrRoundCount"></span>
+          </div>
+          <div class="mr-rounds-list" id="mrRoundsList"></div>
+        </div>
+
+        <!-- KEY STATS GRID -->
+        <div class="mr-stats-grid">
+          <div class="mr-stat">
+            <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon"><use href="#i-target"/></svg>
+            <div class="mr-stat-info">
+              <div class="mr-stat-val" id="mrStatAccuracy">—</div>
+              <div class="mr-stat-lbl">Predictions</div>
+            </div>
+          </div>
+          <div class="mr-stat">
+            <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon"><use href="#i-clock"/></svg>
+            <div class="mr-stat-info">
+              <div class="mr-stat-val" id="mrStatDuration">—</div>
+              <div class="mr-stat-lbl">Duration</div>
+            </div>
+          </div>
+          <div class="mr-stat">
+            <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon" data-anim="flicker"><use href="#i-flame"/></svg>
+            <div class="mr-stat-info">
+              <div class="mr-stat-val" id="mrStatStreak">—</div>
+              <div class="mr-stat-lbl">Win streak</div>
+            </div>
+          </div>
+          <div class="mr-stat">
+            <svg viewBox="0 0 24 24" width="13" height="13" class="mr-stat-icon"><use href="#i-handshake"/></svg>
+            <div class="mr-stat-info">
+              <div class="mr-stat-val" id="mrStatH2H">—</div>
+              <div class="mr-stat-lbl">vs this player</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DAILY CHALLENGE PROGRESS -->
+        <div class="mr-daily" id="mrDailyChallenge">
+          <div class="mr-section-label">
+            <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-zap"/></svg>
+            <span>DAILY CHALLENGE</span>
+            <span class="mr-daily-tag" id="mrDailyTag">+1 PROGRESS</span>
+          </div>
+          <div class="mr-daily-body">
+            <div class="mr-daily-info">
+              <div class="mr-daily-goal" id="mrDailyGoal">Win 3 ranked matches today</div>
+              <div class="mr-daily-progress-row">
+                <div class="mr-daily-bar">
+                  <div class="mr-daily-bar-fill" id="mrDailyFill" style="width:0%"></div>
+                </div>
+                <div class="mr-daily-counter" id="mrDailyCounter">0/3</div>
+              </div>
+            </div>
+            <div class="mr-daily-reward" id="mrDailyReward">
+              <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg>
+              <span>+50 ELO</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <!-- ACTIONS -->
@@ -15117,6 +15190,32 @@ let updateMatchStats = async function(matchResult){
     updates.currentStreak = 0;
   }
 
+  // ===== XP / LEVEL PROGRESSION =====
+  const streakAfter = matchResult === 'win' ? (state.profile.currentStreak || 0) + 1 : 0;
+  const firstWin = matchResult === 'win' && !state._sessionHadWin;
+  const xpResult = calcMatchXp({
+    result: matchResult,
+    roundsWon: state.scoreYou || 0,
+    roundsLost: state.scoreOpp || 0,
+    correctPredictions: state._matchPredictionsCorrect || 0,
+    streakAfter,
+    firstWinOfSession: firstWin,
+  });
+  if(matchResult === 'win') state._sessionHadWin = true;
+  const oldTotalXp = state.profile.totalXp || 0;
+  const newTotalXp = oldTotalXp + xpResult.xp;
+  const oldLevelInfo = levelFromXp(oldTotalXp);
+  const newLevelInfo = levelFromXp(newTotalXp);
+  const leveledUp = newLevelInfo.level > oldLevelInfo.level;
+  updates.totalXp = increment(xpResult.xp);
+  state._lastXpAward = { ...xpResult, oldLevel: oldLevelInfo, newLevel: newLevelInfo, leveledUp };
+  // Detect newly unlocked titles
+  let newTitles = [];
+  if(leveledUp){
+    const before = titlesUnlockedAt(oldLevelInfo.level).map(t => t.id);
+    newTitles = titlesUnlockedAt(newLevelInfo.level).filter(t => !before.includes(t.id));
+  }
+
   try {
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
     if(matchResult === 'win') state.profile.wins = (state.profile.wins||0) + 1;
@@ -15129,6 +15228,11 @@ let updateMatchStats = async function(matchResult){
       state.profile.bestStreak = Math.max(state.profile.bestStreak || 0, state.profile.currentStreak);
     } else if(matchResult === 'lose'){
       state.profile.currentStreak = 0;
+    }
+    // Apply XP locally
+    state.profile.totalXp = newTotalXp;
+    if(leveledUp){
+      state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
     }
     refreshStatsUI();
     updateChipRating();
@@ -15500,126 +15604,6 @@ function calcEloDelta(myRating, oppRating, score, K=24){
   return Math.round(K * (score - expected));
 }
 
-let updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
-  if(!state.user || !state.profile) return;
-  let score = 0.5;
-  if(result === 'win') score = 1;
-  else if(result === 'lose' || result === 'forfeit') score = 0;
-  const myRating = state.profile.rating || 1000;
-  const oppRating = state.oppProfile?.rating || 1000;
-  const delta = calcEloDelta(myRating, oppRating, score);
-
-  const oldRank = rankFromRating(myRating);
-  const newRating = myRating + delta;
-  const newRank = rankFromRating(newRating);
-  const rankedUp = newRank.index > oldRank.index;
-  const rankedDown = newRank.index < oldRank.index;
-
-  const updates = { games: increment(1), lastSeen: serverTimestamp(), rating: increment(delta) };
-  if(result === 'win') updates.wins = increment(1);
-  else if(result === 'lose' || result === 'forfeit') updates.losses = increment(1);
-  else if(result === 'draw') updates.draws = increment(1);
-  if(result === 'win'){
-    const ns = (state.profile.currentStreak || 0) + 1;
-    updates.currentStreak = ns;
-    if(ns > (state.profile.bestStreak || 0)) updates.bestStreak = ns;
-  } else if(result === 'lose' || result === 'forfeit') updates.currentStreak = 0;
-
-  // ===== XP / LEVEL PROGRESSION =====
-  const streakAfter = result === 'win' ? (state.profile.currentStreak || 0) + 1 : 0;
-  const firstWin = result === 'win' && !state._sessionHadWin;
-  const xpResult = calcMatchXp({
-    result,
-    roundsWon: state.scoreYou || 0,
-    roundsLost: state.scoreOpp || 0,
-    correctPredictions: state._matchPredictionsCorrect || 0,
-    streakAfter,
-    firstWinOfSession: firstWin,
-  });
-  if(result === 'win') state._sessionHadWin = true;
-  const oldTotalXp = state.profile.totalXp || 0;
-  const newTotalXp = oldTotalXp + xpResult.xp;
-  const oldLevelInfo = levelFromXp(oldTotalXp);
-  const newLevelInfo = levelFromXp(newTotalXp);
-  const leveledUp = newLevelInfo.level > oldLevelInfo.level;
-  updates.totalXp = increment(xpResult.xp);
-  // Stash for the result screen
-  state._lastXpAward = { ...xpResult, oldLevel: oldLevelInfo, newLevel: newLevelInfo, leveledUp };
-
-  // Detect newly unlocked titles
-  let newTitles = [];
-  if(leveledUp){
-    const before = titlesUnlockedAt(oldLevelInfo.level).map(t => t.id);
-    newTitles = titlesUnlockedAt(newLevelInfo.level).filter(t => !before.includes(t.id));
-  }
-
-  try {
-    await updateDoc(doc(state.db, 'users', state.user.uid), updates);
-    if(result === 'win') state.profile.wins = (state.profile.wins||0) + 1;
-    else if(result === 'lose' || result === 'forfeit') state.profile.losses = (state.profile.losses||0) + 1;
-    else if(result === 'draw') state.profile.draws = (state.profile.draws||0) + 1;
-    state.profile.games = (state.profile.games||0) + 1;
-    state.profile.rating = newRating;
-    if(result === 'win'){
-      state.profile.currentStreak = (state.profile.currentStreak || 0) + 1;
-      state.profile.bestStreak = Math.max(state.profile.bestStreak || 0, state.profile.currentStreak);
-    } else if(result === 'lose' || result === 'forfeit') state.profile.currentStreak = 0;
-
-    // Apply XP locally
-    state.profile.totalXp = newTotalXp;
-    if(leveledUp){
-      state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
-    }
-
-    refreshStatsUI();
-    updateChipRating();
-
-    // show rating delta in result panel
-    if(delta !== 0){
-      const rd = $('#ratingDelta');
-      rd.classList.remove('up','down');
-      if(delta > 0){ rd.classList.add('up'); rd.textContent = `+${delta} rating · now ${newRating}`; }
-      else { rd.classList.add('down'); rd.textContent = `${delta} rating · now ${newRating}`; }
-      rd.style.display = '';
-    }
-
-    // save match history (one entry per player)
-    await addDoc(collection(state.db, 'matchHistory'), {
-      uid: state.user.uid,
-      username: state.profile.username,
-      oppUid: state.oppUid,
-      oppUsername: state.oppProfile?.username || '',
-      result,
-      delta,
-      myMove: yourMove || null,
-      oppMove: oppMove || null,
-      ratingBefore: myRating,
-      ratingAfter: newRating,
-      createdAt: serverTimestamp(),
-    });
-
-    // save to activity feed (so friends see it)
-    await addDoc(collection(state.db, 'activity'), {
-      uid: state.user.uid,
-      username: state.profile.username,
-      colorIdx: state.profile.colorIdx || 0,
-      emoji: state.profile.emoji || '',
-      result,
-      oppUsername: state.oppProfile?.username || '',
-      delta,
-      createdAt: serverTimestamp(),
-    });
-
-    // rank up?
-    if(rankedUp){
-      state.pendingRankUp = { from: oldRank, to: newRank };
-      // show after result panel has displayed
-      setTimeout(() => showRankUp(oldRank, newRank), 1500);
-    } else if(rankedDown){
-      toast(`Demoted to ${newRank.tierName}`, 'error');
-    }
-  } catch(e){ console.warn('stat update fail', e); }
-}
 
 // ============= RANK UP =============
 function showRankUp(oldRank, newRank){
@@ -16288,6 +16272,15 @@ async function playAgain(){
 
 // Match-end buttons
 on('#matchEndAgainBtn', 'click', playAgain);
+// Collapsible match details toggle
+on('#mrcToggleDetails', 'click', () => {
+  const details = $('#mrcDetails');
+  const toggle = $('#mrcToggleDetails');
+  if(!details) return;
+  const isOpen = details.style.display !== 'none';
+  details.style.display = isOpen ? 'none' : 'flex';
+  toggle.classList.toggle('open', !isOpen);
+});
 on('#matchEndExitBtn', 'click', async () => {
   $('#matchResultOverlay').classList.remove('show');
   await teardownMatch();
@@ -16471,6 +16464,44 @@ document.addEventListener('visibilitychange', () => {
   if(document.visibilityState === 'hidden' && state.user && state.screen === 'matching'){
     try { deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
   }
+  // ANTI-CHEAT: switching tabs during an active round (countdown/shoot/reveal)
+  // is a known exploit — rAF gesture detection freezes in background tabs so the
+  // cheater can lock a gesture, switch away, and win. If the tab is hidden while
+  // a round is live, immediately forfeit the player who left.
+  if(document.visibilityState === 'hidden'
+     && state.screen === 'game'
+     && !state.matchOver
+     && state.oppUid
+     && !state.isBotMatch){
+    const liveRound = ['countdown','shoot','reveal','idle'].includes(state.phase);
+    if(liveRound){
+      console.warn('[anti-cheat] tab hidden during active round — forfeiting');
+      // Tell opponent we left so THEY win this match
+      try { sendPeer({ type: 'forfeit' }); } catch(e){}
+      // Apply the forfeit penalty to us
+      try { applyForfeitPenalty(true); } catch(e){}
+      // Show a notice when they come back
+      try {
+        localStorage.setItem('rosham_tabswitch_notice', '1');
+      } catch(e){}
+    }
+  }
+});
+
+// When returning to the tab, if we were forfeited for tab-switching, tell the user
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    try {
+      if(localStorage.getItem('rosham_tabswitch_notice')){
+        localStorage.removeItem('rosham_tabswitch_notice');
+        toast('You left the match (tab switch) — counted as a forfeit', 'error');
+        // Tear down and return to lobby if still on game screen
+        if(state.screen === 'game'){
+          teardownMatch().then(() => showScreen('landing'));
+        }
+      }
+    } catch(e){}
+  }
 });
 
 // Report player — exposed as helper for any UI element to call
@@ -16569,7 +16600,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.6 — XP & LEVELS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.7 — XP FIX + ANTI-CHEAT + COMPACT RESULTS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
