@@ -417,6 +417,104 @@ header{
   letter-spacing: .02em;
 }
 .user-chip .rank-icon{width:14px; height:14px;}
+.user-chip .chip-level{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 11px;
+  color: #08070d;
+  background: linear-gradient(135deg, #ffd33d, #ff9a3d);
+  min-width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  padding: 0 5px;
+  letter-spacing: -.01em;
+  box-shadow: 0 1px 0 rgba(255,255,255,.3) inset, 0 2px 6px -2px rgba(255,154,61,.6);
+}
+
+/* ===== LEVEL STRIP (rank card) ===== */
+.level-strip{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line-soft);
+  cursor: pointer;
+}
+.level-badge{
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #ffd33d, #ff9a3d);
+  color: #08070d;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-stretch: 65%;
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -.02em;
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 12px -4px rgba(255,154,61,.7);
+  position: relative;
+}
+.level-badge::before{
+  content: "LVL";
+  position: absolute;
+  top: -7px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  color: var(--text-faint);
+  background: var(--surface);
+  padding: 0 3px;
+  border-radius: 3px;
+}
+.level-strip-info{ flex: 1; min-width: 0; }
+.level-strip-top{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.level-strip-title{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--title-color, var(--text));
+  letter-spacing: -.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.level-strip-xp{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.level-bar{
+  height: 5px;
+  background: rgba(255,255,255,.06);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.level-bar-fill{
+  height: 100%;
+  background: linear-gradient(90deg, #ffd33d, #ff9a3d);
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(255,154,61,.5);
+  transition: width .8s cubic-bezier(.2,.8,.2,1);
+}
 
 .btn{
   font-family:var(--font-body);
@@ -1479,6 +1577,151 @@ h1.section-title .accent{
   position: relative;
   overflow: hidden;
 }
+
+/* ===== LEVEL PANEL (stats modal) ===== */
+.level-panel{
+  padding: 18px 20px;
+  background: linear-gradient(135deg, rgba(255,211,61,.08), rgba(255,154,61,.05));
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  margin-bottom: 20px;
+}
+.level-panel-head{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.level-panel-badge{
+  flex-shrink: 0;
+  width: 52px; height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #ffd33d, #ff9a3d);
+  color: #08070d;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-stretch: 65%;
+  font-weight: 800;
+  font-size: 26px;
+  letter-spacing: -.02em;
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 16px -6px rgba(255,154,61,.7);
+}
+.level-panel-info{ flex: 1; min-width: 0; }
+.level-panel-title{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--title-color, var(--text));
+  letter-spacing: -.01em;
+}
+.level-panel-xp{
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+  margin-top: 2px;
+}
+.level-panel-total{
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffb347;
+  letter-spacing: .04em;
+  flex-shrink: 0;
+}
+.level-panel-bar{
+  height: 8px;
+  background: rgba(0,0,0,.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.level-panel-fill{
+  height: 100%;
+  background: linear-gradient(90deg, #ffd33d, #ff9a3d);
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255,154,61,.6);
+  transition: width .9s cubic-bezier(.2,.8,.2,1);
+}
+.titles-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .14em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.titles-sub{ color: #ffb347; letter-spacing: .04em; }
+.titles-grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+}
+.title-chip{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line-soft);
+  background: rgba(255,255,255,.02);
+  cursor: pointer;
+  transition: all .15s;
+  position: relative;
+}
+.title-chip.unlocked:hover{
+  border-color: var(--chip-color, var(--line-bright));
+  background: rgba(255,255,255,.05);
+}
+.title-chip.locked{
+  opacity: .4;
+  cursor: not-allowed;
+}
+.title-chip.equipped{
+  border-color: var(--chip-color, var(--coral));
+  background: color-mix(in srgb, var(--chip-color, var(--coral)) 12%, transparent);
+  box-shadow: 0 0 0 1px var(--chip-color, var(--coral)) inset;
+}
+.title-chip-dot{
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--chip-color, var(--text-faint));
+  flex-shrink: 0;
+  box-shadow: 0 0 6px var(--chip-color, transparent);
+}
+.title-chip-body{ flex: 1; min-width: 0; }
+.title-chip-name{
+  font-family: var(--font-display);
+  font-stretch: 80%;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  letter-spacing: -.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.title-chip-req{
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--text-faint);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.title-chip-check{
+  position: absolute;
+  top: 6px; right: 6px;
+  color: var(--chip-color, var(--coral));
+  width: 14px; height: 14px;
+  display: none;
+}
+.title-chip.equipped .title-chip-check{ display: block; }
+
 .big-rating-display::before{
   content: "";
   position: absolute;
@@ -6073,6 +6316,100 @@ h2.match-title{
   margin-bottom: 24px;
   text-align:left;
 }
+
+/* ===== MATCH XP CARD ===== */
+.match-xp-card{
+  position: relative; z-index: 2;
+  background: linear-gradient(135deg, rgba(255,211,61,.06), rgba(255,154,61,.04));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+.mxp-head{
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.mxp-level-badge{
+  flex-shrink: 0;
+  width: 46px; height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffd33d, #ff9a3d);
+  color: #08070d;
+  display: grid; place-items: center;
+  font-family: var(--font-display);
+  font-stretch: 65%;
+  font-weight: 800;
+  font-size: 22px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 4px 12px -4px rgba(255,154,61,.7);
+}
+.mxp-head-info{ flex: 1; min-width: 0; }
+.mxp-title-row{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.mxp-title{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--title-color, var(--text));
+  letter-spacing: -.01em;
+}
+.mxp-gain{
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  color: #ffb347;
+  letter-spacing: .02em;
+}
+.mxp-bar{
+  height: 7px;
+  background: rgba(0,0,0,.3);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 5px;
+}
+.mxp-bar-fill{
+  height: 100%;
+  background: linear-gradient(90deg, #ffd33d, #ff9a3d);
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(255,154,61,.5);
+  width: 0;
+  transition: width 1s cubic-bezier(.2,.8,.2,1);
+}
+.mxp-sub{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+}
+.mxp-breakdown{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.mxp-chip{
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid var(--line-soft);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: .02em;
+}
+.mxp-chip b{ color: #ffb347; font-weight: 700; }
+
 .rank-card-head{
   display:flex; align-items:center; gap:14px;
   margin-bottom: 14px;
@@ -7462,6 +7799,186 @@ h2.match-title{
   animation: rankdownFadeUp 1s 1.7s forwards;
 }
 
+/* ============ LEVEL UP OVERLAY ============ */
+.levelup-overlay{
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(circle at center, rgba(255,154,61,.16), rgba(8,7,13,.97) 70%),
+    rgba(8,7,13,.98);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 510;
+  overflow: hidden;
+  animation: fadeIn .4s ease-out;
+}
+.levelup-overlay.show{ display: flex; }
+.levelup-rays{
+  position: absolute;
+  inset: -50%;
+  background: conic-gradient(from 0deg at 50% 50%,
+    transparent 0deg, rgba(255,211,61,.5) 5deg, transparent 12deg,
+    transparent 90deg, rgba(255,154,61,.5) 95deg, transparent 102deg,
+    transparent 180deg, rgba(255,211,61,.5) 185deg, transparent 192deg,
+    transparent 270deg, rgba(255,154,61,.5) 275deg, transparent 282deg
+  );
+  filter: blur(2px);
+  opacity: .15;
+  animation: rankupSpinRays 20s linear infinite;
+  mask-image: radial-gradient(ellipse 55% 55% at center, black 30%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse 55% 55% at center, black 30%, transparent 80%);
+  pointer-events: none;
+}
+.levelup-particles{ position: absolute; inset: 0; pointer-events: none; }
+.levelup-particles .lu-particle{
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: #ffd33d;
+  box-shadow: 0 0 8px #ffb347;
+  opacity: 0;
+  animation: rankupParticle 3s ease-out infinite;
+}
+.levelup-content{
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  padding: 40px 30px;
+}
+.levelup-eyebrow{
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 800;
+  font-size: 15px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: #ffb347;
+  text-shadow: 0 0 16px rgba(255,154,61,.6);
+  animation: rankdownPillIn .6s cubic-bezier(.2,1.6,.4,1) both;
+}
+.levelup-badge-stage{
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 180px; height: 180px;
+  animation: levelupBadgeIn 1s cubic-bezier(.2,1.5,.4,1) .2s both;
+}
+@keyframes levelupBadgeIn{
+  0%{ opacity: 0; transform: scale(.3) rotate(-12deg); filter: blur(10px); }
+  60%{ opacity: 1; transform: scale(1.12) rotate(4deg); filter: blur(0); }
+  100%{ opacity: 1; transform: scale(1) rotate(0); }
+}
+.levelup-badge-glow{
+  position: absolute;
+  inset: -10%;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ff9a3d, transparent 65%);
+  filter: blur(35px);
+  opacity: .5;
+  animation: rankdownGlowPulse 2.4s ease-in-out infinite;
+}
+.levelup-badge{
+  position: relative;
+  z-index: 1;
+  width: 150px; height: 150px;
+  border-radius: 36px;
+  background: linear-gradient(135deg, #ffd33d, #ff9a3d);
+  color: #08070d;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-stretch: 60%;
+  font-weight: 800;
+  font-size: 84px;
+  letter-spacing: -.04em;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,.4) inset,
+    0 20px 50px -12px rgba(255,154,61,.8);
+}
+.levelup-from-to{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-stretch: 75%;
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--text-dim);
+  opacity: 0;
+  animation: rankdownFadeUp 1s .9s forwards;
+}
+.levelup-from-to svg{ color: #ffb347; }
+.levelup-to{ color: #fff; }
+.levelup-titles{
+  margin-top: 8px;
+  padding: 16px 24px;
+  border: 1px solid rgba(255,154,61,.35);
+  border-radius: 16px;
+  background: rgba(255,154,61,.06);
+  opacity: 0;
+  animation: rankdownFadeUp 1s 1.2s forwards;
+}
+.levelup-titles-label{
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #ffb347;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.levelup-title-list{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+.levelup-title-pill{
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid var(--pill-color, var(--coral));
+  font-family: var(--font-display);
+  font-stretch: 80%;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--pill-color, var(--text));
+}
+.levelup-title-pill .dot{
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--pill-color, var(--coral));
+  box-shadow: 0 0 8px var(--pill-color, transparent);
+}
+.levelup-hint{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 16px;
+  opacity: 0;
+  animation: rankdownFadeUp 1s 1.6s forwards;
+}
+.levelup-hint kbd{
+  background: rgba(255,255,255,.06);
+  border: 1px solid var(--line);
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+  margin: 0 4px;
+}
+
 /* ============ MODALS ============ */
 .modal-bg{
   position:fixed; inset:0;
@@ -7790,6 +8307,35 @@ h2.match-title{
   display:flex; align-items:center; gap:10px;
 }
 .profile-modal .pm-name .rank-mini{width:22px; height:22px;}
+.profile-modal .pm-title-row{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.profile-modal .pm-level-badge{
+  font-family: var(--font-display);
+  font-stretch: 70%;
+  font-weight: 800;
+  font-size: 11px;
+  color: #08070d;
+  background: linear-gradient(135deg, #ffd33d, #ff9a3d);
+  min-width: 22px;
+  height: 20px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  padding: 0 6px;
+  box-shadow: 0 1px 0 rgba(255,255,255,.3) inset;
+}
+.profile-modal .pm-title{
+  font-family: var(--font-display);
+  font-stretch: 78%;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--title-color, var(--text-dim));
+  letter-spacing: -.005em;
+}
 .profile-modal .pm-sub{
   font-family:var(--font-mono); font-size:12px; color:var(--text-faint);
   margin-top:4px;
@@ -8039,30 +8585,6 @@ h2.match-title{
   letter-spacing:.04em;
 }
 
-/* Bot avatar */
-.opp-avatar-big.bot-av{
-  background: linear-gradient(135deg, #2a1f3d, #5a3d80);
-  display:grid; place-items:center;
-  font-size:80px;
-}
-.bot-vision{
-  position:absolute; inset:0;
-  pointer-events:none;
-}
-.bot-vision::before{
-  content:"";
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  width:200px; height:200px;
-  border-radius:50%;
-  background: radial-gradient(circle, rgba(164,139,255,.25), transparent 70%);
-  animation: botPulse 2.5s ease-in-out infinite;
-}
-@keyframes botPulse{
-  0%, 100%{transform:translate(-50%,-50%) scale(.8); opacity:.6;}
-  50%{transform:translate(-50%,-50%) scale(1.1); opacity:1;}
-}
 
 /* Toggle switch */
 .toggle-row{
@@ -8353,6 +8875,7 @@ h2.match-title{
       <button class="btn" id="nextBtn" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-next"/></svg>Next<span class="key">N</span></button>
       <div class="user-chip" id="userChip" style="display:none;" title="Your profile">
         <div class="av" id="chipAv">?</div>
+        <span class="chip-level" id="chipLevel" title="Level">1</span>
         <span id="chipName">—</span>
         <span class="rating" id="chipRating"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
       </div>
@@ -8584,10 +9107,6 @@ const FIREBASE_CONFIG = {
                 <kbd class="cta-kbd">SPACE</kbd>
               </button>
               <div class="hero-cta-row">
-                <button class="btn-icon-action" id="botBtn" title="Practice against the AI bot (offline)">
-                  <svg viewBox="0 0 24 24" width="14" height="14" data-anim="bot-blink"><use href="#i-bot"/></svg>
-                  <span>Play vs bot</span>
-                </button>
                 <button class="btn-icon-action" id="cameraSetupBtn" title="Adjust your camera">
                   <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
                   <span>Camera setup</span>
@@ -8622,6 +9141,17 @@ const FIREBASE_CONFIG = {
               <div class="rank-card-meta">
                 <span id="rankNextLabel">—</span>
                 <span class="rank-card-stats"><b id="heroWinrate">—</b> win rate</span>
+              </div>
+            </div>
+            <!-- LEVEL STRIP -->
+            <div class="level-strip" id="levelStrip" title="Open profile to see titles">
+              <div class="level-badge" id="heroLevelBadge">1</div>
+              <div class="level-strip-info">
+                <div class="level-strip-top">
+                  <span class="level-strip-title" id="heroTitle">Rookie</span>
+                  <span class="level-strip-xp" id="heroXpText">0 / 200 XP</span>
+                </div>
+                <div class="level-bar"><div class="level-bar-fill" id="levelBarFill" style="width:0%;"></div></div>
               </div>
             </div>
           </div>
@@ -9245,6 +9775,30 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- LEVEL UP OVERLAY -->
+<div class="levelup-overlay" id="levelupOverlay">
+  <div class="levelup-rays"></div>
+  <div class="levelup-particles" id="levelupParticles"></div>
+  <div class="levelup-content">
+    <div class="levelup-eyebrow">LEVEL UP</div>
+    <div class="levelup-badge-stage">
+      <div class="levelup-badge-glow"></div>
+      <div class="levelup-badge" id="levelupBadge">2</div>
+    </div>
+    <div class="levelup-from-to">
+      <span id="levelupFrom">Level 1</span>
+      <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-arrow-right"/></svg>
+      <span class="levelup-to" id="levelupTo">Level 2</span>
+    </div>
+    <!-- New titles unlocked -->
+    <div class="levelup-titles" id="levelupTitles" style="display:none;">
+      <div class="levelup-titles-label">NEW TITLE UNLOCKED</div>
+      <div class="levelup-title-list" id="levelupTitleList"></div>
+    </div>
+    <div class="levelup-hint"><kbd>SPACE</kbd> to continue</div>
+  </div>
+</div>
+
 <!-- MATCH RESULT (best-of-3 end) — REDESIGNED v9 -->
 <div class="match-result-overlay" id="matchResultOverlay">
   <!-- Animated background -->
@@ -9379,6 +9933,22 @@ const FIREBASE_CONFIG = {
       </div>
     </div>
 
+    <!-- XP GAIN CARD -->
+    <div class="match-xp-card" id="matchXpCard">
+      <div class="mxp-head">
+        <div class="mxp-level-badge" id="mxpLevelBadge">1</div>
+        <div class="mxp-head-info">
+          <div class="mxp-title-row">
+            <span class="mxp-title" id="mxpTitle">Rookie</span>
+            <span class="mxp-gain" id="mxpGain">+0 XP</span>
+          </div>
+          <div class="mxp-bar"><div class="mxp-bar-fill" id="mxpBarFill" style="width:0%"></div></div>
+          <div class="mxp-sub" id="mxpSub">0 / 200 XP</div>
+        </div>
+      </div>
+      <div class="mxp-breakdown" id="mxpBreakdown"></div>
+    </div>
+
     <!-- ACTIONS -->
     <div class="match-result-actions">
       <button type="button" class="btn btn-ghost" id="matchEndExitBtn">
@@ -9459,6 +10029,27 @@ const FIREBASE_CONFIG = {
         <div class="big-rating-tier" id="statsBigTier">Bronze I</div>
         <div class="big-rating-num"><span id="statsBigRating">1000</span> <span class="rating-label">ELO</span></div>
         <div class="big-rating-next" id="statsBigNext">25 to next tier</div>
+      </div>
+    </div>
+
+    <!-- LEVEL + TITLE -->
+    <div class="level-panel">
+      <div class="level-panel-head">
+        <div class="level-panel-badge" id="statsLevelBadge">1</div>
+        <div class="level-panel-info">
+          <div class="level-panel-title" id="statsEquippedTitle">Rookie</div>
+          <div class="level-panel-xp" id="statsLevelXp">0 / 200 XP to level 2</div>
+        </div>
+        <div class="level-panel-total" id="statsTotalXp">0 XP</div>
+      </div>
+      <div class="level-panel-bar"><div class="level-panel-fill" id="statsLevelFill" style="width:0%"></div></div>
+
+      <div class="titles-head">
+        <span>TITLES</span>
+        <span class="titles-sub" id="titlesUnlockedCount">0 unlocked</span>
+      </div>
+      <div class="titles-grid" id="titlesGrid">
+        <!-- populated by JS -->
       </div>
     </div>
 
@@ -9726,6 +10317,10 @@ const FIREBASE_CONFIG = {
       <div class="av-xl" id="pmAv">?</div>
       <div>
         <div class="pm-name" id="pmName">— <svg class="rank-mini" id="pmRankMini"></svg></div>
+        <div class="pm-title-row" id="pmTitleRow">
+          <span class="pm-level-badge" id="pmLevelBadge">1</span>
+          <span class="pm-title" id="pmTitle">Rookie</span>
+        </div>
         <div class="pm-sub" id="pmSub">—</div>
         <div class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></div>
       </div>
@@ -9951,13 +10546,10 @@ import {
    ROSHAM v4 — paste your Firebase config below
    ========================================================= */
 const FIREBASE_CONFIG = {
-  apiKey: "AIzaSyCepMBXyr7uxW242CfFYGCp6V2lSJ0dYIo",
-  authDomain: "rosham-26c38.firebaseapp.com",
-  projectId: "rosham-26c38",
-  storageBucket: "rosham-26c38.firebasestorage.app",
-  messagingSenderId: "33374172620",
-  appId: "1:33374172620:web:c6cdc9a630add058b2d969",
-  measurementId: "G-1TCWY3Q58Y",
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT",
+  appId: "YOUR_APP_ID",
 };
 
 function isConfigured(){
@@ -10112,6 +10704,83 @@ function rankProgressToNext(rating){
   return { progress, toNext: nextT.threshold - rating, nextLabel: `${nextT.threshold - rating} to next` };
 }
 
+// =================== XP / LEVEL / TITLE PROGRESSION ===================
+// XP needed to go FROM level L to L+1. Smooth exponential curve.
+function xpForLevel(level){
+  // level 1->2 needs 200, scaling up ~12% per level
+  return Math.round(200 * Math.pow(1.12, level - 1));
+}
+// Total cumulative XP required to REACH a given level (level 1 = 0)
+function totalXpForLevel(level){
+  let sum = 0;
+  for(let l = 1; l < level; l++) sum += xpForLevel(l);
+  return sum;
+}
+// Given total accumulated XP, return { level, xpInLevel, xpForThis, progress }
+function levelFromXp(totalXp){
+  totalXp = Math.max(0, totalXp || 0);
+  let level = 1;
+  let remaining = totalXp;
+  // cap at level 99 to avoid runaway loops
+  while(level < 99){
+    const need = xpForLevel(level);
+    if(remaining < need) break;
+    remaining -= need;
+    level++;
+  }
+  const xpForThis = xpForLevel(level);
+  return {
+    level,
+    xpInLevel: Math.floor(remaining),
+    xpForThis,
+    progress: Math.max(0, Math.min(1, remaining / xpForThis)),
+    totalXp,
+  };
+}
+
+// Titles unlocked at level milestones. Player can equip any unlocked title.
+const TITLES = [
+  { id:'rookie',       name:'Rookie',          level:1,  color:'#9aa0aa' },
+  { id:'challenger',   name:'Challenger',      level:3,  color:'#7fd1ff' },
+  { id:'contender',    name:'Contender',       level:5,  color:'#5dffba' },
+  { id:'brawler',      name:'Brawler',         level:8,  color:'#ffd33d' },
+  { id:'duelist',      name:'Duelist',         level:12, color:'#ff9a3d' },
+  { id:'gladiator',    name:'Gladiator',       level:16, color:'#ff7a3d' },
+  { id:'warlord',      name:'Warlord',         level:20, color:'#ff3d68' },
+  { id:'mindreader',   name:'Mind Reader',     level:25, color:'#a48bff' },
+  { id:'unstoppable',  name:'Unstoppable',     level:30, color:'#c77dff' },
+  { id:'legend',       name:'Legend',          level:40, color:'#ff3d9a' },
+  { id:'mythic',       name:'Mythic',          level:50, color:'#ffd700' },
+];
+function titlesUnlockedAt(level){
+  return TITLES.filter(t => level >= t.level);
+}
+function titleById(id){
+  return TITLES.find(t => t.id === id) || TITLES[0];
+}
+// XP award calculation for a finished match.
+// opts: { result, roundsWon, roundsLost, correctPredictions, streakAfter, firstWinOfSession }
+function calcMatchXp(opts){
+  const o = opts || {};
+  let xp = 0;
+  const breakdown = [];
+  // Base by result
+  if(o.result === 'win'){ xp += 100; breakdown.push({ label:'Victory', amount:100 }); }
+  else if(o.result === 'draw'){ xp += 50; breakdown.push({ label:'Draw', amount:50 }); }
+  else if(o.result === 'forfeit'){ xp += 10; breakdown.push({ label:'Forfeit', amount:10 }); }
+  else { xp += 30; breakdown.push({ label:'Match played', amount:30 }); }
+  // Rounds won
+  if(o.roundsWon > 0){ const a = o.roundsWon * 20; xp += a; breakdown.push({ label:`${o.roundsWon} round${o.roundsWon>1?'s':''} won`, amount:a }); }
+  // Correct predictions
+  if(o.correctPredictions > 0){ const a = o.correctPredictions * 15; xp += a; breakdown.push({ label:`${o.correctPredictions} read${o.correctPredictions>1?'s':''}`, amount:a }); }
+  // Win streak bonus
+  if(o.result === 'win' && o.streakAfter >= 3){ const a = Math.min(100, o.streakAfter * 15); xp += a; breakdown.push({ label:`${o.streakAfter}-win streak`, amount:a }); }
+  // First win of session
+  if(o.result === 'win' && o.firstWinOfSession){ xp += 50; breakdown.push({ label:'First win today', amount:50 }); }
+  return { xp, breakdown };
+}
+
+
 // =================== STATE ===================
 const state = {
   screen: null,
@@ -10151,6 +10820,10 @@ const state = {
   muted: false,
   pingTimer: null,
   oppPingMs: null,
+  // XP / leveling session tracking
+  _sessionHadWin: false,        // for "first win today" bonus
+  _lastXpAward: null,           // breakdown of last match's XP for result screen
+  _pendingLevelUp: null,        // { from, to, newTitles } shown after result
   // social
   unsubFriends: null,
   unsubRequests: null,
@@ -10647,6 +11320,9 @@ async function onAuthChanged(user){
       // ensure arrays exist
       if(!state.profile.friends) state.profile.friends = [];
       if(!state.profile.blocked) state.profile.blocked = [];
+      // ensure XP fields exist for legacy profiles
+      if(typeof state.profile.totalXp !== 'number') state.profile.totalXp = 0;
+      if(!state.profile.equippedTitle) state.profile.equippedTitle = 'rookie';
     }
   } catch(e){
     console.error('Profile load failed', e);
@@ -10691,6 +11367,10 @@ function updateChipRating(){
   span.textContent = ' ' + rating;
   ratingEl.appendChild(span);
   ratingEl.style.color = rank.color;
+
+  // Level badge in chip
+  const lvl = levelFromXp(state.profile.totalXp || 0);
+  setText('#chipLevel', lvl.level);
 }
 
 function refreshStatsUI(){
@@ -10742,6 +11422,26 @@ function refreshStatsUI(){
   const games = p.games || ((p.wins||0) + (p.losses||0) + (p.draws||0));
   const wr = games > 0 ? Math.round(((p.wins||0) / games) * 100) : 0;
   setText('#heroWinrate', wr + '%');
+
+  // ===== LEVEL STRIP =====
+  const lvl = levelFromXp(p.totalXp || 0);
+  setText('#heroLevelBadge', lvl.level);
+  setText('#chipLevel', lvl.level);
+  // Equipped title (default to highest unlocked if none set)
+  let equipped = p.equippedTitle ? titleById(p.equippedTitle) : null;
+  if(!equipped || lvl.level < equipped.level){
+    // fall back to highest unlocked
+    const unlocked = titlesUnlockedAt(lvl.level);
+    equipped = unlocked[unlocked.length - 1] || TITLES[0];
+  }
+  const titleEl = $('#heroTitle');
+  if(titleEl){
+    titleEl.textContent = equipped.name;
+    titleEl.style.setProperty('--title-color', equipped.color);
+  }
+  setText('#heroXpText', `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
+  const lvlFill = $('#levelBarFill');
+  if(lvlFill) lvlFill.style.width = (lvl.progress * 100) + '%';
 }
 
 function detachUserListeners(){
@@ -10916,6 +11616,7 @@ async function createProfile(uid, username, country){
     uid, username, country,
     wins:0, losses:0, draws:0, games:0,
     rating: 1000, bestStreak: 0, currentStreak: 0,
+    totalXp: 0, equippedTitle: 'rookie',
     bio: '', colorIdx, photoURL: '',
     createdAt: serverTimestamp(),
     lastSeen: serverTimestamp(),
@@ -11113,6 +11814,71 @@ function openStatsModal(){
   setText('#scissorsCount', throwStats.scissors);
 
   $('#statsModal').classList.add('show');
+
+  // ===== LEVEL + TITLES =====
+  renderLevelPanel();
+}
+
+function renderLevelPanel(){
+  const p = state.profile;
+  if(!p) return;
+  const lvl = levelFromXp(p.totalXp || 0);
+  setText('#statsLevelBadge', lvl.level);
+  setText('#statsTotalXp', (p.totalXp || 0).toLocaleString() + ' XP');
+  setText('#statsLevelXp', lvl.level >= 99 ? 'MAX LEVEL' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP to level ${lvl.level + 1}`);
+  const fill = $('#statsLevelFill');
+  if(fill) fill.style.width = (lvl.progress * 100) + '%';
+
+  // Equipped title
+  let equippedId = p.equippedTitle || 'rookie';
+  let equipped = titleById(equippedId);
+  // if equipped title is no longer valid (shouldn't happen), fall back
+  if(lvl.level < equipped.level){ equipped = TITLES[0]; equippedId = 'rookie'; }
+  setText('#statsEquippedTitle', equipped.name);
+  const titleEl = $('#statsEquippedTitle');
+  if(titleEl) titleEl.style.setProperty('--title-color', equipped.color);
+
+  const unlocked = titlesUnlockedAt(lvl.level);
+  setText('#titlesUnlockedCount', `${unlocked.length}/${TITLES.length} unlocked`);
+
+  // Render title chips
+  const grid = $('#titlesGrid');
+  if(grid){
+    grid.innerHTML = '';
+    TITLES.forEach(t => {
+      const isUnlocked = lvl.level >= t.level;
+      const isEquipped = t.id === equippedId;
+      const chip = document.createElement('div');
+      chip.className = 'title-chip ' + (isUnlocked ? 'unlocked' : 'locked') + (isEquipped ? ' equipped' : '');
+      chip.style.setProperty('--chip-color', t.color);
+      chip.innerHTML = `
+        <span class="title-chip-dot"></span>
+        <div class="title-chip-body">
+          <div class="title-chip-name">${t.name}</div>
+          <div class="title-chip-req">${isUnlocked ? 'unlocked' : 'level ' + t.level}</div>
+        </div>
+        <svg class="title-chip-check" viewBox="0 0 24 24"><use href="#i-check"/></svg>
+      `;
+      if(isUnlocked){
+        chip.addEventListener('click', () => equipTitle(t.id));
+      }
+      grid.appendChild(chip);
+    });
+  }
+}
+
+async function equipTitle(titleId){
+  if(!state.user || !state.profile) return;
+  const lvl = levelFromXp(state.profile.totalXp || 0);
+  const t = titleById(titleId);
+  if(lvl.level < t.level){ toast('Title still locked', 'error'); return; }
+  state.profile.equippedTitle = titleId;
+  try {
+    await updateDoc(doc(state.db, 'users', state.user.uid), { equippedTitle: titleId });
+    toast(`Title set: ${t.name}`, 'success');
+  } catch(e){ console.warn('[title] equip failed', e); }
+  renderLevelPanel();
+  refreshStatsUI();
 }
 
 function getThrowStats(){
@@ -11449,6 +12215,7 @@ function wireSettings(){
 
 // Wire up "View all stats" + "open achievements" + new social buttons
 on('#viewFullStatsBtn', 'click', openStatsModal);
+on('#levelStrip', 'click', openStatsModal);
 on('#settingsBtn', 'click', openSettingsModal);
 on('#achievementsBtn', 'click', openAchievementsModal);
 
@@ -12226,6 +12993,20 @@ async function openProfile(uid){
     setText('#pmLosses', p.losses || 0);
     setText('#pmGames', p.games || 0);
     setText('#pmStreak', p.bestStreak || 0);
+
+    // Level + title
+    const lvl = levelFromXp(p.totalXp || 0);
+    setText('#pmLevelBadge', lvl.level);
+    let pTitle = p.equippedTitle ? titleById(p.equippedTitle) : null;
+    if(!pTitle || lvl.level < pTitle.level){
+      const unl = titlesUnlockedAt(lvl.level);
+      pTitle = unl[unl.length - 1] || TITLES[0];
+    }
+    const pmTitleEl = $('#pmTitle');
+    if(pmTitleEl){
+      pmTitleEl.textContent = pTitle.name;
+      pmTitleEl.style.setProperty('--title-color', pTitle.color);
+    }
 
     // load match history
     await loadMatchHistory(uid);
@@ -13610,6 +14391,8 @@ function resetMatchUI(){
   state._matchWinningMoves = [];
   state._matchRoundHistory = [];        // NEW — round-by-round log for result screen
   state._matchStartedAt = Date.now();   // NEW — for duration display
+  state._lastXpAward = null;            // reset XP award for fresh match
+  state._pendingLevelUp = null;
   state.myPrediction = null;
   setText('#scoreYou', 0);
   setText('#scoreOpp', 0);
@@ -14378,6 +15161,75 @@ let updateMatchStats = async function(matchResult){
   } catch(e){ console.warn('match stat update fail', e); }
 };
 
+// Populate the XP card on the match result screen using state._lastXpAward
+function populateMatchXpCard(){
+  const card = $('#matchXpCard');
+  if(!card) return;
+  const award = state._lastXpAward;
+  if(!award){
+    // No XP awarded (e.g. bot match historically) — hide card
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = '';
+
+  // We animate from the OLD level state to the NEW
+  const oldL = award.oldLevel;
+  const newL = award.newLevel;
+  setText('#mxpLevelBadge', oldL.level);
+  setText('#mxpGain', `+${award.xp} XP`);
+
+  // Title (equipped or highest unlocked at old level)
+  let equipped = state.profile?.equippedTitle ? titleById(state.profile.equippedTitle) : TITLES[0];
+  const titleEl = $('#mxpTitle');
+  if(titleEl){
+    titleEl.textContent = equipped.name;
+    titleEl.style.setProperty('--title-color', equipped.color);
+  }
+
+  // Bar starts at old progress, animates to new
+  const fill = $('#mxpBarFill');
+  const sub = $('#mxpSub');
+  if(fill){
+    fill.style.transition = 'none';
+    fill.style.width = (oldL.progress * 100) + '%';
+    setText('#mxpSub', `${oldL.xpInLevel} / ${oldL.xpForThis} XP`);
+    // Force reflow then animate
+    void fill.offsetWidth;
+    setTimeout(() => {
+      fill.style.transition = '';
+      if(award.leveledUp){
+        // animate to 100%, then reset to new level's progress
+        fill.style.width = '100%';
+        setTimeout(() => {
+          setText('#mxpLevelBadge', newL.level);
+          fill.style.transition = 'none';
+          fill.style.width = '0%';
+          void fill.offsetWidth;
+          fill.style.transition = '';
+          fill.style.width = (newL.progress * 100) + '%';
+          setText('#mxpSub', `${newL.xpInLevel} / ${newL.xpForThis} XP`);
+        }, 900);
+      } else {
+        fill.style.width = (newL.progress * 100) + '%';
+        setText('#mxpSub', `${newL.xpInLevel} / ${newL.xpForThis} XP`);
+      }
+    }, 600);
+  }
+
+  // Breakdown chips
+  const bd = $('#mxpBreakdown');
+  if(bd){
+    bd.innerHTML = '';
+    (award.breakdown || []).forEach(b => {
+      const chip = document.createElement('span');
+      chip.className = 'mxp-chip';
+      chip.innerHTML = `${b.label} <b>+${b.amount}</b>`;
+      bd.appendChild(chip);
+    });
+  }
+}
+
 function showMatchResultScreen(result){
   const overlay = $('#matchResultOverlay');
   const card = $('#matchResultCard');
@@ -14593,6 +15445,7 @@ function showMatchResultScreen(result){
   fill.style.width = (progBefore.progress * 100) + '%';
   // Show overlay
   overlay.classList.add('show');
+  populateMatchXpCard();
 
   // After a moment, animate to new rating
   setTimeout(() => {
@@ -14617,12 +15470,24 @@ function showMatchResultScreen(result){
     }, 700);
     setTimeout(() => fill.classList.remove('animating'), 1500);
 
-    // Trigger rank-up celebration if applicable
+    // Trigger rank-up celebration if applicable, then level-up
+    const showLevelUpIfPending = () => {
+      if(state._pendingLevelUp){
+        const lu = state._pendingLevelUp;
+        state._pendingLevelUp = null;
+        showLevelUp(lu);
+      }
+    };
     if(state._pendingRankUp){
       setTimeout(() => {
         showRankUp(state._pendingRankUp.from, state._pendingRankUp.to);
         state._pendingRankUp = null;
+        // After rank-up auto-dismisses, show level-up
+        if(state._pendingLevelUp) setTimeout(showLevelUpIfPending, 9500);
       }, 1800);
+    } else {
+      // No rank-up — show level-up shortly after result settles
+      if(state._pendingLevelUp) setTimeout(showLevelUpIfPending, 1800);
     }
   }, 900);
 }
@@ -14657,6 +15522,34 @@ let updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
     if(ns > (state.profile.bestStreak || 0)) updates.bestStreak = ns;
   } else if(result === 'lose' || result === 'forfeit') updates.currentStreak = 0;
 
+  // ===== XP / LEVEL PROGRESSION =====
+  const streakAfter = result === 'win' ? (state.profile.currentStreak || 0) + 1 : 0;
+  const firstWin = result === 'win' && !state._sessionHadWin;
+  const xpResult = calcMatchXp({
+    result,
+    roundsWon: state.scoreYou || 0,
+    roundsLost: state.scoreOpp || 0,
+    correctPredictions: state._matchPredictionsCorrect || 0,
+    streakAfter,
+    firstWinOfSession: firstWin,
+  });
+  if(result === 'win') state._sessionHadWin = true;
+  const oldTotalXp = state.profile.totalXp || 0;
+  const newTotalXp = oldTotalXp + xpResult.xp;
+  const oldLevelInfo = levelFromXp(oldTotalXp);
+  const newLevelInfo = levelFromXp(newTotalXp);
+  const leveledUp = newLevelInfo.level > oldLevelInfo.level;
+  updates.totalXp = increment(xpResult.xp);
+  // Stash for the result screen
+  state._lastXpAward = { ...xpResult, oldLevel: oldLevelInfo, newLevel: newLevelInfo, leveledUp };
+
+  // Detect newly unlocked titles
+  let newTitles = [];
+  if(leveledUp){
+    const before = titlesUnlockedAt(oldLevelInfo.level).map(t => t.id);
+    newTitles = titlesUnlockedAt(newLevelInfo.level).filter(t => !before.includes(t.id));
+  }
+
   try {
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
     if(result === 'win') state.profile.wins = (state.profile.wins||0) + 1;
@@ -14668,6 +15561,12 @@ let updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
       state.profile.currentStreak = (state.profile.currentStreak || 0) + 1;
       state.profile.bestStreak = Math.max(state.profile.bestStreak || 0, state.profile.currentStreak);
     } else if(result === 'lose' || result === 'forfeit') state.profile.currentStreak = 0;
+
+    // Apply XP locally
+    state.profile.totalXp = newTotalXp;
+    if(leveledUp){
+      state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
+    }
 
     refreshStatsUI();
     updateChipRating();
@@ -14920,6 +15819,64 @@ function checkForfeitNotice(){
     // Delay slightly so landing screen has rendered
     setTimeout(() => showRankDown(notice), 800);
   } catch(e){ console.warn('[forfeit] check failed', e); }
+}
+
+// ============= LEVEL UP =============
+function showLevelUp(info){
+  const overlay = $('#levelupOverlay');
+  if(!overlay || !info) return;
+  setText('#levelupBadge', info.to.level);
+  setText('#levelupFrom', `Level ${info.from.level}`);
+  setText('#levelupTo', `Level ${info.to.level}`);
+
+  // New titles
+  const titlesBox = $('#levelupTitles');
+  const titleList = $('#levelupTitleList');
+  if(info.newTitles && info.newTitles.length > 0){
+    titleList.innerHTML = '';
+    info.newTitles.forEach(t => {
+      const pill = document.createElement('span');
+      pill.className = 'levelup-title-pill';
+      pill.style.setProperty('--pill-color', t.color);
+      pill.innerHTML = `<span class="dot"></span>${t.name}`;
+      titleList.appendChild(pill);
+    });
+    titlesBox.style.display = '';
+  } else {
+    titlesBox.style.display = 'none';
+  }
+
+  // Particles
+  const particles = $('#levelupParticles');
+  if(particles){
+    particles.innerHTML = '';
+    for(let i = 0; i < 30; i++){
+      const p = document.createElement('div');
+      p.className = 'lu-particle';
+      p.style.left = (Math.random() * 100) + '%';
+      p.style.top = (Math.random() * 100) + '%';
+      p.style.animationDelay = (Math.random() * 2.5) + 's';
+      p.style.animationDuration = (2 + Math.random() * 2) + 's';
+      particles.appendChild(p);
+    }
+  }
+
+  overlay.classList.add('show');
+  try { sfxRankUp && sfxRankUp(); } catch(e){}
+
+  const dismiss = () => {
+    overlay.classList.remove('show');
+    overlay.removeEventListener('click', dismiss);
+    document.removeEventListener('keydown', keyDismiss);
+  };
+  const keyDismiss = (e) => {
+    if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); }
+  };
+  setTimeout(() => {
+    overlay.addEventListener('click', dismiss);
+    document.addEventListener('keydown', keyDismiss);
+  }, 1200);
+  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 9000);
 }
 
 // ============= CHAT =============
@@ -15318,289 +16275,23 @@ function setupCropperEvents(){
 }
 setupCropperEvents();
 
-// ============= BOT MODE =============
-const BOT_NAMES = [
-  { name: 'roshamBot', country: 'XX', rating: 1000 },
-  { name: 'practiceBuddy', country: 'NO', rating: 1100 },
-  { name: 'silverFox', country: 'US', rating: 1250 },
-  { name: 'goldHand', country: 'JP', rating: 1400 },
-];
 
-function pickBotProfile(){
-  // bot rating close to player's so first match isn't lopsided
-  const myRating = state.profile?.rating || 1000;
-  const variants = [
-    { name: 'roshamBot', country: 'XX', rating: myRating },
-    { name: 'trainBot', country: 'NO', rating: myRating + 50 },
-    { name: 'sparBot', country: 'US', rating: myRating - 30 },
-  ];
-  const v = variants[Math.floor(Math.random() * variants.length)];
-  return {
-    uid: 'bot:' + v.name,
-    username: v.name,
-    country: v.country,
-    rating: v.rating,
-    colorIdx: 4, // blue-purple gradient
-    photoURL: '',
-    isBot: true,
-    bio: 'Practice opponent · stats not saved',
-  };
-}
-
-async function startBotMatch(){
-  ensureAudio();
-  if(!state.cameraReady){
-    const ok = await setupCamera();
-    if(!ok) return;
-    await setupHands();
-  }
-  state.isBotMatch = true;
-  state.matchId = null; // no real match
-  state.oppProfile = pickBotProfile();
-  state.oppUid = state.oppProfile.uid;
-  state.isCaller = true; // we drive the round
-
-  // show match-found screen briefly
-  showScreen('matching');
-  showMatchFound();
-  sfxMatch();
-  setText('#mfFeed', '<span class="blink">●</span> warming up the bot…');
-  $('#mfFeed').innerHTML = '<span class="blink">●</span> warming up the bot…';
-  setTimeout(() => enterBotMatch(), 2200);
-}
-
-function enterBotMatch(){
-  showScreen('game');
-  resetMatchUI();
-  setupOppPanelBot();
-  setText('#youName', state.profile.username);
-  const myRank = rankFromRating(state.profile.rating || 1000);
-  setText('#youSub', `${flagOf(state.profile.country)} · ${myRank.tierName}`);
-  renderAvatar($('#youAvatar'), state.profile);
-  setText('#youLabel', state.profile.username.slice(0,12).toUpperCase());
-  setText('#roundState', 'PRACTICE MODE · BOT OPPONENT');
-
-  // simulate a "connected" data channel by stubbing it
-  state.dataChannel = {
-    readyState: 'open',
-    send: (data) => {
-      // intercept own messages — bot reacts to gesture/ready
-      try{
-        const msg = JSON.parse(data);
-        if(msg.type === 'gesture'){
-          // bot already decided in its ready logic
-          // reveal will fire when both gestures set
-        }
-      }catch(e){}
-    },
-    close: () => {},
-  };
-  addChat('sys', 'practice mode · this bot is for warming up · stats NOT saved');
-  onPeerConnectedBot();
-  // fake ping
-  setText('#oppPing', '12ms');
-}
-
-function setupOppPanelBot(){
-  const op = state.oppProfile;
-  setText('#oppName', '@' + op.username);
-  setText('#oppFlag', flagOf(op.country));
-  const oppRank = rankFromRating(op.rating);
-  setRankIconEl($('#oppRankMini'), oppRank.id);
-  setText('#oppSub', `BOT · ${oppRank.tierName}`);
-  setText('#oppLabel', op.username.slice(0,12).toUpperCase());
-  setText('#readyPillOppLab', op.username);
-  renderAvatar($('#oppAvatar'), op);
-  // give the big avatar a bot-style look
-  const big = $('#oppAvatarBig');
-  big.classList.add('bot-av');
-  big.textContent = '';
-  big.innerHTML = '<svg viewBox="0 0 24 24" style="width:80px; height:80px; color:var(--violet);"><use href="#i-bot"/></svg>';
-  setText('#chatWithName', '@' + op.username);
-  $('#oppPlaceholder').style.display = '';
-  // add pulsing vision overlay
-  if(!$('#oppPlaceholder').querySelector('.bot-vision')){
-    const vision = document.createElement('div');
-    vision.className = 'bot-vision';
-    $('#oppPlaceholder').appendChild(vision);
-  }
-  const cs2 = $('#oppCamStatus');
-  if(cs2){
-    cs2.classList.remove('live');
-    const lastSpan = cs2.querySelector('span:last-child');
-    if(lastSpan) lastSpan.textContent = 'bot · no camera';
-  }
-  const db2 = $('#disconnectBanner');
-  if(db2) db2.classList.remove('show');
-  const oppBlock2 = $('#arenaPlayerOpp');
-  if(oppBlock2) oppBlock2.onclick = null;
-}
-
-let botReadyTimer = null;
-function onPeerConnectedBot(){
-  setText('#roundState', 'HOLD UP A HAND TO READY UP');
-  $('#handPrompt').classList.add('show');
-  startReadySystem();
-  // bot will ready up shortly after player starts charging
-  scheduleBotReadyWatch();
-}
-
-function scheduleBotReadyWatch(){
-  if(botReadyTimer) clearInterval(botReadyTimer);
-  let botProgress = 0;
-  let isReady = false;
-  let delayUntilCharge = 200 + Math.random() * 700;
-  let started = false;
-  let lastPhase = state.phase;
-  botReadyTimer = setInterval(() => {
-    if(!state.isBotMatch || state.screen !== 'game'){
-      clearInterval(botReadyTimer); botReadyTimer = null; return;
-    }
-    // detect round reset (was done, now idle again)
-    if(lastPhase !== 'idle' && state.phase === 'idle'){
-      botProgress = 0;
-      isReady = false;
-      delayUntilCharge = 200 + Math.random() * 700;
-      started = false;
-      updateOppReadyUI(false, 0);
-    }
-    lastPhase = state.phase;
-    if(state.phase !== 'idle' && state.phase !== 'done'){
-      return; // round in progress
-    }
-    if(state.phase === 'done') return;
-    // only start charging if player has started showing hand
-    if(state.myReadyTimer > 100) started = true;
-    if(!started){
-      state.oppGestureReady = false;
-      updateOppReadyUI(false, 0);
-      return;
-    }
-    delayUntilCharge -= 80;
-    if(delayUntilCharge > 0) return;
-    if(!isReady){
-      botProgress = Math.min(1, botProgress + 0.08 + Math.random() * 0.04);
-      updateOppReadyUI(false, botProgress);
-      if(botProgress >= 1){
-        isReady = true;
-        state.oppGestureReady = true;
-        updateOppReadyUI(true, 1);
-        sfxReady();
-        maybeStartRound();
-      }
-    }
-  }, 80);
-}
-
-// Override maybeStartRound and runCountdown behavior for bot
-function botPickGesture(){
-  // mostly random with slight bias
-  const r = Math.random();
-  if(r < 0.34) return 'rock';
-  if(r < 0.67) return 'paper';
-  return 'scissors';
-}
-
-// Hook into the existing round flow: when caller (us) calls runCountdown, the bot needs to "send" a gesture.
-// We monkey-patch sendPeer for bot mode to detect 'gesture' from us and respond after a delay.
-const origSendPeer = sendPeer;
-sendPeer = function(msg){
-  if(!state.isBotMatch){ origSendPeer(msg); return; }
-  // bot mode: ignore outgoing, simulate bot's response
-  if(msg.type === 'gesture'){
-    // bot reveals its move ~immediately
-    setTimeout(() => {
-      state.oppGesture = botPickGesture();
-      revealIfBothIn();
-    }, 100 + Math.random() * 200);
-  }
-};
-
-// Override teardown to skip Firestore for bot matches
-const origTeardownMatch = teardownMatch;
-teardownMatch = async function(){
-  if(state.isBotMatch){
-    console.log('[teardown] bot match');
-    if(state.pingTimer){ clearInterval(state.pingTimer); state.pingTimer = null; }
-    if(botReadyTimer){ clearInterval(botReadyTimer); botReadyTimer = null; }
-    state.isBotMatch = false;
-    state.remoteStream = null;
-    state.oppUid = null; state.oppProfile = null;
-    state.scoreYou = 0; state.scoreOpp = 0;
-    state.streak = 0; state.streakType = null;
-    state.phase = 'idle';
-    state.dataChannel = null;
-    // CRITICAL: reset same flags as the non-bot version so a follow-up
-    // ranked match doesn't auto-end immediately
-    state.matchOver = false;
-    state._endMatchCalled = false;
-    state.matchRoundsToWin = 2;
-    state.myGesture = null;
-    state.oppGesture = null;
-    state.myGestureReady = false;
-    state.oppGestureReady = false;
-    state.countdownRunning = false;
-    state._roundResultApplied = false;
-    state._pendingRoundResult = null;
-    state.myPrediction = null;
-    state.isCaller = false;
-    // restore big avatar
-    const big = $('#oppAvatarBig');
-    big.classList.remove('bot-av');
-    big.innerHTML = '';
-    $('#oppVideo').srcObject = null;
-    const vision = $('#oppPlaceholder')?.querySelector('.bot-vision');
-    if(vision) vision.remove();
-    clearChat();
-    return;
-  }
-  return origTeardownMatch();
-};
-
-// Override the stats updater for bot matches — bot games don't affect ELO or get written to Firestore
-const origUpdateProfileStatsAndHistory = updateProfileStatsAndHistory;
-updateProfileStatsAndHistory = async function(result, yourMove, oppMove){
-  if(state.isBotMatch){
-    // show a "practice" badge instead of rating change
-    const rd = $('#ratingDelta');
-    rd.classList.remove('up','down');
-    rd.style.color = 'var(--text-faint)';
-    rd.textContent = 'PRACTICE · no rating change';
-    rd.style.display = '';
-    return;
-  }
-  return origUpdateProfileStatsAndHistory(result, yourMove, oppMove);
-};
-
-// Bot match: when next button is clicked, restart bot match instead of finding stranger
-async function nextStrangerOrBot(){
+// Play Again — find a new stranger
+async function playAgain(){
   // Hide match result overlay if showing
   $('#matchResultOverlay').classList.remove('show');
-  if(state.isBotMatch){
-    await teardownMatch();
-    await startBotMatch();
-  } else {
-    await nextStranger();
-  }
+  await nextStranger();
 }
 
 // Match-end buttons
-on('#matchEndAgainBtn', 'click', nextStrangerOrBot);
+on('#matchEndAgainBtn', 'click', playAgain);
 on('#matchEndExitBtn', 'click', async () => {
   $('#matchResultOverlay').classList.remove('show');
   await teardownMatch();
-  state.isBotMatch = false;
   showScreen('landing');
 });
 // NEW: Rematch button — request rematch with same opponent
 on('#matchEndRematchBtn', 'click', async () => {
-  if(state.isBotMatch){
-    // For bot: just start a new bot match
-    $('#matchResultOverlay').classList.remove('show');
-    await teardownMatch();
-    setTimeout(() => startBotMatch(), 200);
-    return;
-  }
   if(!state.oppUid){
     toast('No opponent to rematch', 'error');
     return;
@@ -15654,7 +16345,7 @@ on('#matchEndShare', 'click', async () => {
 // Replace next button to handle both modes
 const nb = $('#nextBtn');
 if(nb) nb.removeEventListener('click', nextStranger);
-on('#nextBtn', 'click', nextStrangerOrBot);
+on('#nextBtn', 'click', playAgain);
 
 // ============= TOGGLES =============
 on('#optRegion', 'click', () => {
@@ -15675,9 +16366,6 @@ on('#findBtn', 'click', async () => {
     await setupHands();
   }
   findMatch();
-});
-on('#botBtn', 'click', () => {
-  startBotMatch();
 });
 on('#cancelMatchBtn', 'click', cancelMatchmaking);
 on('#debugMatchBtn', 'click', async () => {
@@ -15732,8 +16420,7 @@ document.addEventListener('keydown', (e) => {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   try {
     if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn')?.click(); }
-    if(state.screen === 'landing' && e.code === 'KeyB'){ e.preventDefault(); $('#botBtn')?.click(); }
-    if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); nextStrangerOrBot(); }
+    if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); playAgain(); }
     if(e.code === 'KeyM'){ e.preventDefault(); $('#muteBtn')?.click(); }
     // Quick predictions during game (1=Rock, 2=Paper, 3=Scissors)
     if(state.screen === 'game' && state.phase === 'idle'){
@@ -15879,7 +16566,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.5 — RANKDOWN + CHALLENGE REDESIGN', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.6 — XP & LEVELS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
