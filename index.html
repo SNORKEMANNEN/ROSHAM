@@ -6796,7 +6796,18 @@ h2.match-title{
   100%{ opacity:0; }
 }
 
-.hand-prompt{text-align:center; display:flex; flex-direction:column; align-items:center; gap:18px;}
+.hand-prompt{
+  text-align:center; display:flex; flex-direction:column; align-items:center; gap:18px;
+  opacity: 0;
+  transform: translateY(10px) scale(.98);
+  transition: opacity .45s cubic-bezier(.2,.7,.2,1), transform .45s cubic-bezier(.2,.7,.2,1);
+  pointer-events: none;
+}
+.hand-prompt.show{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
 .hand-prompt h3{
   font-family:var(--font-display);
   font-stretch:60%; font-weight:800;
@@ -8444,8 +8455,11 @@ h2.match-title{
 }
 .profile-modal .pm-stats{
   display:grid; grid-template-columns: repeat(4, 1fr); gap:10px;
-  margin-bottom:18px;
+  margin-bottom:12px;
 }
+.profile-modal .pm-stats-2{ margin-bottom: 16px; }
+.profile-modal .pm-stats-2 .pm-stat{ padding: 10px 8px; }
+.profile-modal .pm-stats-2 .pm-stat .v{ font-size: 20px; }
 .profile-modal .pm-stat{
   text-align:center; padding:14px 10px;
   background: linear-gradient(180deg, var(--surface-2), var(--surface));
@@ -8466,6 +8480,60 @@ h2.match-title{
   color:var(--text-faint); text-transform:uppercase;
   letter-spacing:.12em;
   font-weight: 600;
+}
+/* Level XP bar in profile */
+.pm-level-bar-wrap{
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(255,211,61,.06), rgba(255,154,61,.04));
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  margin-bottom: 14px;
+}
+.pm-level-bar-top{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.pm-level-bar-top span:first-child{
+  font-family: var(--font-display);
+  font-stretch: 78%;
+  font-weight: 700;
+  font-size: 13px;
+}
+.pm-level-bar-top span:last-child{ color: var(--text-faint); }
+.pm-level-bar{
+  height: 6px;
+  background: rgba(0,0,0,.3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.pm-level-bar-fill{
+  height: 100%;
+  background: linear-gradient(90deg, #ffd33d, #ff9a3d);
+  border-radius: 3px;
+  box-shadow: 0 0 8px rgba(255,154,61,.5);
+  transition: width .8s cubic-bezier(.2,.8,.2,1);
+}
+.pm-lastseen{
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-faint);
+  letter-spacing: .04em;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pm-lastseen.online{ color: var(--mint); }
+.pm-online-dot{
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+  display: inline-block;
 }
 
 /* Match history in profile */
@@ -10405,6 +10473,22 @@ const FIREBASE_CONFIG = {
       <div class="pm-stat"><div class="v" id="pmGames">0</div><div class="l">games</div></div>
       <div class="pm-stat"><div class="v" id="pmStreak">0</div><div class="l">best streak</div></div>
     </div>
+    <div class="pm-stats pm-stats-2">
+      <div class="pm-stat"><div class="v" id="pmWinrate">0%</div><div class="l">win rate</div></div>
+      <div class="pm-stat"><div class="v" id="pmCurStreak">0</div><div class="l">current streak</div></div>
+      <div class="pm-stat"><div class="v" id="pmDraws">0</div><div class="l">draws</div></div>
+      <div class="pm-stat"><div class="v" id="pmLevelStat">1</div><div class="l">level</div></div>
+    </div>
+    <!-- Level XP bar -->
+    <div class="pm-level-bar-wrap">
+      <div class="pm-level-bar-top">
+        <span id="pmLevelTitle">Rookie</span>
+        <span id="pmLevelXpText">0 / 200 XP</span>
+      </div>
+      <div class="pm-level-bar"><div class="pm-level-bar-fill" id="pmLevelBarFill" style="width:0%"></div></div>
+    </div>
+    <!-- Last seen -->
+    <div class="pm-lastseen" id="pmLastSeen"></div>
     <div class="match-history" id="pmHistorySection" style="display:none;">
       <h4>RECENT MATCHES</h4>
       <div class="mh-list" id="pmHistoryList"></div>
@@ -11527,6 +11611,8 @@ function detachUserListeners(){
   if(state.unsubLeaderboard){ state.unsubLeaderboard(); state.unsubLeaderboard = null; }
   if(state.unsubActivity){ state.unsubActivity(); state.unsubActivity = null; }
   if(state._heartbeat){ clearInterval(state._heartbeat); state._heartbeat = null; }
+  if(state._friendPresenceUnsubs){ state._friendPresenceUnsubs.forEach(u => { try { u(); } catch(e){} }); state._friendPresenceUnsubs = []; }
+  if(state._friendPresenceTimer){ clearInterval(state._friendPresenceTimer); state._friendPresenceTimer = null; }
 }
 
 // ============= GLOBAL STATS =============
@@ -11769,6 +11855,38 @@ function attachSocialListeners(){
   );
   renderFriends();
   renderRequests();
+  attachFriendPresence();
+}
+
+// Realtime presence: subscribe to each friend's user doc so online status,
+// rating and rank update live without a refresh. Also re-render every 30s so
+// the "online within 60s" window naturally expires for friends who go idle.
+function attachFriendPresence(){
+  // tear down any existing presence listeners
+  if(state._friendPresenceUnsubs){
+    state._friendPresenceUnsubs.forEach(u => { try { u(); } catch(e){} });
+  }
+  state._friendPresenceUnsubs = [];
+  state._friendDocs = state._friendDocs || {};
+
+  const friendUids = state.profile?.friends || [];
+  if(friendUids.length === 0){ return; }
+
+  friendUids.forEach(fuid => {
+    const unsub = onSnapshot(doc(state.db, 'users', fuid), (snap) => {
+      if(snap.exists()){
+        state._friendDocs[fuid] = snap.data();
+        renderFriendsFromCache();
+      }
+    });
+    state._friendPresenceUnsubs.push(unsub);
+  });
+
+  // periodic re-render to expire stale "online" states
+  if(state._friendPresenceTimer) clearInterval(state._friendPresenceTimer);
+  state._friendPresenceTimer = setInterval(() => {
+    if(Object.keys(state._friendDocs || {}).length) renderFriendsFromCache();
+  }, 20000);
 }
 
 async function renderFriends(){
@@ -11786,60 +11904,77 @@ async function renderFriends(){
     return;
   }
   try {
-    const all = [];
+    state._friendDocs = state._friendDocs || {};
     for(let i = 0; i < friendUids.length; i += 10){
       const batch = friendUids.slice(i, i+10);
       const q = query(collection(state.db, 'users'), where(documentId(), 'in', batch));
       const snap = await getDocs(q);
-      snap.forEach(d => all.push(d.data()));
+      snap.forEach(d => { state._friendDocs[d.id] = d.data(); });
     }
-    const now = Date.now();
-    all.sort((a,b) => {
-      const aOn = a.lastSeen?.toMillis ? (now - a.lastSeen.toMillis() < 60000) : false;
-      const bOn = b.lastSeen?.toMillis ? (now - b.lastSeen.toMillis() < 60000) : false;
-      if(aOn !== bOn) return bOn - aOn;
-      return (b.rating||1000) - (a.rating||1000);
-    });
-    let online = 0;
-    for(const f of all){
-      const isOn = f.lastSeen?.toMillis ? (now - f.lastSeen.toMillis() < 60000) : false;
-      if(isOn) online++;
-      const rank = rankFromRating(f.rating || 1000);
-      const row = document.createElement('div');
-      row.className = 'friend-row';
-      const avStyle = f.photoURL
-        ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;`
-        : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
-      const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
-      row.innerHTML = `
-        <div class="av" style="${avStyle}">${avInner}</div>
-        <div class="meta">
-          <div class="nm">${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
-          <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
-        </div>
-        <div class="online-dot ${isOn ? 'on' : ''}"></div>
-        <div class="friend-actions">
-          <button class="icon-btn" title="View profile" data-action="view" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></button>
-          ${isOn ? `<button class="icon-btn accept" title="Challenge" data-action="challenge" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
-        </div>
-      `;
-      row.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const action = btn.dataset.action;
-          const fuid = btn.dataset.uid;
-          if(action === 'view') openProfile(fuid);
-          else if(action === 'challenge') sendChallenge(fuid);
-        });
-      });
-      row.addEventListener('click', () => openProfile(f.uid));
-      body.appendChild(row);
-    }
-    setText('#friendCount', online + '/' + all.length);
+    renderFriendsFromCache();
+    attachFriendPresence();
   } catch(e){
     console.error('renderFriends', e);
     body.innerHTML = '<div class="side-empty">could not load friends</div>';
   }
+}
+
+// Renders the friends list from the live presence cache (state._friendDocs)
+function renderFriendsFromCache(){
+  const body = $('#friendsBody');
+  if(!body) return;
+  const friendUids = state.profile?.friends || [];
+  const all = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean);
+  if(all.length === 0){
+    body.innerHTML = '<div class="side-empty">no friends yet · add some by username</div>';
+    setText('#friendCount', '0/0');
+    return;
+  }
+  const now = Date.now();
+  const isOnline = (f) => f.lastSeen?.toMillis ? (now - f.lastSeen.toMillis() < 60000) : false;
+  all.sort((a,b) => {
+    const aOn = isOnline(a), bOn = isOnline(b);
+    if(aOn !== bOn) return bOn - aOn;
+    return (b.rating||1000) - (a.rating||1000);
+  });
+  body.innerHTML = '';
+  let online = 0;
+  for(const f of all){
+    const isOn = isOnline(f);
+    if(isOn) online++;
+    const rank = rankFromRating(f.rating || 1000);
+    const lvl = levelFromXp(f.totalXp || 0);
+    const row = document.createElement('div');
+    row.className = 'friend-row';
+    const avStyle = f.photoURL
+      ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;`
+      : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
+    const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
+    row.innerHTML = `
+      <div class="av" style="${avStyle}">${avInner}</div>
+      <div class="meta">
+        <div class="nm">${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+        <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
+      </div>
+      <div class="online-dot ${isOn ? 'on' : ''}" title="${isOn ? 'online' : 'offline'}"></div>
+      <div class="friend-actions">
+        <button class="icon-btn" title="View profile" data-action="view" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></button>
+        ${isOn ? `<button class="icon-btn accept" title="Challenge" data-action="challenge" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
+      </div>
+    `;
+    row.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const action = btn.dataset.action;
+        const fuid = btn.dataset.uid;
+        if(action === 'view') openProfile(fuid);
+        else if(action === 'challenge') sendChallenge(fuid);
+      });
+    });
+    row.addEventListener('click', () => openProfile(f.uid));
+    body.appendChild(row);
+  }
+  setText('#friendCount', online + '/' + all.length);
 }
 
 // ============= STATS SUMMARY CARD =============
@@ -13070,9 +13205,17 @@ async function openProfile(uid){
     setText('#pmGames', p.games || 0);
     setText('#pmStreak', p.bestStreak || 0);
 
+    // Extended stats row
+    const pGames = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
+    const pWr = pGames > 0 ? Math.round(((p.wins||0) / pGames) * 100) : 0;
+    setText('#pmWinrate', pWr + '%');
+    setText('#pmCurStreak', p.currentStreak || 0);
+    setText('#pmDraws', p.draws || 0);
+
     // Level + title
     const lvl = levelFromXp(p.totalXp || 0);
     setText('#pmLevelBadge', lvl.level);
+    setText('#pmLevelStat', lvl.level);
     let pTitle = p.equippedTitle ? titleById(p.equippedTitle) : null;
     if(!pTitle || lvl.level < pTitle.level){
       const unl = titlesUnlockedAt(lvl.level);
@@ -13082,6 +13225,29 @@ async function openProfile(uid){
     if(pmTitleEl){
       pmTitleEl.textContent = pTitle.name;
       pmTitleEl.style.setProperty('--title-color', pTitle.color);
+    }
+    // Level XP bar
+    setText('#pmLevelTitle', pTitle.name);
+    setText('#pmLevelXpText', lvl.level >= 99 ? 'MAX' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
+    const pmLevelFill = $('#pmLevelBarFill');
+    if(pmLevelFill) pmLevelFill.style.width = (lvl.progress * 100) + '%';
+    const pmTitleColorEl = $('#pmLevelTitle');
+    if(pmTitleColorEl) pmTitleColorEl.style.color = pTitle.color;
+
+    // Last seen
+    const lsEl = $('#pmLastSeen');
+    if(lsEl){
+      const now = Date.now();
+      const ls = p.lastSeen?.toMillis ? p.lastSeen.toMillis() : 0;
+      if(ls && now - ls < 60000){
+        lsEl.innerHTML = '<span class="pm-online-dot"></span> Online now';
+        lsEl.className = 'pm-lastseen online';
+      } else if(ls){
+        lsEl.textContent = 'Last seen ' + timeAgo(ls);
+        lsEl.className = 'pm-lastseen';
+      } else {
+        lsEl.textContent = '';
+      }
     }
 
     // load match history
