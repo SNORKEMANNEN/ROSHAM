@@ -265,6 +265,55 @@ body.streamer-mode .streamer-hide::selection{ background: transparent; }
 .watch-btn{ display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 8px; background: rgba(255,51,88,.1); border: 1px solid rgba(255,51,88,.3); color: var(--coral); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; cursor: pointer; }
 .watch-btn:hover{ background: rgba(255,51,88,.18); }
 
+/* ===== MODERATION UI ===== */
+.report-reasons{ display:flex; flex-direction:column; gap:6px; }
+.report-reason{ display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:11px; background:var(--surface-2); border:1px solid var(--line); cursor:pointer; font-size:13px; transition:all .12s; }
+.report-reason:hover{ border-color:var(--text-faint); }
+.report-reason.selected{ border-color:var(--coral); background:rgba(255,51,88,.08); }
+.report-reason .rr-radio{ width:16px; height:16px; border-radius:50%; border:2px solid var(--text-faint); flex-shrink:0; position:relative; }
+.report-reason.selected .rr-radio{ border-color:var(--coral); }
+.report-reason.selected .rr-radio::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--coral); }
+.warn-icon{ width:72px; height:72px; border-radius:50%; background:rgba(255,170,40,.12); display:grid; place-items:center; color:#ffaa28; margin:0 auto; }
+.warn-item{ padding:12px 14px; border-radius:12px; background:var(--surface-2); border:1px solid rgba(255,170,40,.3); }
+.warn-item-reason{ font-weight:700; font-size:13px; }
+.warn-item-note{ font-size:12px; color:var(--text-dim); margin-top:3px; }
+/* Ban overlay */
+.ban-overlay{ position:fixed; inset:0; z-index:9500; display:none; align-items:center; justify-content:center; background:radial-gradient(circle at center, rgba(40,8,14,.96), rgba(8,5,9,.99)); padding:24px; }
+.ban-overlay.show{ display:flex; }
+.ban-card{ max-width:420px; text-align:center; }
+.ban-icon{ width:96px; height:96px; border-radius:28px; background:rgba(255,51,88,.12); border:1px solid rgba(255,51,88,.3); display:grid; place-items:center; color:var(--coral); margin:0 auto 20px; }
+.ban-title{ font-family:var(--font-display); font-stretch:62%; font-weight:800; font-size:38px; letter-spacing:-.03em; color:var(--coral); }
+.ban-sub{ color:var(--text-dim); font-size:14px; margin-top:10px; line-height:1.5; }
+.ban-reason{ margin-top:16px; padding:14px 18px; border-radius:14px; background:var(--surface); border:1px solid var(--line); font-size:13px; color:var(--text); }
+/* Admin panel */
+.admin-report-row{ display:flex; align-items:flex-start; gap:12px; padding:12px 14px; border-radius:12px; background:var(--surface-2); border:1px solid var(--line-soft); margin-bottom:8px; }
+.admin-report-row .arr-body{ flex:1; min-width:0; }
+.admin-report-row .arr-target{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; }
+.admin-report-row .arr-reason{ font-size:12px; color:var(--coral); margin-top:2px; }
+.admin-report-row .arr-meta{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:4px; }
+.admin-report-row .arr-action{ padding:6px 12px; border-radius:9px; background:var(--coral); border:none; color:#fff; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; cursor:pointer; flex-shrink:0; }
+.admin-action-card{ margin-top:12px; padding:14px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); }
+.admin-dur-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:10px 0; }
+.admin-dur-btn{ padding:9px 8px; border-radius:10px; background:var(--surface); border:1px solid var(--line); color:var(--text); font-family:var(--font-mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; cursor:pointer; }
+.admin-dur-btn.selected{ border-color:var(--coral); background:rgba(255,51,88,.1); color:var(--coral); }
+.admin-dur-btn.warn-dur.selected{ border-color:#ffaa28; background:rgba(255,170,40,.1); color:#ffaa28; }
+
+/* ===== STACKED TOASTS ===== */
+.toast-stack{ position:fixed; left:50%; transform:translateX(-50%); bottom:calc(24px + env(safe-area-inset-bottom,0px)); z-index:9600; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none; width:max-content; max-width:92vw; }
+.toast2{ display:flex; align-items:center; gap:10px; padding:12px 18px; border-radius:13px; background:rgba(24,23,34,.97); border:1px solid var(--line); box-shadow:0 12px 36px rgba(0,0,0,.45); color:var(--text); font-size:14px; font-weight:500; opacity:0; transform:translateY(14px) scale(.96); transition:opacity .25s, transform .25s cubic-bezier(.2,.9,.3,1); pointer-events:auto; cursor:pointer; backdrop-filter:blur(12px); }
+.toast2.show{ opacity:1; transform:translateY(0) scale(1); }
+.toast2-ic{ flex-shrink:0; color:var(--text-faint); }
+.toast2.success{ border-color:rgba(34,211,163,.4); } .toast2.success .toast2-ic{ color:var(--mint); }
+.toast2.error{ border-color:rgba(255,51,88,.4); } .toast2.error .toast2-ic{ color:var(--coral); }
+.toast2.info .toast2-ic{ color:#a48bff; }
+@media (max-width:600px){ .toast-stack{ bottom:calc(80px + env(safe-area-inset-bottom,0px)); } }
+
+/* ===== SCROLL TO TOP ===== */
+.scroll-top-btn{ position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:70; width:46px; height:46px; border-radius:50%; background:var(--surface); border:1px solid var(--line); color:var(--text); display:grid; place-items:center; cursor:pointer; opacity:0; transform:translateY(12px) scale(.8); transition:opacity .25s, transform .25s; box-shadow:0 8px 24px rgba(0,0,0,.35); pointer-events:none; }
+.scroll-top-btn.show{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+.scroll-top-btn:hover{ border-color:var(--mint); color:var(--mint); }
+@media (max-width:600px){ .scroll-top-btn{ bottom:calc(86px + env(safe-area-inset-bottom,0px)); right:14px; } }
+
 /* ============ ACCESSIBILITY MODES ============ */
 body.reduce-motion *,
 body.reduce-motion *::before,
@@ -10119,6 +10168,7 @@ h2.match-title{
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
       <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span></button>
       <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span>Settings</span></button>
+      <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none; color:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Moderation</span></button>
     </nav>
 
     <div class="sidebar-foot">
@@ -10963,9 +11013,9 @@ const FIREBASE_CONFIG = {
                 <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-sound-on"/></svg></div>
                 Volume
               </div>
-              <div class="volume-val" id="volumeVal">70%</div>
+              <div class="volume-val" id="volumeVal">10%</div>
             </div>
-            <input type="range" min="0" max="100" value="70" class="volume-slider" id="volumeSlider" />
+            <input type="range" min="0" max="100" value="10" class="volume-slider" id="volumeSlider" />
           </div>
           <button class="settings-row" id="setReducedMotion">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-activity"/></svg></div>
@@ -11002,7 +11052,7 @@ const FIREBASE_CONFIG = {
         <div class="settings-list">
           <div class="settings-row" style="cursor:default;">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
-            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.7 · Real-time webcam Rock Paper Scissors</div></div>
+            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.8 · Real-time webcam Rock Paper Scissors</div></div>
           </div>
         </div>
 
@@ -12329,6 +12379,58 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- REPORT PLAYER MODAL -->
+<div class="modal-bg" id="reportModal">
+  <div class="modal" style="max-width:420px;">
+    <button class="modal-close" data-close="reportModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:22px; margin:0 0 4px;"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px; color:var(--coral);"><use href="#i-flag"/></svg> Report player</h3>
+    <p style="color:var(--text-dim); font-size:13px; margin:0 0 16px;">Why are you reporting <b id="reportTargetName">this player</b>? They'll also be blocked from matching with you.</p>
+    <div class="report-reasons" id="reportReasons"></div>
+    <textarea id="reportDetails" placeholder="Add details (optional)…" maxlength="300" style="width:100%; margin-top:12px; min-height:70px; resize:vertical; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:12px; color:var(--text); font-family:var(--font-body); font-size:13px;"></textarea>
+    <div style="display:flex; gap:8px; margin-top:14px;">
+      <button class="btn btn-ghost" data-close="reportModal" style="flex:1;">Cancel</button>
+      <button class="btn btn-primary" id="reportSubmitBtn" style="flex:1; background:var(--coral);">Submit report</button>
+    </div>
+  </div>
+</div>
+
+<!-- WARNING MODAL (shown to warned users) -->
+<div class="modal-bg" id="warningModal">
+  <div class="modal" style="max-width:420px; text-align:center;">
+    <div class="warn-icon"><svg viewBox="0 0 24 24" width="34" height="34"><use href="#i-flag"/></svg></div>
+    <h3 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:24px; margin:14px 0 6px;">Moderator warning</h3>
+    <p style="color:var(--text-dim); font-size:13px; margin:0 0 14px;">A moderator has issued you the following warning(s):</p>
+    <div id="warningList" style="text-align:left; display:flex; flex-direction:column; gap:8px; margin-bottom:18px;"></div>
+    <button class="btn btn-primary" id="warningAck" style="width:100%;">I understand</button>
+  </div>
+</div>
+
+<!-- BAN SCREEN (full overlay) -->
+<div class="ban-overlay" id="banOverlay">
+  <div class="ban-card">
+    <div class="ban-icon"><svg viewBox="0 0 24 24" width="44" height="44"><use href="#i-out"/></svg></div>
+    <h2 class="ban-title" id="banTitle">You are banned</h2>
+    <p class="ban-sub" id="banSub">Your account has been suspended.</p>
+    <div class="ban-reason" id="banReasonBox" style="display:none;"></div>
+    <button class="btn btn-ghost" id="banSignOut" style="margin-top:20px;">Sign out</button>
+  </div>
+</div>
+
+<!-- ADMIN MODERATION PANEL -->
+<div class="modal-bg" id="adminModal">
+  <div class="modal" style="max-width:560px;">
+    <button class="modal-close" data-close="adminModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:22px; margin:0 0 4px;"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px; color:var(--mint);"><use href="#i-shield"/></svg> Moderation</h3>
+    <p style="color:var(--text-dim); font-size:13px; margin:0 0 14px;">Recent reports. Take action on a player below.</p>
+    <div class="admin-reports" id="adminReports" style="max-height:46vh; overflow-y:auto;"><div class="side-empty">Loading reports…</div></div>
+    <div style="border-top:1px solid var(--line-soft); margin-top:14px; padding-top:14px;">
+      <div class="card-hd-title" style="margin-bottom:8px;"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg> Action a player by username</div>
+      <div class="add-friend-input"><input id="adminUserInput" type="text" placeholder="username…" maxlength="20" /><button id="adminUserLookup">Find</button></div>
+      <div id="adminActionBox"></div>
+    </div>
+  </div>
+</div>
+
 <!-- FRIEND PICKER (initiate challenge) -->
 <div class="modal-bg" id="challengePickerModal">
   <div class="modal" style="max-width:440px;">
@@ -12476,6 +12578,48 @@ const AVATAR_COLORS = [
   'linear-gradient(135deg, #2da273, #1f7d57)',
   'linear-gradient(135deg, #c0392b, #8e44ad)',
 ];
+
+// ============= MODERATION / ADMIN =============
+// Admin UIDs can access the moderation panel (view reports, warn/ban players).
+const ADMIN_UIDS = [
+  '9DURgNdTyUhtBso2L8Lo22R3Dru1', // AndreasSalt
+];
+function isAdmin(){ return state.user && ADMIN_UIDS.includes(state.user.uid); }
+const REPORT_REASONS = [
+  { id:'cheating', label:'Cheating / exploiting' },
+  { id:'harassment', label:'Harassment or abuse' },
+  { id:'inappropriate', label:'Inappropriate behaviour' },
+  { id:'afk', label:'AFK / not playing' },
+  { id:'name', label:'Offensive username' },
+  { id:'other', label:'Something else' },
+];
+const BAN_DURATIONS = [
+  { id:'warn', label:'Warning only', ms:0 },
+  { id:'1h', label:'1 hour', ms:3600e3 },
+  { id:'1d', label:'1 day', ms:86400e3 },
+  { id:'7d', label:'7 days', ms:7*86400e3 },
+  { id:'30d', label:'30 days', ms:30*86400e3 },
+  { id:'perm', label:'Permanent', ms:-1 },
+];
+// Returns {banned, until, reason} or null
+function getBanStatus(profile){
+  if(!profile) return null;
+  if(profile.bannedPermanent) return { banned:true, until:null, reason: profile.banReason || '' };
+  if(profile.bannedUntil){
+    const until = profile.bannedUntil.toMillis ? profile.bannedUntil.toMillis() : profile.bannedUntil;
+    if(until && until > Date.now()) return { banned:true, until, reason: profile.banReason || '' };
+  }
+  return null;
+}
+function fmtBanRemaining(untilMs){
+  if(!untilMs) return 'permanently';
+  const diff = untilMs - Date.now();
+  if(diff <= 0) return 'soon';
+  const h = Math.floor(diff/3600e3), d = Math.floor(h/24);
+  if(d >= 1) return `${d} day${d>1?'s':''}`;
+  if(h >= 1) return `${h} hour${h>1?'s':''}`;
+  return `${Math.ceil(diff/60e3)} min`;
+}
 
 const AVATAR_EMOJIS = []; // kept empty for backward-compat references
 
@@ -12688,7 +12832,7 @@ const state = {
   preferredBestOf: 3,       // (legacy, unused — match format removed)
   rematch: {},              // { meRequested, oppRequested } rematch handshake
   streamerMode: false,
-  sfxVolume: 0.7,           // 0..1 SFX volume
+  sfxVolume: 0.1,           // 0..1 SFX volume (default 10%)
   hapticsOff: false,
   matchOver: false,
   myPrediction: null,       // what you predicted opp would throw
@@ -12837,12 +12981,37 @@ function renderAvatar(el, profile){
   }
 }
 
-function toast(text, kind=''){
-  const t = $('#toast');
-  t.textContent = text;
-  t.className = 'toast ' + kind + ' show';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.classList.remove('show'), 2800);
+// Stacked toasts with an icon per kind. Multiple toasts queue vertically and
+// auto-dismiss; they no longer overwrite each other.
+let _toastContainer = null;
+function _ensureToastContainer(){
+  if(_toastContainer) return _toastContainer;
+  _toastContainer = document.createElement('div');
+  _toastContainer.id = 'toastStack';
+  _toastContainer.className = 'toast-stack';
+  document.body.appendChild(_toastContainer);
+  return _toastContainer;
+}
+const TOAST_ICONS = { success:'i-check', error:'i-close', info:'i-zap', '':'i-zap' };
+function toast(text, kind='', opts={}){
+  try {
+    const c = _ensureToastContainer();
+    const el = document.createElement('div');
+    el.className = 'toast2 ' + (kind||'');
+    const icon = TOAST_ICONS[kind] || 'i-zap';
+    el.innerHTML = `<svg class="toast2-ic" viewBox="0 0 24 24" width="16" height="16"><use href="#${icon}"/></svg><span class="toast2-text">${text}</span>`;
+    c.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    const dur = opts.duration || 2800;
+    const close = () => { el.classList.remove('show'); setTimeout(() => el.remove(), 280); };
+    el._timer = setTimeout(close, dur);
+    el.addEventListener('click', close);
+    // Cap the stack
+    while(c.children.length > 4){ c.firstChild.remove(); }
+  } catch(e){
+    // Fallback to the legacy single toast
+    const t = $('#toast'); if(t){ t.textContent = text; t.className = 'toast ' + kind + ' show'; clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2800); }
+  }
 }
 
 // =================== PARTICLES + SFX ===================
@@ -12951,7 +13120,7 @@ async function initSampleAudio(){
   sampleAudio.decoding = false;
 }
 function _musicTargetGain(){
-  return Math.max(0.0001, (state.sfxVolume ?? 0.7) * MUSIC_VOLUME_SCALE);
+  return Math.max(0.0001, (state.sfxVolume ?? 0.1) * MUSIC_VOLUME_SCALE);
 }
 // Play the custom rank-up sample (returns true if a sample is/will play)
 function playRankUpSample(){
@@ -12961,7 +13130,7 @@ function playRankUpSample(){
     if(!sampleAudio.rankupBuf) return false;
     ensureAudio();
     if(audioCtx.state === 'suspended') audioCtx.resume();
-    sampleAudio.rankupGain.gain.setValueAtTime(Math.max(0.0001, (state.sfxVolume ?? 0.7)), audioCtx.currentTime);
+    sampleAudio.rankupGain.gain.setValueAtTime(Math.max(0.0001, (state.sfxVolume ?? 0.1)), audioCtx.currentTime);
     const src = audioCtx.createBufferSource();
     src.buffer = sampleAudio.rankupBuf;
     src.connect(sampleAudio.rankupGain);
@@ -13059,7 +13228,7 @@ function tone(freq, dur=0.1, type='sine', vol=0.15){
   const t = audioCtx.currentTime;
   const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
   o.frequency.value = freq; o.type = type;
-  const vmul = (state.sfxVolume === undefined ? 0.7 : state.sfxVolume);
+  const vmul = (state.sfxVolume === undefined ? 0.1 : state.sfxVolume);
   g.gain.setValueAtTime(Math.max(0.0001, vol * vmul), t);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g).connect(audioCtx.destination);
@@ -13420,6 +13589,29 @@ async function onAuthChanged(user){
   attachNotificationListener();
   attachChatListener();
   updateSidebarProfile();
+
+  // ===== MODERATION: enforce bans + surface warnings =====
+  const ban = getBanStatus(state.profile);
+  if(ban){
+    showBanScreen(ban);
+    return; // do not proceed into the app
+  }
+  // Show any unseen warnings issued by a moderator
+  try {
+    if(Array.isArray(state.profile.warnings)){
+      const unseen = state.profile.warnings.filter(w => !w.seen);
+      if(unseen.length){
+        setTimeout(() => showWarningModal(unseen), 1000);
+        // mark seen
+        const allSeen = state.profile.warnings.map(w => ({ ...w, seen:true }));
+        state.profile.warnings = allSeen;
+        updateDoc(doc(state.db, 'users', state.user.uid), { warnings: allSeen }).catch(()=>{});
+      }
+    }
+  } catch(e){}
+  // Reveal the admin nav entry for admins
+  try { if(isAdmin()){ const el = $('#navAdmin'); if(el) el.style.display = ''; } } catch(e){}
+
   showScreen('landing');
 
   // Check for pending forfeit notice (set by beforeunload during a previous session)
@@ -15696,6 +15888,9 @@ on('#viewBlockedBtn', 'click', async () => {
 // ============= MATCHMAKING =============
 async function findMatch(){
   if(!state.user || !state.cameraReady) return;
+  // Moderation: banned players can't matchmake
+  const ban = getBanStatus(state.profile);
+  if(ban){ showBanScreen(ban); return; }
   console.log('[match] findMatch START — current state.matchId=', state.matchId, 'screen=', state.screen, 'phase=', state.phase);
   // Clean up any prior matchmaking listeners/timers
   cancelMatchmakingResources();
@@ -19062,7 +19257,9 @@ document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const nav = btn.dataset.nav;
     closeSidebarMobile();
-    if(nav === 'play'){
+    if(nav === 'admin'){
+      openAdminPanel();
+    } else if(nav === 'play'){
       // Play nav opens the play page (the actual find button is on it)
       showNavPage('play');
     } else {
@@ -19320,7 +19517,7 @@ function renderSettingsPage(){
   if(rm) rm.classList.toggle('off', !document.body.classList.contains('reduced-motion'));
   // volume
   const vs = $('#volumeSlider');
-  const vpct = Math.round((state.sfxVolume ?? 0.7) * 100);
+  const vpct = Math.round((state.sfxVolume ?? 0.1) * 100);
   if(vs) vs.value = vpct;
   setText('#volumeVal', vpct + '%');
   // haptics
@@ -19354,6 +19551,23 @@ function setVH(){ document.documentElement.style.setProperty('--vh', (window.inn
 setVH();
 window.addEventListener('resize', setVH);
 window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
+
+// ===== QoL: Scroll-to-top button on the landing screen =====
+(function(){
+  const btn = document.createElement('button');
+  btn.className = 'scroll-top-btn';
+  btn.title = 'Back to top';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-arrow-right" style="transform:rotate(-90deg); transform-origin:center;"/></svg>';
+  document.body.appendChild(btn);
+  const scroller = () => $('#screen-landing');
+  function onScroll(){
+    const el = scroller();
+    if(!el || state.screen !== 'landing'){ btn.classList.remove('show'); return; }
+    btn.classList.toggle('show', el.scrollTop > 400);
+  }
+  document.addEventListener('scroll', (e) => { if(e.target && e.target.id === 'screen-landing') onScroll(); }, true);
+  btn.addEventListener('click', () => { const el = scroller(); if(el) el.scrollTo({ top:0, behavior:'smooth' }); });
+})();
 
 // Daily login streak (localStorage)
 function getLoginStreak(){
@@ -19899,30 +20113,203 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // Report player — exposed as helper for any UI element to call
-async function reportPlayer(){
-  if(!state.oppUid || state.isBotMatch){
-    toast("Can't report this player", 'error');
-    return;
-  }
-  if(!confirm(`Report @${state.oppProfile?.username || 'this player'} for inappropriate behavior?\n\nThey will be blocked from future matches with you.`)) return;
-  try {
-    await updateDoc(doc(state.db, 'users', state.user.uid), {
-      blocked: arrayUnion(state.oppUid),
+// ===== REPORT FLOW (modal with reason) =====
+let _reportReason = null;
+function reportPlayer(){
+  if(!state.oppUid || state.isBotMatch){ toast("Can't report this player", 'error'); return; }
+  _reportReason = null;
+  setText('#reportTargetName', '@' + (state.oppProfile?.username || 'this player'));
+  const box = $('#reportReasons');
+  if(box){
+    box.innerHTML = '';
+    REPORT_REASONS.forEach(r => {
+      const el = document.createElement('div');
+      el.className = 'report-reason';
+      el.innerHTML = `<span class="rr-radio"></span><span>${r.label}</span>`;
+      el.addEventListener('click', () => {
+        _reportReason = r.id;
+        box.querySelectorAll('.report-reason').forEach(x => x.classList.remove('selected'));
+        el.classList.add('selected');
+      });
+      box.appendChild(el);
     });
+  }
+  const det = $('#reportDetails'); if(det) det.value = '';
+  $('#reportModal')?.classList.add('show');
+}
+on('#reportSubmitBtn', 'click', async () => {
+  if(!_reportReason){ toast('Pick a reason first', 'error'); return; }
+  const reasonLabel = (REPORT_REASONS.find(r => r.id === _reportReason) || {}).label || _reportReason;
+  const details = $('#reportDetails')?.value?.trim() || '';
+  try {
+    await updateDoc(doc(state.db, 'users', state.user.uid), { blocked: arrayUnion(state.oppUid) });
     state.profile.blocked = [...(state.profile.blocked||[]), state.oppUid];
     await addDoc(collection(state.db, 'reports'), {
       reporter: state.user.uid,
       reporterUsername: state.profile.username,
       reported: state.oppUid,
       reportedUsername: state.oppProfile?.username || '',
+      reason: _reportReason,
+      reasonLabel,
+      details,
+      status: 'open',
       createdAt: serverTimestamp(),
     }).catch(() => {});
-    toast(`Reported & blocked @${state.oppProfile?.username || 'player'}`, 'success');
-    await teardownMatch();
-    showScreen('landing');
-  } catch(e){ toast('Could not report', 'error'); }
-}
+    $('#reportModal')?.classList.remove('show');
+    toast(`Reported @${state.oppProfile?.username || 'player'} — thanks, we'll review it`, 'success');
+  } catch(e){ toast('Could not submit report', 'error'); }
+});
 on('#reportBtn', 'click', reportPlayer);
+
+// ===== WARNING MODAL =====
+function showWarningModal(warnings){
+  const list = $('#warningList');
+  if(list){
+    list.innerHTML = '';
+    warnings.forEach(w => {
+      const el = document.createElement('div');
+      el.className = 'warn-item';
+      el.innerHTML = `<div class="warn-item-reason">${escapeHTML(w.reason || 'Warning')}</div>${w.note ? `<div class="warn-item-note">${escapeHTML(w.note)}</div>` : ''}`;
+      list.appendChild(el);
+    });
+  }
+  $('#warningModal')?.classList.add('show');
+}
+on('#warningAck', 'click', () => $('#warningModal')?.classList.remove('show'));
+
+// ===== BAN SCREEN =====
+function showBanScreen(ban){
+  const ov = $('#banOverlay');
+  if(!ov) return;
+  if(ban.until){
+    setText('#banTitle', 'Account suspended');
+    setText('#banSub', `You're banned for ${fmtBanRemaining(ban.until)}. You can play again after that.`);
+  } else {
+    setText('#banTitle', 'Account banned');
+    setText('#banSub', 'Your account has been permanently suspended.');
+  }
+  const rb = $('#banReasonBox');
+  if(rb){
+    if(ban.reason){ rb.style.display = ''; rb.innerHTML = `<b>Reason:</b> ${escapeHTML(ban.reason)}`; }
+    else rb.style.display = 'none';
+  }
+  ov.classList.add('show');
+}
+on('#banSignOut', 'click', () => $('#signOutBtn')?.click());
+
+// ===== ADMIN MODERATION PANEL =====
+let _adminReports = [];
+function openAdminPanel(){
+  if(!isAdmin()){ toast('Admins only', 'error'); return; }
+  $('#adminModal')?.classList.add('show');
+  loadAdminReports();
+  $('#adminActionBox').innerHTML = '';
+  $('#adminUserInput').value = '';
+}
+async function loadAdminReports(){
+  const box = $('#adminReports');
+  if(!box) return;
+  box.innerHTML = '<div class="side-empty">Loading reports…</div>';
+  try {
+    const snap = await getDocs(query(collection(state.db, 'reports'), orderBy('createdAt', 'desc'), limit(40)));
+    _adminReports = [];
+    snap.forEach(d => _adminReports.push({ id:d.id, ...d.data() }));
+    if(_adminReports.length === 0){ box.innerHTML = '<div class="side-empty">No reports 🎉</div>'; return; }
+    box.innerHTML = '';
+    // group by reported user
+    _adminReports.forEach(r => {
+      const row = document.createElement('div');
+      row.className = 'admin-report-row';
+      const when = r.createdAt?.toMillis ? timeAgo(r.createdAt.toMillis()) : 'recently';
+      row.innerHTML = `
+        <div class="arr-body">
+          <div class="arr-target">@${escapeHTML(r.reportedUsername || r.reported?.slice(0,6) || '?')}</div>
+          <div class="arr-reason">${escapeHTML(r.reasonLabel || r.reason || 'reported')}</div>
+          ${r.details ? `<div class="arr-meta">"${escapeHTML(r.details)}"</div>` : ''}
+          <div class="arr-meta">by @${escapeHTML(r.reporterUsername || '?')} · ${when}</div>
+        </div>
+        <button class="arr-action">Action</button>`;
+      row.querySelector('.arr-action').addEventListener('click', () => showAdminAction(r.reported, r.reportedUsername));
+      box.appendChild(row);
+    });
+  } catch(e){
+    console.error('[admin] reports', e);
+    box.innerHTML = '<div class="side-empty">Could not load reports (need a Firestore index on reports.createdAt)</div>';
+  }
+}
+let _adminTarget = null, _adminDuration = null;
+function showAdminAction(uid, username){
+  _adminTarget = { uid, username };
+  _adminDuration = null;
+  const box = $('#adminActionBox');
+  if(!box) return;
+  box.innerHTML = `
+    <div class="admin-action-card">
+      <div style="font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:15px; margin-bottom:4px;">Action @${escapeHTML(username || uid?.slice(0,6) || '?')}</div>
+      <div class="admin-dur-grid" id="adminDurGrid"></div>
+      <input id="adminReason" type="text" placeholder="Reason / note (shown to user)…" maxlength="140" style="width:100%; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px; color:var(--text); font-size:13px; margin-bottom:10px;" />
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-ghost" id="adminUnban" style="flex:1;">Lift ban</button>
+        <button class="btn btn-primary" id="adminApply" style="flex:1; background:var(--coral);">Apply</button>
+      </div>
+    </div>`;
+  const grid = $('#adminDurGrid');
+  BAN_DURATIONS.forEach(d => {
+    const b = document.createElement('button');
+    b.className = 'admin-dur-btn' + (d.id === 'warn' ? ' warn-dur' : '');
+    b.textContent = d.label;
+    b.addEventListener('click', () => {
+      _adminDuration = d;
+      grid.querySelectorAll('.admin-dur-btn').forEach(x => x.classList.remove('selected'));
+      b.classList.add('selected');
+    });
+    grid.appendChild(b);
+  });
+  $('#adminApply').addEventListener('click', () => applyAdminAction());
+  $('#adminUnban').addEventListener('click', () => liftBan());
+}
+async function applyAdminAction(){
+  if(!_adminTarget){ return; }
+  if(!_adminDuration){ toast('Pick a duration / warning', 'error'); return; }
+  const reason = $('#adminReason')?.value?.trim() || '';
+  try {
+    if(_adminDuration.id === 'warn'){
+      // Issue a warning (append to warnings array)
+      const tgt = await getDoc(doc(state.db, 'users', _adminTarget.uid));
+      const warnings = (tgt.exists() && Array.isArray(tgt.data().warnings)) ? tgt.data().warnings : [];
+      warnings.push({ reason: reason || 'Inappropriate behaviour', note:'', by: state.profile.username, at: Date.now(), seen:false });
+      await updateDoc(doc(state.db, 'users', _adminTarget.uid), { warnings });
+      pushNotification(_adminTarget.uid, { type:'warning', text:`⚠️ A moderator issued you a warning: <b>${escapeHTML(reason||'Inappropriate behaviour')}</b>`, actionUid:null });
+      toast(`Warned @${_adminTarget.username}`, 'success');
+    } else {
+      const update = { banReason: reason || 'Violation of community rules' };
+      if(_adminDuration.ms === -1){ update.bannedPermanent = true; update.bannedUntil = null; }
+      else { update.bannedPermanent = false; update.bannedUntil = new Date(Date.now() + _adminDuration.ms); }
+      await updateDoc(doc(state.db, 'users', _adminTarget.uid), update);
+      pushNotification(_adminTarget.uid, { type:'ban', text:`🚫 You have been banned (${_adminDuration.label}): <b>${escapeHTML(reason||'Violation')}</b>`, actionUid:null });
+      toast(`Banned @${_adminTarget.username} (${_adminDuration.label})`, 'success');
+    }
+    $('#adminActionBox').innerHTML = '';
+    _adminTarget = null;
+  } catch(e){ console.error('[admin] action', e); toast('Could not apply (check permissions)', 'error'); }
+}
+async function liftBan(){
+  if(!_adminTarget) return;
+  try {
+    await updateDoc(doc(state.db, 'users', _adminTarget.uid), { bannedPermanent:false, bannedUntil:null, banReason:'' });
+    toast(`Lifted ban on @${_adminTarget.username}`, 'success');
+    $('#adminActionBox').innerHTML = '';
+  } catch(e){ toast('Could not lift ban', 'error'); }
+}
+on('#adminUserLookup', 'click', async () => {
+  const uname = $('#adminUserInput')?.value?.trim().toLowerCase();
+  if(!uname) return;
+  try {
+    const u = await getDoc(doc(state.db, 'usernames', uname));
+    if(!u.exists()){ toast('User not found', 'error'); return; }
+    showAdminAction(u.data().uid, uname);
+  } catch(e){ toast('Lookup failed', 'error'); }
+});
 
 // NEW: Leave match button (forfeit with ELO penalty)
 on('#leaveMatchBtn', 'click', forfeitMatch);
@@ -20030,6 +20417,10 @@ on('#muteBtn', 'click', () => {
   if(state.muted){ stopChargeTone(); stopMenuMusic(); }
   else { if(state.screen === 'landing') startMenuMusic(); }
   applySampleVolume();
+  // Keep the settings "Sound effects" toggle in sync
+  const st = $('#setSoundToggle');
+  if(st) st.classList.toggle('off', state.muted);
+  setText('#setSoundState', state.muted ? 'Muted' : 'Enabled');
   toast(state.muted ? 'Sound muted' : 'Sound on', 'success');
 });
 // Load mute preference
@@ -20039,7 +20430,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v10.7 — SEAMLESS MUSIC CROSSFADE LOOP + SMOOTH TRANSITIONS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v10.8 — MODERATION (report/warn/ban) + AUDIO DEFAULTS + QoL', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
