@@ -12832,7 +12832,15 @@ const state = {
   preferredBestOf: 3,       // (legacy, unused — match format removed)
   rematch: {},              // { meRequested, oppRequested } rematch handshake
   streamerMode: false,
-  sfxVolume: 0.1,           // 0..1 SFX volume (default 10%)
+  sfxVolume: 0.1,           // 0..1 SFX volume (default 10%) — legacy, mirrors audioVol.sfx
+  audioVol: {               // per-channel volumes (0..1)
+    music: 0.1,
+    sfx: 0.1,
+    voice: 0.7,
+    rankup: 0.4,
+    countdown: 0.4,
+    matchfound: 0.4,
+  },
   hapticsOff: false,
   matchOver: false,
   myPrediction: null,       // what you predicted opp would throw
@@ -13061,22 +13069,46 @@ function ensureAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext|
 //   • SMOOTH crossfade-style transitions via a dedicated GainNode (we fade the
 //     music down when entering a match and back up when returning to the menu)
 // The in-app volume slider (state.sfxVolume) scales the music gain in real time.
+const AUDIO_CHANNELS = ['music','sfx','voice','rankup','countdown','matchfound'];
 const sampleAudio = {
-  rankupBuf: null,      // decoded AudioBuffer for the rank-up sound
-  musicBuf: null,       // decoded AudioBuffer for the looping menu music
-  musicGain: null,      // master GainNode the music routes through (for fades)
-  rankupGain: null,     // GainNode for the rank-up one-shot
-  decoding: false,
-  ready: false,
-  // crossfade-loop scheduling
-  loopActive: false,
-  loopTimer: null,
-  voices: [],           // active {src, gain} crossfade voices
+  ready: false, decoding: false,
+  bufs: {},
+  gains: {},
+  musicLowpass: null,
+  musicBusGain: null,
+  loopActive: false, loopTimer: null, voices: [],
 };
-// Music sits a bit under SFX so it doesn't drown effects.
-const MUSIC_VOLUME_SCALE = 0.5;
-const MUSIC_FADE = 1.1;      // seconds for master fade in/out (menu↔match)
-const LOOP_XFADE = 2.2;      // seconds of crossfade overlap at the loop seam
+const MUSIC_VOLUME_SCALE = 0.55;
+const MUSIC_FADE = 1.1;
+const LOOP_XFADE = 2.2;
+const SAMPLE_DEFS = {
+  rankup:     { ch:'rankup',     data: () => (typeof RANKUP_SFX_DATA !== 'undefined' ? RANKUP_SFX_DATA : '') },
+  music:      { ch:'music',      data: () => (typeof MENU_MUSIC_DATA !== 'undefined' ? MENU_MUSIC_DATA : '') },
+  matchfound: { ch:'matchfound', data: () => (typeof MATCH_FOUND_DATA !== 'undefined' ? MATCH_FOUND_DATA : '') },
+  countdown:  { ch:'countdown',  data: () => (typeof COUNTDOWN_DATA !== 'undefined' ? COUNTDOWN_DATA : '') },
+};
+function _chVol(ch){
+  const base = (state.audioVol && typeof state.audioVol[ch] === 'number') ? state.audioVol[ch] : 0.7;
+  return state.muted ? 0 : Math.max(0, Math.min(1, base));
+}
+function _buildAudioGraph(){
+  if(!audioCtx) return;
+  if(!sampleAudio.gains.music){
+    const g = audioCtx.createGain(); g.gain.value = _chVol('music'); g.connect(audioCtx.destination); sampleAudio.gains.music = g;
+  }
+  if(!sampleAudio.musicLowpass){
+    const lp = audioCtx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 20000; lp.Q.value = 0.7;
+    lp.connect(sampleAudio.gains.music); sampleAudio.musicLowpass = lp;
+  }
+  if(!sampleAudio.musicBusGain){
+    const mb = audioCtx.createGain(); mb.gain.value = 0; mb.connect(sampleAudio.musicLowpass); sampleAudio.musicBusGain = mb;
+  }
+  ['sfx','voice','rankup','countdown','matchfound'].forEach(ch => {
+    if(!sampleAudio.gains[ch]){
+      const g = audioCtx.createGain(); g.gain.value = _chVol(ch); g.connect(audioCtx.destination); sampleAudio.gains[ch] = g;
+    }
+  });
+}
 
 function _b64ToArrayBuffer(dataUri){
   try {
@@ -13094,67 +13126,53 @@ async function initSampleAudio(){
   if(!audioCtx || sampleAudio.decoding || sampleAudio.ready) return;
   sampleAudio.decoding = true;
   try {
-    // Music gain node → destination
-    if(!sampleAudio.musicGain){
-      sampleAudio.musicGain = audioCtx.createGain();
-      sampleAudio.musicGain.gain.value = 0;
-      sampleAudio.musicGain.connect(audioCtx.destination);
-    }
-    if(!sampleAudio.rankupGain){
-      sampleAudio.rankupGain = audioCtx.createGain();
-      sampleAudio.rankupGain.gain.value = 1;
-      sampleAudio.rankupGain.connect(audioCtx.destination);
-    }
-    // Decode rank-up
-    if(!sampleAudio.rankupBuf && typeof RANKUP_SFX_DATA !== 'undefined' && RANKUP_SFX_DATA){
-      const ab = _b64ToArrayBuffer(RANKUP_SFX_DATA);
-      if(ab) sampleAudio.rankupBuf = await audioCtx.decodeAudioData(ab);
-    }
-    // Decode music
-    if(!sampleAudio.musicBuf && typeof MENU_MUSIC_DATA !== 'undefined' && MENU_MUSIC_DATA){
-      const ab = _b64ToArrayBuffer(MENU_MUSIC_DATA);
-      if(ab) sampleAudio.musicBuf = await audioCtx.decodeAudioData(ab);
+    _buildAudioGraph();
+    for(const [name, def] of Object.entries(SAMPLE_DEFS)){
+      if(sampleAudio.bufs[name]) continue;
+      const data = def.data();
+      if(!data) continue;
+      const ab = _b64ToArrayBuffer(data);
+      if(ab){ try { sampleAudio.bufs[name] = await audioCtx.decodeAudioData(ab); } catch(e){ console.warn('[audio] decode', name, e); } }
     }
     sampleAudio.ready = true;
-  } catch(e){ console.warn('[audio] decode failed', e); }
+  } catch(e){ console.warn('[audio] init failed', e); }
   sampleAudio.decoding = false;
 }
-function _musicTargetGain(){
-  return Math.max(0.0001, (state.sfxVolume ?? 0.1) * MUSIC_VOLUME_SCALE);
-}
-// Play the custom rank-up sample (returns true if a sample is/will play)
-function playRankUpSample(){
+function playSample(name){
   try {
     if(state.muted) return false;
-    if(!sampleAudio.ready){ initSampleAudio().then(() => { if(sampleAudio.rankupBuf) playRankUpSample(); }); return true; }
-    if(!sampleAudio.rankupBuf) return false;
+    if(!sampleAudio.ready){ initSampleAudio().then(() => playSample(name)); return true; }
+    const def = SAMPLE_DEFS[name]; if(!def) return false;
+    const buf = sampleAudio.bufs[name]; if(!buf) return false;
     ensureAudio();
     if(audioCtx.state === 'suspended') audioCtx.resume();
-    sampleAudio.rankupGain.gain.setValueAtTime(Math.max(0.0001, (state.sfxVolume ?? 0.1)), audioCtx.currentTime);
+    const ch = def.ch;
+    if(sampleAudio.gains[ch]) sampleAudio.gains[ch].gain.setValueAtTime(_chVol(ch), audioCtx.currentTime);
     const src = audioCtx.createBufferSource();
-    src.buffer = sampleAudio.rankupBuf;
-    src.connect(sampleAudio.rankupGain);
+    src.buffer = buf;
+    src.connect(sampleAudio.gains[ch] || audioCtx.destination);
     src.start();
     return true;
   } catch(e){ return false; }
 }
+function playRankUpSample(){ return playSample('rankup'); }
+function playMatchFound(){ return playSample('matchfound'); }
+function playCountdownSfx(){ return playSample('countdown'); }
+function _musicBusTarget(){ return MUSIC_VOLUME_SCALE; }
 
-// --- Crossfade loop: schedule one playthrough that fades into the next so the
-// seam is inaudible (the tail of one pass overlaps the head of the next). ---
+// --- Crossfade loop (gapless, seamless) ---
 function _scheduleMusicVoice(startAt){
-  if(!sampleAudio.loopActive || !sampleAudio.musicBuf || !audioCtx) return;
-  const buf = sampleAudio.musicBuf;
+  if(!sampleAudio.loopActive || !sampleAudio.bufs.music || !audioCtx) return;
+  const buf = sampleAudio.bufs.music;
   const dur = buf.duration;
-  const xf = Math.min(LOOP_XFADE, dur * 0.45);  // keep crossfade sane vs length
+  const xf = Math.min(LOOP_XFADE, dur * 0.45);
   const voiceGain = audioCtx.createGain();
-  voiceGain.connect(sampleAudio.musicGain);
+  voiceGain.connect(sampleAudio.musicBusGain);
   const src = audioCtx.createBufferSource();
   src.buffer = buf;
   src.connect(voiceGain);
-  // Fade this voice IN over the crossfade window (so it overlaps the previous tail)
   voiceGain.gain.setValueAtTime(0.0001, startAt);
   voiceGain.gain.linearRampToValueAtTime(1, startAt + xf);
-  // Hold full, then fade OUT over the final crossfade window
   const fadeOutStart = startAt + dur - xf;
   voiceGain.gain.setValueAtTime(1, Math.max(startAt + xf, fadeOutStart));
   voiceGain.gain.linearRampToValueAtTime(0.0001, startAt + dur);
@@ -13162,65 +13180,83 @@ function _scheduleMusicVoice(startAt){
   src.stop(startAt + dur + 0.05);
   const voice = { src, gain: voiceGain };
   sampleAudio.voices.push(voice);
-  src.onended = () => {
-    try { voiceGain.disconnect(); } catch(e){}
-    sampleAudio.voices = sampleAudio.voices.filter(v => v !== voice);
-  };
-  // Schedule the NEXT pass to begin xf seconds before this one ends → overlap.
+  src.onended = () => { try { voiceGain.disconnect(); } catch(e){} sampleAudio.voices = sampleAudio.voices.filter(v => v !== voice); };
   const nextStart = startAt + dur - xf;
   const delayMs = Math.max(0, (nextStart - audioCtx.currentTime - 0.25) * 1000);
-  sampleAudio.loopTimer = setTimeout(() => {
-    if(sampleAudio.loopActive) _scheduleMusicVoice(nextStart);
-  }, delayMs);
+  sampleAudio.loopTimer = setTimeout(() => { if(sampleAudio.loopActive) _scheduleMusicVoice(nextStart); }, delayMs);
 }
-
-// Start the crossfade-looping menu music with a smooth master fade-in.
 function startMenuMusic(){
   try {
     if(state.muted) return;
     if(!sampleAudio.ready){ initSampleAudio().then(() => { if(state.screen === 'landing') startMenuMusic(); }); return; }
-    if(!sampleAudio.musicBuf) return;
+    if(!sampleAudio.bufs.music) return;
     ensureAudio();
     if(audioCtx.state === 'suspended') audioCtx.resume();
+    _buildAudioGraph();
     const now = audioCtx.currentTime;
-    // Master fade up to target
-    sampleAudio.musicGain.gain.cancelScheduledValues(now);
-    sampleAudio.musicGain.gain.setValueAtTime(Math.max(0.0001, sampleAudio.musicGain.gain.value), now);
-    sampleAudio.musicGain.gain.linearRampToValueAtTime(_musicTargetGain(), now + MUSIC_FADE);
-    // Already looping → fade-up is enough
+    sampleAudio.gains.music.gain.cancelScheduledValues(now);
+    sampleAudio.gains.music.gain.linearRampToValueAtTime(_chVol('music'), now + 0.2);
+    sampleAudio.musicBusGain.gain.cancelScheduledValues(now);
+    sampleAudio.musicBusGain.gain.setValueAtTime(Math.max(0.0001, sampleAudio.musicBusGain.gain.value), now);
+    sampleAudio.musicBusGain.gain.linearRampToValueAtTime(_musicBusTarget(), now + MUSIC_FADE);
+    setMusicMuffle(false);
     if(sampleAudio.loopActive) return;
     sampleAudio.loopActive = true;
     _scheduleMusicVoice(now + 0.02);
   } catch(e){ console.warn('[audio] startMenuMusic', e); }
 }
-// Smoothly fade the music master out, then tear down all voices.
 function stopMenuMusic(immediate){
   try {
-    if(!audioCtx || !sampleAudio.musicGain) return;
+    if(!audioCtx || !sampleAudio.musicBusGain) return;
     const now = audioCtx.currentTime;
-    const g = sampleAudio.musicGain.gain;
+    const g = sampleAudio.musicBusGain.gain;
     g.cancelScheduledValues(now);
     g.setValueAtTime(Math.max(0.0001, g.value), now);
     const fade = immediate ? 0.08 : MUSIC_FADE;
     g.linearRampToValueAtTime(0.0001, now + fade);
-    // Stop scheduling new voices
     sampleAudio.loopActive = false;
     if(sampleAudio.loopTimer){ clearTimeout(sampleAudio.loopTimer); sampleAudio.loopTimer = null; }
-    // Stop existing voices after the fade
     const voices = sampleAudio.voices.slice();
     sampleAudio.voices = [];
     voices.forEach(v => { try { v.src.stop(now + fade + 0.05); } catch(e){} });
   } catch(e){}
 }
-// Apply current volume/mute to live music (called by the slider + mute)
+function setMusicMuffle(on){
+  try {
+    if(!audioCtx || !sampleAudio.musicLowpass) return;
+    const now = audioCtx.currentTime;
+    const f = sampleAudio.musicLowpass.frequency;
+    f.cancelScheduledValues(now);
+    f.setValueAtTime(f.value, now);
+    f.exponentialRampToValueAtTime(on ? 420 : 20000, now + 0.7);
+    if(sampleAudio.musicBusGain){
+      const g = sampleAudio.musicBusGain.gain;
+      g.cancelScheduledValues(now);
+      g.setValueAtTime(Math.max(0.0001, g.value), now);
+      g.linearRampToValueAtTime(on ? _musicBusTarget()*0.6 : _musicBusTarget(), now + 0.7);
+    }
+  } catch(e){}
+}
 function applySampleVolume(){
   try {
-    if(audioCtx && sampleAudio.musicGain && sampleAudio.loopActive && !state.muted){
-      const now = audioCtx.currentTime;
-      sampleAudio.musicGain.gain.cancelScheduledValues(now);
-      sampleAudio.musicGain.gain.linearRampToValueAtTime(_musicTargetGain(), now + 0.12);
-    }
+    if(!audioCtx){ return; }
+    _buildAudioGraph();
+    const now = audioCtx.currentTime;
+    AUDIO_CHANNELS.forEach(ch => {
+      if(sampleAudio.gains[ch]){
+        sampleAudio.gains[ch].gain.cancelScheduledValues(now);
+        sampleAudio.gains[ch].gain.linearRampToValueAtTime(_chVol(ch), now + 0.12);
+      }
+    });
     if(state.muted) stopMenuMusic(true);
+    applyVoiceVolume();
+  } catch(e){}
+}
+function applyVoiceVolume(){
+  try {
+    const v = document.querySelector('#oppVideo') || document.querySelector('#opponentVideo');
+    if(v) v.volume = _chVol('voice');
+    if(state._remoteAudioEl) state._remoteAudioEl.volume = _chVol('voice');
   } catch(e){}
 }
 function tone(freq, dur=0.1, type='sine', vol=0.15){
@@ -13228,7 +13264,7 @@ function tone(freq, dur=0.1, type='sine', vol=0.15){
   const t = audioCtx.currentTime;
   const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
   o.frequency.value = freq; o.type = type;
-  const vmul = (state.sfxVolume === undefined ? 0.1 : state.sfxVolume);
+  const vmul = _chVol('sfx');
   g.gain.setValueAtTime(Math.max(0.0001, vol * vmul), t);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g).connect(audioCtx.destination);
