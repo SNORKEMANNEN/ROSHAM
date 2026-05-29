@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ROSHCAM — live rock paper scissors with strangers</title>
+<title>ROSHAM — live rock paper scissors with strangers</title>
 <meta name="description" content="Real rock paper scissors against strangers using your webcam. Hand-gesture detection, ranked ELO, friends, leaderboards." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -314,7 +314,7 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
   flex-shrink: 0;
   background: linear-gradient(180deg, rgba(14,12,22,.6), rgba(8,7,13,.4));
   border-right: 1px solid var(--line-soft);
-  display: flex;
+  display: none;
   flex-direction: column;
   padding: 20px 14px;
   position: sticky;
@@ -322,6 +322,7 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
   height: 100vh;
   z-index: 60;
 }
+.app.logged-in .sidebar{ display: flex; }
 .sidebar-logo{
   display: flex;
   align-items: center;
@@ -475,7 +476,7 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
 
 /* ===== TOPBAR ===== */
 .topbar{
-  display: flex; align-items: center; gap: 14px;
+  display: none; align-items: center; gap: 14px;
   padding: 14px 28px;
   border-bottom: 1px solid var(--line-soft);
   backdrop-filter: blur(20px) saturate(140%);
@@ -483,7 +484,133 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
   background: rgba(8,7,13,.7);
   position: sticky; top: 0; z-index: 50;
 }
+.app.logged-in .topbar{ display: flex; }
 .topbar-spacer{ flex: 1; }
+
+/* ===== NAV PAGES ===== */
+.nav-page{ display: none; animation: fadeUp .4s cubic-bezier(.2,.7,.2,1); }
+.nav-page.active{ display: block; }
+.page-header{ margin-bottom: 22px; }
+.page-title{
+  font-family: var(--font-display);
+  font-stretch: 60%; font-weight: 800;
+  font-size: clamp(34px, 5vw, 52px);
+  letter-spacing: -.03em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.page-subtitle{ color: var(--text-dim); font-size: 14px; margin-top: 8px; }
+.ach-section-title, .page-section-title{
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: .16em; color: var(--text-faint);
+  text-transform: uppercase;
+  margin: 26px 0 12px;
+}
+
+/* PLAY PAGE */
+.play-grid{ display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+@media (max-width: 800px){ .play-grid{ grid-template-columns: 1fr; } }
+.play-main-card{
+  position: relative;
+  border-radius: 20px;
+  padding: 32px;
+  background: linear-gradient(135deg, rgba(124,77,255,.18), rgba(34,211,163,.08)), var(--surface);
+  border: 1px solid var(--line);
+  overflow: hidden;
+}
+.pmc-glow{ position: absolute; top: -40%; right: -10%; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(circle, rgba(124,77,255,.35), transparent 70%); filter: blur(20px); pointer-events: none; }
+.pmc-content{ position: relative; z-index: 1; }
+.pmc-eyebrow{ display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; color: var(--mint); font-weight: 700; }
+.pmc-title{ font-family: var(--font-display); font-stretch: 65%; font-weight: 800; font-size: 38px; letter-spacing: -.02em; margin: 10px 0 6px; }
+.pmc-sub{ color: var(--text-dim); font-size: 14px; max-width: 420px; margin-bottom: 22px; }
+.pmc-cta{ margin-bottom: 16px; }
+.pmc-opts{ display: flex; gap: 8px; flex-wrap: wrap; }
+.play-side{ display: flex; flex-direction: column; gap: 12px; }
+.play-mode-card{
+  display: flex; align-items: center; gap: 14px;
+  padding: 18px; border-radius: 16px;
+  background: var(--surface); border: 1px solid var(--line);
+  cursor: pointer; transition: all .15s; text-align: left; color: var(--text);
+}
+.play-mode-card:hover{ border-color: var(--mint); transform: translateY(-2px); }
+.pmc-icon{ width: 44px; height: 44px; border-radius: 12px; background: rgba(34,211,163,.1); display: grid; place-items: center; color: var(--mint); flex-shrink: 0; }
+.pmc-mode-text{ flex: 1; }
+.pmc-mode-title{ font-family: var(--font-display); font-stretch: 78%; font-weight: 700; font-size: 16px; }
+.pmc-mode-sub{ font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+.pmc-arrow{ color: var(--text-faint); }
+.play-tip{ display: flex; gap: 10px; padding: 14px; border-radius: 12px; background: rgba(255,255,255,.02); border: 1px solid var(--line-soft); font-size: 12px; color: var(--text-dim); line-height: 1.45; }
+.play-tip svg{ color: var(--mint); flex-shrink: 0; margin-top: 1px; }
+
+/* ACTIVITY PAGE */
+.activity-page-grid{ display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; }
+@media (max-width: 800px){ .activity-page-grid{ grid-template-columns: 1fr; } }
+
+/* RANK PAGE */
+.rank-page-hero{
+  display: flex; align-items: center; gap: 24px;
+  padding: 28px; border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255,45,107,.12), rgba(176,140,255,.08)), var(--surface);
+  border: 1px solid var(--line); margin-bottom: 16px;
+}
+.rank-page-icon{ width: 88px; height: 88px; flex-shrink: 0; display: grid; place-items: center; }
+.rank-page-icon svg{ width: 76px; height: 76px; }
+.rank-page-info{ flex: 1; min-width: 0; }
+.rank-page-tier{ font-family: var(--font-display); font-stretch: 65%; font-weight: 800; font-size: 32px; letter-spacing: -.02em; }
+.rank-page-rating{ font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); margin: 2px 0 12px; }
+.rank-page-bar{ height: 8px; background: rgba(0,0,0,.3); border-radius: 4px; overflow: hidden; }
+.rank-page-fill{ height: 100%; background: linear-gradient(90deg, var(--mint), var(--coral)); border-radius: 4px; transition: width .8s; }
+.rank-page-next{ font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-top: 6px; }
+.rank-page-stats{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+@media (max-width: 600px){ .rank-page-stats{ grid-template-columns: repeat(2, 1fr); } }
+.rps-stat{ padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); text-align: center; }
+.rps-v{ font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 26px; }
+.rps-l{ font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); margin-top: 3px; }
+.rank-ladder{ display: flex; flex-direction: column; gap: 6px; }
+.ladder-row{ display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line-soft); }
+.ladder-row.current{ border-color: var(--mint); background: rgba(34,211,163,.06); box-shadow: inset 2px 0 0 var(--mint); }
+.ladder-row .lr-icon{ width: 34px; height: 34px; flex-shrink: 0; display: grid; place-items: center; }
+.ladder-row .lr-icon svg{ width: 30px; height: 30px; }
+.ladder-row .lr-name{ flex: 1; font-family: var(--font-display); font-stretch: 75%; font-weight: 700; font-size: 15px; }
+.ladder-row .lr-range{ font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
+
+/* FRIENDS PAGE */
+.friends-page-card{ max-width: 640px; }
+
+/* ACHIEVEMENTS PAGE */
+.ach-level-banner{ display: flex; align-items: center; gap: 18px; padding: 22px; border-radius: 18px; background: linear-gradient(135deg, rgba(255,211,61,.08), rgba(255,154,61,.05)); border: 1px solid var(--line); margin-bottom: 8px; }
+.ach-level-badge{ width: 64px; height: 64px; flex-shrink: 0; border-radius: 16px; background: linear-gradient(135deg, #ffd33d, #ff9a3d); color: #08070d; display: grid; place-items: center; font-family: var(--font-display); font-stretch: 65%; font-weight: 800; font-size: 32px; box-shadow: 0 8px 20px -6px rgba(255,154,61,.7); }
+.ach-level-info{ flex: 1; }
+.ach-level-title{ font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 22px; }
+.ach-level-xp{ font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin: 4px 0 8px; }
+.ach-level-bar{ height: 8px; background: rgba(0,0,0,.3); border-radius: 4px; overflow: hidden; }
+.ach-level-fill{ height: 100%; background: linear-gradient(90deg, #ffd33d, #ff9a3d); border-radius: 4px; transition: width .8s; }
+.ach-milestones{ display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.ach-milestone{ display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line-soft); }
+.ach-milestone.done{ border-color: rgba(34,211,163,.35); }
+.ach-m-icon{ width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center; flex-shrink: 0; background: rgba(255,255,255,.04); color: var(--text-dim); }
+.ach-milestone.done .ach-m-icon{ background: rgba(34,211,163,.12); color: var(--mint); }
+.ach-m-text{ flex: 1; min-width: 0; }
+.ach-m-title{ font-family: var(--font-display); font-stretch: 78%; font-weight: 700; font-size: 14px; }
+.ach-m-sub{ font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.ach-m-check{ color: var(--mint); flex-shrink: 0; }
+
+/* SETTINGS PAGE */
+.settings-list{ display: flex; flex-direction: column; gap: 10px; max-width: 600px; }
+.settings-row{ display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); cursor: pointer; transition: all .15s; text-align: left; color: var(--text); }
+.settings-row:hover{ border-color: var(--mint); transform: translateY(-1px); }
+.settings-row.danger:hover{ border-color: var(--coral); }
+.set-ico{ width: 42px; height: 42px; border-radius: 11px; background: rgba(255,255,255,.04); display: grid; place-items: center; color: var(--text-dim); flex-shrink: 0; }
+.settings-row.danger .set-ico{ color: var(--coral); }
+.set-text{ flex: 1; }
+.set-title{ font-family: var(--font-display); font-stretch: 78%; font-weight: 700; font-size: 16px; }
+.set-sub{ font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+.set-arrow{ color: var(--text-faint); }
+.set-toggle{ width: 44px; height: 24px; border-radius: 12px; background: var(--mint); position: relative; transition: background .2s; flex-shrink: 0; }
+.set-toggle::after{ content: ""; position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .2s; }
+.set-toggle.off{ background: var(--surface-3); }
+.set-toggle.off::after{ transform: translateX(-20px); }
+
 .hamburger{
   display: none;
   width: 38px; height: 38px;
@@ -9340,60 +9467,59 @@ h2.match-title{
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-rock" viewBox="0 0 64 64">
-      <!-- Closed fist: thumb on side, knuckles visible, wrist underneath -->
+      <!-- ROCK: a closed fist seen from the back, knuckles up -->
       <g fill="currentColor">
-        <!-- Wrist/arm -->
-        <path d="M22 56c-2 0-3-1-3-3v-6c0-1 1-2 2-2h22c1 0 2 1 2 2v6c0 2-1 3-3 3H22z" opacity=".7"/>
-        <!-- Main fist shape -->
-        <path d="M18 30c0-3 2-5 5-5h22c4 0 7 3 7 7v15c0 2-1 3-3 3H21c-2 0-3-1-3-3V30z"/>
-        <!-- Top fingers knuckles ridge -->
-        <path d="M22 28c0-4 2-7 6-7h2c2 0 3 1 3 3v6h-11v-2z" fill="currentColor" opacity=".9"/>
-        <path d="M33 24c0-4 2-7 6-7h2c2 0 3 1 3 3v8h-11v-4z" fill="currentColor" opacity=".95"/>
-        <!-- Thumb tucked at side -->
-        <path d="M14 38c0-3 2-5 5-5h2v10h-4c-2 0-3-1-3-3v-2z"/>
-        <!-- Subtle knuckle bumps -->
-        <ellipse cx="26" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
-        <ellipse cx="32" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
-        <ellipse cx="38" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
-        <ellipse cx="44" cy="30" rx="2" ry="1.5" fill="rgba(0,0,0,.2)"/>
+        <!-- forearm/wrist -->
+        <path d="M24 50h16c1.1 0 2 .9 2 2v3c0 2.2-1.8 4-4 4H26c-2.2 0-4-1.8-4-4v-3c0-1.1.9-2 2-2z" opacity=".55"/>
+        <!-- palm/fist body -->
+        <path d="M18 32c0-2.2 1.8-4 4-4h21c3.3 0 6 2.7 6 6v16c0 1.7-1.3 3-3 3H21c-1.7 0-3-1.3-3-3V32z"/>
+        <!-- four curled-finger humps along the top knuckle line -->
+        <path d="M20 31c0-3.3 2-6 5-6s5 2.4 5 5.5V32H20v-1z"/>
+        <path d="M29 30c0-3.6 2-6.5 5.2-6.5S39 26 39 29.5V32h-10v-2z"/>
+        <path d="M38 31c0-3.3 1.8-6 4.8-6S47 27.4 47 30.5V32h-9v-1z"/>
+        <!-- thumb wrapped across the front -->
+        <path d="M17 40c-2.2 0-4 1.5-4 4s1.8 4 4 4h4V40h-4z"/>
+        <path d="M17 41h7c1.1 0 2 .9 2 2s-.9 2-2 2h-7c-1.1 0-2-.9-2-2s.9-2 2-2z" opacity=".4"/>
+        <!-- knuckle creases -->
+        <rect x="24" y="33" width="2.4" height="6" rx="1.2" fill="rgba(0,0,0,.18)"/>
+        <rect x="32" y="33" width="2.4" height="6" rx="1.2" fill="rgba(0,0,0,.18)"/>
+        <rect x="40" y="33" width="2.4" height="6" rx="1.2" fill="rgba(0,0,0,.18)"/>
       </g>
     </symbol>
     <symbol id="i-paper" viewBox="0 0 64 64">
-      <!-- Open hand: 4 fingers up, thumb to side -->
+      <!-- PAPER: open hand, palm forward, four fingers + thumb spread -->
       <g fill="currentColor">
-        <!-- Pinky -->
-        <path d="M14 26V13c0-2 1.5-3.5 3.5-3.5S21 11 21 13v17h-7z"/>
-        <!-- Ring -->
-        <path d="M20 28V8c0-2 1.5-3.5 3.5-3.5S27 6 27 8v22h-7z"/>
-        <!-- Middle (tallest) -->
-        <path d="M26 30V5c0-2 1.5-3.5 3.5-3.5S33 3 33 5v25h-7z"/>
-        <!-- Index -->
-        <path d="M32 30V7c0-2 1.5-3.5 3.5-3.5S39 5 39 7v23h-7z"/>
-        <!-- Thumb -->
-        <path d="M40 32V18c0-2 1.5-3.5 3.5-3.5S47 16 47 18v14c0 1-1 2-2 2h-3c-1 0-2-1-2-2z" transform="rotate(15 43.5 25)"/>
-        <!-- Palm -->
-        <path d="M12 32h36c1 0 2 1 2 2v8c0 11-8 19-19 19h-2c-11 0-19-8-19-19v-8c0-1 1-2 2-2z"/>
-        <!-- Palm shading for depth -->
-        <path d="M16 38c8 0 16 0 28 0v4c0 2-1 3-3 3H19c-2 0-3-1-3-3v-4z" fill="rgba(0,0,0,.12)"/>
+        <!-- palm -->
+        <path d="M20 34c0-2 1-3 3-3h18c2 0 3 1 3 3v8c0 9-6 16-15 16S20 51 20 42v-8z"/>
+        <!-- thumb (left, angled out) -->
+        <path d="M20 38c-2.5-1-5.5-3-7-5.5-1-1.7-.4-3.8 1.3-4.7 1.6-.9 3.6-.4 4.7 1.2L23 35l-3 3z"/>
+        <!-- index -->
+        <rect x="22" y="10" width="6.2" height="24" rx="3.1"/>
+        <!-- middle (tallest) -->
+        <rect x="29" y="6" width="6.2" height="28" rx="3.1"/>
+        <!-- ring -->
+        <rect x="36" y="9" width="6.2" height="25" rx="3.1"/>
+        <!-- pinky (shortest, right) -->
+        <rect x="42.5" y="15" width="5.6" height="19" rx="2.8"/>
+        <!-- palm crease shading -->
+        <path d="M24 40c5 0 11 0 16 0v3c0 1.5-1 2.5-2.5 2.5h-11C25 45.5 24 44.5 24 43v-3z" fill="rgba(0,0,0,.12)"/>
       </g>
     </symbol>
     <symbol id="i-scissors" viewBox="0 0 64 64">
-      <!-- Peace sign: index and middle finger up in V, rest curled -->
+      <!-- SCISSORS: peace/V sign — index + middle up, others folded -->
       <g fill="currentColor">
-        <!-- Index finger (left side of V) -->
-        <path d="M22 30V8c0-2 1.5-3.5 3.5-3.5S29 6 29 8v22h-7z" transform="rotate(-15 25.5 19)"/>
-        <!-- Middle finger (right side of V) -->
-        <path d="M34 30V6c0-2 1.5-3.5 3.5-3.5S41 4 41 6v24h-7z" transform="rotate(15 37.5 18)"/>
-        <!-- Curled ring finger (folded down) -->
-        <path d="M41 32V22c0-2 1.5-3.5 3.5-3.5S48 20 48 22v10h-7z"/>
-        <!-- Curled pinky (folded down) -->
-        <path d="M14 36V28c0-2 1.5-3.5 3.5-3.5S21 26 21 28v8h-7z"/>
-        <!-- Palm/fist base -->
-        <path d="M12 34h40c1 0 2 1 2 2v6c0 12-9 22-22 22S10 54 10 42v-6c0-1 1-2 2-2z"/>
-        <!-- Thumb bulge on side -->
-        <path d="M48 38c2 0 4 2 4 4v4c0 2-2 3-4 3h-2v-11h2z" fill="currentColor" opacity=".85"/>
-        <!-- Palm shading -->
-        <path d="M14 40c12 0 28 0 36 0v3c0 2-1 3-3 3H17c-2 0-3-1-3-3v-3z" fill="rgba(0,0,0,.12)"/>
+        <!-- palm/fist base -->
+        <path d="M22 36c0-2 1-3 3-3h15c2 0 3 1 3 3v6c0 9-6 15-13 15S22 51 22 42v-6z"/>
+        <!-- folded ring + pinky humps -->
+        <path d="M40 35c0-2.8 1.6-5 4-5s4 2.2 4 5v1h-8v-1z"/>
+        <!-- thumb on the side -->
+        <path d="M46 40c2 0 4 1.6 4 4s-1.6 4-3.8 4H43v-8h3z"/>
+        <!-- index finger (left arm of V) -->
+        <rect x="20" y="9" width="6" height="26" rx="3" transform="rotate(-16 23 22)"/>
+        <!-- middle finger (right arm of V) -->
+        <rect x="33" y="7" width="6" height="28" rx="3" transform="rotate(14 36 21)"/>
+        <!-- palm crease -->
+        <path d="M26 40c4 0 9 0 14 0v3c0 1.4-1 2.4-2.4 2.4H28.4C27 45.4 26 44.4 26 43v-3z" fill="rgba(0,0,0,.12)"/>
       </g>
     </symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m21.854 2.147-10.94 10.939"/></symbol>
@@ -9473,7 +9599,7 @@ h2.match-title{
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <span class="logo-mark"><span class="dot"></span></span>
-      <span class="logo-word">ROSHCAM</span>
+      <span class="logo-word">ROSHAM</span>
     </div>
 
     <nav class="sidebar-nav">
@@ -9770,6 +9896,9 @@ const FIREBASE_CONFIG = {
     <section class="screen" id="screen-landing">
       <div class="dashboard">
 
+      <!-- ============ PAGE: HOME ============ -->
+      <div class="nav-page active" data-page="home">
+
         <!-- ===== ROW 1: BIG HERO STRIP ===== -->
         <div class="hero-strip">
           <div class="hero-strip-bg"></div>
@@ -9953,6 +10082,170 @@ const FIREBASE_CONFIG = {
           </div>
 
         </div>
+      </div><!-- /page home -->
+
+      <!-- ============ PAGE: PLAY ============ -->
+      <div class="nav-page" data-page="play">
+        <div class="page-header">
+          <h2 class="page-title">PLAY</h2>
+          <p class="page-subtitle">Jump into a match or set up your camera.</p>
+        </div>
+        <div class="play-grid">
+          <div class="play-main-card">
+            <div class="pmc-glow"></div>
+            <div class="pmc-content">
+              <span class="pmc-eyebrow"><span class="live-dot"></span>RANKED MATCH</span>
+              <h3 class="pmc-title">Find a stranger</h3>
+              <p class="pmc-sub">Get matched with a real opponent worldwide. Best of 3, winner takes the ELO.</p>
+              <button class="btn-cta pmc-cta" id="playPageFindBtn">
+                <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
+                <span>Find a stranger</span>
+              </button>
+              <div class="pmc-opts">
+                <span class="opt-pill active" id="playOptRegion"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-globe"/></svg><span class="lab">Same region</span></span>
+                <span class="opt-pill" id="playOptRanked"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-trophy"/></svg><span class="lab">Similar rank</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="play-side">
+            <button class="play-mode-card" id="playPageCameraBtn">
+              <div class="pmc-icon"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-camera"/></svg></div>
+              <div class="pmc-mode-text"><div class="pmc-mode-title">Camera setup</div><div class="pmc-mode-sub">Test your webcam &amp; hand tracking</div></div>
+              <svg viewBox="0 0 24 24" width="16" height="16" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
+            </button>
+            <button class="play-mode-card" id="playPageInviteBtn">
+              <div class="pmc-icon"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-people"/></svg></div>
+              <div class="pmc-mode-text"><div class="pmc-mode-title">Invite a friend</div><div class="pmc-mode-sub">Challenge someone from your list</div></div>
+              <svg viewBox="0 0 24 24" width="16" height="16" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
+            </button>
+            <div class="play-tip">
+              <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg>
+              <span>Hold a clear gesture before the countdown ends. Leaving mid-match forfeits the round.</span>
+            </div>
+          </div>
+        </div>
+      </div><!-- /page play -->
+
+      <!-- ============ PAGE: ACTIVITY ============ -->
+      <div class="nav-page" data-page="activity">
+        <div class="page-header">
+          <h2 class="page-title">ACTIVITY</h2>
+          <p class="page-subtitle">Live matches and recent results from around the world.</p>
+        </div>
+        <div class="activity-page-grid">
+          <div class="content-card">
+            <div class="content-card-head">
+              <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-activity"/></svg><span>GLOBAL FEED</span></div>
+              <div class="content-card-sub" id="activityPageStats">— games in progress</div>
+            </div>
+            <div class="side-body" id="activityPageBody"><div class="side-empty">Loading activity…</div></div>
+          </div>
+          <div class="content-card">
+            <div class="content-card-head">
+              <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg><span>TOP PLAYERS</span></div>
+            </div>
+            <div class="side-body" id="activityPageLeaderboard"><div class="side-empty">Loading leaderboard…</div></div>
+          </div>
+        </div>
+      </div><!-- /page activity -->
+
+      <!-- ============ PAGE: RANK ============ -->
+      <div class="nav-page" data-page="rank">
+        <div class="page-header">
+          <h2 class="page-title">RANK</h2>
+          <p class="page-subtitle">Your competitive standing and climb.</p>
+        </div>
+        <div class="rank-page-hero">
+          <div class="rank-page-icon" id="rankPageIcon"></div>
+          <div class="rank-page-info">
+            <div class="rank-page-tier" id="rankPageTier">Bronze I</div>
+            <div class="rank-page-rating"><span id="rankPageRating">1000</span> ELO</div>
+            <div class="rank-page-bar"><div class="rank-page-fill" id="rankPageFill"></div></div>
+            <div class="rank-page-next" id="rankPageNext">— to next tier</div>
+          </div>
+        </div>
+        <div class="rank-page-stats" id="rankPageStats">
+          <div class="rps-stat"><div class="rps-v" id="rpsWins">0</div><div class="rps-l">Wins</div></div>
+          <div class="rps-stat"><div class="rps-v" id="rpsLosses">0</div><div class="rps-l">Losses</div></div>
+          <div class="rps-stat"><div class="rps-v" id="rpsWR">0%</div><div class="rps-l">Win rate</div></div>
+          <div class="rps-stat"><div class="rps-v" id="rpsStreak">0</div><div class="rps-l">Best streak</div></div>
+        </div>
+        <div class="rank-ladder" id="rankLadder"></div>
+      </div><!-- /page rank -->
+
+      <!-- ============ PAGE: FRIENDS ============ -->
+      <div class="nav-page" data-page="friends">
+        <div class="page-header">
+          <h2 class="page-title">FRIENDS</h2>
+          <p class="page-subtitle">Your rivals and teammates.</p>
+        </div>
+        <div class="content-card friends-page-card">
+          <div class="content-card-head">
+            <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-people"/></svg><span>FRIENDS</span></div>
+            <div class="content-card-sub"><span class="live-dot"></span><span id="friendCountPage">0/0</span> online</div>
+          </div>
+          <div class="add-friend-input">
+            <input id="addFriendInputPage" type="text" placeholder="Add friend by username…" maxlength="20" />
+            <button id="addFriendBtnPage">Add</button>
+          </div>
+          <div class="side-body" id="friendsBodyPage"><div class="side-empty">Loading…</div></div>
+        </div>
+      </div><!-- /page friends -->
+
+      <!-- ============ PAGE: ACHIEVEMENTS ============ -->
+      <div class="nav-page" data-page="achievements">
+        <div class="page-header">
+          <h2 class="page-title">ACHIEVEMENTS</h2>
+          <p class="page-subtitle">Titles, milestones and bragging rights.</p>
+        </div>
+        <div class="ach-level-banner">
+          <div class="ach-level-badge" id="achLevelBadge">1</div>
+          <div class="ach-level-info">
+            <div class="ach-level-title" id="achLevelTitle">Rookie</div>
+            <div class="ach-level-xp" id="achLevelXp">0 / 200 XP</div>
+            <div class="ach-level-bar"><div class="ach-level-fill" id="achLevelFill"></div></div>
+          </div>
+        </div>
+        <h3 class="ach-section-title">TITLES</h3>
+        <div class="titles-grid" id="achTitlesGrid"></div>
+        <h3 class="ach-section-title">MILESTONES</h3>
+        <div class="ach-milestones" id="achMilestones"></div>
+      </div><!-- /page achievements -->
+
+      <!-- ============ PAGE: SETTINGS ============ -->
+      <div class="nav-page" data-page="settings">
+        <div class="page-header">
+          <h2 class="page-title">SETTINGS</h2>
+          <p class="page-subtitle">Profile, preferences and account.</p>
+        </div>
+        <div class="settings-list">
+          <button class="settings-row" id="setEditProfile">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-edit"/></svg></div>
+            <div class="set-text"><div class="set-title">Edit profile</div><div class="set-sub">Username, country, avatar &amp; bio</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
+          <button class="settings-row" id="setCamera">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-camera"/></svg></div>
+            <div class="set-text"><div class="set-title">Camera &amp; tracking</div><div class="set-sub">Set up your webcam and hand detection</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
+          <button class="settings-row" id="setSound">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-sound-on"/></svg></div>
+            <div class="set-text"><div class="set-title">Sound effects</div><div class="set-sub" id="setSoundState">Enabled</div></div>
+            <div class="set-toggle" id="setSoundToggle"></div>
+          </button>
+          <button class="settings-row" id="setHowTo">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></div>
+            <div class="set-text"><div class="set-title">How to play</div><div class="set-sub">Rules &amp; gestures</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
+          <button class="settings-row danger" id="setSignOut">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-out"/></svg></div>
+            <div class="set-text"><div class="set-title">Sign out</div><div class="set-sub">Log out of your account</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
+        </div>
+      </div><!-- /page settings -->
 
         <!-- Hidden legacy elements (for back-compat with code references) -->
         <div style="display:none;">
@@ -10884,7 +11177,7 @@ const FIREBASE_CONFIG = {
   <div class="modal">
     <button class="modal-close" data-close="settingsModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
     <h3>SETTINGS</h3>
-    <p>Customize your ROSCAM experience.</p>
+    <p>Customize your ROSHAM experience.</p>
 
     <div class="settings-row" style="margin-bottom:8px;">
       <div class="settings-row-info">
@@ -11559,6 +11852,19 @@ function showScreen(name){
   try {
     const nb = $('#nextBtn');
     if(nb) nb.style.display = name === 'game' ? '' : 'none';
+  } catch(e){}
+  try {
+    // Sidebar + topbar only appear once the user is past auth (landing/matching/game)
+    const inApp = (name === 'landing' || name === 'matching' || name === 'game');
+    document.querySelector('.app')?.classList.toggle('logged-in', inApp);
+    // Always close the mobile drawer + flyouts on screen change
+    closeSidebarMobile?.();
+    closeAllFlyouts?.();
+    // When (re)entering the landing screen, default to the Home page
+    if(name === 'landing'){
+      document.querySelectorAll('.nav-page').forEach(pg => pg.classList.toggle('active', pg.dataset.page === 'home'));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === 'home'));
+    }
   } catch(e){}
   console.log('[screen] →', name);
 }
@@ -16791,7 +17097,16 @@ function checkForfeitNotice(){
       localStorage.removeItem(key);
       return;
     }
-    // Delay slightly so landing screen has rendered
+    // Push an in-app notification (bell) about the ELO loss from leaving the match
+    const lost = Math.abs((notice.ratingBefore || 0) - (notice.ratingAfter || 0));
+    if(lost > 0){
+      pushNotification(state.user.uid, {
+        type: 'forfeit',
+        text: `You left a match early and lost <b>${lost} ELO</b> (forfeit penalty).`,
+        actionUid: null,
+      });
+    }
+    // Delay slightly so landing screen has rendered, then show the rank-down overlay
     setTimeout(() => showRankDown(notice), 800);
   } catch(e){ console.warn('[forfeit] check failed', e); }
 }
@@ -17399,23 +17714,223 @@ on('#helpBtn', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add
 function setActiveNav(nav){
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === nav));
 }
+function showNavPage(page){
+  // Make sure we're on the landing screen first
+  if(state.screen !== 'landing') showScreen('landing');
+  setActiveNav(page);
+  document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
+  // populate the page being shown
+  try {
+    if(page === 'rank') renderRankPage();
+    else if(page === 'achievements') renderAchievementsPage();
+    else if(page === 'activity') renderActivityPage();
+    else if(page === 'friends') renderFriendsPage();
+    else if(page === 'settings') renderSettingsPage();
+  } catch(e){ console.warn('[nav] page render', e); }
+  // scroll content to top
+  const sc = document.querySelector('.screens'); if(sc) sc.scrollTop = 0;
+  window.scrollTo({ top: 0 });
+}
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const nav = btn.dataset.nav;
-    setActiveNav(nav);
     closeSidebarMobile();
-    switch(nav){
-      case 'home': break; // already on landing
-      case 'play': $('#findBtn')?.click(); break;
-      case 'activity': scrollToEl('#liveActivityCard'); break;
-      case 'rank': openStatsModal(); break;
-      case 'friends': scrollToEl('#friendsCard'); break;
-      case 'achievements': openAchievementsModal(); break;
-      case 'settings': openSettingsModal(); break;
+    if(nav === 'play'){
+      // Play nav opens the play page (the actual find button is on it)
+      showNavPage('play');
+    } else {
+      showNavPage(nav);
     }
   });
 });
 function scrollToEl(sel){ const el = $(sel); if(el) el.scrollIntoView({ behavior:'smooth', block:'start' }); }
+
+// ===== NAV PAGE RENDERERS =====
+function renderRankPage(){
+  if(!state.profile) return;
+  const p = state.profile;
+  const rating = p.rating || 1000;
+  const rank = rankFromRating(rating);
+  setRankIconEl($('#rankPageIcon'), rank.id);
+  const ic = $('#rankPageIcon'); if(ic) ic.style.color = rank.color;
+  setText('#rankPageTier', rank.tierName);
+  setText('#rankPageRating', rating);
+  const prog = rankProgressToNext(rating);
+  const fill = $('#rankPageFill'); if(fill) fill.style.width = (prog.progress*100) + '%';
+  setText('#rankPageNext', prog.nextLabel);
+  const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
+  const wr = games > 0 ? Math.round(((p.wins||0)/games)*100) : 0;
+  setText('#rpsWins', p.wins||0);
+  setText('#rpsLosses', p.losses||0);
+  setText('#rpsWR', wr+'%');
+  setText('#rpsStreak', p.bestStreak||0);
+  // ladder
+  const ladder = $('#rankLadder');
+  if(ladder){
+    ladder.innerHTML = '';
+    RANKS.forEach((r, i) => {
+      const next = RANKS[i+1];
+      const rangeText = next ? `${r.base}–${next.base - 1}` : `${r.base}+`;
+      const row = document.createElement('div');
+      row.className = 'ladder-row' + (r.id === rank.id ? ' current' : '');
+      row.innerHTML = `
+        <div class="lr-icon ${r.cls}"><svg viewBox="0 0 24 24"><use href="#${r.icon}"/></svg></div>
+        <div class="lr-name">${r.name}</div>
+        <div class="lr-range">${rangeText}</div>
+      `;
+      ladder.appendChild(row);
+    });
+  }
+}
+function renderAchievementsPage(){
+  if(!state.profile) return;
+  const p = state.profile;
+  const lvl = levelFromXp(p.totalXp || 0);
+  setText('#achLevelBadge', lvl.level);
+  setText('#achLevelXp', lvl.level >= 99 ? 'MAX LEVEL' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
+  const fill = $('#achLevelFill'); if(fill) fill.style.width = (lvl.progress*100)+'%';
+  let equipped = p.equippedTitle ? titleById(p.equippedTitle) : null;
+  if(!equipped || lvl.level < equipped.level){ const u = titlesUnlockedAt(lvl.level); equipped = u[u.length-1] || TITLES[0]; }
+  setText('#achLevelTitle', equipped.name);
+  const tEl = $('#achLevelTitle'); if(tEl) tEl.style.color = equipped.color;
+  // titles grid (reuse title-chip style)
+  const grid = $('#achTitlesGrid');
+  if(grid){
+    grid.innerHTML = '';
+    TITLES.forEach(t => {
+      const unlocked = lvl.level >= t.level;
+      const isEq = t.id === p.equippedTitle;
+      const chip = document.createElement('div');
+      chip.className = 'title-chip ' + (unlocked ? 'unlocked' : 'locked') + (isEq ? ' equipped' : '');
+      chip.style.setProperty('--chip-color', t.color);
+      chip.innerHTML = `
+        <span class="title-chip-dot"></span>
+        <div class="title-chip-body">
+          <div class="title-chip-name">${t.name}</div>
+          <div class="title-chip-req">${unlocked ? 'unlocked' : 'level ' + t.level}</div>
+        </div>
+        <svg class="title-chip-check" viewBox="0 0 24 24"><use href="#i-check"/></svg>`;
+      if(unlocked) chip.addEventListener('click', () => { equipTitle(t.id); renderAchievementsPage(); });
+      grid.appendChild(chip);
+    });
+  }
+  // milestones
+  const ms = $('#achMilestones');
+  if(ms){
+    const wins = p.wins||0, games = p.games||0, streak = p.bestStreak||0;
+    const list = [
+      { icon:'i-trophy', title:'First Win', sub:'Win a match', done: wins >= 1 },
+      { icon:'i-trophy', title:'10 Wins', sub:'Win 10 matches', done: wins >= 10 },
+      { icon:'i-trophy', title:'50 Wins', sub:'Win 50 matches', done: wins >= 50 },
+      { icon:'i-swords', title:'Veteran', sub:'Play 100 matches', done: games >= 100 },
+      { icon:'i-flame', title:'On Fire', sub:'5-win streak', done: streak >= 5 },
+      { icon:'i-flame', title:'Unstoppable', sub:'10-win streak', done: streak >= 10 },
+      { icon:'i-medal', title:'Level 10', sub:'Reach level 10', done: lvl.level >= 10 },
+      { icon:'i-medal', title:'Level 25', sub:'Reach level 25', done: lvl.level >= 25 },
+    ];
+    ms.innerHTML = '';
+    list.forEach(m => {
+      const el = document.createElement('div');
+      el.className = 'ach-milestone' + (m.done ? ' done' : '');
+      el.innerHTML = `
+        <div class="ach-m-icon"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#${m.icon}"/></svg></div>
+        <div class="ach-m-text"><div class="ach-m-title">${m.title}</div><div class="ach-m-sub">${m.sub}</div></div>
+        ${m.done ? '<svg class="ach-m-check" viewBox="0 0 24 24" width="18" height="18"><use href="#i-check"/></svg>' : ''}`;
+      ms.appendChild(el);
+    });
+  }
+}
+function renderActivityPage(){
+  // Mirror the global activity + leaderboard into the activity page containers
+  const src = $('#globalActivityBody');
+  const dst = $('#activityPageBody');
+  if(src && dst) dst.innerHTML = src.innerHTML || '<div class="side-empty">No recent matches</div>';
+  const lb = $('#leaderboardBody');
+  const lbDst = $('#activityPageLeaderboard');
+  if(lb && lbDst) lbDst.innerHTML = lb.innerHTML || '<div class="side-empty">No players ranked yet</div>';
+  const stats = $('#globalActiveStats');
+  if(stats) setText('#activityPageStats', stats.textContent);
+}
+function renderFriendsPage(){
+  // Mirror friends list into the page
+  const src = $('#friendsBody');
+  const dst = $('#friendsBodyPage');
+  if(src && dst){
+    dst.innerHTML = src.innerHTML;
+    // re-bind clicks by re-rendering from cache into the page container
+  }
+  setText('#friendCountPage', $('#friendCount')?.textContent || '0/0');
+  // Better: directly render from cache into page
+  renderFriendsInto('#friendsBodyPage');
+}
+function renderSettingsPage(){
+  const t = $('#setSoundToggle');
+  if(t) t.classList.toggle('off', state.muted);
+  setText('#setSoundState', state.muted ? 'Muted' : 'Enabled');
+}
+
+// Render friends from cache into an arbitrary container (used by friends page)
+function renderFriendsInto(sel){
+  const body = $(sel);
+  if(!body) return;
+  const friendUids = state.profile?.friends || [];
+  const all = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean);
+  if(all.length === 0){ body.innerHTML = '<div class="side-empty">No friends yet · add some by username</div>'; return; }
+  const now = Date.now();
+  const isOnline = (f) => f.lastSeen?.toMillis ? (now - f.lastSeen.toMillis() < 60000) : false;
+  all.sort((a,b) => (isOnline(b)-isOnline(a)) || ((b.rating||1000)-(a.rating||1000)));
+  body.innerHTML = '';
+  all.forEach(f => {
+    const isOn = isOnline(f);
+    const rank = rankFromRating(f.rating || 1000);
+    const row = document.createElement('div');
+    row.className = 'friend-row';
+    const avStyle = f.photoURL ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;` : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
+    const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
+    row.innerHTML = `
+      <div class="av" style="${avStyle}">${avInner}</div>
+      <div class="meta">
+        <div class="nm">${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+        <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
+      </div>
+      <div class="online-dot ${isOn ? 'on' : ''}"></div>
+      <div class="friend-actions">
+        <button class="icon-btn" data-action="message" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></button>
+        <button class="icon-btn" data-action="view" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></button>
+        ${isOn ? `<button class="icon-btn accept" data-action="challenge" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
+      </div>`;
+    row.querySelectorAll('button').forEach(btn => btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const a = btn.dataset.action, u = btn.dataset.uid;
+      if(a === 'view') openProfile(u);
+      else if(a === 'challenge') sendChallenge(u);
+      else if(a === 'message') openChatThread(u, f.username, f.photoURL, f.colorIdx);
+    }));
+    row.addEventListener('click', () => openProfile(f.uid));
+    body.appendChild(row);
+  });
+}
+
+// ===== PLAY PAGE buttons =====
+on('#playPageFindBtn', 'click', () => $('#findBtn')?.click());
+on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
+on('#playPageInviteBtn', 'click', () => { showNavPage('friends'); });
+on('#playOptRegion', 'click', () => { $('#playOptRegion')?.classList.add('active'); $('#playOptRanked')?.classList.remove('active'); $('#optRegion')?.click?.(); });
+on('#playOptRanked', 'click', () => { $('#playOptRanked')?.classList.add('active'); $('#playOptRegion')?.classList.remove('active'); $('#optRanged')?.click?.(); });
+
+// ===== FRIENDS PAGE add-friend =====
+on('#addFriendBtnPage', 'click', () => {
+  const v = $('#addFriendInputPage')?.value?.trim();
+  if(v){ $('#addFriendInput').value = v; $('#addFriendBtn')?.click(); $('#addFriendInputPage').value = ''; }
+});
+on('#addFriendInputPage', 'keydown', (e) => { if(e.key === 'Enter') $('#addFriendBtnPage')?.click(); });
+
+// ===== SETTINGS PAGE rows =====
+on('#setEditProfile', 'click', () => openEditProfile());
+on('#setCamera', 'click', () => $('#cameraSetupBtn')?.click());
+on('#setSound', 'click', () => { $('#muteBtn')?.click(); renderSettingsPage(); });
+on('#setHowTo', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
+on('#setSignOut', 'click', () => $('#signOutBtn')?.click());
 
 // Sidebar profile → open profile editor / stats
 on('#sidebarProfile', 'click', () => openStatsModal());
@@ -17645,7 +18160,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.8 — SIDEBAR + NOTIFICATIONS + CHAT + APPLE SIGN-IN', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v9.9 — MULTI-PAGE SIDEBAR + NEW HAND ICONS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
