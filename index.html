@@ -611,6 +611,102 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
 .set-toggle.off{ background: var(--surface-3); }
 .set-toggle.off::after{ transform: translateX(-20px); }
 
+/* ============ ENHANCED PAGE CONTENT (v10) ============ */
+/* Welcome banner (home) */
+.welcome-banner{
+  display:flex; align-items:center; gap:18px;
+  padding:18px 22px; border-radius:18px; margin-bottom:16px;
+  background:linear-gradient(120deg, rgba(34,211,163,.10), rgba(124,77,255,.07));
+  border:1px solid var(--line);
+}
+.wb-av{ width:54px; height:54px; border-radius:14px; background-size:cover; background-position:center; display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:22px; color:#fff; flex-shrink:0; }
+.wb-text{ flex:1; min-width:0; }
+.wb-hi{ font-family:var(--font-display); font-stretch:70%; font-weight:800; font-size:22px; letter-spacing:-.02em; }
+.wb-sub{ color:var(--text-dim); font-size:13px; margin-top:2px; }
+.wb-streak{ display:flex; align-items:center; gap:8px; padding:10px 16px; border-radius:12px; background:rgba(255,154,61,.08); border:1px solid rgba(255,154,61,.25); flex-shrink:0; }
+.wb-streak .flame{ font-size:20px; }
+.wb-streak-num{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:24px; color:#ff9a3d; line-height:1; }
+.wb-streak-lbl{ font-family:var(--font-mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); }
+@media (max-width:640px){ .welcome-banner{ flex-wrap:wrap; } }
+
+/* World stat strip */
+.world-strip{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+@media (max-width:700px){ .world-strip{ grid-template-columns:repeat(2,1fr); } }
+.world-stat{ padding:14px 16px; border-radius:14px; background:var(--surface); border:1px solid var(--line-soft); position:relative; overflow:hidden; }
+.world-stat-v{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:24px; letter-spacing:-.02em; }
+.world-stat-l{ font-family:var(--font-mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-top:2px; }
+.world-stat-ic{ position:absolute; top:12px; right:12px; color:var(--text-faint); opacity:.4; }
+
+/* Section heading w/ action */
+.section-head{ display:flex; align-items:center; justify-content:space-between; margin:24px 0 12px; }
+.section-head h3{ font-family:var(--font-display); font-stretch:70%; font-weight:800; font-size:18px; letter-spacing:-.01em; text-transform:uppercase; }
+.section-head .sh-action{ font-family:var(--font-mono); font-size:11px; color:var(--mint); cursor:pointer; letter-spacing:.04em; }
+.section-head .sh-action:hover{ text-decoration:underline; }
+
+/* Play page additions */
+.format-toggle{ display:flex; gap:8px; margin-top:14px; }
+.format-opt{ flex:1; padding:12px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.02); cursor:pointer; text-align:center; transition:all .15s; }
+.format-opt.active{ border-color:var(--mint); background:rgba(34,211,163,.08); }
+.format-opt-title{ font-family:var(--font-display); font-stretch:75%; font-weight:700; font-size:15px; }
+.format-opt-sub{ font-family:var(--font-mono); font-size:9px; color:var(--text-faint); letter-spacing:.06em; text-transform:uppercase; margin-top:2px; }
+.play-info-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:16px; }
+@media (max-width:700px){ .play-info-grid{ grid-template-columns:1fr; } }
+.play-info-card{ padding:18px; border-radius:14px; background:var(--surface); border:1px solid var(--line-soft); }
+.pic-num{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:28px; color:var(--mint); line-height:1; }
+.pic-num.purple{ color:#a48bff; }
+.pic-num.gold{ color:#ffd33d; }
+.pic-title{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; margin-top:8px; }
+.pic-sub{ font-size:12px; color:var(--text-faint); margin-top:3px; line-height:1.4; }
+
+/* Activity page stat header */
+.activity-stat-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px; }
+@media (max-width:700px){ .activity-stat-row{ grid-template-columns:repeat(2,1fr); } }
+
+/* Rank page additions */
+.season-banner{ display:flex; align-items:center; gap:16px; padding:16px 20px; border-radius:16px; margin-bottom:16px;
+  background:linear-gradient(120deg, rgba(255,61,104,.12), rgba(124,77,255,.10)); border:1px solid var(--line); }
+.season-ico{ width:46px; height:46px; border-radius:12px; background:rgba(255,61,104,.15); display:grid; place-items:center; color:var(--coral); flex-shrink:0; }
+.season-info{ flex:1; }
+.season-name{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:17px; }
+.season-time{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:2px; }
+.season-pill{ padding:6px 12px; border-radius:999px; background:rgba(255,255,255,.05); font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; color:var(--text-dim); }
+.percentile-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:24px; }
+@media (max-width:600px){ .percentile-row{ grid-template-columns:1fr; } }
+.percentile-card{ padding:18px; border-radius:14px; background:var(--surface); border:1px solid var(--line-soft); }
+.pct-big{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:30px; }
+.pct-big.mint{ color:var(--mint); }
+.pct-lbl{ font-size:12px; color:var(--text-dim); margin-top:4px; }
+
+/* Friends page enhancements */
+.friends-layout{ display:grid; grid-template-columns:1fr 320px; gap:16px; align-items:start; }
+@media (max-width:900px){ .friends-layout{ grid-template-columns:1fr; } }
+.friend-leaderboard{ }
+.fl-row{ display:flex; align-items:center; gap:12px; padding:11px 14px; border-radius:12px; background:var(--surface); border:1px solid var(--line-soft); margin-bottom:6px; }
+.fl-rank{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:18px; width:26px; text-align:center; color:var(--text-faint); }
+.fl-rank.gold{ color:#ffd33d; } .fl-rank.silver{ color:#c0c0c0; } .fl-rank.bronze{ color:#cd7f32; }
+.fl-av{ width:34px; height:34px; border-radius:50%; background-size:cover; background-position:center; display:grid; place-items:center; font-weight:800; color:#fff; font-size:13px; flex-shrink:0; }
+.fl-name{ flex:1; font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.fl-elo{ font-family:var(--font-mono); font-size:12px; font-weight:700; color:var(--mint); }
+
+/* Achievements enhancements */
+.ach-summary-row{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:16px 0 8px; }
+@media (max-width:600px){ .ach-summary-row{ grid-template-columns:1fr; } }
+.ach-summary-card{ padding:18px; border-radius:14px; background:var(--surface); border:1px solid var(--line-soft); text-align:center; }
+.asc-v{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:30px; }
+.asc-v.gold{ color:#ffd33d; } .asc-v.mint{ color:var(--mint); } .asc-v.purple{ color:#a48bff; }
+.asc-l{ font-family:var(--font-mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-top:4px; }
+
+/* Settings enhancements */
+.settings-section-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-faint); margin:22px 0 10px; font-weight:700; }
+.account-card{ display:flex; align-items:center; gap:16px; padding:20px; border-radius:16px; background:var(--surface); border:1px solid var(--line); margin-bottom:8px; max-width:600px; }
+.acc-av{ width:56px; height:56px; border-radius:14px; background-size:cover; background-position:center; display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:24px; color:#fff; flex-shrink:0; }
+.acc-info{ flex:1; min-width:0; }
+.acc-name{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:20px; }
+.acc-meta{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:3px; }
+
+/* Reduced motion preference */
+body.reduced-motion *{ animation-duration:.001s !important; transition-duration:.05s !important; }
+
 .hamburger{
   display: none;
   width: 38px; height: 38px;
@@ -9899,6 +9995,46 @@ const FIREBASE_CONFIG = {
       <!-- ============ PAGE: HOME ============ -->
       <div class="nav-page active" data-page="home">
 
+        <!-- Welcome banner -->
+        <div class="welcome-banner">
+          <div class="wb-av" id="wbAv">?</div>
+          <div class="wb-text">
+            <div class="wb-hi" id="wbHi">Welcome back</div>
+            <div class="wb-sub" id="wbSub">Ready to throw hands?</div>
+          </div>
+          <div class="wb-streak" title="Daily login streak">
+            <span class="flame">🔥</span>
+            <div>
+              <div class="wb-streak-num" id="wbStreakNum">0</div>
+              <div class="wb-streak-lbl">day streak</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- World stat strip -->
+        <div class="world-strip">
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-people"/></svg>
+            <div class="world-stat-v" id="wsOnline">—</div>
+            <div class="world-stat-l">Players online</div>
+          </div>
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-swords"/></svg>
+            <div class="world-stat-v" id="wsMatches">—</div>
+            <div class="world-stat-l">Live matches</div>
+          </div>
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-trophy"/></svg>
+            <div class="world-stat-v" id="wsRank">#—</div>
+            <div class="world-stat-l">Your global rank</div>
+          </div>
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-flame"/></svg>
+            <div class="world-stat-v" id="wsStreak">0</div>
+            <div class="world-stat-l">Current streak</div>
+          </div>
+        </div>
+
         <!-- ===== ROW 1: BIG HERO STRIP ===== -->
         <div class="hero-strip">
           <div class="hero-strip-bg"></div>
@@ -10124,6 +10260,43 @@ const FIREBASE_CONFIG = {
             </div>
           </div>
         </div>
+
+        <!-- Match format -->
+        <div class="section-head"><h3>Match format</h3></div>
+        <div class="format-toggle">
+          <div class="format-opt active" data-format="3">
+            <div class="format-opt-title">Best of 3</div>
+            <div class="format-opt-sub">First to 2 · quick</div>
+          </div>
+          <div class="format-opt" data-format="5">
+            <div class="format-opt-title">Best of 5</div>
+            <div class="format-opt-sub">First to 3 · classic</div>
+          </div>
+          <div class="format-opt" data-format="7">
+            <div class="format-opt-title">Best of 7</div>
+            <div class="format-opt-sub">First to 4 · marathon</div>
+          </div>
+        </div>
+
+        <!-- How it works -->
+        <div class="section-head"><h3>How matchmaking works</h3></div>
+        <div class="play-info-grid">
+          <div class="play-info-card">
+            <div class="pic-num">1</div>
+            <div class="pic-title">Get matched</div>
+            <div class="pic-sub">We pair you with a real opponent close to your skill and region.</div>
+          </div>
+          <div class="play-info-card">
+            <div class="pic-num purple">2</div>
+            <div class="pic-title">Read &amp; react</div>
+            <div class="pic-sub">Predict their throw for bonus XP, then shoot before the timer ends.</div>
+          </div>
+          <div class="play-info-card">
+            <div class="pic-num gold">3</div>
+            <div class="pic-title">Climb</div>
+            <div class="pic-sub">Win to gain ELO and XP. Build streaks for big rank jumps.</div>
+          </div>
+        </div>
       </div><!-- /page play -->
 
       <!-- ============ PAGE: ACTIVITY ============ -->
@@ -10131,6 +10304,28 @@ const FIREBASE_CONFIG = {
         <div class="page-header">
           <h2 class="page-title">ACTIVITY</h2>
           <p class="page-subtitle">Live matches and recent results from around the world.</p>
+        </div>
+        <div class="activity-stat-row">
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-swords"/></svg>
+            <div class="world-stat-v" id="actLiveCount">—</div>
+            <div class="world-stat-l">Live now</div>
+          </div>
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-people"/></svg>
+            <div class="world-stat-v" id="actOnlineCount">—</div>
+            <div class="world-stat-l">Online</div>
+          </div>
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-activity"/></svg>
+            <div class="world-stat-v" id="actRecentCount">—</div>
+            <div class="world-stat-l">Recent results</div>
+          </div>
+          <div class="world-stat">
+            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-trophy"/></svg>
+            <div class="world-stat-v" id="actTopElo">—</div>
+            <div class="world-stat-l">Top ELO</div>
+          </div>
         </div>
         <div class="activity-page-grid">
           <div class="content-card">
@@ -10155,6 +10350,14 @@ const FIREBASE_CONFIG = {
           <h2 class="page-title">RANK</h2>
           <p class="page-subtitle">Your competitive standing and climb.</p>
         </div>
+        <div class="season-banner">
+          <div class="season-ico"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-trophy"/></svg></div>
+          <div class="season-info">
+            <div class="season-name">Season 1 · Genesis</div>
+            <div class="season-time" id="seasonTime">Ends in 24 days</div>
+          </div>
+          <div class="season-pill">RANKED</div>
+        </div>
         <div class="rank-page-hero">
           <div class="rank-page-icon" id="rankPageIcon"></div>
           <div class="rank-page-info">
@@ -10164,12 +10367,23 @@ const FIREBASE_CONFIG = {
             <div class="rank-page-next" id="rankPageNext">— to next tier</div>
           </div>
         </div>
+        <div class="percentile-row">
+          <div class="percentile-card">
+            <div class="pct-big mint" id="pctTop">Top —%</div>
+            <div class="pct-lbl">You're ahead of most players worldwide</div>
+          </div>
+          <div class="percentile-card">
+            <div class="pct-big" id="pctGlobalRank">#—</div>
+            <div class="pct-lbl">Global leaderboard position</div>
+          </div>
+        </div>
         <div class="rank-page-stats" id="rankPageStats">
           <div class="rps-stat"><div class="rps-v" id="rpsWins">0</div><div class="rps-l">Wins</div></div>
           <div class="rps-stat"><div class="rps-v" id="rpsLosses">0</div><div class="rps-l">Losses</div></div>
           <div class="rps-stat"><div class="rps-v" id="rpsWR">0%</div><div class="rps-l">Win rate</div></div>
           <div class="rps-stat"><div class="rps-v" id="rpsStreak">0</div><div class="rps-l">Best streak</div></div>
         </div>
+        <div class="section-head"><h3>Rank ladder</h3></div>
         <div class="rank-ladder" id="rankLadder"></div>
       </div><!-- /page rank -->
 
@@ -10179,16 +10393,26 @@ const FIREBASE_CONFIG = {
           <h2 class="page-title">FRIENDS</h2>
           <p class="page-subtitle">Your rivals and teammates.</p>
         </div>
-        <div class="content-card friends-page-card">
-          <div class="content-card-head">
-            <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-people"/></svg><span>FRIENDS</span></div>
-            <div class="content-card-sub"><span class="live-dot"></span><span id="friendCountPage">0/0</span> online</div>
+        <div class="friends-layout">
+          <div class="content-card friends-page-card">
+            <div class="content-card-head">
+              <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-people"/></svg><span>ALL FRIENDS</span></div>
+              <div class="content-card-sub"><span class="live-dot"></span><span id="friendCountPage">0/0</span> online</div>
+            </div>
+            <div class="add-friend-input">
+              <input id="addFriendInputPage" type="text" placeholder="Add friend by username…" maxlength="20" />
+              <button id="addFriendBtnPage">Add</button>
+            </div>
+            <div class="side-body" id="friendsBodyPage"><div class="side-empty">Loading…</div></div>
           </div>
-          <div class="add-friend-input">
-            <input id="addFriendInputPage" type="text" placeholder="Add friend by username…" maxlength="20" />
-            <button id="addFriendBtnPage">Add</button>
+          <div>
+            <div class="content-card">
+              <div class="content-card-head">
+                <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg><span>FRIEND LEADERBOARD</span></div>
+              </div>
+              <div class="side-body" id="friendLeaderboard" style="padding:12px;"><div class="side-empty">Add friends to compare ELO</div></div>
+            </div>
           </div>
-          <div class="side-body" id="friendsBodyPage"><div class="side-empty">Loading…</div></div>
         </div>
       </div><!-- /page friends -->
 
@@ -10206,6 +10430,20 @@ const FIREBASE_CONFIG = {
             <div class="ach-level-bar"><div class="ach-level-fill" id="achLevelFill"></div></div>
           </div>
         </div>
+        <div class="ach-summary-row">
+          <div class="ach-summary-card">
+            <div class="asc-v gold" id="ascTitles">0/11</div>
+            <div class="asc-l">Titles unlocked</div>
+          </div>
+          <div class="ach-summary-card">
+            <div class="asc-v mint" id="ascMilestones">0/8</div>
+            <div class="asc-l">Milestones earned</div>
+          </div>
+          <div class="ach-summary-card">
+            <div class="asc-v purple" id="ascTotalXp">0</div>
+            <div class="asc-l">Total XP earned</div>
+          </div>
+        </div>
         <h3 class="ach-section-title">TITLES</h3>
         <div class="titles-grid" id="achTitlesGrid"></div>
         <h3 class="ach-section-title">MILESTONES</h3>
@@ -10218,6 +10456,16 @@ const FIREBASE_CONFIG = {
           <h2 class="page-title">SETTINGS</h2>
           <p class="page-subtitle">Profile, preferences and account.</p>
         </div>
+
+        <div class="account-card">
+          <div class="acc-av" id="setAccAv">?</div>
+          <div class="acc-info">
+            <div class="acc-name" id="setAccName">—</div>
+            <div class="acc-meta" id="setAccMeta">— · 1000 ELO · Level 1</div>
+          </div>
+        </div>
+
+        <div class="settings-section-title">PROFILE</div>
         <div class="settings-list">
           <button class="settings-row" id="setEditProfile">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-edit"/></svg></div>
@@ -10229,16 +10477,29 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Camera &amp; tracking</div><div class="set-sub">Set up your webcam and hand detection</div></div>
             <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
           </button>
+        </div>
+
+        <div class="settings-section-title">PREFERENCES</div>
+        <div class="settings-list">
           <button class="settings-row" id="setSound">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-sound-on"/></svg></div>
             <div class="set-text"><div class="set-title">Sound effects</div><div class="set-sub" id="setSoundState">Enabled</div></div>
             <div class="set-toggle" id="setSoundToggle"></div>
+          </button>
+          <button class="settings-row" id="setReducedMotion">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-activity"/></svg></div>
+            <div class="set-text"><div class="set-title">Reduced motion</div><div class="set-sub" id="setMotionState">Off</div></div>
+            <div class="set-toggle off" id="setMotionToggle"></div>
           </button>
           <button class="settings-row" id="setHowTo">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></div>
             <div class="set-text"><div class="set-title">How to play</div><div class="set-sub">Rules &amp; gestures</div></div>
             <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
           </button>
+        </div>
+
+        <div class="settings-section-title">ACCOUNT</div>
+        <div class="settings-list">
           <button class="settings-row danger" id="setSignOut">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-out"/></svg></div>
             <div class="set-text"><div class="set-title">Sign out</div><div class="set-sub">Log out of your account</div></div>
@@ -11810,6 +12071,7 @@ const state = {
   // Best-of-3
   matchRound: 0,            // current round number (1, 2, 3)
   matchRoundsToWin: 2,      // first to 2 wins the match
+  preferredBestOf: 3,       // player-selected match format (3/5/7)
   matchOver: false,
   myPrediction: null,       // what you predicted opp would throw
   _lastPredictionCorrect: false,
@@ -11864,6 +12126,7 @@ function showScreen(name){
     if(name === 'landing'){
       document.querySelectorAll('.nav-page').forEach(pg => pg.classList.toggle('active', pg.dataset.page === 'home'));
       document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === 'home'));
+      try { renderHomePage(); } catch(e){}
     }
   } catch(e){}
   console.log('[screen] →', name);
@@ -15754,7 +16017,7 @@ function resetMatchUI(){
   state.streak = 0;
   state.streakType = null;
   state.matchOver = false;
-  state.matchRoundsToWin = 2; // best of 3 default — may grow during overtime
+  state.matchRoundsToWin = state.preferredBestOf ? Math.ceil(state.preferredBestOf / 2) : 2; // best of 3 default — may grow during overtime
   state._endMatchCalled = false; // reset for new match
   state._matchPredictionsCorrect = 0;
   state._matchPredictionsTotal = 0;
@@ -17721,7 +17984,8 @@ function showNavPage(page){
   document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
   // populate the page being shown
   try {
-    if(page === 'rank') renderRankPage();
+    if(page === 'home') renderHomePage();
+    else if(page === 'rank') renderRankPage();
     else if(page === 'achievements') renderAchievementsPage();
     else if(page === 'activity') renderActivityPage();
     else if(page === 'friends') renderFriendsPage();
@@ -17746,6 +18010,46 @@ document.querySelectorAll('.nav-item').forEach(btn => {
 function scrollToEl(sel){ const el = $(sel); if(el) el.scrollIntoView({ behavior:'smooth', block:'start' }); }
 
 // ===== NAV PAGE RENDERERS =====
+function computeGlobalRank(rating){
+  // Estimate a global rank + percentile from rating using leaderboard if available
+  const lb = state.leaderboard || [];
+  let rank = null, total = Math.max(lb.length, 1);
+  if(lb.length){
+    const idx = lb.findIndex(p => (p.rating||1000) <= rating);
+    rank = idx === -1 ? lb.length + 1 : idx + 1;
+    total = lb.length;
+  }
+  // percentile: higher rating = better. crude estimate vs 1000 baseline
+  const pct = Math.max(1, Math.min(99, Math.round(100 - ((rating - 800) / 1600) * 95)));
+  return { rank, total, pct };
+}
+
+function renderHomePage(){
+  if(!state.profile) return;
+  const p = state.profile;
+  // welcome banner
+  const av = $('#wbAv');
+  if(av){
+    if(p.photoURL){ av.style.backgroundImage = `url('${p.photoURL}')`; av.textContent=''; }
+    else { av.style.backgroundImage='none'; av.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; av.textContent = initialOf(p.username||'?'); }
+  }
+  const hour = new Date().getHours();
+  const greet = hour < 5 ? 'Up late' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+  setText('#wbHi', `${greet}, ${p.username || 'player'}`);
+  const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
+  setText('#wbSub', games > 0 ? `You've played ${games} matches. Keep climbing!` : 'Ready to throw hands?');
+  const loginStreak = getLoginStreak();
+  setText('#wbStreakNum', loginStreak);
+  // world strip
+  const rating = p.rating || 1000;
+  const gr = computeGlobalRank(rating);
+  setText('#wsRank', gr.rank ? '#' + gr.rank : '#—');
+  setText('#wsStreak', p.currentStreak || 0);
+  // online + matches filled by watchGlobalStats into #onlineCount/#matchCount; mirror them
+  setText('#wsOnline', $('#onlineCount')?.textContent || '—');
+  setText('#wsMatches', $('#matchCount')?.textContent || '—');
+}
+
 function renderRankPage(){
   if(!state.profile) return;
   const p = state.profile;
@@ -17764,6 +18068,10 @@ function renderRankPage(){
   setText('#rpsLosses', p.losses||0);
   setText('#rpsWR', wr+'%');
   setText('#rpsStreak', p.bestStreak||0);
+  // percentile + global rank
+  const gr = computeGlobalRank(rating);
+  setText('#pctTop', 'Top ' + gr.pct + '%');
+  setText('#pctGlobalRank', gr.rank ? '#' + gr.rank : '#—');
   // ladder
   const ladder = $('#rankLadder');
   if(ladder){
@@ -17794,6 +18102,9 @@ function renderAchievementsPage(){
   setText('#achLevelTitle', equipped.name);
   const tEl = $('#achLevelTitle'); if(tEl) tEl.style.color = equipped.color;
   // titles grid (reuse title-chip style)
+  const unlockedTitles = titlesUnlockedAt(lvl.level).length;
+  setText('#ascTitles', unlockedTitles + '/' + TITLES.length);
+  setText('#ascTotalXp', (p.totalXp||0).toLocaleString());
   const grid = $('#achTitlesGrid');
   if(grid){
     grid.innerHTML = '';
@@ -17828,6 +18139,8 @@ function renderAchievementsPage(){
       { icon:'i-medal', title:'Level 10', sub:'Reach level 10', done: lvl.level >= 10 },
       { icon:'i-medal', title:'Level 25', sub:'Reach level 25', done: lvl.level >= 25 },
     ];
+    const doneCount = list.filter(m => m.done).length;
+    setText('#ascMilestones', doneCount + '/' + list.length);
     ms.innerHTML = '';
     list.forEach(m => {
       const el = document.createElement('div');
@@ -17850,23 +18163,83 @@ function renderActivityPage(){
   if(lb && lbDst) lbDst.innerHTML = lb.innerHTML || '<div class="side-empty">No players ranked yet</div>';
   const stats = $('#globalActiveStats');
   if(stats) setText('#activityPageStats', stats.textContent);
+  // stat row
+  setText('#actLiveCount', $('#matchCount')?.textContent || '—');
+  setText('#actOnlineCount', $('#onlineCount')?.textContent || '—');
+  const recent = (state.activityFeed || []).length || (src ? src.querySelectorAll('.activity-row, .side-row').length : 0);
+  setText('#actRecentCount', recent || '—');
+  const topElo = (state.leaderboard && state.leaderboard[0]) ? (state.leaderboard[0].rating || '—') : '—';
+  setText('#actTopElo', topElo);
 }
 function renderFriendsPage(){
-  // Mirror friends list into the page
-  const src = $('#friendsBody');
-  const dst = $('#friendsBodyPage');
-  if(src && dst){
-    dst.innerHTML = src.innerHTML;
-    // re-bind clicks by re-rendering from cache into the page container
-  }
   setText('#friendCountPage', $('#friendCount')?.textContent || '0/0');
-  // Better: directly render from cache into page
   renderFriendsInto('#friendsBodyPage');
+  // friend leaderboard (you + friends sorted by ELO)
+  const lbEl = $('#friendLeaderboard');
+  if(lbEl){
+    const friendUids = state.profile?.friends || [];
+    const entries = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean).map(f => ({ uid:f.uid, name:f.username, rating:f.rating||1000, photoURL:f.photoURL, colorIdx:f.colorIdx }));
+    // include self
+    entries.push({ uid: state.user?.uid, name: state.profile.username + ' (you)', rating: state.profile.rating||1000, photoURL: state.profile.photoURL, colorIdx: state.profile.colorIdx, me:true });
+    entries.sort((a,b) => b.rating - a.rating);
+    if(entries.length <= 1){ lbEl.innerHTML = '<div class="side-empty">Add friends to compare ELO</div>'; }
+    else {
+      lbEl.innerHTML = '';
+      entries.forEach((e, i) => {
+        const rankCls = i===0?'gold':i===1?'silver':i===2?'bronze':'';
+        const avStyle = e.photoURL ? `background-image:url('${e.photoURL}')` : `background:${AVATAR_COLORS[e.colorIdx||0]}`;
+        const avInner = e.photoURL ? '' : escapeHTML(initialOf(e.name));
+        const row = document.createElement('div');
+        row.className = 'fl-row';
+        if(e.me) row.style.borderColor = 'var(--mint)';
+        row.innerHTML = `
+          <div class="fl-rank ${rankCls}">${i+1}</div>
+          <div class="fl-av" style="${avStyle}">${avInner}</div>
+          <div class="fl-name">${escapeHTML(e.name)}</div>
+          <div class="fl-elo">${e.rating}</div>`;
+        lbEl.appendChild(row);
+      });
+    }
+  }
 }
 function renderSettingsPage(){
   const t = $('#setSoundToggle');
   if(t) t.classList.toggle('off', state.muted);
   setText('#setSoundState', state.muted ? 'Muted' : 'Enabled');
+  // account card
+  if(state.profile){
+    const p = state.profile;
+    const av = $('#setAccAv');
+    if(av){
+      if(p.photoURL){ av.style.backgroundImage = `url('${p.photoURL}')`; av.textContent=''; }
+      else { av.style.backgroundImage='none'; av.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; av.textContent = initialOf(p.username||'?'); }
+    }
+    setText('#setAccName', p.username || '—');
+    const lvl = levelFromXp(p.totalXp||0);
+    const rank = rankFromRating(p.rating||1000);
+    setText('#setAccMeta', `${flagOf(p.country)} · ${p.rating||1000} ELO · ${rank.tierName} · Lvl ${lvl.level}`);
+  }
+  // reduced motion toggle state
+  const rm = $('#setMotionToggle');
+  if(rm) rm.classList.toggle('off', !document.body.classList.contains('reduced-motion'));
+}
+
+// Daily login streak (localStorage)
+function getLoginStreak(){
+  try {
+    const uid = state.user?.uid || 'anon';
+    const key = 'rosham_login_' + uid;
+    const raw = localStorage.getItem(key);
+    const today = new Date().toDateString();
+    const yesterday = new Date(Date.now()-86400000).toDateString();
+    let data = raw ? JSON.parse(raw) : { last:null, streak:0 };
+    if(data.last === today) return data.streak;
+    if(data.last === yesterday) data.streak += 1;
+    else data.streak = 1;
+    data.last = today;
+    localStorage.setItem(key, JSON.stringify(data));
+    return data.streak;
+  } catch(e){ return 1; }
 }
 
 // Render friends from cache into an arbitrary container (used by friends page)
@@ -17917,6 +18290,18 @@ on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
 on('#playPageInviteBtn', 'click', () => { showNavPage('friends'); });
 on('#playOptRegion', 'click', () => { $('#playOptRegion')?.classList.add('active'); $('#playOptRanked')?.classList.remove('active'); $('#optRegion')?.click?.(); });
 on('#playOptRanked', 'click', () => { $('#playOptRanked')?.classList.add('active'); $('#playOptRegion')?.classList.remove('active'); $('#optRanged')?.click?.(); });
+// Match format toggle (Bo3 / Bo5 / Bo7)
+document.querySelectorAll('.format-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    document.querySelectorAll('.format-opt').forEach(o => o.classList.remove('active'));
+    opt.classList.add('active');
+    const fmt = parseInt(opt.dataset.format, 10);
+    // store preferred match length; matchRoundsToWin = ceil(fmt/2)
+    state.preferredBestOf = fmt;
+    state.matchRoundsToWin = Math.ceil(fmt / 2);
+    toast(`Match format: Best of ${fmt}`, 'success');
+  });
+});
 
 // ===== FRIENDS PAGE add-friend =====
 on('#addFriendBtnPage', 'click', () => {
@@ -17929,6 +18314,11 @@ on('#addFriendInputPage', 'keydown', (e) => { if(e.key === 'Enter') $('#addFrien
 on('#setEditProfile', 'click', () => openEditProfile());
 on('#setCamera', 'click', () => $('#cameraSetupBtn')?.click());
 on('#setSound', 'click', () => { $('#muteBtn')?.click(); renderSettingsPage(); });
+on('#setReducedMotion', 'click', () => {
+  document.body.classList.toggle('reduced-motion');
+  setText('#setMotionState', document.body.classList.contains('reduced-motion') ? 'On' : 'Off');
+  renderSettingsPage();
+});
 on('#setHowTo', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
 on('#setSignOut', 'click', () => $('#signOutBtn')?.click());
 
@@ -18160,7 +18550,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v9.9 — MULTI-PAGE SIDEBAR + NEW HAND ICONS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v10.0 — FULL PAGE REDESIGN + NEW FEATURES', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
