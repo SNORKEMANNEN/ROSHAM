@@ -549,23 +549,15 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
 /* RANK PAGE */
 .rank-page-hero{
   display: flex; align-items: center; gap: 24px;
-  padding: 28px; border-radius: 20px;
-  background: linear-gradient(135deg, rgba(255,45,107,.12), rgba(176,140,255,.08)), var(--surface);
-  border: 1px solid var(--line); margin-bottom: 16px;
+  margin-bottom: 14px;
 }
+.card.rank-page-hero{ background: linear-gradient(135deg, rgba(255,45,107,.12), rgba(176,140,255,.08)), var(--surface); }
 .rank-page-icon{ width: 88px; height: 88px; flex-shrink: 0; display: grid; place-items: center; }
 .rank-page-icon svg{ width: 76px; height: 76px; }
 .rank-page-info{ flex: 1; min-width: 0; }
 .rank-page-tier{ font-family: var(--font-display); font-stretch: 65%; font-weight: 800; font-size: 32px; letter-spacing: -.02em; }
-.rank-page-rating{ font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); margin: 2px 0 12px; }
-.rank-page-bar{ height: 8px; background: rgba(0,0,0,.3); border-radius: 4px; overflow: hidden; }
-.rank-page-fill{ height: 100%; background: linear-gradient(90deg, var(--mint), var(--coral)); border-radius: 4px; transition: width .8s; }
-.rank-page-next{ font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin-top: 6px; }
-.rank-page-stats{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
-@media (max-width: 600px){ .rank-page-stats{ grid-template-columns: repeat(2, 1fr); } }
-.rps-stat{ padding: 16px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); text-align: center; }
-.rps-v{ font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 26px; }
-.rps-l{ font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); margin-top: 3px; }
+.rank-page-rating{ font-family: var(--font-mono); font-size: 13px; color: var(--text-dim); margin: 2px 0 0; }
+.rank-page-next{ font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); }
 .rank-ladder{ display: flex; flex-direction: column; gap: 6px; }
 .ladder-row{ display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line-soft); }
 .ladder-row.current{ border-color: var(--mint); background: rgba(34,211,163,.06); box-shadow: inset 2px 0 0 var(--mint); }
@@ -10353,39 +10345,39 @@ const FIREBASE_CONFIG = {
           <h2 class="page-title">ACTIVITY</h2>
           <p class="page-subtitle">Live matches and recent results from around the world.</p>
         </div>
-        <div class="activity-stat-row">
-          <div class="world-stat">
-            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-swords"/></svg>
-            <div class="world-stat-v" id="actLiveCount">—</div>
-            <div class="world-stat-l">Live now</div>
+        <div class="stat-grid-4" style="margin-bottom:14px;">
+          <div class="stat-tile">
+            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-swords"/></svg>
+            <div class="stat-tile-v" id="actLiveCount">—</div>
+            <div class="stat-tile-l">Live now</div>
           </div>
-          <div class="world-stat">
-            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-people"/></svg>
-            <div class="world-stat-v" id="actOnlineCount">—</div>
-            <div class="world-stat-l">Online</div>
+          <div class="stat-tile">
+            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-people"/></svg>
+            <div class="stat-tile-v mint" id="actOnlineCount">—</div>
+            <div class="stat-tile-l">Online</div>
           </div>
-          <div class="world-stat">
-            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-activity"/></svg>
-            <div class="world-stat-v" id="actRecentCount">—</div>
-            <div class="world-stat-l">Recent results</div>
+          <div class="stat-tile">
+            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-activity"/></svg>
+            <div class="stat-tile-v purple" id="actRecentCount">—</div>
+            <div class="stat-tile-l">Recent results</div>
           </div>
-          <div class="world-stat">
-            <svg viewBox="0 0 24 24" width="15" height="15" class="world-stat-ic"><use href="#i-trophy"/></svg>
-            <div class="world-stat-v" id="actTopElo">—</div>
-            <div class="world-stat-l">Top ELO</div>
+          <div class="stat-tile">
+            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-trophy"/></svg>
+            <div class="stat-tile-v gold" id="actTopElo">—</div>
+            <div class="stat-tile-l">Top ELO</div>
           </div>
         </div>
         <div class="activity-page-grid">
-          <div class="content-card">
-            <div class="content-card-head">
-              <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-activity"/></svg><span>GLOBAL FEED</span></div>
-              <div class="content-card-sub" id="activityPageStats">— games in progress</div>
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Global feed</div>
+              <div class="card-hd-sub" id="activityPageStats">— in progress</div>
             </div>
             <div class="side-body" id="activityPageBody"><div class="side-empty">Loading activity…</div></div>
           </div>
-          <div class="content-card">
-            <div class="content-card-head">
-              <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg><span>TOP PLAYERS</span></div>
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Top players</div>
             </div>
             <div class="side-body" id="activityPageLeaderboard"><div class="side-empty">Loading leaderboard…</div></div>
           </div>
@@ -10406,32 +10398,32 @@ const FIREBASE_CONFIG = {
           </div>
           <div class="season-pill">RANKED</div>
         </div>
-        <div class="rank-page-hero">
+        <div class="card rank-page-hero">
           <div class="rank-page-icon" id="rankPageIcon"></div>
           <div class="rank-page-info">
             <div class="rank-page-tier" id="rankPageTier">Bronze I</div>
             <div class="rank-page-rating"><span id="rankPageRating">1000</span> ELO</div>
-            <div class="rank-page-bar"><div class="rank-page-fill" id="rankPageFill"></div></div>
+            <div class="ui-bar" style="margin:12px 0 6px;"><div class="ui-bar-fill" id="rankPageFill"></div></div>
             <div class="rank-page-next" id="rankPageNext">— to next tier</div>
           </div>
         </div>
-        <div class="percentile-row">
-          <div class="percentile-card">
+        <div class="stat-grid-2" style="margin-bottom:14px;">
+          <div class="card">
             <div class="pct-big mint" id="pctTop">Top —%</div>
             <div class="pct-lbl">You're ahead of most players worldwide</div>
           </div>
-          <div class="percentile-card">
+          <div class="card">
             <div class="pct-big" id="pctGlobalRank">#—</div>
             <div class="pct-lbl">Global leaderboard position</div>
           </div>
         </div>
-        <div class="rank-page-stats" id="rankPageStats">
-          <div class="rps-stat"><div class="rps-v" id="rpsWins">0</div><div class="rps-l">Wins</div></div>
-          <div class="rps-stat"><div class="rps-v" id="rpsLosses">0</div><div class="rps-l">Losses</div></div>
-          <div class="rps-stat"><div class="rps-v" id="rpsWR">0%</div><div class="rps-l">Win rate</div></div>
-          <div class="rps-stat"><div class="rps-v" id="rpsStreak">0</div><div class="rps-l">Best streak</div></div>
+        <div class="stat-grid-4" style="margin-bottom:8px;">
+          <div class="stat-tile"><div class="stat-tile-v mint" id="rpsWins">0</div><div class="stat-tile-l">Wins</div></div>
+          <div class="stat-tile"><div class="stat-tile-v coral" id="rpsLosses">0</div><div class="stat-tile-l">Losses</div></div>
+          <div class="stat-tile"><div class="stat-tile-v" id="rpsWR">0%</div><div class="stat-tile-l">Win rate</div></div>
+          <div class="stat-tile"><div class="stat-tile-v gold" id="rpsStreak">0</div><div class="stat-tile-l">Best streak</div></div>
         </div>
-        <div class="section-head"><h3>Rank ladder</h3></div>
+        <div class="psection"><h3>Rank ladder</h3></div>
         <div class="rank-ladder" id="rankLadder"></div>
       </div><!-- /page rank -->
 
@@ -10442,23 +10434,31 @@ const FIREBASE_CONFIG = {
           <p class="page-subtitle">Your rivals and teammates.</p>
         </div>
         <div class="friends-layout">
-          <div class="content-card friends-page-card">
-            <div class="content-card-head">
-              <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-people"/></svg><span>ALL FRIENDS</span></div>
-              <div class="content-card-sub"><span class="live-dot"></span><span id="friendCountPage">0/0</span> online</div>
+          <div class="card" style="padding:0; overflow:hidden;">
+            <div class="card-hd" style="padding:18px 20px 0;">
+              <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg> All friends</div>
+              <div class="card-hd-sub"><span class="live-dot"></span><span id="friendCountPage">0/0</span> online</div>
             </div>
-            <div class="add-friend-input">
-              <input id="addFriendInputPage" type="text" placeholder="Add friend by username…" maxlength="20" />
-              <button id="addFriendBtnPage">Add</button>
-            </div>
-            <div class="side-body" id="friendsBodyPage"><div class="side-empty">Loading…</div></div>
-          </div>
-          <div>
-            <div class="content-card">
-              <div class="content-card-head">
-                <div class="content-card-title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg><span>FRIEND LEADERBOARD</span></div>
+            <div style="padding:14px 20px 0;">
+              <div class="add-friend-input">
+                <input id="addFriendInputPage" type="text" placeholder="Add friend by username…" maxlength="20" />
+                <button id="addFriendBtnPage">Add</button>
               </div>
-              <div class="side-body" id="friendLeaderboard" style="padding:12px;"><div class="side-empty">Add friends to compare ELO</div></div>
+            </div>
+            <div class="side-body" id="friendsBodyPage" style="padding:8px 14px 14px;"><div class="side-empty">Loading…</div></div>
+          </div>
+          <div class="home-col">
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Friend leaderboard</div>
+              </div>
+              <div id="friendLeaderboard"><div class="side-empty">Add friends to compare ELO</div></div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg> Tip</div>
+              </div>
+              <p style="font-size:13px; color:var(--text-dim); line-height:1.5; margin:0;">Add friends by username to challenge them directly, chat, and see who's online. Climb the friend leaderboard by winning ranked matches.</p>
             </div>
           </div>
         </div>
@@ -10479,22 +10479,22 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
         <div class="ach-summary-row">
-          <div class="ach-summary-card">
+          <div class="card" style="text-align:center;">
             <div class="asc-v gold" id="ascTitles">0/11</div>
             <div class="asc-l">Titles unlocked</div>
           </div>
-          <div class="ach-summary-card">
+          <div class="card" style="text-align:center;">
             <div class="asc-v mint" id="ascMilestones">0/8</div>
             <div class="asc-l">Milestones earned</div>
           </div>
-          <div class="ach-summary-card">
+          <div class="card" style="text-align:center;">
             <div class="asc-v purple" id="ascTotalXp">0</div>
             <div class="asc-l">Total XP earned</div>
           </div>
         </div>
-        <h3 class="ach-section-title">TITLES</h3>
+        <div class="psection"><h3>Titles</h3></div>
         <div class="titles-grid" id="achTitlesGrid"></div>
-        <h3 class="ach-section-title">MILESTONES</h3>
+        <div class="psection"><h3>Milestones</h3></div>
         <div class="ach-milestones" id="achMilestones"></div>
       </div><!-- /page achievements -->
 
@@ -10511,6 +10511,7 @@ const FIREBASE_CONFIG = {
             <div class="acc-name" id="setAccName">—</div>
             <div class="acc-meta" id="setAccMeta">— · 1000 ELO · Level 1</div>
           </div>
+          <button class="acc-edit-btn" id="setAccEdit">Edit</button>
         </div>
 
         <div class="settings-section-title">PROFILE</div>
@@ -10534,16 +10535,40 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Sound effects</div><div class="set-sub" id="setSoundState">Enabled</div></div>
             <div class="set-toggle" id="setSoundToggle"></div>
           </button>
+          <!-- Volume slider -->
+          <div class="card volume-row" style="margin:0;">
+            <div class="volume-top">
+              <div class="volume-label">
+                <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-sound-on"/></svg></div>
+                Volume
+              </div>
+              <div class="volume-val" id="volumeVal">70%</div>
+            </div>
+            <input type="range" min="0" max="100" value="70" class="volume-slider" id="volumeSlider" />
+          </div>
           <button class="settings-row" id="setReducedMotion">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-activity"/></svg></div>
             <div class="set-text"><div class="set-title">Reduced motion</div><div class="set-sub" id="setMotionState">Off</div></div>
             <div class="set-toggle off" id="setMotionToggle"></div>
+          </button>
+          <button class="settings-row" id="setHaptics">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
+            <div class="set-text"><div class="set-title">Haptic feedback</div><div class="set-sub" id="setHapticsState">On</div></div>
+            <div class="set-toggle" id="setHapticsToggle"></div>
           </button>
           <button class="settings-row" id="setHowTo">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></div>
             <div class="set-text"><div class="set-title">How to play</div><div class="set-sub">Rules &amp; gestures</div></div>
             <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
           </button>
+        </div>
+
+        <div class="settings-section-title">ABOUT</div>
+        <div class="settings-list">
+          <div class="settings-row" style="cursor:default;">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
+            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.1 · Real-time webcam Rock Paper Scissors</div></div>
+          </div>
         </div>
 
         <div class="settings-section-title">ACCOUNT</div>
@@ -12119,7 +12144,9 @@ const state = {
   // Best-of-3
   matchRound: 0,            // current round number (1, 2, 3)
   matchRoundsToWin: 2,      // first to 2 wins the match
-  preferredBestOf: 3,       // player-selected match format (3/5/7)
+  preferredBestOf: 3,       // (legacy, unused — match format removed)
+  sfxVolume: 0.7,           // 0..1 SFX volume
+  hapticsOff: false,
   matchOver: false,
   myPrediction: null,       // what you predicted opp would throw
   _lastPredictionCorrect: false,
@@ -12309,7 +12336,8 @@ function tone(freq, dur=0.1, type='sine', vol=0.15){
   const t = audioCtx.currentTime;
   const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
   o.frequency.value = freq; o.type = type;
-  g.gain.setValueAtTime(vol, t);
+  const vmul = (state.sfxVolume === undefined ? 0.7 : state.sfxVolume);
+  g.gain.setValueAtTime(Math.max(0.0001, vol * vmul), t);
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g).connect(audioCtx.destination);
   o.start(t); o.stop(t + dur);
@@ -18270,7 +18298,27 @@ function renderSettingsPage(){
   // reduced motion toggle state
   const rm = $('#setMotionToggle');
   if(rm) rm.classList.toggle('off', !document.body.classList.contains('reduced-motion'));
+  // volume
+  const vs = $('#volumeSlider');
+  const vpct = Math.round((state.sfxVolume ?? 0.7) * 100);
+  if(vs) vs.value = vpct;
+  setText('#volumeVal', vpct + '%');
+  // haptics
+  const ht = $('#setHapticsToggle');
+  if(ht) ht.classList.toggle('off', !!state.hapticsOff);
+  setText('#setHapticsState', state.hapticsOff ? 'Off' : 'On');
 }
+
+// Load saved client preferences (volume, motion, haptics)
+function loadClientPrefs(){
+  try {
+    const vol = localStorage.getItem('rosham_volume');
+    if(vol !== null) state.sfxVolume = Math.max(0, Math.min(1, parseInt(vol,10)/100));
+    if(localStorage.getItem('rosham_reduced_motion') === '1') document.body.classList.add('reduced-motion');
+    if(localStorage.getItem('rosham_haptics') === '0') state.hapticsOff = true;
+  } catch(e){}
+}
+loadClientPrefs();
 
 // Daily login streak (localStorage)
 function getLoginStreak(){
@@ -18338,17 +18386,10 @@ on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
 on('#playPageInviteBtn', 'click', () => { showNavPage('friends'); });
 on('#playOptRegion', 'click', () => { $('#playOptRegion')?.classList.add('active'); $('#playOptRanked')?.classList.remove('active'); $('#optRegion')?.click?.(); });
 on('#playOptRanked', 'click', () => { $('#playOptRanked')?.classList.add('active'); $('#playOptRegion')?.classList.remove('active'); $('#optRanged')?.click?.(); });
-// Match format toggle (Bo3 / Bo5 / Bo7)
-document.querySelectorAll('.format-opt').forEach(opt => {
-  opt.addEventListener('click', () => {
-    document.querySelectorAll('.format-opt').forEach(o => o.classList.remove('active'));
-    opt.classList.add('active');
-    const fmt = parseInt(opt.dataset.format, 10);
-    // store preferred match length; matchRoundsToWin = ceil(fmt/2)
-    state.preferredBestOf = fmt;
-    state.matchRoundsToWin = Math.ceil(fmt / 2);
-    toast(`Match format: Best of ${fmt}`, 'success');
-  });
+
+// ===== HOME quick links =====
+document.querySelectorAll('[data-quicklink]').forEach(btn => {
+  btn.addEventListener('click', () => showNavPage(btn.dataset.quicklink));
 });
 
 // ===== FRIENDS PAGE add-friend =====
@@ -18360,18 +18401,35 @@ on('#addFriendInputPage', 'keydown', (e) => { if(e.key === 'Enter') $('#addFrien
 
 // ===== SETTINGS PAGE rows =====
 on('#setEditProfile', 'click', () => openEditProfile());
+on('#setAccEdit', 'click', () => openEditProfile());
 on('#setCamera', 'click', () => $('#cameraSetupBtn')?.click());
 on('#setSound', 'click', () => { $('#muteBtn')?.click(); renderSettingsPage(); });
 on('#setReducedMotion', 'click', () => {
   document.body.classList.toggle('reduced-motion');
-  setText('#setMotionState', document.body.classList.contains('reduced-motion') ? 'On' : 'Off');
+  const on_ = document.body.classList.contains('reduced-motion');
+  setText('#setMotionState', on_ ? 'On' : 'Off');
+  try { localStorage.setItem('rosham_reduced_motion', on_ ? '1' : '0'); } catch(e){}
   renderSettingsPage();
+});
+on('#setHaptics', 'click', () => {
+  state.hapticsOff = !state.hapticsOff;
+  $('#setHapticsToggle')?.classList.toggle('off', state.hapticsOff);
+  setText('#setHapticsState', state.hapticsOff ? 'Off' : 'On');
+  try { localStorage.setItem('rosham_haptics', state.hapticsOff ? '0' : '1'); } catch(e){}
 });
 on('#setHowTo', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
 on('#setSignOut', 'click', () => $('#signOutBtn')?.click());
+// Volume slider — controls global SFX gain
+on('#volumeSlider', 'input', (e) => {
+  const v = parseInt(e.target.value, 10);
+  state.sfxVolume = v / 100;
+  setText('#volumeVal', v + '%');
+  try { localStorage.setItem('rosham_volume', String(v)); } catch(e){}
+});
 
 // Sidebar profile → open profile editor / stats
 on('#sidebarProfile', 'click', () => openStatsModal());
+on('#homeRankCard', 'click', (e) => { if(!e.target.closest('#rankViewMoreBtn')) showNavPage('rank'); });
 
 // ===== HAMBURGER (mobile) =====
 function openSidebarMobile(){ $('#sidebar')?.classList.add('mobile-open'); $('#sidebarBackdrop')?.classList.add('show'); }
@@ -18598,7 +18656,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v10.0 — FULL PAGE REDESIGN + NEW FEATURES', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v10.1 — UNIFIED DESIGN SYSTEM + VOLUME + CLEANUP', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
