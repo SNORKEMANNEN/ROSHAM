@@ -11002,7 +11002,7 @@ const FIREBASE_CONFIG = {
         <div class="settings-list">
           <div class="settings-row" style="cursor:default;">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
-            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.6 · Real-time webcam Rock Paper Scissors</div></div>
+            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.7 · Real-time webcam Rock Paper Scissors</div></div>
           </div>
         </div>
 
@@ -12884,77 +12884,174 @@ animateParticles();
 let audioCtx = null;
 function ensureAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
 
-// ============= SAMPLE AUDIO ENGINE (custom mp3 sfx + looping music) =============
-// Uses HTMLAudioElement routed through the WebAudio graph so the in-app volume
-// slider (state.sfxVolume) controls these too. Falls back to element.volume if
-// WebAudio routing isn't available.
+// ============= SAMPLE AUDIO ENGINE (custom mp3 sfx + gapless looping music) =============
+// Music + rank-up are decoded into AudioBuffers and played through the WebAudio
+// graph. This gives us:
+//   • GAPLESS looping (AudioBufferSourceNode loop=true is sample-accurate — no
+//     click/silence at the loop point that HTMLAudio.loop suffers from)
+//   • SMOOTH crossfade-style transitions via a dedicated GainNode (we fade the
+//     music down when entering a match and back up when returning to the menu)
+// The in-app volume slider (state.sfxVolume) scales the music gain in real time.
 const sampleAudio = {
-  rankup: null,     // one-shot rank-up sound
-  music: null,      // looping main-menu music
-  _musicGain: null,
-  _musicSrc: null,
-  _wired: false,
+  rankupBuf: null,      // decoded AudioBuffer for the rank-up sound
+  musicBuf: null,       // decoded AudioBuffer for the looping menu music
+  musicGain: null,      // master GainNode the music routes through (for fades)
+  rankupGain: null,     // GainNode for the rank-up one-shot
+  decoding: false,
+  ready: false,
+  // crossfade-loop scheduling
+  loopActive: false,
+  loopTimer: null,
+  voices: [],           // active {src, gain} crossfade voices
 };
-// Volume balance: music sits a bit under SFX so it doesn't drown effects.
-const MUSIC_VOLUME_SCALE = 0.55;
+// Music sits a bit under SFX so it doesn't drown effects.
+const MUSIC_VOLUME_SCALE = 0.5;
+const MUSIC_FADE = 1.1;      // seconds for master fade in/out (menu↔match)
+const LOOP_XFADE = 2.2;      // seconds of crossfade overlap at the loop seam
 
-function _makeAudioEl(dataUri, { loop=false } = {}){
-  if(!dataUri) return null;
-  const a = new Audio();
-  a.src = dataUri;
-  a.loop = loop;
-  a.preload = 'auto';
-  a.crossOrigin = 'anonymous';
-  return a;
+function _b64ToArrayBuffer(dataUri){
+  try {
+    const b64 = dataUri.split(',')[1] || '';
+    const bin = atob(b64);
+    const len = bin.length;
+    const bytes = new Uint8Array(len);
+    for(let i=0;i<len;i++) bytes[i] = bin.charCodeAt(i);
+    return bytes.buffer;
+  } catch(e){ return null; }
 }
-function initSampleAudio(){
-  // Rank-up one-shot
-  if(!sampleAudio.rankup && typeof RANKUP_SFX_DATA !== 'undefined' && RANKUP_SFX_DATA){
-    sampleAudio.rankup = _makeAudioEl(RANKUP_SFX_DATA, { loop:false });
-  }
-  // Looping menu music
-  if(!sampleAudio.music && typeof MENU_MUSIC_DATA !== 'undefined' && MENU_MUSIC_DATA){
-    sampleAudio.music = _makeAudioEl(MENU_MUSIC_DATA, { loop:true });
-  }
+// Decode the base64 audio into AudioBuffers (once). Needs an unlocked context.
+async function initSampleAudio(){
+  ensureAudio();
+  if(!audioCtx || sampleAudio.decoding || sampleAudio.ready) return;
+  sampleAudio.decoding = true;
+  try {
+    // Music gain node → destination
+    if(!sampleAudio.musicGain){
+      sampleAudio.musicGain = audioCtx.createGain();
+      sampleAudio.musicGain.gain.value = 0;
+      sampleAudio.musicGain.connect(audioCtx.destination);
+    }
+    if(!sampleAudio.rankupGain){
+      sampleAudio.rankupGain = audioCtx.createGain();
+      sampleAudio.rankupGain.gain.value = 1;
+      sampleAudio.rankupGain.connect(audioCtx.destination);
+    }
+    // Decode rank-up
+    if(!sampleAudio.rankupBuf && typeof RANKUP_SFX_DATA !== 'undefined' && RANKUP_SFX_DATA){
+      const ab = _b64ToArrayBuffer(RANKUP_SFX_DATA);
+      if(ab) sampleAudio.rankupBuf = await audioCtx.decodeAudioData(ab);
+    }
+    // Decode music
+    if(!sampleAudio.musicBuf && typeof MENU_MUSIC_DATA !== 'undefined' && MENU_MUSIC_DATA){
+      const ab = _b64ToArrayBuffer(MENU_MUSIC_DATA);
+      if(ab) sampleAudio.musicBuf = await audioCtx.decodeAudioData(ab);
+    }
+    sampleAudio.ready = true;
+  } catch(e){ console.warn('[audio] decode failed', e); }
+  sampleAudio.decoding = false;
 }
-// Play the custom rank-up sample (returns true if a sample played)
+function _musicTargetGain(){
+  return Math.max(0.0001, (state.sfxVolume ?? 0.7) * MUSIC_VOLUME_SCALE);
+}
+// Play the custom rank-up sample (returns true if a sample is/will play)
 function playRankUpSample(){
   try {
     if(state.muted) return false;
-    if(!sampleAudio.rankup) initSampleAudio();
-    if(!sampleAudio.rankup) return false;
-    const a = sampleAudio.rankup;
-    a.currentTime = 0;
-    a.volume = Math.max(0, Math.min(1, (state.sfxVolume ?? 0.7)));
-    a.play().catch(() => {});
+    if(!sampleAudio.ready){ initSampleAudio().then(() => { if(sampleAudio.rankupBuf) playRankUpSample(); }); return true; }
+    if(!sampleAudio.rankupBuf) return false;
+    ensureAudio();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    sampleAudio.rankupGain.gain.setValueAtTime(Math.max(0.0001, (state.sfxVolume ?? 0.7)), audioCtx.currentTime);
+    const src = audioCtx.createBufferSource();
+    src.buffer = sampleAudio.rankupBuf;
+    src.connect(sampleAudio.rankupGain);
+    src.start();
     return true;
   } catch(e){ return false; }
 }
-// Looping main-menu music control
+
+// --- Crossfade loop: schedule one playthrough that fades into the next so the
+// seam is inaudible (the tail of one pass overlaps the head of the next). ---
+function _scheduleMusicVoice(startAt){
+  if(!sampleAudio.loopActive || !sampleAudio.musicBuf || !audioCtx) return;
+  const buf = sampleAudio.musicBuf;
+  const dur = buf.duration;
+  const xf = Math.min(LOOP_XFADE, dur * 0.45);  // keep crossfade sane vs length
+  const voiceGain = audioCtx.createGain();
+  voiceGain.connect(sampleAudio.musicGain);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  src.connect(voiceGain);
+  // Fade this voice IN over the crossfade window (so it overlaps the previous tail)
+  voiceGain.gain.setValueAtTime(0.0001, startAt);
+  voiceGain.gain.linearRampToValueAtTime(1, startAt + xf);
+  // Hold full, then fade OUT over the final crossfade window
+  const fadeOutStart = startAt + dur - xf;
+  voiceGain.gain.setValueAtTime(1, Math.max(startAt + xf, fadeOutStart));
+  voiceGain.gain.linearRampToValueAtTime(0.0001, startAt + dur);
+  src.start(startAt);
+  src.stop(startAt + dur + 0.05);
+  const voice = { src, gain: voiceGain };
+  sampleAudio.voices.push(voice);
+  src.onended = () => {
+    try { voiceGain.disconnect(); } catch(e){}
+    sampleAudio.voices = sampleAudio.voices.filter(v => v !== voice);
+  };
+  // Schedule the NEXT pass to begin xf seconds before this one ends → overlap.
+  const nextStart = startAt + dur - xf;
+  const delayMs = Math.max(0, (nextStart - audioCtx.currentTime - 0.25) * 1000);
+  sampleAudio.loopTimer = setTimeout(() => {
+    if(sampleAudio.loopActive) _scheduleMusicVoice(nextStart);
+  }, delayMs);
+}
+
+// Start the crossfade-looping menu music with a smooth master fade-in.
 function startMenuMusic(){
   try {
     if(state.muted) return;
-    if(!sampleAudio.music) initSampleAudio();
-    if(!sampleAudio.music) return;
-    const m = sampleAudio.music;
-    m.volume = Math.max(0, Math.min(1, (state.sfxVolume ?? 0.7) * MUSIC_VOLUME_SCALE));
-    // Only (re)start if not already playing
-    if(m.paused){ m.play().catch(() => {}); }
+    if(!sampleAudio.ready){ initSampleAudio().then(() => { if(state.screen === 'landing') startMenuMusic(); }); return; }
+    if(!sampleAudio.musicBuf) return;
+    ensureAudio();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+    // Master fade up to target
+    sampleAudio.musicGain.gain.cancelScheduledValues(now);
+    sampleAudio.musicGain.gain.setValueAtTime(Math.max(0.0001, sampleAudio.musicGain.gain.value), now);
+    sampleAudio.musicGain.gain.linearRampToValueAtTime(_musicTargetGain(), now + MUSIC_FADE);
+    // Already looping → fade-up is enough
+    if(sampleAudio.loopActive) return;
+    sampleAudio.loopActive = true;
+    _scheduleMusicVoice(now + 0.02);
+  } catch(e){ console.warn('[audio] startMenuMusic', e); }
+}
+// Smoothly fade the music master out, then tear down all voices.
+function stopMenuMusic(immediate){
+  try {
+    if(!audioCtx || !sampleAudio.musicGain) return;
+    const now = audioCtx.currentTime;
+    const g = sampleAudio.musicGain.gain;
+    g.cancelScheduledValues(now);
+    g.setValueAtTime(Math.max(0.0001, g.value), now);
+    const fade = immediate ? 0.08 : MUSIC_FADE;
+    g.linearRampToValueAtTime(0.0001, now + fade);
+    // Stop scheduling new voices
+    sampleAudio.loopActive = false;
+    if(sampleAudio.loopTimer){ clearTimeout(sampleAudio.loopTimer); sampleAudio.loopTimer = null; }
+    // Stop existing voices after the fade
+    const voices = sampleAudio.voices.slice();
+    sampleAudio.voices = [];
+    voices.forEach(v => { try { v.src.stop(now + fade + 0.05); } catch(e){} });
   } catch(e){}
 }
-function stopMenuMusic(){
-  try { if(sampleAudio.music && !sampleAudio.music.paused){ sampleAudio.music.pause(); } } catch(e){}
-}
-// Apply current volume/mute to live sample audio (called by the slider + mute)
+// Apply current volume/mute to live music (called by the slider + mute)
 function applySampleVolume(){
   try {
-    if(sampleAudio.music){
-      sampleAudio.music.volume = Math.max(0, Math.min(1, (state.sfxVolume ?? 0.7) * MUSIC_VOLUME_SCALE));
-      if(state.muted){ stopMenuMusic(); }
+    if(audioCtx && sampleAudio.musicGain && sampleAudio.loopActive && !state.muted){
+      const now = audioCtx.currentTime;
+      sampleAudio.musicGain.gain.cancelScheduledValues(now);
+      sampleAudio.musicGain.gain.linearRampToValueAtTime(_musicTargetGain(), now + 0.12);
     }
-    if(sampleAudio.rankup){
-      sampleAudio.rankup.volume = Math.max(0, Math.min(1, (state.sfxVolume ?? 0.7)));
-    }
+    if(state.muted) stopMenuMusic(true);
   } catch(e){}
 }
 function tone(freq, dur=0.1, type='sine', vol=0.15){
@@ -18867,10 +18964,13 @@ on('#optRanged', 'click', () => {
 });
 
 // One-time audio unlock — browsers block audio until a user gesture. After the
-// first interaction, resume the audio context and start menu music if applicable.
-function _unlockAudioOnce(){
-  try { ensureAudio(); if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); } catch(e){}
-  try { initSampleAudio(); if(state.screen === 'landing' && !state.muted) startMenuMusic(); } catch(e){}
+// first interaction, resume the audio context, decode samples, then start music.
+async function _unlockAudioOnce(){
+  try { ensureAudio(); if(audioCtx && audioCtx.state === 'suspended') await audioCtx.resume(); } catch(e){}
+  try {
+    await initSampleAudio();
+    if(state.screen === 'landing' && !state.muted) startMenuMusic();
+  } catch(e){}
   window.removeEventListener('pointerdown', _unlockAudioOnce);
   window.removeEventListener('keydown', _unlockAudioOnce);
 }
@@ -19939,7 +20039,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v10.6 — UNLOAD FIX + CUSTOM AUDIO (rank-up + menu music)', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v10.7 — SEAMLESS MUSIC CROSSFADE LOOP + SMOOTH TRANSITIONS', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
