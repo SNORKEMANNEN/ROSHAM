@@ -75,12 +75,14 @@
   --rank-grandmaster:#ff2d6b;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;}
+html,body{height:100%; overflow-x:hidden; max-width:100%;}
+html{ overscroll-behavior-x:none; }
 body{
   font-family:var(--font-body);
   background:var(--bg);
   color:var(--text);
   overflow-x:hidden;
+  overscroll-behavior-x:none;
   min-height:100vh;
   position:relative;
   -webkit-font-smoothing:antialiased;
@@ -306,7 +308,7 @@ html{ scroll-behavior: smooth; }
 /* Icons inside buttons should never inherit stroke wider than needed */
 svg[data-lucide-icon]{ flex-shrink: 0; }
 
-.app{position:relative; z-index:2; min-height:100vh; display:flex;}
+.app{position:relative; z-index:2; min-height:100vh; display:flex; max-width:100%; overflow-x:clip;}
 
 /* ===== SIDEBAR ===== */
 .sidebar{
@@ -476,16 +478,47 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
 
 /* ===== TOPBAR ===== */
 .topbar{
-  display: none; align-items: center; gap: 14px;
-  padding: 14px 28px;
+  display: none; align-items: center; gap: 12px;
+  padding: 12px 24px;
   border-bottom: 1px solid var(--line-soft);
-  backdrop-filter: blur(20px) saturate(140%);
-  -webkit-backdrop-filter: blur(20px) saturate(140%);
-  background: rgba(8,7,13,.7);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  background: rgba(10,9,16,.78);
   position: sticky; top: 0; z-index: 50;
 }
 .app.logged-in .topbar{ display: flex; }
 .topbar-spacer{ flex: 1; }
+/* Mobile brand shown only on small screens in the topbar */
+.topbar-brand{ display: none; align-items: center; gap: 9px; font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 19px; letter-spacing: -.01em; }
+.topbar-brand .tb-logo{ width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, var(--mint), #159f78); display: grid; place-items: center; }
+
+/* ===== MOBILE BOTTOM NAV (app-like) ===== */
+.mobile-nav{
+  display: none;
+  position: fixed; left: 0; right: 0; bottom: 0;
+  z-index: 80;
+  background: rgba(10,9,16,.92);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border-top: 1px solid var(--line);
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+  grid-template-columns: repeat(5, 1fr);
+  gap: 2px;
+}
+.app.logged-in .mobile-nav{ /* shown via media query only */ }
+.mobile-nav-item{
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 8px 2px; border-radius: 12px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-faint); transition: color .15s, background .15s;
+}
+.mobile-nav-item svg{ width: 22px; height: 22px; }
+.mobile-nav-item span{ font-family: var(--font-mono); font-size: 8.5px; letter-spacing: .04em; text-transform: uppercase; font-weight: 700; }
+.mobile-nav-item.active{ color: var(--mint); }
+.mobile-nav-item.active .mni-icon{ background: rgba(34,211,163,.12); }
+.mni-icon{ width: 100%; display: grid; place-items: center; padding: 2px 0; border-radius: 10px; transition: background .15s; }
+.mobile-nav-item .mni-badge{ position: absolute; top: 4px; right: calc(50% - 16px); min-width: 15px; height: 15px; padding: 0 4px; border-radius: 999px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 9px; font-weight: 700; display: none; align-items: center; justify-content: center; }
+.mobile-nav-item{ position: relative; }
 
 /* ===== NAV PAGES ===== */
 .nav-page{ display: none; animation: fadeUp .4s cubic-bezier(.2,.7,.2,1); }
@@ -5791,15 +5824,34 @@ h2.match-title{
   .arena-ctrl-btn#arenaMoreBtn{ display: grid; }
 
   /* ---- BATTLE STAGE: two stacked videos fill remaining space ---- */
-  .battle-stage{ grid-template-rows: 1fr 44px 1fr; }
-  .duel-divider{ height: 44px; }
-  .duel-divider-vs{ font-size: 20px; }
+  .battle-stage{ grid-template-rows: 1fr 40px 1fr; }
+  .duel-divider{ height: 40px; }
+  .duel-divider-vs{ font-size: 18px; }
   .duel-badge{ font-size: 9px; padding: 4px 9px; border-radius: 999px; }
   .duel-overlay{ top: 10px; }
   .duel-video.you .duel-overlay{ left: 8px; }
   .duel-video.opp .duel-overlay{ right: 8px; }
-  .duel-countdown{ font-size: clamp(96px, 36vw, 170px) !important; }
-  .duel-gesture-indicator{ transform: scale(.8); }
+  /* Countdown: compact circle so BOTH players stay visible */
+  .duel-countdown{
+    font-size: clamp(48px, 16vw, 84px) !important;
+    width: clamp(96px, 30vw, 130px) !important;
+    height: clamp(96px, 30vw, 130px) !important;
+  }
+  .duel-countdown.shoot{
+    font-size: clamp(26px, 7vw, 40px) !important;
+    width: auto !important; height: auto !important;
+    padding: 12px 24px !important;
+  }
+  .duel-gesture-indicator{ transform: scale(.7); }
+
+  /* Result overlay: compact card, smaller picks + headline */
+  .duel-result-inner{ padding: 20px 22px; gap: 12px; border-radius: 22px; max-width: 90vw; }
+  .duel-result-picks{ gap: 14px; }
+  .duel-result-pick{ width: 64px; height: 64px; border-radius: 16px; }
+  .duel-result-pick svg{ width: 38px; height: 38px; }
+  .duel-result-vs{ font-size: 20px; }
+  .duel-result-headline{ font-size: clamp(38px, 13vw, 52px); }
+  .duel-result-detail{ font-size: 11px; }
 
   /* ---- BOTTOM DOCK: redesigned as an app action bar ---- */
   .duel-dock{
@@ -5848,6 +5900,15 @@ h2.match-title{
   .grace-timer{ font-size: 46px; }
   .opp-away-banner{ font-size: 10px; padding: 6px 12px; top: max(8px, env(safe-area-inset-top)); }
   .calib-preview{ aspect-ratio: 1/1; }
+  /* Reduce clutter: smaller ready badges, hide energy particles, tame floating chat */
+  .duel-badge{ font-size: 8.5px; padding: 3px 8px; }
+  .duel-badge .dot{ width: 5px; height: 5px; }
+  .energy-particles{ display: none; }
+  #floatingChat{ max-width: 70vw; }
+  .floating-chat-msg{ font-size: 11px; padding: 6px 10px; }
+  .duel-placeholder-av{ width: 64px; height: 64px; font-size: 26px; }
+  /* keep the obscured "no peeking" tidy */
+  .duel-obscured .lbl{ font-size: 10px; }
 }
 
 /* Desktop hides the mobile-only chat toggle */
@@ -9743,12 +9804,18 @@ h2.match-title{
     width: 260px;
   }
   .sidebar.mobile-open{ transform: translateX(0); }
-  .hamburger{ display: grid; }
-  .topbar{ padding: 12px 16px; }
+  .hamburger{ display: none; }
+  .topbar-brand{ display: flex; }
+  .topbar{ padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); }
   .live-stats{ display: none; }
   .header-actions .btn span:not(.key){ display: none; } /* icon-only help btn */
   #helpBtn{ padding: 8px 10px; }
   .flyout-panel{ top: 60px; right: 8px; left: 8px; width: auto; }
+  /* Show app-like bottom nav, give content room above it */
+  .app.logged-in .mobile-nav{ display: grid; }
+  /* Hide bottom nav during an active match (game has its own dock) */
+  body.in-game .mobile-nav{ display: none !important; }
+  .app.logged-in #screen-landing{ padding-bottom: 86px; }
 }
 @media (max-width: 700px){
   .topbar{ gap: 8px; }
@@ -9979,6 +10046,7 @@ h2.match-title{
 
   <header class="topbar">
     <button class="hamburger" id="hamburgerBtn" title="Menu"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-menu"/></svg></button>
+    <div class="topbar-brand"><span class="tb-logo"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-rock"/></svg></span>ROSHAM</div>
     <div class="live-stats" id="liveStats">
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
       <div class="stat"><span>· <b id="matchCount">0</b> active matches</span></div>
@@ -10009,6 +10077,15 @@ h2.match-title{
       <button id="settingsBtn" style="display:none;"></button>
     </div>
   </header>
+
+  <!-- ===== MOBILE BOTTOM NAV ===== -->
+  <nav class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav-item active" data-mnav="home"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span>Home</span></button>
+    <button class="mobile-nav-item" data-mnav="play"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
+    <button class="mobile-nav-item" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
+    <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
+    <button class="mobile-nav-item" data-mnav="settings"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span>More</span></button>
+  </nav>
 
   <!-- ===== NOTIFICATIONS PANEL ===== -->
   <div class="flyout-panel" id="notifPanel">
@@ -10803,7 +10880,7 @@ const FIREBASE_CONFIG = {
         <div class="settings-list">
           <div class="settings-row" style="cursor:default;">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
-            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.3 · Real-time webcam Rock Paper Scissors</div></div>
+            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.4 · Real-time webcam Rock Paper Scissors</div></div>
           </div>
         </div>
 
@@ -12495,10 +12572,13 @@ function showScreen(name){
     // Always close the mobile drawer + flyouts on screen change
     closeSidebarMobile?.();
     closeAllFlyouts?.();
+    // Toggle in-game flag (hides mobile bottom nav during a match)
+    document.body.classList.toggle('in-game', name === 'game');
     // When (re)entering the landing screen, default to the Home page
     if(name === 'landing'){
       document.querySelectorAll('.nav-page').forEach(pg => pg.classList.toggle('active', pg.dataset.page === 'home'));
       document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === 'home'));
+      try { syncMobileNav('home'); } catch(e){}
       try { renderHomePage(); } catch(e){}
     }
   } catch(e){}
@@ -14432,6 +14512,12 @@ async function renderRequests(){
   body.innerHTML = '';
   // filter out requests from blocked users
   const visible = state.pendingRequests.filter(r => !state.profile.blocked?.includes(r.from));
+  // Mobile nav friends badge
+  const mnavBadge = $('#mnavFriendsBadge');
+  if(mnavBadge){
+    if(visible.length > 0){ mnavBadge.textContent = visible.length; mnavBadge.style.display = 'flex'; }
+    else { mnavBadge.style.display = 'none'; }
+  }
   if(visible.length === 0){
     reqArea.style.display = 'none';
     $('#reqBadge').style.display = 'none';
@@ -18381,6 +18467,8 @@ function showNavPage(page){
   if(state.screen !== 'landing') showScreen('landing');
   setActiveNav(page);
   document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
+  try { syncMobileNav(page); } catch(e){}
+  try { closeSidebarMobile(); } catch(e){}
   // populate the page being shown
   try {
     if(page === 'home') renderHomePage();
@@ -18929,6 +19017,24 @@ function closeSidebarMobile(){ $('#sidebar')?.classList.remove('mobile-open'); $
 on('#hamburgerBtn', 'click', openSidebarMobile);
 on('#sidebarBackdrop', 'click', closeSidebarMobile);
 
+// ===== MOBILE BOTTOM NAV =====
+document.querySelectorAll('.mobile-nav-item').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.mnav;
+    if(target === 'settings'){
+      // "More" opens the drawer for the extra pages (activity/achievements/settings)
+      openSidebarMobile();
+      return;
+    }
+    showNavPage(target);
+  });
+});
+function syncMobileNav(page){
+  document.querySelectorAll('.mobile-nav-item').forEach(b => {
+    b.classList.toggle('active', b.dataset.mnav === page);
+  });
+}
+
 // ===== FLYOUT PANELS =====
 function closeAllFlyouts(){ $('#notifPanel')?.classList.remove('show'); $('#chatPanel')?.classList.remove('show'); }
 on('#notifBtn', 'click', (e) => {
@@ -19252,7 +19358,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v10.3 — PRO MOBILE IN-MATCH + PLAY REDESIGN', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v10.4 — MOBILE NAV OVERHAUL + IN-MATCH FIXES', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
