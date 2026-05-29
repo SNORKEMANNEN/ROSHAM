@@ -755,6 +755,64 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
 /* Reduced motion preference */
 body.reduced-motion *{ animation-duration:.001s !important; transition-duration:.05s !important; }
 
+/* ===== TAB-SWITCH GRACE OVERLAY ===== */
+.grace-overlay{
+  position: fixed; inset: 0; z-index: 9000;
+  display: none; align-items: center; justify-content: center;
+  background: rgba(8,7,13,.85); backdrop-filter: blur(8px);
+  padding: 20px;
+}
+.grace-overlay.show{ display: flex; animation: fadeUp .25s ease-out; }
+.grace-card{
+  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--coral); border-radius: 22px;
+  padding: 32px 28px; text-align: center; max-width: 360px; width: 100%;
+  position: relative; box-shadow: 0 30px 80px rgba(255,51,88,.25);
+}
+.grace-icon{ width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%; background: rgba(255,51,88,.12); display: grid; place-items: center; color: var(--coral); }
+.grace-title{ font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 24px; }
+.grace-sub{ color: var(--text-dim); font-size: 14px; margin: 6px 0 16px; }
+.grace-timer{ font-family: var(--font-display); font-stretch: 60%; font-weight: 800; font-size: 56px; color: var(--coral); line-height: 1; position: relative; z-index: 2; }
+.grace-ring{ width: 120px; height: 120px; margin: -90px auto 12px; position: relative; }
+.grace-ring svg{ transform: rotate(-90deg); width: 120px; height: 120px; }
+.grace-ring-bg{ fill: none; stroke: var(--line); stroke-width: 6; }
+.grace-ring-fg{ fill: none; stroke: var(--coral); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset .2s linear; }
+
+/* Opponent away banner (in-game) */
+.opp-away-banner{
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+  display: none; align-items: center; gap: 8px;
+  padding: 8px 16px; border-radius: 999px;
+  background: rgba(255,170,40,.14); border: 1px solid rgba(255,170,40,.4);
+  color: #ffc24d; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: .06em; z-index: 40;
+}
+.opp-away-banner.show{ display: flex; }
+.opp-away-banner .dot{ width: 7px; height: 7px; border-radius: 50%; background: #ffc24d; animation: pulse 1s infinite; }
+
+/* ===== CHALLENGE CARD (play page) ===== */
+.challenge-card{ background: linear-gradient(135deg, rgba(255,51,88,.10), rgba(255,51,88,.02)) !important; border-color: rgba(255,51,88,.3) !important; }
+.challenge-card:hover{ border-color: var(--coral) !important; }
+
+/* ===== CAMERA CALIBRATION WIZARD ===== */
+.calibration-modal{ max-width: 440px; text-align: center; }
+.calib-progress{ height: 4px; background: var(--surface-3); border-radius: 2px; overflow: hidden; margin-bottom: 6px; }
+.calib-progress-fill{ height: 100%; width: 25%; background: linear-gradient(90deg, var(--mint), var(--coral)); border-radius: 2px; transition: width .4s cubic-bezier(.2,.8,.2,1); }
+.calib-steps-ind{ font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 22px; }
+.calib-step{ display: none; flex-direction: column; align-items: center; }
+.calib-step.active{ display: flex; animation: fadeUp .3s ease-out; }
+.calib-icon{ width: 76px; height: 76px; border-radius: 22px; background: rgba(34,211,163,.1); display: grid; place-items: center; color: var(--mint); margin-bottom: 18px; }
+.calib-icon.success{ background: rgba(34,211,163,.16); animation: calibPop .5s cubic-bezier(.2,1.6,.4,1); }
+@keyframes calibPop{ from{ transform: scale(.4); opacity: 0; } to{ transform: scale(1); opacity: 1; } }
+.calib-title{ font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 24px; margin: 0 0 8px; }
+.calib-sub{ color: var(--text-dim); font-size: 14px; line-height: 1.5; margin: 0 0 22px; max-width: 340px; }
+.calib-preview{ position: relative; width: 100%; aspect-ratio: 4/3; border-radius: 16px; overflow: hidden; background: #000; margin-bottom: 20px; border: 1px solid var(--line); }
+.calib-preview video, .calib-preview canvas{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+.calib-preview-overlay{ position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 7px; padding: 7px 14px; border-radius: 999px; background: rgba(8,7,13,.8); backdrop-filter: blur(8px); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .05em; color: var(--text-dim); z-index: 2; }
+.calib-preview-overlay .dot{ width: 8px; height: 8px; border-radius: 50%; background: var(--text-faint); }
+.calib-preview-overlay.ok{ color: var(--mint); }
+.calib-preview-overlay.ok .dot{ background: var(--mint); box-shadow: 0 0 8px var(--mint); }
+
 .hamburger{
   display: none;
   width: 38px; height: 38px;
@@ -1489,121 +1547,121 @@ h1.section-title .accent{
   position: relative;
   border-radius: 24px;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  background:
+    radial-gradient(ellipse 80% 100% at 70% 20%, rgba(255,45,107,.20), transparent 60%),
+    radial-gradient(ellipse 70% 90% at 10% 90%, rgba(176,140,255,.16), transparent 55%),
+    linear-gradient(160deg, #1a1826 0%, #100e18 60%, #0a0911 100%);
   border: 1px solid var(--line);
   box-shadow: var(--shadow-xl);
-  min-height: 260px;
+  min-height: 320px;
 }
 .hero-strip-bg{
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(circle at 85% 50%, rgba(255,45,107,.18), transparent 50%),
-    radial-gradient(circle at 15% 100%, rgba(176,140,255,.12), transparent 50%),
-    radial-gradient(circle at 50% 0%, rgba(60,255,185,.06), transparent 60%);
-  pointer-events: none;
+  position: absolute; inset: 0; pointer-events: none; overflow: hidden;
 }
+/* Animated aurora blobs */
+.hero-strip-bg::before,
+.hero-strip-bg::after{
+  content: ""; position: absolute; border-radius: 50%; filter: blur(60px); opacity: .5;
+}
+.hero-strip-bg::before{
+  width: 420px; height: 420px; top: -120px; right: -80px;
+  background: radial-gradient(circle, rgba(255,45,107,.55), transparent 70%);
+  animation: heroBlob1 12s ease-in-out infinite;
+}
+.hero-strip-bg::after{
+  width: 360px; height: 360px; bottom: -140px; left: 10%;
+  background: radial-gradient(circle, rgba(124,77,255,.45), transparent 70%);
+  animation: heroBlob2 14s ease-in-out infinite;
+}
+@keyframes heroBlob1{ 0%,100%{ transform: translate(0,0) scale(1);} 50%{ transform: translate(-40px,30px) scale(1.15);} }
+@keyframes heroBlob2{ 0%,100%{ transform: translate(0,0) scale(1);} 50%{ transform: translate(50px,-20px) scale(1.1);} }
 .hero-strip::before{
   content: "";
-  position: absolute;
-  top: 0; left: 8%; right: 8%; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--coral), var(--violet), var(--mint), transparent);
-  opacity: .5;
-  z-index: 2;
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(ellipse at 60% 40%, black, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 60% 40%, black, transparent 75%);
+  pointer-events: none; z-index: 1;
 }
 .hero-strip-content{
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 40px;
-  padding: 38px 44px;
+  grid-template-columns: 1.25fr .85fr;
+  gap: 44px;
+  padding: 44px 48px;
   align-items: center;
-  min-height: 260px;
+  min-height: 320px;
 }
-.hero-strip-left{
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.hero-strip-right{
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: stretch;
-}
+.hero-strip-left{ display: flex; flex-direction: column; gap: 16px; }
+.hero-strip-right{ display: flex; flex-direction: column; gap: 12px; align-items: stretch; }
 
 .hero-eyebrow-stat{
-  margin-left: 12px;
-  padding-left: 12px;
-  border-left: 1px solid var(--line);
-  color: var(--text-faint);
-  font-weight: 600;
+  margin-left: 12px; padding-left: 12px;
+  border-left: 1px solid rgba(255,255,255,.12);
+  color: var(--text-faint); font-weight: 600;
 }
-.hero-eyebrow-stat b{
-  color: var(--mint);
-  font-weight: 700;
-  margin-right: 4px;
-}
+.hero-eyebrow-stat b{ color: var(--mint); font-weight: 700; margin-right: 4px; }
 
 .hero-strip .hero-headline{
   font-family: var(--font-display);
   font-weight: 800;
-  font-stretch: 60%;
-  font-size: clamp(56px, 7.5vw, 92px);
-  line-height: .9;
-  letter-spacing: -.045em;
+  font-stretch: 58%;
+  font-size: clamp(60px, 8vw, 104px);
+  line-height: .86;
+  letter-spacing: -.05em;
   text-transform: uppercase;
   margin: 0;
-  background: linear-gradient(180deg, #fff 25%, #b69cda 100%);
+  background: linear-gradient(170deg, #ffffff 30%, #c9b8ea 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
+  filter: drop-shadow(0 4px 24px rgba(0,0,0,.4));
 }
 .hero-strip .hero-headline .accent{
-  font-stretch: 90%;
+  font-stretch: 95%;
   font-style: italic;
-  font-weight: 700;
-  background: linear-gradient(180deg, var(--coral) 0%, #ff7a3d 50%, var(--amber) 100%);
+  font-weight: 800;
+  background: linear-gradient(120deg, var(--coral) 0%, #ff7a3d 55%, var(--amber) 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 30px var(--coral-glow));
+  filter: drop-shadow(0 0 36px var(--coral-glow));
 }
 .hero-strip .hero-sub{
   color: var(--text-dim);
   font-size: 15px;
-  max-width: 540px;
-  line-height: 1.5;
+  max-width: 460px;
+  line-height: 1.55;
   margin: 0;
 }
 
 .hero-cta{
-  font-size: 17px;
-  padding: 18px 24px;
+  font-size: 18px;
+  padding: 20px 26px;
   width: 100%;
   justify-content: center;
   display: flex;
   align-items: center;
   gap: 12px;
+  box-shadow: 0 12px 40px -8px var(--coral-glow);
 }
 .hero-cta .cta-kbd{
   margin-left: auto;
-  background: rgba(0,0,0,.25);
-  border: 1px solid rgba(255,255,255,.2);
-  padding: 3px 10px;
-  border-radius: 6px;
+  background: rgba(0,0,0,.28);
+  border: 1px solid rgba(255,255,255,.22);
+  padding: 4px 11px;
+  border-radius: 7px;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: #fff;
   letter-spacing: .08em;
 }
-.hero-cta-row{
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.hero-cta-row .btn-icon-action{
-  justify-content: center;
-  padding: 11px 14px;
-  font-size: 13px;
+.hero-cta-row{ display: grid; grid-template-columns: 1fr; gap: 8px; }
+.hero-cta-row .btn-icon-action{ justify-content: center; padding: 13px 14px; font-size: 13px; }
+/* Match-options as a clean segmented control above the CTA */
+.hero-strip-right .match-options{ display: flex; gap: 6px; margin-bottom: 4px; }
+.hero-strip-right .opt-pill{ flex: 1; justify-content: center; }
+@media (max-width: 920px){
+  .hero-strip-content{ grid-template-columns: 1fr; gap: 26px; padding: 32px 28px; }
 }
 
 /* ===== INFO GRID — 3 cards in a row ===== */
@@ -5679,24 +5737,52 @@ h2.match-title{
 
 /* Responsive */
 @media (max-width: 900px){
-  .battle-stage{ grid-template-columns: 1fr; grid-template-rows: 1fr 60px 1fr; }
-  .duel-divider{ width: 100%; height: 60px; flex-direction: row; }
-  .duel-divider-vs{ font-size: 28px; }
+  .battle-stage{ grid-template-columns: 1fr; grid-template-rows: 1fr 54px 1fr; }
+  .duel-divider{ width: 100%; height: 54px; flex-direction: row; }
+  .duel-divider-vs{ font-size: 26px; }
   .duel-divider::before, .duel-divider::after{ display: none; }
-  .duel-countdown{ font-size: clamp(120px, 30vw, 220px) !important; }
+  .duel-countdown{ font-size: clamp(110px, 28vw, 200px) !important; }
   .duel-intro-vs{ grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: 20px; }
   .duel-intro-vs-text{ font-size: 56px; }
   .duel-intro-av{ width: 100px; height: 100px; font-size: 40px; }
   .arena-player-meta{ display: none; }
   .duel-dock{ grid-template-columns: 1fr; gap: 8px; padding: 10px 14px; }
-  .arena-bar{ padding: 10px 14px; gap: 8px; }
+  .arena-bar{ padding: 8px 12px; gap: 8px; }
 }
 @media (max-width: 600px){
-  .arena-score-num{ font-size: 28px; }
-  .arena-player-name{ font-size: 14px; }
-  .arena-player-av{ width: 36px; height: 36px; }
-  .dock-emotes{ overflow-x: auto; max-width: 100%; }
+  /* Use dynamic viewport height so mobile browser chrome doesn't crop the game */
+  #screen-game{ height: 100dvh; height: calc(var(--vh, 1vh) * 100); }
+  .arena-score-num{ font-size: 26px; }
+  .arena-player-name{ font-size: 13px; }
+  .arena-player-av{ width: 34px; height: 34px; }
+  .dock-emotes{ overflow-x: auto; max-width: 100%; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .dock-emotes::-webkit-scrollbar{ display: none; }
   .dock-predict-label{ display: none; }
+  /* Make the arena bar tighter and avatars/score readable */
+  .arena-bar{ padding: 6px 10px; }
+  .arena-player{ gap: 6px; }
+  .duel-badge{ font-size: 9px; padding: 4px 8px; }
+  .duel-overlay{ top: 10px; }
+  .duel-video.you .duel-overlay{ left: 8px; }
+  .duel-video.opp .duel-overlay{ right: 8px; }
+  /* Countdown smaller so it fits stacked layout */
+  .duel-countdown{ font-size: clamp(90px, 34vw, 160px) !important; }
+  /* Dock controls full-width, finger-friendly */
+  .duel-dock{ padding: 8px 10px env(safe-area-inset-bottom, 8px); }
+  .duel-dock .btn, .dock-emote{ min-height: 40px; }
+  /* Result + grace cards fit small screens */
+  .grace-card{ padding: 24px 18px; }
+  .grace-timer{ font-size: 46px; }
+  /* Opponent away banner smaller */
+  .opp-away-banner{ font-size: 10px; padding: 6px 12px; top: 8px; }
+  /* Calibration preview not too tall on mobile */
+  .calib-preview{ aspect-ratio: 1/1; }
+}
+@media (max-width: 600px) and (orientation: landscape){
+  /* Landscape phone — go back to side-by-side which fits better */
+  .battle-stage{ grid-template-columns: 1fr auto 1fr; grid-template-rows: none; }
+  .duel-divider{ width: auto; height: auto; flex-direction: column; }
+  .duel-countdown{ font-size: clamp(70px, 18vh, 140px) !important; }
 }
 
 .panel{
@@ -10281,19 +10367,51 @@ const FIREBASE_CONFIG = {
             </div>
           </div>
           <div class="play-side">
+            <button class="play-mode-card challenge-card" id="playPageChallengeBtn">
+              <div class="pmc-icon" style="background:rgba(255,51,88,.12); color:var(--coral);"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-sword"/></svg></div>
+              <div class="pmc-mode-text"><div class="pmc-mode-title">Challenge a friend</div><div class="pmc-mode-sub">Pick someone to duel directly</div></div>
+              <svg viewBox="0 0 24 24" width="16" height="16" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
+            </button>
             <button class="play-mode-card" id="playPageCameraBtn">
               <div class="pmc-icon"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-camera"/></svg></div>
               <div class="pmc-mode-text"><div class="pmc-mode-title">Camera setup</div><div class="pmc-mode-sub">Test your webcam &amp; hand tracking</div></div>
               <svg viewBox="0 0 24 24" width="16" height="16" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
             </button>
-            <button class="play-mode-card" id="playPageInviteBtn">
-              <div class="pmc-icon"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-people"/></svg></div>
-              <div class="pmc-mode-text"><div class="pmc-mode-title">Invite a friend</div><div class="pmc-mode-sub">Challenge someone from your list</div></div>
-              <svg viewBox="0 0 24 24" width="16" height="16" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
-            </button>
             <div class="play-tip">
               <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg>
               <span>Hold a clear gesture before the countdown ends. Leaving mid-match forfeits the round.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rank + Daily challenge row -->
+        <div class="home-grid" style="margin-top:14px;">
+          <div class="card clickable" id="playRankCard">
+            <div class="card-hd">
+              <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Your rank</div>
+              <span class="card-hd-action">View →</span>
+            </div>
+            <div class="rank-card-body">
+              <div class="rank-card-icon"><svg id="playRankIcon"></svg></div>
+              <div class="rank-card-info">
+                <div class="rank-card-tier" id="playRankTier">Bronze I</div>
+                <div class="rank-card-rating"><span id="playRankRating">1000</span><span class="elo-unit">ELO</span></div>
+              </div>
+            </div>
+            <div class="rank-card-progress">
+              <div class="ui-bar"><div class="ui-bar-fill" id="playRankFill" style="width:0%;"></div></div>
+              <div class="rank-card-meta"><span id="playRankNext">—</span><span class="rank-card-stats"><b id="playRankWR">—</b> win rate</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-hd">
+              <div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily challenge</div>
+              <span class="daily-streak-mini" id="playDailyStreak">🔥 0</span>
+            </div>
+            <div class="daily-card-goal" id="playDailyText">Win 3 ranked matches today</div>
+            <div class="rank-card-progress">
+              <div class="ui-bar"><div class="ui-bar-fill" id="playDailyFill" style="width:0%"></div></div>
+              <div class="rank-card-meta"><span id="playDailyProgress">0/3</span><span class="daily-reward">+50 ELO bonus</span></div>
             </div>
           </div>
         </div>
@@ -10526,6 +10644,11 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Camera &amp; tracking</div><div class="set-sub">Set up your webcam and hand detection</div></div>
             <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
           </button>
+          <button class="settings-row" id="setCalibrate">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-check"/></svg></div>
+            <div class="set-text"><div class="set-title">Run calibration wizard</div><div class="set-sub">Re-test your camera, face &amp; hand detection</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
         </div>
 
         <div class="settings-section-title">PREFERENCES</div>
@@ -10567,7 +10690,7 @@ const FIREBASE_CONFIG = {
         <div class="settings-list">
           <div class="settings-row" style="cursor:default;">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
-            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.1 · Real-time webcam Rock Paper Scissors</div></div>
+            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.2 · Real-time webcam Rock Paper Scissors</div></div>
           </div>
         </div>
 
@@ -10814,6 +10937,7 @@ const FIREBASE_CONFIG = {
 
       <!-- MAIN BATTLE STAGE: two videos + vs divider -->
       <div class="battle-stage" id="battleStage">
+        <div class="opp-away-banner" id="oppAwayBanner"><span class="dot"></span> Opponent stepped away…</div>
 
         <!-- YOUR VIDEO (left) -->
         <div class="duel-video you" id="yourVideoWrap">
@@ -11849,6 +11973,61 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- FRIEND PICKER (initiate challenge) -->
+<div class="modal-bg" id="challengePickerModal">
+  <div class="modal" style="max-width:440px;">
+    <button class="modal-close" data-close="challengePickerModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:22px; margin:0 0 4px;"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px;"><use href="#i-sword"/></svg> Challenge a friend</h3>
+    <p style="color:var(--text-dim); font-size:13px; margin:0 0 14px;">Pick an online friend to send a direct challenge to.</p>
+    <div class="side-body" id="challengePickerList" style="max-height:50vh; overflow-y:auto;"><div class="side-empty">Loading friends…</div></div>
+  </div>
+</div>
+
+<!-- CAMERA CALIBRATION WIZARD (first-time) -->
+<div class="modal-bg" id="calibrationModal">
+  <div class="modal calibration-modal">
+    <div class="calib-progress"><div class="calib-progress-fill" id="calibProgressFill"></div></div>
+    <div class="calib-steps-ind" id="calibStepsInd"></div>
+
+    <!-- Step content gets swapped -->
+    <div class="calib-step active" data-calib-step="0">
+      <div class="calib-icon"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-camera"/></svg></div>
+      <h3 class="calib-title">Let's set up your camera</h3>
+      <p class="calib-sub">ROSHAM uses your webcam to detect hand gestures in real time. We'll quickly check everything works. Takes about 20 seconds.</p>
+      <button class="btn btn-primary" id="calibStart" style="width:100%;">Start setup</button>
+      <button class="btn btn-ghost" id="calibSkip" style="width:100%; margin-top:8px;">Skip for now</button>
+    </div>
+
+    <div class="calib-step" data-calib-step="1">
+      <div class="calib-preview">
+        <video id="calibVideo" autoplay playsinline muted></video>
+        <div class="calib-preview-overlay" id="calibFaceState"><span class="dot"></span> Looking for you…</div>
+      </div>
+      <h3 class="calib-title">Can you see yourself?</h3>
+      <p class="calib-sub">Make sure your face and upper body are visible and well-lit. Position yourself in the center of the frame.</p>
+      <button class="btn btn-primary" id="calibStep1Next" style="width:100%;">Looks good →</button>
+    </div>
+
+    <div class="calib-step" data-calib-step="2">
+      <div class="calib-preview">
+        <video id="calibVideo2" autoplay playsinline muted></video>
+        <canvas id="calibHandCanvas"></canvas>
+        <div class="calib-preview-overlay" id="calibHandState"><span class="dot"></span> Show your hand…</div>
+      </div>
+      <h3 class="calib-title">Raise your hand ✋</h3>
+      <p class="calib-sub">Hold your open hand up to the camera. When we detect it, the badge turns green.</p>
+      <button class="btn btn-primary" id="calibStep2Next" style="width:100%;" disabled>Detecting…</button>
+    </div>
+
+    <div class="calib-step" data-calib-step="3">
+      <div class="calib-icon success"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-check"/></svg></div>
+      <h3 class="calib-title">You're all set!</h3>
+      <p class="calib-sub">Your camera and hand tracking are working perfectly. Time to throw some hands.</p>
+      <button class="btn btn-primary" id="calibFinish" style="width:100%;">Let's play</button>
+    </div>
+  </div>
+</div>
+
 <!-- MediaPipe -->
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/hands.js" crossorigin="anonymous"></script>
@@ -12700,6 +12879,13 @@ async function onAuthChanged(user){
 
   // Check for pending forfeit notice (set by beforeunload during a previous session)
   checkForfeitNotice();
+
+  // First-time camera calibration wizard
+  try {
+    if(!localStorage.getItem('rosham_calibrated_v1')){
+      setTimeout(() => { if(state.screen === 'landing') openCalibration(); }, 900);
+    }
+  } catch(e){}
 }
 
 function updateChipRating(){
@@ -15750,6 +15936,17 @@ function handlePeerMessage(msg){
         setTimeout(() => endMatch(), 100);
       }
       break;
+    // NEW: opponent temporarily left the tab (grace period) — show waiting state
+    case 'opponent_away':
+      if(!state.matchOver && state.screen === 'game'){
+        toast(`@${state.oppProfile?.username || 'opponent'} stepped away — waiting…`, 'info');
+        const ab = $('#oppAwayBanner');
+        if(ab) ab.classList.add('show');
+      }
+      break;
+    case 'opponent_back':
+      { const ab2 = $('#oppAwayBanner'); if(ab2) ab2.classList.remove('show'); }
+      break;
     // NEW: leave/forfeit — peer is forfeiting voluntarily
     case 'forfeit':
       console.log('[peer] opponent forfeited');
@@ -18061,6 +18258,7 @@ function showNavPage(page){
   // populate the page being shown
   try {
     if(page === 'home') renderHomePage();
+    else if(page === 'play') renderPlayPage();
     else if(page === 'rank') renderRankPage();
     else if(page === 'achievements') renderAchievementsPage();
     else if(page === 'activity') renderActivityPage();
@@ -18320,6 +18518,12 @@ function loadClientPrefs(){
 }
 loadClientPrefs();
 
+// Mobile dynamic viewport height (accounts for browser chrome)
+function setVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
+setVH();
+window.addEventListener('resize', setVH);
+window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
+
 // Daily login streak (localStorage)
 function getLoginStreak(){
   try {
@@ -18383,9 +18587,171 @@ function renderFriendsInto(sel){
 // ===== PLAY PAGE buttons =====
 on('#playPageFindBtn', 'click', () => $('#findBtn')?.click());
 on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
-on('#playPageInviteBtn', 'click', () => { showNavPage('friends'); });
+on('#playPageChallengeBtn', 'click', () => openChallengePicker());
+on('#playRankCard', 'click', () => showNavPage('rank'));
 on('#playOptRegion', 'click', () => { $('#playOptRegion')?.classList.add('active'); $('#playOptRanked')?.classList.remove('active'); $('#optRegion')?.click?.(); });
 on('#playOptRanked', 'click', () => { $('#playOptRanked')?.classList.add('active'); $('#playOptRegion')?.classList.remove('active'); $('#optRanged')?.click?.(); });
+
+// ===== CHALLENGE FRIEND PICKER =====
+function openChallengePicker(){
+  const modal = $('#challengePickerModal');
+  const list = $('#challengePickerList');
+  if(!modal || !list) return;
+  modal.classList.add('show');
+  const friendUids = state.profile?.friends || [];
+  const all = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean);
+  if(all.length === 0){
+    list.innerHTML = '<div class="side-empty">No friends yet — add some on the Friends page first.</div>';
+    return;
+  }
+  const now = Date.now();
+  const isOnline = (f) => f.lastSeen?.toMillis ? (now - f.lastSeen.toMillis() < 60000) : false;
+  all.sort((a,b) => (isOnline(b)-isOnline(a)) || ((b.rating||1000)-(a.rating||1000)));
+  list.innerHTML = '';
+  all.forEach(f => {
+    const on_ = isOnline(f);
+    const rank = rankFromRating(f.rating||1000);
+    const row = document.createElement('div');
+    row.className = 'friend-row';
+    const avStyle = f.photoURL ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;` : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
+    const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
+    row.innerHTML = `
+      <div class="av" style="${avStyle}">${avInner}</div>
+      <div class="meta">
+        <div class="nm">${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+        <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
+      </div>
+      <div class="online-dot ${on_ ? 'on' : ''}"></div>
+      <button class="btn ${on_ ? 'btn-primary' : 'btn-ghost'}" style="padding:7px 14px; font-size:12px;" ${on_?'':'disabled'} data-cuid="${f.uid}">
+        ${on_ ? 'Challenge' : 'Offline'}
+      </button>`;
+    const btn = row.querySelector('button');
+    if(on_) btn.addEventListener('click', () => {
+      modal.classList.remove('show');
+      sendChallenge(f.uid);
+    });
+    list.appendChild(row);
+  });
+}
+
+// ===== PLAY PAGE render (rank + daily) =====
+function renderPlayPage(){
+  if(!state.profile) return;
+  const p = state.profile;
+  const rating = p.rating||1000;
+  const rank = rankFromRating(rating);
+  setRankIconEl($('#playRankIcon'), rank.id);
+  const ic = $('#playRankIcon'); if(ic) ic.style.color = rank.color;
+  setText('#playRankTier', rank.tierName);
+  setText('#playRankRating', rating);
+  const prog = rankProgressToNext(rating);
+  const fill = $('#playRankFill'); if(fill) fill.style.width = (prog.progress*100)+'%';
+  setText('#playRankNext', prog.nextLabel);
+  const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
+  const wr = games>0 ? Math.round(((p.wins||0)/games)*100) : 0;
+  setText('#playRankWR', wr+'%');
+  // mirror daily challenge
+  setText('#playDailyText', $('#dailyChallengeText')?.textContent || 'Win 3 ranked matches today');
+  setText('#playDailyProgress', $('#dailyProgressText')?.textContent || '0/3');
+  setText('#playDailyStreak', $('#dailyStreakBadge')?.textContent || '🔥 0');
+  const df = $('#dailyProgressFill'); const pdf = $('#playDailyFill');
+  if(df && pdf) pdf.style.width = df.style.width;
+}
+
+// ===== CAMERA CALIBRATION WIZARD =====
+const CALIB_KEY = 'rosham_calibrated_v1';
+let calibStream = null;
+let calibHands = null;
+let calibStepIdx = 0;
+let calibHandSeen = false;
+
+function setCalibStep(idx){
+  calibStepIdx = idx;
+  document.querySelectorAll('.calib-step').forEach(s => s.classList.toggle('active', +s.dataset.calibStep === idx));
+  const fill = $('#calibProgressFill'); if(fill) fill.style.width = ((idx+1)/4*100) + '%';
+  setText('#calibStepsInd', `Step ${idx+1} of 4`);
+}
+function openCalibration(){
+  const m = $('#calibrationModal'); if(!m) return;
+  setCalibStep(0);
+  m.classList.add('show');
+}
+async function calibGetStream(){
+  if(calibStream) return calibStream;
+  calibStream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' }, audio: false });
+  return calibStream;
+}
+function calibStopStream(){
+  if(calibStream){ calibStream.getTracks().forEach(t => t.stop()); calibStream = null; }
+  if(calibHands){ try { calibHands.close(); } catch(e){} calibHands = null; }
+}
+async function calibStep1(){
+  setCalibStep(1);
+  try {
+    const stream = await calibGetStream();
+    const v = $('#calibVideo'); if(v){ v.srcObject = stream; }
+    const fs = $('#calibFaceState');
+    if(fs){ setTimeout(() => { fs.classList.add('ok'); fs.innerHTML = '<span class="dot"></span> Looks great!'; }, 1500); }
+  } catch(e){
+    toast('Could not access camera — check permissions', 'error');
+    $('#calibrationModal')?.classList.remove('show');
+  }
+}
+async function calibStep2(){
+  setCalibStep(2);
+  calibHandSeen = false;
+  const nextBtn = $('#calibStep2Next');
+  if(nextBtn){ nextBtn.disabled = true; nextBtn.textContent = 'Detecting…'; }
+  try {
+    const stream = await calibGetStream();
+    const v = $('#calibVideo2'); if(v){ v.srcObject = stream; }
+    // Lightweight hands detector for calibration
+    if(typeof Hands !== 'undefined'){
+      calibHands = new Hands({ locateFile: (f) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${f}` });
+      calibHands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 });
+      calibHands.onResults((res) => {
+        const st = $('#calibHandState');
+        if(res.multiHandLandmarks && res.multiHandLandmarks.length > 0){
+          if(!calibHandSeen){
+            calibHandSeen = true;
+            if(st){ st.classList.add('ok'); st.innerHTML = '<span class="dot"></span> Hand detected!'; }
+            const nb = $('#calibStep2Next'); if(nb){ nb.disabled = false; nb.textContent = 'Perfect →'; }
+          }
+        }
+      });
+      const v2 = $('#calibVideo2');
+      const pump = async () => {
+        if(calibStepIdx !== 2 || !calibHands || !v2) return;
+        try { await calibHands.send({ image: v2 }); } catch(e){}
+        setTimeout(pump, 120);
+      };
+      v2.addEventListener('loadeddata', pump, { once: true });
+    } else {
+      // MediaPipe not loaded — allow continue after a moment
+      setTimeout(() => { const nb = $('#calibStep2Next'); if(nb){ nb.disabled = false; nb.textContent = 'Continue →'; } }, 2000);
+    }
+  } catch(e){
+    const nb = $('#calibStep2Next'); if(nb){ nb.disabled = false; nb.textContent = 'Continue →'; }
+  }
+}
+function calibComplete(){
+  setCalibStep(3);
+  calibStopStream();
+  try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){}
+}
+function closeCalibration(){
+  calibStopStream();
+  $('#calibrationModal')?.classList.remove('show');
+}
+// Wizard button wiring
+on('#calibStart', 'click', calibStep1);
+on('#calibSkip', 'click', () => { try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){} closeCalibration(); });
+on('#calibStep1Next', 'click', calibStep2);
+on('#calibStep2Next', 'click', calibComplete);
+on('#calibFinish', 'click', closeCalibration);
+// Re-runnable from settings
+on('#setCalibrate', 'click', () => { try { localStorage.removeItem(CALIB_KEY); } catch(e){} openCalibration(); });
+
 
 // ===== HOME quick links =====
 document.querySelectorAll('[data-quicklink]').forEach(btn => {
@@ -18466,7 +18832,12 @@ document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
 });
 document.querySelectorAll('.modal-bg').forEach(m => {
-  m.addEventListener('click', (e) => { if(e.target === m) m.classList.remove('show'); });
+  m.addEventListener('click', (e) => {
+    if(e.target === m){
+      m.classList.remove('show');
+      if(m.id === 'calibrationModal'){ try { calibStopStream(); } catch(err){} }
+    }
+  });
 });
 document.addEventListener('keydown', (e) => {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
@@ -18515,15 +18886,78 @@ function cleanupOnExit(){
 }
 window.addEventListener('beforeunload', cleanupOnExit);
 window.addEventListener('pagehide', cleanupOnExit);
+// ===== TAB-SWITCH GRACE PERIOD =====
+// Instead of forfeiting instantly when the tab is hidden mid-round, give the
+// player a short window to return. A full-screen warning + countdown shows when
+// they come back; only if the timer runs out do we forfeit. This also still
+// closes the cheat (you can't gain advantage by hiding — the clock is ticking).
+const TAB_GRACE_MS = 10000;
+state._tabGraceTimer = null;
+state._tabGraceDeadline = 0;
+
+function startTabGrace(){
+  if(state._tabGraceTimer) return; // already counting
+  state._tabGraceDeadline = Date.now() + TAB_GRACE_MS;
+  // Pause/notify opponent that we're temporarily away (non-forfeit signal)
+  try { sendPeer({ type: 'opponent_away' }); } catch(e){}
+  state._tabGraceTimer = setTimeout(() => {
+    // Time's up — now it's a forfeit
+    state._tabGraceTimer = null;
+    console.warn('[anti-cheat] grace expired — forfeiting');
+    try { sendPeer({ type: 'forfeit' }); } catch(e){}
+    try { applyForfeitPenalty(true); } catch(e){}
+    try { localStorage.setItem('rosham_tabswitch_notice', '1'); } catch(e){}
+  }, TAB_GRACE_MS);
+}
+function cancelTabGrace(){
+  if(state._tabGraceTimer){ clearTimeout(state._tabGraceTimer); state._tabGraceTimer = null; }
+  state._tabGraceDeadline = 0;
+  try { sendPeer({ type: 'opponent_back' }); } catch(e){}
+  hideGraceOverlay();
+}
+
+function showGraceOverlay(){
+  let ov = $('#graceOverlay');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'graceOverlay';
+    ov.className = 'grace-overlay';
+    ov.innerHTML = `
+      <div class="grace-card">
+        <div class="grace-icon"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-clock"/></svg></div>
+        <div class="grace-title">You left the match!</div>
+        <div class="grace-sub">Return now or you'll forfeit and lose ELO.</div>
+        <div class="grace-timer" id="graceTimer">10</div>
+        <div class="grace-ring"><svg viewBox="0 0 120 120"><circle class="grace-ring-bg" cx="60" cy="60" r="52"/><circle class="grace-ring-fg" id="graceRingFg" cx="60" cy="60" r="52"/></svg></div>
+        <button class="btn btn-primary" id="graceResumeBtn" style="margin-top:8px;">I'm back — resume</button>
+      </div>`;
+    document.body.appendChild(ov);
+    ov.querySelector('#graceResumeBtn').addEventListener('click', () => { cancelTabGrace(); });
+  }
+  ov.classList.add('show');
+  // animate countdown
+  const circ = 2 * Math.PI * 52;
+  const fg = $('#graceRingFg');
+  if(fg){ fg.style.strokeDasharray = circ; }
+  const tick = () => {
+    if(!state._tabGraceDeadline){ hideGraceOverlay(); return; }
+    const remain = Math.max(0, state._tabGraceDeadline - Date.now());
+    const secs = Math.ceil(remain / 1000);
+    setText('#graceTimer', secs);
+    if(fg){ const frac = remain / TAB_GRACE_MS; fg.style.strokeDashoffset = circ * (1 - frac); }
+    if(remain > 0 && state._tabGraceTimer){ requestAnimationFrame(tick); }
+    else if(remain <= 0){ hideGraceOverlay(); }
+  };
+  requestAnimationFrame(tick);
+}
+function hideGraceOverlay(){ const ov = $('#graceOverlay'); if(ov) ov.classList.remove('show'); }
+
 document.addEventListener('visibilitychange', () => {
   // when hidden, mark queue entry as stale so others skip it
   if(document.visibilityState === 'hidden' && state.user && state.screen === 'matching'){
     try { deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
   }
-  // ANTI-CHEAT: switching tabs during an active round (countdown/shoot/reveal)
-  // is a known exploit — rAF gesture detection freezes in background tabs so the
-  // cheater can lock a gesture, switch away, and win. If the tab is hidden while
-  // a round is live, immediately forfeit the player who left.
+  // Tab hidden during an active round → start grace countdown (not instant forfeit)
   if(document.visibilityState === 'hidden'
      && state.screen === 'game'
      && !state.matchOver
@@ -18531,32 +18965,25 @@ document.addEventListener('visibilitychange', () => {
      && !state.isBotMatch){
     const liveRound = ['countdown','shoot','reveal','idle'].includes(state.phase);
     if(liveRound){
-      console.warn('[anti-cheat] tab hidden during active round — forfeiting');
-      // Tell opponent we left so THEY win this match
-      try { sendPeer({ type: 'forfeit' }); } catch(e){}
-      // Apply the forfeit penalty to us
-      try { applyForfeitPenalty(true); } catch(e){}
-      // Show a notice when they come back
-      try {
-        localStorage.setItem('rosham_tabswitch_notice', '1');
-      } catch(e){}
+      console.warn('[anti-cheat] tab hidden — starting 10s grace');
+      startTabGrace();
     }
   }
-});
-
-// When returning to the tab, if we were forfeited for tab-switching, tell the user
-document.addEventListener('visibilitychange', () => {
+  // Tab visible again
   if(document.visibilityState === 'visible'){
+    // If we were forfeited (grace expired while away), show notice
     try {
       if(localStorage.getItem('rosham_tabswitch_notice')){
         localStorage.removeItem('rosham_tabswitch_notice');
-        toast('You left the match (tab switch) — counted as a forfeit', 'error');
-        // Tear down and return to lobby if still on game screen
-        if(state.screen === 'game'){
-          teardownMatch().then(() => showScreen('landing'));
-        }
+        toast('You left too long — match forfeited', 'error');
+        if(state.screen === 'game'){ teardownMatch().then(() => showScreen('landing')); }
+        return;
       }
     } catch(e){}
+    // Still within grace? show the resume overlay with countdown
+    if(state._tabGraceTimer && state._tabGraceDeadline > Date.now()){
+      showGraceOverlay();
+    }
   }
 });
 
@@ -18656,7 +19083,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v10.1 — UNIFIED DESIGN SYSTEM + VOLUME + CLEANUP', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v10.2 — GRACE PERIOD + HERO REDESIGN + CALIBRATION + MOBILE', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
