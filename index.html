@@ -211,6 +211,59 @@ body::after{
   padding: 8px 14px;
   font-size: 12px;
 }
+/* Rematch waiting spinner (on the Rematch button) */
+.rematch-spinner{
+  display: inline-block; width: 13px; height: 13px;
+  border: 2px solid rgba(255,255,255,.25); border-top-color: var(--mint);
+  border-radius: 50%; animation: rematchSpin .7s linear infinite;
+  vertical-align: -2px; margin-right: 4px;
+}
+@keyframes rematchSpin{ to{ transform: rotate(360deg); } }
+#matchEndRematchBtn.waiting{ opacity: .85; }
+
+/* ===== STREAMER MODE — blur sensitive info until hovered ===== */
+body.streamer-mode .streamer-hide{
+  filter: blur(7px);
+  transition: filter .15s;
+  cursor: pointer;
+  user-select: none;
+}
+body.streamer-mode .streamer-hide:hover{ filter: none; }
+/* Small lock hint */
+body.streamer-mode .streamer-hide::selection{ background: transparent; }
+
+/* ===== SPECTATOR SCREEN ===== */
+#screen-spectate{ background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,77,255,.10), transparent 60%), var(--bg-2); }
+.spectate-wrap{ max-width: 920px; margin: 0 auto; width: 100%; padding: 24px; display: flex; flex-direction: column; gap: 28px; min-height: 100%; justify-content: center; }
+.spectate-head{ display: flex; align-items: center; justify-content: space-between; }
+.spectate-leave{ display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); color: var(--text); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
+.spectate-leave:hover{ border-color: var(--coral); }
+.spectate-live-pill{ display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: rgba(255,51,88,.12); border: 1px solid rgba(255,51,88,.3); color: var(--coral); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
+.spectate-live-pill .dot{ width: 8px; height: 8px; border-radius: 50%; background: var(--coral); animation: pulse 1s infinite; }
+.spectate-stage{ display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center; }
+.spectate-player{ display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 20px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); }
+.spectate-av{ width: 88px; height: 88px; border-radius: 24px; background-size: cover; background-position: center; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 36px; color: #fff; }
+.spectate-name{ font-family: var(--font-display); font-stretch: 72%; font-weight: 800; font-size: 22px; }
+.spectate-rank{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: .06em; text-transform: uppercase; }
+.spectate-score{ font-family: var(--font-display); font-stretch: 58%; font-weight: 800; font-size: 72px; line-height: 1; letter-spacing: -.04em; margin-top: 6px; transition: transform .2s; }
+.spectate-score.pop{ animation: scorePop .4s cubic-bezier(.2,1.6,.4,1); }
+.spectate-center{ display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.spectate-vs{ font-family: var(--font-display); font-stretch: 58%; font-weight: 800; font-size: 36px; color: var(--text-faint); letter-spacing: -.04em; }
+.spectate-rounds{ display: flex; gap: 8px; }
+.spectate-round-pip{ width: 14px; height: 14px; border-radius: 50%; background: var(--surface-3); border: 1px solid var(--line); }
+.spectate-round-pip.p1{ background: var(--mint); border-color: var(--mint); }
+.spectate-round-pip.p2{ background: var(--coral); border-color: var(--coral); }
+.spectate-bo{ font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); letter-spacing: .14em; }
+.spectate-status{ text-align: center; font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); letter-spacing: .04em; }
+@media (max-width: 640px){
+  .spectate-stage{ grid-template-columns: 1fr; gap: 14px; }
+  .spectate-center{ order: -1; }
+  .spectate-score{ font-size: 56px; }
+  .spectate-av{ width: 64px; height: 64px; font-size: 26px; }
+}
+/* Spectate buttons in activity rows */
+.watch-btn{ display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 8px; background: rgba(255,51,88,.1); border: 1px solid rgba(255,51,88,.3); color: var(--coral); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; cursor: pointer; }
+.watch-btn:hover{ background: rgba(255,51,88,.18); }
 
 /* ============ ACCESSIBILITY MODES ============ */
 body.reduce-motion *,
@@ -8207,6 +8260,51 @@ h2.match-title{
 }
 @keyframes rankupSpinRays{to{transform:rotate(360deg);}}
 
+/* ===== PREMIUM RANK-UP ENHANCEMENTS ===== */
+/* Vertical god-ray beams sweeping up behind the icon */
+.rankup-beams{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1; opacity:0; animation: rankupBeamsIn 1.2s 2.4s forwards; }
+@keyframes rankupBeamsIn{ to{ opacity:1; } }
+.rankup-beam{
+  position:absolute; bottom:0; width:8%; height:120%;
+  background: linear-gradient(to top, transparent, var(--rank-color, var(--amber)) 60%, transparent);
+  filter: blur(8px); opacity:.0; transform-origin:bottom center;
+  animation: rankupBeamRise 2.6s ease-out infinite;
+}
+@keyframes rankupBeamRise{
+  0%{ opacity:0; transform: scaleY(.4); }
+  35%{ opacity:.5; }
+  100%{ opacity:0; transform: scaleY(1.1); }
+}
+/* Expanding shockwave rings */
+.rankup-shockwave{ position:absolute; left:50%; top:42%; width:10px; height:10px; transform:translate(-50%,-50%); pointer-events:none; z-index:1; }
+.rankup-shockwave .ring{
+  position:absolute; left:50%; top:50%; width:10px; height:10px; transform:translate(-50%,-50%);
+  border:2px solid var(--rank-color, var(--amber)); border-radius:50%; opacity:0;
+}
+.rankup-shockwave .ring.go{ animation: rankupShock 1.1s cubic-bezier(.1,.6,.3,1) forwards; }
+@keyframes rankupShock{
+  0%{ opacity:.9; width:20px; height:20px; border-width:4px; }
+  100%{ opacity:0; width:90vw; height:90vw; border-width:1px; }
+}
+/* Animated gradient shimmer on the big tier name */
+.rankup-rank-name-shimmer{
+  background: linear-gradient(100deg,
+    var(--rank-color, var(--amber)) 0%,
+    #ffffff 25%,
+    var(--rank-color-2, #fff) 50%,
+    #ffffff 75%,
+    var(--rank-color, var(--amber)) 100%);
+  background-size: 250% auto;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  -webkit-text-fill-color:transparent;
+  animation: rankupShimmer 3s linear infinite;
+  filter: drop-shadow(0 0 24px var(--rank-color, var(--amber)));
+}
+@keyframes rankupShimmer{ to{ background-position: 250% center; } }
+/* Brighter, more saturated rays for a premium feel */
+.rankup-overlay.show .rankup-rays{ opacity:.28; }
+.rankup-overlay.show .rankup-rays.r2{ opacity:.18; }
+
 /* Particle field — uses pre-positioned dots */
 .rankup-particles{
   position: absolute;
@@ -9980,6 +10078,7 @@ h2.match-title{
     <symbol id="i-swords" viewBox="0 0 24 24"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="13" x2="19" y1="19" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="16" x2="20" y1="16" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="19" x2="21" y1="21" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="5" x2="9" y1="14" y2="18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="7" x2="4" y1="17" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><line x1="3" x2="5" y1="19" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
     <symbol id="i-chart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 17V9M13 17V5M8 17v-3"/></symbol>
     <symbol id="i-arrow-right" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 12H5M12 19l-7-7 7-7"/></symbol>
     <symbol id="i-sparkles" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M19 17v4M3 5h4M17 19h4"/></symbol>
     <symbol id="i-shield" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></symbol>
     <symbol id="i-crown" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294zM5 21h14"/></symbol>
@@ -10675,6 +10774,14 @@ const FIREBASE_CONFIG = {
             <div class="stat-tile-l">Top ELO</div>
           </div>
         </div>
+        <!-- LIVE MATCHES (spectate) -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-hd">
+            <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg> Live matches</div>
+            <div class="card-hd-sub"><span class="live-dot"></span><span id="liveMatchCount">0</span> watchable</div>
+          </div>
+          <div class="side-body" id="liveMatchesBody"><div class="side-empty">No live matches right now</div></div>
+        </div>
         <div class="activity-page-grid">
           <div class="card">
             <div class="card-hd">
@@ -10818,6 +10925,7 @@ const FIREBASE_CONFIG = {
           <div class="acc-info">
             <div class="acc-name" id="setAccName">—</div>
             <div class="acc-meta" id="setAccMeta">— · 1000 ELO · Level 1</div>
+            <div class="acc-meta streamer-hide" id="setAccEmail" style="margin-top:2px;"></div>
           </div>
           <button class="acc-edit-btn" id="setAccEdit">Edit</button>
         </div>
@@ -10876,11 +10984,25 @@ const FIREBASE_CONFIG = {
           </button>
         </div>
 
+        <div class="settings-section-title">PRIVACY</div>
+        <div class="settings-list">
+          <button class="settings-row" id="setStreamerMode">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-eye-off"/></svg></div>
+            <div class="set-text"><div class="set-title">Streamer mode</div><div class="set-sub" id="setStreamerState">Hides sensitive info (codes, emails, opponent names)</div></div>
+            <div class="set-toggle off" id="setStreamerToggle"></div>
+          </button>
+          <button class="settings-row" id="setBlockRequests">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-user-plus"/></svg></div>
+            <div class="set-text"><div class="set-title">Friend requests</div><div class="set-sub" id="setBlockRequestsState">Allow others to send you requests</div></div>
+            <div class="set-toggle" id="setBlockRequestsToggle"></div>
+          </button>
+        </div>
+
         <div class="settings-section-title">ABOUT</div>
         <div class="settings-list">
           <div class="settings-row" style="cursor:default;">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
-            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.4 · Real-time webcam Rock Paper Scissors</div></div>
+            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.5 · Real-time webcam Rock Paper Scissors</div></div>
           </div>
         </div>
 
@@ -11099,7 +11221,7 @@ const FIREBASE_CONFIG = {
             <div class="arena-player-name">
               <svg class="rank-mini" id="oppRankMini"></svg>
               <span class="flag" id="oppFlag"></span>
-              <span id="oppName">—</span>
+              <span id="oppName" class="streamer-hide">—</span>
             </div>
             <div class="arena-player-meta">
               <span class="ping-tiny"><span class="ping-dot" id="oppPingDot"></span><span id="oppPing">…</span></span>
@@ -11303,6 +11425,38 @@ const FIREBASE_CONFIG = {
       <!-- Hidden chatWithName referenced by code -->
       <span id="chatWithName" style="display:none;">stranger</span>
     </section>
+
+    <!-- ============ SPECTATOR SCREEN ============ -->
+    <section class="screen" id="screen-spectate">
+      <div class="spectate-wrap">
+        <div class="spectate-head">
+          <button class="spectate-leave" id="spectateLeaveBtn"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-arrow-left"/></svg> Leave</button>
+          <div class="spectate-live-pill"><span class="dot"></span> SPECTATING · LIVE</div>
+          <div style="width:80px;"></div>
+        </div>
+        <div class="spectate-stage">
+          <div class="spectate-player" id="specP1">
+            <div class="spectate-av" id="specP1Av">?</div>
+            <div class="spectate-name" id="specP1Name">Player 1</div>
+            <div class="spectate-rank" id="specP1Rank">—</div>
+            <div class="spectate-score" id="specP1Score">0</div>
+          </div>
+          <div class="spectate-center">
+            <div class="spectate-vs">VS</div>
+            <div class="spectate-rounds" id="specRounds"></div>
+            <div class="spectate-bo" id="specBo">BEST OF 3</div>
+          </div>
+          <div class="spectate-player" id="specP2">
+            <div class="spectate-av" id="specP2Av">?</div>
+            <div class="spectate-name" id="specP2Name">Player 2</div>
+            <div class="spectate-rank" id="specP2Rank">—</div>
+            <div class="spectate-score" id="specP2Score">0</div>
+          </div>
+        </div>
+        <div class="spectate-status" id="specStatus">Connecting to match…</div>
+      </div>
+    </section>
+
   </div>
   </div><!-- /main-col -->
 </div><!-- /app -->
@@ -11312,6 +11466,12 @@ const FIREBASE_CONFIG = {
   <!-- Animated rays background -->
   <div class="rankup-rays"></div>
   <div class="rankup-rays r2"></div>
+
+  <!-- Vertical god-ray beams -->
+  <div class="rankup-beams" id="rankupBeams"></div>
+
+  <!-- Expanding shockwave rings (premium burst) -->
+  <div class="rankup-shockwave" id="rankupShockwave"></div>
 
   <!-- Particle field -->
   <div class="rankup-particles" id="rankupParticles"></div>
@@ -11349,7 +11509,7 @@ const FIREBASE_CONFIG = {
     </div>
 
     <!-- Big tier name underneath -->
-    <h2 id="rankupRankName">SILVER</h2>
+    <h2 id="rankupRankName" class="rankup-rank-name-shimmer">SILVER</h2>
     <div class="rankup-sub" id="rankupSub">1100 RATING</div>
     <div class="rankup-from" id="rankupFrom">Promoted from Bronze III</div>
 
@@ -12520,6 +12680,8 @@ const state = {
   matchRound: 0,            // current round number (1, 2, 3)
   matchRoundsToWin: 2,      // first to 2 wins the match
   preferredBestOf: 3,       // (legacy, unused — match format removed)
+  rematch: {},              // { meRequested, oppRequested } rematch handshake
+  streamerMode: false,
   sfxVolume: 0.7,           // 0..1 SFX volume
   hapticsOff: false,
   matchOver: false,
@@ -12555,6 +12717,7 @@ const screens = {
   landing: $('#screen-landing'),
   matching: $('#screen-matching'),
   game: $('#screen-game'),
+  spectate: $('#screen-spectate'),
 };
 function showScreen(name){
   state.screen = name;
@@ -13418,6 +13581,13 @@ function attachSocialListeners(){
         const data = d.data();
         if(data.status !== 'accepted') state.pendingRequests.push({ id:d.id, ...data });
       });
+      // Privacy: if the user blocks incoming requests, silently auto-decline them
+      if(state.profile?.blockFriendRequests && state.pendingRequests.length){
+        state.pendingRequests.forEach(r => {
+          deleteDoc(doc(state.db, 'friendRequests', r.id)).catch(() => {});
+        });
+        state.pendingRequests = [];
+      }
       renderRequests();
     }
   );
@@ -14560,6 +14730,14 @@ async function addFriendByUsername(username){
     const targetUid = unameDoc.data().uid;
     if(state.profile.friends?.includes(targetUid)){ toast('Already friends', 'error'); return; }
     if(state.profile.blocked?.includes(targetUid)){ toast('That user is blocked', 'error'); return; }
+    // Respect the target's privacy setting (no incoming friend requests)
+    try {
+      const targetDoc = await getDoc(doc(state.db, 'users', targetUid));
+      if(targetDoc.exists() && targetDoc.data().blockFriendRequests){
+        toast('This player is not accepting friend requests', 'error');
+        return;
+      }
+    } catch(e){}
     const existing = await getDocs(query(
       collection(state.db, 'friendRequests'),
       where('from', '==', state.user.uid),
@@ -16009,6 +16187,8 @@ function updateHeadToHead(oppUid, result){
 function showMatchIntro(){
   const intro = $('#matchIntro');
   if(!intro) return;
+  // Broadcast initial live state for spectators
+  try { broadcastLiveMatch({ status: 'live' }); } catch(e){}
   // populate intro card
   renderAvatar($('#introYouAv'), state.profile);
   renderAvatar($('#introOppAv'), state.oppProfile || {});
@@ -16163,34 +16343,35 @@ function handlePeerMessage(msg){
         setTimeout(() => endMatch(), 600);
       }
       break;
-    // NEW: rematch request
+    // ===== REMATCH STATE MACHINE =====
+    // Opponent requested a rematch
     case 'rematch_request':
-      showRematchOffer();
+      state.rematch = state.rematch || {};
+      state.rematch.oppRequested = true;
+      if(state.rematch.meRequested){
+        // Both agreed → start immediately
+        startRematch(false);
+      } else {
+        // Show their offer with accept/decline
+        showRematchOffer();
+      }
       break;
+    // Opponent accepted our request → both agreed, start
     case 'rematch_accept':
-      toast('Rematch accepted! Starting new match...', 'success');
-      // Reset state and restart from match intro
-      try {
-        // CRITICAL: hide match result overlay on initiator's screen too —
-        // initiator pressed rematch but result was still showing
-        $('#matchResultOverlay')?.classList.remove('show');
-        // Re-enable rematch button for future use
-        const rbAcc = $('#matchEndRematchBtn');
-        if(rbAcc){ rbAcc.disabled = false; rbAcc.textContent = 'Rematch'; }
-        resetMatchUI();
-        setTimeout(() => {
-          showMatchIntro();
-          // Caller restarts the round
-          if(state.isCaller){
-            setTimeout(() => runCountdown(), 3000);
-          }
-        }, 400);
-      } catch(e){ console.error('[rematch_accept]', e); }
+      state.rematch = state.rematch || {};
+      state.rematch.oppRequested = true;
+      startRematch(true);
       break;
+    // Opponent declined
     case 'rematch_decline':
       toast('Rematch declined', 'error');
-      const rb = $('#matchEndRematchBtn');
-      if(rb){ rb.disabled = false; rb.textContent = 'Rematch'; }
+      resetRematchUI();
+      break;
+    // Opponent cancelled their pending request (e.g. they left)
+    case 'rematch_cancel':
+      { const box = document.getElementById('rematchOfferBox'); if(box) box.remove(); }
+      state.rematch = {};
+      resetRematchUI();
       break;
     // NEW: peer profile updates (used for real-time score display)
     case 'profile_meta':
@@ -16200,10 +16381,53 @@ function handlePeerMessage(msg){
       break;
   }
 }
+
+// Reset the rematch button back to its default state
+function resetRematchUI(){
+  const rb = $('#matchEndRematchBtn');
+  if(rb){
+    rb.disabled = false;
+    rb.classList.remove('waiting');
+    rb.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-rotate"/></svg> Rematch';
+  }
+  const box = document.getElementById('rematchOfferBox');
+  if(box) box.remove();
+}
+
+// Single source of truth for restarting a rematch (both sides call this)
+function startRematch(weAccepted){
+  // Guard against double-trigger
+  if(state._rematchStarting) return;
+  state._rematchStarting = true;
+  state.rematch = {};
+  resetRematchUI();
+  // Hide result overlay + any offer box
+  $('#matchResultOverlay')?.classList.remove('show');
+  const box = document.getElementById('rematchOfferBox');
+  if(box) box.remove();
+  toast('Rematch starting…', 'success');
+  try {
+    resetMatchUI();
+    // Reset scores for the new match
+    state.scoreYou = 0; state.scoreOpp = 0;
+    state.matchOver = false; state._endMatchCalled = false;
+    setTimeout(() => {
+      showMatchIntro();
+      // Only the caller drives the countdown so both stay in sync
+      if(state.isCaller){
+        setTimeout(() => { runCountdown(); }, 3000);
+      }
+      state._rematchStarting = false;
+    }, 500);
+  } catch(e){
+    console.error('[rematch] start failed', e);
+    state._rematchStarting = false;
+  }
+}
+
 function showRematchOffer(){
   // Opponent requested a rematch. Show a prompt with accept/decline.
   const oppName = state.oppProfile?.username || 'opponent';
-  // Use a custom inline toast/banner since we don't have a native modal for this
   const existing = document.getElementById('rematchOfferBox');
   if(existing) existing.remove();
   const box = document.createElement('div');
@@ -16224,29 +16448,21 @@ function showRematchOffer(){
   setTimeout(() => box.classList.add('show'), 10);
   document.getElementById('rematchAcceptBtn').addEventListener('click', () => {
     try { sendPeer({type: 'rematch_accept'}); } catch(e){}
-    box.remove();
-    $('#matchResultOverlay').classList.remove('show');
-    try {
-      resetMatchUI();
-      setTimeout(() => {
-        showMatchIntro();
-        if(state.isCaller){
-          setTimeout(() => runCountdown(), 3000);
-        }
-      }, 400);
-    } catch(e){ console.error('[rematch_accept_local]', e); }
+    startRematch(true);
   });
   document.getElementById('rematchDeclineBtn').addEventListener('click', () => {
     try { sendPeer({type: 'rematch_decline'}); } catch(e){}
     box.remove();
+    state.rematch = {};
   });
-  // Auto-decline after 15s
+  // Auto-decline after 20s
   setTimeout(() => {
     if(document.getElementById('rematchOfferBox')){
       try { sendPeer({type: 'rematch_decline'}); } catch(e){}
       box.remove();
+      state.rematch = {};
     }
-  }, 15000);
+  }, 20000);
 }
 
 function showEmoteFlash(el, emoji){
@@ -17010,7 +17226,109 @@ function updateScore(){
   if(state.scoreOpp !== oldOpp && oppEl){
     oppEl.classList.remove('pop'); void oppEl.offsetWidth; oppEl.classList.add('pop');
   }
+  // Broadcast live state for spectators
+  broadcastLiveMatch();
 }
+
+// ===== SPECTATOR: live match broadcast (caller only writes) =====
+async function broadcastLiveMatch(extra){
+  try {
+    if(!state.matchId || state.isBotMatch || !state.isCaller) return;
+    if(!state.user || !state.profile) return;
+    // caller is "you", callee is opponent — store from a neutral perspective
+    const payload = {
+      matchId: state.matchId,
+      status: state.matchOver ? 'ended' : 'live',
+      p1: { uid: state.user.uid, name: state.profile.username, rating: state.profile.rating||1000, colorIdx: state.profile.colorIdx||0, photoURL: state.profile.photoURL||'', country: state.profile.country||'' },
+      p2: { uid: state.oppUid||'', name: state.oppProfile?.username||'stranger', rating: state.oppProfile?.rating||1000, colorIdx: state.oppProfile?.colorIdx||0, photoURL: state.oppProfile?.photoURL||'', country: state.oppProfile?.country||'' },
+      scoreP1: state.scoreYou||0,
+      scoreP2: state.scoreOpp||0,
+      roundsToWin: state.matchRoundsToWin||2,
+      updatedAt: serverTimestamp(),
+      ...(extra||{}),
+    };
+    await setDoc(doc(state.db, 'liveMatches', state.matchId), payload, { merge: true });
+  } catch(e){ /* non-critical */ }
+}
+async function clearLiveMatch(){
+  try {
+    if(state.matchId && state.isCaller){
+      await updateDoc(doc(state.db, 'liveMatches', state.matchId), { status: 'ended', endedAt: serverTimestamp() });
+      // delete shortly after so spectators see the final state briefly
+      setTimeout(() => { deleteDoc(doc(state.db, 'liveMatches', state.matchId)).catch(()=>{}); }, 8000);
+    }
+  } catch(e){}
+}
+
+// ===== SPECTATOR MODE =====
+function openSpectate(matchId){
+  if(!matchId){ toast('No match to watch', 'error'); return; }
+  showScreen('spectate');
+  setText('#specStatus', 'Connecting to match…');
+  // Unsubscribe any previous
+  if(state._specUnsub){ try { state._specUnsub(); } catch(e){} state._specUnsub = null; }
+  state._specMatchId = matchId;
+  state._specUnsub = onSnapshot(doc(state.db, 'liveMatches', matchId), (snap) => {
+    if(!snap.exists()){
+      setText('#specStatus', 'This match has ended.');
+      setTimeout(() => { if(state.screen === 'spectate') leaveSpectate(); }, 2500);
+      return;
+    }
+    renderSpectate(snap.data());
+  }, (err) => {
+    setText('#specStatus', 'Could not load match.');
+  });
+}
+function renderSpectate(d){
+  if(!d) return;
+  const p1 = d.p1 || {}, p2 = d.p2 || {};
+  // avatars
+  const setAv = (sel, p) => {
+    const el = $(sel); if(!el) return;
+    if(p.photoURL){ el.style.backgroundImage = `url('${p.photoURL}')`; el.textContent = ''; }
+    else { el.style.backgroundImage = 'none'; el.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; el.textContent = initialOf(p.name||'?'); }
+  };
+  setAv('#specP1Av', p1); setAv('#specP2Av', p2);
+  setText('#specP1Name', p1.name || 'Player 1');
+  setText('#specP2Name', p2.name || 'Player 2');
+  setText('#specP1Rank', `${flagOf(p1.country)} ${rankFromRating(p1.rating||1000).tierName} · ${p1.rating||1000}`);
+  setText('#specP2Rank', `${flagOf(p2.country)} ${rankFromRating(p2.rating||1000).tierName} · ${p2.rating||1000}`);
+  // scores with pop
+  const s1El = $('#specP1Score'), s2El = $('#specP2Score');
+  const old1 = parseInt(s1El?.textContent || '0'), old2 = parseInt(s2El?.textContent || '0');
+  setText('#specP1Score', d.scoreP1 || 0);
+  setText('#specP2Score', d.scoreP2 || 0);
+  if((d.scoreP1||0) !== old1 && s1El){ s1El.classList.remove('pop'); void s1El.offsetWidth; s1El.classList.add('pop'); }
+  if((d.scoreP2||0) !== old2 && s2El){ s2El.classList.remove('pop'); void s2El.offsetWidth; s2El.classList.add('pop'); }
+  // rounds pips
+  const rtw = d.roundsToWin || 2;
+  const totalPips = rtw * 2 - 1;
+  const pipsEl = $('#specRounds');
+  if(pipsEl){
+    pipsEl.innerHTML = '';
+    let p1left = d.scoreP1||0, p2left = d.scoreP2||0;
+    for(let i=0;i<totalPips;i++){
+      const pip = document.createElement('div');
+      pip.className = 'spectate-round-pip';
+      if(p1left > 0){ pip.classList.add('p1'); p1left--; }
+      else if(p2left > 0){ pip.classList.add('p2'); p2left--; }
+      pipsEl.appendChild(pip);
+    }
+  }
+  setText('#specBo', `BEST OF ${rtw*2-1}`);
+  if(d.status === 'ended'){
+    const winner = (d.scoreP1||0) > (d.scoreP2||0) ? p1.name : (d.scoreP2||0) > (d.scoreP1||0) ? p2.name : null;
+    setText('#specStatus', winner ? `${winner} won the match!` : 'Match ended in a draw');
+  } else {
+    setText('#specStatus', 'Live — watching in real time');
+  }
+}
+function leaveSpectate(){
+  if(state._specUnsub){ try { state._specUnsub(); } catch(e){} state._specUnsub = null; }
+  state._specMatchId = null;
+  showScreen('landing');
+}
+on('#spectateLeaveBtn', 'click', leaveSpectate);
 
 function updateRoundIndicator(roundResult){
   // Light up the appropriate pip for the current round
@@ -17050,6 +17368,9 @@ async function endMatch(){
   const youWon = state.scoreYou > state.scoreOpp;
   const draw = state.scoreYou === state.scoreOpp;
   const result = draw ? 'draw' : (youWon ? 'win' : 'lose');
+
+  // Spectators: mark match ended
+  try { clearLiveMatch(); } catch(e){}
 
   // Track head-to-head locally
   if(state.oppUid && !state.isBotMatch){
@@ -17707,7 +18028,37 @@ function showRankUp(oldRank, newRank){
   // Reset settled state for clean re-runs
   $('#rankupNewRank')?.classList.remove('settled');
 
+  // PREMIUM: spawn god-ray beams
+  const beams = $('#rankupBeams');
+  if(beams){
+    beams.innerHTML = '';
+    const beamCount = 7;
+    for(let i = 0; i < beamCount; i++){
+      const b = document.createElement('div');
+      b.className = 'rankup-beam';
+      b.style.left = (i / beamCount * 100 + Math.random() * 4) + '%';
+      b.style.animationDelay = (2.4 + Math.random() * 1.2) + 's';
+      b.style.animationDuration = (2.2 + Math.random() * 1.4) + 's';
+      beams.appendChild(b);
+    }
+  }
+
   overlay.classList.add('show');
+
+  // PREMIUM: fire expanding shockwave rings at the new-rank arrival moment
+  const shock = $('#rankupShockwave');
+  if(shock){
+    shock.innerHTML = '';
+    [2700, 2900, 3150].forEach((t, idx) => {
+      setTimeout(() => {
+        const ring = document.createElement('div');
+        ring.className = 'ring';
+        shock.appendChild(ring);
+        requestAnimationFrame(() => ring.classList.add('go'));
+        setTimeout(() => ring.remove(), 1300);
+      }, t);
+    });
+  }
 
   // FORTNITE-STYLE CHOREOGRAPHY:
   // 0.0s - PROMOTION pill + rays appear
@@ -17832,23 +18183,25 @@ function checkForfeitNotice(){
     const raw = localStorage.getItem(key);
     if(!raw) return;
     const notice = JSON.parse(raw);
+    // Always clear immediately so it only triggers once
+    localStorage.removeItem(key);
     if(!notice || !notice.ratingBefore) return;
     // Skip very old notices (>24h)
-    if(Date.now() - (notice.timestamp || 0) > 24 * 60 * 60 * 1000){
-      localStorage.removeItem(key);
-      return;
-    }
-    // Push an in-app notification (bell) about the ELO loss from leaving the match
+    if(Date.now() - (notice.timestamp || 0) > 24 * 60 * 60 * 1000) return;
     const lost = Math.abs((notice.ratingBefore || 0) - (notice.ratingAfter || 0));
     if(lost > 0){
+      // Reliable in-app notification (bell)
       pushNotification(state.user.uid, {
         type: 'forfeit',
         text: `You left a match early and lost <b>${lost} ELO</b> (forfeit penalty).`,
         actionUid: null,
       });
+      // And a clear toast so it's never missed
+      setTimeout(() => {
+        toast(`You left a match early — lost ${lost} ELO (forfeit)`, 'error');
+      }, 900);
     }
-    // Delay slightly so landing screen has rendered, then show the rank-down overlay
-    setTimeout(() => showRankDown(notice), 800);
+    // NOTE: the dramatic rank-down overlay is intentionally NOT shown here anymore.
   } catch(e){ console.warn('[forfeit] check failed', e); }
 }
 
@@ -18017,6 +18370,11 @@ function sendChat(){
 async function handleRemoteLeft(){
   if(state.phase === 'ended') return;
   state.phase = 'ended';
+  // If a rematch was pending, cancel its UI (opponent is gone)
+  if(state.rematch && (state.rematch.meRequested || state.rematch.oppRequested)){
+    state.rematch = {};
+    try { resetRematchUI(); } catch(e){}
+  }
   const banner = $('#disconnectBanner');
   if(banner) banner.classList.add('show');
   const cs = $('#oppCamStatus');
@@ -18339,19 +18697,37 @@ on('#matchEndExitBtn', 'click', async () => {
 });
 // NEW: Rematch button — request rematch with same opponent
 on('#matchEndRematchBtn', 'click', async () => {
-  if(!state.oppUid){
+  if(!state.oppUid || state.isBotMatch){
     toast('No opponent to rematch', 'error');
     return;
   }
+  state.rematch = state.rematch || {};
+  // If opponent already requested, this is an accept → start
+  if(state.rematch.oppRequested){
+    try { sendPeer({type: 'rematch_accept'}); } catch(e){}
+    startRematch(true);
+    return;
+  }
+  // Otherwise send our request and show waiting state
+  state.rematch.meRequested = true;
   try { sendPeer({type: 'rematch_request'}); } catch(e){}
-  toast('Rematch requested — waiting for opponent...', 'success');
-  $('#matchEndRematchBtn').disabled = true;
-  $('#matchEndRematchBtn').textContent = 'Waiting...';
-  // 10s timeout
-  setTimeout(() => {
-    const btn = $('#matchEndRematchBtn');
-    if(btn){ btn.disabled = false; btn.textContent = 'Rematch'; }
-  }, 10000);
+  toast('Rematch requested — waiting for opponent…', 'success');
+  const btn = $('#matchEndRematchBtn');
+  if(btn){
+    btn.disabled = true;
+    btn.classList.add('waiting');
+    btn.innerHTML = '<span class="rematch-spinner"></span> Waiting…';
+  }
+  // Timeout: if no response in 20s, reset + tell opponent we cancelled
+  clearTimeout(state._rematchTimeout);
+  state._rematchTimeout = setTimeout(() => {
+    if(state.rematch?.meRequested && !state._rematchStarting){
+      try { sendPeer({type: 'rematch_cancel'}); } catch(e){}
+      state.rematch = {};
+      resetRematchUI();
+      toast('No response — rematch cancelled', 'error');
+    }
+  }, 20000);
 });
 // NEW: Add friend from match-end
 on('#matchEndAddFriend', 'click', async () => {
@@ -18469,6 +18845,8 @@ function showNavPage(page){
   document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
   try { syncMobileNav(page); } catch(e){}
   try { closeSidebarMobile(); } catch(e){}
+  // Detach the live-matches listener unless we're on the activity page
+  if(page !== 'activity' && state._liveMatchesUnsub){ try { state._liveMatchesUnsub(); } catch(e){} state._liveMatchesUnsub = null; }
   // populate the page being shown
   try {
     if(page === 'home') renderHomePage();
@@ -18658,6 +19036,36 @@ function renderActivityPage(){
   setText('#actRecentCount', recent || '—');
   const topElo = (state.leaderboard && state.leaderboard[0]) ? (state.leaderboard[0].rating || '—') : '—';
   setText('#actTopElo', topElo);
+  // Live matches (spectate)
+  attachLiveMatches();
+}
+
+// Subscribe to live matches for the spectate list (only while on activity page)
+function attachLiveMatches(){
+  if(state._liveMatchesUnsub){ try { state._liveMatchesUnsub(); } catch(e){} state._liveMatchesUnsub = null; }
+  const body = $('#liveMatchesBody');
+  if(!body) return;
+  state._liveMatchesUnsub = onSnapshot(collection(state.db, 'liveMatches'), (snap) => {
+    const live = [];
+    snap.forEach(d => { const m = d.data(); if(m && m.status === 'live') live.push({ id: d.id, ...m }); });
+    setText('#liveMatchCount', live.length);
+    if(live.length === 0){ body.innerHTML = '<div class="side-empty">No live matches right now</div>'; return; }
+    body.innerHTML = '';
+    live.slice(0, 12).forEach(m => {
+      const p1 = m.p1 || {}, p2 = m.p2 || {};
+      const row = document.createElement('div');
+      row.className = 'activity-row';
+      row.style.alignItems = 'center';
+      row.innerHTML = `
+        <div class="body">
+          <div class="b-text"><b>${escapeHTML(p1.name||'?')}</b> <span class="win">${m.scoreP1||0}</span> – <span class="lose">${m.scoreP2||0}</span> <b>${escapeHTML(p2.name||'?')}</b></div>
+          <div class="b-time">${rankFromRating(p1.rating||1000).tierName} vs ${rankFromRating(p2.rating||1000).tierName}</div>
+        </div>
+        <button class="watch-btn" data-watch="${m.id}"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-eye"/></svg> Watch</button>`;
+      row.querySelector('[data-watch]').addEventListener('click', () => openSpectate(m.id));
+      body.appendChild(row);
+    });
+  }, () => {});
 }
 function renderFriendsPage(){
   setText('#friendCountPage', $('#friendCount')?.textContent || '0/0');
@@ -18706,6 +19114,9 @@ function renderSettingsPage(){
     const lvl = levelFromXp(p.totalXp||0);
     const rank = rankFromRating(p.rating||1000);
     setText('#setAccMeta', `${flagOf(p.country)} · ${p.rating||1000} ELO · ${rank.tierName} · Lvl ${lvl.level}`);
+    const email = state.user?.email || '';
+    setText('#setAccEmail', email || '');
+    const emailEl = $('#setAccEmail'); if(emailEl) emailEl.style.display = email ? '' : 'none';
   }
   // reduced motion toggle state
   const rm = $('#setMotionToggle');
@@ -18719,15 +19130,24 @@ function renderSettingsPage(){
   const ht = $('#setHapticsToggle');
   if(ht) ht.classList.toggle('off', !!state.hapticsOff);
   setText('#setHapticsState', state.hapticsOff ? 'Off' : 'On');
+  // streamer mode
+  const sm = $('#setStreamerToggle');
+  if(sm) sm.classList.toggle('off', !state.streamerMode);
+  // block friend requests
+  const br = $('#setBlockRequestsToggle');
+  const blocking = !!state.profile?.blockFriendRequests;
+  if(br) br.classList.toggle('off', blocking);
+  setText('#setBlockRequestsState', blocking ? 'Blocking all incoming requests' : 'Allow others to send you requests');
 }
 
-// Load saved client preferences (volume, motion, haptics)
+// Load saved client preferences (volume, motion, haptics, streamer)
 function loadClientPrefs(){
   try {
     const vol = localStorage.getItem('rosham_volume');
     if(vol !== null) state.sfxVolume = Math.max(0, Math.min(1, parseInt(vol,10)/100));
     if(localStorage.getItem('rosham_reduced_motion') === '1') document.body.classList.add('reduced-motion');
     if(localStorage.getItem('rosham_haptics') === '0') state.hapticsOff = true;
+    if(localStorage.getItem('rosham_streamer') === '1'){ state.streamerMode = true; document.body.classList.add('streamer-mode'); }
   } catch(e){}
 }
 loadClientPrefs();
@@ -18999,6 +19419,31 @@ on('#setHaptics', 'click', () => {
 });
 on('#setHowTo', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
 on('#setSignOut', 'click', () => $('#signOutBtn')?.click());
+
+// ===== PRIVACY: Streamer mode =====
+function applyStreamerMode(on_){
+  state.streamerMode = on_;
+  document.body.classList.toggle('streamer-mode', on_);
+  try { localStorage.setItem('rosham_streamer', on_ ? '1' : '0'); } catch(e){}
+}
+on('#setStreamerMode', 'click', () => {
+  const on_ = !state.streamerMode;
+  applyStreamerMode(on_);
+  $('#setStreamerToggle')?.classList.toggle('off', !on_);
+  toast(on_ ? 'Streamer mode on — sensitive info hidden' : 'Streamer mode off', on_ ? 'success' : 'info');
+});
+
+// ===== PRIVACY: Block incoming friend requests =====
+on('#setBlockRequests', 'click', async () => {
+  const blocking = !state.profile?.blockFriendRequests;
+  if(state.profile) state.profile.blockFriendRequests = blocking;
+  $('#setBlockRequestsToggle')?.classList.toggle('off', blocking);
+  setText('#setBlockRequestsState', blocking ? 'Blocking all incoming requests' : 'Allow others to send you requests');
+  try {
+    await updateDoc(doc(state.db, 'users', state.user.uid), { blockFriendRequests: blocking });
+  } catch(e){ console.warn('[privacy] could not save', e); }
+  toast(blocking ? 'Friend requests blocked' : 'Friend requests allowed', 'info');
+});
 // Volume slider — controls global SFX gain
 on('#volumeSlider', 'input', (e) => {
   const v = parseInt(e.target.value, 10);
@@ -19107,8 +19552,44 @@ document.querySelectorAll('.code-block .copy').forEach(b => {
     });
   });
 });
+function saveForfeitNoticeSync(){
+  // Synchronous best-effort: compute the penalty and persist a notice to
+  // localStorage so the next session can notify the user. Also fire-and-forget
+  // the Firestore writes (may not complete on unload, but localStorage will).
+  try {
+    if(!state.user || !state.profile || state.isBotMatch || state.matchOver) return;
+    if(state.screen !== 'game') return;
+    const myRating = state.profile.rating || 1000;
+    const oppRating = state.oppProfile?.rating || 1000;
+    const normalLoss = calcEloDelta(myRating, oppRating, 0);
+    const totalDelta = normalLoss + (-25);
+    const newRating = Math.max(0, myRating + totalDelta);
+    const notice = {
+      uid: state.user.uid,
+      ratingBefore: myRating,
+      ratingAfter: newRating,
+      delta: totalDelta,
+      opp: state.oppProfile?.username || 'stranger',
+      timestamp: Date.now(),
+    };
+    localStorage.setItem('rosham_forfeit_notice_' + state.user.uid, JSON.stringify(notice));
+    // Fire-and-forget rating + loss update (best effort)
+    try {
+      updateDoc(doc(state.db, 'users', state.user.uid), {
+        rating: newRating,
+        losses: (state.profile.losses || 0) + 1,
+        games: (state.profile.games || 0) + 1,
+        currentStreak: 0,
+      });
+    } catch(e){}
+  } catch(e){}
+}
 function cleanupOnExit(){
   try {
+    // If leaving mid-match (refresh/close), save the forfeit notice reliably
+    if(state.screen === 'game' && !state.matchOver && state.oppUid && !state.isBotMatch){
+      saveForfeitNoticeSync();
+    }
     if(state.user) deleteDoc(doc(state.db, 'queue', state.user.uid));
     if(state.matchId){
       updateDoc(doc(state.db, 'matches', state.matchId), { status: 'ended' });
@@ -19358,7 +19839,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v10.4 — MOBILE NAV OVERHAUL + IN-MATCH FIXES', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHAM v10.5 — REMATCH OVERHAUL + SPECTATE + STREAMER MODE + PRIVACY', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
