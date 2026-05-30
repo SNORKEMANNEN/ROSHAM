@@ -3,8 +3,17 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ROSHAM — live rock paper scissors with strangers</title>
+<title>ROSHCAM — live rock paper scissors with strangers</title>
 <meta name="description" content="Real rock paper scissors against strangers using your webcam. Hand-gesture detection, ranked ELO, friends, leaderboards." />
+<meta name="theme-color" content="#08070d" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%AA%A8%3C/text%3E%3C/svg%3E" />
+<meta property="og:title" content="ROSHCAM — live rock paper scissors with strangers" />
+<meta property="og:description" content="Real webcam rock · paper · scissors against strangers. Read their eyes, throw first, climb the ranked ladder." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://roshcam.com" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="ROSHCAM — live rock paper scissors" />
+<meta name="twitter:description" content="Real webcam rock · paper · scissors against strangers. Ranked ELO, friends, leaderboards." />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -231,6 +240,92 @@ body.streamer-mode .streamer-hide{
 body.streamer-mode .streamer-hide:hover{ filter: none; }
 /* Small lock hint */
 body.streamer-mode .streamer-hide::selection{ background: transparent; }
+/* Streamer mode: blur EVERY username/handle wherever it can appear.
+   Hover any one to peek. Avatar initials are hidden too. */
+body.streamer-mode .sp-name,
+body.streamer-mode .acc-name,
+body.streamer-mode #chipName,
+body.streamer-mode .mf-name,
+body.streamer-mode .arena-player-name,
+body.streamer-mode .duel-intro-name,
+body.streamer-mode .spectate-name,
+body.streamer-mode .mrc-pname,
+body.streamer-mode .pm-name,
+body.streamer-mode .ci-name,
+body.streamer-mode .ci-handle,
+body.streamer-mode .chat-thread-name,
+body.streamer-mode .chat-conv-name,
+body.streamer-mode .nm,
+body.streamer-mode .who,
+body.streamer-mode .b-text b,
+body.streamer-mode .vs-opp b,
+body.streamer-mode .arr-target,
+body.streamer-mode .arr-meta,
+body.streamer-mode #reportTargetName,
+body.streamer-mode .msg-reply-name,
+body.streamer-mode [data-username]{
+  filter: blur(7px);
+  transition: filter .12s;
+  cursor: pointer;
+  user-select: none;
+}
+body.streamer-mode .sp-name:hover,
+body.streamer-mode .acc-name:hover,
+body.streamer-mode #chipName:hover,
+body.streamer-mode .mf-name:hover,
+body.streamer-mode .arena-player-name:hover,
+body.streamer-mode .duel-intro-name:hover,
+body.streamer-mode .spectate-name:hover,
+body.streamer-mode .mrc-pname:hover,
+body.streamer-mode .pm-name:hover,
+body.streamer-mode .ci-name:hover,
+body.streamer-mode .ci-handle:hover,
+body.streamer-mode .chat-thread-name:hover,
+body.streamer-mode .chat-conv-name:hover,
+body.streamer-mode .nm:hover,
+body.streamer-mode .who:hover,
+body.streamer-mode .b-text b:hover,
+body.streamer-mode .vs-opp b:hover,
+body.streamer-mode .arr-target:hover,
+body.streamer-mode .arr-meta:hover,
+body.streamer-mode #reportTargetName:hover,
+body.streamer-mode [data-username]:hover{ filter: none; }
+/* Hide avatar initials in streamer mode (first letter can identify a user) */
+body.streamer-mode .av,
+body.streamer-mode .wb-av,
+body.streamer-mode .sp-av,
+body.streamer-mode .chat-conv-av,
+body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !important; }
+
+/* ===== HOME REDESIGN — launch command deck ===== */
+.hx-hero{ position:relative; overflow:hidden; border-radius:24px; padding:34px 30px 24px; margin-bottom:16px;
+  background:
+    radial-gradient(120% 150% at 0% 0%, rgba(34,211,163,.16), transparent 55%),
+    radial-gradient(120% 150% at 100% 0%, rgba(124,77,255,.20), transparent 55%),
+    linear-gradient(180deg, var(--surface-2), var(--surface));
+  border:1px solid var(--line); box-shadow:0 34px 80px -46px rgba(0,0,0,.75); }
+.hx-hero-glow{ position:absolute; left:20%; right:20%; top:-55%; height:360px; background:radial-gradient(closest-side, rgba(34,211,163,.22), transparent); filter:blur(26px); pointer-events:none; }
+.hx-hero-grid{ position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px); background-size:36px 36px; -webkit-mask:radial-gradient(125% 85% at 50% 0%, #000, transparent 72%); mask:radial-gradient(125% 85% at 50% 0%, #000, transparent 72%); pointer-events:none; }
+.hx-hero-inner{ position:relative; z-index:1; }
+.hx-hero-top{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+.hx-badge{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:5px 11px; border-radius:999px; background:rgba(34,211,163,.12); color:var(--mint); border:1px solid rgba(34,211,163,.25); }
+.hx-badge.ghost{ background:var(--surface-3); color:var(--text-dim); border-color:var(--line); }
+.hx-badge b{ color:var(--text); }
+.hx-wordmark{ font-family:var(--font-display); font-stretch:78%; font-weight:900; font-size:clamp(42px,7vw,78px); line-height:.9; letter-spacing:-.02em; margin:0; }
+.hx-wordmark .hx-cam{ background:linear-gradient(120deg,var(--mint),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hx-tag{ color:var(--text-dim); font-size:15px; max-width:580px; margin:12px 0 22px; line-height:1.5; }
+.hx-play{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+.hx-options{ margin:0; }
+.hx-cta{ font-size:17px; padding:16px 26px; }
+.hx-you{ display:flex; align-items:center; gap:12px; margin-top:22px; padding-top:18px; border-top:1px solid var(--line-soft); }
+.hx-you .wb-av{ flex:0 0 auto; }
+.hx-you-text{ flex:1; min-width:0; }
+.hx-you-hi{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:16px; }
+.hx-you-sub{ color:var(--text-dim); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hx-you-streak{ display:flex; align-items:center; gap:6px; font-weight:800; font-family:var(--font-display); font-stretch:78%; font-size:18px; }
+.hx-you-streak-lbl{ font-size:11px; color:var(--text-dim); font-weight:600; }
+.hx-ribbon{ margin-bottom:16px; }
+@media(max-width:640px){ .hx-hero{ padding:24px 18px; } .hx-cta{ width:100%; justify-content:center; } }
 
 /* ===== SPECTATOR SCREEN ===== */
 #screen-spectate{ background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,77,255,.10), transparent 60%), var(--bg-2); }
@@ -1201,6 +1296,45 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
   display: grid; place-items: center;
   cursor: pointer;
 }
+/* ===== DM rich messaging (reactions, reply, typing, receipts) ===== */
+.chat-msg-row{ display:flex; flex-direction:column; gap:3px; max-width:82%; position:relative; }
+.chat-msg-row.me{ align-self:flex-end; align-items:flex-end; }
+.chat-msg-row.them{ align-self:flex-start; align-items:flex-start; }
+.chat-msg-row .chat-msg{ align-self:inherit; cursor:default; }
+.msg-text{ white-space:pre-wrap; }
+.msg-reply{ display:flex; flex-direction:column; gap:1px; border-left:3px solid rgba(255,255,255,.45); padding:3px 8px; margin:-2px 0 5px; border-radius:6px; background:rgba(0,0,0,.16); font-size:11.5px; max-width:100%; }
+.chat-msg.them .msg-reply{ border-left-color:var(--mint); background:rgba(255,255,255,.04); }
+.msg-reply-name{ font-weight:700; opacity:.9; }
+.msg-reply-text{ opacity:.75; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:200px; }
+.msg-deleted{ font-style:italic; opacity:.6; font-size:12.5px; }
+.msg-reactions{ display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+.rx-chip{ font-size:11px; line-height:1; padding:3px 7px; border-radius:999px; background:var(--surface-3); border:1px solid var(--line); cursor:pointer; user-select:none; color:var(--text); transition:transform .08s; }
+.rx-chip:hover{ transform:scale(1.08); }
+.rx-chip.mine{ background:rgba(34,211,163,.18); border-color:rgba(34,211,163,.5); color:var(--mint); }
+.msg-actions{ display:flex; gap:4px; opacity:0; transition:opacity .12s; pointer-events:none; }
+.chat-msg-row:hover .msg-actions, .chat-msg-row.show-actions .msg-actions{ opacity:1; pointer-events:auto; }
+.msg-actions button{ width:24px; height:24px; border-radius:7px; border:1px solid var(--line); background:var(--surface-2); color:var(--text-dim); font-size:12px; cursor:pointer; display:grid; place-items:center; padding:0; }
+.msg-actions button:hover{ color:var(--text); border-color:var(--mint); }
+.react-pop{ position:absolute; bottom:100%; margin-bottom:4px; display:flex; gap:2px; padding:5px; background:var(--surface); border:1px solid var(--line); border-radius:999px; box-shadow:0 12px 30px -12px rgba(0,0,0,.7); z-index:5; }
+.chat-msg-row.me .react-pop{ right:0; } .chat-msg-row.them .react-pop{ left:0; }
+.react-pop button{ width:30px; height:30px; border:none; background:none; font-size:18px; cursor:pointer; border-radius:50%; transition:transform .08s; }
+.react-pop button:hover{ transform:scale(1.25); background:var(--surface-3); }
+.msg-seen{ font-family:var(--font-mono); font-size:8.5px; color:var(--text-dim); margin-top:1px; }
+.chat-typing{ display:flex; align-items:center; gap:7px; padding:2px 16px 6px; font-size:12px; color:var(--text-dim); }
+.ct-dots{ display:inline-flex; gap:3px; }
+.ct-dots i{ width:6px; height:6px; border-radius:50%; background:var(--text-dim); animation:ctd 1s infinite ease-in-out; }
+.ct-dots i:nth-child(2){ animation-delay:.15s; } .ct-dots i:nth-child(3){ animation-delay:.3s; }
+@keyframes ctd{ 0%,60%,100%{ transform:translateY(0); opacity:.4; } 30%{ transform:translateY(-4px); opacity:1; } }
+.chat-reply-bar{ display:flex; align-items:center; gap:10px; padding:8px 12px; border-top:1px solid var(--line-soft); background:var(--surface-2); }
+.crb-info{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; border-left:3px solid var(--mint); padding-left:9px; }
+.crb-label{ font-size:11px; color:var(--text-dim); } .crb-label b{ color:var(--mint); }
+.crb-text{ font-size:12px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.crb-cancel{ width:28px; height:28px; border-radius:8px; border:1px solid var(--line); background:var(--surface); color:var(--text-dim); cursor:pointer; display:grid; place-items:center; }
+.chat-emoji-palette{ display:flex; flex-wrap:wrap; gap:2px; padding:10px 12px; border-top:1px solid var(--line-soft); max-height:160px; overflow-y:auto; }
+.chat-emoji-palette button{ width:34px; height:34px; border:none; background:none; font-size:20px; cursor:pointer; border-radius:8px; }
+.chat-emoji-palette button:hover{ background:var(--surface-3); }
+.chat-emoji-btn{ width:38px; flex:0 0 auto; border-radius:10px; background:var(--surface-2); border:1px solid var(--line); font-size:18px; cursor:pointer; }
+.chat-emoji-btn:hover{ border-color:var(--mint); }
 
 
 header{
@@ -10164,7 +10298,7 @@ h2.match-title{
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <span class="logo-mark"><span class="dot"></span></span>
-      <span class="logo-word">ROSHAM</span>
+      <span class="logo-word">ROSHCAM</span>
     </div>
 
     <nav class="sidebar-nav">
@@ -10202,7 +10336,7 @@ h2.match-title{
 
   <header class="topbar">
     <button class="hamburger" id="hamburgerBtn" title="Menu"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-menu"/></svg></button>
-    <div class="topbar-brand"><span class="tb-logo"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-rock"/></svg></span>ROSHAM</div>
+    <div class="topbar-brand"><span class="tb-logo"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-rock"/></svg></span>ROSHCAM</div>
     <div class="live-stats" id="liveStats">
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
       <div class="stat"><span>· <b id="matchCount">0</b> active matches</span></div>
@@ -10270,7 +10404,14 @@ h2.match-title{
         <div class="chat-thread-name" id="chatThreadName">—</div>
       </div>
       <div class="chat-thread-body" id="chatThreadBody"></div>
+      <div class="chat-typing" id="chatTypingInd" style="display:none;"><span class="ct-dots"><i></i><i></i><i></i></span><span id="chatTypingName">typing…</span></div>
+      <div class="chat-reply-bar" id="chatReplyBar" style="display:none;">
+        <div class="crb-info"><span class="crb-label">Replying to <b id="chatReplyName">—</b></span><span class="crb-text" id="chatReplyText"></span></div>
+        <button class="crb-cancel" id="chatReplyCancel"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg></button>
+      </div>
+      <div class="chat-emoji-palette" id="chatEmojiPalette" style="display:none;"></div>
       <div class="chat-thread-input">
+        <button id="chatEmojiBtn" class="chat-emoji-btn" type="button" title="Emoji">😊</button>
         <input type="text" id="chatThreadInput" placeholder="Type a message…" maxlength="300" />
         <button id="chatThreadSend"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-send"/></svg></button>
       </div>
@@ -10312,7 +10453,8 @@ service cloud.firestore {
   match /databases/{database}/documents {
     match /users/{userId} {
       allow read: if request.auth != null;
-      allow create, update: if request.auth != null && request.auth.uid == userId;
+      allow create, update: if request.auth != null &&
+        (request.auth.uid == userId || request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1');
     }
     match /usernames/{name} {
       allow read: if request.auth != null;
@@ -10481,24 +10623,55 @@ const FIREBASE_CONFIG = {
       <!-- ============ PAGE: HOME ============ -->
       <div class="nav-page active" data-page="home">
 
-        <!-- Welcome banner -->
-        <div class="welcome-banner">
-          <div class="wb-av" id="wbAv">?</div>
-          <div class="wb-text">
-            <div class="wb-hi" id="wbHi">Welcome back</div>
-            <div class="wb-sub" id="wbSub">Ready to throw hands?</div>
-          </div>
-          <div class="wb-streak" title="Daily login streak">
-            <span class="flame">🔥</span>
-            <div>
-              <div class="wb-streak-num" id="wbStreakNum">0</div>
-              <div class="wb-streak-lbl">day streak</div>
+        <!-- ===== LAUNCH COMMAND DECK ===== -->
+        <section class="hx-hero">
+          <div class="hx-hero-glow"></div>
+          <div class="hx-hero-grid"></div>
+          <div class="hx-hero-inner">
+            <div class="hx-hero-top">
+              <span class="hx-badge"><span class="live-dot"></span> Live worldwide</span>
+              <span class="hx-badge ghost"><b id="heroOnlineCount">—</b> playing now</span>
+            </div>
+            <h1 class="hx-wordmark">ROSH<span class="hx-cam">CAM</span></h1>
+            <p class="hx-tag">Webcam rock · paper · scissors against real strangers. Read their eyes, throw first, and climb from Bronze to Grandmaster.</p>
+            <div class="hx-play">
+              <div class="match-options hx-options">
+                <span class="opt-pill active" data-opt="region" data-val="same" id="optRegion">
+                  <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-globe"/></svg>
+                  <span class="lab">Same region</span>
+                </span>
+                <span class="opt-pill" id="optRanged">
+                  <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-trophy"/></svg>
+                  <span class="lab">Similar rank only</span>
+                </span>
+              </div>
+              <button class="btn-cta hx-cta" id="findBtn">
+                <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
+                <span>Find a stranger</span>
+                <kbd class="cta-kbd">SPACE</kbd>
+              </button>
+              <button class="btn-icon-action hx-cam-btn" id="cameraSetupBtn" title="Adjust your camera">
+                <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
+                <span>Camera setup</span>
+              </button>
+            </div>
+            <div class="hx-you">
+              <div class="wb-av" id="wbAv">?</div>
+              <div class="hx-you-text">
+                <div class="hx-you-hi" id="wbHi">Welcome back</div>
+                <div class="hx-you-sub" id="wbSub">Ready to throw hands?</div>
+              </div>
+              <div class="hx-you-streak" title="Daily login streak">
+                <span class="flame">🔥</span>
+                <span class="wb-streak-num" id="wbStreakNum">0</span>
+                <span class="hx-you-streak-lbl">day streak</span>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        <!-- World stat strip (unified tiles) -->
-        <div class="stat-grid-4" style="margin-bottom:14px;">
+        <!-- World ribbon -->
+        <div class="stat-grid-4 hx-ribbon">
           <div class="stat-tile">
             <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-people"/></svg>
             <div class="stat-tile-v" id="wsOnline">—</div>
@@ -10518,41 +10691,6 @@ const FIREBASE_CONFIG = {
             <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-flame"/></svg>
             <div class="stat-tile-v" id="wsStreak">0</div>
             <div class="stat-tile-l">Current streak</div>
-          </div>
-        </div>
-
-        <!-- HERO -->
-        <div class="hero-strip">
-          <div class="hero-strip-bg"></div>
-          <div class="hero-strip-content">
-            <div class="hero-strip-left">
-              <div class="hero-eyebrow"><span class="live-dot"></span><span>LIVE WORLDWIDE</span><span class="hero-eyebrow-stat"><b id="heroOnlineCount">—</b> playing now</span></div>
-              <h1 class="hero-headline">THROW <span class="accent">HANDS</span>.</h1>
-              <p class="hero-sub">Real strangers. Real cameras. Real reflexes. Climb from Bronze to Grandmaster.</p>
-            </div>
-            <div class="hero-strip-right">
-              <div class="match-options">
-                <span class="opt-pill active" data-opt="region" data-val="same" id="optRegion">
-                  <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-globe"/></svg>
-                  <span class="lab">Same region</span>
-                </span>
-                <span class="opt-pill" id="optRanged">
-                  <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-trophy"/></svg>
-                  <span class="lab">Similar rank only</span>
-                </span>
-              </div>
-              <button class="btn-cta hero-cta" id="findBtn">
-                <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
-                <span>Find a stranger</span>
-                <kbd class="cta-kbd">SPACE</kbd>
-              </button>
-              <div class="hero-cta-row">
-                <button class="btn-icon-action" id="cameraSetupBtn" title="Adjust your camera">
-                  <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
-                  <span>Camera setup</span>
-                </button>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -11083,7 +11221,7 @@ const FIREBASE_CONFIG = {
         <div class="settings-list">
           <div class="settings-row" style="cursor:default;">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
-            <div class="set-text"><div class="set-title">ROSHAM</div><div class="set-sub">Version 10.8 · Real-time webcam Rock Paper Scissors</div></div>
+            <div class="set-text"><div class="set-title">ROSHCAM</div><div class="set-sub">Version 1.0 · Real-time webcam Rock Paper Scissors</div></div>
           </div>
         </div>
 
@@ -12072,7 +12210,7 @@ const FIREBASE_CONFIG = {
   <div class="modal">
     <button class="modal-close" data-close="settingsModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
     <h3>SETTINGS</h3>
-    <p>Customize your ROSHAM experience.</p>
+    <p>Customize your ROSHCAM experience.</p>
 
     <div class="settings-row" style="margin-bottom:8px;">
       <div class="settings-row-info">
@@ -12482,7 +12620,7 @@ const FIREBASE_CONFIG = {
     <div class="calib-step active" data-calib-step="0">
       <div class="calib-icon"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-camera"/></svg></div>
       <h3 class="calib-title">Let's set up your camera</h3>
-      <p class="calib-sub">ROSHAM uses your webcam to detect hand gestures in real time. We'll quickly check everything works. Takes about 20 seconds.</p>
+      <p class="calib-sub">ROSHCAM uses your webcam to detect hand gestures in real time. We'll quickly check everything works. Takes about 20 seconds.</p>
       <button class="btn btn-primary" id="calibStart" style="width:100%;">Start setup</button>
       <button class="btn btn-ghost" id="calibSkip" style="width:100%; margin-top:8px;">Skip for now</button>
     </div>
@@ -12546,7 +12684,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 /* =========================================================
-   ROSHAM v4 — paste your Firebase config below
+   ROSHCAM v4 — paste your Firebase config below
    ========================================================= */
 const FIREBASE_CONFIG = {
   apiKey: "AIzaSyCepMBXyr7uxW242CfFYGCp6V2lSJ0dYIo",
@@ -14469,9 +14607,131 @@ function renderChatConvList(){
   });
 }
 
+// ===== Rich DM messaging: reactions, reply, delete, typing, read receipts =====
+const DM_PICKER_EMOJIS = ['😀','😁','😂','🤣','😊','😍','😘','😎','🤔','😅','😏','😇','🙂','😉','😌','😋','😜','🤩','🥳','😮','😢','😭','😤','😡','🥶','🤯','🤓','😴','🤝','👍','👎','👏','🙌','🙏','✊','✌️','🤙','🤞','💪','👀','🔥','💯','✨','🎉','❤️','🧡','💛','💚','💙','💜','🖤','💔','💀','🤡','👻','🪨','📄','✂️','🏆','⚡'];
+const DM_REACTIONS = ['👍','❤️','😂','😮','😢','🔥'];
+let _dmTypingTimer = null, _dmTypingLast = 0, _dmTypingHideTimer = null;
+
+function _dmTs(ts){ try { return ts && ts.toMillis ? ts.toMillis() : (typeof ts === 'number' ? ts : 0); } catch(e){ return 0; } }
+function _dmTimeStr(ts){ const ms = _dmTs(ts); if(!ms) return ''; const d = new Date(ms); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+
+function paintDmThread(){
+  const body = $('#chatThreadBody'); if(!body) return;
+  const order = state._dmOrder || [];
+  if(!order.length){ body.innerHTML = '<div class="flyout-empty">Say hi 👋</div>'; return; }
+  const me = state.user.uid;
+  let lastMineId = null;
+  order.forEach(id => { const m = state._dmMessages[id]; if(m && m.from === me && !m.deleted) lastMineId = id; });
+  body.innerHTML = '';
+  order.forEach(id => {
+    const m = state._dmMessages[id]; if(!m) return;
+    const mine = m.from === me;
+    const row = document.createElement('div');
+    row.className = 'chat-msg-row ' + (mine ? 'me' : 'them');
+    row.dataset.mid = id;
+    let inner = '';
+    if(m.replyTo){
+      inner += `<div class="msg-reply"><span class="msg-reply-name">${escapeHTML(m.replyTo.name || '')}</span><span class="msg-reply-text">${escapeHTML(m.replyTo.text || '')}</span></div>`;
+    }
+    if(m.deleted){
+      inner += `<span class="msg-deleted">🚫 message deleted</span>`;
+    } else {
+      inner += `<span class="msg-text">${escapeHTML(m.text || '')}</span> <span class="chat-msg-time">${_dmTimeStr(m.createdAt)}</span>`;
+    }
+    const rx = m.reactions || {};
+    const rxKeys = Object.keys(rx).filter(k => (rx[k] || []).length);
+    let rxHtml = '';
+    if(rxKeys.length){
+      rxHtml = '<div class="msg-reactions">' + rxKeys.map(k => `<span class="rx-chip${(rx[k] || []).includes(me) ? ' mine' : ''}" data-emoji="${k}">${k} ${(rx[k] || []).length}</span>`).join('') + '</div>';
+    }
+    const actions = `<div class="msg-actions">`
+      + `<button type="button" data-act="react" title="React">😊</button>`
+      + (m.deleted ? '' : `<button type="button" data-act="reply" title="Reply">↩</button>`)
+      + ((mine && !m.deleted) ? `<button type="button" data-act="delete" title="Delete">🗑</button>` : '')
+      + `</div>`;
+    row.innerHTML = `<div class="chat-msg ${mine ? 'me' : 'them'}">${inner}${rxHtml}</div>${actions}`;
+    if(mine && id === lastMineId){
+      const seen = state._otherReadAt && _dmTs(m.createdAt) && state._otherReadAt >= _dmTs(m.createdAt);
+      const tick = document.createElement('div');
+      tick.className = 'msg-seen';
+      tick.textContent = seen ? 'Seen' : 'Sent';
+      row.appendChild(tick);
+    }
+    body.appendChild(row);
+  });
+  body.scrollTop = body.scrollHeight;
+}
+
+function markDmRead(){
+  if(!state._activeChatConvId || !state.user) return;
+  setDoc(doc(state.db, 'dmIndex', state._activeChatConvId), { ['unread_' + state.user.uid]: 0, ['read_' + state.user.uid]: serverTimestamp() }, { merge: true }).catch(()=>{});
+}
+function setDmTypingIndicator(on){
+  const ind = $('#chatTypingInd'); if(!ind) return;
+  ind.style.display = on ? 'flex' : 'none';
+  if(on){
+    setText('#chatTypingName', (state._activeChatName || 'they') + ' is typing…');
+    clearTimeout(_dmTypingHideTimer);
+    _dmTypingHideTimer = setTimeout(() => { ind.style.display = 'none'; }, 5200);
+  }
+}
+function onDmTyping(){
+  if(!state._activeChatConvId || !state.user) return;
+  const now = Date.now();
+  if(now - _dmTypingLast > 1800){
+    _dmTypingLast = now;
+    setDoc(doc(state.db, 'dmIndex', state._activeChatConvId), { ['typing_' + state.user.uid]: serverTimestamp() }, { merge: true }).catch(()=>{});
+  }
+  clearTimeout(_dmTypingTimer);
+  _dmTypingTimer = setTimeout(clearDmTyping, 4000);
+}
+function clearDmTyping(){
+  _dmTypingLast = 0; clearTimeout(_dmTypingTimer);
+  if(state._activeChatConvId && state.user){
+    setDoc(doc(state.db, 'dmIndex', state._activeChatConvId), { ['typing_' + state.user.uid]: 0 }, { merge: true }).catch(()=>{});
+  }
+}
+async function toggleDmReaction(mid, emoji){
+  if(!state._activeChatConvId || !mid) return;
+  const m = state._dmMessages[mid] || {};
+  const reactions = Object.assign({}, m.reactions || {});
+  const set = new Set(reactions[emoji] || []);
+  if(set.has(state.user.uid)) set.delete(state.user.uid); else set.add(state.user.uid);
+  if(set.size) reactions[emoji] = Array.from(set); else delete reactions[emoji];
+  try { await updateDoc(doc(state.db, 'dms', state._activeChatConvId, 'messages', mid), { reactions }); } catch(e){ console.warn('[chat] react', e); }
+}
+async function deleteDmMessage(mid){
+  if(!state._activeChatConvId || !mid) return;
+  try { await updateDoc(doc(state.db, 'dms', state._activeChatConvId, 'messages', mid), { deleted: true, text: '', reactions: {}, replyTo: null }); }
+  catch(e){ console.warn('[chat] delete', e); toast('Could not delete', 'error'); }
+}
+function startDmReply(mid){
+  const m = state._dmMessages[mid]; if(!m || m.deleted) return;
+  const who = m.from === state.user.uid ? 'yourself' : (state._activeChatName || 'them');
+  state._replyTo = { id: mid, name: who, text: (m.text || '').slice(0, 140) };
+  setText('#chatReplyName', who);
+  setText('#chatReplyText', state._replyTo.text);
+  const bar = $('#chatReplyBar'); if(bar) bar.style.display = 'flex';
+  $('#chatThreadInput')?.focus();
+}
+function cancelDmReply(){ state._replyTo = null; const b = $('#chatReplyBar'); if(b) b.style.display = 'none'; }
+function openReactPicker(row, mid){
+  document.querySelectorAll('.react-pop').forEach(p => p.remove());
+  const pop = document.createElement('div');
+  pop.className = 'react-pop';
+  pop.innerHTML = DM_REACTIONS.map(e => `<button type="button" data-emoji="${e}">${e}</button>`).join('');
+  pop.addEventListener('click', (ev) => {
+    const b = ev.target.closest('button'); if(!b) return;
+    toggleDmReaction(mid, b.dataset.emoji); pop.remove();
+  });
+  row.appendChild(pop);
+}
+
 async function openChatThread(uid, name, photoURL, colorIdx){
   if(!uid || !state.user) return;
   state._activeChatUid = uid;
+  cancelDmReply();
+  const pal = $('#chatEmojiPalette'); if(pal) pal.style.display = 'none';
   $('#chatPanel').classList.add('show');
   $('#chatConvList').style.display = 'none';
   $('#chatThread').style.display = 'flex';
@@ -14479,6 +14739,7 @@ async function openChatThread(uid, name, photoURL, colorIdx){
   if(!name){
     try { const s = await getDoc(doc(state.db, 'users', uid)); if(s.exists()){ const d = s.data(); name = d.username; photoURL = d.photoURL; colorIdx = d.colorIdx; } } catch(e){}
   }
+  state._activeChatName = name || 'player';
   setText('#chatThreadName', name || 'player');
   const av = $('#chatThreadAv');
   if(av){
@@ -14486,29 +14747,33 @@ async function openChatThread(uid, name, photoURL, colorIdx){
     else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[colorIdx||0]; av.textContent = initialOf(name||'?'); }
   }
   const convId = convIdFor(state.user.uid, uid);
+  state._activeChatConvId = convId;
+  state._dmMessages = {}; state._dmOrder = []; state._otherReadAt = 0;
   const body = $('#chatThreadBody');
   body.innerHTML = '<div class="flyout-empty">Loading…</div>';
+  setDmTypingIndicator(false);
   // subscribe to messages
   if(state._unsubActiveThread) state._unsubActiveThread();
   state._unsubActiveThread = onSnapshot(
-    query(collection(state.db, 'dms', convId, 'messages'), orderBy('createdAt', 'asc'), limit(100)),
+    query(collection(state.db, 'dms', convId, 'messages'), orderBy('createdAt', 'asc'), limit(150)),
     (snap) => {
-      body.innerHTML = '';
-      snap.forEach(d => {
-        const m = d.data();
-        const div = document.createElement('div');
-        div.className = 'chat-msg ' + (m.from === state.user.uid ? 'me' : 'them');
-        div.textContent = m.text;
-        body.appendChild(div);
-      });
-      body.scrollTop = body.scrollHeight;
+      state._dmMessages = {}; state._dmOrder = [];
+      snap.forEach(d => { state._dmMessages[d.id] = d.data(); state._dmOrder.push(d.id); });
+      paintDmThread();
+      markDmRead();
     },
     (err) => { console.warn('[chat] thread', err); body.innerHTML = '<div class="flyout-empty">Could not load messages</div>'; }
   );
-  // reset unread for me
-  try {
-    await setDoc(doc(state.db, 'dmIndex', convId), { ['unread_' + state.user.uid]: 0 }, { merge: true });
-  } catch(e){}
+  // subscribe to the index doc for typing + read receipts
+  if(state._unsubActiveIndex) state._unsubActiveIndex();
+  state._unsubActiveIndex = onSnapshot(doc(state.db, 'dmIndex', convId), (snap) => {
+    const d = snap.exists() ? snap.data() : {};
+    const tms = _dmTs(d['typing_' + uid]);
+    setDmTypingIndicator(tms && (Date.now() - tms < 5000));
+    const rms = _dmTs(d['read_' + uid]);
+    if(rms !== state._otherReadAt){ state._otherReadAt = rms; paintDmThread(); }
+  }, () => {});
+  markDmRead();
 }
 
 async function sendChatMessage(){
@@ -14516,16 +14781,17 @@ async function sendChatMessage(){
   const text = (input.value || '').trim();
   if(!text || !state._activeChatUid || !state.user) return;
   input.value = '';
+  const pal = $('#chatEmojiPalette'); if(pal) pal.style.display = 'none';
   const uid = state._activeChatUid;
   const convId = convIdFor(state.user.uid, uid);
+  const replyTo = state._replyTo ? { id: state._replyTo.id, name: state._replyTo.name, text: state._replyTo.text } : null;
+  cancelDmReply();
+  clearDmTyping();
   try {
-    await addDoc(collection(state.db, 'dms', convId, 'messages'), {
-      from: state.user.uid,
-      text,
-      createdAt: serverTimestamp(),
-    });
+    const msg = { from: state.user.uid, text, createdAt: serverTimestamp() };
+    if(replyTo) msg.replyTo = replyTo;
+    await addDoc(collection(state.db, 'dms', convId, 'messages'), msg);
     // update index doc
-    const otherUnreadField = 'unread_' + uid;
     await setDoc(doc(state.db, 'dmIndex', convId), {
       participants: [state.user.uid, uid],
       lastMsg: text,
@@ -14533,7 +14799,8 @@ async function sendChatMessage(){
       ['name_' + state.user.uid]: state.profile.username,
       ['photo_' + state.user.uid]: state.profile.photoURL || '',
       ['color_' + state.user.uid]: state.profile.colorIdx || 0,
-      [otherUnreadField]: increment(1),
+      ['unread_' + uid]: increment(1),
+      ['read_' + state.user.uid]: serverTimestamp(),
     }, { merge: true });
     // notify the recipient
     pushNotification(uid, {
@@ -14542,7 +14809,7 @@ async function sendChatMessage(){
       actionUid: state.user.uid,
       actionName: state.profile.username,
     });
-  } catch(e){ console.warn('[chat] send failed', e); toast('Message failed', 'error'); }
+  } catch(e){ console.warn('[chat] send failed', e); toast('Message failed', 'error'); input.value = text; }
 }
 
 // ============= STATS SUMMARY CARD =============
@@ -16167,7 +16434,7 @@ async function findMatch(){
     if(!joined){
       throw lastErr || new Error('Could not join queue');
     }
-    console.log('[match] joined queue', uid, '[ROSHAM v8.2 — auth-token-refresh]');
+    console.log('[match] joined queue', uid, '[ROSHCAM v8.2 — auth-token-refresh]');
   } catch(e){
     console.error('[match] could not join queue', e);
     if(e.code === 'permission-denied' || e.message?.includes('permission')){
@@ -17371,11 +17638,18 @@ async function runCountdown(){
   // Custom countdown sample plays once across the whole 3·2·1 sequence.
   // Falls back to the per-tick synth beeps if no sample is available.
   const _cdSample = playCountdownSample();
+  // Sync the visual 3·2·1 to the countdown sound: stretch each step so SHOOT
+  // lands near the end of the audio. Snappy 700ms fallback when there's no sample.
+  let _cdStep = 700;
+  if(_cdSample){
+    const _cdDur = (sampleAudio.countdownBuf && sampleAudio.countdownBuf.duration) ? sampleAudio.countdownBuf.duration : 5.8;
+    _cdStep = Math.max(700, Math.min(1700, Math.round(_cdDur * 1000 * 0.88 / 3)));
+  }
   for(const b of ['3','2','1']){
     cd.textContent = b;
     cd.classList.remove('flash'); void cd.offsetWidth; cd.classList.add('flash');
     if(!_cdSample) sfxCountdown();
-    await sleep(700);
+    await sleep(_cdStep);
   }
   state.phase = 'shoot';
   cd.textContent = 'SHOOT!';
@@ -18329,7 +18603,7 @@ function showMatchResultScreen(result){
       oppAv.textContent = 'B';
     }
   }
-  setText('#mrOppName', state.isBotMatch ? '@roshamBot' : ('@' + (state.oppProfile?.username || 'stranger')));
+  setText('#mrOppName', state.isBotMatch ? '@roshcamBot' : ('@' + (state.oppProfile?.username || 'stranger')));
 
   // ROUND-BY-ROUND BREAKDOWN
   const list = $('#mrRoundsList');
@@ -19327,9 +19601,9 @@ on('#matchEndShare', 'click', async () => {
   const youWon = state.scoreYou > state.scoreOpp;
   const draw = state.scoreYou === state.scoreOpp;
   const verb = draw ? 'tied' : (youWon ? 'won' : 'lost');
-  const txt = `I just ${verb} a ROSHAM match ${state.scoreYou}-${state.scoreOpp}${state.isBotMatch ? ' vs a bot' : ''}! 🪨📄✂️`;
+  const txt = `I just ${verb} a ROSHCAM match ${state.scoreYou}-${state.scoreOpp}${state.isBotMatch ? ' vs a bot' : ''}! 🪨📄✂️`;
   if(navigator.share){
-    try { await navigator.share({ title: 'ROSHAM', text: txt }); }
+    try { await navigator.share({ title: 'ROSHCAM', text: txt }); }
     catch(e){ /* user cancelled */ }
   } else {
     try {
@@ -20138,9 +20412,44 @@ document.addEventListener('click', (e) => {
   if(!e.target.closest('#notifPanel, #chatPanel, #notifBtn, #chatBtn')) closeAllFlyouts();
 });
 on('#notifClearBtn', 'click', clearAllNotifications);
-on('#chatBackBtn', 'click', () => { $('#chatThread').style.display = 'none'; $('#chatConvList').style.display = ''; });
+on('#chatBackBtn', 'click', () => { clearDmTyping(); cancelDmReply(); $('#chatThread').style.display = 'none'; $('#chatConvList').style.display = ''; const p=$('#chatEmojiPalette'); if(p) p.style.display='none'; });
 on('#chatThreadSend', 'click', sendChatMessage);
 on('#chatThreadInput', 'keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); sendChatMessage(); } });
+on('#chatThreadInput', 'input', onDmTyping);
+on('#chatReplyCancel', 'click', cancelDmReply);
+// Emoji picker toggle + insertion
+on('#chatEmojiBtn', 'click', () => {
+  const pal = $('#chatEmojiPalette'); if(!pal) return;
+  if(!pal.dataset.built){
+    pal.innerHTML = DM_PICKER_EMOJIS.map(e => `<button type="button" data-emoji="${e}">${e}</button>`).join('');
+    pal.dataset.built = '1';
+    pal.addEventListener('click', (ev) => {
+      const b = ev.target.closest('button'); if(!b) return;
+      const inp = $('#chatThreadInput'); if(!inp) return;
+      inp.value += b.dataset.emoji; inp.focus(); onDmTyping();
+    });
+  }
+  pal.style.display = (pal.style.display === 'none' || !pal.style.display) ? 'flex' : 'none';
+});
+// Delegated interactions on messages (reactions, reply, delete, tap-to-show actions)
+on('#chatThreadBody', 'click', (e) => {
+  const chip = e.target.closest('.rx-chip');
+  if(chip){ const r = e.target.closest('.chat-msg-row'); if(r) toggleDmReaction(r.dataset.mid, chip.dataset.emoji); return; }
+  const btn = e.target.closest('.msg-actions button');
+  const row = e.target.closest('.chat-msg-row');
+  if(btn && row){
+    const mid = row.dataset.mid; const act = btn.dataset.act;
+    if(act === 'react') openReactPicker(row, mid);
+    else if(act === 'reply') startDmReply(mid);
+    else if(act === 'delete'){ if(confirm('Delete this message for everyone?')) deleteDmMessage(mid); }
+    return;
+  }
+  // tap a bubble (mobile) to reveal its actions
+  if(e.target.closest('.chat-msg') && row){
+    document.querySelectorAll('.chat-msg-row.show-actions').forEach(x => { if(x !== row) x.classList.remove('show-actions'); });
+    row.classList.toggle('show-actions');
+  }
+});
 
 document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
@@ -20668,7 +20977,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHAM v10.8 — MODERATION (report/warn/ban) + AUDIO DEFAULTS + QoL', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHCAM v1.0 — LAUNCH · volume mixer · rich DMs · streamer privacy · spectator + moderation', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
