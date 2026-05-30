@@ -17,6 +17,10 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -326,6 +330,23 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .hx-you-streak-lbl{ font-size:11px; color:var(--text-dim); font-weight:600; }
 .hx-ribbon{ margin-bottom:16px; }
 @media(max-width:640px){ .hx-hero{ padding:24px 18px; } .hx-cta{ width:100%; justify-content:center; } }
+/* ===== PLAY page redesign ===== */
+.play-hero-title{ font-size:clamp(34px,5.5vw,60px); }
+.play-quick{ display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+.play-quick-btn{ flex:1; min-width:210px; display:flex; align-items:center; gap:12px; text-align:left; padding:13px 15px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); color:var(--text); cursor:pointer; transition:border-color .15s, transform .12s; }
+.play-quick-btn:hover{ border-color:var(--mint); transform:translateY(-2px); }
+.pq-ic{ width:40px; height:40px; border-radius:11px; display:grid; place-items:center; background:var(--surface-3); color:var(--text); flex:0 0 auto; }
+.pq-text{ display:flex; flex-direction:column; flex:1; min-width:0; }
+.pq-text b{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; }
+.pq-text span{ font-size:12px; color:var(--text-dim); }
+.pq-arrow{ color:var(--text-dim); flex:0 0 auto; }
+.play-hero .play-tip{ margin-top:18px; }
+.throw-cycle{ display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.throw-node{ display:flex; flex-direction:column; align-items:center; gap:3px; text-align:center; padding:22px 14px; border-radius:16px; background:var(--surface-2); border:1px solid var(--line); border-top:3px solid var(--tn); }
+.throw-node svg{ color:var(--tn); margin-bottom:6px; }
+.throw-node b{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:17px; }
+.throw-node span{ font-size:12px; color:var(--text-dim); }
+@media(max-width:560px){ .throw-node{ padding:16px 8px; } .throw-node span{ font-size:11px; } }
 
 /* ===== SPECTATOR SCREEN ===== */
 #screen-spectate{ background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,77,255,.10), transparent 60%), var(--bg-2); }
@@ -1336,6 +1357,24 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .chat-emoji-palette button:hover{ background:var(--surface-3); }
 .chat-emoji-btn{ width:38px; flex:0 0 auto; border-radius:10px; background:var(--surface-2); border:1px solid var(--line); font-size:18px; cursor:pointer; }
 .chat-emoji-btn:hover{ border-color:var(--mint); }
+/* ===== Home spotlight row ===== */
+.home-spotlight{ grid-template-columns:repeat(3,1fr); }
+@media(max-width:900px){ .home-spotlight{ grid-template-columns:1fr; } }
+.hs-card{ display:flex; flex-direction:column; }
+.hs-milestone{ display:flex; align-items:center; gap:14px; }
+.hs-mile-icon svg{ width:46px; height:46px; }
+.hs-mile-info{ flex:1; min-width:0; }
+.hs-mile-tier{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:17px; }
+.hs-mile-sub{ font-size:12px; color:var(--text-dim); margin:2px 0 8px; }
+.hs-throws{ display:flex; gap:14px; align-items:flex-end; justify-content:space-around; padding:6px 0 2px; }
+.hs-throw{ display:flex; flex-direction:column; align-items:center; gap:6px; flex:1; }
+.hs-throw-bar{ width:26px; height:64px; border-radius:7px; background:var(--surface-3); display:flex; align-items:flex-end; overflow:hidden; }
+.hs-throw-bar span{ width:100%; border-radius:7px; transition:height .5s cubic-bezier(.2,1,.3,1); display:block; }
+.hs-throw-bar.coral span{ background:var(--coral); } .hs-throw-bar.mint span{ background:var(--mint); } .hs-throw-bar.violet span{ background:#a48bff; }
+.hs-throw b{ font-family:var(--font-mono); font-size:12px; }
+.hs-throw-note{ margin-top:12px; font-size:12px; color:var(--text-dim); text-align:center; }
+.hs-tip{ font-size:13.5px; line-height:1.55; color:var(--text); }
+.hx-arena-link{ display:inline-flex; align-items:center; gap:9px; padding:11px 18px; font-size:14px; }
 /* ===== Weekly challenges ===== */
 .weekly-list{ display:flex; flex-direction:column; gap:13px; }
 .weekly-row{ display:flex; flex-direction:column; gap:5px; }
@@ -9689,6 +9728,30 @@ h2.match-title{
 .profile-modal .pm-stats-2{ margin-bottom: 16px; }
 .profile-modal .pm-stats-2 .pm-stat{ padding: 10px 8px; }
 .profile-modal .pm-stats-2 .pm-stat .v{ font-size: 20px; }
+/* Richer profile: head-to-head, extra stats, comments */
+.profile-modal .pm-stats-3{ margin-bottom: 16px; }
+.pm-h2h{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; margin:0 0 14px; border-radius:12px; background:var(--surface-2); border:1px solid var(--line); }
+.pm-h2h-label{ font-size:12px; color:var(--text-dim); font-weight:600; }
+.pm-h2h-rec{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:15px; }
+.pm-h2h-rec .win{ color:var(--mint); } .pm-h2h-rec .loss{ color:var(--coral); }
+.pm-comments{ margin-top:18px; border-top:1px solid var(--line-soft); padding-top:14px; }
+.pm-comments h4{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:12px; letter-spacing:.1em; color:var(--text-dim); margin:0 0 12px; }
+.pm-comment-compose{ display:flex; gap:8px; margin-bottom:14px; }
+.pm-comment-compose input{ flex:1; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:9px 12px; color:var(--text); font-family:var(--font-body); font-size:13px; }
+.pm-comment-compose input:focus{ outline:none; border-color:var(--mint); }
+.pm-comment-compose button{ width:40px; border-radius:10px; background:linear-gradient(135deg,var(--mint),#15a079); border:none; color:#06251c; display:grid; place-items:center; cursor:pointer; }
+.pm-comment-list{ display:flex; flex-direction:column; gap:13px; max-height:250px; overflow-y:auto; }
+.pm-comment{ display:flex; gap:10px; align-items:flex-start; }
+.pmc-av{ width:32px; height:32px; border-radius:50%; flex:0 0 auto; background-size:cover; background-position:center; display:grid; place-items:center; font-weight:700; font-size:13px; color:#06120e; }
+.pmc-body{ flex:1; min-width:0; }
+.pmc-head{ display:flex; align-items:center; gap:8px; margin-bottom:2px; }
+.pmc-name{ font-weight:700; font-size:13px; cursor:pointer; }
+.pmc-name:hover{ color:var(--mint); }
+.pmc-time{ font-family:var(--font-mono); font-size:10px; color:var(--text-dim); }
+.pmc-text{ font-size:13px; color:var(--text); word-break:break-word; line-height:1.4; }
+.pmc-del{ background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:13px; padding:2px 6px; border-radius:6px; flex:0 0 auto; }
+.pmc-del:hover{ color:var(--coral); }
+.pm-comment-empty{ font-size:12px; color:var(--text-dim); text-align:center; padding:10px; }
 .profile-modal .pm-stat{
   text-align:center; padding:14px 10px;
   background: linear-gradient(180deg, var(--surface-2), var(--surface));
@@ -10080,6 +10143,8 @@ h2.match-title{
 .rank-diamond{color:var(--rank-diamond);}
 .rank-master{color:var(--rank-master);}
 .rank-grandmaster{color:var(--rank-grandmaster);}
+.rank-champion{color:#ff8c42;}
+.rank-legend{color:#ff61c3;}
 
 /* RESPONSIVE */
 @media (max-width: 1100px){
@@ -10309,6 +10374,8 @@ h2.match-title{
     <symbol id="i-rank-diamond" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L20 9 L12 22 L4 9 Z"/><path fill="rgba(255,255,255,.3)" d="M12 2 L16 6 L12 12 L8 6 Z M12 12 L20 9 L16 6 Z"/></symbol>
     <symbol id="i-rank-master" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 L14 7 L20 7 L15 11 L17 17 L12 14 L7 17 L9 11 L4 7 L10 7 Z M12 14 L17 19 L12 23 L7 19 Z"/></symbol>
     <symbol id="i-rank-grandmaster" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path fill="rgba(0,0,0,.4)" d="M12 4 L14 10 L20 10 L15 14 L17 20 L12 16 L7 20 L9 14 L4 10 L10 10 Z"/></symbol>
+    <symbol id="i-rank-champion" viewBox="0 0 24 24"><path fill="currentColor" d="M3 7 L7.5 11 L12 3.5 L16.5 11 L21 7 L19 19.5 L5 19.5 Z"/><path fill="rgba(0,0,0,.35)" d="M5 19.5 L19 19.5 L18.5 16.5 L5.5 16.5 Z"/><circle cx="3" cy="7" r="1.7" fill="currentColor"/><circle cx="21" cy="7" r="1.7" fill="currentColor"/><circle cx="12" cy="3.5" r="1.9" fill="currentColor"/></symbol>
+    <symbol id="i-rank-legend" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 L13.9 8.1 L21 6 L15.8 12 L21 18 L13.9 15.9 L12 23 L10.1 15.9 L3 18 L8.2 12 L3 6 L10.1 8.1 Z"/><circle cx="12" cy="12" r="3" fill="rgba(255,255,255,.6)"/></symbol>
   </defs>
 </svg>
 
@@ -10525,6 +10592,12 @@ service cloud.firestore {
       allow read, list: if request.auth != null;
       allow create, update, delete: if request.auth != null;
     }
+    match /profileComments/{profileUid}/comments/{id} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
+      allow delete: if request.auth != null &&
+        (resource.data.from == request.auth.uid || profileUid == request.auth.uid || request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1');
+    }
   }
 }</span>
               </div>
@@ -10704,6 +10777,34 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
+        <!-- NEW: spotlight row — next milestone + throw style + this-week recap -->
+        <div class="home-grid home-spotlight" style="margin-top:14px;">
+          <div class="card hs-card" id="hsMilestoneCard">
+            <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Next milestone</div></div>
+            <div class="hs-milestone">
+              <div class="hs-mile-icon"><svg id="hsNextRankIcon"></svg></div>
+              <div class="hs-mile-info">
+                <div class="hs-mile-tier" id="hsNextRankName">Silver I</div>
+                <div class="hs-mile-sub" id="hsNextRankGap">— ELO to climb</div>
+                <div class="ui-bar"><div class="ui-bar-fill" id="hsNextRankFill" style="width:0%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card hs-card" id="hsThrowCard">
+            <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Your throw style</div></div>
+            <div class="hs-throws" id="hsThrows">
+              <div class="hs-throw"><div class="hs-throw-bar coral"><span id="hsRockBar" style="height:0%"></span></div><svg viewBox="0 0 64 64" width="22" height="22" style="color:var(--coral)"><use href="#i-rock"/></svg><b id="hsRockPct">0%</b></div>
+              <div class="hs-throw"><div class="hs-throw-bar mint"><span id="hsPaperBar" style="height:0%"></span></div><svg viewBox="0 0 64 64" width="22" height="22" style="color:var(--mint)"><use href="#i-paper"/></svg><b id="hsPaperPct">0%</b></div>
+              <div class="hs-throw"><div class="hs-throw-bar violet"><span id="hsScissorsBar" style="height:0%"></span></div><svg viewBox="0 0 64 64" width="22" height="22" style="color:#a48bff"><use href="#i-scissors"/></svg><b id="hsScissorsPct">0%</b></div>
+            </div>
+            <div class="hs-throw-note" id="hsThrowNote">Play matches to reveal your favourite throw.</div>
+          </div>
+          <div class="card hs-card" id="hsTipCard">
+            <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Pro tip</div></div>
+            <div class="hs-tip" id="hsTip">—</div>
+          </div>
+        </div>
+
         <!-- TWO-COLUMN DASHBOARD: left = rank+stats+activity, right = daily+friends -->
         <div class="home-grid" style="margin-top:14px;">
 
@@ -10855,40 +10956,42 @@ const FIREBASE_CONFIG = {
 
       <!-- ============ PAGE: PLAY ============ -->
       <div class="nav-page" data-page="play">
-        <div class="page-header">
-          <h2 class="page-title">PLAY</h2>
-          <p class="page-subtitle">Jump into a ranked match or set up your camera.</p>
-        </div>
-        <div class="play-grid">
-          <div class="play-main-card">
-            <div class="pmc-glow"></div>
-            <div class="pmc-content">
-              <span class="pmc-eyebrow"><span class="live-dot"></span>RANKED MATCH</span>
-              <h3 class="pmc-title">Find a stranger</h3>
-              <p class="pmc-sub">Get matched with a real opponent worldwide. Best of 3, winner takes the ELO.</p>
-              <button class="btn-cta pmc-cta" id="playPageFindBtn">
+        <!-- ARENA HERO -->
+        <section class="hx-hero play-hero">
+          <div class="hx-hero-glow"></div>
+          <div class="hx-hero-grid"></div>
+          <div class="hx-hero-inner">
+            <div class="hx-hero-top">
+              <span class="hx-badge"><span class="live-dot"></span> Ranked · live</span>
+              <span class="hx-badge ghost">Best of 3 · winner takes ELO</span>
+            </div>
+            <h1 class="hx-wordmark play-hero-title">ENTER THE <span class="hx-cam">ARENA</span></h1>
+            <p class="hx-tag">Get matched with a real stranger worldwide. Read their eyes, predict the throw, and shoot before the timer hits zero.</p>
+            <div class="hx-play">
+              <button class="btn-cta hx-cta" id="playPageFindBtn">
                 <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
                 <span>Find a stranger</span>
+                <kbd class="cta-kbd">SPACE</kbd>
               </button>
             </div>
-          </div>
-          <div class="play-side">
-            <button class="play-mode-card challenge-card" id="playPageChallengeBtn">
-              <div class="pmc-icon" style="background:rgba(255,51,88,.12); color:var(--coral);"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-sword"/></svg></div>
-              <div class="pmc-mode-text"><div class="pmc-mode-title">Challenge a friend</div><div class="pmc-mode-sub">Pick someone to duel directly</div></div>
-              <svg viewBox="0 0 24 24" width="16" height="16" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
-            </button>
-            <button class="play-mode-card" id="playPageCameraBtn">
-              <div class="pmc-icon"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-camera"/></svg></div>
-              <div class="pmc-mode-text"><div class="pmc-mode-title">Camera setup</div><div class="pmc-mode-sub">Test your webcam &amp; hand tracking</div></div>
-              <svg viewBox="0 0 24 24" width="16" height="16" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
-            </button>
+            <div class="play-quick">
+              <button class="play-quick-btn" id="playPageChallengeBtn">
+                <span class="pq-ic" style="background:rgba(255,51,88,.14); color:var(--coral);"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-sword"/></svg></span>
+                <span class="pq-text"><b>Challenge a friend</b><span>Duel someone directly</span></span>
+                <svg viewBox="0 0 24 24" width="15" height="15" class="pq-arrow"><use href="#i-arrow-right"/></svg>
+              </button>
+              <button class="play-quick-btn" id="playPageCameraBtn">
+                <span class="pq-ic"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-camera"/></svg></span>
+                <span class="pq-text"><b>Camera setup</b><span>Test webcam &amp; tracking</span></span>
+                <svg viewBox="0 0 24 24" width="15" height="15" class="pq-arrow"><use href="#i-arrow-right"/></svg>
+              </button>
+            </div>
             <div class="play-tip">
               <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg>
               <span>Hold a clear gesture before the countdown ends. Leaving mid-match forfeits the round.</span>
             </div>
           </div>
-        </div>
+        </section>
 
         <!-- Rank + Daily challenge row -->
         <div class="home-grid" style="margin-top:14px;">
@@ -10944,21 +11047,18 @@ const FIREBASE_CONFIG = {
 
         <!-- The throws -->
         <div class="psection"><h3>The throws</h3></div>
-        <div class="play-info-grid">
-          <div class="card" style="text-align:center;">
-            <svg viewBox="0 0 64 64" width="46" height="46" style="color:var(--coral)"><use href="#i-rock"/></svg>
-            <div class="pic-title" style="margin-top:10px;">Rock</div>
-            <div class="pic-sub">Beats scissors · loses to paper</div>
+        <div class="throw-cycle">
+          <div class="throw-node" style="--tn:var(--coral);">
+            <svg viewBox="0 0 64 64" width="40" height="40"><use href="#i-rock"/></svg>
+            <b>Rock</b><span>crushes scissors</span>
           </div>
-          <div class="card" style="text-align:center;">
-            <svg viewBox="0 0 64 64" width="46" height="46" style="color:var(--mint)"><use href="#i-paper"/></svg>
-            <div class="pic-title" style="margin-top:10px;">Paper</div>
-            <div class="pic-sub">Beats rock · loses to scissors</div>
+          <div class="throw-node" style="--tn:var(--mint);">
+            <svg viewBox="0 0 64 64" width="40" height="40"><use href="#i-paper"/></svg>
+            <b>Paper</b><span>covers rock</span>
           </div>
-          <div class="card" style="text-align:center;">
-            <svg viewBox="0 0 64 64" width="46" height="46" style="color:#a48bff"><use href="#i-scissors"/></svg>
-            <div class="pic-title" style="margin-top:10px;">Scissors</div>
-            <div class="pic-sub">Beats paper · loses to rock</div>
+          <div class="throw-node" style="--tn:#a48bff;">
+            <svg viewBox="0 0 64 64" width="40" height="40"><use href="#i-scissors"/></svg>
+            <b>Scissors</b><span>cuts paper</span>
           </div>
         </div>
       </div><!-- /page play -->
@@ -11490,7 +11590,7 @@ const FIREBASE_CONFIG = {
         <div class="opp-away-banner" id="oppAwayBanner"><span class="dot"></span> Opponent stepped away…</div>
 
         <!-- YOUR VIDEO (left) -->
-        <div class="duel-video you" id="yourVideoWrap">
+        <div class="duel-video you pip-br" id="yourVideoWrap">
           <video id="yourVideo" class="local" autoplay playsinline muted></video>
           <canvas id="overlay-canvas"></canvas>
           <canvas class="energy-particles" id="energyParticles"></canvas>
@@ -12373,6 +12473,8 @@ const FIREBASE_CONFIG = {
       <div class="pm-stat"><div class="v" id="pmDraws">0</div><div class="l">draws</div></div>
       <div class="pm-stat"><div class="v" id="pmLevelStat">1</div><div class="l">level</div></div>
     </div>
+    <div class="pm-h2h" id="pmH2H" style="display:none;"></div>
+    <div class="pm-stats pm-stats-3" id="pmExtraStats"></div>
     <!-- Level XP bar -->
     <div class="pm-level-bar-wrap">
       <div class="pm-level-bar-top">
@@ -12386,6 +12488,14 @@ const FIREBASE_CONFIG = {
     <div class="match-history" id="pmHistorySection" style="display:none;">
       <h4>RECENT MATCHES</h4>
       <div class="mh-list" id="pmHistoryList"></div>
+    </div>
+    <div class="pm-comments" id="pmCommentsSection">
+      <h4>PROFILE COMMENTS</h4>
+      <div class="pm-comment-compose">
+        <input type="text" id="pmCommentInput" placeholder="Leave a comment…" maxlength="200" />
+        <button id="pmCommentSend" type="button"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-send"/></svg></button>
+      </div>
+      <div class="pm-comment-list" id="pmCommentList"></div>
     </div>
     <div class="modal-actions" id="pmActions">
       <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block</button>
@@ -12830,11 +12940,13 @@ const RANKS = [
   { id:'diamond',     name:'Diamond',     icon:'i-rank-diamond',     cls:'rank-diamond',     base:1700, color:'#5fc9ff', color2:'#3aa3d9' },
   { id:'master',      name:'Master',      icon:'i-rank-master',      cls:'rank-master',      base:1900, color:'#a48bff', color2:'#7a5fdc' },
   { id:'grandmaster', name:'Grandmaster', icon:'i-rank-grandmaster', cls:'rank-grandmaster', base:2100, color:'#ff3d68', color2:'#d8264f' },
+  { id:'champion',    name:'Champion',    icon:'i-rank-champion',    cls:'rank-champion',    base:2300, color:'#ff8c42', color2:'#e06a1f' },
+  { id:'legend',      name:'Legend',      icon:'i-rank-legend',      cls:'rank-legend',      base:2500, color:'#ff61c3', color2:'#d62f9e' },
 ];
 // Tier width within a rank (except Grandmaster which is open-ended top tier)
 const TIER_WIDTHS = {
   bronze: 100/3, silver: 200/3, gold: 200/3, platinum: 200/3,
-  diamond: 200/3, master: 200/3, grandmaster: 100,
+  diamond: 200/3, master: 200/3, grandmaster: 200/3, champion: 200/3, legend: 100,
 };
 // Returns {rank, tier, tierName ("Bronze III"), index (0-20)} for a given rating
 function rankFromRating(rating){
@@ -12850,8 +12962,8 @@ function rankFromRating(rating){
   for(let i = RANKS.length - 1; i >= 0; i--){
     const r = RANKS[i];
     if(rating >= r.base){
-      if(r.id === 'grandmaster'){
-        return packRank('grandmaster', 3, rating);
+      if(r.id === 'legend'){
+        return packRank('legend', 3, rating);
       }
       const next = RANKS[i+1];
       const span = next.base - r.base;
@@ -12871,7 +12983,7 @@ function packRank(rankId, tier, rating){
   const tierRoman = tier === 1 ? 'I' : tier === 2 ? 'II' : 'III';
   // global index for compare — higher tier number is higher within a rank now
   const index = RANKS.findIndex(x => x.id === rankId) * 3 + (tier - 1);
-  const tierName = rankId === 'grandmaster' ? r.name : `${r.name} ${tierRoman}`;
+  const tierName = rankId === 'legend' ? r.name : `${r.name} ${tierRoman}`;
   return { id:rankId, name:r.name, icon:r.icon, cls:r.cls, color:r.color, color2:r.color2, tier, tierRoman, tierName, index, rating };
 }
 function rankProgressToNext(rating){
@@ -12880,8 +12992,8 @@ function rankProgressToNext(rating){
   // construct list of all 21 thresholds
   const thresholds = [];
   for(const r of RANKS){
-    if(r.id === 'grandmaster'){
-      thresholds.push({ id:'grandmaster', tier:1, threshold: r.base });
+    if(r.id === 'legend'){
+      thresholds.push({ id:'legend', tier:3, threshold: r.base });
       continue;
     }
     const next = RANKS[RANKS.indexOf(r)+1];
@@ -16263,12 +16375,105 @@ async function openProfile(uid){
         : '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block';
       $('#pmBlockBtn').onclick = () => toggleBlock(uid, p.username, !isBlocked);
     }
+    // ===== Richer content: extra detail tiles + head-to-head + comments =====
+    const extra = $('#pmExtraStats');
+    if(extra){
+      const gr = computeGlobalRank(rating);
+      const createdMs = p.createdAt?.toMillis ? p.createdAt.toMillis() : 0;
+      const since = createdMs ? new Date(createdMs).toLocaleDateString(undefined, { month:'short', year:'numeric' }) : '—';
+      let titlesCount = 1; try { titlesCount = titlesUnlockedAt(lvl.level).length; } catch(e){}
+      extra.innerHTML = `
+        <div class="pm-stat"><div class="v gold">${gr && gr.rank ? '#'+gr.rank : '#—'}</div><div class="l">global rank</div></div>
+        <div class="pm-stat"><div class="v">${(p.totalXp||0).toLocaleString()}</div><div class="l">total XP</div></div>
+        <div class="pm-stat"><div class="v">${titlesCount}</div><div class="l">titles</div></div>
+        <div class="pm-stat"><div class="v" style="font-size:14px;">${since}</div><div class="l">member since</div></div>`;
+    }
+    const h2hEl = $('#pmH2H');
+    if(h2hEl){
+      if(uid !== state.user.uid){
+        const h = getHeadToHead(uid);
+        const tot = (h.wins||0)+(h.losses||0)+(h.draws||0);
+        if(tot > 0){
+          h2hEl.style.display = '';
+          h2hEl.innerHTML = `<span class="pm-h2h-label">Your head-to-head</span><span class="pm-h2h-rec"><b class="win">${h.wins||0}W</b> · <b class="loss">${h.losses||0}L</b> · <b>${h.draws||0}D</b></span>`;
+        } else { h2hEl.style.display = 'none'; }
+      } else { h2hEl.style.display = 'none'; }
+    }
+    loadProfileComments(uid);
     $('#profileModal').classList.add('show');
   } catch(e){
     console.error(e);
     toast('Could not load profile', 'error');
   }
 }
+
+// ===== PROFILE COMMENTS =====
+async function loadProfileComments(uid){
+  state._viewingProfileUid = uid;
+  const list = $('#pmCommentList');
+  if(!list) return;
+  list.innerHTML = '<div class="pm-comment-empty">Loading…</div>';
+  if(state._unsubProfileComments){ try { state._unsubProfileComments(); } catch(e){} state._unsubProfileComments = null; }
+  try {
+    state._unsubProfileComments = onSnapshot(
+      query(collection(state.db, 'profileComments', uid, 'comments'), orderBy('createdAt', 'desc'), limit(60)),
+      (snap) => {
+        if(snap.empty){ list.innerHTML = '<div class="pm-comment-empty">No comments yet — be the first!</div>'; return; }
+        list.innerHTML = '';
+        snap.forEach(d => {
+          const c = d.data();
+          const canDelete = c.from === state.user.uid || uid === state.user.uid || isAdmin();
+          const row = document.createElement('div');
+          row.className = 'pm-comment';
+          const avStyle = c.fromPhoto ? `background-image:url('${c.fromPhoto}')` : `background:${AVATAR_COLORS[c.fromColor||0]}`;
+          row.innerHTML = `
+            <div class="pmc-av" style="${avStyle}">${c.fromPhoto ? '' : escapeHTML(initialOf(c.fromName||'?'))}</div>
+            <div class="pmc-body">
+              <div class="pmc-head"><span class="pmc-name nm" data-uid="${c.from}">${escapeHTML(c.fromName||'player')}</span><span class="pmc-time">${timeAgo(c.createdAt)}</span></div>
+              <div class="pmc-text">${escapeHTML(c.text||'')}</div>
+            </div>
+            ${canDelete ? `<button class="pmc-del" type="button" data-id="${d.id}" title="Delete">✕</button>` : ''}`;
+          list.appendChild(row);
+        });
+      },
+      (err) => { console.warn('[comments] load', err); list.innerHTML = '<div class="pm-comment-empty">Could not load comments — check the profileComments Firestore rule.</div>'; }
+    );
+  } catch(e){ list.innerHTML = '<div class="pm-comment-empty">Could not load comments</div>'; }
+}
+async function postProfileComment(){
+  const uid = state._viewingProfileUid;
+  const input = $('#pmCommentInput');
+  const text = (input?.value || '').trim();
+  if(!text || !uid || !state.user || !state.profile) return;
+  input.value = '';
+  try {
+    await addDoc(collection(state.db, 'profileComments', uid, 'comments'), {
+      from: state.user.uid,
+      fromName: state.profile.username,
+      fromPhoto: state.profile.photoURL || '',
+      fromColor: state.profile.colorIdx || 0,
+      text,
+      createdAt: serverTimestamp(),
+    });
+    if(uid !== state.user.uid){
+      try { pushNotification(uid, { type:'comment', text:`<b>@${escapeHTML(state.profile.username)}</b> commented on your profile`, actionUid: state.user.uid, actionName: state.profile.username }); } catch(e){}
+    }
+  } catch(e){ console.warn('[comment] post', e); toast('Could not post comment', 'error'); input.value = text; }
+}
+async function deleteProfileComment(commentId){
+  const uid = state._viewingProfileUid;
+  if(!uid || !commentId) return;
+  try { await deleteDoc(doc(state.db, 'profileComments', uid, 'comments', commentId)); }
+  catch(e){ console.warn('[comment] delete', e); toast('Could not delete comment', 'error'); }
+}
+on('#pmCommentSend', 'click', postProfileComment);
+on('#pmCommentInput', 'keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); postProfileComment(); } });
+on('#pmCommentList', 'click', (e) => {
+  const del = e.target.closest('.pmc-del');
+  if(del){ deleteProfileComment(del.dataset.id); return; }
+  const name = e.target.closest('.pmc-name');
+  if(name && name.dataset.uid){ $('#profileModal').classList.remove('show'); setTimeout(() => openProfile(name.dataset.uid), 200); }
+});
 
 async function loadMatchHistory(uid){
   const section = $('#pmHistorySection');
@@ -19845,6 +20050,58 @@ function computeGlobalRank(rating){
   return { rank, total, pct };
 }
 
+const PRO_TIPS = [
+  'Watch your opponent\'s wrist — most players telegraph their throw a split-second early.',
+  'Predict correctly for bonus XP. Even a wrong guess keeps them honest.',
+  'Win streaks multiply your XP — string wins together for big jumps.',
+  'Hold your gesture clearly before the countdown ends, or it won\'t register.',
+  'Players repeat their last winning throw more often than they think.',
+  'After a tie, opponents tend to switch — counter the switch.',
+  'Leaving mid-match forfeits ELO. Ride it out even when behind.',
+  'Complete weekly challenges for XP that levels you up faster.',
+  'Bronze to Legend — every match counts toward your global rank.',
+  'Rock is the most common opening throw. Paper is a safe first move.',
+];
+function renderHomeSpotlight(p){
+  if(!p) return;
+  const rating = p.rating || 1000;
+  // Next milestone (rank progress)
+  try {
+    const prog = rankProgressToNext(rating);
+    const here = rankFromRating(rating);
+    // find the next tier's rank object for the icon/name
+    const nextRating = rating + Math.max(1, prog.toNext || 0);
+    const nextRank = (prog.toNext > 0) ? rankFromRating(nextRating) : here;
+    setRankIconEl($('#hsNextRankIcon'), nextRank.id);
+    const ic = $('#hsNextRankIcon'); if(ic) ic.style.color = nextRank.color;
+    setText('#hsNextRankName', prog.toNext > 0 ? nextRank.tierName : 'Max rank reached');
+    setText('#hsNextRankGap', prog.toNext > 0 ? `${prog.toNext} ELO to climb` : 'You\'re at the top!');
+    const f = $('#hsNextRankFill'); if(f){ f.style.width = ((prog.progress||0) * 100) + '%'; f.style.background = nextRank.color; }
+  } catch(e){}
+  // Throw style distribution
+  try {
+    const t = getThrowStats();
+    const total = (t.rock||0) + (t.paper||0) + (t.scissors||0);
+    const pct = (n) => total > 0 ? Math.round((n/total)*100) : 0;
+    const rp = pct(t.rock), pp = pct(t.paper), sp = pct(t.scissors);
+    setText('#hsRockPct', rp + '%'); setText('#hsPaperPct', pp + '%'); setText('#hsScissorsPct', sp + '%');
+    const rb = $('#hsRockBar'), pb = $('#hsPaperBar'), sb = $('#hsScissorsBar');
+    if(rb) rb.style.height = rp + '%'; if(pb) pb.style.height = pp + '%'; if(sb) sb.style.height = sp + '%';
+    const note = $('#hsThrowNote');
+    if(note){
+      if(total === 0){ note.textContent = 'Play matches to reveal your favourite throw.'; }
+      else {
+        const fav = rp >= pp && rp >= sp ? 'Rock' : pp >= sp ? 'Paper' : 'Scissors';
+        note.textContent = `Your go-to is ${fav} · ${total} throws tracked.`;
+      }
+    }
+  } catch(e){}
+  // Pro tip — rotates daily
+  try {
+    const dayIdx = Math.floor(Date.now() / 86400000) % PRO_TIPS.length;
+    setText('#hsTip', PRO_TIPS[dayIdx]);
+  } catch(e){}
+}
 function renderHomePage(){
   if(!state.profile) return;
   const p = state.profile;
@@ -19862,6 +20119,7 @@ function renderHomePage(){
   const loginStreak = getLoginStreak();
   setText('#wbStreakNum', loginStreak);
   try { refreshWeeklyChallenges(); } catch(e){}
+  try { renderHomeSpotlight(p); } catch(e){ console.warn('[home] spotlight', e); }
   // world strip
   const rating = p.rating || 1000;
   const gr = computeGlobalRank(rating);
@@ -20124,8 +20382,53 @@ loadClientPrefs();
 // Mobile dynamic viewport height (accounts for browser chrome)
 function setVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
 setVH();
-window.addEventListener('resize', setVH);
+// Throttle resize to one update per frame (avoids layout thrash on drag-resize / mobile URL bar).
+let _vhRaf = 0;
+window.addEventListener('resize', () => { if(_vhRaf) return; _vhRaf = requestAnimationFrame(() => { _vhRaf = 0; setVH(); }); }, { passive: true });
 window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
+
+// ===== Draggable self-cam picture-in-picture (FaceTime-style) — snaps to corners =====
+(function initPipDrag(){
+  const pip = document.getElementById('yourVideoWrap');
+  if(!pip) return;
+  try { const c = localStorage.getItem('rosham_pip_corner'); if(c && ['tl','tr','bl','br'].includes(c)){ pip.classList.remove('pip-tl','pip-tr','pip-bl','pip-br'); pip.classList.add('pip-' + c); } } catch(e){}
+  let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
+  pip.addEventListener('pointerdown', (e) => {
+    dragging = true;
+    pip.classList.add('dragging');
+    const r = pip.getBoundingClientRect();
+    ox = r.left; oy = r.top; sx = e.clientX; sy = e.clientY;
+    // switch to free positioning while dragging
+    pip.classList.remove('pip-tl','pip-tr','pip-bl','pip-br');
+    pip.style.left = r.left + 'px'; pip.style.top = r.top + 'px'; pip.style.right = 'auto'; pip.style.bottom = 'auto';
+    try { pip.setPointerCapture(e.pointerId); } catch(err){}
+    e.preventDefault();
+  });
+  pip.addEventListener('pointermove', (e) => {
+    if(!dragging) return;
+    const stage = pip.parentElement.getBoundingClientRect();
+    let nx = (ox + (e.clientX - sx)) - stage.left;
+    let ny = (oy + (e.clientY - sy)) - stage.top;
+    nx = Math.max(4, Math.min(stage.width - pip.offsetWidth - 4, nx));
+    ny = Math.max(4, Math.min(stage.height - pip.offsetHeight - 4, ny));
+    pip.style.left = nx + 'px'; pip.style.top = ny + 'px';
+  });
+  function endDrag(){
+    if(!dragging) return;
+    dragging = false;
+    pip.classList.remove('dragging');
+    const stage = pip.parentElement.getBoundingClientRect();
+    const r = pip.getBoundingClientRect();
+    const cx = (r.left - stage.left) + r.width / 2;
+    const cy = (r.top - stage.top) + r.height / 2;
+    const corner = (cy < stage.height / 2 ? 't' : 'b') + (cx < stage.width / 2 ? 'l' : 'r');
+    pip.style.left = ''; pip.style.top = ''; pip.style.right = ''; pip.style.bottom = '';
+    pip.classList.add('pip-' + corner);
+    try { localStorage.setItem('rosham_pip_corner', corner); } catch(e){}
+  }
+  pip.addEventListener('pointerup', endDrag);
+  pip.addEventListener('pointercancel', endDrag);
+})();
 
 // ===== QoL: Scroll-to-top button on the landing screen =====
 (function(){
@@ -20207,7 +20510,7 @@ function renderFriendsInto(sel){
 }
 
 // ===== PLAY PAGE buttons =====
-on('#playPageFindBtn', 'click', () => $('#findBtn')?.click());
+on('#playPageFindBtn', 'click', findMatch);
 on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
 on('#playPageChallengeBtn', 'click', () => openChallengePicker());
 on('#playRankCard', 'click', () => showNavPage('rank'));
