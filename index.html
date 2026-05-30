@@ -1297,11 +1297,12 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
   cursor: pointer;
 }
 /* ===== DM rich messaging (reactions, reply, typing, receipts) ===== */
-.chat-msg-row{ display:flex; flex-direction:column; gap:3px; max-width:82%; position:relative; }
-.chat-msg-row.me{ align-self:flex-end; align-items:flex-end; }
-.chat-msg-row.them{ align-self:flex-start; align-items:flex-start; }
-.chat-msg-row .chat-msg{ align-self:inherit; cursor:default; }
-.msg-text{ white-space:pre-wrap; }
+.chat-msg-row{ display:flex; flex-direction:column; gap:3px; width:100%; position:relative; }
+.chat-msg-row.me{ align-items:flex-end; }
+.chat-msg-row.them{ align-items:flex-start; }
+.chat-msg-row .chat-msg{ width:fit-content; max-width:80%; cursor:default; }
+.msg-text{ white-space:pre-wrap; overflow-wrap:anywhere; }
+.chat-msg-time{ display:inline-block; margin-left:8px; }
 .msg-reply{ display:flex; flex-direction:column; gap:1px; border-left:3px solid rgba(255,255,255,.45); padding:3px 8px; margin:-2px 0 5px; border-radius:6px; background:rgba(0,0,0,.16); font-size:11.5px; max-width:100%; }
 .chat-msg.them .msg-reply{ border-left-color:var(--mint); background:rgba(255,255,255,.04); }
 .msg-reply-name{ font-weight:700; opacity:.9; }
@@ -1335,6 +1336,24 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .chat-emoji-palette button:hover{ background:var(--surface-3); }
 .chat-emoji-btn{ width:38px; flex:0 0 auto; border-radius:10px; background:var(--surface-2); border:1px solid var(--line); font-size:18px; cursor:pointer; }
 .chat-emoji-btn:hover{ border-color:var(--mint); }
+/* ===== Weekly challenges ===== */
+.weekly-list{ display:flex; flex-direction:column; gap:13px; }
+.weekly-row{ display:flex; flex-direction:column; gap:5px; }
+.weekly-row.done{ opacity:.72; }
+.weekly-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.weekly-goal{ font-size:13px; font-weight:600; color:var(--text); }
+.weekly-xp{ font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--mint); white-space:nowrap; }
+.weekly-meta{ font-family:var(--font-mono); font-size:10px; color:var(--text-dim); align-self:flex-end; }
+.weekly-foot{ margin-top:12px; font-size:11px; color:var(--text-dim); }
+.weekly-foot b{ color:var(--mint); }
+/* ===== Subtle level-up toast ===== */
+.levelup-toast{ position:fixed; top:-140px; left:50%; transform:translateX(-50%); z-index:520; display:flex; align-items:center; gap:13px; padding:11px 20px 11px 11px; border-radius:16px; background:linear-gradient(135deg, rgba(34,211,163,.16), var(--surface)); border:1px solid rgba(34,211,163,.4); box-shadow:0 22px 55px -22px rgba(0,0,0,.75); opacity:0; transition:top .45s cubic-bezier(.2,1,.3,1), opacity .3s; pointer-events:none; max-width:92vw; }
+.levelup-toast.show{ top:18px; opacity:1; }
+.lut-badge{ width:46px; height:46px; border-radius:13px; display:grid; place-items:center; font-family:var(--font-display); font-stretch:78%; font-weight:900; font-size:22px; color:#06251c; background:linear-gradient(135deg,var(--mint),#15a079); box-shadow:0 0 0 4px rgba(34,211,163,.18); flex:0 0 auto; }
+.lut-title{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:12px; letter-spacing:.12em; color:var(--mint); }
+.lut-sub{ font-size:13.5px; color:var(--text); font-weight:600; }
+.lut-titles{ font-size:12px; color:var(--text-dim); margin-top:2px; }
+@media(max-width:560px){ .levelup-toast.show{ top:10px; } .lut-badge{ width:40px; height:40px; font-size:19px; } }
 
 
 header{
@@ -3924,6 +3943,7 @@ h1.section-title .accent{
 .lb-row .rating svg{width:12px; height:12px;}
 
 .friend-actions, .req-actions{display:flex; gap:5px;}
+.icon-btn.danger:hover{ color:var(--coral); border-color:var(--coral); }
 .icon-btn{
   width:30px; height:30px;
   border-radius:8px;
@@ -10635,16 +10655,6 @@ const FIREBASE_CONFIG = {
             <h1 class="hx-wordmark">ROSH<span class="hx-cam">CAM</span></h1>
             <p class="hx-tag">Webcam rock · paper · scissors against real strangers. Read their eyes, throw first, and climb from Bronze to Grandmaster.</p>
             <div class="hx-play">
-              <div class="match-options hx-options">
-                <span class="opt-pill active" data-opt="region" data-val="same" id="optRegion">
-                  <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-globe"/></svg>
-                  <span class="lab">Same region</span>
-                </span>
-                <span class="opt-pill" id="optRanged">
-                  <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-trophy"/></svg>
-                  <span class="lab">Similar rank only</span>
-                </span>
-              </div>
               <button class="btn-cta hx-cta" id="findBtn">
                 <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
                 <span>Find a stranger</span>
@@ -10793,6 +10803,16 @@ const FIREBASE_CONFIG = {
               </div>
             </div>
 
+            <!-- Weekly challenges (XP) -->
+            <div class="card" id="weeklyChallengeCard">
+              <div class="card-hd">
+                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg> Weekly challenges</div>
+                <span class="daily-streak-mini" id="weeklyDoneBadge">0/3</span>
+              </div>
+              <div class="weekly-list" id="weeklyList"></div>
+              <div class="weekly-foot">3 fresh challenges every week · rewards are <b>XP</b></div>
+            </div>
+
             <!-- Friends -->
             <div class="card" id="friendsCard">
               <div class="card-hd">
@@ -10850,10 +10870,6 @@ const FIREBASE_CONFIG = {
                 <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
                 <span>Find a stranger</span>
               </button>
-              <div class="pmc-opts">
-                <span class="opt-pill active" id="playOptRegion"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-globe"/></svg><span class="lab">Same region</span></span>
-                <span class="opt-pill" id="playOptRanked"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-trophy"/></svg><span class="lab">Similar rank</span></span>
-              </div>
             </div>
           </div>
           <div class="play-side">
@@ -11792,6 +11808,15 @@ const FIREBASE_CONFIG = {
 </div>
 
 <!-- LEVEL UP OVERLAY -->
+<!-- Subtle level-up toast (non-blocking) -->
+<div class="levelup-toast" id="levelupToast">
+  <div class="lut-badge" id="luToastLevel">2</div>
+  <div class="lut-text">
+    <div class="lut-title">LEVEL UP</div>
+    <div class="lut-sub" id="luToastSub">You reached Level 2</div>
+    <div class="lut-titles" id="luToastTitles" style="display:none;"></div>
+  </div>
+</div>
 <div class="levelup-overlay" id="levelupOverlay">
   <div class="levelup-rays"></div>
   <div class="levelup-particles" id="levelupParticles"></div>
@@ -12817,25 +12842,25 @@ function rankFromRating(rating){
     // Bronze: split 0..1099 into Bronze III (low), II, I (high)
     const w = 1100/3;
     let tier;
-    if(rating < w) tier = 3;
+    if(rating < w) tier = 1;
     else if(rating < 2*w) tier = 2;
-    else tier = 1;
+    else tier = 3;
     return packRank('bronze', tier, rating);
   }
   for(let i = RANKS.length - 1; i >= 0; i--){
     const r = RANKS[i];
     if(rating >= r.base){
       if(r.id === 'grandmaster'){
-        return packRank('grandmaster', 1, rating);
+        return packRank('grandmaster', 3, rating);
       }
       const next = RANKS[i+1];
       const span = next.base - r.base;
       const w = span / 3;
-      // tier III = lowest, I = highest within rank
+      // tier I = lowest, III = highest within rank (ascends with skill)
       let tier;
-      if(rating < r.base + w) tier = 3;
+      if(rating < r.base + w) tier = 1;
       else if(rating < r.base + 2*w) tier = 2;
-      else tier = 1;
+      else tier = 3;
       return packRank(r.id, tier, rating);
     }
   }
@@ -12844,9 +12869,10 @@ function rankFromRating(rating){
 function packRank(rankId, tier, rating){
   const r = RANKS.find(x => x.id === rankId);
   const tierRoman = tier === 1 ? 'I' : tier === 2 ? 'II' : 'III';
-  // global index 0-20 for compare
-  const index = RANKS.findIndex(x => x.id === rankId) * 3 + (3 - tier);
-  return { id:rankId, name:r.name, icon:r.icon, cls:r.cls, color:r.color, color2:r.color2, tier, tierRoman, tierName: `${r.name} ${tierRoman}`, index, rating };
+  // global index for compare — higher tier number is higher within a rank now
+  const index = RANKS.findIndex(x => x.id === rankId) * 3 + (tier - 1);
+  const tierName = rankId === 'grandmaster' ? r.name : `${r.name} ${tierRoman}`;
+  return { id:rankId, name:r.name, icon:r.icon, cls:r.cls, color:r.color, color2:r.color2, tier, tierRoman, tierName, index, rating };
 }
 function rankProgressToNext(rating){
   const cur = rankFromRating(rating);
@@ -12864,13 +12890,13 @@ function rankProgressToNext(rating){
     if(r.id === 'bronze'){
       // bronze has 3 tiers within 0..1099
       const wb = 1100/3;
-      thresholds.push({ id:'bronze', tier:3, threshold: 0 });
+      thresholds.push({ id:'bronze', tier:1, threshold: 0 });
       thresholds.push({ id:'bronze', tier:2, threshold: Math.floor(wb) });
-      thresholds.push({ id:'bronze', tier:1, threshold: Math.floor(2*wb) });
+      thresholds.push({ id:'bronze', tier:3, threshold: Math.floor(2*wb) });
     } else {
-      thresholds.push({ id:r.id, tier:3, threshold: r.base });
+      thresholds.push({ id:r.id, tier:1, threshold: r.base });
       thresholds.push({ id:r.id, tier:2, threshold: r.base + Math.floor(w) });
-      thresholds.push({ id:r.id, tier:1, threshold: r.base + Math.floor(2*w) });
+      thresholds.push({ id:r.id, tier:3, threshold: r.base + Math.floor(2*w) });
     }
   }
   // find current threshold + next
@@ -12893,8 +12919,8 @@ function rankProgressToNext(rating){
 // =================== XP / LEVEL / TITLE PROGRESSION ===================
 // XP needed to go FROM level L to L+1. Smooth exponential curve.
 function xpForLevel(level){
-  // level 1->2 needs 200, scaling up ~12% per level
-  return Math.round(200 * Math.pow(1.12, level - 1));
+  // level 1->2 needs 280, scaling up ~16% per level (intentionally a slower climb)
+  return Math.round(280 * Math.pow(1.16, level - 1));
 }
 // Total cumulative XP required to REACH a given level (level 1 = 0)
 function totalXpForLevel(level){
@@ -13592,6 +13618,12 @@ const sfxRankUp=()=>{
   const notes = [523, 659, 784, 1047, 1319];
   notes.forEach((n, i) => setTimeout(() => tone(n, 0.18, 'triangle', 0.14), i * 90));
   setTimeout(() => tone(1568, 0.4, 'triangle', 0.16), notes.length * 90);
+};
+// Distinct, lighter level-up chime — deliberately NOT the rank-up sample/fanfare.
+const sfxLevelUp=()=>{
+  tone(659, 0.10, 'sine', 0.10);
+  setTimeout(() => tone(988, 0.12, 'sine', 0.11), 85);
+  setTimeout(() => tone(1319, 0.20, 'triangle', 0.09), 190);
 };
 
 // Combo popup display
@@ -14429,6 +14461,7 @@ function renderFriendsFromCache(){
         <button class="icon-btn" title="Message" data-action="message" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></button>
         <button class="icon-btn" title="View profile" data-action="view" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></button>
         ${isOn ? `<button class="icon-btn accept" title="Challenge" data-action="challenge" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
+        <button class="icon-btn danger" title="Remove friend" data-action="remove" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
       </div>
     `;
     row.querySelectorAll('button').forEach(btn => {
@@ -14439,6 +14472,7 @@ function renderFriendsFromCache(){
         if(action === 'view') openProfile(fuid);
         else if(action === 'challenge') sendChallenge(fuid);
         else if(action === 'message') openChatThread(fuid, f.username, f.photoURL, f.colorIdx);
+        else if(action === 'remove') removeFriend(fuid, f.username);
       });
     });
     row.addEventListener('click', () => openProfile(f.uid));
@@ -14649,7 +14683,7 @@ function paintDmThread(){
       + (m.deleted ? '' : `<button type="button" data-act="reply" title="Reply">↩</button>`)
       + ((mine && !m.deleted) ? `<button type="button" data-act="delete" title="Delete">🗑</button>` : '')
       + `</div>`;
-    row.innerHTML = `<div class="chat-msg ${mine ? 'me' : 'them'}">${inner}${rxHtml}</div>${actions}`;
+    row.innerHTML = `<div class="chat-msg ${mine ? 'me' : 'them'}">${inner}</div>${rxHtml}${actions}`;
     if(mine && id === lastMineId){
       const seen = state._otherReadAt && _dmTs(m.createdAt) && state._otherReadAt >= _dmTs(m.createdAt);
       const tick = document.createElement('div');
@@ -14721,6 +14755,7 @@ function openReactPicker(row, mid){
   pop.className = 'react-pop';
   pop.innerHTML = DM_REACTIONS.map(e => `<button type="button" data-emoji="${e}">${e}</button>`).join('');
   pop.addEventListener('click', (ev) => {
+    ev.stopPropagation();
     const b = ev.target.closest('button'); if(!b) return;
     toggleDmReaction(mid, b.dataset.emoji); pop.remove();
   });
@@ -15411,6 +15446,103 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
   }
   try { localStorage.setItem('rosham_daily', JSON.stringify(data)); } catch(e){}
   refreshDailyChallenge();
+}
+
+// ============= WEEKLY CHALLENGES (3 per week, grant XP — not ELO) =============
+const WEEKLY_CHALLENGES = [
+  { id:'w_win15',      text:'Win 15 matches this week',          goal:15, type:'wins',        xp:600 },
+  { id:'w_play30',     text:'Play 30 matches this week',         goal:30, type:'games',       xp:500 },
+  { id:'w_rounds40',   text:'Win 40 rounds this week',           goal:40, type:'roundsWon',   xp:550 },
+  { id:'w_streak5',    text:'Hit a 5-win streak this week',      goal:5,  type:'streak',      xp:500 },
+  { id:'w_predict20',  text:'Read 20 throws correctly this week',goal:20, type:'predicts',    xp:650 },
+  { id:'w_rock15',     text:'Win 15 rounds with ROCK',           goal:15, type:'rockWin',     xp:450 },
+  { id:'w_paper15',    text:'Win 15 rounds with PAPER',          goal:15, type:'paperWin',    xp:450 },
+  { id:'w_scissors15', text:'Win 15 rounds with SCISSORS',       goal:15, type:'scissorsWin', xp:450 },
+];
+// Monday-based week key so challenges refresh once a week.
+function getWeekKey(){
+  const d = new Date();
+  const day = (d.getDay() + 6) % 7; // Mon=0 … Sun=6
+  const monday = new Date(d); monday.setHours(0,0,0,0); monday.setDate(d.getDate() - day);
+  return monday.toISOString().split('T')[0];
+}
+function getWeeklyChallenges(){
+  const week = getWeekKey();
+  let data;
+  try { data = JSON.parse(localStorage.getItem('rosham_weekly') || '{}'); }
+  catch(e){ data = {}; }
+  if(data.week !== week || !Array.isArray(data.challenges) || data.challenges.length !== 3){
+    const pool = WEEKLY_CHALLENGES.slice();
+    for(let i = pool.length - 1; i > 0; i--){ const j = Math.floor(Math.random()*(i+1)); const t = pool[i]; pool[i] = pool[j]; pool[j] = t; }
+    const picks = pool.slice(0, 3).map(c => ({ ...c, progress:0, completed:false }));
+    data = { week, challenges: picks };
+    try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){}
+  }
+  return data;
+}
+function refreshWeeklyChallenges(){
+  const box = $('#weeklyList');
+  if(!box) return;
+  const data = getWeeklyChallenges();
+  box.innerHTML = '';
+  let done = 0;
+  data.challenges.forEach(c => {
+    if(c.completed) done++;
+    const pct = Math.min(100, (c.progress / c.goal) * 100);
+    const row = document.createElement('div');
+    row.className = 'weekly-row' + (c.completed ? ' done' : '');
+    row.innerHTML = `
+      <div class="weekly-top">
+        <span class="weekly-goal">${escapeHTML(c.text)}</span>
+        <span class="weekly-xp">${c.completed ? '✓ ' : ''}+${c.xp} XP</span>
+      </div>
+      <div class="ui-bar"><div class="ui-bar-fill${c.completed ? ' complete' : ''}" style="width:${pct}%"></div></div>
+      <div class="weekly-meta">${Math.min(c.progress, c.goal)}/${c.goal}</div>`;
+    box.appendChild(row);
+  });
+  const badge = $('#weeklyDoneBadge');
+  if(badge) badge.textContent = `${done}/3`;
+}
+// Award XP (used by weekly challenges) — also handles the level-up toast.
+async function grantXp(amount, reason){
+  if(!amount || !state.user || !state.profile) return;
+  const before = state.profile.totalXp || 0;
+  const after = before + amount;
+  const oldL = levelFromXp(before), newL = levelFromXp(after);
+  state.profile.totalXp = after;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { totalXp: increment(amount) }); } catch(e){ console.warn('[xp] grant', e); }
+  try { toast(`+${amount} XP · ${reason}`, 'success'); } catch(e){}
+  if(newL.level > oldL.level){
+    let newTitles = [];
+    try { const had = titlesUnlockedAt(oldL.level).map(t => t.id); newTitles = titlesUnlockedAt(newL.level).filter(t => !had.includes(t.id)); } catch(e){}
+    try { showLevelUp({ from: oldL, to: newL, newTitles }); } catch(e){}
+  }
+  try { renderHomePage(); } catch(e){}
+}
+function updateWeeklyChallengeProgress(matchResult, roundDetails){
+  if(state.isBotMatch) return;
+  const data = getWeeklyChallenges();
+  let changed = false;
+  data.challenges.forEach(c => {
+    if(c.completed) return;
+    let delta = 0;
+    switch(c.type){
+      case 'wins': if(matchResult === 'win') delta = 1; break;
+      case 'games': delta = 1; break;
+      case 'streak': { const cs = state.profile.currentStreak || 0; if(cs > c.progress){ c.progress = cs; changed = true; } break; }
+      case 'roundsWon': delta = roundDetails?.wonRounds || 0; break;
+      case 'predicts': delta = roundDetails?.predictedCorrect || 0; break;
+      case 'rockWin': delta = (roundDetails?.withMoves || []).filter(m => m === 'rock_win').length; break;
+      case 'paperWin': delta = (roundDetails?.withMoves || []).filter(m => m === 'paper_win').length; break;
+      case 'scissorsWin': delta = (roundDetails?.withMoves || []).filter(m => m === 'scissors_win').length; break;
+    }
+    if(delta > 0){ c.progress += delta; changed = true; }
+    if(c.progress >= c.goal && !c.completed){
+      c.completed = true; changed = true;
+      grantXp(c.xp, 'Weekly challenge');
+    }
+  });
+  if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
 
 // ============= RECENT PLAYERS =============
@@ -16176,6 +16308,16 @@ async function loadMatchHistory(uid){
   } catch(e){ console.warn('history load fail', e); section.style.display = 'none'; }
 }
 
+async function removeFriend(uid, username){
+  if(!uid || !state.user) return;
+  if(!confirm(`Remove ${username ? '@'+username : 'this friend'} from your friends?`)) return;
+  try {
+    await updateDoc(doc(state.db, 'users', state.user.uid), { friends: arrayRemove(uid) });
+    state.profile.friends = (state.profile.friends||[]).filter(x => x !== uid);
+    toast(`Removed ${username ? '@'+username : 'friend'}`, 'success');
+    try { renderFriends(); } catch(e){}
+  } catch(e){ console.warn('[friend] remove', e); toast('Could not remove friend', 'error'); }
+}
 async function toggleBlock(uid, username, doBlock){
   try {
     const myRef = doc(state.db, 'users', state.user.uid);
@@ -16406,8 +16548,6 @@ async function findMatch(){
       username: state.profile.username,
       country: state.profile.country,
       rating: state.profile.rating || 1000,
-      sameRegion: state.sameRegion,
-      similarRank: state.similarRank,
       colorIdx: state.profile.colorIdx || 0,
       blocked: state.profile.blocked || [],
       joinedAt: serverTimestamp(),
@@ -16557,19 +16697,9 @@ async function findMatch(){
       }
 
       const myRating = state.profile.rating || 1000;
-      const myRegion = regionOf(state.profile.country);
       let candidates = others.slice();
-      if(state.sameRegion){
-        const sameReg = candidates.filter(c => regionOf(c.country) === myRegion);
-        if(sameReg.length > 0) candidates = sameReg;
-      }
-      if(state.similarRank){
-        candidates.sort((a,b) => Math.abs((a.rating||1000)-myRating) - Math.abs((b.rating||1000)-myRating));
-        const wnd = 100 + attempts * 80;
-        candidates = candidates.filter(c => Math.abs((c.rating||1000) - myRating) <= wnd);
-      } else {
-        candidates.sort((a,b) => Math.abs((a.rating||1000)-myRating) - Math.abs((b.rating||1000)-myRating));
-      }
+      // No manual filters — always pair with the closest-rated opponent available.
+      candidates.sort((a,b) => Math.abs((a.rating||1000)-myRating) - Math.abs((b.rating||1000)-myRating));
       if(candidates.length === 0){
         $('#matchFeed').innerHTML = `<span class="blink">●</span> expanding search · ${attempts}s · ${others.length} in queue`;
         return;
@@ -18229,6 +18359,11 @@ async function endMatch(){
     predictedCorrect: state._matchPredictionsCorrect || 0,
     withMoves: state._matchWinningMoves || [],
   }); } catch(e){ console.error('[daily]', e); }
+  try { updateWeeklyChallengeProgress(result, {
+    predictedCorrect: state._matchPredictionsCorrect || 0,
+    withMoves: state._matchWinningMoves || [],
+    wonRounds: state.scoreYou || 0,
+  }); } catch(e){ console.error('[weekly]', e); }
 
   // Update profile stats + ELO (once per match, not per round)
   await updateMatchStats(result);
@@ -19052,62 +19187,25 @@ function checkForfeitNotice(){
 }
 
 // ============= LEVEL UP =============
+// Subtle, non-blocking level-up toast (slides in at the top, auto-dismisses).
+// Replaces the old full-screen overlay so it doesn't interrupt play.
 function showLevelUp(info){
-  const overlay = $('#levelupOverlay');
-  if(!overlay || !info) return;
-  setText('#levelupBadge', info.to.level);
-  setText('#levelupFrom', `Level ${info.from.level}`);
-  setText('#levelupTo', `Level ${info.to.level}`);
-
-  // New titles
-  const titlesBox = $('#levelupTitles');
-  const titleList = $('#levelupTitleList');
-  if(info.newTitles && info.newTitles.length > 0){
-    titleList.innerHTML = '';
-    info.newTitles.forEach(t => {
-      const pill = document.createElement('span');
-      pill.className = 'levelup-title-pill';
-      pill.style.setProperty('--pill-color', t.color);
-      pill.innerHTML = `<span class="dot"></span>${t.name}`;
-      titleList.appendChild(pill);
-    });
-    titlesBox.style.display = '';
-  } else {
-    titlesBox.style.display = 'none';
+  if(!info) return;
+  const toast = $('#levelupToast');
+  if(!toast){ try { sfxLevelUp(); } catch(e){} return; }
+  setText('#luToastLevel', info.to.level);
+  setText('#luToastSub', `You reached Level ${info.to.level}`);
+  const tWrap = $('#luToastTitles');
+  if(tWrap){
+    if(info.newTitles && info.newTitles.length){
+      tWrap.style.display = '';
+      tWrap.innerHTML = 'New title: ' + info.newTitles.map(t => `<b style="color:${t.color || 'var(--mint)'}">${escapeHTML(t.name)}</b>`).join(', ');
+    } else { tWrap.style.display = 'none'; tWrap.innerHTML = ''; }
   }
-
-  // Particles
-  const particles = $('#levelupParticles');
-  if(particles){
-    particles.innerHTML = '';
-    for(let i = 0; i < 30; i++){
-      const p = document.createElement('div');
-      p.className = 'lu-particle';
-      p.style.left = (Math.random() * 100) + '%';
-      p.style.top = (Math.random() * 100) + '%';
-      p.style.animationDelay = (Math.random() * 2.5) + 's';
-      p.style.animationDuration = (2 + Math.random() * 2) + 's';
-      particles.appendChild(p);
-    }
-  }
-
-  overlay.classList.add('show');
-  try { sfxRankUp && sfxRankUp(); } catch(e){}
-
-  const dismiss = () => {
-    overlay.classList.remove('show');
-    overlay.removeEventListener('click', dismiss);
-    document.removeEventListener('keydown', keyDismiss);
-    flushMenuMusic();
-  };
-  const keyDismiss = (e) => {
-    if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); }
-  };
-  setTimeout(() => {
-    overlay.addEventListener('click', dismiss);
-    document.addEventListener('keydown', keyDismiss);
-  }, 1200);
-  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, 9000);
+  toast.classList.remove('show'); void toast.offsetWidth; toast.classList.add('show');
+  try { sfxLevelUp(); } catch(e){}
+  clearTimeout(state._luToastTimer);
+  state._luToastTimer = setTimeout(() => { toast.classList.remove('show'); }, 4200);
 }
 
 // ============= CHAT =============
@@ -19619,14 +19717,7 @@ if(nb) nb.removeEventListener('click', nextStranger);
 on('#nextBtn', 'click', playAgain);
 
 // ============= TOGGLES =============
-on('#optRegion', 'click', () => {
-  state.sameRegion = !state.sameRegion;
-  $('#optRegion').classList.toggle('active', state.sameRegion);
-});
-on('#optRanged', 'click', () => {
-  state.similarRank = !state.similarRank;
-  $('#optRanged').classList.toggle('active', state.similarRank);
-});
+// Matchmaking region/rank options removed — matchmaking now always pairs closest rating.
 
 // One-time audio unlock — browsers block audio until a user gesture. After the
 // first interaction, resume the audio context, decode samples, then start music.
@@ -19770,6 +19861,7 @@ function renderHomePage(){
   setText('#wbSub', games > 0 ? `You've played ${games} matches. Keep climbing!` : 'Ready to throw hands?');
   const loginStreak = getLoginStreak();
   setText('#wbStreakNum', loginStreak);
+  try { refreshWeeklyChallenges(); } catch(e){}
   // world strip
   const rating = p.rating || 1000;
   const gr = computeGlobalRank(rating);
@@ -20099,6 +20191,7 @@ function renderFriendsInto(sel){
         <button class="icon-btn" data-action="message" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></button>
         <button class="icon-btn" data-action="view" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></button>
         ${isOn ? `<button class="icon-btn accept" data-action="challenge" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
+        <button class="icon-btn danger" data-action="remove" title="Remove friend" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
       </div>`;
     row.querySelectorAll('button').forEach(btn => btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -20106,6 +20199,7 @@ function renderFriendsInto(sel){
       if(a === 'view') openProfile(u);
       else if(a === 'challenge') sendChallenge(u);
       else if(a === 'message') openChatThread(u, f.username, f.photoURL, f.colorIdx);
+      else if(a === 'remove') removeFriend(u, f.username);
     }));
     row.addEventListener('click', () => openProfile(f.uid));
     body.appendChild(row);
@@ -20117,8 +20211,6 @@ on('#playPageFindBtn', 'click', () => $('#findBtn')?.click());
 on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
 on('#playPageChallengeBtn', 'click', () => openChallengePicker());
 on('#playRankCard', 'click', () => showNavPage('rank'));
-on('#playOptRegion', 'click', () => { $('#playOptRegion')?.classList.add('active'); $('#playOptRanked')?.classList.remove('active'); $('#optRegion')?.click?.(); });
-on('#playOptRanked', 'click', () => { $('#playOptRanked')?.classList.add('active'); $('#playOptRegion')?.classList.remove('active'); $('#optRanged')?.click?.(); });
 
 // ===== CHALLENGE FRIEND PICKER =====
 function openChallengePicker(){
@@ -20433,6 +20525,7 @@ on('#chatEmojiBtn', 'click', () => {
 });
 // Delegated interactions on messages (reactions, reply, delete, tap-to-show actions)
 on('#chatThreadBody', 'click', (e) => {
+  e.stopPropagation();
   const chip = e.target.closest('.rx-chip');
   if(chip){ const r = e.target.closest('.chat-msg-row'); if(r) toggleDmReaction(r.dataset.mid, chip.dataset.emoji); return; }
   const btn = e.target.closest('.msg-actions button');
@@ -20694,8 +20787,8 @@ on('#reportSubmitBtn', 'click', async () => {
     });
     // Blocking the player is best-effort — never let it fail the report.
     try {
-      await updateDoc(doc(state.db, 'users', state.user.uid), { blocked: arrayUnion(state.oppUid) });
-      if(state.profile) state.profile.blocked = [...(state.profile.blocked||[]), state.oppUid];
+      await updateDoc(doc(state.db, 'users', state.user.uid), { blocked: arrayUnion(state.oppUid), friends: arrayRemove(state.oppUid) });
+      if(state.profile){ state.profile.blocked = [...(state.profile.blocked||[]), state.oppUid]; state.profile.friends = (state.profile.friends||[]).filter(x => x !== state.oppUid); }
     } catch(blockErr){ console.warn('[report] could not block player', blockErr); }
     $('#reportModal')?.classList.remove('show');
     toast(`Reported @${state.oppProfile?.username || 'player'} — thanks, we'll review it`, 'success');
