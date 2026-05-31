@@ -140,6 +140,143 @@ body::after{
   pointer-events:none;
 }
 /* Film grain layer for cinematic feel */
+/* ============================================================ */
+/* ===== XP / RANK PROGRESS BARS — premium redesign (global) === */
+/* ============================================================ */
+/* Track: inset, rounded pill with a soft inner shadow + faint top sheen */
+.ui-bar, .mxp-bar, .rank-progress-track, .pm-level-bar{
+  position: relative;
+  height: 10px !important;
+  border-radius: 999px !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.03), transparent 60%),
+    rgba(0,0,0,.34) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.5), inset 0 0 0 1px rgba(255,255,255,.04);
+  overflow: hidden;
+}
+/* Fill: vivid gradient + glossy top highlight + outer glow, smooth springy fill */
+.ui-bar-fill, .mxp-bar-fill, .rank-progress-fill, .pm-level-bar-fill{
+  position: relative;
+  height: 100%;
+  border-radius: 999px !important;
+  transition: width 1.1s cubic-bezier(.34,1.2,.4,1) !important;
+  background-image: linear-gradient(180deg, rgba(255,255,255,.28), transparent 55%);
+  background-blend-mode: overlay;
+  will-change: width;
+}
+/* Glossy moving sheen that sweeps the filled portion (kept subtle) */
+.ui-bar-fill::before, .mxp-bar-fill::before, .pm-level-bar-fill::before{
+  content:''; position:absolute; inset:0; border-radius:999px; pointer-events:none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.4) 48%, transparent 66%);
+  transform: translateX(-120%);
+  animation: barSheen 3.2s ease-in-out 1.2s infinite;
+}
+@keyframes barSheen{ 0%{ transform:translateX(-120%); } 55%,100%{ transform:translateX(160%); } }
+/* Bright rounded leading edge so the fill tip reads as a glowing cap (sits
+   just inside the fill's right edge so the track's overflow doesn't clip it) */
+.ui-bar-fill::after, .mxp-bar-fill::after, .pm-level-bar-fill::after{
+  content:''; position:absolute; top:50%; right:1px; transform:translateY(-50%);
+  width:6px; height:6px; border-radius:50%;
+  background: rgba(255,255,255,.95);
+  box-shadow: 0 0 6px 1px rgba(255,255,255,.6);
+  opacity:.9; pointer-events:none;
+}
+/* Hide the cap when the bar is essentially empty (no fill to cap) */
+.ui-bar-fill[style*="width:0%"]::after, .ui-bar-fill[style*="width: 0%"]::after,
+.mxp-bar-fill[style*="width:0%"]::after, .mxp-bar-fill[style*="width: 0%"]::after,
+.pm-level-bar-fill[style*="width:0%"]::after, .pm-level-bar-fill[style*="width: 0%"]::after{ display:none; }
+/* Generic fill keeps its mint→coral gradient but with depth */
+.ui-bar-fill{ background-color: transparent; background:
+  linear-gradient(180deg, rgba(255,255,255,.25), transparent 55%),
+  linear-gradient(90deg, var(--mint), #5fc9ff 55%, var(--coral)) !important;
+  box-shadow: 0 0 10px rgba(34,211,163,.35); }
+/* XP (match result) bar: golden, glowing */
+.mxp-bar-fill{ background:
+  linear-gradient(180deg, rgba(255,255,255,.3), transparent 55%),
+  linear-gradient(90deg, #ffd33d, #ff9a3d) !important;
+  box-shadow: 0 0 12px rgba(255,170,61,.55); }
+/* Profile level bar: mint */
+.pm-level-bar-fill{ background:
+  linear-gradient(180deg, rgba(255,255,255,.28), transparent 55%),
+  linear-gradient(90deg, var(--mint), #15a079) !important;
+  box-shadow: 0 0 10px rgba(34,211,163,.45); }
+/* Home/Play rank-progress fills tint themselves with the player's rank colour */
+#rankBarFill, #playRankFill, #hsNextRankFill{ background:
+  linear-gradient(180deg, rgba(255,255,255,.28), transparent 55%),
+  linear-gradient(90deg, var(--rank-color, var(--mint)) 0%, var(--rank-color-2, #5fc9ff) 100%) !important;
+  box-shadow: 0 0 12px var(--rank-color, rgba(34,211,163,.4)); }
+/* Daily-challenge fills stay coral/amber to read as "challenge" not rank */
+#dailyProgressFill, #playDailyFill{ background:
+  linear-gradient(180deg, rgba(255,255,255,.26), transparent 55%),
+  linear-gradient(90deg, #ffd33d, var(--coral)) !important;
+  box-shadow: 0 0 10px rgba(255,140,66,.4); }
+#dailyProgressFill.complete, #playDailyFill.complete{ background:
+  linear-gradient(180deg, rgba(255,255,255,.28), transparent 55%),
+  linear-gradient(90deg, var(--mint), #15a079) !important; }
+/* Rank bar keeps its rank-colour gradient but gains the glossy top + glow */
+.rank-progress-fill{ background-image:
+  linear-gradient(180deg, rgba(255,255,255,.28), transparent 55%),
+  linear-gradient(90deg, var(--rank-color, var(--amber)) 0%, var(--rank-color-2, #d8a91d) 100%) !important;
+  box-shadow: 0 0 14px var(--rank-color, var(--amber)); }
+.rank-progress-fill::before{
+  content:''; position:absolute; inset:0; border-radius:999px; pointer-events:none;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.45) 48%, transparent 66%);
+  transform: translateX(-120%); animation: barSheen 3.2s ease-in-out 1.2s infinite;
+}
+/* Level-strip mini bar on the home rank card also gets the treatment via .ui-bar */
+/* Honour reduced motion / low power: drop the moving sheen + edge dot */
+body.reduced-motion .ui-bar-fill::before, body.reduced-motion .mxp-bar-fill::before,
+body.reduced-motion .pm-level-bar-fill::before, body.reduced-motion .rank-progress-fill::before,
+body.low-power .ui-bar-fill::before, body.low-power .mxp-bar-fill::before,
+body.low-power .pm-level-bar-fill::before, body.low-power .rank-progress-fill::before{ animation:none; opacity:0; }
+body.reduced-motion .ui-bar-fill, body.reduced-motion .mxp-bar-fill,
+body.reduced-motion .rank-progress-fill, body.reduced-motion .pm-level-bar-fill{ transition:width .2s linear !important; }
+
+/* ===== Auth / login redesign ===== */
+#screen-auth{ overflow-y:auto; -webkit-overflow-scrolling:touch; }
+.auth-layout{ display:grid; grid-template-columns:1.1fr .9fr; gap:48px; max-width:1040px; margin:0 auto; padding:48px 24px 8px; align-items:center; min-height:calc(100% - 120px); }
+.auth-brand{ display:inline-flex; align-items:center; gap:11px; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:24px; letter-spacing:.02em; margin-bottom:22px; }
+.auth-brand .tb-logo{ width:38px; height:38px; border-radius:11px; background:linear-gradient(135deg,var(--mint),#159f78); display:grid; place-items:center; color:#06120e; }
+.auth-headline{ font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:clamp(34px,4.5vw,52px); line-height:1.02; letter-spacing:-.02em; margin:0 0 16px; }
+.auth-headline .accent{ background:linear-gradient(120deg,var(--mint),var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.auth-tagline{ font-size:15px; line-height:1.6; color:var(--text-dim); max-width:520px; margin:0 0 26px; }
+.auth-features{ display:flex; flex-direction:column; gap:14px; margin-bottom:24px; }
+.auth-feat{ display:flex; gap:13px; align-items:flex-start; }
+.af-ic{ width:42px; height:42px; flex:0 0 auto; border-radius:12px; display:grid; place-items:center; background:color-mix(in srgb,var(--mc) 15%,transparent); color:var(--mc); }
+.af-ic svg{ width:21px; height:21px; }
+.auth-feat b{ display:block; font-family:var(--font-display); font-stretch:80%; font-weight:700; font-size:15px; margin-bottom:1px; }
+.auth-feat span{ font-size:13px; color:var(--text-dim); line-height:1.5; }
+.auth-trust{ display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--text-dim); font-family:var(--font-mono); }
+.auth-trust b{ color:var(--mint); }
+.auth-card{ background:linear-gradient(180deg,var(--surface),var(--bg-2)); border:1px solid var(--line); border-radius:24px; padding:30px 26px; box-shadow:0 32px 80px -34px rgba(0,0,0,.7); }
+.auth-card-head{ margin-bottom:18px; }
+.auth-card-head h2{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:24px; margin:0 0 4px; }
+.auth-card-head p{ font-size:13px; color:var(--text-dim); margin:0; }
+.auth-legal-note{ font-size:11px; color:var(--text-faint); text-align:center; margin:14px 0 0; line-height:1.5; }
+@media(max-width:860px){
+  .auth-layout{ grid-template-columns:1fr; gap:30px; padding:32px 18px 8px; }
+  .auth-intro{ text-align:center; }
+  .auth-brand, .auth-trust{ justify-content:center; }
+  .auth-tagline{ margin-left:auto; margin-right:auto; }
+  .auth-feat{ text-align:left; max-width:420px; margin:0 auto; width:100%; }
+  .auth-headline{ font-size:clamp(30px,9vw,44px); }
+}
+
+/* ===== First-visit age gate ===== */
+.age-gate{ position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; padding:24px;
+  background:radial-gradient(circle at 50% 30%, rgba(124,77,255,.18), transparent 60%), rgba(6,5,11,.97);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
+.age-gate-card{ max-width:440px; width:100%; background:linear-gradient(180deg,var(--surface),var(--bg-2)); border:1px solid var(--line); border-radius:24px; padding:30px 26px calc(26px + env(safe-area-inset-bottom,0px)); text-align:center; box-shadow:0 32px 80px -30px rgba(0,0,0,.8); animation:sheetUp .4s cubic-bezier(.2,1,.3,1); }
+.age-gate-logo{ display:inline-flex; align-items:center; gap:9px; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:20px; letter-spacing:.02em; margin-bottom:18px; }
+.age-gate-logo .tb-logo{ width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--mint),#159f78); display:grid; place-items:center; color:#06120e; }
+.age-gate-title{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:24px; margin:0 0 12px; }
+.age-gate-text{ font-size:14px; line-height:1.6; color:var(--text-dim); margin:0 0 22px; }
+.age-gate-text b{ color:var(--text); }
+.age-gate-link{ background:none; border:none; color:var(--mint); cursor:pointer; font:inherit; padding:0; text-decoration:underline; }
+.age-gate-actions{ display:flex; flex-direction:column; gap:10px; }
+.age-gate-actions .btn{ width:100%; justify-content:center; min-height:50px; }
+.age-gate-note{ font-size:11px; color:var(--text-faint); margin:16px 0 0; }
+
 /* ===== App footer ===== */
 .app-footer{ margin-top:32px; padding:24px 16px calc(20px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line-soft); text-align:center; }
 .app-footer-brand{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:18px; letter-spacing:.02em; color:var(--text-dim); }
@@ -637,6 +774,9 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
   z-index: 60;
 }
 .app.logged-in .sidebar{ display: flex; }
+/* Hide the sidebar (and topbar) during a match — the arena is fullscreen/immersive. */
+body.in-game .sidebar, body.in-game .topbar{ display: none !important; }
+body.in-game .main-col{ min-height: 100vh; }
 .sidebar-logo{
   display: flex;
   align-items: center;
@@ -829,6 +969,9 @@ svg[data-lucide-icon]{ flex-shrink: 0; }
 .mobile-nav-item.active{ color: var(--mint); }
 .mobile-nav-item.active .mni-icon{ background: rgba(34,211,163,.12); }
 .mni-icon{ width: 100%; display: grid; place-items: center; padding: 2px 0; border-radius: 10px; transition: background .15s; }
+/* "You" tab shows the user's profile picture instead of a generic icon */
+.mni-av{ width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background-size: cover; background-position: center; background-repeat: no-repeat; font-family: var(--font-display); font-weight: 800; font-size: 12px; color: #06120e; overflow: hidden; }
+.mobile-nav-item.active .mni-av{ box-shadow: 0 0 0 2px var(--mint); }
 .mobile-nav-item .mni-badge{ position: absolute; top: 4px; right: calc(50% - 16px); min-width: 15px; height: 15px; padding: 0 4px; border-radius: 999px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 9px; font-weight: 700; display: none; align-items: center; justify-content: center; }
 .mobile-nav-item{ position: relative; }
 
@@ -4917,11 +5060,47 @@ h2.match-title{
 
 /* RESPONSIVE */
 @media (max-width: 900px){
-  .mf-stage{ grid-template-columns: 1fr; gap: 24px; padding: 0 16px; }
-  .mf-center{ order: -1; }
-  .mf-vs{ font-size: 64px; }
-  .mf-player{ padding: 20px 24px; }
-  .mf-banner{ margin-bottom: 24px; }
+  /* Compact side-by-side VS that fits a phone with no scrolling:
+     two slim player columns flanking a centered VS. */
+  .match-found-v2{ padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom)); }
+  .mf-stage{
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    padding: 0 12px;
+    align-items: stretch;
+  }
+  .mf-center{ order: 0; gap: 10px; justify-content: center; }
+  .mf-player{
+    padding: 16px 8px 14px;
+    gap: 8px;
+    border-radius: 18px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    justify-content: flex-start;
+  }
+  .mf-player-side-label{ font-size: 9px; letter-spacing: .14em; }
+  .mf-avatar{ width: 68px; height: 68px; border-radius: 18px; font-size: 28px; }
+  .mf-avatar-rank{ width: 26px; height: 26px; bottom: -6px; right: -6px; padding: 3px; }
+  .mf-name{ font-size: 15px; margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mf-rank-line{ font-size: 9px; gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .mf-elo{ font-size: 12px; }
+  .mf-elo-unit{ font-size: 8px; }
+  /* Stats stack vertically so each card stays narrow */
+  .mf-stats-mini{ flex-direction: column; gap: 5px; width: 100%; padding-top: 10px; margin-top: 4px; }
+  .mf-stat-mini{ width: 100%; justify-content: center; padding: 4px 6px; font-size: 11px; }
+  /* Center VS column — compact */
+  .mf-vs{ font-size: 40px; }
+  .mf-h2h{ padding: 8px 10px; margin-top: 10px; }
+  .mf-h2h-title{ font-size: 8px; }
+  .mf-h2h-row{ font-size: 18px; }
+  .mf-h2h-label{ font-size: 8px; }
+  .mf-banner{ margin-bottom: 18px; }
+  .mf-bg-grid{ opacity: .4; }
+}
+@media (max-width: 380px){
+  .mf-avatar{ width: 58px; height: 58px; font-size: 24px; }
+  .mf-vs{ font-size: 32px; }
+  .mf-name{ font-size: 13px; }
+  .mf-stat-mini span{ font-size: 10px; }
 }
 @keyframes vsSlam{
   0%{transform:scale(2) rotate(-20deg); opacity:0;}
@@ -7610,6 +7789,77 @@ body.reduced-motion .mr-headline-strip::after, body.low-power .mr-headline-strip
   background: rgba(34,211,163,.18);
   border-color: var(--mint);
 }
+
+/* ============ MATCH RESULT — PREMIUM ANIMATION UPGRADE ============ */
+/* Pulsing aura around the card, tinted by result */
+.match-result-card-v2{ --mr-aura: rgba(34,211,163,.5); }
+.match-result-overlay:has(.mr-headline-strip.win) .match-result-card-v2{ --mr-aura: rgba(34,211,163,.55); }
+.match-result-overlay:has(.mr-headline-strip.lose) .match-result-card-v2{ --mr-aura: rgba(255,61,104,.5); }
+.match-result-overlay:has(.mr-headline-strip.draw) .match-result-card-v2{ --mr-aura: rgba(155,123,255,.5); }
+.match-result-card-v2::after{
+  content:''; position:absolute; inset:-2px; border-radius:24px; z-index:-1; pointer-events:none;
+  background:radial-gradient(120% 80% at 50% 0%, var(--mr-aura), transparent 70%);
+  filter:blur(22px); opacity:0; animation:mrAura 1s ease .25s forwards, mrAuraPulse 3.2s ease-in-out 1.4s infinite;
+}
+@keyframes mrAura{ to{ opacity:.85; } }
+@keyframes mrAuraPulse{ 0%,100%{ opacity:.6; } 50%{ opacity:1; } }
+body.low-power .match-result-card-v2::after{ display:none; }
+
+/* Punchier card entrance */
+.match-result-card-v2{ animation: mrCardIn2 .6s cubic-bezier(.16,1.2,.3,1) both; }
+@keyframes mrCardIn2{
+  0%{ transform: scale(.86) translateY(28px); opacity: 0; filter:blur(6px); }
+  60%{ transform: scale(1.02) translateY(0); opacity: 1; filter:blur(0); }
+  100%{ transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* Headline slams in with a brief overshoot + glow flash */
+.match-result-card-v2 .match-result-headline{ animation: mrHeadSlam .7s cubic-bezier(.2,1.6,.3,1) .15s both; transform-origin:left center; }
+@keyframes mrHeadSlam{
+  0%{ transform: scale(1.6); opacity: 0; letter-spacing:.1em; }
+  55%{ transform: scale(.96); opacity: 1; letter-spacing:-.03em; }
+  100%{ transform: scale(1); opacity: 1; }
+}
+.mr-headline-strip::before{
+  content:''; position:absolute; inset:0; z-index:1; pointer-events:none; opacity:0;
+  background:radial-gradient(circle at 26% 50%, rgba(255,255,255,.5), transparent 45%);
+  animation:mrHeadFlash .9s ease-out .2s both;
+}
+@keyframes mrHeadFlash{ 0%{ opacity:0; } 25%{ opacity:.9; } 100%{ opacity:0; } }
+
+/* Bigger, livelier result icon with a continuous float */
+.mr-headline-icon{ animation: mrHeadlineIconIn .8s cubic-bezier(.2,1.8,.4,1) .2s both, mrIconFloat 3s ease-in-out 1.1s infinite !important; }
+@keyframes mrIconFloat{ 0%,100%{ transform:translateY(0) rotate(0); } 50%{ transform:translateY(-4px) rotate(-4deg); } }
+
+/* Score pops in with a bounce */
+.mrc-score{ animation: mrScorePop .6s cubic-bezier(.2,1.8,.4,1) .4s both; }
+@keyframes mrScorePop{ 0%{ transform:scale(.4); opacity:0; } 60%{ transform:scale(1.15); opacity:1; } 100%{ transform:scale(1); } }
+
+/* Avatars + names slide in from their sides */
+.mrc-player.you{ animation: mrSlideL .55s cubic-bezier(.2,1.3,.4,1) .35s both; }
+.mrc-player.opp{ animation: mrSlideR .55s cubic-bezier(.2,1.3,.4,1) .35s both; }
+@keyframes mrSlideL{ from{ transform:translateX(-26px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+@keyframes mrSlideR{ from{ transform:translateX(26px); opacity:0; } to{ transform:translateX(0); opacity:1; } }
+
+/* Body sections fade-rise in a gentle stagger (skip the collapsible details,
+   which is toggled open later and must not be left in an animated state) */
+.mrc-body > *:not(#mrcDetails){ animation: mrRise .5s ease-out both; }
+.mrc-body > *:nth-child(1){ animation-delay:.5s; }
+.mrc-body > *:nth-child(2){ animation-delay:.6s; }
+.mrc-body > *:nth-child(3){ animation-delay:.7s; }
+.mrc-body > *:nth-child(4){ animation-delay:.8s; }
+.mrc-body > *:nth-child(n+5){ animation-delay:.9s; }
+@keyframes mrRise{ from{ transform:translateY(14px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+
+/* (Rank/level bar shimmer is handled by the global bar redesign block.) */
+
+/* Action buttons rise in last */
+.match-result-actions{ animation: mrRise .5s ease-out 1s both; }
+.match-result-extra{ animation: mrRise .5s ease-out 1.1s both; }
+
+/* Respect reduced motion — keep it readable, drop the motion */
+body.reduced-motion .match-result-card-v2,
+body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important; }
 
 /* RESPONSIVE */
 @media (max-width: 600px){
@@ -10645,6 +10895,19 @@ body.low-power .play-hero{ box-shadow: none !important; }
 </style>
 </head>
 <body>
+<!-- ===== FIRST-VISIT AGE GATE ===== -->
+<div class="age-gate" id="ageGate" style="display:none;">
+  <div class="age-gate-card">
+    <div class="age-gate-logo"><span class="tb-logo"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-rock"/></svg></span> ROSHCAM</div>
+    <h2 class="age-gate-title">Are you 13 or older?</h2>
+    <p class="age-gate-text">ROSHCAM connects you to <b>real strangers over live webcam</b>. You'll be visible and audible to other players. By entering you confirm you are at least <b>13 years old</b> (or the minimum age in your country) and that you accept our <button class="age-gate-link" data-open-legal="terms">Terms</button> and <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>.</p>
+    <div class="age-gate-actions">
+      <button class="btn btn-primary" id="ageGateYes">I'm 13 or older — Enter</button>
+      <button class="btn btn-ghost" id="ageGateNo">Leave</button>
+    </div>
+    <p class="age-gate-note">Never share personal information on camera. Treat every match as public.</p>
+  </div>
+</div>
 <div class="grain"></div>
 <div class="noise"></div>
 <!-- Ambient floating orbs — make the whole app feel alive (off in low-power) -->
@@ -10859,7 +11122,7 @@ body.low-power .play-hero{ box-shadow: none !important; }
     <button class="mobile-nav-item" data-mnav="play"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
     <button class="mobile-nav-item" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
     <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
-    <button class="mobile-nav-item" data-mnav="settings"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-menu"/></svg></span><span>More</span></button>
+    <button class="mobile-nav-item mni-profile" data-mnav="settings"><span class="mni-icon"><span class="mni-av" id="mnavAv">?</span></span><span>You</span></button>
   </nav>
 
   <!-- ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== -->
@@ -11054,60 +11317,89 @@ const FIREBASE_CONFIG = {
 
     <!-- ====== AUTH ====== -->
     <section class="screen" id="screen-auth">
-      <div class="auth-wrap">
-        <span class="eyebrow"><span class="dot"></span>sign in to throw hands</span>
-        <h1 class="section-title">WELCOME <span class="accent">BACK.</span></h1>
-        <p class="section-sub" style="margin-top:-8px;">Sign in to track your rating, climb the ranks, and play with friends.</p>
-
-        <button class="btn btn-google" id="googleBtn" style="max-width:380px; width:100%;">
-          <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-google"/></svg>
-          Continue with Google
-        </button>
-
-        <div class="divider">or with email</div>
-
-        <div class="auth-tabs">
-          <button class="active" data-tab="signin">Sign in</button>
-          <button data-tab="signup">Create account</button>
+      <div class="auth-layout">
+        <!-- LEFT: what ROSHCAM is -->
+        <div class="auth-intro">
+          <div class="auth-brand"><span class="tb-logo"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-rock"/></svg></span> ROSHCAM</div>
+          <h1 class="auth-headline">Rock. Paper. Scissors.<br><span class="accent">Against real people.</span></h1>
+          <p class="auth-tagline">Get matched with a stranger worldwide over live webcam, read their eyes, and throw first. Climb a ranked ladder from Bronze all the way to Legend.</p>
+          <div class="auth-features">
+            <div class="auth-feat"><span class="af-ic" style="--mc:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-camera"/></svg></span><div><b>Live webcam duels</b><span>Real opponents, real reflexes — your hand is the controller.</span></div></div>
+            <div class="auth-feat"><span class="af-ic" style="--mc:var(--coral);"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><div><b>Ranked &amp; ELO</b><span>Win to climb 9 ranks and 50 levels. Build streaks for big jumps.</span></div></div>
+            <div class="auth-feat"><span class="af-ic" style="--mc:var(--violet);"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><div><b>Friends &amp; challenges</b><span>Add friends, message, and challenge them to private duels.</span></div></div>
+            <div class="auth-feat"><span class="af-ic" style="--mc:#5fc9ff;"><svg viewBox="0 0 24 24"><use href="#i-eye-off"/></svg></span><div><b>Private by design</b><span>Video is peer-to-peer — we never record it. Streamer mode hides names.</span></div></div>
+          </div>
+          <div class="auth-trust"><span class="live-dot"></span> <b id="authOnlineCount">—</b> playing now · free to play · 13+</div>
         </div>
 
-        <form class="auth-form" id="signinForm">
-          <div class="field">
-            <label>Email</label>
-            <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+        <!-- RIGHT: sign in / sign up -->
+        <div class="auth-card">
+          <div class="auth-card-head">
+            <h2>Get started</h2>
+            <p>Create a free account or jump in as a guest.</p>
           </div>
-          <div class="field">
-            <label>Password</label>
-            <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password" />
-          </div>
-          <button class="btn btn-primary" type="submit" style="margin-top:6px;">Sign in</button>
-        </form>
+          <button class="btn btn-google" id="googleBtn" style="width:100%;">
+            <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-google"/></svg>
+            Continue with Google
+          </button>
 
-        <form class="auth-form" id="signupForm" style="display:none;">
-          <div class="field">
-            <label>Username</label>
-            <input type="text" name="username" required minlength="2" maxlength="20" placeholder="neonFox" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" />
-          </div>
-          <div class="field">
-            <label>Country</label>
-            <select name="country" required></select>
-          </div>
-          <div class="field">
-            <label>Email</label>
-            <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
-          </div>
-          <div class="field">
-            <label>Password</label>
-            <input type="password" name="password" required minlength="6" placeholder="6+ characters" autocomplete="new-password" />
-          </div>
-          <button class="btn btn-primary" type="submit" style="margin-top:6px;">Create account</button>
-        </form>
+          <div class="divider">or with email</div>
 
-        <div class="error-msg" id="authError"></div>
+          <div class="auth-tabs">
+            <button class="active" data-tab="signin">Sign in</button>
+            <button data-tab="signup">Create account</button>
+          </div>
 
-        <div class="divider">or</div>
-        <button class="btn" id="guestBtn" style="max-width:380px;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-globe"/></svg> Continue as guest</button>
+          <form class="auth-form" id="signinForm">
+            <div class="field">
+              <label>Email</label>
+              <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password" />
+            </div>
+            <button class="btn btn-primary" type="submit" style="margin-top:6px;">Sign in</button>
+          </form>
+
+          <form class="auth-form" id="signupForm" style="display:none;">
+            <div class="field">
+              <label>Username</label>
+              <input type="text" name="username" required minlength="2" maxlength="20" placeholder="neonFox" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" />
+            </div>
+            <div class="field">
+              <label>Country</label>
+              <select name="country" required></select>
+            </div>
+            <div class="field">
+              <label>Email</label>
+              <input type="email" name="email" required placeholder="you@example.com" autocomplete="email" />
+            </div>
+            <div class="field">
+              <label>Password</label>
+              <input type="password" name="password" required minlength="6" placeholder="6+ characters" autocomplete="new-password" />
+            </div>
+            <button class="btn btn-primary" type="submit" style="margin-top:6px;">Create account</button>
+          </form>
+
+          <div class="error-msg" id="authError"></div>
+
+          <div class="divider">or</div>
+          <button class="btn" id="guestBtn" style="width:100%;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-globe"/></svg> Continue as guest</button>
+          <p class="auth-legal-note">By continuing you agree to our <button class="age-gate-link" data-open-legal="terms">Terms</button> &amp; <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>. You must be 13+.</p>
+        </div>
       </div>
+
+      <!-- Auth footer -->
+      <footer class="app-footer">
+        <div class="app-footer-brand">ROSHCAM</div>
+        <div class="app-footer-links">
+          <button data-open-legal="terms">Terms of Service</button>
+          <span class="app-footer-dot">·</span>
+          <button data-open-legal="privacy">Privacy Policy</button>
+        </div>
+        <div class="app-footer-copy">© 2026 ROSHCAM · Real-time webcam Rock Paper Scissors · play responsibly</div>
+      </footer>
     </section>
 
     <!-- ====== POST-GOOGLE SIGNUP ====== -->
@@ -11333,7 +11625,7 @@ const FIREBASE_CONFIG = {
                 <span class="daily-streak-mini" id="weeklyDoneBadge">0/3</span>
               </div>
               <div class="weekly-list" id="weeklyList"></div>
-              <div class="weekly-foot">3 fresh challenges every week · rewards are <b>XP</b></div>
+              <div class="weekly-foot">3 fresh challenges every week · each rewards <b>a full level</b></div>
             </div>
 
             <!-- Friends -->
@@ -12041,6 +12333,9 @@ const FIREBASE_CONFIG = {
           <button class="arena-ctrl-btn" id="addFriendInGameBtn" title="Add as friend">
             <svg viewBox="0 0 24 24"><use href="#i-plus"/></svg>
           </button>
+          <button class="arena-ctrl-btn" id="muteOppBtn" title="Mute opponent">
+            <svg viewBox="0 0 24 24" id="muteOppIcon"><use href="#i-sound-on"/></svg>
+          </button>
           <button class="arena-ctrl-btn" id="reportBtn" title="Report player">
             <svg viewBox="0 0 24 24"><use href="#i-flag"/></svg>
           </button>
@@ -12705,19 +13000,6 @@ const FIREBASE_CONFIG = {
       </div>
     </div>
     <p style="font-size:13px;"><b>Ranks:</b> Bronze → Silver → Gold → Platinum → Diamond → Master → Grandmaster. Each rank has 3 tiers. Win to gain ELO, lose to drop. Promotion = celebration.</p>
-    <h4 style="font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; color:var(--text-faint); text-transform:uppercase; margin-top:18px; margin-bottom:10px; font-weight:700;">KEYBOARD SHORTCUTS</h4>
-    <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:8px; font-size:12px;">
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Find match</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">SPACE</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Play bot</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">B</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Next match</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">N</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Leave match</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">L</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Predict rock</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">1</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Predict paper</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">2</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Predict scissors</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">3</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Add friend</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">F</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Mute</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">M</kbd></div>
-      <div style="display:flex; justify-content:space-between; padding:6px 10px; background:var(--surface-2); border-radius:8px;"><span>Help</span><kbd style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--font-mono);font-size:10px;">?</kbd></div>
-    </div>
   </div>
 </div>
 
@@ -13516,14 +13798,14 @@ const AVATAR_EMOJIS = []; // kept empty for backward-compat references
 // Base rating starts at 1000. Bronze covers 0-1099 (so everyone starts Bronze III).
 const RANKS = [
   { id:'bronze',      name:'Bronze',      icon:'i-rank-bronze',      cls:'rank-bronze',      base:0,    color:'#cd7f32', color2:'#a06424' },
-  { id:'silver',      name:'Silver',      icon:'i-rank-silver',      cls:'rank-silver',      base:1100, color:'#c0c0c0', color2:'#888' },
-  { id:'gold',        name:'Gold',        icon:'i-rank-gold',        cls:'rank-gold',        base:1300, color:'#ffd33d', color2:'#d8a91d' },
-  { id:'platinum',    name:'Platinum',    icon:'i-rank-platinum',    cls:'rank-platinum',    base:1500, color:'#5dffba', color2:'#3edd95' },
-  { id:'diamond',     name:'Diamond',     icon:'i-rank-diamond',     cls:'rank-diamond',     base:1700, color:'#5fc9ff', color2:'#3aa3d9' },
-  { id:'master',      name:'Master',      icon:'i-rank-master',      cls:'rank-master',      base:1900, color:'#a48bff', color2:'#7a5fdc' },
-  { id:'grandmaster', name:'Grandmaster', icon:'i-rank-grandmaster', cls:'rank-grandmaster', base:2100, color:'#ff3d68', color2:'#d8264f' },
-  { id:'champion',    name:'Champion',    icon:'i-rank-champion',    cls:'rank-champion',    base:2300, color:'#ff8c42', color2:'#e06a1f' },
-  { id:'legend',      name:'Legend',      icon:'i-rank-legend',      cls:'rank-legend',      base:2500, color:'#ff61c3', color2:'#d62f9e' },
+  { id:'silver',      name:'Silver',      icon:'i-rank-silver',      cls:'rank-silver',      base:1200, color:'#c0c0c0', color2:'#888' },
+  { id:'gold',        name:'Gold',        icon:'i-rank-gold',        cls:'rank-gold',        base:1500, color:'#ffd33d', color2:'#d8a91d' },
+  { id:'platinum',    name:'Platinum',    icon:'i-rank-platinum',    cls:'rank-platinum',    base:1900, color:'#5dffba', color2:'#3edd95' },
+  { id:'diamond',     name:'Diamond',     icon:'i-rank-diamond',     cls:'rank-diamond',     base:2350, color:'#5fc9ff', color2:'#3aa3d9' },
+  { id:'master',      name:'Master',      icon:'i-rank-master',      cls:'rank-master',      base:2900, color:'#a48bff', color2:'#7a5fdc' },
+  { id:'grandmaster', name:'Grandmaster', icon:'i-rank-grandmaster', cls:'rank-grandmaster', base:3550, color:'#ff3d68', color2:'#d8264f' },
+  { id:'champion',    name:'Champion',    icon:'i-rank-champion',    cls:'rank-champion',    base:4250, color:'#ff8c42', color2:'#e06a1f' },
+  { id:'legend',      name:'Legend',      icon:'i-rank-legend',      cls:'rank-legend',      base:5000, color:'#ff61c3', color2:'#d62f9e' },
 ];
 // Tier width within a rank (except Grandmaster which is open-ended top tier)
 const TIER_WIDTHS = {
@@ -13854,6 +14136,27 @@ window.addEventListener('unhandledrejection', e => {
   console.error('[unhandled promise]', e.reason);
 });
 function setText(sel, text){ const el = $(sel); if(el) el.textContent = text; }
+// Animate a number counting up to a target value (skips animation in reduced/low-power).
+function countUp(sel, target, durMs, delayMs){
+  const el = typeof sel === 'string' ? $(sel) : sel;
+  if(!el) return;
+  target = Math.round(target || 0);
+  if(document.body.classList.contains('reduced-motion') || document.body.classList.contains('low-power') || target <= 0){
+    el.textContent = target; return;
+  }
+  el.textContent = '0';
+  const start = () => {
+    const t0 = performance.now();
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / (durMs || 600));
+      const eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(eased * target);
+      if(p < 1) requestAnimationFrame(tick); else el.textContent = target;
+    };
+    requestAnimationFrame(tick);
+  };
+  if(delayMs) setTimeout(start, delayMs); else start();
+}
 function setHTML(sel, html){ const el = $(sel); if(el) el.innerHTML = html; }
 function showErr(sel, text){
   const el = $(sel);
@@ -14324,7 +14627,7 @@ function applySampleVolume(){
 function applyVoiceVolume(){
   try {
     const v = $('#oppVideo');
-    if(v) v.volume = state.muted ? 0 : _clamp01(_voiceVol());
+    if(v){ v.volume = state.muted ? 0 : _clamp01(_voiceVol()); v.muted = !!state._oppMuted; }
   } catch(e){}
 }
 // Apply every channel at once (music + opponent voice). One-shot SFX read the
@@ -14892,6 +15195,7 @@ function watchGlobalStats(){
       setText('#queueSize', active);
       setText('#heroOnlineCount', active);
       setText('#playHeroOnline', active);
+      setText('#authOnlineCount', active);
     }, (err) => {
       console.error('global stats queue listener failed:', err);
       // NOTE: do NOT call showRulesError here — global stats are non-critical
@@ -15180,6 +15484,19 @@ async function renderFriends(){
       const q = query(collection(state.db, 'users'), where(documentId(), 'in', batch));
       const snap = await getDocs(q);
       snap.forEach(d => { state._friendDocs[d.id] = d.data(); });
+    }
+    // Self-healing mutual check: if someone I list no longer lists me back
+    // (they removed me), drop them from my side too so it converges both ways.
+    const myUid = state.user?.uid;
+    const stale = friendUids.filter(fid => {
+      const fd = state._friendDocs[fid];
+      return fd && Array.isArray(fd.friends) && !fd.friends.includes(myUid);
+    });
+    if(stale.length){
+      try {
+        await updateDoc(doc(state.db, 'users', myUid), { friends: arrayRemove(...stale) });
+        state.profile.friends = (state.profile.friends||[]).filter(x => !stale.includes(x));
+      } catch(e){ console.warn('[friend] mutual-cleanup', e); }
     }
     renderFriendsFromCache();
     attachFriendPresence();
@@ -16223,7 +16540,7 @@ function refreshWeeklyChallenges(){
     row.innerHTML = `
       <div class="weekly-top">
         <span class="weekly-goal">${escapeHTML(c.text)}</span>
-        <span class="weekly-xp">${c.completed ? '✓ ' : ''}+${c.xp} XP</span>
+        <span class="weekly-xp">${c.completed ? '✓ ' : ''}+1 LEVEL</span>
       </div>
       <div class="ui-bar"><div class="ui-bar-fill${c.completed ? ' complete' : ''}" style="width:${pct}%"></div></div>
       <div class="weekly-meta">${Math.min(c.progress, c.goal)}/${c.goal}</div>`;
@@ -16268,7 +16585,9 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
     if(delta > 0){ c.progress += delta; changed = true; }
     if(c.progress >= c.goal && !c.completed){
       c.completed = true; changed = true;
-      grantXp(c.xp, 'Weekly challenge');
+      // Each weekly challenge grants a FULL level's worth of XP at your current level.
+      const curLvl = levelFromXp(state.profile?.totalXp || 0).level;
+      grantXp(xpForLevel(curLvl), 'Weekly challenge · +1 level');
     }
   });
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
@@ -16733,11 +17052,24 @@ function attachLeaderboardListener(){
       query(collection(state.db, 'users'), orderBy('rating', 'desc'), limit(20)),
       (snap) => {
         state.leaderboard = [];
-        snap.forEach(d => state.leaderboard.push(d.data()));
+        snap.forEach(d => { const u = d.data(); if(u && u.username) state.leaderboard.push(u); });
         renderLeaderboard();
-      }
+      },
+      (err) => { console.warn('[leaderboard] ordered query failed, falling back', err); loadLeaderboardFallback(); }
     );
-  } catch(e){ console.warn('leaderboard listen fail', e); }
+  } catch(e){ console.warn('leaderboard listen fail', e); loadLeaderboardFallback(); }
+}
+// Fallback: read users without orderBy (no composite index needed) and sort client-side.
+// Fixes "no players ranked yet" when the ordered query is blocked or users lack a rating.
+async function loadLeaderboardFallback(){
+  try {
+    const snap = await getDocs(query(collection(state.db, 'users'), limit(100)));
+    const players = [];
+    snap.forEach(d => { const u = d.data(); if(u && u.username) players.push(u); });
+    players.sort((a,b) => (b.rating||1000) - (a.rating||1000));
+    state.leaderboard = players.slice(0, 20);
+    renderLeaderboard();
+  } catch(e){ console.warn('[leaderboard] fallback failed', e); }
 }
 function renderLeaderboard(){
   const body = $('#leaderboardBody');
@@ -19569,6 +19901,8 @@ function showMatchResultScreen(result){
   // Make sure no menu music / countdown tail is bleeding in under the result +
   // rank-up audio. (Music resumes cleanly once the result overlay is dismissed.)
   try { stopCountdownSample(); stopMenuMusic(true); state._wantMenuMusic = true; } catch(e){}
+  // A satisfying haptic pulse keyed to the outcome.
+  try { haptic(result === 'win' ? [40,40,90] : result === 'lose' ? [120] : [30,30,30]); } catch(e){}
   const overlay = $('#matchResultOverlay');
   const card = $('#matchResultCard');
   const headline = $('#matchResultHeadline');
@@ -19611,8 +19945,8 @@ function showMatchResultScreen(result){
     sub.textContent = `Best of 3 · tied ${state.scoreYou}–${state.scoreOpp}`;
     sfxDraw();
   }
-  setText('#matchResultYouScore', state.scoreYou);
-  setText('#matchResultOppScore', state.scoreOpp);
+  countUp('#matchResultYouScore', state.scoreYou, 600, 450);
+  countUp('#matchResultOppScore', state.scoreOpp, 600, 450);
 
   // Best-of-N label (handles overtime)
   const target = state.matchRoundsToWin || 2;
@@ -19831,7 +20165,7 @@ function showMatchResultScreen(result){
   }, 900);
 }
 
-function calcEloDelta(myRating, oppRating, score, K=24){
+function calcEloDelta(myRating, oppRating, score, K=48){
   const expected = 1 / (1 + Math.pow(10, (oppRating - myRating) / 400));
   return Math.round(K * (score - expected));
 }
@@ -20383,6 +20717,7 @@ let teardownMatch = async function(){
   state.myPrediction = null;
   state.isCaller = false;
   state.isCasual = false;
+  state._oppMuted = false;
   $('#oppVideo').srcObject = null;
   clearChat();
   console.log('[teardown] complete');
@@ -20837,6 +21172,12 @@ const PRO_TIPS = [
   'Bronze to Legend — every match counts toward your global rank.',
   'Rock is the most common opening throw. Paper is a safe first move.',
 ];
+// Paint the mobile-nav "You" tab with the user's profile picture (or initial).
+function paintMnavAvatar(){
+  const av = $('#mnavAv'); if(!av || !state.profile) return;
+  if(state.profile.photoURL){ av.style.backgroundImage = `url('${state.profile.photoURL}')`; av.textContent = ''; }
+  else { av.style.backgroundImage = 'none'; av.style.background = AVATAR_COLORS[state.profile.colorIdx||0]; av.textContent = initialOf(state.profile.username||'?'); }
+}
 function renderHomeSpotlight(p){
   if(!p) return;
   const rating = p.rating || 1000;
@@ -20851,7 +21192,7 @@ function renderHomeSpotlight(p){
     const ic = $('#hsNextRankIcon'); if(ic) ic.style.color = nextRank.color;
     setText('#hsNextRankName', prog.toNext > 0 ? nextRank.tierName : 'Max rank reached');
     setText('#hsNextRankGap', prog.toNext > 0 ? `${prog.toNext} ELO to climb` : 'You\'re at the top!');
-    const f = $('#hsNextRankFill'); if(f){ f.style.width = ((prog.progress||0) * 100) + '%'; f.style.background = nextRank.color; }
+    const f = $('#hsNextRankFill'); if(f){ f.style.width = ((prog.progress||0) * 100) + '%'; f.style.setProperty('--rank-color', nextRank.color); f.style.setProperty('--rank-color-2', nextRank.color2 || nextRank.color); }
   } catch(e){}
   // Throw style distribution
   try {
@@ -20894,6 +21235,7 @@ function renderHomePage(){
   const loginStreak = getLoginStreak();
   setText('#wbStreakNum', loginStreak);
   try { refreshWeeklyChallenges(); } catch(e){}
+  try { paintMnavAvatar(); } catch(e){}
   try { renderHomeSpotlight(p); } catch(e){ console.warn('[home] spotlight', e); }
   // world strip
   const rating = p.rating || 1000;
@@ -21393,7 +21735,7 @@ function renderPlayPage(){
   setText('#playRankTier', rank.tierName);
   setText('#playRankRating', rating);
   const prog = rankProgressToNext(rating);
-  const fill = $('#playRankFill'); if(fill) fill.style.width = (prog.progress*100)+'%';
+  const fill = $('#playRankFill'); if(fill){ fill.style.width = (prog.progress*100)+'%'; fill.style.setProperty('--rank-color', rank.color); fill.style.setProperty('--rank-color-2', rank.color2 || rank.color); }
   setText('#playRankNext', prog.nextLabel);
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games>0 ? Math.round(((p.wins||0)/games)*100) : 0;
@@ -21735,6 +22077,24 @@ document.querySelectorAll('[data-open-legal]').forEach(b => {
   });
 });
 on('#footerHelpBtn', 'click', () => $('#helpModal')?.classList.add('show'));
+
+// ===== First-visit age gate (13+) =====
+(function initAgeGate(){
+  let ok = false;
+  try { ok = localStorage.getItem('rosham_age_ok') === '1'; } catch(e){}
+  if(ok) return;
+  const gate = $('#ageGate');
+  if(!gate) return;
+  gate.style.display = 'flex';
+  on('#ageGateYes', 'click', () => {
+    try { localStorage.setItem('rosham_age_ok', '1'); } catch(e){}
+    gate.style.display = 'none';
+    try { haptic(12); } catch(e){}
+  });
+  on('#ageGateNo', 'click', () => {
+    document.body.innerHTML = '<div style="display:grid;place-items:center;min-height:100vh;padding:30px;text-align:center;font-family:system-ui,sans-serif;color:#9aa0aa;background:#06050b;">You must be 13 or older to use ROSHCAM.</div>';
+  });
+})();
 
 // ===== HAPTICS: central helper that respects the Haptics setting =====
 function haptic(pattern){
@@ -22193,6 +22553,18 @@ on('#adminUserLookup', 'click', async () => {
 
 // NEW: Leave match button (forfeit with ELO penalty)
 on('#leaveMatchBtn', 'click', forfeitMatch);
+// Mute the opponent's audio directly in a match (independent of your master mute).
+on('#muteOppBtn', 'click', () => {
+  const vid = $('#oppVideo'); if(!vid) return;
+  state._oppMuted = !state._oppMuted;
+  vid.muted = state._oppMuted;
+  const ic = $('#muteOppIcon');
+  if(ic) ic.innerHTML = `<use href="#i-sound-${state._oppMuted ? 'off' : 'on'}"/>`;
+  const btn = $('#muteOppBtn');
+  if(btn){ btn.classList.toggle('danger', state._oppMuted); btn.title = state._oppMuted ? 'Unmute opponent' : 'Mute opponent'; }
+  haptic(10);
+  toast(state._oppMuted ? 'Opponent muted' : 'Opponent unmuted', state._oppMuted ? 'info' : 'success');
+});
 
 // ===== MOBILE: chat toggle (slide-up chat sheet) =====
 on('#dockChatToggle', 'click', () => {
