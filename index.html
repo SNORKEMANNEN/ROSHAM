@@ -140,6 +140,17 @@ body::after{
   pointer-events:none;
 }
 /* Film grain layer for cinematic feel */
+/* ===== Avatar safety net — any photo-backed avatar always covers cleanly =====
+   (prevents stretched / tiled / mis-cropped profile pictures anywhere) */
+.av, .sp-av, .mrc-av, .mf-avatar, .msp-av, .av-xl, .acc-av, .pmc-av,
+.chat-conv-av, .chat-thread-av, .wb-av, .fc-av-wrap .av, .ci-avatar,
+.mf-avatar, #pmAv, #chipAv, #setAccAv, #mrYouAv, #mrOppAv{
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  overflow: hidden;
+}
+
 /* ===== Ambient floating orbs (alive background) ===== */
 .ambient{ position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden; }
 .amb-orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.5; will-change:transform; }
@@ -10489,8 +10500,12 @@ body.low-power .play-hero{ box-shadow: none !important; }
   /* Minimum 44px tap targets for icon buttons (Apple HIG) */
   .topbar-icon-btn{ width: 40px !important; height: 40px !important; }
   .icon-btn{ min-width: 38px; min-height: 38px; }
-  /* Help button: was a cramped ~28px icon; give it a real 40px square target */
-  #helpBtn{ padding: 0 !important; width: 40px; height: 40px; justify-content: center; }
+  /* Declutter the topbar on mobile: "How to play" lives in the More sheet, and
+     sound is in Settings. Keep only notifications + messages up top. */
+  #helpBtn, #muteBtn{ display: none !important; }
+  .topbar{ gap: 6px; }
+  /* Center the brand since the hamburger is hidden on mobile */
+  .topbar-brand{ font-size: 20px; }
 
   /* Mobile-nav active state: a clear filled pill so the current tab reads instantly */
   .mobile-nav-item.active .mni-icon{ background: rgba(34,211,163,.18); box-shadow: 0 0 0 1px rgba(34,211,163,.25) inset; }
@@ -14327,9 +14342,9 @@ function getGestureForShoot(){
     console.log('[gesture] SHOOT uses current frame:', state.currentGesture);
     return state.currentGesture;
   }
-  // Priority 2: very recent detection (within 1.2s) — likely a 1-frame blip
-  if(state._lastValidGesture && state._lastValidGestureAt && (Date.now() - state._lastValidGestureAt < 1200)){
-    console.log('[gesture] SHOOT uses last-valid (within 1.2s):', state._lastValidGesture);
+  // Priority 2: very recent detection (within 2s) — likely a brief tracking blip
+  if(state._lastValidGesture && state._lastValidGestureAt && (Date.now() - state._lastValidGestureAt < 2000)){
+    console.log('[gesture] SHOOT uses last-valid (within 2s):', state._lastValidGesture);
     return state._lastValidGesture;
   }
   // Priority 3: the gesture we LOCKED IN when we readied up — most reliable
@@ -14342,7 +14357,7 @@ function getGestureForShoot(){
   if(state._gestureBuffer && state._gestureBuffer.length > 0){
     const cutoff = Date.now() - 5000;
     const recent = state._gestureBuffer.filter(e => e.t > cutoff);
-    if(recent.length >= 3){ // need at least 3 frames to trust a vote
+    if(recent.length >= 2){ // need at least 2 frames to trust a vote
       const counts = { rock: 0, paper: 0, scissors: 0 };
       for(const e of recent) counts[e.g] = (counts[e.g] || 0) + 1;
       let winner = null, max = 0;
@@ -17686,7 +17701,10 @@ async function enterMatch(matchData){
   };
   state.pc.onconnectionstatechange = () => {
     const s = state.pc.connectionState;
-    if(s === 'connected') onPeerConnected();
+    if(s === 'connected'){ onPeerReconnected(); onPeerConnected(); }
+    // 'disconnected' is often transient — give a reconnect grace window instead of
+    // instantly ending. 'failed'/'closed' still go through the same grace (the peer
+    // may rejoin within 30s); only a real timeout or an explicit leave ends the match.
     else if(s === 'disconnected' || s === 'failed' || s === 'closed') onPeerDisconnected();
   };
 
@@ -17861,13 +17879,15 @@ function onPeerConnected(){
   state.pingTimer = setInterval(() => { sendPeer({type:'ping', t: Date.now()}); }, 2000);
 }
 function handlePeerMessage(msg){
+  // Any inbound message proves the peer is back — cancel a pending reconnect grace.
+  if(state._reconnecting) onPeerReconnected();
   switch(msg.type){
     case 'ready_state':
       state.oppGestureReady = msg.ready;
       updateOppReadyUI(msg.ready, msg.progress);
       maybeStartRound();
       break;
-    case 'gesture': state.oppGesture = msg.value; revealIfBothIn(); break;
+    case 'gesture': state.oppGesture = msg.value; state.oppThrowIn = true; revealIfBothIn(); break;
     // NEW: authoritative round result from the caller
     // The caller computes the outcome and broadcasts. The callee applies it
     // verbatim so both sides display identical results — no more "I see WIN, they see DRAW".
@@ -18263,6 +18283,11 @@ function resetGameUI(){
   state.countdownRunning = false;
   state.myGesture = null;
   state.oppGesture = null;
+  // Explicit submission flags — reveal must wait until BOTH sides have actually
+  // submitted their throw this round. (Avoids a race where the opponent's gesture
+  // arrives before our own SHOOT capture runs and we get falsely forfeited.)
+  state.myThrowIn = false;
+  state.oppThrowIn = false;
   // CRITICAL: reset round-result flags so the next round can apply cleanly
   state._roundResultApplied = false;
   state._pendingRoundResult = null;
@@ -18436,15 +18461,25 @@ async function runCountdown(){
 
   // Track throw stats locally
   if(state.myGesture) recordThrow(state.myGesture);
+  // Mark our throw as submitted for THIS round before broadcasting it.
+  state.myThrowIn = true;
+  // Bot matches have no peer — generate the bot's throw locally so the round resolves.
+  if(state.isBotMatch && !state.oppThrowIn){
+    const moves = ['rock','paper','scissors'];
+    state.oppGesture = moves[(Math.random()*3)|0];
+    state.oppThrowIn = true;
+  }
   sendPeer({type:'gesture', value: state.myGesture});
   await sleep(180);
   revealIfBothIn();
 }
 function revealIfBothIn(){
   if(state.phase !== 'shoot' && state.phase !== 'reveal') return;
-  if(state.myGesture === undefined) return;
-  if(!('oppGesture' in state) || state.oppGesture === undefined) return;
   if(state.phase === 'reveal') return;
+  // Only reveal once BOTH players have actually submitted a throw this round.
+  // (Gating on explicit flags — not on myGesture==null — prevents a false
+  // forfeit when the opponent's gesture message arrives before our SHOOT capture.)
+  if(!state.myThrowIn || !state.oppThrowIn) return;
   doReveal();
 }
 function doReveal(){
@@ -19939,6 +19974,9 @@ function sendChat(){
 async function handleRemoteLeft(){
   if(state.phase === 'ended') return;
   state.phase = 'ended';
+  // Stop any reconnect-grace countdown — the match is ending now.
+  state._reconnecting = false;
+  clearTimeout(state._reconnectTimer); clearInterval(state._reconnectTick);
   // If a rematch was pending, cancel its UI (opponent is gone)
   if(state.rematch && (state.rematch.meRequested || state.rematch.oppRequested)){
     state.rematch = {};
@@ -19977,7 +20015,49 @@ async function handleRemoteLeft(){
     }, 1800);
   }
 }
-function onPeerDisconnected(){ if(state.phase !== 'ended') handleRemoteLeft(); }
+// ===== Reconnect grace: hold the match open for 30s before declaring a leaver =====
+const REJOIN_GRACE_MS = 30000;
+function onPeerDisconnected(){
+  if(state.phase === 'ended') return;
+  if(state.matchOver){ handleRemoteLeft(); return; } // match already decided — just clean up
+  if(state._reconnecting) return; // already in grace
+  state._reconnecting = true;
+  state._reconnectStart = Date.now();
+  // Pause: show a reconnect banner with a live countdown
+  const banner = $('#disconnectBanner');
+  if(banner){
+    banner.classList.add('show');
+    banner.textContent = 'Opponent disconnected · waiting 30s for them to rejoin…';
+  }
+  try { addChat('sys', 'opponent disconnected · 30s to rejoin'); } catch(e){}
+  const cs = $('#oppCamStatus');
+  if(cs){ cs.classList.remove('live'); const l = cs.querySelector('span:last-child'); if(l) l.textContent = 'reconnecting…'; }
+  clearInterval(state._reconnectTick);
+  state._reconnectTick = setInterval(() => {
+    const left = Math.ceil((REJOIN_GRACE_MS - (Date.now() - state._reconnectStart)) / 1000);
+    if(banner && left > 0) banner.textContent = `Opponent disconnected · ${left}s to rejoin…`;
+  }, 1000);
+  clearTimeout(state._reconnectTimer);
+  state._reconnectTimer = setTimeout(() => {
+    // Grace expired — opponent didn't come back. Now award the win / end.
+    state._reconnecting = false;
+    clearInterval(state._reconnectTick);
+    if(state.phase !== 'ended') handleRemoteLeft();
+  }, REJOIN_GRACE_MS);
+}
+// Called when the connection recovers within the grace window.
+function onPeerReconnected(){
+  if(!state._reconnecting) return;
+  state._reconnecting = false;
+  clearTimeout(state._reconnectTimer);
+  clearInterval(state._reconnectTick);
+  const banner = $('#disconnectBanner');
+  if(banner) banner.classList.remove('show');
+  const cs = $('#oppCamStatus');
+  if(cs){ cs.classList.add('live'); const l = cs.querySelector('span:last-child'); if(l) l.textContent = 'live'; }
+  try { addChat('sys', 'opponent reconnected'); } catch(e){}
+  try { if(navigator.vibrate && !state.hapticsOff) navigator.vibrate(20); } catch(e){}
+}
 let teardownMatch = async function(){
   console.log('[teardown] starting cleanup');
   stopCountdownSample();
@@ -19989,6 +20069,9 @@ let teardownMatch = async function(){
   // connection during Play Again triggers handleRemoteLeft → showScreen('landing')
   // which kicks the user back to the lobby right after entering matchmaking.
   state.phase = 'ended';
+  // Cancel any pending reconnect grace so it can't fire after we've left.
+  state._reconnecting = false;
+  clearTimeout(state._reconnectTimer); clearInterval(state._reconnectTick);
   if(state.pingTimer){ clearInterval(state.pingTimer); state.pingTimer = null; }
   if(state.unsubMatch){ state.unsubMatch(); state.unsubMatch = null; }
   if(state.unsubCallerCands){ state.unsubCallerCands(); state.unsubCallerCands = null; }
