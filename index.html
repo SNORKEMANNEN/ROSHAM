@@ -140,6 +140,18 @@ body::after{
   pointer-events:none;
 }
 /* Film grain layer for cinematic feel */
+/* ===== Ambient floating orbs (alive background) ===== */
+.ambient{ position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden; }
+.amb-orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.5; will-change:transform; }
+.amb-orb.o1{ width:42vw; height:42vw; left:-10vw; top:-8vh; background:radial-gradient(circle, rgba(34,211,163,.5), transparent 68%); animation:ambFloat1 26s ease-in-out infinite; }
+.amb-orb.o2{ width:38vw; height:38vw; right:-8vw; top:8vh; background:radial-gradient(circle, rgba(124,77,255,.45), transparent 68%); animation:ambFloat2 32s ease-in-out infinite; }
+.amb-orb.o3{ width:34vw; height:34vw; left:14vw; bottom:-14vh; background:radial-gradient(circle, rgba(255,61,104,.34), transparent 68%); animation:ambFloat3 30s ease-in-out infinite; }
+.amb-orb.o4{ width:26vw; height:26vw; right:10vw; bottom:-6vh; background:radial-gradient(circle, rgba(95,201,255,.3), transparent 68%); animation:ambFloat1 38s ease-in-out infinite reverse; }
+@keyframes ambFloat1{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(6vw,5vh) scale(1.12); } }
+@keyframes ambFloat2{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-7vw,7vh) scale(1.08); } }
+@keyframes ambFloat3{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(5vw,-6vh) scale(1.15); } }
+body.reduced-motion .amb-orb{ animation:none !important; }
+
 .grain{
   position:fixed; inset:0;
   z-index:-1;
@@ -7067,6 +7079,12 @@ h2.match-title{
 .mr-headline-strip.win{ --result-color-gradient: linear-gradient(135deg, #17a079 0%, #0e7556 100%); }
 .mr-headline-strip.lose{ --result-color-gradient: linear-gradient(135deg, #c41f44 0%, #8c1530 100%); }
 .mr-headline-strip.draw{ --result-color-gradient: linear-gradient(135deg, #7a5cd8 0%, #5840a0 100%); }
+/* Animated shine sweep across the result header */
+.mr-headline-strip::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.22) 48%, transparent 66%);
+  transform:translateX(-120%); animation:mrShine 3.2s ease-in-out .5s infinite; }
+@keyframes mrShine{ 0%{ transform:translateX(-120%); } 55%,100%{ transform:translateX(120%); } }
+body.reduced-motion .mr-headline-strip::after, body.low-power .mr-headline-strip::after{ animation:none; opacity:0; }
 .mrc-top{
   position: relative;
   z-index: 2;
@@ -10367,7 +10385,8 @@ h2.match-title{
 
 /* ===== LOW POWER MODE — strip GPU-heavy effects for older / low-end devices ===== */
 body.low-power .grain,
-body.low-power .noise{ display: none !important; }
+body.low-power .noise,
+body.low-power .ambient{ display: none !important; }
 body.low-power *{
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
@@ -10397,30 +10416,34 @@ body.low-power .card,
 body.low-power .hx-hero,
 body.low-power .play-hero{ box-shadow: none !important; }
 
-/* ===== FACETIME-STYLE MATCH LAYOUT (all screen sizes) ===== */
-/* Opponent fills the whole stage; you are a draggable corner PiP. */
-.battle-stage{ position: relative; flex: 1; min-height: 0; padding: 0; overflow: hidden; display: block; gap: 0; grid-template-columns: none !important; grid-template-rows: none !important; }
-.duel-video.opp{ position: absolute !important; inset: 0; width: auto; height: auto; border-radius: 0; border: none; z-index: 0; margin: 0; }
-.duel-video.you{
-  position: absolute; width: 118px; height: 158px; z-index: 30; margin: 0; min-height: 0;
-  border-radius: 14px; border: 2px solid rgba(255,255,255,.6);
-  box-shadow: 0 12px 30px -10px rgba(0,0,0,.78); overflow: hidden;
-  cursor: grab; touch-action: none; transition: border-color .15s, box-shadow .15s;
+/* ===== FACETIME-STYLE MATCH LAYOUT — MOBILE ONLY (desktop keeps side-by-side) ===== */
+@media (max-width: 900px){
+  /* Opponent fills the whole stage; you are a draggable corner PiP. */
+  .battle-stage{ position: relative; flex: 1; min-height: 0; padding: 0; overflow: hidden; display: block; gap: 0; grid-template-columns: none !important; grid-template-rows: none !important; }
+  .duel-video.opp{ position: absolute !important; inset: 0; width: auto; height: auto; border-radius: 0; border: none; z-index: 0; margin: 0; }
+  .duel-video.you{
+    position: absolute; width: 118px; height: 158px; z-index: 30; margin: 0; min-height: 0;
+    border-radius: 14px; border: 2px solid rgba(255,255,255,.6);
+    box-shadow: 0 12px 30px -10px rgba(0,0,0,.78); overflow: hidden;
+    cursor: grab; touch-action: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .duel-video.you.dragging{ cursor: grabbing; transition: none; border-color: var(--mint); box-shadow: 0 16px 44px -8px rgba(0,0,0,.85); }
+  .duel-video.you.pip-tl{ top: 14px; left: 14px; right: auto; bottom: auto; }
+  .duel-video.you.pip-tr{ top: 14px; right: 14px; left: auto; bottom: auto; }
+  .duel-video.you.pip-bl{ bottom: 14px; left: 14px; right: auto; top: auto; }
+  .duel-video.you.pip-br{ bottom: 14px; right: 14px; left: auto; top: auto; }
+  .duel-video.you::after{ content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 26px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.5); opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 3; }
+  .duel-video.you:hover::after{ opacity: 1; }
 }
-.duel-video.you.dragging{ cursor: grabbing; transition: none; border-color: var(--mint); box-shadow: 0 16px 44px -8px rgba(0,0,0,.85); }
-.duel-video.you.pip-tl{ top: 14px; left: 14px; right: auto; bottom: auto; }
-.duel-video.you.pip-tr{ top: 14px; right: 14px; left: auto; bottom: auto; }
-.duel-video.you.pip-bl{ bottom: 14px; left: 14px; right: auto; top: auto; }
-.duel-video.you.pip-br{ bottom: 14px; right: 14px; left: auto; top: auto; }
-.duel-video.you::after{ content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 26px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.5); opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 3; }
-.duel-video.you:hover::after{ opacity: 1; }
 /* Countdown / VS sit above the opponent video but below the PiP */
 .duel-stage-center{ z-index: 25; }
-/* Thrown gesture = compact badge at the top, never covering the face */
+/* Thrown gesture = compact badge at the top, never covering the face (all sizes) */
 .opp-thrown, .you-thrown, .duel-thrown{ position: absolute; inset: auto; top: 12px; left: 50%; right: auto; bottom: auto; transform: translate(-50%,-8px); width: auto; height: auto; padding: 6px 8px; border-radius: 999px; background: rgba(8,8,12,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); z-index: 22; opacity: 0; transition: opacity .2s, transform .2s; }
 .opp-thrown.show, .you-thrown.show, .duel-thrown.show{ opacity: 1; transform: translate(-50%,0); }
 .opp-thrown svg, .you-thrown svg, .duel-thrown svg, .opp-thrown img, .you-thrown img, .duel-thrown img{ width: 44px; height: 44px; filter: drop-shadow(0 3px 10px rgba(0,0,0,.55)); }
-.duel-video.you .opp-thrown svg, .duel-video.you .you-thrown svg{ width: 26px; height: 26px; }
+@media (max-width: 900px){
+  .duel-video.you .opp-thrown svg, .duel-video.you .you-thrown svg{ width: 26px; height: 26px; }
+}
 @media (max-width: 560px){
   .duel-video.you{ width: 100px; height: 136px; }
   .opp-thrown svg, .you-thrown svg, .duel-thrown svg, .opp-thrown img, .you-thrown img, .duel-thrown img{ width: 38px; height: 38px; }
@@ -10540,6 +10563,13 @@ body.low-power .play-hero{ box-shadow: none !important; }
 <body>
 <div class="grain"></div>
 <div class="noise"></div>
+<!-- Ambient floating orbs — make the whole app feel alive (off in low-power) -->
+<div class="ambient" aria-hidden="true">
+  <span class="amb-orb o1"></span>
+  <span class="amb-orb o2"></span>
+  <span class="amb-orb o3"></span>
+  <span class="amb-orb o4"></span>
+</div>
 <div class="shoot-flash" id="shootFlash"></div>
 <div class="win-vignette" id="winVignette"></div>
 <div class="lose-vignette" id="loseVignette"></div>
@@ -11036,9 +11066,9 @@ const FIREBASE_CONFIG = {
             <h1 class="hx-wordmark">ROSH<span class="hx-cam">CAM</span></h1>
             <p class="hx-tag">Webcam rock · paper · scissors against real strangers. Read their eyes, throw first, and climb from Bronze to Grandmaster.</p>
             <div class="hx-play">
-              <button class="btn-cta hx-cta" id="findBtn">
+              <button class="btn-cta hx-cta" id="homePlayBtn" data-goto-play>
                 <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
-                <span>Find a stranger</span>
+                <span>Play</span>
                 <kbd class="cta-kbd">SPACE</kbd>
               </button>
               <button class="btn-icon-action hx-cam-btn" id="cameraSetupBtn" title="Adjust your camera">
@@ -13402,6 +13432,34 @@ function levelFromXp(totalXp){
     totalXp,
   };
 }
+// Level badge colour — shifts through tiers as you climb (gray → … → legendary).
+// Returns { a, b } gradient stops + ideal dark/light text colour.
+const LEVEL_TIERS = [
+  { min:1,  a:'#9aa0aa', b:'#7f868f', t:'#0a0a0f' }, // 1-4   slate
+  { min:5,  a:'#7fd1ff', b:'#3a93d8', t:'#04121c' }, // 5-9   blue
+  { min:10, a:'#5dffba', b:'#15a079', t:'#04221a' }, // 10-14 mint
+  { min:15, a:'#ffd33d', b:'#ff9a3d', t:'#1c1402' }, // 15-19 gold (classic)
+  { min:20, a:'#ff9a3d', b:'#ff5a2d', t:'#1c0c02' }, // 20-29 orange
+  { min:30, a:'#ff3d68', b:'#d8264f', t:'#fff' },     // 30-39 coral
+  { min:40, a:'#a48bff', b:'#7a5fdc', t:'#fff' },     // 40-49 violet
+  { min:50, a:'#ff61c3', b:'#a48bff', t:'#fff' },     // 50-69 magenta→violet
+  { min:70, a:'#ffd700', b:'#ff61c3', t:'#1c1402' }, // 70-98 prismatic
+  { min:99, a:'#ffffff', b:'#ffd700', t:'#1c1402' }, // 99    max — white-gold
+];
+function levelTier(level){
+  let tier = LEVEL_TIERS[0];
+  for(const t of LEVEL_TIERS){ if(level >= t.min) tier = t; }
+  return tier;
+}
+function levelGradient(level){ const t = levelTier(level); return `linear-gradient(135deg, ${t.a}, ${t.b})`; }
+// Paint a level badge element: gradient bg + readable text colour.
+function paintLevelBadge(elOrSel, level){
+  const el = typeof elOrSel === 'string' ? $(elOrSel) : elOrSel;
+  if(!el) return;
+  const t = levelTier(level || 1);
+  el.style.background = `linear-gradient(135deg, ${t.a}, ${t.b})`;
+  el.style.color = t.t;
+}
 
 // Titles unlocked at level milestones. Player can equip any unlocked title.
 const TITLES = [
@@ -13701,6 +13759,24 @@ function bigBurst(color){
     const ang = Math.random()*Math.PI*2;
     const speed = 4 + Math.random()*14;
     particles.push({x:cx,y:cy,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed-3,g:0.18,life:90+Math.random()*60,size:3+Math.random()*5,color});
+  }
+}
+// Celebratory confetti raining from the top (used on a match win).
+function launchConfetti(){
+  if(document.body.classList.contains('low-power')) return;
+  const colors = ['#22d3a3','#9b7bff','#ffd33d','#ff3d68','#5fc9ff','#ff8c42'];
+  const W = window.innerWidth;
+  for(let i=0;i<140;i++){
+    particles.push({
+      x: Math.random()*W,
+      y: -20 - Math.random()*120,
+      vx: (Math.random()-.5)*3,
+      vy: 2 + Math.random()*4,
+      g: 0.05 + Math.random()*0.05,
+      life: 150 + Math.random()*90,
+      size: 4 + Math.random()*5,
+      color: colors[(Math.random()*colors.length)|0],
+    });
   }
 }
 function animateParticles(){
@@ -14463,7 +14539,7 @@ function updateSidebarProfile(){
     else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; av.textContent = initialOf(p.username||'?'); }
   }
   const lvl = levelFromXp(p.totalXp || 0);
-  setText('#sidebarLevel', lvl.level);
+  setText('#sidebarLevel', lvl.level); paintLevelBadge('#sidebarLevel', lvl.level);
   let title = p.equippedTitle ? titleById(p.equippedTitle) : null;
   if(!title || lvl.level < title.level){ const u = titlesUnlockedAt(lvl.level); title = u[u.length-1] || TITLES[0]; }
   const tEl = $('#sidebarTitle');
@@ -14525,7 +14601,7 @@ function refreshStatsUI(){
 
   // ===== LEVEL STRIP =====
   const lvl = levelFromXp(p.totalXp || 0);
-  setText('#heroLevelBadge', lvl.level);
+  setText('#heroLevelBadge', lvl.level); paintLevelBadge('#heroLevelBadge', lvl.level);
   setText('#chipLevel', lvl.level);
   // Equipped title (default to highest unlocked if none set)
   let equipped = p.equippedTitle ? titleById(p.equippedTitle) : null;
@@ -16623,7 +16699,7 @@ async function openProfile(uid){
 
     // Level + title
     const lvl = levelFromXp(p.totalXp || 0);
-    setText('#pmLevelBadge', lvl.level);
+    setText('#pmLevelBadge', lvl.level); paintLevelBadge('#pmLevelBadge', lvl.level);
     setText('#pmLevelStat', lvl.level);
     let pTitle = p.equippedTitle ? titleById(p.equippedTitle) : null;
     if(!pTitle || lvl.level < pTitle.level){
@@ -18318,13 +18394,10 @@ async function runCountdown(){
   // Custom countdown sample plays once across the whole 3·2·1 sequence.
   // Falls back to the per-tick synth beeps if no sample is available.
   const _cdSample = playCountdownSample();
-  // Sync the visual 3·2·1 to the countdown sound: stretch each step so SHOOT
-  // lands near the end of the audio. Snappy 700ms fallback when there's no sample.
-  let _cdStep = 700;
-  if(_cdSample){
-    const _cdDur = (sampleAudio.countdownBuf && sampleAudio.countdownBuf.duration) ? sampleAudio.countdownBuf.duration : 5.8;
-    _cdStep = Math.max(700, Math.min(1700, Math.round(_cdDur * 1000 * 0.88 / 3)));
-  }
+  // Sync the visual 3·2·1 to the countdown sound: with the custom sample, each
+  // step lasts ~1300ms so SHOOT lands ~3.9s into the mp3 (mp3 is ~5.8s). Snappy
+  // 700ms fallback when there's no sample.
+  const _cdStep = _cdSample ? 1300 : 700;
   for(const b of ['3','2','1']){
     cd.textContent = b;
     cd.classList.remove('flash'); void cd.offsetWidth; cd.classList.add('flash');
@@ -19166,7 +19239,7 @@ function populateMatchXpCard(){
   // We animate from the OLD level state to the NEW
   const oldL = award.oldLevel;
   const newL = award.newLevel;
-  setText('#mxpLevelBadge', oldL.level);
+  setText('#mxpLevelBadge', oldL.level); paintLevelBadge('#mxpLevelBadge', oldL.level);
   setText('#mxpGain', `+${award.xp} XP`);
 
   // Title (equipped or highest unlocked at old level)
@@ -19192,7 +19265,7 @@ function populateMatchXpCard(){
         // animate to 100%, then reset to new level's progress
         fill.style.width = '100%';
         setTimeout(() => {
-          setText('#mxpLevelBadge', newL.level);
+          setText('#mxpLevelBadge', newL.level); paintLevelBadge('#mxpLevelBadge', newL.level);
           fill.style.transition = 'none';
           fill.style.width = '0%';
           void fill.offsetWidth;
@@ -19246,6 +19319,7 @@ function showMatchResultScreen(result){
     sfxWin();
     setTimeout(() => bigBurst('#22d3a3'), 300);
     setTimeout(() => bigBurst('#9b7bff'), 600);
+    setTimeout(() => launchConfetti(), 250);
   } else if(result === 'lose'){
     headline.textContent = 'DEFEAT';
     headline.classList.add('lose');
@@ -19743,7 +19817,7 @@ function showLevelUp(info){
   if(!info) return;
   const toast = $('#levelupToast');
   if(!toast){ try { sfxLevelUp(); } catch(e){} return; }
-  setText('#luToastLevel', info.to.level);
+  setText('#luToastLevel', info.to.level); paintLevelBadge('#luToastLevel', info.to.level);
   setText('#luToastSub', `You reached Level ${info.to.level}`);
   const tWrap = $('#luToastTitles');
   if(tWrap){
@@ -20286,7 +20360,8 @@ window.addEventListener('pointerdown', _unlockAudioOnce);
 window.addEventListener('keydown', _unlockAudioOnce);
 
 // ============= EVENTS =============
-on('#findBtn', 'click', async () => {
+// Start a ranked match — ensures audio + camera are ready first.
+async function startRankedMatch(){
   ensureAudio();
   if(!state.cameraReady){
     const ok = await setupCamera();
@@ -20294,7 +20369,10 @@ on('#findBtn', 'click', async () => {
     await setupHands();
   }
   findMatch();
-});
+}
+on('#findBtn', 'click', startRankedMatch);
+// Home "Play" button + any [data-goto-play] → go to the Play page (mode picker)
+document.querySelectorAll('[data-goto-play]').forEach(el => el.addEventListener('click', () => { haptic(10); showNavPage('play'); }));
 on('#cancelMatchBtn', 'click', cancelMatchmaking);
 on('#debugMatchBtn', 'click', async () => {
   const dbg = $('#matchDebug');
@@ -20521,7 +20599,7 @@ function renderAchievementsPage(){
   if(!state.profile) return;
   const p = state.profile;
   const lvl = levelFromXp(p.totalXp || 0);
-  setText('#achLevelBadge', lvl.level);
+  setText('#achLevelBadge', lvl.level); paintLevelBadge('#achLevelBadge', lvl.level);
   setText('#achLevelXp', lvl.level >= 99 ? 'MAX LEVEL' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
   const fill = $('#achLevelFill'); if(fill) fill.style.width = (lvl.progress*100)+'%';
   let equipped = p.equippedTitle ? titleById(p.equippedTitle) : null;
@@ -20748,6 +20826,8 @@ window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
 (function initPipDrag(){
   const pip = document.getElementById('yourVideoWrap');
   if(!pip) return;
+  // FaceTime PiP is mobile-only; on desktop the cams are side-by-side (no dragging).
+  if(!(window.matchMedia && window.matchMedia('(max-width: 900px)').matches)) return;
   try { const c = localStorage.getItem('rosham_pip_corner'); if(c && ['tl','tr','bl','br'].includes(c)){ pip.classList.remove('pip-tl','pip-tr','pip-bl','pip-br'); pip.classList.add('pip-' + c); } } catch(e){}
   let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0;
   pip.addEventListener('pointerdown', (e) => {
@@ -20903,7 +20983,7 @@ function renderFriendsInto(sel){
 }
 
 // ===== PLAY PAGE buttons =====
-on('#playPageFindBtn', 'click', findMatch);
+on('#playPageFindBtn', 'click', startRankedMatch);
 on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
 on('#playPageChallengeBtn', 'click', () => openChallengePicker());
 on('#playPageHowBtn', 'click', () => $('#helpBtn')?.click());
@@ -21354,7 +21434,12 @@ document.querySelectorAll('.modal-bg').forEach(m => {
 document.addEventListener('keydown', (e) => {
   if(e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
   try {
-    if(state.screen === 'landing' && e.code === 'Space'){ e.preventDefault(); $('#findBtn')?.click(); }
+    if(state.screen === 'landing' && e.code === 'Space'){
+      e.preventDefault();
+      // On the Play page, SPACE starts ranked; elsewhere it jumps to the Play page.
+      const onPlay = document.querySelector('.nav-page[data-page="play"]')?.classList.contains('active');
+      if(onPlay) startRankedMatch(); else showNavPage('play');
+    }
     if(state.screen === 'game' && e.code === 'KeyN'){ e.preventDefault(); playAgain(); }
     if(e.code === 'KeyM'){ e.preventDefault(); $('#muteBtn')?.click(); }
     // Quick predictions during game (1=Rock, 2=Paper, 3=Scissors)
