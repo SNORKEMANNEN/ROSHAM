@@ -2,10 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1" />
 <title>ROSHCAM — live rock paper scissors with strangers</title>
 <meta name="description" content="Real rock paper scissors against strangers using your webcam. Hand-gesture detection, ranked ELO, friends, leaderboards." />
 <meta name="theme-color" content="#08070d" />
+<!-- Installable / standalone app (iOS + Android) -->
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="ROSHCAM" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2308070d'/%3E%3Ctext x='50' y='52' font-size='62' text-anchor='middle' dominant-baseline='central'%3E%F0%9F%AA%A8%3C/text%3E%3C/svg%3E" />
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22ROSHCAM%22%2C%22short_name%22%3A%22ROSHCAM%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2308070d%22%2C%22theme_color%22%3A%22%2308070d%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Froshcam.com%2Ficon-192.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Froshcam.com%2Ficon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D" />
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%AA%A8%3C/text%3E%3C/svg%3E" />
 <meta property="og:title" content="ROSHCAM — live rock paper scissors with strangers" />
 <meta property="og:description" content="Real webcam rock · paper · scissors against strangers. Read their eyes, throw first, climb the ranked ladder." />
@@ -10232,6 +10240,259 @@ h2.match-title{
   .rank-page-hero{ flex-direction: column; text-align: center; gap: 14px; }
   .season-banner{ flex-wrap: wrap; }
 }
+
+/* ====================================================================== */
+/* ============ MOBILE APP OVERHAUL (launch-grade, appended last) ======== */
+/* ====================================================================== */
+
+/* ===== Title picker (edit profile) ===== */
+.title-pick{ display: flex; flex-wrap: wrap; gap: 8px; }
+.title-chip{ padding: 8px 13px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface-2);
+  color: var(--tc, var(--text)); font-family: var(--font-display); font-stretch: 80%; font-weight: 700;
+  font-size: 13px; cursor: pointer; transition: transform .1s, border-color .15s, background .15s; }
+.title-chip.active{ border-color: var(--tc); background: color-mix(in srgb, var(--tc) 16%, transparent); box-shadow: 0 0 0 1px var(--tc) inset; }
+.title-chip:active{ transform: scale(.94); }
+.title-chip.locked{ color: var(--text-faint); opacity: .6; cursor: not-allowed; font-stretch: 100%; font-weight: 500; font-size: 12px; }
+
+/* ===== Profile status line ===== */
+.pm-status{ display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 10px; padding: 6px 12px;
+  border-radius: 999px; background: rgba(34,211,163,.1); border: 1px solid rgba(34,211,163,.25);
+  color: var(--mint); font-size: 13px; font-weight: 600; max-width: 100%; }
+
+/* ===== FRIENDS LIST OVERHAUL — rich cards with presence ===== */
+.friends-summary{ display: flex; align-items: center; justify-content: space-between; padding: 4px 4px 12px; margin-bottom: 6px; border-bottom: 1px solid var(--line-soft); }
+.fs-online{ display: flex; align-items: center; gap: 7px; font-family: var(--font-display); font-stretch: 78%; font-weight: 800; font-size: 14px; color: var(--mint); }
+.fs-total{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+.friend-card{ display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: 16px;
+  background: var(--surface-2); border: 1px solid var(--line); cursor: pointer; margin-bottom: 8px;
+  transition: transform .1s, border-color .15s, background .15s; }
+.friend-card:hover{ border-color: var(--line-bright, rgba(255,255,255,.16)); background: var(--surface-3); }
+.friend-card:active{ transform: scale(.99); }
+.friend-card.is-online{ border-color: rgba(34,211,163,.28); }
+.friend-card.is-pinned{ background: linear-gradient(180deg, rgba(255,211,61,.06), var(--surface-2)); border-color: rgba(255,211,61,.3); }
+.fc-pin-mark{ font-size: 11px; margin-right: 2px; }
+.fc-av-wrap{ position: relative; flex: 0 0 auto; }
+.friend-card .av{ width: 44px; height: 44px; border-radius: 13px; }
+.fc-status-dot{ position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%;
+  background: var(--text-faint); border: 2.5px solid var(--surface-2); }
+.fc-status-dot.on{ background: var(--mint); box-shadow: 0 0 8px rgba(34,211,163,.7); }
+.fc-status-dot.game{ background: var(--amber); box-shadow: 0 0 8px rgba(255,179,0,.7); }
+.fc-meta{ flex: 1; min-width: 0; }
+.friend-card .nm{ font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.fc-status-line{ font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 2px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fc-status-line.on{ color: var(--mint); }
+.fc-status-line.game{ color: var(--amber); }
+.friend-card .friend-actions{ flex: 0 0 auto; gap: 6px; }
+.friend-card .icon-btn{ width: 38px; height: 38px; }
+@media (max-width: 560px){
+  .friend-card{ padding: 10px; gap: 10px; }
+  .friend-card .av{ width: 42px; height: 42px; }
+}
+
+/* ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== */
+.more-sheet{ position: fixed; inset: 0; z-index: 90; display: none; align-items: flex-end;
+  background: rgba(4,3,9,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.more-sheet.show{ display: flex; animation: msFade .22s ease-out; }
+@keyframes msFade{ from{ opacity: 0; } to{ opacity: 1; } }
+.more-sheet-card{ width: 100%; background: var(--surface); border-radius: 24px 24px 0 0;
+  border: 1px solid var(--line); border-bottom: none; padding: 8px 16px calc(20px + env(safe-area-inset-bottom,0px));
+  box-shadow: 0 -20px 60px -20px rgba(0,0,0,.7); animation: sheetUp .32s cubic-bezier(.2,.9,.25,1); }
+.more-sheet.closing .more-sheet-card{ animation: sheetDown .25s cubic-bezier(.4,0,.7,.2) forwards; }
+@keyframes sheetDown{ from{ transform: translateY(0); } to{ transform: translateY(100%); } }
+.more-sheet-handle{ width: 40px; height: 4px; border-radius: 999px; background: var(--line-bright, rgba(255,255,255,.25)); margin: 6px auto 14px; }
+.more-sheet-profile{ display: flex; align-items: center; gap: 13px; padding: 12px; border-radius: 16px;
+  background: var(--surface-2); border: 1px solid var(--line); cursor: pointer; margin-bottom: 14px; }
+.more-sheet-profile:active{ transform: scale(.985); }
+.msp-av{ width: 46px; height: 46px; border-radius: 50%; flex: 0 0 auto; background-size: cover; background-position: center;
+  display: grid; place-items: center; font-weight: 700; font-size: 18px; color: #06120e; }
+.msp-info{ flex: 1; min-width: 0; }
+.msp-name{ font-family: var(--font-display); font-stretch: 78%; font-weight: 800; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.msp-sub{ font-size: 12px; color: var(--text-dim); }
+.msp-chev{ color: var(--text-faint); flex: 0 0 auto; }
+.more-sheet-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.more-sheet-item{ display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px;
+  padding: 16px 6px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line);
+  color: var(--text); cursor: pointer; transition: transform .1s, border-color .15s; min-height: 78px; }
+.more-sheet-item:active{ transform: scale(.94); border-color: var(--mint); }
+.msi-ic{ width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--surface-3); }
+.msi-ic svg{ width: 19px; height: 19px; color: var(--mint); }
+.more-sheet-item span:last-child{ font-size: 11px; font-weight: 600; text-align: center; }
+.more-sheet-signout{ width: 100%; margin-top: 14px; padding: 14px; border-radius: 14px; background: none;
+  border: 1px solid var(--line); color: var(--coral); font-family: var(--font-display); font-stretch: 80%;
+  font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.more-sheet-signout:active{ background: rgba(255,51,88,.08); }
+
+/* ===== LOW POWER MODE — strip GPU-heavy effects for older / low-end devices ===== */
+body.low-power .grain,
+body.low-power .noise{ display: none !important; }
+body.low-power *{
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+/* Replace translucent blurred surfaces with solid ones so they still read well */
+body.low-power .topbar,
+body.low-power .mobile-nav,
+body.low-power .flyout-panel,
+body.low-power .modal-bg,
+body.low-power .modal,
+body.low-power .floating-chat-msg,
+body.low-power .duel-dock,
+body.low-power .arena-bar{ background: var(--surface) !important; }
+body.low-power .modal-bg{ background: rgba(4,2,8,.92) !important; }
+/* Kill decorative infinite animations (keep functional transitions snappy) */
+body.low-power .grain,
+body.low-power .hx-hero-glow,
+body.low-power .orb-ring,
+body.low-power .mf-bg-glow,
+body.low-power .rankup-rays,
+body.low-power .rankup-beams,
+body.low-power .levelup-rays,
+body.low-power [data-anim]{ animation: none !important; }
+body.low-power .hx-hero-grid{ display: none !important; }
+/* Soft-shadow-heavy cards get a cheap flat border instead */
+body.low-power .card,
+body.low-power .hx-hero,
+body.low-power .play-hero{ box-shadow: none !important; }
+
+/* ===== FACETIME-STYLE MATCH LAYOUT (all screen sizes) ===== */
+/* Opponent fills the whole stage; you are a draggable corner PiP. */
+.battle-stage{ position: relative; flex: 1; min-height: 0; padding: 0; overflow: hidden; display: block; gap: 0; grid-template-columns: none !important; grid-template-rows: none !important; }
+.duel-video.opp{ position: absolute !important; inset: 0; width: auto; height: auto; border-radius: 0; border: none; z-index: 0; margin: 0; }
+.duel-video.you{
+  position: absolute; width: 118px; height: 158px; z-index: 30; margin: 0; min-height: 0;
+  border-radius: 14px; border: 2px solid rgba(255,255,255,.6);
+  box-shadow: 0 12px 30px -10px rgba(0,0,0,.78); overflow: hidden;
+  cursor: grab; touch-action: none; transition: border-color .15s, box-shadow .15s;
+}
+.duel-video.you.dragging{ cursor: grabbing; transition: none; border-color: var(--mint); box-shadow: 0 16px 44px -8px rgba(0,0,0,.85); }
+.duel-video.you.pip-tl{ top: 14px; left: 14px; right: auto; bottom: auto; }
+.duel-video.you.pip-tr{ top: 14px; right: 14px; left: auto; bottom: auto; }
+.duel-video.you.pip-bl{ bottom: 14px; left: 14px; right: auto; top: auto; }
+.duel-video.you.pip-br{ bottom: 14px; right: 14px; left: auto; top: auto; }
+.duel-video.you::after{ content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%); width: 26px; height: 3px; border-radius: 2px; background: rgba(255,255,255,.5); opacity: 0; transition: opacity .15s; pointer-events: none; z-index: 3; }
+.duel-video.you:hover::after{ opacity: 1; }
+/* Countdown / VS sit above the opponent video but below the PiP */
+.duel-stage-center{ z-index: 25; }
+/* Thrown gesture = compact badge at the top, never covering the face */
+.opp-thrown, .you-thrown, .duel-thrown{ position: absolute; inset: auto; top: 12px; left: 50%; right: auto; bottom: auto; transform: translate(-50%,-8px); width: auto; height: auto; padding: 6px 8px; border-radius: 999px; background: rgba(8,8,12,.55); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); z-index: 22; opacity: 0; transition: opacity .2s, transform .2s; }
+.opp-thrown.show, .you-thrown.show, .duel-thrown.show{ opacity: 1; transform: translate(-50%,0); }
+.opp-thrown svg, .you-thrown svg, .duel-thrown svg, .opp-thrown img, .you-thrown img, .duel-thrown img{ width: 44px; height: 44px; filter: drop-shadow(0 3px 10px rgba(0,0,0,.55)); }
+.duel-video.you .opp-thrown svg, .duel-video.you .you-thrown svg{ width: 26px; height: 26px; }
+@media (max-width: 560px){
+  .duel-video.you{ width: 100px; height: 136px; }
+  .opp-thrown svg, .you-thrown svg, .duel-thrown svg, .opp-thrown img, .you-thrown img, .duel-thrown img{ width: 38px; height: 38px; }
+}
+
+/* Global niceties for an app-like feel on touch devices */
+@media (hover: none) and (pointer: coarse){
+  *{ -webkit-tap-highlight-color: transparent; }
+  button, .btn, .settings-row, .mobile-nav-item, .play-quick-btn, .opt-pill,
+  .icon-btn, .arena-ctrl-btn, .chat-conv, .friend-row{ -webkit-touch-callout: none; }
+  /* Kill text selection on chrome/controls (keep it for chat + bios) */
+  .topbar, .sidebar, .mobile-nav, .arena-bar, .card-hd, .page-title, .page-subtitle{ -webkit-user-select: none; user-select: none; }
+}
+
+@media (max-width: 900px){
+  /* Smooth momentum scrolling + no overscroll glow bleeding into the app */
+  html, body{ overscroll-behavior-y: none; }
+  .nav-page, #screen-landing, .modal{ -webkit-overflow-scrolling: touch; }
+
+  /* iOS: inputs must be >=16px or Safari zooms on focus. Force it everywhere. */
+  input, select, textarea,
+  .field input, .field select, .field textarea,
+  .pm-comment-compose input, .chat-thread-input input, .dock-chat-input-wrap input,
+  .add-friend-input input, #addFriendInput, #chatThreadInput, #pmCommentInput,
+  #reportDetails{ font-size: 16px !important; }
+
+  /* Safe-area aware topbar (notch / dynamic island) */
+  .topbar{ padding-top: max(12px, env(safe-area-inset-top)) !important;
+           padding-left: max(14px, env(safe-area-inset-left));
+           padding-right: max(14px, env(safe-area-inset-right)); }
+
+  /* Bottom nav: taller tap targets + safe area, blur, active pill */
+  .mobile-nav{ padding: 8px 6px calc(8px + env(safe-area-inset-bottom, 0px)); gap: 0; }
+  .mobile-nav-item{ min-height: 52px; padding: 7px 2px; border-radius: 14px; }
+  .mobile-nav-item svg{ width: 23px; height: 23px; }
+  .mobile-nav-item span{ font-size: 9px; }
+  .mobile-nav-item:active{ transform: scale(.92); }
+
+  /* Give every scrolling page room above the fixed bottom nav */
+  .app.logged-in .nav-page{ padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
+  .app.logged-in #screen-landing{ padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)) !important; }
+
+  /* Minimum 44px tap targets for icon buttons (Apple HIG) */
+  .topbar-icon-btn{ width: 40px !important; height: 40px !important; }
+  .icon-btn{ min-width: 38px; min-height: 38px; }
+  /* Help button: was a cramped ~28px icon; give it a real 40px square target */
+  #helpBtn{ padding: 0 !important; width: 40px; height: 40px; justify-content: center; }
+
+  /* Mobile-nav active state: a clear filled pill so the current tab reads instantly */
+  .mobile-nav-item.active .mni-icon{ background: rgba(34,211,163,.18); box-shadow: 0 0 0 1px rgba(34,211,163,.25) inset; }
+  .mobile-nav-item.active span:last-child{ color: var(--mint); }
+
+  /* Cards a touch tighter, fully rounded, comfortable spacing */
+  .card{ border-radius: 18px; }
+  .page-header{ margin-bottom: 14px; }
+
+  /* Flyouts (notifications / messages) become near-fullscreen sheets */
+  .flyout-panel{ top: max(58px, calc(env(safe-area-inset-top) + 50px)) !important;
+                 left: 8px !important; right: 8px !important; width: auto !important;
+                 max-height: calc(100vh - 120px); border-radius: 18px; }
+}
+
+/* ===== BOTTOM-SHEET MODALS on phones ===== */
+@media (max-width: 640px){
+  .modal-bg{ align-items: flex-end; padding: 0; }
+  .modal{
+    max-width: 100% !important; width: 100%;
+    border-radius: 22px 22px 0 0 !important;
+    max-height: 92vh;
+    padding: 24px 18px calc(24px + env(safe-area-inset-bottom, 0px));
+    animation: sheetUp .32s cubic-bezier(.2,.9,.25,1);
+  }
+  /* Grab handle at the top of every sheet */
+  .modal::before{
+    content: ''; position: sticky; top: -4px; left: 50%;
+    display: block; width: 40px; height: 4px; margin: -8px auto 14px;
+    border-radius: 999px; background: var(--line-bright, rgba(255,255,255,.25));
+  }
+  .modal-close{ top: 14px; right: 14px; width: 40px; height: 40px; }
+  /* Big, thumb-friendly action buttons in modals */
+  .modal-actions{ flex-wrap: wrap; gap: 8px; }
+  .modal-actions .btn{ flex: 1 1 100%; min-height: 48px; justify-content: center; }
+}
+
+/* ===== Phone layout polish (<=560px) ===== */
+@media (max-width: 560px){
+  /* Primary CTAs are full-width & tall for thumbs */
+  .btn-cta, .hx-cta{ width: 100%; justify-content: center; min-height: 54px; }
+  .btn{ min-height: 44px; }
+
+  /* Hero / wordmark scales down so it never overflows */
+  .hx-wordmark{ font-size: clamp(38px, 13vw, 60px); }
+  .hx-hero{ padding: 22px 16px; border-radius: 20px; }
+  .hx-tag{ font-size: 14px; }
+
+  /* Settings rows: comfy height, clear separation */
+  .settings-row{ padding: 14px 16px; min-height: 56px; }
+  .settings-list{ border-radius: 16px; }
+
+  /* Profile comment / chat composers sit above the keyboard cleanly */
+  .pm-comment-list{ max-height: 200px; }
+
+  /* Friends / list rows: bigger touch rows */
+  .friend-row, .chat-conv, .req-row{ padding-top: 12px; padding-bottom: 12px; }
+
+  /* Tables/grids that were 4-wide go 2-wide already; make tiles breathe */
+  .stat-tile{ padding: 12px 8px; }
+}
+
+/* ===== Landscape phones: keep the game arena usable ===== */
+@media (max-height: 480px) and (orientation: landscape){
+  .mobile-nav{ display: none !important; }
+  .hx-hero{ padding: 16px; }
+}
 </style>
 </head>
 <body>
@@ -10248,59 +10509,40 @@ h2.match-title{
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <symbol id="i-rock" viewBox="0 0 64 64">
-      <!-- ROCK: a closed fist seen from the back, knuckles up -->
-      <g fill="currentColor">
-        <!-- forearm/wrist -->
-        <path d="M24 50h16c1.1 0 2 .9 2 2v3c0 2.2-1.8 4-4 4H26c-2.2 0-4-1.8-4-4v-3c0-1.1.9-2 2-2z" opacity=".55"/>
-        <!-- palm/fist body -->
-        <path d="M18 32c0-2.2 1.8-4 4-4h21c3.3 0 6 2.7 6 6v16c0 1.7-1.3 3-3 3H21c-1.7 0-3-1.3-3-3V32z"/>
-        <!-- four curled-finger humps along the top knuckle line -->
-        <path d="M20 31c0-3.3 2-6 5-6s5 2.4 5 5.5V32H20v-1z"/>
-        <path d="M29 30c0-3.6 2-6.5 5.2-6.5S39 26 39 29.5V32h-10v-2z"/>
-        <path d="M38 31c0-3.3 1.8-6 4.8-6S47 27.4 47 30.5V32h-9v-1z"/>
-        <!-- thumb wrapped across the front -->
-        <path d="M17 40c-2.2 0-4 1.5-4 4s1.8 4 4 4h4V40h-4z"/>
-        <path d="M17 41h7c1.1 0 2 .9 2 2s-.9 2-2 2h-7c-1.1 0-2-.9-2-2s.9-2 2-2z" opacity=".4"/>
-        <!-- knuckle creases -->
-        <rect x="24" y="33" width="2.4" height="6" rx="1.2" fill="rgba(0,0,0,.18)"/>
-        <rect x="32" y="33" width="2.4" height="6" rx="1.2" fill="rgba(0,0,0,.18)"/>
-        <rect x="40" y="33" width="2.4" height="6" rx="1.2" fill="rgba(0,0,0,.18)"/>
+      <!-- ROCK: red closed fist (emoji-style) with white knuckle detailing -->
+      <g>
+        <path fill="#ed1b24" d="M15 28c0-6.5 4.8-11.2 12-12 2.6-.3 4.4 0 7 .2v8.3c0 1.2 1.8 1.2 1.8 0V16.6c1.4.1 2.7.3 4 .5v7.6c0 1.2 1.9 1.2 1.9 0v-7.2c1.4.3 2.7.7 3.9 1.2v6.7c0 1.2 1.9 1.2 1.9 0v-5.7c2.5 1.6 3.6 4.2 3.6 7.6v13.4c0 6.6-4.6 11.6-12.4 12.4-4 .4-12.7.5-18-1.6-5.4-2.1-7.7-6.8-7.7-12.6V28z"/>
+        <path fill="#ed1b24" d="M15 31.5c-3.4 0-6.2 2.6-6.2 6s2.8 6 6.2 6c1.8 0 3.5-.8 4.7-2v-8.3c-1.2-1-2.9-1.7-4.7-1.7z"/>
+        <g fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.5 27.5c4.4-3.3 9.8-3.3 14.3-.4"/>
+          <path d="M36 26.5c3-1.4 6.4-1.2 9 .6"/>
+          <path d="M46 28.5c2.2-.6 4.4-.2 6 1.1"/>
+          <path d="M19.8 40.5c3.3 2.2 7.4 2.4 11 .6"/>
+        </g>
       </g>
     </symbol>
     <symbol id="i-paper" viewBox="0 0 64 64">
-      <!-- PAPER: open hand, palm forward, four fingers + thumb spread -->
-      <g fill="currentColor">
-        <!-- palm -->
-        <path d="M20 34c0-2 1-3 3-3h18c2 0 3 1 3 3v8c0 9-6 16-15 16S20 51 20 42v-8z"/>
-        <!-- thumb (left, angled out) -->
-        <path d="M20 38c-2.5-1-5.5-3-7-5.5-1-1.7-.4-3.8 1.3-4.7 1.6-.9 3.6-.4 4.7 1.2L23 35l-3 3z"/>
-        <!-- index -->
-        <rect x="22" y="10" width="6.2" height="24" rx="3.1"/>
-        <!-- middle (tallest) -->
-        <rect x="29" y="6" width="6.2" height="28" rx="3.1"/>
-        <!-- ring -->
-        <rect x="36" y="9" width="6.2" height="25" rx="3.1"/>
-        <!-- pinky (shortest, right) -->
-        <rect x="42.5" y="15" width="5.6" height="19" rx="2.8"/>
-        <!-- palm crease shading -->
-        <path d="M24 40c5 0 11 0 16 0v3c0 1.5-1 2.5-2.5 2.5h-11C25 45.5 24 44.5 24 43v-3z" fill="rgba(0,0,0,.12)"/>
+      <!-- PAPER: green flat hand from the side, fingers together pointing right -->
+      <g>
+        <path fill="#2e9e34" d="M8 31c0-5 4-8 9.5-8 3.4 0 6.7 1 12.5 1h22.7c2.3 0 3.8 1.3 3.8 3.2 0 1.9-1.5 3.1-3.8 3.1H38c-1.2 0-1.2 1.7 0 1.7h20.2c2.3 0 3.8 1.2 3.8 3.1s-1.5 3.2-3.8 3.2H38c-1.2 0-1.2 1.7 0 1.7h17.8c2.2 0 3.6 1.2 3.6 3 0 1.9-1.4 3.1-3.6 3.1H38c-1.2 0-1.2 1.7 0 1.7h13.7c2.1 0 3.5 1.1 3.5 2.9s-1.4 3-3.5 3H30c-6 0-9-1.2-13.5-4C11 49.5 8 45 8 38.5V31z"/>
+        <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+          <path d="M30 25.5c3 1.3 4.6 3.3 4.6 6.2"/>
+          <path d="M27 38.5c3.4 1 6.6 1 10.4-.2"/>
+        </g>
       </g>
     </symbol>
     <symbol id="i-scissors" viewBox="0 0 64 64">
-      <!-- SCISSORS: peace/V sign — index + middle up, others folded -->
-      <g fill="currentColor">
-        <!-- palm/fist base -->
-        <path d="M22 36c0-2 1-3 3-3h15c2 0 3 1 3 3v6c0 9-6 15-13 15S22 51 22 42v-6z"/>
-        <!-- folded ring + pinky humps -->
-        <path d="M40 35c0-2.8 1.6-5 4-5s4 2.2 4 5v1h-8v-1z"/>
-        <!-- thumb on the side -->
-        <path d="M46 40c2 0 4 1.6 4 4s-1.6 4-3.8 4H43v-8h3z"/>
-        <!-- index finger (left arm of V) -->
-        <rect x="20" y="9" width="6" height="26" rx="3" transform="rotate(-16 23 22)"/>
-        <!-- middle finger (right arm of V) -->
-        <rect x="33" y="7" width="6" height="28" rx="3" transform="rotate(14 36 21)"/>
-        <!-- palm crease -->
-        <path d="M26 40c4 0 9 0 14 0v3c0 1.4-1 2.4-2.4 2.4H28.4C27 45.4 26 44.4 26 43v-3z" fill="rgba(0,0,0,.12)"/>
+      <!-- SCISSORS: yellow hand, index + middle in a V, others folded -->
+      <g>
+        <path fill="#f7b500" d="M21 38c0-2.2 1.2-3.5 3.4-3.5h14c2.2 0 3.6 1.3 3.6 3.5v5.5c0 8.4-5.6 13.5-12.5 13.5S21 51.9 21 43.5V38z"/>
+        <path fill="#f7b500" d="M39 35.5c0-2.6 1.6-4.6 4-4.6s4 1.9 4 4.5V37h-8v-1.5z"/>
+        <path fill="#f7b500" d="M45 41c2.1 0 4 1.7 4 4s-1.7 4-3.9 4H42v-8h3z"/>
+        <path fill="#f7b500" d="M30.5 36.5 21.2 16.8c-.9-1.9-.2-4 1.7-4.8 1.8-.8 3.8 0 4.7 1.8l9.2 19.5-6.3 3.2z"/>
+        <path fill="#f7b500" d="M41.5 33 39 11.7c-.2-2 1.2-3.7 3.2-3.9 1.9-.2 3.6 1.2 3.8 3.1l2.5 20.8-7 1.3z"/>
+        <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
+          <path d="M27 38.5c3.3 1 6.4 1 10-.2"/>
+          <path d="M40.5 39.5c2.4.6 4.2.5 6.3-.4"/>
+        </g>
       </g>
     </symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m21.854 2.147-10.94 10.939"/></symbol>
@@ -10461,8 +10703,32 @@ h2.match-title{
     <button class="mobile-nav-item" data-mnav="play"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
     <button class="mobile-nav-item" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
     <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
-    <button class="mobile-nav-item" data-mnav="settings"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span>More</span></button>
+    <button class="mobile-nav-item" data-mnav="settings"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-menu"/></svg></span><span>More</span></button>
   </nav>
+
+  <!-- ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== -->
+  <div class="more-sheet" id="moreSheet">
+    <div class="more-sheet-card">
+      <div class="more-sheet-handle"></div>
+      <div class="more-sheet-profile" id="moreSheetProfile" data-act="profile">
+        <div class="msp-av" id="moreSheetAv">?</div>
+        <div class="msp-info">
+          <div class="msp-name" id="moreSheetName">—</div>
+          <div class="msp-sub" id="moreSheetSub">View profile</div>
+        </div>
+        <svg viewBox="0 0 24 24" width="18" height="18" class="msp-chev"><use href="#i-arrow-right"/></svg>
+      </div>
+      <div class="more-sheet-grid">
+        <button class="more-sheet-item" data-act="activity"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
+        <button class="more-sheet-item" data-act="achievements"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
+        <button class="more-sheet-item" data-act="settings"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span>Settings</span></button>
+        <button class="more-sheet-item" data-act="help"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-help"/></svg></span><span>How to play</span></button>
+        <button class="more-sheet-item" data-act="camera"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-camera"/></svg></span><span>Camera</span></button>
+        <button class="more-sheet-item" id="moreSheetAdmin" data-act="admin" style="display:none;"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg></span><span>Moderation</span></button>
+      </div>
+      <button class="more-sheet-signout" data-act="signout"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-out"/></svg> Sign out</button>
+    </div>
+  </div>
 
   <!-- ===== NOTIFICATIONS PANEL ===== -->
   <div class="flyout-panel" id="notifPanel">
@@ -10664,7 +10930,7 @@ const FIREBASE_CONFIG = {
         <form class="auth-form" id="signupForm" style="display:none;">
           <div class="field">
             <label>Username</label>
-            <input type="text" name="username" required minlength="2" maxlength="20" placeholder="neonFox" autocomplete="username" />
+            <input type="text" name="username" required minlength="2" maxlength="20" placeholder="neonFox" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" />
           </div>
           <div class="field">
             <label>Country</label>
@@ -11307,6 +11573,11 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Reduced motion</div><div class="set-sub" id="setMotionState">Off</div></div>
             <div class="set-toggle off" id="setMotionToggle"></div>
           </button>
+          <button class="settings-row" id="setLowPower">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
+            <div class="set-text"><div class="set-title">Low power mode</div><div class="set-sub" id="setLowPowerState">Off · disables blur &amp; effects for smoother play on older devices</div></div>
+            <div class="set-toggle off" id="setLowPowerToggle"></div>
+          </button>
           <button class="settings-row" id="setHaptics">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
             <div class="set-text"><div class="set-title">Haptic feedback</div><div class="set-sub" id="setHapticsState">On</div></div>
@@ -11396,8 +11667,8 @@ const FIREBASE_CONFIG = {
           </div>
           <div class="search-stat-divider"></div>
           <div class="search-stat">
-            <span class="search-stat-val">±100</span>
-            <span class="search-stat-lbl">elo range</span>
+            <span class="search-stat-val">🌍</span>
+            <span class="search-stat-lbl">worldwide</span>
           </div>
         </div>
         <div id="matchDebug" style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); max-width:380px; text-align:left; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2); display:none; white-space:pre-wrap; max-height:140px; overflow-y:auto;"></div>
@@ -12460,6 +12731,7 @@ const FIREBASE_CONFIG = {
         <div class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></div>
       </div>
     </div>
+    <div class="pm-status" id="pmStatus" style="display:none;">—</div>
     <div class="bio" id="pmBio" style="display:none;">—</div>
     <div class="pm-stats">
       <div class="pm-stat"><div class="v" id="pmWins">0</div><div class="l">wins</div></div>
@@ -12499,6 +12771,7 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="modal-actions" id="pmActions">
       <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block</button>
+      <button class="btn" id="pmShareBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-send"/></svg> Share</button>
       <button class="btn" id="pmAddFriendBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-plus"/></svg> Add friend</button>
       <button class="btn btn-mint" id="pmChallengeBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-sword"/></svg> Challenge</button>
     </div>
@@ -12518,6 +12791,14 @@ const FIREBASE_CONFIG = {
       <div class="field">
         <label>Country</label>
         <select name="country" id="editCountry"></select>
+      </div>
+      <div class="field">
+        <label>Status (optional)</label>
+        <input type="text" name="status" maxlength="40" placeholder="e.g. 🔥 on a win streak" />
+      </div>
+      <div class="field">
+        <label>Title <span style="color:var(--text-faint); font-weight:400;">· unlocked by leveling up</span></label>
+        <div class="title-pick" id="titlePick"></div>
       </div>
       <div class="field">
         <label>Bio (optional)</label>
@@ -14043,9 +14324,9 @@ async function onAuthChanged(user){
   refreshStatsUI();
 
   state._heartbeat = setInterval(async () => {
-    try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp() }); } catch(e){}
+    try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp(), inMatch: state.screen === 'game' }); } catch(e){}
   }, 30000);
-  try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp() }); } catch(e){}
+  try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp(), inMatch: false }); } catch(e){}
 
   attachSocialListeners();
   attachActivityListener();
@@ -14542,53 +14823,12 @@ function renderFriendsFromCache(){
     setText('#friendCount', '0/0');
     return;
   }
-  const now = Date.now();
-  const isOnline = (f) => f.lastSeen?.toMillis ? (now - f.lastSeen.toMillis() < 60000) : false;
-  all.sort((a,b) => {
-    const aOn = isOnline(a), bOn = isOnline(b);
-    if(aOn !== bOn) return bOn - aOn;
-    return (b.rating||1000) - (a.rating||1000);
-  });
+  all.sort((a,b) => ((isPinned(b.uid)?1:0)-(isPinned(a.uid)?1:0)) || (friendPresence(b).online - friendPresence(a).online) || ((b.rating||1000)-(a.rating||1000)));
   body.innerHTML = '';
   let online = 0;
   for(const f of all){
-    const isOn = isOnline(f);
-    if(isOn) online++;
-    const rank = rankFromRating(f.rating || 1000);
-    const lvl = levelFromXp(f.totalXp || 0);
-    const row = document.createElement('div');
-    row.className = 'friend-row';
-    const avStyle = f.photoURL
-      ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;`
-      : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
-    const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
-    row.innerHTML = `
-      <div class="av" style="${avStyle}">${avInner}</div>
-      <div class="meta">
-        <div class="nm">${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
-        <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
-      </div>
-      <div class="online-dot ${isOn ? 'on' : ''}" title="${isOn ? 'online' : 'offline'}"></div>
-      <div class="friend-actions">
-        <button class="icon-btn" title="Message" data-action="message" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></button>
-        <button class="icon-btn" title="View profile" data-action="view" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></button>
-        ${isOn ? `<button class="icon-btn accept" title="Challenge" data-action="challenge" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
-        <button class="icon-btn danger" title="Remove friend" data-action="remove" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-      </div>
-    `;
-    row.querySelectorAll('button').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const action = btn.dataset.action;
-        const fuid = btn.dataset.uid;
-        if(action === 'view') openProfile(fuid);
-        else if(action === 'challenge') sendChallenge(fuid);
-        else if(action === 'message') openChatThread(fuid, f.username, f.photoURL, f.colorIdx);
-        else if(action === 'remove') removeFriend(fuid, f.username);
-      });
-    });
-    row.addEventListener('click', () => openProfile(f.uid));
-    body.appendChild(row);
+    if(friendPresence(f).online) online++;
+    body.appendChild(buildFriendCard(f));
   }
   setText('#friendCount', online + '/' + all.length);
 }
@@ -16300,8 +16540,13 @@ async function openProfile(uid){
     $('#pmRating').parentElement.style.color = rank.color;
     renderAvatar($('#pmAv'), p);
 
+    if(p.status){ $('#pmStatus').textContent = p.status; $('#pmStatus').style.display = ''; }
+    else $('#pmStatus').style.display = 'none';
     if(p.bio){ $('#pmBio').textContent = p.bio; $('#pmBio').style.display = ''; }
     else $('#pmBio').style.display = 'none';
+    // Share button shares this player's profile
+    const shareBtn = $('#pmShareBtn');
+    if(shareBtn) shareBtn.onclick = () => shareProfile(p.username, rating, rank.tierName);
 
     setText('#pmWins', p.wins || 0);
     setText('#pmLosses', p.losses || 0);
@@ -16554,11 +16799,46 @@ async function toggleBlock(uid, username, doBlock){
 let pendingPhotoDataURL = null; // staged photo for save
 
 on('#userChip', 'click', () => openEditProfile());
+async function shareProfile(username, rating, tier){
+  const text = `Check out @${username} on ROSHCAM — ${tier} · ${rating} ELO. Play webcam rock·paper·scissors at`;
+  const url = 'https://roshcam.com';
+  try {
+    if(navigator.share){ await navigator.share({ title: 'ROSHCAM', text, url }); return; }
+  } catch(e){ if(e && e.name === 'AbortError') return; }
+  try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied profile link', 'success'); }
+  catch(e){ toast('Could not share', 'error'); }
+}
 function openEditProfile(){
   const p = state.profile;
   $('#editProfileForm input[name=username]').value = p.username;
   $('#editCountry').value = p.country || 'XX';
+  const statusInput = $('#editProfileForm input[name=status]'); if(statusInput) statusInput.value = p.status || '';
   $('#editProfileForm textarea[name=bio]').value = p.bio || '';
+  // Title picker — show unlocked titles + locked previews
+  const tp = $('#titlePick');
+  if(tp){
+    const lvl = levelFromXp(p.totalXp || 0).level;
+    const equipped = p.equippedTitle || 'rookie';
+    state._pendingTitle = equipped;
+    tp.innerHTML = '';
+    TITLES.forEach(t => {
+      const unlocked = lvl >= t.level;
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'title-chip' + (t.id === equipped ? ' active' : '') + (unlocked ? '' : ' locked');
+      chip.style.setProperty('--tc', t.color);
+      chip.innerHTML = unlocked ? escapeHTML(t.name) : `🔒 ${escapeHTML(t.name)} · Lv${t.level}`;
+      if(unlocked){
+        chip.addEventListener('click', () => {
+          state._pendingTitle = t.id;
+          tp.querySelectorAll('.title-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          haptic(9);
+        });
+      } else { chip.disabled = true; }
+      tp.appendChild(chip);
+    });
+  }
   document.querySelectorAll('#colorPick button').forEach((b, i) => b.classList.toggle('active', i === (p.colorIdx || 0)));
   // default acceptChallenges to true (only false if explicitly disabled)
   $('#editAcceptChallenges').checked = (p.acceptChallenges !== false);
@@ -16610,6 +16890,7 @@ on('#editProfileForm', 'submit', async (e) => {
   const newUsername = fd.get('username').trim();
   const newCountry = fd.get('country');
   const newBio = (fd.get('bio') || '').trim();
+  const newStatus = (fd.get('status') || '').trim();
   const activeColor = document.querySelector('#colorPick button.active');
   const newColorIdx = activeColor ? parseInt(activeColor.dataset.idx) : (state.profile.colorIdx || 0);
   const newAcceptChallenges = $('#editAcceptChallenges').checked;
@@ -16624,16 +16905,17 @@ on('#editProfileForm', 'submit', async (e) => {
       await reserveUsername(newUsername, state.user.uid);
       try { await deleteDoc(doc(state.db, 'usernames', state.profile.username.toLowerCase())); } catch(e){}
     }
+    const newTitle = state._pendingTitle || state.profile.equippedTitle || 'rookie';
     const updates = {
-      username: newUsername, country: newCountry, bio: newBio,
-      colorIdx: newColorIdx,
+      username: newUsername, country: newCountry, bio: newBio, status: newStatus,
+      colorIdx: newColorIdx, equippedTitle: newTitle,
       acceptChallenges: newAcceptChallenges,
     };
     if(pendingPhotoDataURL !== null){
       updates.photoURL = pendingPhotoDataURL;
     }
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
-    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, colorIdx:newColorIdx, acceptChallenges:newAcceptChallenges };
+    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, equippedTitle:newTitle, acceptChallenges:newAcceptChallenges };
     if(pendingPhotoDataURL !== null) state.profile.photoURL = pendingPhotoDataURL;
     setText('#chipName', newUsername);
     renderAvatar($('#chipAv'), state.profile);
@@ -17238,6 +17520,8 @@ const RTC_CONFIG = {
 async function enterMatch(matchData){
   cancelMatchmakingResources();
   state.oppProfile = state.isCaller ? matchData.calleeProfile : matchData.callerProfile;
+  // Let friends see you're in a match (presence) — fire-and-forget.
+  try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: true }).catch(()=>{}); } catch(e){}
   showScreen('game');
   resetMatchUI();
   setupOppPanel();
@@ -19562,6 +19846,8 @@ function onPeerDisconnected(){ if(state.phase !== 'ended') handleRemoteLeft(); }
 let teardownMatch = async function(){
   console.log('[teardown] starting cleanup');
   stopCountdownSample();
+  // Clear in-match presence so friends see you as free again.
+  try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: false }).catch(()=>{}); } catch(e){}
   // CRITICAL: set phase to 'ended' BEFORE closing pc/dc, so the close handlers
   // (oniceconnectionstatechange / dc.onclose / unsubMatch's status-listener)
   // see phase==='ended' and skip handleRemoteLeft. Without this, closing the
@@ -20335,6 +20621,8 @@ function renderSettingsPage(){
   // reduced motion toggle state
   const rm = $('#setMotionToggle');
   if(rm) rm.classList.toggle('off', !document.body.classList.contains('reduced-motion'));
+  const lp = $('#setLowPowerToggle');
+  if(lp) lp.classList.toggle('off', !document.body.classList.contains('low-power'));
   // volume mixer — sync all channel sliders
   const syncVol = (sid, vid, val) => {
     const el = $('#' + sid); const pct = Math.round(_clamp01(val) * 100);
@@ -20375,6 +20663,14 @@ function loadClientPrefs(){
     if(localStorage.getItem('rosham_reduced_motion') === '1') document.body.classList.add('reduced-motion');
     if(localStorage.getItem('rosham_haptics') === '0') state.hapticsOff = true;
     if(localStorage.getItem('rosham_streamer') === '1'){ state.streamerMode = true; document.body.classList.add('streamer-mode'); }
+    // Low power mode: explicit setting wins; otherwise auto-enable on clearly low-end devices.
+    const lpPref = localStorage.getItem('rosham_low_power');
+    if(lpPref === '1') document.body.classList.add('low-power');
+    else if(lpPref === null){
+      const cores = navigator.hardwareConcurrency || 8;
+      const mem = navigator.deviceMemory || 8;
+      if(cores <= 4 || mem <= 4) document.body.classList.add('low-power');
+    }
   } catch(e){}
 }
 loadClientPrefs();
@@ -20466,47 +20762,83 @@ function getLoginStreak(){
 }
 
 // Render friends from cache into an arbitrary container (used by friends page)
+// ===== Pinned (favorite) friends — stored locally per user =====
+function getPinnedFriends(){
+  try { return JSON.parse(localStorage.getItem('rosham_pinned_' + (state.user?.uid||'anon')) || '[]'); }
+  catch(e){ return []; }
+}
+function isPinned(uid){ return getPinnedFriends().includes(uid); }
+function togglePin(uid){
+  let pins = getPinnedFriends();
+  if(pins.includes(uid)) pins = pins.filter(x => x !== uid);
+  else pins = [uid, ...pins].slice(0, 20);
+  try { localStorage.setItem('rosham_pinned_' + (state.user?.uid||'anon'), JSON.stringify(pins)); } catch(e){}
+  haptic(10);
+  try { renderFriends(); renderFriendsPage?.(); } catch(e){}
+}
+// Shared friend-presence helper: returns { online, inGame, label, cls }
+function friendPresence(f){
+  const now = Date.now();
+  const ls = f.lastSeen?.toMillis ? f.lastSeen.toMillis() : 0;
+  const online = ls ? (now - ls < 60000) : false;
+  const inGame = online && !!f.inMatch;
+  let label, cls;
+  if(inGame){ label = 'In a match'; cls = 'game'; }
+  else if(online){ label = 'Online now'; cls = 'on'; }
+  else if(ls){ label = 'Active ' + timeAgo(ls); cls = ''; }
+  else { label = 'Offline'; cls = ''; }
+  return { online, inGame, label, cls };
+}
+// Build one rich friend card (used by both the sidebar list and the Friends page).
+function buildFriendCard(f){
+  const pres = friendPresence(f);
+  const rank = rankFromRating(f.rating || 1000);
+  const pinned = isPinned(f.uid);
+  const row = document.createElement('div');
+  row.className = 'friend-card' + (pres.online ? ' is-online' : '') + (pinned ? ' is-pinned' : '');
+  const avStyle = f.photoURL ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;` : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
+  const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
+  row.innerHTML = `
+    <div class="fc-av-wrap">
+      <div class="av" style="${avStyle}">${avInner}</div>
+      <span class="fc-status-dot ${pres.cls}"></span>
+    </div>
+    <div class="fc-meta">
+      <div class="nm">${pinned ? '<span class="fc-pin-mark">📌</span>' : ''}${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+      <div class="fc-status-line ${pres.cls}">${flagOf(f.country)} ${pres.label} · ${f.rating||1000}</div>
+    </div>
+    <div class="friend-actions">
+      <button class="icon-btn${pinned ? ' accept' : ''}" data-action="pin" data-uid="${f.uid}" title="${pinned ? 'Unpin' : 'Pin to top'}"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg></button>
+      <button class="icon-btn" data-action="message" data-uid="${f.uid}" title="Message"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></button>
+      ${pres.online ? `<button class="icon-btn accept" data-action="challenge" data-uid="${f.uid}" title="Challenge"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
+      <button class="icon-btn danger" data-action="remove" title="Remove friend" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    </div>`;
+  row.querySelectorAll('button').forEach(btn => btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const a = btn.dataset.action, u = btn.dataset.uid;
+    if(a === 'pin') togglePin(u);
+    else if(a === 'challenge') sendChallenge(u);
+    else if(a === 'message') openChatThread(u, f.username, f.photoURL, f.colorIdx);
+    else if(a === 'remove') removeFriend(u, f.username);
+  }));
+  row.addEventListener('click', () => openProfile(f.uid));
+  return row;
+}
 function renderFriendsInto(sel){
   const body = $(sel);
   if(!body) return;
   const friendUids = state.profile?.friends || [];
   const all = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean);
   if(all.length === 0){ body.innerHTML = '<div class="side-empty">No friends yet · add some by username</div>'; return; }
-  const now = Date.now();
-  const isOnline = (f) => f.lastSeen?.toMillis ? (now - f.lastSeen.toMillis() < 60000) : false;
-  all.sort((a,b) => (isOnline(b)-isOnline(a)) || ((b.rating||1000)-(a.rating||1000)));
+  all.sort((a,b) => ((isPinned(b.uid)?1:0)-(isPinned(a.uid)?1:0)) || (friendPresence(b).online - friendPresence(a).online) || ((b.rating||1000)-(a.rating||1000)));
+  const onlineCount = all.filter(f => friendPresence(f).online).length;
   body.innerHTML = '';
-  all.forEach(f => {
-    const isOn = isOnline(f);
-    const rank = rankFromRating(f.rating || 1000);
-    const row = document.createElement('div');
-    row.className = 'friend-row';
-    const avStyle = f.photoURL ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;` : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
-    const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
-    row.innerHTML = `
-      <div class="av" style="${avStyle}">${avInner}</div>
-      <div class="meta">
-        <div class="nm">${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
-        <div class="sub">${flagOf(f.country)} · ${f.rating||1000} · ${rank.tierName}</div>
-      </div>
-      <div class="online-dot ${isOn ? 'on' : ''}"></div>
-      <div class="friend-actions">
-        <button class="icon-btn" data-action="message" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></button>
-        <button class="icon-btn" data-action="view" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></button>
-        ${isOn ? `<button class="icon-btn accept" data-action="challenge" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
-        <button class="icon-btn danger" data-action="remove" title="Remove friend" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-      </div>`;
-    row.querySelectorAll('button').forEach(btn => btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const a = btn.dataset.action, u = btn.dataset.uid;
-      if(a === 'view') openProfile(u);
-      else if(a === 'challenge') sendChallenge(u);
-      else if(a === 'message') openChatThread(u, f.username, f.photoURL, f.colorIdx);
-      else if(a === 'remove') removeFriend(u, f.username);
-    }));
-    row.addEventListener('click', () => openProfile(f.uid));
-    body.appendChild(row);
-  });
+  // Online summary chip
+  const summary = document.createElement('div');
+  summary.className = 'friends-summary';
+  summary.innerHTML = `<span class="fs-online"><span class="live-dot"></span>${onlineCount} online</span><span class="fs-total">${all.length} friend${all.length===1?'':'s'}</span>`;
+  body.appendChild(summary);
+  all.forEach(f => body.appendChild(buildFriendCard(f)));
 }
 
 // ===== PLAY PAGE buttons =====
@@ -20700,6 +21032,13 @@ on('#setReducedMotion', 'click', () => {
   try { localStorage.setItem('rosham_reduced_motion', on_ ? '1' : '0'); } catch(e){}
   renderSettingsPage();
 });
+function setLowPower(on){
+  document.body.classList.toggle('low-power', !!on);
+  try { localStorage.setItem('rosham_low_power', on ? '1' : '0'); } catch(e){}
+  const t = $('#setLowPowerToggle'); if(t) t.classList.toggle('off', !on);
+  setText('#setLowPowerState', on ? 'On · effects disabled for smoother play' : 'Off · disables blur & effects for smoother play on older devices');
+}
+on('#setLowPower', 'click', () => setLowPower(!document.body.classList.contains('low-power')));
 on('#setHaptics', 'click', () => {
   state.hapticsOff = !state.hapticsOff;
   $('#setHapticsToggle')?.classList.toggle('off', state.hapticsOff);
@@ -20773,12 +21112,56 @@ document.querySelectorAll('.mobile-nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.dataset.mnav;
     if(target === 'settings'){
-      // "More" opens the drawer for the extra pages (activity/achievements/settings)
-      openSidebarMobile();
+      // "More" opens an iOS-style bottom action sheet (not the side drawer)
+      openMoreSheet();
       return;
     }
     showNavPage(target);
   });
+});
+// ===== "More" bottom sheet =====
+function openMoreSheet(){
+  const sheet = $('#moreSheet'); if(!sheet) return;
+  // populate the profile chip
+  if(state.profile){
+    const av = $('#moreSheetAv');
+    if(av){
+      if(state.profile.photoURL){ av.style.backgroundImage = `url('${state.profile.photoURL}')`; av.textContent = ''; }
+      else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[state.profile.colorIdx||0]; av.textContent = initialOf(state.profile.username||'?'); }
+    }
+    setText('#moreSheetName', state.profile.username || 'you');
+    const lvl = levelFromXp(state.profile.totalXp || 0);
+    const rk = rankFromRating(state.profile.rating || 1000);
+    setText('#moreSheetSub', `Lvl ${lvl.level} · ${rk.tierName} · ${state.profile.rating||1000}`);
+  }
+  try { $('#moreSheetAdmin').style.display = isAdmin() ? '' : 'none'; } catch(e){}
+  sheet.classList.remove('closing');
+  sheet.classList.add('show');
+}
+function closeMoreSheet(){
+  const sheet = $('#moreSheet'); if(!sheet || !sheet.classList.contains('show')) return;
+  sheet.classList.add('closing');
+  setTimeout(() => { sheet.classList.remove('show','closing'); }, 240);
+}
+on('#moreSheet', 'click', (e) => {
+  // tap on the dimmed backdrop closes
+  if(e.target.id === 'moreSheet'){ closeMoreSheet(); return; }
+  const item = e.target.closest('[data-act]');
+  if(!item) return;
+  const act = item.dataset.act;
+  closeMoreSheet();
+  setTimeout(() => {
+    switch(act){
+      case 'profile': if(state.user) openProfile(state.user.uid); break;
+      case 'activity': showNavPage('activity'); break;
+      case 'achievements': showNavPage('achievements'); break;
+      case 'settings': showNavPage('settings'); break;
+      case 'help': $('#helpBtn')?.click(); break;
+      case 'camera': $('#cameraSetupBtn')?.click(); break;
+      case 'admin': openAdminPanel?.(); break;
+      case 'signout': $('#signOutBtn')?.click(); break;
+    }
+  }, 120);
 });
 function syncMobileNav(page){
   document.querySelectorAll('.mobile-nav-item').forEach(b => {
@@ -20849,6 +21232,53 @@ on('#chatThreadBody', 'click', (e) => {
 
 document.querySelectorAll('[data-close]').forEach(b => {
   b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
+});
+
+// ===== HAPTICS: central helper that respects the Haptics setting =====
+function haptic(pattern){
+  try { if(!state.hapticsOff && navigator.vibrate) navigator.vibrate(pattern || 12); } catch(e){}
+}
+// Light tap feedback on interactive controls (touch only — never on desktop).
+if(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches){
+  document.addEventListener('pointerdown', (e) => {
+    if(e.pointerType !== 'touch') return;
+    if(e.target.closest('button, .btn, .settings-row, .mobile-nav-item, .more-sheet-item, .friend-card, .icon-btn, .opt-pill, .play-quick-btn, [data-mnav], [data-act], [data-nav]')) haptic(9);
+  }, { passive: true });
+}
+
+// ===== SWIPE-TO-DISMISS for bottom sheets & modals (drag the grab-handle area down) =====
+function enableSwipeDismiss(el, onClose, opts){
+  if(!el) return;
+  const handleZone = (opts && opts.handleSelector) ? () => el.querySelector(opts.handleSelector) : null;
+  let startY = 0, curY = 0, dragging = false, target = null;
+  el.addEventListener('pointerdown', (e) => {
+    if(e.pointerType === 'mouse') return; // touch/pen only
+    target = (opts && opts.cardSelector) ? el.querySelector(opts.cardSelector) : el.firstElementChild;
+    if(!target) return;
+    // Only start a drag near the top of the sheet (so inner scrolling still works)
+    const rect = target.getBoundingClientRect();
+    if(e.clientY - rect.top > 90) return;
+    startY = e.clientY; curY = 0; dragging = true;
+    target.style.transition = 'none';
+  }, { passive: true });
+  el.addEventListener('pointermove', (e) => {
+    if(!dragging || !target) return;
+    curY = Math.max(0, e.clientY - startY);
+    target.style.transform = `translateY(${curY}px)`;
+  }, { passive: true });
+  function end(){
+    if(!dragging || !target) return;
+    dragging = false;
+    target.style.transition = '';
+    if(curY > 110){ target.style.transform = ''; haptic(14); onClose(); }
+    else { target.style.transform = ''; }
+  }
+  el.addEventListener('pointerup', end);
+  el.addEventListener('pointercancel', end);
+}
+enableSwipeDismiss($('#moreSheet'), () => closeMoreSheet(), { cardSelector: '.more-sheet-card' });
+document.querySelectorAll('.modal-bg').forEach(m => {
+  enableSwipeDismiss(m, () => { m.classList.remove('show'); if(m.id === 'calibrationModal'){ try { calibStopStream(); } catch(e){} } }, { cardSelector: '.modal' });
 });
 document.querySelectorAll('.modal-bg').forEach(m => {
   m.addEventListener('click', (e) => {
