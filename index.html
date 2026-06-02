@@ -253,6 +253,10 @@ body.reduced-motion .rank-progress-fill, body.reduced-motion .pm-level-bar-fill{
 .auth-card-head{ margin-bottom:18px; }
 .auth-card-head h2{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:24px; margin:0 0 4px; }
 .auth-card-head p{ font-size:13px; color:var(--text-dim); margin:0; }
+.auth-trust-row{ display:flex; flex-wrap:wrap; gap:8px 14px; justify-content:center; margin:0 0 14px; }
+.atr-item{ display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--text-dim); font-weight:600; }
+.atr-item svg{ color:var(--mint); }
+.auth-guest-note{ font-size:11px; color:var(--text-faint); text-align:center; margin:8px 0 0; line-height:1.5; }
 .auth-legal-note{ font-size:11px; color:var(--text-faint); text-align:center; margin:14px 0 0; line-height:1.5; }
 .auth-forgot{ background:none; border:none; color:var(--mint); font-size:12px; cursor:pointer; padding:2px 0; margin:-2px 0 0; align-self:flex-start; font-family:var(--font-body); }
 .auth-forgot:hover{ text-decoration:underline; }
@@ -1223,6 +1227,27 @@ body.in-game .main-col{ min-height: 100vh; }
 .season-name{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:17px; }
 .season-time{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:2px; }
 .season-pill{ padding:6px 12px; border-radius:999px; background:rgba(255,255,255,.05); font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; color:var(--text-dim); }
+/* Season banner v2: live countdown + progress bar */
+.season-bar{ height:6px; border-radius:999px; background:rgba(0,0,0,.3); overflow:hidden; margin-top:8px; box-shadow:inset 0 1px 2px rgba(0,0,0,.4); }
+.season-bar-fill{ height:100%; border-radius:999px; background:linear-gradient(90deg,var(--coral),var(--violet)); transition:width .6s ease; }
+.season-countdown{ flex-shrink:0; text-align:center; padding:8px 14px; border-radius:12px; background:rgba(255,61,104,.1); border:1px solid rgba(255,61,104,.25); }
+.sc-num{ font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:26px; line-height:1; color:var(--coral); }
+.sc-lbl{ font-family:var(--font-mono); font-size:8px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-dim); margin-top:3px; }
+/* 2× XP weekend banner */
+.dxp-banner{ display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:16px; margin-bottom:14px; position:relative; overflow:hidden;
+  background:linear-gradient(120deg, rgba(255,211,61,.18), rgba(255,140,66,.12)), var(--surface); border:1px solid rgba(255,211,61,.4);
+  box-shadow:0 0 24px -6px rgba(255,180,60,.4); }
+.dxp-banner::after{ content:''; position:absolute; inset:0; background:linear-gradient(110deg, transparent 35%, rgba(255,255,255,.18) 50%, transparent 65%); transform:translateX(-120%); animation:dxpSheen 3s ease-in-out 1s infinite; pointer-events:none; }
+@keyframes dxpSheen{ 0%{ transform:translateX(-120%);} 55%,100%{ transform:translateX(160%);} }
+body.reduced-motion .dxp-banner::after, body.low-power .dxp-banner::after{ animation:none; opacity:0; }
+.dxp-bolt{ width:44px; height:44px; flex-shrink:0; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,#ffd33d,#ff8c42); color:#1c1402; box-shadow:0 0 16px rgba(255,180,60,.6); animation:dxpPulse 1.6s ease-in-out infinite; }
+@keyframes dxpPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.08);} }
+body.reduced-motion .dxp-bolt, body.low-power .dxp-bolt{ animation:none; }
+.dxp-text{ flex:1; min-width:0; }
+.dxp-title{ font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:16px; letter-spacing:.01em; background:linear-gradient(90deg,#ffd33d,#ff8c42); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.dxp-sub{ font-size:12px; color:var(--text-dim); margin-top:1px; }
+.dxp-mult{ flex-shrink:0; font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:32px; color:#ffd33d; text-shadow:0 0 16px rgba(255,211,61,.6); }
+@media(max-width:560px){ .dxp-sub{ font-size:11px; } .dxp-mult{ font-size:26px; } .season-countdown{ padding:6px 10px; } .sc-num{ font-size:22px; } }
 .pct-big{ font-family:var(--font-display); font-stretch:62%; font-weight:800; font-size:30px; }
 .pct-big.mint{ color:var(--mint); }
 .pct-lbl{ font-size:12px; color:var(--text-dim); margin-top:4px; }
@@ -11405,7 +11430,11 @@ const FIREBASE_CONFIG = {
         <div class="auth-card">
           <div class="auth-card-head">
             <h2>Get started</h2>
-            <p>Create a free account or jump in as a guest.</p>
+            <p>Free account, or jump straight in as a guest — no email needed.</p>
+          </div>
+          <div class="auth-trust-row">
+            <span class="atr-item"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-shield"/></svg> Secured by Google</span>
+            <span class="atr-item"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-eye-off"/></svg> Video never recorded</span>
           </div>
           <button class="btn btn-google" id="googleBtn" style="width:100%;">
             <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-google"/></svg>
@@ -11455,7 +11484,8 @@ const FIREBASE_CONFIG = {
           <div class="error-msg" id="authError"></div>
 
           <div class="divider">or</div>
-          <button class="btn" id="guestBtn" style="width:100%;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-globe"/></svg> Continue as guest</button>
+          <button class="btn" id="guestBtn" style="width:100%;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-globe"/></svg> Play as guest</button>
+          <p class="auth-guest-note">No email, no commitment — try a match, make an account later to keep your rank.</p>
           <p class="auth-legal-note">By continuing you agree to our <button class="age-gate-link" data-open-legal="terms">Terms</button> &amp; <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>. You must be 13+.</p>
         </div>
       </div>
@@ -11536,6 +11566,13 @@ const FIREBASE_CONFIG = {
             </div>
           </div>
         </section>
+
+        <!-- Weekend 2× XP banner (home) — shown only during the weekend window -->
+        <div class="dxp-banner dxp-home" id="dxpBannerHome" style="display:none;">
+          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND IS LIVE</div><div class="dxp-sub">Every match earns double XP — climb levels twice as fast!</div></div>
+          <div class="dxp-mult">2×</div>
+        </div>
 
         <!-- World ribbon -->
         <div class="stat-grid-4 hx-ribbon">
@@ -11920,13 +11957,23 @@ const FIREBASE_CONFIG = {
           <h2 class="page-title">RANK</h2>
           <p class="page-subtitle">Your competitive standing and climb.</p>
         </div>
-        <div class="season-banner">
+        <div class="season-banner season-banner-v2">
           <div class="season-ico"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-trophy"/></svg></div>
           <div class="season-info">
-            <div class="season-name">Season 1 · Genesis</div>
-            <div class="season-time" id="seasonTime">Ends in 24 days</div>
+            <div class="season-name" id="seasonName">Season 1 · Genesis</div>
+            <div class="season-time" id="seasonTime">Ends in 60 days</div>
+            <div class="season-bar"><div class="season-bar-fill" id="seasonBarFill" style="width:0%"></div></div>
           </div>
-          <div class="season-pill">RANKED</div>
+          <div class="season-countdown" id="seasonCountdown">
+            <div class="sc-num" id="scDays">60</div>
+            <div class="sc-lbl">days left</div>
+          </div>
+        </div>
+        <!-- Weekend 2× XP banner — only shown during the weekend window -->
+        <div class="dxp-banner" id="dxpBanner" style="display:none;">
+          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub" id="dxpSub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-mult">2×</div>
         </div>
         <div class="card rank-page-hero">
           <div class="rank-page-icon" id="rankPageIcon"></div>
@@ -14085,8 +14132,70 @@ function titlesUnlockedAt(level){
 function titleById(id){
   return TITLES.find(t => t.id === id) || TITLES[0];
 }
+// Seasonal titles — earned by reaching a rating tier DURING the current season.
+// They carry the season name, e.g. "Genesis Diamond". Stored per-season in the
+// user's `seasonTitles` map: { [seasonNumber]: highestTierId }.
+const SEASON_TITLE_TIERS = [
+  { id:'gold',        minRating:1500, label:'Gold',        color:'#ffd33d' },
+  { id:'platinum',    minRating:1900, label:'Platinum',    color:'#5dffba' },
+  { id:'diamond',     minRating:2350, label:'Diamond',     color:'#5fc9ff' },
+  { id:'master',      minRating:2900, label:'Master',      color:'#a48bff' },
+  { id:'grandmaster', minRating:3550, label:'Grandmaster', color:'#ff3d68' },
+  { id:'champion',    minRating:4250, label:'Champion',    color:'#ff8c42' },
+  { id:'legend',      minRating:5000, label:'Legend',      color:'#ff61c3' },
+];
+function seasonTitleForRating(rating){
+  let best = null;
+  for(const t of SEASON_TITLE_TIERS){ if(rating >= t.minRating) best = t; }
+  return best; // null below Gold
+}
 // XP award calculation for a finished match.
 // opts: { result, roundsWon, roundsLost, correctPredictions, streakAfter, firstWinOfSession }
+// ============= SEASONS =============
+// A season is a fixed ~60-day window. The start date is pinned so the countdown
+// is real and identical for everyone; when one ends, the next begins automatically.
+const SEASON_EPOCH = Date.UTC(2026, 4, 1, 0, 0, 0); // 1 May 2026 — Season 1 start
+const SEASON_LENGTH_MS = 60 * 24 * 60 * 60 * 1000;   // 60 days
+const SEASON_NAMES = ['Genesis','Ascension','Eclipse','Tempest','Vanguard','Mirage','Onslaught','Equinox','Phantom','Zenith','Inferno','Frostbite'];
+function getSeason(){
+  const now = Date.now();
+  const elapsed = Math.max(0, now - SEASON_EPOCH);
+  const index = Math.floor(elapsed / SEASON_LENGTH_MS);       // 0-based
+  const start = SEASON_EPOCH + index * SEASON_LENGTH_MS;
+  const end = start + SEASON_LENGTH_MS;
+  const number = index + 1;
+  const name = SEASON_NAMES[index % SEASON_NAMES.length];
+  const msLeft = end - now;
+  const daysLeft = Math.floor(msLeft / 86400000);
+  const hoursLeft = Math.floor((msLeft % 86400000) / 3600000);
+  const minsLeft = Math.floor((msLeft % 3600000) / 60000);
+  const progress = Math.max(0, Math.min(1, (now - start) / SEASON_LENGTH_MS));
+  return { number, name, start, end, msLeft, daysLeft, hoursLeft, minsLeft, progress };
+}
+function seasonCountdownText(){
+  const s = getSeason();
+  if(s.daysLeft >= 1) return `${s.daysLeft}d ${s.hoursLeft}h left`;
+  if(s.hoursLeft >= 1) return `${s.hoursLeft}h ${s.minsLeft}m left`;
+  return `${s.minsLeft}m left`;
+}
+// ===== WEEKEND 2× XP — Friday 18:00 through Sunday 23:59 (local time) =====
+function isDoubleXP(){
+  const d = new Date();
+  const day = d.getDay(); // 0 Sun … 6 Sat
+  if(day === 6) return true;                 // all Saturday
+  if(day === 0) return true;                 // all Sunday
+  if(day === 5 && d.getHours() >= 18) return true; // Friday evening
+  return false;
+}
+function doubleXpEndsText(){
+  // Rough "ends Sunday midnight" indicator
+  const d = new Date();
+  const day = d.getDay();
+  if(day === 0){ const h = 23 - d.getHours(); return `${h}h left`; }
+  if(day === 6){ return `ends Sun 23:59`; }
+  return `ends Sun 23:59`;
+}
+
 function calcMatchXp(opts){
   const o = opts || {};
   let xp = 0;
@@ -14104,6 +14213,12 @@ function calcMatchXp(opts){
   if(o.result === 'win' && o.streakAfter >= 3){ const a = Math.min(100, o.streakAfter * 15); xp += a; breakdown.push({ label:`${o.streakAfter}-win streak`, amount:a }); }
   // First win of session
   if(o.result === 'win' && o.firstWinOfSession){ xp += 50; breakdown.push({ label:'First win today', amount:50 }); }
+  // WEEKEND DOUBLE XP — doubles the whole match XP
+  if(isDoubleXP()){
+    const bonus = xp; // doubling = +100% of the subtotal
+    xp += bonus;
+    breakdown.push({ label:'⚡ Weekend 2× XP', amount: bonus });
+  }
   return { xp, breakdown };
 }
 
@@ -15114,7 +15229,7 @@ async function onAuthChanged(user){
       } else {
         const username = 'guest_' + user.uid.slice(0,6);
         const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
-        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, colorIdx, photoURL:'', bio:'', isAnon:true, friends:[], blocked:[] };
+        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, totalXp:0, equippedTitle:'rookie', colorIdx, photoURL:'', bio:'', isAnon:true, friends:[], blocked:[] };
         await setDoc(ref, { ...state.profile, createdAt: serverTimestamp(), lastSeen: serverTimestamp() });
       }
     } else {
@@ -18958,7 +19073,12 @@ function startReadySystem(){
 function onGestureFrame(){
   if(state.screen !== 'game') return;
   if(state.phase !== 'idle' && state.phase !== 'done') return;
-  if(state.dataChannel?.readyState !== 'open') return;
+  // NOTE: do NOT hard-gate on the data channel here. The charge meter must build
+  // locally as soon as you hold a gesture — gating on dataChannel.readyState made
+  // the meter freeze at 0 whenever the channel wasn't "open" yet (a frequent
+  // guest / slow-connect symptom: "holding rock never readies"). sendPeer() is a
+  // no-op when the channel is closed, and the 2s ready-state resync reconciles
+  // both sides, so it's safe to always advance the local charge.
   const now = performance.now();
   const dt = Math.min(100, now - lastFrameTime);
   lastFrameTime = now;
@@ -20043,6 +20163,24 @@ let updateMatchStats = async function(matchResult){
     if(leveledUp){
       state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
     }
+    // SEASONAL TITLE: if this win pushed you into a higher season tier, record &
+    // celebrate it (e.g. "Genesis Diamond"). Stored per season number.
+    try {
+      const season = getSeason();
+      const newTier = seasonTitleForRating(newRating);
+      if(newTier){
+        const map = state.profile.seasonTitles || {};
+        const prev = map[season.number];
+        const prevIdx = prev ? SEASON_TITLE_TIERS.findIndex(t => t.id === prev) : -1;
+        const newIdx = SEASON_TITLE_TIERS.findIndex(t => t.id === newTier.id);
+        if(newIdx > prevIdx){
+          map[season.number] = newTier.id;
+          state.profile.seasonTitles = map;
+          updateDoc(doc(state.db, 'users', state.user.uid), { seasonTitles: map }).catch(()=>{});
+          setTimeout(() => { try { toast(`🏅 Seasonal title earned: ${season.name} ${newTier.label}!`, 'success'); } catch(e){} }, 1200);
+        }
+      }
+    } catch(e){ console.warn('[season-title]', e); }
     refreshStatsUI();
     updateChipRating();
 
@@ -21457,6 +21595,7 @@ function renderHomeSpotlight(p){
 }
 function renderHomePage(){
   if(!state.profile) return;
+  try { refreshSeasonUI(); } catch(e){}
   const p = state.profile;
   // welcome banner
   const av = $('#wbAv');
@@ -21484,8 +21623,25 @@ function renderHomePage(){
   setText('#wsMatches', $('#matchCount')?.textContent || '—');
 }
 
+// Update the live season countdown + the weekend 2× XP banners everywhere.
+function refreshSeasonUI(){
+  const s = getSeason();
+  setText('#seasonName', `Season ${s.number} · ${s.name}`);
+  setText('#seasonTime', `Season ends ${s.daysLeft >= 1 ? 'in ' + s.daysLeft + ' days' : seasonCountdownText()}`);
+  const bar = $('#seasonBarFill'); if(bar) bar.style.width = (s.progress * 100) + '%';
+  setText('#scDays', s.daysLeft);
+  // Weekend 2× XP banners (rank page + home)
+  const on = isDoubleXP();
+  const showHide = (sel) => { const el = $(sel); if(el) el.style.display = on ? '' : 'none'; };
+  showHide('#dxpBanner'); showHide('#dxpBannerHome');
+  if(on){ setText('#dxpSub', `Double XP on every match · ${doubleXpEndsText()}`); }
+}
+// Tick the season/2x UI once a minute so the countdown stays live.
+setInterval(() => { try { if(state.screen === 'landing') refreshSeasonUI(); } catch(e){} }, 60000);
+
 function renderRankPage(){
   if(!state.profile) return;
+  try { refreshSeasonUI(); } catch(e){}
   const p = state.profile;
   const rating = p.rating || 1000;
   const rank = rankFromRating(rating);
