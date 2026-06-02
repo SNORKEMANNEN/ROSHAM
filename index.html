@@ -201,7 +201,7 @@ body::after{
   linear-gradient(90deg, var(--mint), #15a079) !important;
   box-shadow: 0 0 10px rgba(34,211,163,.45); }
 /* Home/Play rank-progress fills tint themselves with the player's rank colour */
-#rankBarFill, #playRankFill, #hsNextRankFill{ background:
+#rankBarFill, #playRankFill{ background:
   linear-gradient(180deg, rgba(255,255,255,.28), transparent 55%),
   linear-gradient(90deg, var(--rank-color, var(--mint)) 0%, var(--rank-color-2, #5fc9ff) 100%) !important;
   box-shadow: 0 0 12px var(--rank-color, rgba(34,211,163,.4)); }
@@ -253,6 +253,8 @@ body.reduced-motion .rank-progress-fill, body.reduced-motion .pm-level-bar-fill{
 .auth-card-head h2{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:24px; margin:0 0 4px; }
 .auth-card-head p{ font-size:13px; color:var(--text-dim); margin:0; }
 .auth-legal-note{ font-size:11px; color:var(--text-faint); text-align:center; margin:14px 0 0; line-height:1.5; }
+.auth-forgot{ background:none; border:none; color:var(--mint); font-size:12px; cursor:pointer; padding:2px 0; margin:-2px 0 0; align-self:flex-start; font-family:var(--font-body); }
+.auth-forgot:hover{ text-decoration:underline; }
 @media(max-width:860px){
   .auth-layout{ grid-template-columns:1fr; gap:30px; padding:32px 18px 8px; }
   .auth-intro{ text-align:center; }
@@ -1312,6 +1314,26 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .calib-steps-ind{ font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 22px; }
 .calib-step{ display: none; flex-direction: column; align-items: center; }
 .calib-step.active{ display: flex; animation: fadeUp .3s ease-out; }
+/* Calibration extras: checklist, framing guide, lighting meter, gesture targets */
+.calib-checklist{ list-style:none; padding:0; margin:6px 0 18px; display:flex; flex-direction:column; gap:8px; width:100%; }
+.calib-checklist li{ display:flex; align-items:center; gap:10px; font-size:13px; color:var(--text-dim); }
+.calib-checklist li svg{ color:var(--mint); flex:0 0 auto; }
+.calib-frame-guide{ position:absolute; inset:14% 24%; border:2px dashed rgba(255,255,255,.35); border-radius:50%/40%; pointer-events:none; }
+.calib-meter{ width:100%; height:10px; border-radius:999px; background:rgba(0,0,0,.34); box-shadow:inset 0 1px 2px rgba(0,0,0,.5); overflow:hidden; margin:14px 0 6px; }
+.calib-meter-fill{ height:100%; width:0; border-radius:999px; transition:width .25s ease; background:var(--text-faint); }
+.calib-meter-fill.ok{ background:linear-gradient(90deg,var(--mint),#5fc9ff); }
+.calib-meter-fill.low{ background:linear-gradient(90deg,#5a4a8f,var(--violet)); }
+.calib-meter-fill.high{ background:linear-gradient(90deg,#ffd33d,var(--coral)); }
+.calib-meter-label{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-bottom:14px; }
+.calib-gesture-targets{ display:flex; gap:10px; width:100%; margin:14px 0 4px; }
+.cgt{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:12px 6px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim); position:relative; transition:all .2s; }
+.cgt svg{ opacity:.5; transition:opacity .2s; }
+.cgt span{ font-family:var(--font-mono); font-size:10px; letter-spacing:.04em; text-transform:uppercase; }
+.cgt-check{ position:absolute; top:6px; right:6px; width:16px; height:16px; border-radius:50%; border:2px solid var(--line-bright); }
+.cgt.done{ border-color:var(--mint); background:rgba(34,211,163,.12); color:var(--mint); }
+.cgt.done svg{ opacity:1; }
+.cgt.done .cgt-check{ border-color:var(--mint); background:var(--mint); }
+.cgt.done .cgt-check::after{ content:'✓'; position:absolute; inset:0; display:grid; place-items:center; font-size:10px; color:#06120e; font-weight:900; }
 .calib-icon{ width: 76px; height: 76px; border-radius: 22px; background: rgba(34,211,163,.1); display: grid; place-items: center; color: var(--mint); margin-bottom: 18px; }
 .calib-icon.success{ background: rgba(34,211,163,.16); animation: calibPop .5s cubic-bezier(.2,1.6,.4,1); }
 @keyframes calibPop{ from{ transform: scale(.4); opacity: 0; } to{ transform: scale(1); opacity: 1; } }
@@ -1596,8 +1618,27 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .chat-emoji-btn:hover{ border-color:var(--mint); }
 /* ===== Home spotlight row ===== */
 .home-spotlight{ grid-template-columns:repeat(3,1fr); }
-@media(max-width:900px){ .home-spotlight{ grid-template-columns:1fr; } }
+.home-spotlight-2{ grid-template-columns:repeat(2,1fr); }
+@media(max-width:900px){ .home-spotlight, .home-spotlight-2{ grid-template-columns:1fr; } }
 .hs-card{ display:flex; flex-direction:column; }
+/* ===== Redesigned rank card (current rank big + next-rank marker) ===== */
+.rankcard2 .rc2-hero{ display:flex; align-items:center; gap:16px; margin:6px 0 16px; }
+.rc2-icon-wrap{ position:relative; flex:0 0 auto; width:76px; height:76px; display:grid; place-items:center; }
+.rc2-icon-glow{ position:absolute; inset:-18%; border-radius:50%; filter:blur(16px); opacity:.55; }
+.rc2-icon{ position:relative; z-index:1; }
+.rc2-icon svg{ width:64px; height:64px; filter:drop-shadow(0 4px 14px rgba(0,0,0,.5)); }
+.rc2-info{ flex:1; min-width:0; }
+.rc2-tier{ font-family:var(--font-display); font-stretch:78%; font-weight:900; font-size:30px; line-height:1; letter-spacing:-.02em; }
+.rc2-rating{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); margin-top:6px; }
+.rc2-rating .elo-unit{ font-size:9px; opacity:.7; margin-left:1px; }
+.rc2-rating b{ color:var(--text); }
+.rc2-progress{ margin-bottom:14px; }
+.rc2-bar-row{ display:flex; align-items:center; gap:10px; }
+.rc2-bar{ flex:1; }
+.rc2-next{ flex:0 0 auto; width:34px; height:34px; border-radius:10px; border:2px solid var(--line-bright); background:var(--surface-2); display:grid; place-items:center; }
+.rc2-next-icon{ width:20px; height:20px; }
+.rc2-next-label{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:7px; text-align:right; padding-right:44px; }
+@media(max-width:480px){ .rc2-tier{ font-size:26px; } .rc2-icon svg{ width:56px; height:56px; } .rc2-icon-wrap{ width:66px; height:66px; } }
 .hs-milestone{ display:flex; align-items:center; gap:14px; }
 .hs-mile-icon svg{ width:46px; height:46px; }
 .hs-mile-info{ flex:1; min-width:0; }
@@ -3227,6 +3268,17 @@ h1.section-title .accent{
 .camera-modal{
   max-width: 640px;
 }
+/* Device pickers (camera / mic / output) */
+.device-sec-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin:20px 0 12px; font-weight:700; }
+.device-section{ display:flex; flex-direction:column; gap:12px; }
+.device-row{ display:flex; flex-direction:column; gap:6px; }
+.device-row label{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text); }
+.device-row label svg{ color:var(--text-dim); }
+.device-req{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--coral); background:rgba(255,51,88,.12); border:1px solid rgba(255,51,88,.3); padding:2px 6px; border-radius:999px; }
+.device-opt{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-dim); background:var(--surface-3); border:1px solid var(--line); padding:2px 6px; border-radius:999px; }
+.device-select{ width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; padding:11px 12px; color:var(--text); font-family:var(--font-body); font-size:14px; cursor:pointer; }
+.device-select:focus{ outline:none; border-color:var(--mint); }
+.device-note{ font-size:11px; color:var(--text-faint); line-height:1.5; }
 .camera-preview-wrap{
   position: relative;
   width: 100%;
@@ -10825,6 +10877,10 @@ body.low-power .play-hero{ box-shadow: none !important; }
   .topbar{ gap: 6px; }
   /* Center the brand since the hamburger is hidden on mobile */
   .topbar-brand{ font-size: 20px; }
+  /* Profile chip on mobile: show ONLY the avatar + level (hide name to save space) */
+  #userChip{ padding: 3px !important; gap: 0 !important; }
+  #userChip #chipName{ display: none !important; }
+  #userChip .chip-level{ margin-left: 2px; }
 
   /* Mobile-nav active state: a clear filled pill so the current tab reads instantly */
   .mobile-nav-item.active .mni-icon{ background: rgba(34,211,163,.18); box-shadow: 0 0 0 1px rgba(34,211,163,.25) inset; }
@@ -11109,7 +11165,7 @@ body.low-power .play-hero{ box-shadow: none !important; }
         <div class="av" id="chipAv">?</div>
         <span class="chip-level" id="chipLevel">1</span>
         <span id="chipName">—</span>
-        <span class="rating" id="chipRating"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
+        <span class="rating" id="chipRating" style="display:none;"><svg class="rank-icon" id="chipRankIcon"></svg> 1000</span>
       </div>
       <button id="achievementsBtn" style="display:none;"></button>
       <button id="settingsBtn" style="display:none;"></button>
@@ -11122,7 +11178,7 @@ body.low-power .play-hero{ box-shadow: none !important; }
     <button class="mobile-nav-item" data-mnav="play"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
     <button class="mobile-nav-item" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
     <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
-    <button class="mobile-nav-item mni-profile" data-mnav="settings"><span class="mni-icon"><span class="mni-av" id="mnavAv">?</span></span><span>You</span></button>
+    <button class="mobile-nav-item" data-mnav="settings"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-menu"/></svg></span><span>More</span></button>
   </nav>
 
   <!-- ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== -->
@@ -11359,6 +11415,7 @@ const FIREBASE_CONFIG = {
               <label>Password</label>
               <input type="password" name="password" required placeholder="••••••••" autocomplete="current-password" />
             </div>
+            <button type="button" class="auth-forgot" id="forgotPwBtn">Forgot password?</button>
             <button class="btn btn-primary" type="submit" style="margin-top:6px;">Sign in</button>
           </form>
 
@@ -11491,19 +11548,8 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
-        <!-- NEW: spotlight row — next milestone + throw style + this-week recap -->
-        <div class="home-grid home-spotlight" style="margin-top:14px;">
-          <div class="card hs-card" id="hsMilestoneCard">
-            <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Next milestone</div></div>
-            <div class="hs-milestone">
-              <div class="hs-mile-icon"><svg id="hsNextRankIcon"></svg></div>
-              <div class="hs-mile-info">
-                <div class="hs-mile-tier" id="hsNextRankName">Silver I</div>
-                <div class="hs-mile-sub" id="hsNextRankGap">— ELO to climb</div>
-                <div class="ui-bar"><div class="ui-bar-fill" id="hsNextRankFill" style="width:0%"></div></div>
-              </div>
-            </div>
-          </div>
+        <!-- Spotlight row — throw style + pro tip (rank/next-rank now live in the rank card) -->
+        <div class="home-grid home-spotlight home-spotlight-2" style="margin-top:14px;">
           <div class="card hs-card" id="hsThrowCard">
             <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Your throw style</div></div>
             <div class="hs-throws" id="hsThrows">
@@ -11525,25 +11571,32 @@ const FIREBASE_CONFIG = {
           <!-- LEFT COLUMN -->
           <div class="home-col">
 
-            <!-- Rank card -->
-            <div class="card clickable" id="homeRankCard">
+            <!-- Rank card (current rank BIG + next-rank marker on the bar) -->
+            <div class="card clickable rankcard2" id="homeRankCard">
               <div class="card-hd">
                 <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Your rank</div>
                 <span class="card-hd-action" id="rankViewMoreBtn">Details →</span>
               </div>
-              <div class="rank-card-body">
-                <div class="rank-card-icon"><svg id="rankIconCurrent"></svg></div>
-                <div class="rank-card-info">
-                  <div class="rank-card-tier" id="rankNameCurrent">Bronze I</div>
-                  <div class="rank-card-rating"><span id="heroRating">1000</span><span class="elo-unit">ELO</span></div>
+              <!-- Hero: big current rank -->
+              <div class="rc2-hero">
+                <div class="rc2-icon-wrap">
+                  <div class="rc2-icon-glow" id="rc2IconGlow"></div>
+                  <div class="rank-card-icon rc2-icon"><svg id="rankIconCurrent"></svg></div>
+                </div>
+                <div class="rc2-info">
+                  <div class="rank-card-tier rc2-tier" id="rankNameCurrent">Bronze I</div>
+                  <div class="rc2-rating"><span id="heroRating">1000</span><span class="elo-unit">ELO</span> · <b id="heroWinrate">—</b> win rate</div>
                 </div>
               </div>
-              <div class="rank-card-progress">
-                <div class="ui-bar"><div class="ui-bar-fill" id="rankBarFill" style="width:0%;"></div></div>
-                <div class="rank-card-meta">
-                  <span id="rankNextLabel">—</span>
-                  <span class="rank-card-stats"><b id="heroWinrate">—</b> win rate</span>
+              <!-- Progress to next rank, with the NEXT rank shown as a marker at the bar end -->
+              <div class="rc2-progress">
+                <div class="rc2-bar-row">
+                  <div class="ui-bar rc2-bar"><div class="ui-bar-fill" id="rankBarFill" style="width:0%;"></div></div>
+                  <div class="rc2-next" id="rc2Next" title="Next rank">
+                    <svg id="rc2NextIcon" class="rc2-next-icon"></svg>
+                  </div>
                 </div>
+                <div class="rc2-next-label" id="rankNextLabel">—</div>
               </div>
               <div class="level-strip" id="levelStrip" title="Open achievements to see titles">
                 <div class="level-badge" id="heroLevelBadge">1</div>
@@ -13177,6 +13230,23 @@ const FIREBASE_CONFIG = {
       </div>
     </div>
 
+    <h4 class="device-sec-title">DEVICES</h4>
+    <div class="settings-section device-section">
+      <div class="device-row">
+        <label for="devCamSelect"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-camera"/></svg> Camera <span class="device-req">required</span></label>
+        <select id="devCamSelect" class="device-select"></select>
+      </div>
+      <div class="device-row">
+        <label for="devMicSelect"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-sound-on"/></svg> Microphone <span class="device-opt">optional</span></label>
+        <select id="devMicSelect" class="device-select"></select>
+      </div>
+      <div class="device-row">
+        <label for="devOutSelect"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-sound-on"/></svg> Audio output</label>
+        <select id="devOutSelect" class="device-select"></select>
+      </div>
+      <div class="device-note" id="devNote">Pick which camera, mic and headset/speakers to use. Camera is required — mic is optional.</div>
+    </div>
+
     <div style="display:flex; gap:10px; margin-top:18px;">
       <button class="btn btn-ghost" id="camModalResetBtn" style="flex:1;">Reset to defaults</button>
       <button class="btn btn-primary" id="camModalDoneBtn" style="flex:2;">Done</button>
@@ -13615,39 +13685,67 @@ const FIREBASE_CONFIG = {
     <div class="calib-steps-ind" id="calibStepsInd"></div>
 
     <!-- Step content gets swapped -->
+    <!-- 0: Intro -->
     <div class="calib-step active" data-calib-step="0">
       <div class="calib-icon"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-camera"/></svg></div>
-      <h3 class="calib-title">Let's set up your camera</h3>
-      <p class="calib-sub">ROSHCAM uses your webcam to detect hand gestures in real time. We'll quickly check everything works. Takes about 20 seconds.</p>
-      <button class="btn btn-primary" id="calibStart" style="width:100%;">Start setup</button>
+      <h3 class="calib-title">Camera calibration</h3>
+      <p class="calib-sub">ROSHCAM reads your hand from your webcam, so good setup = fewer missed throws. This 4-step check tunes your framing, lighting and gesture detection. Takes ~40 seconds and makes matches far more reliable.</p>
+      <ul class="calib-checklist">
+        <li><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg> Camera &amp; framing</li>
+        <li><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg> Lighting quality</li>
+        <li><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg> Rock · Paper · Scissors test</li>
+      </ul>
+      <button class="btn btn-primary" id="calibStart" style="width:100%;">Start calibration</button>
       <button class="btn btn-ghost" id="calibSkip" style="width:100%; margin-top:8px;">Skip for now</button>
     </div>
 
+    <!-- 1: Framing -->
     <div class="calib-step" data-calib-step="1">
       <div class="calib-preview">
         <video id="calibVideo" autoplay playsinline muted></video>
+        <div class="calib-frame-guide"></div>
         <div class="calib-preview-overlay" id="calibFaceState"><span class="dot"></span> Looking for you…</div>
       </div>
-      <h3 class="calib-title">Can you see yourself?</h3>
-      <p class="calib-sub">Make sure your face and upper body are visible and well-lit. Position yourself in the center of the frame.</p>
+      <h3 class="calib-title">Frame yourself</h3>
+      <p class="calib-sub">Sit so your head and shoulders fill the frame, camera at roughly eye level. Keep about an arm's length of space so your raised hand fits in view.</p>
       <button class="btn btn-primary" id="calibStep1Next" style="width:100%;">Looks good →</button>
     </div>
 
+    <!-- 2: Lighting -->
     <div class="calib-step" data-calib-step="2">
+      <div class="calib-preview">
+        <video id="calibVideoLight" autoplay playsinline muted></video>
+        <div class="calib-preview-overlay" id="calibLightState"><span class="dot"></span> Measuring light…</div>
+      </div>
+      <div class="calib-meter"><div class="calib-meter-fill" id="calibLightMeter" style="width:0%"></div></div>
+      <div class="calib-meter-label" id="calibLightLabel">Analyzing your lighting…</div>
+      <h3 class="calib-title">Check your lighting</h3>
+      <p class="calib-sub">Face a light source — a window or lamp in front of you works best. Avoid bright lights or windows <b>behind</b> you (it turns you into a silhouette).</p>
+      <button class="btn btn-primary" id="calibStep2Next" style="width:100%;" disabled>Measuring…</button>
+    </div>
+
+    <!-- 3: Gesture test -->
+    <div class="calib-step" data-calib-step="3">
       <div class="calib-preview">
         <video id="calibVideo2" autoplay playsinline muted></video>
         <canvas id="calibHandCanvas"></canvas>
         <div class="calib-preview-overlay" id="calibHandState"><span class="dot"></span> Show your hand…</div>
       </div>
-      <h3 class="calib-title">Raise your hand ✋</h3>
-      <p class="calib-sub">Hold your open hand up to the camera. When we detect it, the badge turns green.</p>
-      <button class="btn btn-primary" id="calibStep2Next" style="width:100%;" disabled>Detecting…</button>
+      <div class="calib-gesture-targets">
+        <div class="cgt" data-g="rock"><svg viewBox="0 0 64 64" width="26" height="26"><use href="#i-rock"/></svg><span>Rock</span><i class="cgt-check"></i></div>
+        <div class="cgt" data-g="paper"><svg viewBox="0 0 64 64" width="26" height="26"><use href="#i-paper"/></svg><span>Paper</span><i class="cgt-check"></i></div>
+        <div class="cgt" data-g="scissors"><svg viewBox="0 0 64 64" width="26" height="26"><use href="#i-scissors"/></svg><span>Scissors</span><i class="cgt-check"></i></div>
+      </div>
+      <h3 class="calib-title">Test all three throws</h3>
+      <p class="calib-sub" id="calibGesturePrompt">Make each shape clearly — we'll tick them off as they're detected. This trains your muscle memory for real matches.</p>
+      <button class="btn btn-primary" id="calibStep3Next" style="width:100%;" disabled>Make all 3 to continue…</button>
     </div>
 
-    <div class="calib-step" data-calib-step="3">
+    <!-- 4: Done -->
+    <div class="calib-step" data-calib-step="4">
       <div class="calib-icon success"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-check"/></svg></div>
-      <h3 class="calib-title">You're all set!</h3>
-      <p class="calib-sub">Your camera and hand tracking are working perfectly. Time to throw some hands.</p>
+      <h3 class="calib-title">Calibration complete!</h3>
+      <p class="calib-sub" id="calibDoneSummary">Camera, lighting and all three gestures verified. You're ready to throw hands.</p>
       <button class="btn btn-primary" id="calibFinish" style="width:100%;">Let's play</button>
     </div>
   </div>
@@ -13673,7 +13771,7 @@ import {
   getAuth, onAuthStateChanged,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signInAnonymously, signOut, updateProfile,
-  GoogleAuthProvider, signInWithPopup,
+  GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
   getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, addDoc,
@@ -14003,6 +14101,7 @@ const state = {
   fbApp: null, auth: null, db: null,
   user: null, profile: null,
   cameraReady: false,
+  micReady: false,
   hands: null,
   currentGesture: null,
   recentGestures: [],
@@ -14758,11 +14857,33 @@ const videoEl = $('#yourVideo');
 const overlayCanvas = $('#overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 async function setupCamera(){
+  // CAMERA IS REQUIRED, MIC IS OPTIONAL.
+  // Request them separately so a mic problem (blocked / busy / no device) can
+  // never block the camera — the old combined request made camera "fail" with
+  // permission-denied even when the camera itself was allowed.
   try{
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { width:{ideal:640}, height:{ideal:480}, facingMode: 'user' },
-      audio: true,
-    });
+    const camId = (function(){ try { return localStorage.getItem('rosham_dev_cam') || ''; } catch(e){ return ''; } })();
+    const videoConstraints = { width:{ideal:640}, height:{ideal:480}, facingMode:'user' };
+    if(camId) videoConstraints.deviceId = { exact: camId };
+    let stream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: videoConstraints, audio: false });
+    } catch(camErr){
+      // If a saved deviceId is stale/unavailable, retry with the default camera.
+      if(camId){ stream = await navigator.mediaDevices.getUserMedia({ video: { width:{ideal:640}, height:{ideal:480}, facingMode:'user' }, audio: false }); }
+      else throw camErr;
+    }
+    // Camera is up — now TRY to add a mic track (best effort, never fatal).
+    state.micReady = false;
+    try {
+      const micId = (function(){ try { return localStorage.getItem('rosham_dev_mic') || ''; } catch(e){ return ''; } })();
+      const audioConstraints = micId ? { deviceId: { exact: micId } } : true;
+      const micStream = await navigator.mediaDevices.getUserMedia({ audio: audioConstraints });
+      micStream.getAudioTracks().forEach(t => stream.addTrack(t));
+      state.micReady = true;
+    } catch(micErr){
+      console.warn('[mic] optional mic unavailable — continuing video-only', micErr);
+    }
     videoEl.srcObject = stream;
     state.localStream = stream;
     await new Promise(res => { videoEl.onloadedmetadata = res; });
@@ -14770,12 +14891,13 @@ async function setupCamera(){
     overlayCanvas.width = 640;
     overlayCanvas.height = 480;
     $('#camStatus').classList.add('live');
-    setText('#camStatusText', 'live');
+    setText('#camStatusText', state.micReady ? 'live' : 'live · no mic');
     state.cameraReady = true;
     return true;
   } catch(e){
     setText('#camStatusText', 'denied');
-    toast('Camera + mic permission required', 'error');
+    console.warn('[camera] setup failed', e);
+    toast('Camera access required — please allow your camera', 'error');
     return false;
   }
 }
@@ -14950,20 +15072,23 @@ async function onAuthChanged(user){
     await user.getIdToken(true);
     console.log('[auth] token refreshed for', user.uid);
   } catch(e){ console.warn('[auth] token refresh failed', e); }
-  // Clean up any zombie queue entries / matches from previous sessions for this user
-  try {
-    await deleteDoc(doc(state.db, 'queue', user.uid));
-  } catch(e){}
-  try {
-    const callerQ = await getDocs(query(collection(state.db, 'matches'), where('caller', '==', user.uid)));
-    const calleeQ = await getDocs(query(collection(state.db, 'matches'), where('callee', '==', user.uid)));
-    const ids = new Set();
-    callerQ.forEach(d => ids.add(d.id));
-    calleeQ.forEach(d => ids.add(d.id));
-    for(const id of ids){
-      try { await deleteDoc(doc(state.db, 'matches', id)); } catch(e){}
-    }
-  } catch(e){ console.warn('zombie match cleanup failed', e); }
+  // Clean up zombie queue entries / matches from previous sessions — but do it
+  // in the BACKGROUND (fire-and-forget). It used to run 3 sequential queries +
+  // deletes BEFORE showing the app, which made login feel very slow. None of it
+  // is needed before the user reaches the landing screen.
+  (async () => {
+    try { await deleteDoc(doc(state.db, 'queue', user.uid)); } catch(e){}
+    try {
+      const [callerQ, calleeQ] = await Promise.all([
+        getDocs(query(collection(state.db, 'matches'), where('caller', '==', user.uid))),
+        getDocs(query(collection(state.db, 'matches'), where('callee', '==', user.uid))),
+      ]);
+      const ids = new Set();
+      callerQ.forEach(d => ids.add(d.id));
+      calleeQ.forEach(d => ids.add(d.id));
+      await Promise.all([...ids].map(id => deleteDoc(doc(state.db, 'matches', id)).catch(()=>{})));
+    } catch(e){ console.warn('zombie match cleanup failed', e); }
+  })();
   try {
     const ref = doc(state.db, 'users', user.uid);
     const snap = await getDoc(ref);
@@ -15005,7 +15130,8 @@ async function onAuthChanged(user){
   state._heartbeat = setInterval(async () => {
     try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp(), inMatch: state.screen === 'game' }); } catch(e){}
   }, 30000);
-  try { await updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp(), inMatch: false }); } catch(e){}
+  // Fire-and-forget so it doesn't delay reaching the landing screen.
+  updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp(), inMatch: false }).catch(()=>{});
 
   attachSocialListeners();
   attachActivityListener();
@@ -15105,6 +15231,21 @@ function refreshStatsUI(){
     fill.style.setProperty('--rank-color', rank.color);
     fill.style.setProperty('--rank-color-2', rank.color2);
   }
+  // Redesigned rank card: glow behind the big current-rank icon + the NEXT rank
+  // shown as a small marker at the end of the progress bar.
+  try {
+    const glow = $('#rc2IconGlow'); if(glow) glow.style.background = `radial-gradient(circle, ${rank.color}, transparent 70%)`;
+    const bigIcon = $('#rankIconCurrent'); if(bigIcon) bigIcon.style.color = rank.color;
+    const nextMarker = $('#rc2Next'), nextIcon = $('#rc2NextIcon');
+    if(prog.toNext > 0){
+      const nextRank = rankFromRating(rating + Math.max(1, prog.toNext));
+      if(nextMarker){ nextMarker.style.display = ''; nextMarker.style.borderColor = nextRank.color; nextMarker.style.color = nextRank.color; nextMarker.title = `Next: ${nextRank.tierName}`; }
+      if(nextIcon){ setRankIconEl(nextIcon, nextRank.id); nextIcon.style.color = nextRank.color; }
+    } else if(nextMarker){
+      // Max rank — show a crown-less "MAX" state
+      nextMarker.style.display = 'none';
+    }
+  } catch(e){}
 
   // Update the NEW rank-display icon
   const rankIcon = $('#rankIconCurrent');
@@ -15264,6 +15405,16 @@ function setupAuthUI(){
     const fd = new FormData(e.target);
     try { await signInWithEmailAndPassword(state.auth, fd.get('email'), fd.get('password')); }
     catch(err){ showErr('#authError', friendlyError(err)); }
+  });
+  // Forgot password — send a reset email to the address in the sign-in form.
+  on('#forgotPwBtn', 'click', async () => {
+    showErr('#authError', '');
+    const email = ($('#signinForm input[name=email]')?.value || '').trim();
+    if(!email){ showErr('#authError', 'Enter your email above first, then tap "Forgot password?"'); return; }
+    try {
+      await sendPasswordResetEmail(state.auth, email);
+      toast(`Password reset email sent to ${email}`, 'success');
+    } catch(err){ showErr('#authError', friendlyError(err)); }
   });
   $('#signupForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -16157,6 +16308,71 @@ async function openCameraModal(){
 
   // Try to attach the live preview
   await attachCameraPreview();
+  // Populate the camera/mic/output device pickers
+  try { await populateDeviceSelectors(); } catch(e){ console.warn('[devices]', e); }
+}
+
+// ===== Device selection (camera / mic / audio output) =====
+async function populateDeviceSelectors(){
+  const camSel = $('#devCamSelect'), micSel = $('#devMicSelect'), outSel = $('#devOutSelect');
+  if(!camSel) return;
+  let devices = [];
+  try { devices = await navigator.mediaDevices.enumerateDevices(); }
+  catch(e){ console.warn('[devices] enumerate failed', e); }
+  const fill = (sel, kind, savedKey, emptyLabel) => {
+    if(!sel) return;
+    const saved = (function(){ try { return localStorage.getItem(savedKey) || ''; } catch(e){ return ''; } })();
+    const list = devices.filter(d => d.kind === kind);
+    sel.innerHTML = '';
+    if(kind === 'audiooutput' && !('setSinkId' in HTMLMediaElement.prototype)){
+      const o = document.createElement('option'); o.value=''; o.textContent='System default (not switchable in this browser)'; sel.appendChild(o); sel.disabled = true; return;
+    }
+    // "Default / Automatic" option
+    const def = document.createElement('option'); def.value=''; def.textContent = emptyLabel; sel.appendChild(def);
+    list.forEach((d, i) => {
+      const o = document.createElement('option');
+      o.value = d.deviceId;
+      o.textContent = d.label || `${kind} ${i+1}`;
+      if(d.deviceId === saved) o.selected = true;
+      sel.appendChild(o);
+    });
+    // Labels are blank until permission is granted — hint the user.
+    if(list.length && !list[0].label){
+      const hint = document.createElement('option'); hint.disabled = true; hint.textContent = '— allow camera/mic to see device names —'; sel.appendChild(hint);
+    }
+  };
+  fill(camSel, 'videoinput', 'rosham_dev_cam', 'Default camera');
+  fill(micSel, 'audioinput', 'rosham_dev_mic', 'Default microphone');
+  fill(outSel, 'audiooutput', 'rosham_dev_out', 'Default output');
+}
+on('#devCamSelect', 'change', async (e) => {
+  try { localStorage.setItem('rosham_dev_cam', e.target.value); } catch(err){}
+  toast('Camera updated — restart preview/match to apply', 'success');
+  // Restart the preview with the new camera so the change is visible immediately.
+  try {
+    if(cameraPreviewStream && cameraPreviewStream !== state.localStream){ cameraPreviewStream.getTracks().forEach(t=>t.stop()); cameraPreviewStream = null; }
+    const vc = { width:{ideal:640}, height:{ideal:480} };
+    if(e.target.value) vc.deviceId = { exact: e.target.value };
+    cameraPreviewStream = await navigator.mediaDevices.getUserMedia({ video: vc, audio:false });
+    const v = document.getElementById('cameraPreviewVideo'); if(v){ v.srcObject = cameraPreviewStream; applyCameraPreviewFilter(); }
+  } catch(err){ console.warn('[devices] cam switch', err); }
+});
+on('#devMicSelect', 'change', (e) => {
+  try { localStorage.setItem('rosham_dev_mic', e.target.value); } catch(err){}
+  toast('Microphone updated — applies next match', 'success');
+});
+on('#devOutSelect', 'change', async (e) => {
+  try { localStorage.setItem('rosham_dev_out', e.target.value); } catch(err){}
+  await applyAudioOutput();
+  toast('Audio output updated', 'success');
+});
+// Route opponent audio (and any media) to the chosen output device, if supported.
+async function applyAudioOutput(){
+  const id = (function(){ try { return localStorage.getItem('rosham_dev_out') || ''; } catch(e){ return ''; } })();
+  const opp = document.getElementById('oppVideo');
+  if(opp && typeof opp.setSinkId === 'function' && id){
+    try { await opp.setSinkId(id); } catch(e){ console.warn('[devices] setSinkId', e); }
+  }
 }
 
 async function attachCameraPreview(){
@@ -18223,7 +18439,15 @@ const RTC_CONFIG = {
     { urls: 'stun:stun.l.google.com:19302' },
     { urls: 'stun:stun1.l.google.com:19302' },
     { urls: 'stun:stun.cloudflare.com:3478' },
+    // TURN relays — REQUIRED for many real-world NATs (especially mobile/cellular
+    // and symmetric NATs). Without a relay the peer connection silently fails to
+    // establish, the data channel never opens, and the ready-up meter never charges
+    // so the round never starts. These are free public OpenRelay (Metered) servers.
+    { urls: 'turn:openrelay.metered.ca:80', username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443', username: 'openrelayproject', credential: 'openrelayproject' },
+    { urls: 'turn:openrelay.metered.ca:443?transport=tcp', username: 'openrelayproject', credential: 'openrelayproject' },
   ],
+  iceCandidatePoolSize: 4,
 };
 
 async function enterMatch(matchData){
@@ -18251,6 +18475,7 @@ async function enterMatch(matchData){
   state.remoteStream = new MediaStream();
   $('#oppVideo').srcObject = state.remoteStream;
   applyVoiceVolume(); // honour the opponent-voice slider / mute on the remote audio
+  try { applyAudioOutput(); } catch(e){} // route to the chosen headset/speakers
   state.pc.ontrack = (e) => {
     e.streams[0].getTracks().forEach(t => state.remoteStream.addTrack(t));
     applyVoiceVolume();
@@ -18435,7 +18660,18 @@ function onPeerConnected(){
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
   $('#handPrompt').classList.add('show');
   startReadySystem();
-  state.pingTimer = setInterval(() => { sendPeer({type:'ping', t: Date.now()}); }, 2000);
+  // Guard against double-init (onPeerConnected fires from both dc.onopen and the
+  // connectionstatechange handler) — keep a single ping/resync timer.
+  if(state.pingTimer) clearInterval(state.pingTimer);
+  state.pingTimer = setInterval(() => {
+    sendPeer({type:'ping', t: Date.now()});
+    // Resync ready-state so a dropped 'ready_state' message can't permanently
+    // stall the round: re-announce our current readiness, then re-check start.
+    if(state.phase === 'idle' || state.phase === 'done'){
+      sendPeer({type:'ready_state', ready: state.myGestureReady, progress: state.myReadyTimer / READY_HOLD_MS });
+      maybeStartRound();
+    }
+  }, 2000);
 }
 function handlePeerMessage(msg){
   // Any inbound message proves the peer is back — cancel a pending reconnect grace.
@@ -21181,19 +21417,7 @@ function paintMnavAvatar(){
 function renderHomeSpotlight(p){
   if(!p) return;
   const rating = p.rating || 1000;
-  // Next milestone (rank progress)
-  try {
-    const prog = rankProgressToNext(rating);
-    const here = rankFromRating(rating);
-    // find the next tier's rank object for the icon/name
-    const nextRating = rating + Math.max(1, prog.toNext || 0);
-    const nextRank = (prog.toNext > 0) ? rankFromRating(nextRating) : here;
-    setRankIconEl($('#hsNextRankIcon'), nextRank.id);
-    const ic = $('#hsNextRankIcon'); if(ic) ic.style.color = nextRank.color;
-    setText('#hsNextRankName', prog.toNext > 0 ? nextRank.tierName : 'Max rank reached');
-    setText('#hsNextRankGap', prog.toNext > 0 ? `${prog.toNext} ELO to climb` : 'You\'re at the top!');
-    const f = $('#hsNextRankFill'); if(f){ f.style.width = ((prog.progress||0) * 100) + '%'; f.style.setProperty('--rank-color', nextRank.color); f.style.setProperty('--rank-color-2', nextRank.color2 || nextRank.color); }
-  } catch(e){}
+  // (Next-milestone now lives inside the rank card — see renderHomeRankCard.)
   // Throw style distribution
   try {
     const t = getThrowStats();
@@ -21755,11 +21979,12 @@ let calibHands = null;
 let calibStepIdx = 0;
 let calibHandSeen = false;
 
+const CALIB_STEPS = 5;
 function setCalibStep(idx){
   calibStepIdx = idx;
   document.querySelectorAll('.calib-step').forEach(s => s.classList.toggle('active', +s.dataset.calibStep === idx));
-  const fill = $('#calibProgressFill'); if(fill) fill.style.width = ((idx+1)/4*100) + '%';
-  setText('#calibStepsInd', `Step ${idx+1} of 4`);
+  const fill = $('#calibProgressFill'); if(fill) fill.style.width = ((idx+1)/CALIB_STEPS*100) + '%';
+  setText('#calibStepsInd', `Step ${idx+1} of ${CALIB_STEPS}`);
 }
 function openCalibration(){
   const m = $('#calibrationModal'); if(!m) return;
@@ -21772,6 +21997,7 @@ async function calibGetStream(){
   return calibStream;
 }
 function calibStopStream(){
+  clearInterval(calibLightTimer);
   if(calibStream){ calibStream.getTracks().forEach(t => t.stop()); calibStream = null; }
   if(calibHands){ try { calibHands.close(); } catch(e){} calibHands = null; }
 }
@@ -21787,45 +22013,98 @@ async function calibStep1(){
     $('#calibrationModal')?.classList.remove('show');
   }
 }
+// ---- Step 2: LIGHTING — sample average brightness from the video ----
+let calibLightTimer = null;
 async function calibStep2(){
   setCalibStep(2);
-  calibHandSeen = false;
   const nextBtn = $('#calibStep2Next');
-  if(nextBtn){ nextBtn.disabled = true; nextBtn.textContent = 'Detecting…'; }
+  if(nextBtn){ nextBtn.disabled = true; nextBtn.textContent = 'Measuring…'; }
   try {
     const stream = await calibGetStream();
-    const v = $('#calibVideo2'); if(v){ v.srcObject = stream; }
-    // Lightweight hands detector for calibration
+    const v = $('#calibVideoLight'); if(v){ v.srcObject = stream; }
+    const cvs = document.createElement('canvas'); cvs.width = 64; cvs.height = 48;
+    const cx = cvs.getContext('2d', { willReadFrequently: true });
+    let goodFrames = 0;
+    clearInterval(calibLightTimer);
+    calibLightTimer = setInterval(() => {
+      if(calibStepIdx !== 2 || !v || v.readyState < 2) return;
+      try {
+        cx.drawImage(v, 0, 0, 64, 48);
+        const data = cx.getImageData(0, 0, 64, 48).data;
+        let sum = 0;
+        for(let i = 0; i < data.length; i += 4){ sum += (data[i]*0.299 + data[i+1]*0.587 + data[i+2]*0.114); }
+        const avg = sum / (data.length / 4); // 0..255
+        const pct = Math.round(Math.min(100, avg / 1.9)); // ~180 maps to ~95%
+        const meter = $('#calibLightMeter'); if(meter){ meter.style.width = pct + '%'; meter.className = 'calib-meter-fill ' + (avg < 55 ? 'low' : avg > 210 ? 'high' : 'ok'); }
+        const st = $('#calibLightState'), label = $('#calibLightLabel');
+        let verdict, ok = false;
+        if(avg < 55){ verdict = 'Too dark — add a light in front of you'; }
+        else if(avg > 210){ verdict = 'Too bright / blown out — reduce backlight'; }
+        else { verdict = 'Lighting looks great!'; ok = true; }
+        if(label) label.textContent = verdict;
+        if(st){ st.classList.toggle('ok', ok); st.innerHTML = `<span class="dot"></span> ${ok ? 'Good light' : 'Adjust light'}`; }
+        if(ok){ goodFrames++; } else { goodFrames = 0; }
+        // Enable continue once lighting is acceptable for ~1s (or always after a grace period)
+        if(goodFrames >= 5 && nextBtn && nextBtn.disabled){ nextBtn.disabled = false; nextBtn.textContent = 'Lighting good →'; }
+      } catch(e){}
+    }, 200);
+    // Safety: never trap the user — allow continue after 8s regardless.
+    setTimeout(() => { if(calibStepIdx === 2 && nextBtn && nextBtn.disabled){ nextBtn.disabled = false; nextBtn.textContent = 'Continue anyway →'; } }, 8000);
+  } catch(e){
+    if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
+  }
+}
+// ---- Step 3: GESTURE TEST — must form rock, paper AND scissors ----
+let calibGesturesDone = { rock:false, paper:false, scissors:false };
+async function calibStep3(){
+  setCalibStep(3);
+  clearInterval(calibLightTimer);
+  calibGesturesDone = { rock:false, paper:false, scissors:false };
+  document.querySelectorAll('.cgt').forEach(c => c.classList.remove('done'));
+  const nextBtn = $('#calibStep3Next');
+  if(nextBtn){ nextBtn.disabled = true; nextBtn.textContent = 'Make all 3 to continue…'; }
+  try {
+    const stream = await calibGetStream();
+    const v2 = $('#calibVideo2'); if(v2){ v2.srcObject = stream; }
     if(typeof Hands !== 'undefined'){
+      if(calibHands){ try { calibHands.close(); } catch(e){} }
       calibHands = new Hands({ locateFile: (f) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${f}` });
       calibHands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 });
       calibHands.onResults((res) => {
         const st = $('#calibHandState');
         if(res.multiHandLandmarks && res.multiHandLandmarks.length > 0){
-          if(!calibHandSeen){
-            calibHandSeen = true;
-            if(st){ st.classList.add('ok'); st.innerHTML = '<span class="dot"></span> Hand detected!'; }
-            const nb = $('#calibStep2Next'); if(nb){ nb.disabled = false; nb.textContent = 'Perfect →'; }
+          const g = classifyGesture(res.multiHandLandmarks[0]);
+          if(st){ st.classList.add('ok'); st.innerHTML = `<span class="dot"></span> ${g ? g.toUpperCase() : 'Hand detected'}`; }
+          if(g && !calibGesturesDone[g]){
+            calibGesturesDone[g] = true;
+            const cell = document.querySelector(`.cgt[data-g="${g}"]`); if(cell) cell.classList.add('done');
+            try { haptic(12); sfxReady && sfxReady(); } catch(e){}
+            const allDone = calibGesturesDone.rock && calibGesturesDone.paper && calibGesturesDone.scissors;
+            if(allDone && nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'All set →'; }
+            else {
+              const left = ['rock','paper','scissors'].filter(x => !calibGesturesDone[x]);
+              setText('#calibGesturePrompt', `Nice! Still need: ${left.join(', ')}.`);
+            }
           }
-        }
+        } else if(st && !st.classList.contains('ok')){ st.innerHTML = '<span class="dot"></span> Show your hand…'; }
       });
-      const v2 = $('#calibVideo2');
       const pump = async () => {
-        if(calibStepIdx !== 2 || !calibHands || !v2) return;
+        if(calibStepIdx !== 3 || !calibHands || !v2) return;
         try { await calibHands.send({ image: v2 }); } catch(e){}
-        setTimeout(pump, 120);
+        setTimeout(pump, 110);
       };
       v2.addEventListener('loadeddata', pump, { once: true });
+      if(v2.readyState >= 2) pump();
     } else {
-      // MediaPipe not loaded — allow continue after a moment
-      setTimeout(() => { const nb = $('#calibStep2Next'); if(nb){ nb.disabled = false; nb.textContent = 'Continue →'; } }, 2000);
+      setTimeout(() => { if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; } }, 2000);
     }
   } catch(e){
-    const nb = $('#calibStep2Next'); if(nb){ nb.disabled = false; nb.textContent = 'Continue →'; }
+    if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
   }
 }
 function calibComplete(){
-  setCalibStep(3);
+  setCalibStep(4);
+  clearInterval(calibLightTimer);
   calibStopStream();
   try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){}
 }
@@ -21833,11 +22112,12 @@ function closeCalibration(){
   calibStopStream();
   $('#calibrationModal')?.classList.remove('show');
 }
-// Wizard button wiring
+// Wizard button wiring (5 steps: intro → framing → lighting → gesture test → done)
 on('#calibStart', 'click', calibStep1);
 on('#calibSkip', 'click', () => { try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){} closeCalibration(); });
 on('#calibStep1Next', 'click', calibStep2);
-on('#calibStep2Next', 'click', calibComplete);
+on('#calibStep2Next', 'click', calibStep3);
+on('#calibStep3Next', 'click', calibComplete);
 on('#calibFinish', 'click', closeCalibration);
 // Re-runnable from settings
 on('#setCalibrate', 'click', () => { try { localStorage.removeItem(CALIB_KEY); } catch(e){} openCalibration(); });
