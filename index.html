@@ -813,6 +813,12 @@ body.in-game .main-col{ min-height: 100vh; }
 }
 .nav-item svg{ width: 19px; height: 19px; flex-shrink: 0; }
 .nav-item:hover{ background: rgba(255,255,255,.04); color: var(--text); }
+.nav-item .nav-badge{
+  margin-left: auto; min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 9px; background: var(--coral); color: #fff;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+  display: grid; place-items: center;
+}
 .nav-item.active{
   background: linear-gradient(90deg, rgba(34,211,163,.14), rgba(34,211,163,.03));
   color: var(--mint);
@@ -1507,6 +1513,19 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
   display: grid; place-items: center;
   padding: 0 5px;
 }
+/* Global chat — pinned to the top of Messages */
+.chat-conv-global{ background: linear-gradient(90deg, color-mix(in srgb, var(--mint) 7%, transparent), transparent); }
+.chat-conv-global:hover{ background: linear-gradient(90deg, color-mix(in srgb, var(--mint) 12%, transparent), rgba(255,255,255,.02)); }
+.chat-conv-av-global{ background: linear-gradient(135deg, var(--mint), var(--violet)); box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 4px 14px -4px var(--mint-glow); }
+.chat-conv-av-global svg{ color: #fff; }
+.chat-conv-tag{
+  font-family: var(--font-mono); font-size: 8px; font-weight: 700; letter-spacing: .1em;
+  padding: 1px 5px; border-radius: 5px; vertical-align: 1px;
+  background: color-mix(in srgb, var(--mint) 18%, transparent); color: var(--mint);
+}
+/* When the global room is open, lay its messages out like the old page did */
+.chat-thread.is-global .chat-thread-body{ padding: 12px 12px 14px; display: flex; flex-direction: column; gap: 10px; }
+.chat-thread.is-global .gc-bubble-wrap{ max-width: 80%; }
 .chat-thread{ display: flex; flex-direction: column; flex: 1; min-height: 0; }
 .chat-thread-head{
   display: flex; align-items: center; gap: 10px;
@@ -1669,6 +1688,42 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .weekly-meta{ font-family:var(--font-mono); font-size:10px; color:var(--text-dim); align-self:flex-end; }
 .weekly-foot{ margin-top:12px; font-size:11px; color:var(--text-dim); }
 .weekly-foot b{ color:var(--mint); }
+
+/* ===== Challenge cards — revamped (daily + weekly) ===== */
+.challenge-card{ position:relative; overflow:hidden; }
+.challenge-card::after{
+  content:''; position:absolute; inset:0 0 auto 0; height:2px; pointer-events:none;
+  background:linear-gradient(90deg, transparent, var(--amber), transparent); opacity:.5;
+}
+#weeklyChallengeCard.challenge-card::after{ background:linear-gradient(90deg, transparent, var(--violet), transparent); }
+.daily-goal-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.daily-goal-row .daily-card-goal{ flex:1; }
+.daily-reroll-btn{
+  flex:0 0 auto; width:30px; height:30px; border-radius:9px;
+  display:grid; place-items:center; cursor:pointer;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim);
+  transition:transform .25s ease, color .2s, border-color .2s, background .2s;
+}
+.daily-reroll-btn:hover:not(:disabled){ color:var(--amber); border-color:var(--amber); background:color-mix(in srgb, var(--amber) 12%, var(--surface-2)); }
+.daily-reroll-btn:active:not(:disabled) svg{ animation:rerollSpin .5s ease; }
+.daily-reroll-btn:disabled{ opacity:.32; cursor:default; }
+@keyframes rerollSpin{ from{ transform:rotate(0); } to{ transform:rotate(-360deg); } }
+.challenge-reset{
+  margin-top:11px; padding-top:10px; border-top:1px solid var(--line-soft);
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.06em;
+  color:var(--text-faint); text-transform:uppercase; display:flex; align-items:center; gap:6px;
+}
+.challenge-reset::before{ content:'⏱'; font-size:11px; opacity:.7; }
+.daily-streak-mini.all-done{ background:linear-gradient(135deg, var(--mint), #15a079); color:#06251c; border-color:transparent; }
+/* Completion pulse for a challenge card */
+.challenge-card.just-completed{ animation:challengePulse .9s cubic-bezier(.2,1.4,.4,1); }
+@keyframes challengePulse{
+  0%{ box-shadow:0 0 0 0 var(--mint-glow); }
+  40%{ box-shadow:0 0 0 6px rgba(34,211,163,.18); }
+  100%{ box-shadow:0 0 0 0 rgba(34,211,163,0); }
+}
+.weekly-tick{ width:14px; height:14px; color:var(--mint); vertical-align:-2px; }
+
 /* ===== Subtle level-up toast ===== */
 .levelup-toast{ position:fixed; top:-140px; left:50%; transform:translateX(-50%); z-index:520; display:flex; align-items:center; gap:13px; padding:11px 20px 11px 11px; border-radius:16px; background:linear-gradient(135deg, rgba(34,211,163,.16), var(--surface)); border:1px solid rgba(34,211,163,.4); box-shadow:0 22px 55px -22px rgba(0,0,0,.75); opacity:0; transition:top .45s cubic-bezier(.2,1,.3,1), opacity .3s; pointer-events:none; max-width:92vw; }
 .levelup-toast.show{ top:18px; opacity:1; }
@@ -4568,7 +4623,7 @@ body.low-power .podium-crown{ animation: none; }
 
 /* ===== MATCHMAKING SCREEN v2 (radar) ===== */
 .mm-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; min-height:100%; padding:24px 18px; text-align:center; }
-.mm-radar{ position:relative; width:220px; height:220px; display:grid; place-items:center; margin-bottom:8px; }
+.mm-radar{ position:relative; width:clamp(168px, 46vw, 220px); height:clamp(168px, 46vw, 220px); display:grid; place-items:center; margin-bottom:8px; }
 .mm-ring{ position:absolute; inset:0; border-radius:50%; border:1.5px solid rgba(34,211,163,.5); opacity:0; animation:mmRing 2.6s ease-out infinite; }
 .mm-ring.d2{ animation-delay:.85s; } .mm-ring.d3{ animation-delay:1.7s; }
 @keyframes mmRing{ 0%{ transform:scale(.32); opacity:.0; } 12%{ opacity:.7; } 100%{ transform:scale(1); opacity:0; } }
@@ -4603,7 +4658,7 @@ body.low-power .mm-ring{ opacity:.25; }
 .mm-stat-l{ font-family:var(--font-mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
 .mm-actions{ margin-top:24px; display:flex; flex-direction:column; gap:8px; align-items:center; }
 .mm-cancel{ min-width:200px; justify-content:center; }
-@media(max-width:480px){ .mm-radar{ width:180px; height:180px; } .mm-core{ width:82px; height:82px; } .mm-core-av{ width:62px; height:62px; font-size:24px; } .mm-stat{ padding:11px 16px; } }
+@media(max-width:480px){ .mm-core{ width:82px; height:82px; } .mm-core-av{ width:62px; height:62px; font-size:24px; } .mm-stat{ padding:11px 14px; } .mm-stat-v{ font-size:19px; } }
 
 /* CLEAN SEARCHING ORB — minimal, no over-the-top effects */
 .searching-orb{
@@ -5324,49 +5379,52 @@ h2.match-title{
   box-shadow: 0 0 12px var(--mint-glow);
 }
 
-/* RESPONSIVE */
+/* RESPONSIVE — a clean, tight side-by-side face-off that fits any phone
+   with no scrolling and no off-screen overflow. */
 @media (max-width: 900px){
-  /* Compact side-by-side VS that fits a phone with no scrolling:
-     two slim player columns flanking a centered VS. */
   .match-found-v2{ padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom)); }
   .mf-stage{
     grid-template-columns: 1fr auto 1fr;
-    gap: 8px;
-    padding: 0 12px;
+    gap: clamp(6px, 2vw, 14px);
+    padding: 0 10px;
     align-items: stretch;
+    max-width: 560px;
   }
-  .mf-center{ order: 0; gap: 10px; justify-content: center; }
+  .mf-center{ order: 0; gap: 8px; justify-content: flex-start; }
   .mf-player{
-    padding: 16px 8px 14px;
-    gap: 8px;
-    border-radius: 18px;
+    padding: 14px 8px 12px;
+    gap: 7px;
+    border-radius: 16px;
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
     justify-content: flex-start;
   }
-  .mf-player-side-label{ font-size: 9px; letter-spacing: .14em; }
-  .mf-avatar{ width: 68px; height: 68px; border-radius: 18px; font-size: 28px; }
-  .mf-avatar-rank{ width: 26px; height: 26px; bottom: -6px; right: -6px; padding: 3px; }
-  .mf-name{ font-size: 15px; margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mf-rank-line{ font-size: 9px; gap: 4px; flex-wrap: wrap; justify-content: center; }
+  .mf-player-side-label{ font-size: 8.5px; letter-spacing: .12em; top: -8px; padding: 3px 9px; }
+  .mf-avatar{ width: clamp(52px, 17vw, 72px); height: clamp(52px, 17vw, 72px); border-radius: 16px; font-size: clamp(22px, 7vw, 30px); }
+  .mf-avatar-rank{ width: 24px; height: 24px; bottom: -6px; right: -6px; padding: 3px; }
+  .mf-name{ font-size: clamp(12px, 3.6vw, 15px); margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mf-rank-line{ font-size: 9px; gap: 3px; flex-wrap: wrap; justify-content: center; }
   .mf-elo{ font-size: 12px; }
   .mf-elo-unit{ font-size: 8px; }
-  /* Stats stack vertically so each card stays narrow */
-  .mf-stats-mini{ flex-direction: column; gap: 5px; width: 100%; padding-top: 10px; margin-top: 4px; }
-  .mf-stat-mini{ width: 100%; justify-content: center; padding: 4px 6px; font-size: 11px; }
+  /* Compact stat chips that wrap gracefully instead of a tall stacked column */
+  .mf-stats-mini{ flex-direction: row; flex-wrap: wrap; gap: 4px; width: 100%; padding-top: 8px; margin-top: 2px; justify-content: center; border-top: 1px solid var(--line-soft); }
+  .mf-stat-mini{ width: auto; justify-content: center; padding: 3px 7px; font-size: 10px; gap: 4px; }
+  .mf-stat-mini svg{ display: none; }
   /* Center VS column — compact */
-  .mf-vs{ font-size: 40px; }
-  .mf-h2h{ padding: 8px 10px; margin-top: 10px; }
+  .mf-vs{ font-size: clamp(30px, 9vw, 44px); }
+  .mf-h2h{ padding: 7px 10px; margin-top: 6px; min-width: 0; width: 100%; }
   .mf-h2h-title{ font-size: 8px; }
-  .mf-h2h-row{ font-size: 18px; }
-  .mf-h2h-label{ font-size: 8px; }
-  .mf-banner{ margin-bottom: 18px; }
+  .mf-h2h-row{ font-size: 18px; gap: 7px; }
+  .mf-h2h-score{ font-size: clamp(20px, 6vw, 28px); }
+  .mf-h2h-label{ font-size: 8px; text-align: center; }
+  .mf-banner{ margin-bottom: 16px; font-size: 11px; padding: 8px 18px; letter-spacing: .2em; }
   .mf-bg-grid{ opacity: .4; }
+  .mf-bg-glow{ width: 64vw; height: 64vw; filter: blur(90px); }
+  .mf-footer{ width: min(360px, 90vw); bottom: max(22px, env(safe-area-inset-bottom)); }
 }
 @media (max-width: 380px){
-  .mf-avatar{ width: 58px; height: 58px; font-size: 24px; }
-  .mf-vs{ font-size: 32px; }
-  .mf-name{ font-size: 13px; }
-  .mf-stat-mini span{ font-size: 10px; }
+  .mf-stat-mini{ font-size: 9px; padding: 2px 5px; }
+  .mf-player-side-label{ font-size: 8px; }
+  .mf-player{ padding: 12px 6px 10px; }
 }
 @keyframes vsSlam{
   0%{transform:scale(2) rotate(-20deg); opacity:0;}
@@ -6118,7 +6176,11 @@ h2.match-title{
   animation: introSlideIn .7s cubic-bezier(.2,1.6,.4,1) .5s both;
 }
 
-/* RESULT OVERLAY — fullscreen takeover when round ends */
+/* ============================================================
+   ROUND RESULT — compact & premium, never blankets the faces.
+   Win/Lose: a refined, translucent centered card.
+   Draw: a slim glass pill (a draw is just a replay — stay subtle).
+   ============================================================ */
 .duel-result{
   position: absolute;
   inset: 0;
@@ -6127,76 +6189,87 @@ h2.match-title{
   justify-content: center;
   z-index: 18;
   pointer-events: none;
+  padding: 16px;
 }
 .duel-result.show{ display: flex; }
 .duel-result-inner{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 30px 40px;
-  background: rgba(8,5,15,.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--line);
-  border-radius: 28px;
+  gap: 12px;
+  padding: 22px 30px 24px;
+  background: linear-gradient(180deg, rgba(20,18,30,.62), rgba(8,5,15,.66));
+  backdrop-filter: blur(18px) saturate(1.25);
+  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 26px;
   position: relative;
-  max-width: 520px;
+  overflow: hidden;
+  max-width: min(380px, 92vw);
   pointer-events: auto;
-  animation: resultPop .6s cubic-bezier(.2,1.6,.4,1);
+  box-shadow: 0 24px 64px -20px rgba(0,0,0,.75);
+  animation: resultPop .5s cubic-bezier(.2,1.5,.34,1) both;
 }
+/* Colored top accent + soft wash from the top — premium, not heavy */
+.duel-result-inner::before{
+  content:""; position:absolute; top:0; left:0; right:0; height:3px;
+  background: var(--rr-accent, var(--text-faint)); opacity:.95;
+}
+.duel-result-inner::after{
+  content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+  background: radial-gradient(130% 80% at 50% -12%, var(--rr-wash, transparent), transparent 62%);
+}
+.duel-result-inner > *{ position: relative; z-index: 1; }
 @keyframes resultPop{
-  0%{ opacity: 0; transform: scale(.7); }
-  60%{ opacity: 1; transform: scale(1.05); }
-  100%{ opacity: 1; transform: scale(1); }
+  0%{ opacity: 0; transform: scale(.88) translateY(10px); }
+  100%{ opacity: 1; transform: scale(1) translateY(0); }
 }
 .duel-result-inner.win{
-  border-color: var(--mint);
-  box-shadow: 0 30px 80px var(--mint-glow), 0 0 60px var(--mint-glow);
+  --rr-accent: var(--mint); --rr-wash: rgba(34,211,163,.20);
+  border-color: rgba(34,211,163,.34);
+  box-shadow: 0 24px 64px -20px rgba(0,0,0,.75), 0 0 48px -12px var(--mint-glow);
 }
 .duel-result-inner.lose{
-  border-color: var(--coral);
-  box-shadow: 0 30px 80px var(--coral-glow), 0 0 60px var(--coral-glow);
+  --rr-accent: var(--coral); --rr-wash: rgba(255,51,88,.17);
+  border-color: rgba(255,51,88,.30);
+  box-shadow: 0 24px 64px -20px rgba(0,0,0,.75), 0 0 48px -12px var(--coral-glow);
 }
-.duel-result-inner.draw{
-  border-color: var(--amber);
-  box-shadow: 0 30px 80px var(--amber-glow), 0 0 60px var(--amber-glow);
+.duel-result-inner.draw{ --rr-accent: var(--amber); --rr-wash: rgba(255,200,60,.14); }
+.duel-result-headwrap{
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
 }
 .duel-result-picks{
   display: flex;
   align-items: center;
-  gap: 24px;
-  margin-bottom: 4px;
+  gap: 16px;
 }
 .duel-result-pick{
-  width: 96px; height: 96px;
-  border-radius: 22px;
-  background: linear-gradient(180deg, var(--surface-2), var(--surface));
-  border: 2px solid var(--line);
+  width: 72px; height: 72px;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(43,41,57,.92), rgba(20,19,28,.92));
+  border: 1.5px solid var(--line);
   display: grid;
   place-items: center;
   position: relative;
-  transition: all .4s cubic-bezier(.2,1.6,.4,1);
-  box-shadow: 0 10px 30px rgba(0,0,0,.5);
+  transition: transform .4s cubic-bezier(.2,1.6,.4,1), box-shadow .4s, border-color .4s, opacity .3s;
+  box-shadow: 0 8px 22px rgba(0,0,0,.45);
 }
-.duel-result-pick svg{ width: 56px; height: 56px; }
+.duel-result-pick svg{ width: 42px; height: 42px; }
 .duel-result-pick.rock svg{ color: var(--coral); }
 .duel-result-pick.paper svg{ color: var(--mint); }
 .duel-result-pick.scissors svg{ color: var(--amber); }
 .duel-result-pick.winner{
-  transform: scale(1.18);
+  transform: scale(1.14);
   border-color: var(--mint);
-  background: linear-gradient(180deg, rgba(60,255,185,.18), var(--surface));
-  box-shadow:
-    0 0 50px var(--mint),
-    0 12px 36px rgba(0,0,0,.5);
+  background: linear-gradient(180deg, rgba(34,211,163,.20), rgba(20,19,28,.92));
+  box-shadow: 0 0 34px -4px var(--mint), 0 10px 26px rgba(0,0,0,.5);
 }
-.duel-result-pick.loser{ opacity: .35; filter: grayscale(.6); transform: scale(.92); }
+.duel-result-pick.loser{ opacity: .4; filter: grayscale(.55); transform: scale(.9); }
 .duel-result-vs{
   font-family: var(--font-display);
   font-stretch: 60%;
   font-weight: 800;
-  font-size: 28px;
+  font-size: 22px;
   color: var(--text-faint);
   opacity: .5;
   letter-spacing: -.04em;
@@ -6205,29 +6278,29 @@ h2.match-title{
   font-family: var(--font-display);
   font-stretch: 55%;
   font-weight: 800;
-  font-size: 64px;
+  font-size: clamp(40px, 9vw, 56px);
   line-height: .9;
   letter-spacing: -.04em;
   text-transform: uppercase;
 }
 .duel-result-headline.win{
-  background: linear-gradient(180deg, #fff 5%, var(--mint) 50%, #25c186 100%);
+  background: linear-gradient(180deg, #fff 5%, var(--mint) 55%, #25c186 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 24px var(--mint-glow));
+  filter: drop-shadow(0 0 22px var(--mint-glow));
 }
 .duel-result-headline.lose{
-  background: linear-gradient(180deg, #fff 5%, var(--coral) 50%, #c01546 100%);
+  background: linear-gradient(180deg, #fff 5%, var(--coral) 55%, #c01546 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 24px var(--coral-glow));
+  filter: drop-shadow(0 0 22px var(--coral-glow));
 }
 .duel-result-headline.draw{
-  background: linear-gradient(180deg, #fff 5%, var(--amber) 50%, #c89e1d 100%);
+  background: linear-gradient(180deg, #fff 5%, var(--amber) 55%, #c89e1d 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 24px var(--amber-glow));
+  filter: drop-shadow(0 0 18px var(--amber-glow));
 }
 .duel-result-detail{
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-dim);
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -6263,27 +6336,50 @@ h2.match-title{
   display: none;
   align-items: center;
   gap: 10px;
-  margin-top: 8px;
-  padding: 10px 16px;
-  border-radius: 14px;
-  background: var(--surface-2);
-  border: 1px solid var(--line);
+  margin-top: 4px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.07);
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text);
   font-style: italic;
-  max-width: 380px;
+  max-width: 340px;
   text-align: left;
 }
 .duel-result-commentary.show{
   display: flex;
   animation: commentaryIn .5s cubic-bezier(.2,1.6,.4,1);
 }
-.duel-result-commentary .mic{ font-size: 22px; flex-shrink: 0; }
+.duel-result-commentary .mic{ font-size: 20px; flex-shrink: 0; }
 @keyframes commentaryIn{
   from{ opacity: 0; transform: translateY(8px); }
   to{ opacity: 1; transform: translateY(0); }
 }
+
+/* ===== DRAW — slim glass pill. A draw just replays, so keep it tiny
+   and out of the way (the top announcer carries "REPLAY THE ROUND"). ===== */
+.duel-result.rr-draw{ align-items: flex-start; padding-top: clamp(64px, 16vh, 150px); }
+.duel-result-inner.draw{
+  flex-direction: row;
+  gap: 13px;
+  padding: 9px 18px 9px 11px;
+  border-radius: 999px;
+  max-width: min(440px, 94vw);
+}
+.duel-result-inner.draw .duel-result-picks{ gap: 7px; }
+.duel-result-inner.draw .duel-result-pick{
+  width: 38px; height: 38px; border-radius: 11px; box-shadow: none; border-width: 1px;
+}
+.duel-result-inner.draw .duel-result-pick svg{ width: 22px; height: 22px; }
+.duel-result-inner.draw .duel-result-vs{ font-size: 13px; }
+.duel-result-inner.draw .duel-result-headwrap{ flex-direction: row; align-items: baseline; gap: 9px; white-space: nowrap; }
+.duel-result-inner.draw .duel-result-headline{ font-size: 26px; }
+.duel-result-inner.draw .duel-result-detail{ font-size: 9.5px; opacity: .85; }
+.duel-result-inner.draw .duel-result-prediction,
+.duel-result-inner.draw .duel-result-commentary,
+.duel-result-inner.draw .rating-delta{ display: none !important; }
 
 /* HAND READY PROMPT (when no hand detected) */
 .duel-prompt{
@@ -6650,9 +6746,14 @@ h2.match-title{
   .duel-divider-vs{ font-size: 24px; }
   .duel-divider::before, .duel-divider::after{ display: none; }
   .duel-countdown{ font-size: clamp(110px, 28vw, 200px) !important; }
-  .duel-intro-vs{ grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: 20px; }
-  .duel-intro-vs-text{ font-size: 56px; }
-  .duel-intro-av{ width: 100px; height: 100px; font-size: 40px; }
+  .duel-intro-inner{ gap: clamp(14px, 4vh, 28px); padding: 24px 18px; max-width: 100%; }
+  .duel-intro-vs{ grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: clamp(12px, 3.5vh, 22px); }
+  .duel-intro-vs-text{ font-size: clamp(40px, 14vw, 64px); }
+  .duel-intro-av{ width: clamp(78px, 26vw, 112px); height: clamp(78px, 26vw, 112px); font-size: clamp(30px, 10vw, 44px); border-radius: 26px; }
+  .duel-intro-name{ font-size: clamp(22px, 6.5vw, 30px); }
+  .duel-intro-player{ gap: 9px; }
+  .duel-intro-h2h{ font-size: 11px; padding: 8px 15px; }
+  .duel-intro-tagline{ font-size: 15px; letter-spacing: .16em; }
   .duel-dock{ gap: 8px; padding: 10px 14px; }
   .arena-bar{ padding: 8px 12px; gap: 8px; }
 }
@@ -6704,14 +6805,23 @@ h2.match-title{
   }
   .duel-gesture-indicator{ transform: scale(.7); }
 
-  /* Result overlay: compact card, smaller picks + headline */
-  .duel-result-inner{ padding: 20px 22px; gap: 12px; border-radius: 22px; max-width: 90vw; }
-  .duel-result-picks{ gap: 14px; }
-  .duel-result-pick{ width: 64px; height: 64px; border-radius: 16px; }
-  .duel-result-pick svg{ width: 38px; height: 38px; }
-  .duel-result-vs{ font-size: 20px; }
-  .duel-result-headline{ font-size: clamp(38px, 13vw, 52px); }
-  .duel-result-detail{ font-size: 11px; }
+  /* Result overlay: compact card, smaller picks + headline.
+     Sits in the upper third so it never covers either player's face. */
+  .duel-result{ align-items: flex-start; padding-top: clamp(40px, 11vh, 96px); }
+  .duel-result-inner{ padding: 16px 18px 18px; gap: 9px; border-radius: 20px; max-width: 90vw; }
+  .duel-result-picks{ gap: 12px; }
+  .duel-result-pick{ width: 56px; height: 56px; border-radius: 14px; }
+  .duel-result-pick svg{ width: 32px; height: 32px; }
+  .duel-result-vs{ font-size: 18px; }
+  .duel-result-headline{ font-size: clamp(34px, 12vw, 48px); }
+  .duel-result-detail{ font-size: 10px; }
+  .duel-result-commentary{ font-size: 12px; padding: 8px 12px; }
+  /* Draw pill stays tiny + near the very top on phones */
+  .duel-result.rr-draw{ padding-top: clamp(28px, 8vh, 70px); }
+  .duel-result-inner.draw{ padding: 8px 15px 8px 9px; gap: 10px; }
+  .duel-result-inner.draw .duel-result-pick{ width: 34px; height: 34px; }
+  .duel-result-inner.draw .duel-result-pick svg{ width: 19px; height: 19px; }
+  .duel-result-inner.draw .duel-result-headline{ font-size: 22px; }
 
   /* ---- BOTTOM DOCK: redesigned as an app action bar ---- */
   .duel-dock{
@@ -9150,9 +9260,34 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
   animation:legendTitleShimmer 3s linear infinite !important;
 }
 @keyframes legendTitleShimmer{ to{ background-position:300% 0; } }
-.legend-rankup .rankup-label{ background:linear-gradient(135deg,#ffd700,#ff61c3) !important; color:#1c1402 !important; box-shadow:0 0 24px rgba(255,215,0,.5) !important; }
+.legend-rankup .rankup-label{ background:linear-gradient(135deg,#ffd700,#ff61c3) !important; color:#1c1402 !important; box-shadow:0 0 24px rgba(255,215,0,.5) !important; letter-spacing:.34em !important; }
 body.reduced-motion .legend-rankup::before, body.reduced-motion .legend-rankup::after,
 body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ animation:none; }
+
+/* ----- LEGEND: extra cinematic layers ----- */
+/* Gold bloom behind the icon */
+.legend-rankup .rankup-bloom{ background:radial-gradient(circle, rgba(255,215,0,.9) 0%, rgba(255,97,195,.25) 38%, transparent 64%); }
+/* A slow, premium medal-shine ring that sweeps around the new icon */
+.legend-rankup .rankup-sweep-wrap::after{
+  content:''; position:absolute; inset:-8%; border-radius:50%; z-index:0; pointer-events:none;
+  background:conic-gradient(from 0deg, transparent 0 78%, rgba(255,255,255,.85) 86%, rgba(255,215,0,.9) 90%, transparent 96%);
+  -webkit-mask:radial-gradient(circle, transparent 60%, #000 61% 73%, transparent 74%);
+  mask:radial-gradient(circle, transparent 60%, #000 61% 73%, transparent 74%);
+  opacity:0; animation: legendRingIn .8s 2.8s forwards, rankupSpinRays 6s linear 2.8s infinite;
+}
+@keyframes legendRingIn{ to{ opacity:.9; } }
+/* "LEGEND" — grander, with a soft breathing scale on top of the shimmer */
+.legend-rankup .rankup-rank-name-shimmer{
+  text-shadow:0 0 50px rgba(255,215,0,.4);
+  animation:legendTitleShimmer 3s linear infinite, legendTitleBreath 4s ease-in-out 1s infinite !important;
+}
+@keyframes legendTitleBreath{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.035); } }
+/* Apex sub-line glows gold */
+.legend-rankup .rankup-sub{ color:#ffe9a8; letter-spacing:.3em; }
+.legend-rankup .rankup-from{ color:#ffce6e; }
+/* Lite legend: drop the rotating ring + breathing transform */
+.rankup-lite.legend-rankup .rankup-sweep-wrap::after{ animation:legendRingIn .8s 2.8s forwards; }
+.rankup-lite.legend-rankup .rankup-rank-name-shimmer{ animation:legendTitleShimmer 3s linear infinite !important; }
 
 /* Animated rays — two layers spinning opposite directions */
 .rankup-rays{
@@ -9268,19 +9403,20 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
 }
 .rankup-label{
   font-family:var(--font-mono);
-  font-size:11px; letter-spacing:.4em;
-  color:#fff; opacity:.55;
+  font-size:11px; letter-spacing:.32em;
+  color:var(--rank-color, #fff); opacity:.9;
   text-transform:uppercase;
   font-weight: 700;
-  padding: 6px 16px;
-  border: 1px solid rgba(255,255,255,.15);
+  padding: 7px 18px;
+  border: 1px solid color-mix(in srgb, var(--rank-color, #fff) 45%, transparent);
   border-radius: 999px;
-  background: rgba(0,0,0,.3);
+  background: color-mix(in srgb, var(--rank-color, #fff) 10%, rgba(0,0,0,.4));
+  box-shadow: 0 0 22px -6px var(--rank-color, transparent);
   animation: rankupLabelIn 1s .1s both;
 }
 @keyframes rankupLabelIn{
   from{opacity:0; transform: translateY(-12px);}
-  to{opacity:.7; transform:none;}
+  to{opacity:.95; transform:none;}
 }
 
 /* STAGE — old rank → arrow → new rank */
@@ -9575,30 +9711,78 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
   font-family:var(--font-mono);
   font-size:11px;
   color:var(--text-faint);
-  letter-spacing:.12em;
+  letter-spacing:.14em;
   text-transform:uppercase;
-  margin-top:24px;
+  margin-top:26px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.03);
   opacity: 0;
-  animation: rankupFadeUp 1s 4.4s forwards;
+  transition: opacity .6s ease, transform .6s ease;
+  transform: translateY(8px);
 }
-.rankup-continue-hint kbd{
-  background: rgba(255,255,255,.06);
-  border: 1px solid var(--line);
-  padding: 3px 8px;
-  border-radius: 5px;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-dim);
-  margin: 0 4px;
+/* Fades in only once the overlay is actually dismissible */
+.rankup-continue-hint.ready{ opacity: .85; transform: none; animation: rankupHintPulse 2.4s ease-in-out 1s infinite; }
+@keyframes rankupHintPulse{ 0%,100%{ opacity:.55; } 50%{ opacity:.9; } }
+
+/* ============================================================
+   PREMIUM POLISH — a quieter, more deliberate light bloom behind
+   the new rank so the moment reads as "expensive", not busy.
+   ============================================================ */
+.rankup-bloom{
+  position:absolute; left:50%; top:42%; width:min(70vw,560px); height:min(70vw,560px);
+  transform:translate(-50%,-50%) scale(.4); border-radius:50%;
+  background:radial-gradient(circle, var(--rank-color, var(--amber)) 0%, transparent 62%);
+  opacity:0; pointer-events:none; z-index:0; mix-blend-mode:screen;
+  animation: rankupBloomIn 1.4s 2.3s cubic-bezier(.2,.7,.2,1) forwards;
 }
+@keyframes rankupBloomIn{
+  0%{ opacity:0; transform:translate(-50%,-50%) scale(.4); }
+  55%{ opacity:.5; }
+  100%{ opacity:.32; transform:translate(-50%,-50%) scale(1); }
+}
+/* Cinematic letterbox bars — only for the apex (Legend) reveal */
+.rankup-bar{
+  position:absolute; left:0; right:0; height:9vh; background:#000; z-index:6;
+  pointer-events:none; opacity:0;
+}
+.rankup-bar.top{ top:0; transform:translateY(-100%); }
+.rankup-bar.bot{ bottom:0; transform:translateY(100%); }
+.legend-rankup .rankup-bar{ animation: rankupBarIn .9s .15s cubic-bezier(.2,.8,.2,1) forwards; }
+.legend-rankup .rankup-bar.bot{ animation-name: rankupBarInBot; }
+@keyframes rankupBarIn{ to{ opacity:1; transform:translateY(0); } }
+@keyframes rankupBarInBot{ to{ opacity:1; transform:translateY(0); } }
 
 @media (max-width: 600px){
-  .rankup-center-stage{ width: 240px; height: 240px; }
-  .rankup-old-icon{ width: 130px !important; height: 130px !important; }
-  .rankup-new-icon{ width: 170px !important; height: 170px !important; }
-  .rankup-sweep-wrap{ width: 180px; height: 180px; }
+  .rankup-center-stage{ width: 230px; height: 230px; }
+  .rankup-old-icon{ width: 124px !important; height: 124px !important; }
+  .rankup-new-icon{ width: 162px !important; height: 162px !important; }
+  .rankup-sweep-wrap{ width: 176px; height: 176px; }
+  .rankup-content{ padding: 24px 18px; }
+  .rankup-bar{ height: 7vh; }
 }
+
+/* ============================================================
+   LITE MODE — phones / low-power / reduced-motion.
+   Kill the GPU-expensive layers (full-screen animated blur on
+   conic gradients, continuously-animated filter drop-shadows)
+   while keeping the core reveal so it still feels great.
+   ============================================================ */
+.rankup-lite .rankup-rays.r2{ display:none; }
+.rankup-lite .rankup-rays{ filter:none; opacity:.16 !important; }
+.rankup-lite .rankup-bloom{ mix-blend-mode:normal; }
+.rankup-lite .rankup-beams{ display:none; }
+.rankup-lite .rankup-particles .particle{ box-shadow:none; }
+.rankup-lite .rankup-shockwave .ring{ border-width:2px !important; }
+/* Drop the expensive animated-filter halos; use a cheap static glow */
+.rankup-lite.legend-rankup .rankup-new-icon{ animation:none; filter:drop-shadow(0 0 18px rgba(255,215,0,.8)); }
+.rankup-lite .rankup-new-rank.settled .rankup-new-icon{ animation:none; }
+/* Aurora: keep the colour wash but stop rotating a blurred full-screen layer */
+.rankup-lite.legend-rankup::before{ animation: legendAuroraIn 1s ease .1s forwards; filter:blur(36px); }
+.rankup-lite.legend-rankup::after{ animation:none; opacity:.6; }
+.rankup-lite .rankup-sweep-wrap::before{ animation: rankupNewHalo 1.5s 2.6s ease-out forwards; }
+.rankup-lite .rankup-light-sweep.s2{ display:none; }
 
 /* ============ RANK DOWN OVERLAY ============ */
 .rankdown-overlay{
@@ -10408,7 +10592,34 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
 .modal-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:16px;}
 
 /* Profile modal */
-.profile-modal .profile-head{display:flex; gap:18px; align-items:center; margin-bottom:20px;}
+/* ===== Profile modal — revamped header (cover banner + avatar ring) ===== */
+.profile-modal .pm-banner{
+  height: 98px;
+  margin: -32px -32px 0;
+  border-radius: 24px 24px 0 0;
+  background: linear-gradient(135deg, var(--coral), var(--violet));
+  position: relative; overflow: hidden;
+}
+.profile-modal .pm-banner::after{
+  content:''; position:absolute; inset:0;
+  background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 72%);
+  mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 72%);
+}
+.profile-modal .profile-head{display:flex; gap:18px; align-items:flex-end; margin:0 0 18px; position:relative; z-index:1;}
+/* Avatar straddles the banner; the name/info stay below it so text is always legible */
+.profile-modal .pm-av-wrap{ position:relative; flex-shrink:0; transform:translateY(-32px); margin-bottom:-22px; }
+.profile-modal .pm-av-ring{ position:absolute; inset:-4px; border-radius:26px; pointer-events:none; }
+.profile-modal .pm-av-lvl{
+  position:absolute; bottom:-7px; right:-7px;
+  min-width:24px; height:22px; padding:0 6px; border-radius:7px;
+  font-family:var(--font-display); font-stretch:70%; font-weight:800; font-size:11px;
+  color:#08070d; background:linear-gradient(135deg,#ffd33d,#ff9a3d);
+  display:grid; place-items:center; z-index:2;
+  box-shadow:0 2px 8px rgba(0,0,0,.45); border:2px solid var(--surface);
+}
+.profile-modal .pm-head-info{ padding-bottom:4px; min-width:0; }
 .profile-modal .av-xl{
   width:84px; height:84px; border-radius:22px;
   background:linear-gradient(135deg, var(--coral), var(--violet));
@@ -10419,8 +10630,23 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
   background-size: cover;
   background-position: center;
   box-shadow: 0 12px 28px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.15);
-  border: 2px solid rgba(255,255,255,.06);
+  border: 3px solid var(--surface);
+  position: relative; z-index: 1;
 }
+/* Recent form guide */
+.pm-form-wrap{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 0 14px; padding:10px 14px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
+.pm-form-label{ font-family:var(--font-mono); font-size:10px; letter-spacing:.12em; color:var(--text-faint); font-weight:700; flex-shrink:0; }
+.pm-form{ display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end; }
+.pm-form-pip{ width:22px; height:22px; border-radius:6px; display:grid; place-items:center; font-family:var(--font-display); font-stretch:70%; font-weight:800; font-size:11px; color:#fff; }
+.pm-form-pip.win{ background:linear-gradient(135deg,var(--mint),#15a079); color:#04130d; }
+.pm-form-pip.lose{ background:linear-gradient(135deg,var(--coral),var(--coral-dim)); }
+.pm-form-pip.draw{ background:var(--surface-3); color:var(--text-dim); }
+/* Rank progress to next tier */
+.pm-rankprog{ margin:0 0 16px; }
+.pm-rankprog-top{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:11px; margin-bottom:6px; }
+.pm-rankprog-cur{ color:var(--text); font-weight:700; }
+.pm-rankprog-next{ color:var(--text-faint); }
+.pm-rankprog-label{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:5px; text-align:right; }
 .profile-modal .av-xl .emoji-av{font-size:46px;}
 .profile-modal .pm-name{
   font-family:var(--font-display); font-stretch:60%;
@@ -10651,6 +10877,18 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
   transition: all .15s;
 }
 .color-pick button.active{border-color:#fff; transform:scale(1.1);}
+.accent-pick{display:flex; gap:8px; flex-wrap:wrap;}
+.accent-pick button{
+  width:34px; height:34px; border-radius:9px;
+  border:2px solid transparent; cursor:pointer; transition:all .15s;
+  position:relative;
+}
+.accent-pick button.active{border-color:#fff; transform:scale(1.1); box-shadow:0 0 0 2px var(--bg), 0 0 14px -2px rgba(255,255,255,.4);}
+.accent-pick button.accent-auto{
+  background:conic-gradient(from 0deg,#ff3358,#ff8c42,#ffd33d,#22d3a3,#5fc9ff,#a48bff,#ff61c3,#ff3358);
+  font-family:var(--font-mono); font-size:7px; font-weight:700; color:#fff; letter-spacing:.04em;
+  display:grid; place-items:center; text-shadow:0 1px 3px rgba(0,0,0,.8);
+}
 
 /* Photo upload + cropper */
 .photo-section{display:flex; flex-direction:column; gap:12px;}
@@ -11418,7 +11656,7 @@ body.reduced-motion .sl-text{ animation:none; }
       <button class="nav-item" data-nav="activity"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg><span>Activity</span></button>
       <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
-      <button class="nav-item" data-nav="chat"><svg viewBox="0 0 24 24"><use href="#i-globe"/></svg><span>Global chat</span></button>
+      <button class="nav-item" id="navMessages"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg><span>Messages</span><span class="nav-badge" id="navMsgBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span></button>
       <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span>Settings</span></button>
       <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none; color:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Moderation</span></button>
@@ -11503,7 +11741,7 @@ body.reduced-motion .sl-text{ animation:none; }
       </div>
       <div class="more-sheet-grid">
         <button class="more-sheet-item" data-act="activity"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
-        <button class="more-sheet-item" data-act="chat"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-globe"/></svg></span><span>Global chat</span></button>
+        <button class="more-sheet-item" data-act="chat"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span>Messages</span></button>
         <button class="more-sheet-item" data-act="achievements"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
         <button class="more-sheet-item" data-act="settings"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span>Settings</span></button>
         <button class="more-sheet-item" data-act="help"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-help"/></svg></span><span>How to play</span></button>
@@ -11984,12 +12222,15 @@ const FIREBASE_CONFIG = {
           <div class="home-col">
 
             <!-- Daily challenge -->
-            <div class="card" id="dailyChallengeCard">
+            <div class="card challenge-card" id="dailyChallengeCard">
               <div class="card-hd">
                 <div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily challenge</div>
-                <span class="daily-streak-mini" id="dailyStreakBadge">🔥 0</span>
+                <span class="daily-streak-mini" id="dailyStreakBadge" title="Daily completion streak">🔥 0</span>
               </div>
-              <div class="daily-card-goal" id="dailyChallengeText">Win 3 ranked matches today</div>
+              <div class="daily-goal-row">
+                <div class="daily-card-goal" id="dailyChallengeText">Win 3 ranked matches today</div>
+                <button class="daily-reroll-btn" id="dailyRerollBtn" title="Reroll (1 per day)" aria-label="Reroll challenge"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-rotate"/></svg></button>
+              </div>
               <div class="rank-card-progress">
                 <div class="ui-bar"><div class="ui-bar-fill" id="dailyProgressFill" style="width:0%"></div></div>
                 <div class="rank-card-meta">
@@ -11997,16 +12238,18 @@ const FIREBASE_CONFIG = {
                   <span class="daily-reward" id="dailyRewardText">+50 ELO bonus</span>
                 </div>
               </div>
+              <div class="challenge-reset" id="dailyResetIn">Resets in 24h</div>
             </div>
 
             <!-- Weekly challenges (XP) -->
-            <div class="card" id="weeklyChallengeCard">
+            <div class="card challenge-card" id="weeklyChallengeCard">
               <div class="card-hd">
                 <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg> Weekly challenges</div>
                 <span class="daily-streak-mini" id="weeklyDoneBadge">0/3</span>
               </div>
               <div class="weekly-list" id="weeklyList"></div>
-              <div class="weekly-foot">3 fresh challenges every week · each rewards <b>a full level</b></div>
+              <div class="weekly-foot" id="weeklyFoot">Clear all 3 for a <b>bonus level</b></div>
+              <div class="challenge-reset" id="weeklyResetIn">Resets in 7d</div>
             </div>
 
             <!-- Friends -->
@@ -12349,20 +12592,7 @@ const FIREBASE_CONFIG = {
       </div><!-- /page achievements -->
 
       <!-- ============ PAGE: GLOBAL CHAT ============ -->
-      <div class="nav-page" data-page="chat">
-        <div class="page-header">
-          <h2 class="page-title">GLOBAL CHAT</h2>
-          <p class="page-subtitle">Say hi to everyone online. Be cool — reports &amp; blocks apply here too.</p>
-        </div>
-        <div class="gc-shell">
-          <div class="gc-stream" id="gcStream"><div class="side-empty">Loading chat…</div></div>
-          <form class="gc-composer" id="gcComposer" autocomplete="off">
-            <input id="gcInput" type="text" maxlength="300" placeholder="Message global chat…" />
-            <button type="submit" class="gc-send" id="gcSend" aria-label="Send"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-send"/></svg></button>
-          </form>
-          <div class="gc-foot" id="gcFoot">Messages are public. Don't share personal info.</div>
-        </div>
-      </div><!-- /page chat -->
+      <!-- Global chat now lives inside the Messages flyout (top pinned conversation) -->
 
       <!-- ============ PAGE: SETTINGS ============ -->
       <div class="nav-page" data-page="settings">
@@ -12822,8 +13052,10 @@ const FIREBASE_CONFIG = {
                 <div class="duel-result-vs">vs</div>
                 <div class="duel-result-pick" id="resultOppPick"><svg></svg></div>
               </div>
-              <h2 class="duel-result-headline" id="resultHeadline">—</h2>
-              <div class="duel-result-detail" id="resultDetail">—</div>
+              <div class="duel-result-headwrap">
+                <h2 class="duel-result-headline" id="resultHeadline">—</h2>
+                <div class="duel-result-detail" id="resultDetail">—</div>
+              </div>
               <div class="duel-result-prediction" id="predictionBadge">
                 <svg viewBox="0 0 24 24"><use href="#i-star"/></svg>
                 <span>PREDICTED!</span>
@@ -12929,9 +13161,16 @@ const FIREBASE_CONFIG = {
 
 <!-- RANK UP OVERLAY -->
 <div class="rankup-overlay" id="rankupOverlay">
+  <!-- Cinematic letterbox bars (animate in for the apex Legend reveal) -->
+  <div class="rankup-bar top"></div>
+  <div class="rankup-bar bot"></div>
+
   <!-- Animated rays background -->
   <div class="rankup-rays"></div>
   <div class="rankup-rays r2"></div>
+
+  <!-- Soft radial light bloom behind the new rank -->
+  <div class="rankup-bloom"></div>
 
   <!-- Vertical god-ray beams -->
   <div class="rankup-beams" id="rankupBeams"></div>
@@ -12979,9 +13218,7 @@ const FIREBASE_CONFIG = {
     <div class="rankup-sub" id="rankupSub">1100 RATING</div>
     <div class="rankup-from" id="rankupFrom">Promoted from Bronze III</div>
 
-    <div class="rankup-continue-hint">
-      <kbd>SPACE</kbd> to continue
-    </div>
+    <div class="rankup-continue-hint" id="rankupContinueHint">Tap or press SPACE to continue</div>
   </div>
 </div>
 
@@ -13686,9 +13923,15 @@ const FIREBASE_CONFIG = {
 <div class="modal-bg" id="profileModal">
   <div class="modal profile-modal">
     <button class="modal-close" data-close="profileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <!-- Rank-tinted cover banner -->
+    <div class="pm-banner" id="pmBanner"></div>
     <div class="profile-head">
-      <div class="av-xl" id="pmAv">?</div>
-      <div>
+      <div class="pm-av-wrap">
+        <div class="av-xl" id="pmAv">?</div>
+        <span class="pm-av-ring" id="pmAvRing"></span>
+        <span class="pm-av-lvl" id="pmAvLvl">1</span>
+      </div>
+      <div class="pm-head-info">
         <div class="pm-name" id="pmName">— <svg class="rank-mini" id="pmRankMini"></svg></div>
         <div class="pm-title-row" id="pmTitleRow">
           <span class="pm-level-badge" id="pmLevelBadge">1</span>
@@ -13700,6 +13943,11 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="pm-status" id="pmStatus" style="display:none;">—</div>
     <div class="bio" id="pmBio" style="display:none;">—</div>
+    <!-- Recent form (last matches) -->
+    <div class="pm-form-wrap" id="pmFormWrap" style="display:none;">
+      <span class="pm-form-label">RECENT FORM</span>
+      <div class="pm-form" id="pmForm"></div>
+    </div>
     <div class="pm-stats">
       <div class="pm-stat"><div class="v" id="pmWins">0</div><div class="l">wins</div></div>
       <div class="pm-stat"><div class="v" id="pmLosses">0</div><div class="l">losses</div></div>
@@ -13714,6 +13962,15 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="pm-h2h" id="pmH2H" style="display:none;"></div>
     <div class="pm-stats pm-stats-3" id="pmExtraStats"></div>
+    <!-- Rank progress to next tier -->
+    <div class="pm-rankprog" id="pmRankProg">
+      <div class="pm-rankprog-top">
+        <span class="pm-rankprog-cur" id="pmRankProgCur">Bronze I</span>
+        <span class="pm-rankprog-next" id="pmRankProgNext">Bronze II</span>
+      </div>
+      <div class="ui-bar"><div class="ui-bar-fill" id="pmRankProgFill" style="width:0%"></div></div>
+      <div class="pm-rankprog-label" id="pmRankProgLabel">—</div>
+    </div>
     <!-- Level XP bar -->
     <div class="pm-level-bar-wrap">
       <div class="pm-level-bar-top">
@@ -13739,6 +13996,7 @@ const FIREBASE_CONFIG = {
     <div class="modal-actions" id="pmActions">
       <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block</button>
       <button class="btn" id="pmShareBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-send"/></svg> Share</button>
+      <button class="btn" id="pmMessageBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Message</button>
       <button class="btn" id="pmAddFriendBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-plus"/></svg> Add friend</button>
       <button class="btn btn-mint" id="pmChallengeBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-sword"/></svg> Challenge</button>
     </div>
@@ -13798,6 +14056,10 @@ const FIREBASE_CONFIG = {
       <div class="field">
         <label>Fallback color (shown if no photo)</label>
         <div class="color-pick" id="colorPick"></div>
+      </div>
+      <div class="field">
+        <label>Profile accent <span style="color:var(--text-faint); font-weight:400;">· tints your profile banner</span></label>
+        <div class="accent-pick" id="accentPick"></div>
       </div>
       <div class="field">
         <label>Privacy</label>
@@ -14794,13 +15056,26 @@ function burst(x, y, color, count=80){
     particles.push({x,y,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed-2,g:0.2,life:60+Math.random()*40,size:2+Math.random()*4,color});
   }
 }
-function bigBurst(color){
+function bigBurst(color, count=200){
   const cx = window.innerWidth/2, cy = window.innerHeight/2;
-  for(let i=0;i<200;i++){
+  for(let i=0;i<count;i++){
     const ang = Math.random()*Math.PI*2;
     const speed = 4 + Math.random()*14;
     particles.push({x:cx,y:cy,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed-3,g:0.18,life:90+Math.random()*60,size:3+Math.random()*5,color});
   }
+}
+// Performance tier for big celebratory animations (rank-up especially).
+// Phones / low-core / low-power / reduced-motion get a lighter sequence so it
+// never janks; desktops get the full cinematic treatment.
+function fxPerf(){
+  const lowPower = document.body.classList.contains('low-power');
+  const reduced = document.body.classList.contains('reduced-motion');
+  const smallScreen = !!(window.matchMedia && window.matchMedia('(max-width: 760px)').matches);
+  const fewCores = (navigator.hardwareConcurrency || 8) <= 4;
+  const lowMem = (navigator.deviceMemory || 8) <= 4;
+  const touch = !!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches);
+  const lite = lowPower || reduced || smallScreen || fewCores || lowMem || touch;
+  return { lite, reduced, mobile: smallScreen || touch, lowPower };
 }
 // Celebratory confetti raining from the top (used on a match win).
 function launchConfetti(){
@@ -15834,6 +16109,22 @@ function setupAuthUI(){
     cp.appendChild(b);
   });
 
+  // accent picker (tints the profile banner) — '' means auto/rank colour
+  const ap = $('#accentPick');
+  if(ap){
+    ['', '#ff3358','#ff8c42','#ffd33d','#22d3a3','#5fc9ff','#a48bff','#ff61c3'].forEach((color) => {
+      const b = document.createElement('button');
+      b.type = 'button'; b.dataset.accent = color;
+      if(color){ b.style.background = color; }
+      else { b.classList.add('accent-auto'); b.title = 'Auto · use your rank colour'; b.textContent = 'AUTO'; }
+      b.addEventListener('click', () => {
+        ap.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+        b.classList.add('active');
+      });
+      ap.appendChild(b);
+    });
+  }
+
   $('#signinForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     showErr('#authError', '');
@@ -16236,11 +16527,11 @@ function attachChatListener(){
             colorIdx: data['color_' + otherUid] || 0,
           };
         });
-        const badge = $('#chatBadge');
-        if(badge){
+        [$('#chatBadge'), $('#navMsgBadge')].forEach(badge => {
+          if(!badge) return;
           if(totalUnread > 0){ badge.style.display = ''; badge.textContent = totalUnread > 9 ? '9+' : totalUnread; }
           else badge.style.display = 'none';
-        }
+        });
         if($('#chatPanel').classList.contains('show') && $('#chatThread').style.display === 'none') renderChatConvList();
       },
       (err) => console.warn('[chat] index listener', err)
@@ -16252,16 +16543,33 @@ function renderChatConvList(){
   const list = $('#chatConvList');
   $('#chatThread').style.display = 'none';
   list.style.display = '';
+  state._chatThreadGlobal = false;
   const convs = Object.entries(state._chatConvs).sort((a,b) => {
     const am = a[1].lastAt?.toMillis ? a[1].lastAt.toMillis() : 0;
     const bm = b[1].lastAt?.toMillis ? b[1].lastAt.toMillis() : 0;
     return bm - am;
   });
+  list.innerHTML = '';
+  // Global Chat — always pinned to the very top of Messages
+  const gc = document.createElement('div');
+  gc.className = 'chat-conv chat-conv-global';
+  gc.innerHTML = `
+    <div class="chat-conv-av chat-conv-av-global"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-globe"/></svg></div>
+    <div class="chat-conv-info">
+      <div class="chat-conv-name">Global Chat <span class="chat-conv-tag">PUBLIC</span></div>
+      <div class="chat-conv-last">Everyone online · say hi 👋</div>
+    </div>`;
+  gc.addEventListener('click', () => openGlobalChatThread());
+  list.appendChild(gc);
   if(convs.length === 0){
-    list.innerHTML = '<div class="flyout-empty">No conversations yet. Open a friend\'s profile or the chat icon next to a friend to start.</div>';
+    const empty = document.createElement('div');
+    empty.className = 'flyout-empty';
+    empty.style.borderTop = '1px solid var(--line-soft)';
+    empty.style.marginTop = '4px';
+    empty.innerHTML = 'No private chats yet. Open a friend\'s profile to start one.';
+    list.appendChild(empty);
     return;
   }
-  list.innerHTML = '';
   convs.forEach(([uid, c]) => {
     const row = document.createElement('div');
     row.className = 'chat-conv';
@@ -16404,6 +16712,8 @@ function openReactPicker(row, mid){
 async function openChatThread(uid, name, photoURL, colorIdx){
   if(!uid || !state.user) return;
   state._activeChatUid = uid;
+  state._chatThreadGlobal = false;
+  $('#chatThread')?.classList.remove('is-global');
   cancelDmReply();
   const pal = $('#chatEmojiPalette'); if(pal) pal.style.display = 'none';
   $('#chatPanel').classList.add('show');
@@ -16450,10 +16760,47 @@ async function openChatThread(uid, name, photoURL, colorIdx){
   markDmRead();
 }
 
+// GLOBAL CHAT inside Messages — opens the public room as a pinned thread.
+function openGlobalChatThread(){
+  state._activeChatUid = null;
+  state._chatThreadGlobal = true;
+  if(state._unsubActiveThread){ try { state._unsubActiveThread(); } catch(e){} state._unsubActiveThread = null; }
+  if(state._unsubActiveIndex){ try { state._unsubActiveIndex(); } catch(e){} state._unsubActiveIndex = null; }
+  try { cancelDmReply(); } catch(e){}
+  const pal = $('#chatEmojiPalette'); if(pal) pal.style.display = 'none';
+  $('#chatPanel').classList.add('show');
+  $('#chatConvList').style.display = 'none';
+  $('#chatThread').style.display = 'flex';
+  $('#chatThread').classList.add('is-global');
+  setText('#chatThreadName', 'Global Chat');
+  const av = $('#chatThreadAv');
+  if(av){
+    av.style.backgroundImage = 'none';
+    av.style.background = 'linear-gradient(135deg, var(--mint), var(--violet))';
+    av.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" style="color:#fff"><use href="#i-globe"/></svg>';
+  }
+  setDmTypingIndicator(false);
+  const rb = $('#chatReplyBar'); if(rb) rb.style.display = 'none';
+  const input = $('#chatThreadInput'); if(input) input.placeholder = 'Message global chat…';
+  const body = $('#chatThreadBody');
+  if(body) body.innerHTML = '<div class="flyout-empty">Loading chat…</div>';
+  attachGlobalChat();
+  renderGlobalChat();
+  requestAnimationFrame(() => { if(body) body.scrollTop = body.scrollHeight; });
+}
+
 async function sendChatMessage(){
   const input = $('#chatThreadInput');
   const text = (input.value || '').trim();
-  if(!text || !state._activeChatUid || !state.user) return;
+  if(!text) return;
+  // Route to the public room when the global thread is open
+  if(state._chatThreadGlobal){
+    input.value = '';
+    const p = $('#chatEmojiPalette'); if(p) p.style.display = 'none';
+    sendGlobalChat(text);
+    return;
+  }
+  if(!state._activeChatUid || !state.user) return;
   input.value = '';
   const pal = $('#chatEmojiPalette'); if(pal) pal.style.display = 'none';
   const uid = state._activeChatUid;
@@ -17079,6 +17426,9 @@ document.querySelectorAll('.stat-mini').forEach(c => {
   c.addEventListener('click', openStatsModal);
 });
 
+// Reroll today's daily challenge (one per day)
+on('#dailyRerollBtn', 'click', (e) => { e.stopPropagation(); rerollDailyChallenge(); });
+
 // Daily challenge card click → show toast with info
 document.addEventListener('click', e => {
   const card = e.target.closest('.daily-challenge-card');
@@ -17096,12 +17446,18 @@ document.addEventListener('click', e => {
 // ============= DAILY CHALLENGE =============
 const DAILY_CHALLENGES = [
   { id: 'win3', text: 'Win 3 ranked matches today', goal: 3, type: 'wins', reward: 75 },
+  { id: 'win5', text: 'Win 5 ranked matches today', goal: 5, type: 'wins', reward: 110 },
   { id: 'play5', text: 'Play 5 matches today', goal: 5, type: 'games', reward: 50 },
+  { id: 'play8', text: 'Play 8 matches today', goal: 8, type: 'games', reward: 80 },
   { id: 'streak3', text: 'Get a 3-win streak today', goal: 3, type: 'streak', reward: 80 },
+  { id: 'streak4', text: 'Get a 4-win streak today', goal: 4, type: 'streak', reward: 110 },
   { id: 'predict3', text: 'Correctly predict 3 throws today', goal: 3, type: 'predicts', reward: 70 },
+  { id: 'predict5', text: 'Read 5 throws correctly today', goal: 5, type: 'predicts', reward: 100 },
   { id: 'rock_w', text: 'Win 5 rounds with ROCK', goal: 5, type: 'rockWin', reward: 60 },
   { id: 'paper_w', text: 'Win 5 rounds with PAPER', goal: 5, type: 'paperWin', reward: 60 },
   { id: 'scissors_w', text: 'Win 5 rounds with SCISSORS', goal: 5, type: 'scissorsWin', reward: 60 },
+  { id: 'rounds10', text: 'Win 10 rounds today', goal: 10, type: 'roundsWon', reward: 70 },
+  { id: 'flawless', text: 'Win a match without dropping a round', goal: 1, type: 'flawless', reward: 90 },
 ];
 // Reward (ELO) for a daily — resilient to older saved challenges that predate the field.
 function dailyReward(c){
@@ -17113,13 +17469,35 @@ function getTodayKey(){
   return new Date().toISOString().split('T')[0];
 }
 
+// Human-readable "resets in 5h 23m" until local midnight / next Monday.
+function fmtCountdown(ms){
+  if(ms <= 0) return 'now';
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor((ms % 3600000) / 60000);
+  const d = Math.floor(h / 24);
+  if(d >= 1) return `${d}d ${h % 24}h`;
+  if(h >= 1) return `${h}h ${m}m`;
+  return `${m}m`;
+}
+function msUntilMidnight(){
+  const now = new Date();
+  const next = new Date(now); next.setHours(24, 0, 0, 0);
+  return next - now;
+}
+function msUntilWeekReset(){
+  const now = new Date();
+  const day = (now.getDay() + 6) % 7; // Mon=0
+  const nextMon = new Date(now); nextMon.setHours(0, 0, 0, 0); nextMon.setDate(now.getDate() + (7 - day));
+  return nextMon - now;
+}
+
 function getDailyChallenge(){
   const today = getTodayKey();
   let data;
   try { data = JSON.parse(localStorage.getItem('rosham_daily') || '{}'); }
   catch(e){ data = {}; }
   if(data.date !== today){
-    // pick a new challenge for today
+    // pick a new challenge for today + grant the daily reroll token
     const challenge = DAILY_CHALLENGES[Math.floor(Math.random() * DAILY_CHALLENGES.length)];
     data = {
       date: today,
@@ -17127,10 +17505,39 @@ function getDailyChallenge(){
       progress: 0,
       completed: false,
       claimedBonus: false,
+      rerolls: 1,
     };
     localStorage.setItem('rosham_daily', JSON.stringify(data));
   }
+  if(data.rerolls == null) data.rerolls = 0; // back-compat for saves predating rerolls
   return data;
+}
+
+// Swap today's challenge for a different one (one free reroll per day, pre-completion).
+function rerollDailyChallenge(){
+  const data = getDailyChallenge();
+  if(data.completed){ toast('Already complete — nothing to reroll', 'info'); return; }
+  if(!data.rerolls || data.rerolls < 1){ toast('No rerolls left today', 'info'); return; }
+  const pool = DAILY_CHALLENGES.filter(c => c.id !== data.challenge.id);
+  data.challenge = pool[Math.floor(Math.random() * pool.length)];
+  data.progress = 0;
+  data.rerolls -= 1;
+  try { localStorage.setItem('rosham_daily', JSON.stringify(data)); } catch(e){}
+  refreshDailyChallenge();
+  try { haptic(9); } catch(e){}
+  toast('New daily challenge rolled', 'success');
+}
+
+// A small celebratory confetti burst centered on a challenge card.
+function celebrateChallenge(sel){
+  const el = typeof sel === 'string' ? $(sel) : sel;
+  if(!el) return;
+  el.classList.remove('just-completed'); void el.offsetWidth; el.classList.add('just-completed');
+  if(document.body.classList.contains('low-power')) return;
+  const r = el.getBoundingClientRect();
+  const cx = r.left + r.width / 2, cy = r.top + Math.min(r.height / 2, 90);
+  ['#22d3a3','#ffd33d','#9b7bff','#5fc9ff'].forEach((c, i) => setTimeout(() => burst(cx, cy, c, 26), i * 60));
+  try { haptic([12, 30, 18]); } catch(e){}
 }
 
 function getDailyStreak(){
@@ -17153,6 +17560,15 @@ function refreshDailyChallenge(){
   setText('#dailyStreakBadge', `🔥 ${streak}`);
   const rwd = dailyReward(data.challenge);
   setText('#dailyRewardText', data.completed ? `✓ +${rwd} ELO earned` : `+${rwd} ELO bonus`);
+  setText('#dailyResetIn', `Resets in ${fmtCountdown(msUntilMidnight())}`);
+  // Reroll button state
+  const reroll = $('#dailyRerollBtn');
+  if(reroll){
+    const can = !data.completed && data.rerolls > 0;
+    reroll.disabled = !can;
+    reroll.title = can ? 'Swap for a different challenge (1 per day)' : (data.completed ? 'Challenge complete' : 'No rerolls left today');
+    reroll.style.display = '';
+  }
   const card = $('#dailyChallengeCard');
   if(card) card.classList.toggle('daily-done', !!data.completed);
 }
@@ -17192,6 +17608,12 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
     case 'scissorsWin':
       delta = (roundDetails?.withMoves || []).filter(m => m === 'scissors_win').length;
       break;
+    case 'roundsWon':
+      delta = roundDetails?.wonRounds || 0;
+      break;
+    case 'flawless':
+      if(roundDetails?.flawless) delta = 1;
+      break;
   }
   state._dailyProgressGained = delta;
   data.progress += delta;
@@ -17201,6 +17623,7 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
     // by updateMatchStats so it shows in the result breakdown.
     state._dailyBonusElo = dailyReward(c);
     toast(`🎉 Daily complete: ${c.text} · +${dailyReward(c)} ELO!`, 'success');
+    try { celebrateChallenge('#dailyChallengeCard'); } catch(e){}
     // increment streak
     const lastStreakDate = localStorage.getItem('rosham_daily_last') || '';
     const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -17220,10 +17643,13 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
 // ============= WEEKLY CHALLENGES (3 per week, grant XP — not ELO) =============
 const WEEKLY_CHALLENGES = [
   { id:'w_win15',      text:'Win 15 matches this week',          goal:15, type:'wins',        xp:600 },
+  { id:'w_win25',      text:'Win 25 matches this week',          goal:25, type:'wins',        xp:900 },
   { id:'w_play30',     text:'Play 30 matches this week',         goal:30, type:'games',       xp:500 },
   { id:'w_rounds40',   text:'Win 40 rounds this week',           goal:40, type:'roundsWon',   xp:550 },
   { id:'w_streak5',    text:'Hit a 5-win streak this week',      goal:5,  type:'streak',      xp:500 },
+  { id:'w_streak7',    text:'Hit a 7-win streak this week',      goal:7,  type:'streak',      xp:750 },
   { id:'w_predict20',  text:'Read 20 throws correctly this week',goal:20, type:'predicts',    xp:650 },
+  { id:'w_flawless3',  text:'Win 3 flawless matches this week',  goal:3,  type:'flawless',    xp:700 },
   { id:'w_rock15',     text:'Win 15 rounds with ROCK',           goal:15, type:'rockWin',     xp:450 },
   { id:'w_paper15',    text:'Win 15 rounds with PAPER',          goal:15, type:'paperWin',    xp:450 },
   { id:'w_scissors15', text:'Win 15 rounds with SCISSORS',       goal:15, type:'scissorsWin', xp:450 },
@@ -17270,7 +17696,22 @@ function refreshWeeklyChallenges(){
     box.appendChild(row);
   });
   const badge = $('#weeklyDoneBadge');
-  if(badge) badge.textContent = `${done}/3`;
+  if(badge){
+    badge.textContent = `${done}/3`;
+    badge.classList.toggle('all-done', done === 3);
+  }
+  setText('#weeklyResetIn', `Resets in ${fmtCountdown(msUntilWeekReset())}`);
+  // "Clear all 3" bonus banner
+  const foot = $('#weeklyFoot');
+  if(foot){
+    if(done === 3 && data.bonusClaimed){
+      foot.innerHTML = '<b style="color:var(--mint)">✓ All cleared — bonus level claimed!</b>';
+    } else if(done === 3){
+      foot.innerHTML = 'All challenges done — claiming bonus…';
+    } else {
+      foot.innerHTML = `Clear all 3 for a <b>bonus level</b> · ${3 - done} to go`;
+    }
+  }
 }
 // Award XP (used by weekly challenges) — also handles the level-up toast.
 async function grantXp(amount, reason){
@@ -17301,6 +17742,7 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
       case 'streak': { const cs = state.profile.currentStreak || 0; if(cs > c.progress){ c.progress = cs; changed = true; } break; }
       case 'roundsWon': delta = roundDetails?.wonRounds || 0; break;
       case 'predicts': delta = roundDetails?.predictedCorrect || 0; break;
+      case 'flawless': if(roundDetails?.flawless) delta = 1; break;
       case 'rockWin': delta = (roundDetails?.withMoves || []).filter(m => m === 'rock_win').length; break;
       case 'paperWin': delta = (roundDetails?.withMoves || []).filter(m => m === 'paper_win').length; break;
       case 'scissorsWin': delta = (roundDetails?.withMoves || []).filter(m => m === 'scissors_win').length; break;
@@ -17311,8 +17753,16 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
       // Each weekly challenge grants a FULL level's worth of XP at your current level.
       const curLvl = levelFromXp(state.profile?.totalXp || 0).level;
       grantXp(xpForLevel(curLvl), 'Weekly challenge · +1 level');
+      try { celebrateChallenge('#weeklyChallengeCard'); } catch(e){}
     }
   });
+  // BONUS: clearing all three in a week grants an extra level, once.
+  if(data.challenges.every(c => c.completed) && !data.bonusClaimed){
+    data.bonusClaimed = true; changed = true;
+    const curLvl = levelFromXp(state.profile?.totalXp || 0).level;
+    grantXp(xpForLevel(curLvl), 'Weekly clear bonus · +1 level');
+    setTimeout(() => toast('🏆 All weekly challenges cleared — bonus level!', 'success'), 600);
+  }
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
 
@@ -17944,14 +18394,16 @@ function attachGlobalChat(){
       },
       (err) => {
         console.warn('[globalChat] listen failed — check the globalChat Firestore rule', err);
-        const stream = $('#gcStream');
+        const stream = globalChatStream();
         if(stream) stream.innerHTML = '<div class="side-empty">Chat unavailable. Publish the globalChat Firestore rule to enable it.</div>';
       }
     );
   } catch(e){ console.warn('[globalChat]', e); }
 }
+// Global chat now renders inside the Messages flyout thread.
+function globalChatStream(){ return state._chatThreadGlobal ? $('#chatThreadBody') : $('#gcStream'); }
 function renderGlobalChat(){
-  const stream = $('#gcStream');
+  const stream = globalChatStream();
   if(!stream) return;
   const blocked = state.profile?.blocked || [];
   const msgs = (state._globalChatMsgs || []).filter(m => !blocked.includes(m.uid));
@@ -17993,12 +18445,9 @@ function renderGlobalChat(){
   });
   if(atBottom) stream.scrollTop = stream.scrollHeight;
 }
-function renderChatPage(){
-  attachGlobalChat();
-  renderGlobalChat();
-  const stream = $('#gcStream');
-  if(stream) requestAnimationFrame(() => { stream.scrollTop = stream.scrollHeight; });
-}
+// Back-compat: any old "open global chat" entry point now opens the
+// Messages flyout's pinned Global Chat thread.
+function renderChatPage(){ openGlobalChatThread(); }
 async function sendGlobalChat(text){
   text = (text || '').trim();
   if(!text) return;
@@ -18022,13 +18471,6 @@ async function sendGlobalChat(text){
     toast('Could not send (check the globalChat rule)', 'error');
   }
 }
-on('#gcComposer', 'submit', (e) => {
-  e.preventDefault();
-  const inp = $('#gcInput'); if(!inp) return;
-  const v = inp.value; inp.value = '';
-  sendGlobalChat(v);
-});
-
 // ============= ACTIVITY FEED =============
 function attachActivityListener(){
   if(state.unsubActivity) return;
@@ -18175,6 +18617,29 @@ async function openProfile(uid){
     $('#pmRating').parentElement.style.color = rank.color;
     renderAvatar($('#pmAv'), p);
 
+    // Rank-tinted cover banner (honours a player's chosen accent if set)
+    const banner = $('#pmBanner');
+    if(banner){
+      const accent = p.accent || rank.color;
+      banner.style.background = `radial-gradient(120% 160% at 0% 0%, ${accent}44, transparent 60%), linear-gradient(135deg, ${rank.color}33, ${(rank.color2||rank.color)}1a 60%, transparent)`;
+    }
+    // Avatar rank ring + level pip
+    const avRing = $('#pmAvRing');
+    if(avRing) avRing.style.boxShadow = `0 0 0 2.5px ${rank.color}, 0 0 18px -2px ${rank.color}`;
+    const lvlNow = levelFromXp(p.totalXp || 0);
+    setText('#pmAvLvl', lvlNow.level);
+
+    // Rank progress to next tier
+    try {
+      const rp = rankProgressToNext(rating);
+      const fill = $('#pmRankProgFill'); if(fill) fill.style.width = Math.round(rp.progress * 100) + '%';
+      setText('#pmRankProgCur', rank.tierName);
+      // derive the next tier name from the "to next" delta
+      const nextRank = rankFromRating(rating + (rp.toNext || 1));
+      setText('#pmRankProgNext', rp.toNext > 0 ? nextRank.tierName : 'MAX');
+      setText('#pmRankProgLabel', rp.toNext > 0 ? `${rp.toNext} ELO to ${nextRank.tierName}` : 'Apex rank reached');
+    } catch(e){}
+
     if(p.status){ $('#pmStatus').textContent = p.status; $('#pmStatus').style.display = ''; }
     else $('#pmStatus').style.display = 'none';
     if(p.bio){ $('#pmBio').textContent = p.bio; $('#pmBio').style.display = ''; }
@@ -18241,6 +18706,7 @@ async function openProfile(uid){
       $('#pmAddFriendBtn').style.display = 'none';
       $('#pmChallengeBtn').style.display = 'none';
       $('#pmBlockBtn').style.display = 'none';
+      const msgBtn = $('#pmMessageBtn'); if(msgBtn) msgBtn.style.display = 'none';
     } else {
       const isFriend = state.profile.friends?.includes(uid);
       const isBlocked = state.profile.blocked?.includes(uid);
@@ -18248,6 +18714,12 @@ async function openProfile(uid){
       $('#pmAddFriendBtn').onclick = () => { addFriendByUsername(p.username); $('#profileModal').classList.remove('show'); };
       $('#pmChallengeBtn').style.display = isBlocked ? 'none' : '';
       $('#pmChallengeBtn').onclick = () => { sendChallenge(uid); $('#profileModal').classList.remove('show'); };
+      // Message — opens a DM thread in the Messages flyout
+      const msgBtn = $('#pmMessageBtn');
+      if(msgBtn){
+        msgBtn.style.display = isBlocked ? 'none' : '';
+        msgBtn.onclick = () => { $('#profileModal').classList.remove('show'); openChatThread(uid, p.username, p.photoURL, p.colorIdx); };
+      }
       $('#pmBlockBtn').style.display = '';
       $('#pmBlockBtn').textContent = '';
       $('#pmBlockBtn').innerHTML = isBlocked
@@ -18358,7 +18830,10 @@ on('#pmCommentList', 'click', (e) => {
 async function loadMatchHistory(uid){
   const section = $('#pmHistorySection');
   const list = $('#pmHistoryList');
+  const formWrap = $('#pmFormWrap');
+  const form = $('#pmForm');
   list.innerHTML = '';
+  if(form) form.innerHTML = '';
   try {
     const snap = await getDocs(query(
       collection(state.db, 'matchHistory'),
@@ -18368,9 +18843,25 @@ async function loadMatchHistory(uid){
     ));
     if(snap.empty){
       section.style.display = 'none';
+      if(formWrap) formWrap.style.display = 'none';
       return;
     }
     section.style.display = '';
+    // Recent form — newest on the right, like a sports form guide
+    const formDocs = [];
+    snap.forEach(d => formDocs.push(d.data()));
+    if(form){
+      formDocs.slice().reverse().forEach(h => {
+        const cls = h.result === 'win' ? 'win' : (h.result === 'lose' || h.result === 'forfeit') ? 'lose' : 'draw';
+        const ch = h.result === 'win' ? 'W' : (h.result === 'lose' || h.result === 'forfeit') ? 'L' : 'D';
+        const pip = document.createElement('span');
+        pip.className = 'pm-form-pip ' + cls;
+        pip.textContent = ch;
+        pip.title = `${h.result} vs ${h.oppUsername || 'unknown'}`;
+        form.appendChild(pip);
+      });
+      if(formWrap) formWrap.style.display = '';
+    }
     snap.forEach(d => {
       const h = d.data();
       const cls = h.result === 'win' ? 'win' : h.result === 'lose' ? 'lose' : 'draw';
@@ -18475,6 +18966,7 @@ function openEditProfile(){
     });
   }
   document.querySelectorAll('#colorPick button').forEach((b, i) => b.classList.toggle('active', i === (p.colorIdx || 0)));
+  document.querySelectorAll('#accentPick button').forEach(b => b.classList.toggle('active', (b.dataset.accent || '') === (p.accent || '')));
   // default acceptChallenges to true (only false if explicitly disabled)
   $('#editAcceptChallenges').checked = (p.acceptChallenges !== false);
   pendingPhotoDataURL = null;
@@ -18528,6 +19020,8 @@ on('#editProfileForm', 'submit', async (e) => {
   const newStatus = (fd.get('status') || '').trim();
   const activeColor = document.querySelector('#colorPick button.active');
   const newColorIdx = activeColor ? parseInt(activeColor.dataset.idx) : (state.profile.colorIdx || 0);
+  const activeAccent = document.querySelector('#accentPick button.active');
+  const newAccent = activeAccent ? (activeAccent.dataset.accent || '') : (state.profile.accent || '');
   const newAcceptChallenges = $('#editAcceptChallenges').checked;
 
   if(!/^[a-zA-Z0-9_]{2,20}$/.test(newUsername)){
@@ -18543,14 +19037,14 @@ on('#editProfileForm', 'submit', async (e) => {
     const newTitle = state._pendingTitle || state.profile.equippedTitle || 'rookie';
     const updates = {
       username: newUsername, country: newCountry, bio: newBio, status: newStatus,
-      colorIdx: newColorIdx, equippedTitle: newTitle,
+      colorIdx: newColorIdx, accent: newAccent, equippedTitle: newTitle,
       acceptChallenges: newAcceptChallenges,
     };
     if(pendingPhotoDataURL !== null){
       updates.photoURL = pendingPhotoDataURL;
     }
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
-    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, equippedTitle:newTitle, acceptChallenges:newAcceptChallenges };
+    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, accent:newAccent, equippedTitle:newTitle, acceptChallenges:newAcceptChallenges };
     if(pendingPhotoDataURL !== null) state.profile.photoURL = pendingPhotoDataURL;
     setText('#chipName', newUsername);
     renderAvatar($('#chipAv'), state.profile);
@@ -20227,7 +20721,7 @@ function showRoundResultUI(result, yourMove, oppMove, predictionCorrect){
   const screen = $('#screen-game');
   // Clean previous classes
   if(headline) headline.classList.remove('win','lose','draw');
-  if(resultDisplay) resultDisplay.classList.remove('show');
+  if(resultDisplay) resultDisplay.classList.remove('show','rr-win','rr-lose','rr-draw');
   if(resultInner) resultInner.classList.remove('win','lose','draw');
   if(youPickEl) youPickEl.classList.remove('winner','loser');
   if(oppPickEl) oppPickEl.classList.remove('winner','loser');
@@ -20284,7 +20778,7 @@ function showRoundResultUI(result, yourMove, oppMove, predictionCorrect){
     try { if(navigator.vibrate) navigator.vibrate([120, 60, 40]); } catch(e){}
   } else if(result === 'draw'){
     if(headline){ headline.textContent = 'DRAW'; headline.classList.add('draw'); }
-    if(detail) detail.textContent = oppMove ? `BOTH THREW ${oppMove.toUpperCase()} — REPLAY` : 'NO THROWS — REPLAY';
+    if(detail) detail.textContent = oppMove ? `BOTH ${oppMove.toUpperCase()}` : 'REPLAY';
     if(resultInner) resultInner.classList.add('draw');
     sfxDraw();
     showAnnouncer('DRAW — REPLAY THE ROUND', 2000);
@@ -20295,7 +20789,11 @@ function showRoundResultUI(result, yourMove, oppMove, predictionCorrect){
     if(resultInner) resultInner.classList.add('lose');
     sfxLose();
   }
-  if(resultDisplay) resultDisplay.classList.add('show');
+  if(resultDisplay){
+    // Tag the container so the draw can render as a slim, non-blocking pill
+    const rrTag = result === 'draw' ? 'rr-draw' : (result === 'win' ? 'rr-win' : 'rr-lose');
+    resultDisplay.classList.add('show', rrTag);
+  }
 
   const predBadge = $('#predictionBadge');
   if(predBadge){
@@ -20449,14 +20947,18 @@ async function endMatch(){
   // NEW: Update daily + weekly challenge progress (skip for casual friend
   // challenges so they can't be farmed for free progress/rewards).
   if(!state.isCasual){
+    const _flawless = result === 'win' && (state.scoreOpp || 0) === 0;
     try { updateDailyChallengeProgress(result, {
       predictedCorrect: state._matchPredictionsCorrect || 0,
       withMoves: state._matchWinningMoves || [],
+      wonRounds: state.scoreYou || 0,
+      flawless: _flawless,
     }); } catch(e){ console.error('[daily]', e); }
     try { updateWeeklyChallengeProgress(result, {
       predictedCorrect: state._matchPredictionsCorrect || 0,
       withMoves: state._matchWinningMoves || [],
       wonRounds: state.scoreYou || 0,
+      flawless: _flawless,
     }); } catch(e){ console.error('[weekly]', e); }
   }
 
@@ -21125,6 +21627,16 @@ function showRankUp(oldRank, newRank){
   const isLegend = newRank.id === 'legend';
   overlay.classList.toggle('legend-rankup', isLegend);
 
+  // Performance tier: phones / low-power get a lighter (but still premium) pass
+  // so the sequence never janks. Desktops get the full cinematic treatment.
+  const perf = fxPerf();
+  overlay.classList.toggle('rankup-lite', perf.lite);
+
+  // All deferred steps are tracked so an early dismiss cancels the rest
+  // (no stray bursts firing after the overlay is gone).
+  const timers = [];
+  const later = (fn, ms) => { timers.push(setTimeout(fn, ms)); };
+
   // Set rank color variables — drives the entire animation palette
   overlay.style.setProperty('--rank-color', newRank.color);
   overlay.style.setProperty('--rank-color-2', newRank.color2 || newRank.color);
@@ -21142,14 +21654,22 @@ function showRankUp(oldRank, newRank){
 
   // Big title
   setText('#rankupRankName', newRank.name.toUpperCase());
-  setText('#rankupSub', `${state.profile.rating} RATING`);
-  setText('#rankupFrom', `Promoted from ${oldRank.tierName}`);
+  setText('#rankupSub', isLegend ? `THE APEX · ${state.profile.rating} RATING` : `${state.profile.rating} RATING`);
+  setText('#rankupFrom', isLegend ? `Only the very best ever make it here.` : `Promoted from ${oldRank.tierName}`);
+  // Legend gets an apex tagline instead of a generic "promoted from"
+  const eyebrow = $('#rankupLabel');
+  if(eyebrow) eyebrow.textContent = isLegend ? 'APEX RANK REACHED' : 'PROMOTION';
 
-  // Spawn ambient particles around the stage
+  // Continue hint adapts to input type (no "SPACE" key on a phone)
+  const hint = $('#rankupContinueHint');
+  if(hint) hint.textContent = perf.mobile ? 'Tap to continue' : 'Tap or press SPACE to continue';
+
+  // Spawn ambient particles around the stage (scaled to the device)
   const particles = $('#rankupParticles');
   if(particles){
     particles.innerHTML = '';
-    for(let i = 0; i < 40; i++){
+    const pCount = perf.lite ? (isLegend ? 16 : 10) : (isLegend ? 48 : 36);
+    for(let i = 0; i < pCount; i++){
       const p = document.createElement('div');
       p.className = 'particle';
       p.style.left = (Math.random() * 100) + '%';
@@ -21160,11 +21680,11 @@ function showRankUp(oldRank, newRank){
     }
   }
 
-  // Spawn SHATTER SHARDS — triangular fragments that fly outward when old rank breaks
+  // Spawn SHATTER SHARDS — fragments that fly outward when the old rank breaks
   const shards = $('#rankupShards');
   if(shards){
     shards.innerHTML = '';
-    const shardCount = 20;
+    const shardCount = perf.lite ? 10 : 22;
     for(let i = 0; i < shardCount; i++){
       const sh = document.createElement('div');
       sh.className = 'rankup-shard';
@@ -21178,8 +21698,7 @@ function showRankUp(oldRank, newRank){
       sh.style.width = size + 'px';
       sh.style.height = size + 'px';
       sh.style.background = oldRank.color;
-      sh.style.boxShadow = `0 0 10px ${oldRank.color}`;
-      // Slight delay variation for organic feel
+      if(!perf.lite) sh.style.boxShadow = `0 0 10px ${oldRank.color}`;
       sh.style.animationDelay = (1.9 + Math.random() * 0.15) + 's';
       shards.appendChild(sh);
     }
@@ -21188,11 +21707,11 @@ function showRankUp(oldRank, newRank){
   // Reset settled state for clean re-runs
   $('#rankupNewRank')?.classList.remove('settled');
 
-  // PREMIUM: spawn god-ray beams
+  // PREMIUM: vertical god-ray beams sweeping up behind the icon
   const beams = $('#rankupBeams');
   if(beams){
     beams.innerHTML = '';
-    const beamCount = 7;
+    const beamCount = perf.lite ? 4 : 7;
     for(let i = 0; i < beamCount; i++){
       const b = document.createElement('div');
       b.className = 'rankup-beam';
@@ -21207,87 +21726,81 @@ function showRankUp(oldRank, newRank){
 
   // PREMIUM: fire expanding shockwave rings at the new-rank arrival moment
   const shock = $('#rankupShockwave');
+  const fireRing = (life = 1300) => {
+    if(!shock) return;
+    const ring = document.createElement('div');
+    ring.className = 'ring';
+    shock.appendChild(ring);
+    requestAnimationFrame(() => ring.classList.add('go'));
+    setTimeout(() => ring.remove(), life);
+  };
   if(shock){
     shock.innerHTML = '';
-    [2700, 2900, 3150].forEach((t, idx) => {
-      setTimeout(() => {
-        const ring = document.createElement('div');
-        ring.className = 'ring';
-        shock.appendChild(ring);
-        requestAnimationFrame(() => ring.classList.add('go'));
-        setTimeout(() => ring.remove(), 1300);
-      }, t);
-    });
+    [2700, 2950, 3200].forEach((t) => later(() => fireRing(), t));
   }
 
-  // FORTNITE-STYLE CHOREOGRAPHY:
-  // 0.0s - PROMOTION pill + rays appear
-  // 0.0–1.0s - Old rank dramatic entrance (zoom + rotate)
-  // 1.0–1.9s - Old rank holds in place
-  // 1.9–2.5s - Old rank shatters into shards flying outward
-  // 2.0s - Screen flash (peak of transition)
-  // 2.2–3.4s - NEW rank zooms in from depth (small + blurred → full size)
-  // 3.4s - Light sweep across new icon
-  // 4.8s - Second light sweep
-  // 2.8s - Big tier title appears
+  // CHOREOGRAPHY (seconds):
+  //  0.0  PROMOTION pill + rays fade in
+  //  0.0–1.0  old rank dramatic entrance (zoom + rotate)
+  //  1.0–1.9  old rank holds
+  //  1.9–2.5  old rank shatters into shards flying outward
+  //  2.0  screen flash (peak of the transition)
+  //  2.2–3.4  NEW rank zooms in from depth (small + blurred → full)
+  //  2.8  big tier title resolves · 3.4/4.8 light sweeps
+  const burstSize = perf.lite ? 70 : 200;
   if(isLegend){
     // The custom epic Legend sound carries the whole sequence.
-    setTimeout(() => { if(!playLegendSound()) sfxRankUp(); }, 100);
+    later(() => { if(!playLegendSound()) sfxRankUp(); }, 100);
   } else {
-    setTimeout(() => sfxRankUp(), 100);
-    // Initial whoosh when old rank lands
-    setTimeout(() => sfxReady && sfxReady(), 700);
+    later(() => sfxRankUp(), 100);
+    later(() => sfxReady && sfxReady(), 700);   // whoosh as the old rank lands
   }
-  // SHATTER moment burst (white flash)
-  setTimeout(() => bigBurst('#ffffff'), 2000);
-  setTimeout(() => bigBurst(oldRank.color), 2100);
-  // New rank arrival burst
-  setTimeout(() => bigBurst(newRank.color), 2700);
-  setTimeout(() => bigBurst(newRank.color2 || newRank.color), 3000);
-  // Light sweep follow-up
-  setTimeout(() => bigBurst('#ffffff'), 3400);
+  // Shatter moment + new-rank arrival bursts
+  later(() => bigBurst('#ffffff', burstSize), 2000);
+  later(() => bigBurst(oldRank.color, burstSize), 2120);
+  later(() => bigBurst(newRank.color, burstSize), 2700);
+  later(() => bigBurst(newRank.color2 || newRank.color, burstSize), 3000);
+  later(() => bigBurst('#ffffff', Math.round(burstSize * 0.7)), 3400);
 
   if(isLegend){
-    // Sustained celebratory barrage + confetti for reaching the apex rank.
-    [3600, 4200, 4900, 5600, 6400, 7300].forEach((t) => {
-      setTimeout(() => { bigBurst('#ffd700'); bigBurst('#ff61c3'); }, t);
-    });
-    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 2800);
-    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 5200);
-    // Extra shockwave rings rolling outward
-    const shock2 = $('#rankupShockwave');
-    if(shock2){
-      [3000, 3600, 4400, 5400].forEach((t) => setTimeout(() => {
-        const ring = document.createElement('div'); ring.className = 'ring';
-        shock2.appendChild(ring); requestAnimationFrame(() => ring.classList.add('go'));
-        setTimeout(() => ring.remove(), 1400);
-      }, t));
+    // Sustained gold/magenta barrage + confetti for reaching the apex rank.
+    // Fewer volleys on phones, but still a celebration.
+    const volleys = perf.lite ? [3700, 4600, 5600] : [3600, 4200, 4900, 5600, 6400, 7300];
+    volleys.forEach((t) => later(() => { bigBurst('#ffd700', burstSize); bigBurst('#ff61c3', burstSize); }, t));
+    if(!perf.lite){
+      later(() => { try { launchConfetti(); } catch(e){} }, 2800);
+      later(() => { try { launchConfetti(); } catch(e){} }, 5200);
+      [3000, 3600, 4400, 5400].forEach((t) => later(() => fireRing(1400), t));
+    } else {
+      later(() => { try { launchConfetti(); } catch(e){} }, 3000);
     }
   }
 
-  // After the new-rank entry animation settles, add .settled so it starts floating
-  setTimeout(() => {
-    $('#rankupNewRank')?.classList.add('settled');
-  }, 3500);
+  // After the new-rank entry settles, let it gently float
+  later(() => { $('#rankupNewRank')?.classList.add('settled'); }, 3500);
 
   // dismiss controls
+  let dismissed = false;
   const dismiss = () => {
-    overlay.classList.remove('show');
-    overlay.classList.remove('legend-rankup');
+    if(dismissed) return;
+    dismissed = true;
+    timers.forEach(clearTimeout);   // cancel any pending bursts/rings
+    overlay.classList.remove('show', 'legend-rankup', 'rankup-lite');
     overlay.removeEventListener('click', dismiss);
     document.removeEventListener('keydown', keydismiss);
     if(isLegend) stopLegendSound();
     flushMenuMusic();
   };
   const keydismiss = (e) => { if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); } };
-  // Wait until the animation has played before letting them dismiss (longer for Legend)
-  setTimeout(() => {
+  // Hold dismissal until the entrance has played (longer for Legend)
+  later(() => {
     overlay.addEventListener('click', dismiss);
     document.addEventListener('keydown', keydismiss);
-  }, isLegend ? 6500 : 4800);
+    if(hint) hint.classList.add('ready');
+  }, isLegend ? 6200 : 4400);
 
-  // auto-dismiss if no input (Legend lingers longer to soak in the moment)
-  setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, isLegend ? 16000 : 10000);
+  // auto-dismiss if untouched (Legend lingers so you can soak it in)
+  timers.push(setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, isLegend ? 15000 : 9500));
 }
 
 // ============= RANK-DOWN POPUP (after forfeit-by-refresh) =============
@@ -22105,6 +22618,7 @@ function showNavPage(page){
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const nav = btn.dataset.nav;
+    if(!nav) return; // e.g. Messages button manages its own flyout
     closeSidebarMobile();
     if(nav === 'admin'){
       openAdminPanel();
@@ -22196,6 +22710,7 @@ function renderHomePage(){
   setText('#wbSub', games > 0 ? `You've played ${games} matches. Keep climbing!` : 'Ready to throw hands?');
   const loginStreak = getLoginStreak();
   setText('#wbStreakNum', loginStreak);
+  try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
   try { paintMnavAvatar(); } catch(e){}
   try { renderHomeSpotlight(p); } catch(e){ console.warn('[home] spotlight', e); }
@@ -22208,6 +22723,14 @@ function renderHomePage(){
   setText('#wsOnline', $('#onlineCount')?.textContent || '—');
   setText('#wsMatches', $('#matchCount')?.textContent || '—');
 }
+
+// Keep the challenge reset countdowns ticking (once a minute, only the labels).
+setInterval(() => {
+  try {
+    if($('#dailyResetIn')) setText('#dailyResetIn', `Resets in ${fmtCountdown(msUntilMidnight())}`);
+    if($('#weeklyResetIn')) setText('#weeklyResetIn', `Resets in ${fmtCountdown(msUntilWeekReset())}`);
+  } catch(e){}
+}, 60000);
 
 // Update the live season countdown + the weekend 2× XP banners everywhere.
 function refreshSeasonUI(){
@@ -22996,7 +23519,7 @@ on('#moreSheet', 'click', (e) => {
     switch(act){
       case 'profile': if(state.user) openProfile(state.user.uid); break;
       case 'activity': showNavPage('activity'); break;
-      case 'chat': showNavPage('chat'); break;
+      case 'chat': closeAllFlyouts(); $('#chatPanel')?.classList.add('show'); renderChatConvList(); break;
       case 'achievements': showNavPage('achievements'); break;
       case 'settings': showNavPage('settings'); break;
       case 'help': $('#helpBtn')?.click(); break;
@@ -23030,10 +23553,18 @@ on('#chatBtn', 'click', (e) => {
 });
 // click outside closes flyouts
 document.addEventListener('click', (e) => {
-  if(!e.target.closest('#notifPanel, #chatPanel, #notifBtn, #chatBtn')) closeAllFlyouts();
+  if(!e.target.closest('#notifPanel, #chatPanel, #notifBtn, #chatBtn, #navMessages')) closeAllFlyouts();
 });
 on('#notifClearBtn', 'click', clearAllNotifications);
-on('#chatBackBtn', 'click', () => { clearDmTyping(); cancelDmReply(); $('#chatThread').style.display = 'none'; $('#chatConvList').style.display = ''; const p=$('#chatEmojiPalette'); if(p) p.style.display='none'; });
+on('#chatBackBtn', 'click', () => { clearDmTyping(); cancelDmReply(); state._chatThreadGlobal = false; $('#chatThread').classList.remove('is-global'); $('#chatThread').style.display = 'none'; $('#chatConvList').style.display = ''; const p=$('#chatEmojiPalette'); if(p) p.style.display='none'; renderChatConvList(); });
+// Sidebar "Messages" → open the Messages flyout (which holds Global Chat + DMs)
+on('#navMessages', 'click', (e) => {
+  e.stopPropagation();
+  const p = $('#chatPanel');
+  const wasOpen = p.classList.contains('show');
+  closeAllFlyouts();
+  if(!wasOpen){ p.classList.add('show'); renderChatConvList(); }
+});
 on('#chatThreadSend', 'click', sendChatMessage);
 on('#chatThreadInput', 'keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); sendChatMessage(); } });
 on('#chatThreadInput', 'input', onDmTyping);
