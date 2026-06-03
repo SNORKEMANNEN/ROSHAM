@@ -458,7 +458,6 @@ body.streamer-mode #wbHi,
 body.streamer-mode .mf-name,
 body.streamer-mode .arena-player-name,
 body.streamer-mode .duel-intro-name,
-body.streamer-mode .spectate-name,
 body.streamer-mode .mrc-pname,
 body.streamer-mode .pm-name,
 body.streamer-mode .ci-name,
@@ -486,7 +485,6 @@ body.streamer-mode #wbHi:hover,
 body.streamer-mode .mf-name:hover,
 body.streamer-mode .arena-player-name:hover,
 body.streamer-mode .duel-intro-name:hover,
-body.streamer-mode .spectate-name:hover,
 body.streamer-mode .mrc-pname:hover,
 body.streamer-mode .pm-name:hover,
 body.streamer-mode .ci-name:hover,
@@ -596,38 +594,6 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .throw-node span{ font-size:12px; color:var(--text-dim); }
 @media(max-width:560px){ .throw-node{ padding:16px 8px; } .throw-node span{ font-size:11px; } }
 
-/* ===== SPECTATOR SCREEN ===== */
-#screen-spectate{ background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(124,77,255,.10), transparent 60%), var(--bg-2); }
-.spectate-wrap{ max-width: 920px; margin: 0 auto; width: 100%; padding: 24px; display: flex; flex-direction: column; gap: 28px; min-height: 100%; justify-content: center; }
-.spectate-head{ display: flex; align-items: center; justify-content: space-between; }
-.spectate-leave{ display: inline-flex; align-items: center; gap: 6px; padding: 9px 14px; border-radius: 10px; background: var(--surface); border: 1px solid var(--line); color: var(--text); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; cursor: pointer; }
-.spectate-leave:hover{ border-color: var(--coral); }
-.spectate-live-pill{ display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: rgba(255,51,88,.12); border: 1px solid rgba(255,51,88,.3); color: var(--coral); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .1em; }
-.spectate-live-pill .dot{ width: 8px; height: 8px; border-radius: 50%; background: var(--coral); animation: pulse 1s infinite; }
-.spectate-stage{ display: grid; grid-template-columns: 1fr auto 1fr; gap: 24px; align-items: center; }
-.spectate-player{ display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 28px 20px; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); }
-.spectate-av{ width: 88px; height: 88px; border-radius: 24px; background-size: cover; background-position: center; display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 36px; color: #fff; }
-.spectate-name{ font-family: var(--font-display); font-stretch: 72%; font-weight: 800; font-size: 22px; }
-.spectate-rank{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); letter-spacing: .06em; text-transform: uppercase; }
-.spectate-score{ font-family: var(--font-display); font-stretch: 58%; font-weight: 800; font-size: 72px; line-height: 1; letter-spacing: -.04em; margin-top: 6px; transition: transform .2s; }
-.spectate-score.pop{ animation: scorePop .4s cubic-bezier(.2,1.6,.4,1); }
-.spectate-center{ display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.spectate-vs{ font-family: var(--font-display); font-stretch: 58%; font-weight: 800; font-size: 36px; color: var(--text-faint); letter-spacing: -.04em; }
-.spectate-rounds{ display: flex; gap: 8px; }
-.spectate-round-pip{ width: 14px; height: 14px; border-radius: 50%; background: var(--surface-3); border: 1px solid var(--line); }
-.spectate-round-pip.p1{ background: var(--mint); border-color: var(--mint); }
-.spectate-round-pip.p2{ background: var(--coral); border-color: var(--coral); }
-.spectate-bo{ font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); letter-spacing: .14em; }
-.spectate-status{ text-align: center; font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); letter-spacing: .04em; }
-@media (max-width: 640px){
-  .spectate-stage{ grid-template-columns: 1fr; gap: 14px; }
-  .spectate-center{ order: -1; }
-  .spectate-score{ font-size: 56px; }
-  .spectate-av{ width: 64px; height: 64px; font-size: 26px; }
-}
-/* Spectate buttons in activity rows */
-.watch-btn{ display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 8px; background: rgba(255,51,88,.1); border: 1px solid rgba(255,51,88,.3); color: var(--coral); font-family: var(--font-mono); font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; cursor: pointer; }
-.watch-btn:hover{ background: rgba(255,51,88,.18); }
 
 /* ===== MODERATION UI ===== */
 .report-reasons{ display:flex; flex-direction:column; gap:6px; }
@@ -2517,6 +2483,69 @@ h1.section-title .accent{
 }
 .daily-card .daily-reward{ color: var(--mint); font-weight: 700; }
 
+/* ===== Daily challenge card — premium accent + real reward pill ===== */
+#dailyChallengeCard{
+  position: relative;
+  border-color: rgba(255,107,0,.28);
+  background: radial-gradient(120% 80% at 0% 0%, rgba(255,107,0,.08), transparent 55%), var(--surface);
+}
+#dailyChallengeCard.daily-done{
+  border-color: rgba(60,255,185,.42);
+  background: radial-gradient(120% 80% at 0% 0%, rgba(60,255,185,.1), transparent 55%), var(--surface);
+  box-shadow: 0 0 22px rgba(60,255,185,.12);
+}
+#dailyChallengeCard .daily-reward{
+  font-family: var(--font-mono); font-size: 10px; font-weight: 800;
+  letter-spacing: .03em; padding: 3px 9px; border-radius: 999px;
+  background: rgba(255,107,0,.14); border: 1px solid rgba(255,107,0,.35);
+  color: #ff8a3d !important;
+}
+#dailyChallengeCard.daily-done .daily-reward{
+  background: rgba(60,255,185,.14); border-color: rgba(60,255,185,.4); color: var(--mint) !important;
+}
+#dailyChallengeCard .daily-streak-mini{ animation: dailyFlame 2.4s ease-in-out infinite; }
+@keyframes dailyFlame{ 0%,100%{ box-shadow: 0 0 0 rgba(255,107,0,0); } 50%{ box-shadow: 0 0 10px rgba(255,107,0,.45); } }
+
+/* ===== Weekly rows — reward pill + clearer completed state ===== */
+#weeklyChallengeCard .weekly-xp{
+  padding: 3px 8px; border-radius: 999px;
+  background: rgba(60,255,185,.12); border: 1px solid rgba(60,255,185,.3);
+}
+#weeklyChallengeCard .weekly-row.done{ opacity: 1; }
+#weeklyChallengeCard .weekly-row.done .weekly-goal{ color: var(--mint); }
+.weekly-tick{ width: 13px; height: 13px; color: var(--mint); vertical-align: -2px; }
+body.low-power #dailyChallengeCard .daily-streak-mini{ animation: none; }
+
+/* ===== GLOBAL CHAT PAGE ===== */
+.gc-shell{ display: flex; flex-direction: column; height: min(680px, calc(100vh - 250px)); min-height: 340px; }
+.gc-stream{ flex: 1; overflow-y: auto; padding: 8px 2px 12px; display: flex; flex-direction: column; gap: 10px; }
+.gc-msg{ display: flex; gap: 10px; align-items: flex-start; }
+.gc-msg.grouped{ margin-top: -6px; }
+.gc-av{ width: 34px; height: 34px; flex-shrink: 0; border-radius: 11px; display: grid; place-items: center; cursor: pointer; font-family: var(--font-display); font-weight: 800; font-size: 15px; color: #fff; }
+.gc-bubble-wrap{ min-width: 0; max-width: min(560px, 78%); }
+.gc-meta{ display: flex; align-items: baseline; gap: 8px; margin: 0 0 3px 2px; }
+.gc-name{ font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 13px; color: var(--text); cursor: pointer; }
+.gc-name:hover{ color: var(--mint); }
+.gc-time{ font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); }
+.gc-bubble{ background: var(--surface-2); border: 1px solid var(--line-soft); border-radius: 4px 14px 14px 14px; padding: 9px 13px; font-size: 14px; line-height: 1.4; color: var(--text); word-wrap: break-word; overflow-wrap: anywhere; }
+.gc-msg.mine{ flex-direction: row-reverse; }
+.gc-msg.mine .gc-bubble-wrap{ display: flex; flex-direction: column; align-items: flex-end; }
+.gc-msg.mine .gc-meta{ flex-direction: row-reverse; margin: 0 2px 3px 0; }
+.gc-msg.mine .gc-bubble{ background: linear-gradient(135deg, rgba(60,255,185,.16), rgba(60,255,185,.06)); border-color: rgba(60,255,185,.3); border-radius: 14px 4px 14px 14px; }
+.gc-del{ margin-left: 8px; width: 20px; height: 20px; border-radius: 6px; background: transparent; border: none; color: var(--text-faint); display: inline-grid; place-items: center; cursor: pointer; vertical-align: middle; opacity: .45; transition: opacity .15s, color .15s; }
+.gc-del:hover{ opacity: 1; color: var(--coral); }
+.gc-composer{ display: flex; gap: 8px; align-items: center; padding: 10px 0 4px; }
+.gc-composer input{ flex: 1; min-width: 0; height: 44px; padding: 0 16px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); color: var(--text); font-family: var(--font-body); font-size: 14px; }
+.gc-composer input:focus{ outline: none; border-color: var(--mint); }
+.gc-send{ width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px; background: linear-gradient(135deg, var(--mint), #25c186); border: none; color: #04130d; display: grid; place-items: center; cursor: pointer; transition: transform .12s; }
+.gc-send:hover{ transform: translateY(-1px); }
+.gc-send:active{ transform: scale(.94); }
+.gc-foot{ font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); text-align: center; padding: 4px 0 2px; }
+@media (max-width: 600px){
+  .gc-shell{ height: calc(100dvh - 200px); min-height: 0; }
+  .gc-bubble-wrap{ max-width: 82%; }
+}
+
 /* STATS CARD (col 3) */
 .quick-stats-grid{
   display: grid;
@@ -3519,6 +3548,55 @@ h1.section-title .accent{
   letter-spacing: .04em;
   line-height: 1.4;
 }
+/* Revamped cards: relative for the ✓ ribbon, locked cards stay legible (so the
+   progress bar reads), unlocked cards get a slow shine. */
+.achievement-card{ position: relative; overflow: hidden; }
+.achievement-card.locked{ opacity: 1; filter: none; background: var(--surface-2); border-color: var(--line); }
+.achievement-card.locked .icon{ filter: grayscale(1) brightness(.7); opacity: .5; }
+.achievement-card.locked .title{ color: var(--text-dim); }
+.achievement-card.unlocked::after{
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(60,255,185,.16) 50%, transparent 65%);
+  transform: translateX(-120%); animation: achCardShine 5s ease-in-out infinite;
+}
+@keyframes achCardShine{ 0%, 72%{ transform: translateX(-120%);} 100%{ transform: translateX(120%);} }
+.ach-check{ position: absolute; top: 8px; right: 8px; width: 18px; height: 18px; border-radius: 50%; background: var(--mint); color: #04130d; display: grid; place-items: center; }
+.ach-check svg{ width: 12px; height: 12px; }
+.ach-prog{ width: 100%; height: 5px; margin-top: 7px; background: rgba(255,255,255,.07); border-radius: 99px; overflow: hidden; }
+.ach-prog-fill{ height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--violet), var(--mint)); }
+.ach-prog-txt{ font-family: var(--font-mono); font-size: 9px; color: var(--text-faint); letter-spacing: .04em; margin-top: 3px; }
+.psection-sub{ font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-left: 8px; }
+body.low-power .achievement-card.unlocked::after{ display: none; }
+
+/* ===== Achievement-unlock reveal stack (end of match) ===== */
+#achUnlockStack{
+  position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+  z-index: 320; display: flex; flex-direction: column; gap: 10px;
+  pointer-events: none; width: min(360px, 92vw);
+}
+.ach-unlock-toast{
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 14px; position: relative; overflow: hidden;
+  background: linear-gradient(135deg, rgba(255,206,61,.16), rgba(255,122,61,.05)), var(--surface);
+  border: 1px solid rgba(255,206,61,.4);
+  box-shadow: 0 12px 32px rgba(0,0,0,.5), 0 0 24px rgba(255,206,61,.18);
+  animation: achToastIn .5s cubic-bezier(.2,1.3,.4,1) both;
+}
+.ach-unlock-toast.out{ animation: achToastOut .4s ease forwards; }
+@keyframes achToastIn{ from{ transform: translateY(-16px) scale(.95); opacity: 0; } to{ transform: translateY(0) scale(1); opacity: 1; } }
+@keyframes achToastOut{ to{ transform: translateY(-12px); opacity: 0; } }
+.ach-unlock-toast::before{
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%);
+  transform: translateX(-120%); animation: achShine 1.6s ease .3s;
+}
+@keyframes achShine{ to{ transform: translateX(120%); } }
+.ach-unlock-ic{ font-size: 30px; flex-shrink: 0; filter: drop-shadow(0 3px 6px rgba(0,0,0,.4)); }
+.ach-unlock-body{ min-width: 0; }
+.ach-unlock-kicker{ font-family: var(--font-mono); font-size: 9px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--rank-gold); }
+.ach-unlock-title{ font-family: var(--font-display); font-stretch: 72%; font-weight: 800; font-size: 16px; color: var(--text); line-height: 1.1; }
+.ach-unlock-desc{ font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); }
+body.low-power .ach-unlock-toast, body.low-power .ach-unlock-toast::before{ animation: none; }
 
 @media (max-width: 600px){
   .stats-grid{ grid-template-columns: repeat(2, 1fr); }
@@ -4311,6 +4389,61 @@ h1.section-title .accent{
   display:flex; align-items:center; gap:5px;
 }
 .lb-row .rating svg{width:12px; height:12px;}
+
+/* ===== TOP-3 PODIUM ===== */
+.lb-podium{
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 4px 0;
+}
+.podium-slot{
+  flex: 1 1 0; min-width: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  cursor: pointer; position: relative;
+  transition: transform .18s ease;
+}
+.podium-slot:hover{ transform: translateY(-3px); }
+.podium-crown{ width: 22px; height: 22px; color: var(--rank-gold); filter: drop-shadow(0 0 8px var(--amber-glow)); animation: podiumCrown 2.6s ease-in-out infinite; }
+.podium-crown svg{ width: 100%; height: 100%; }
+@keyframes podiumCrown{ 0%,100%{ transform: translateY(0) rotate(-5deg); } 50%{ transform: translateY(-3px) rotate(5deg); } }
+.podium-av-wrap{ position: relative; }
+.podium-av{
+  border-radius: 16px; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; color: #fff;
+  background-size: cover; background-position: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.12);
+}
+.podium-medal{
+  position: absolute; bottom: -6px; right: -6px;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 12px;
+  color: #1a1206; border: 2px solid var(--bg);
+}
+.podium-name{
+  font-family: var(--font-display); font-stretch: 70%; font-weight: 800;
+  font-size: 12px; max-width: 100%; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.podium-elo{ font-family: var(--font-mono); font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 4px; color: var(--text-dim); }
+.podium-elo svg{ width: 12px; height: 12px; }
+.podium-pillar{ width: 100%; border-radius: 8px 8px 0 0; display: grid; place-items: center; margin-top: 2px; }
+.podium-pillar span{ font-family: var(--font-display); font-stretch: 58%; font-weight: 800; font-size: 18px; opacity: .5; }
+/* place-specific sizing + metallic accents */
+.podium-slot.place-1 .podium-av{ width: 72px; height: 72px; font-size: 30px; outline: 2px solid var(--rank-gold); outline-offset: 2px; box-shadow: 0 8px 24px rgba(255,206,61,.3), inset 0 1px 0 rgba(255,255,255,.18); }
+.podium-slot.place-2 .podium-av{ width: 58px; height: 58px; font-size: 24px; outline: 2px solid var(--rank-silver); outline-offset: 2px; }
+.podium-slot.place-3 .podium-av{ width: 54px; height: 54px; font-size: 22px; outline: 2px solid var(--rank-bronze); outline-offset: 2px; }
+.podium-slot.place-1 .podium-medal{ background: linear-gradient(180deg, #ffe79a, var(--rank-gold)); box-shadow: 0 0 10px var(--amber-glow); }
+.podium-slot.place-2 .podium-medal{ background: linear-gradient(180deg, #fff, var(--rank-silver)); color: #222; }
+.podium-slot.place-3 .podium-medal{ background: linear-gradient(180deg, #f0b878, var(--rank-bronze)); }
+.podium-slot.place-1 .podium-name{ color: var(--rank-gold); }
+.podium-slot.place-1 .podium-pillar{ height: 46px; background: linear-gradient(180deg, rgba(255,206,61,.28), rgba(255,206,61,.05)); border: 1px solid rgba(255,206,61,.3); border-bottom: none; }
+.podium-slot.place-2 .podium-pillar{ height: 34px; background: linear-gradient(180deg, rgba(200,200,212,.22), rgba(200,200,212,.04)); border: 1px solid rgba(200,200,212,.25); border-bottom: none; }
+.podium-slot.place-3 .podium-pillar{ height: 26px; background: linear-gradient(180deg, rgba(209,138,60,.22), rgba(209,138,60,.04)); border: 1px solid rgba(209,138,60,.25); border-bottom: none; }
+.lb-list{ display: flex; flex-direction: column; }
+body.low-power .podium-crown{ animation: none; }
 
 .friend-actions, .req-actions{display:flex; gap:5px;}
 .icon-btn.danger:hover{ color:var(--coral); border-color:var(--coral); }
@@ -6408,14 +6541,18 @@ h2.match-title{
   align-items: center;
 }
 .arena-ctrl-btn{
-  width: 36px; height: 36px;
-  border-radius: 10px;
+  min-width: 46px; height: 44px;
+  padding: 4px 8px;
+  border-radius: 11px;
   background: linear-gradient(180deg, var(--surface-2), var(--surface));
   border: 1px solid var(--line);
   color: var(--text-dim);
   cursor: pointer;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
   transition: all .2s;
 }
 .arena-ctrl-btn:hover{
@@ -6424,11 +6561,25 @@ h2.match-title{
   border-color: var(--line-bright);
   transform: translateY(-1px);
 }
-.arena-ctrl-btn svg{ width: 14px; height: 14px; }
+.arena-ctrl-btn svg{ width: 16px; height: 16px; }
+.actl-label{
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  line-height: 1;
+  color: inherit;
+}
+/* Leave reads as a warning at rest, not only on hover */
+.arena-ctrl-btn.danger{ color: var(--coral); border-color: rgba(255,51,88,.28); }
 .arena-ctrl-btn.danger:hover{
   border-color: var(--coral);
   color: var(--coral);
+  background: rgba(255,51,88,.1);
 }
+/* Muted state: clearly active/red so it's obvious the opponent is silenced */
+.arena-ctrl-btn#muteOppBtn.danger{ background: rgba(255,51,88,.12); }
 
 /* ON FIRE floating badge */
 .duel-fire-badge{
@@ -6527,9 +6678,10 @@ h2.match-title{
   .arena-score-pips{ gap: 4px; }
   /* Collapse the 4 control buttons into just leave + a "more" sheet trigger */
   .arena-controls{ gap: 4px; }
-  .arena-ctrl-btn{ width: 34px; height: 34px; }
+  .arena-ctrl-btn{ width: 34px; min-width: 34px; height: 34px; padding: 0; }
+  .actl-label{ display: none; }
   #cameraAdjustBtn, #addFriendInGameBtn, #reportBtn{ display: none; }
-  .arena-ctrl-btn#arenaMoreBtn{ display: grid; }
+  .arena-ctrl-btn#arenaMoreBtn{ display: flex; }
 
   /* ---- BATTLE STAGE: two stacked videos fill remaining space ---- */
   .battle-stage{ grid-template-rows: 1fr 40px 1fr; }
@@ -11266,6 +11418,7 @@ body.reduced-motion .sl-text{ animation:none; }
       <button class="nav-item" data-nav="activity"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg><span>Activity</span></button>
       <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
+      <button class="nav-item" data-nav="chat"><svg viewBox="0 0 24 24"><use href="#i-globe"/></svg><span>Global chat</span></button>
       <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span></button>
       <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span>Settings</span></button>
       <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none; color:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Moderation</span></button>
@@ -11350,6 +11503,7 @@ body.reduced-motion .sl-text{ animation:none; }
       </div>
       <div class="more-sheet-grid">
         <button class="more-sheet-item" data-act="activity"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
+        <button class="more-sheet-item" data-act="chat"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-globe"/></svg></span><span>Global chat</span></button>
         <button class="more-sheet-item" data-act="achievements"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
         <button class="more-sheet-item" data-act="settings"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span>Settings</span></button>
         <button class="more-sheet-item" data-act="help"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-help"/></svg></span><span>How to play</span></button>
@@ -11483,16 +11637,23 @@ service cloud.firestore {
       // Only the admin can read / triage / dismiss (delete) reports.
       allow read, list, update, delete: if request.auth != null && request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1';
     }
-    match /liveMatches/{matchId} {
-      // Spectators: anyone signed in can watch; players write their own live state.
-      allow read, list: if request.auth != null;
-      allow create, update, delete: if request.auth != null;
-    }
     match /profileComments/{profileUid}/comments/{id} {
       allow read, list: if request.auth != null;
       allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
       allow delete: if request.auth != null &&
         (resource.data.from == request.auth.uid || profileUid == request.auth.uid || request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1');
+    }
+    match /globalChat/{msgId} {
+      // Anyone signed in can read the room. You may only post AS yourself, with a
+      // short non-empty message. No edits. Delete your own message — or admin deletes any.
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 300;
+      allow delete: if request.auth != null &&
+        (resource.data.uid == request.auth.uid || request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1');
     }
   }
 }</span>
@@ -11833,7 +11994,7 @@ const FIREBASE_CONFIG = {
                 <div class="ui-bar"><div class="ui-bar-fill" id="dailyProgressFill" style="width:0%"></div></div>
                 <div class="rank-card-meta">
                   <span id="dailyProgressText">0/3</span>
-                  <span class="daily-reward">+50 ELO bonus</span>
+                  <span class="daily-reward" id="dailyRewardText">+50 ELO bonus</span>
                 </div>
               </div>
             </div>
@@ -12043,14 +12204,6 @@ const FIREBASE_CONFIG = {
             <div class="stat-tile-l">Top ELO</div>
           </div>
         </div>
-        <!-- LIVE MATCHES (spectate) -->
-        <div class="card" style="margin-bottom:14px;">
-          <div class="card-hd">
-            <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg> Live matches</div>
-            <div class="card-hd-sub"><span class="live-dot"></span><span id="liveMatchCount">0</span> watchable</div>
-          </div>
-          <div class="side-body" id="liveMatchesBody"><div class="side-empty">No live matches right now</div></div>
-        </div>
         <div class="activity-page-grid">
           <div class="card">
             <div class="card-hd">
@@ -12187,11 +12340,29 @@ const FIREBASE_CONFIG = {
             <div class="asc-l">Total XP earned</div>
           </div>
         </div>
+        <div class="psection"><h3>Badges</h3><span class="psection-sub" id="achPageCount">0 / 0</span></div>
+        <div class="achievements-grid" id="achPageGrid"></div>
         <div class="psection"><h3>Titles</h3></div>
         <div class="titles-grid" id="achTitlesGrid"></div>
         <div class="psection"><h3>Milestones</h3></div>
         <div class="ach-milestones" id="achMilestones"></div>
       </div><!-- /page achievements -->
+
+      <!-- ============ PAGE: GLOBAL CHAT ============ -->
+      <div class="nav-page" data-page="chat">
+        <div class="page-header">
+          <h2 class="page-title">GLOBAL CHAT</h2>
+          <p class="page-subtitle">Say hi to everyone online. Be cool — reports &amp; blocks apply here too.</p>
+        </div>
+        <div class="gc-shell">
+          <div class="gc-stream" id="gcStream"><div class="side-empty">Loading chat…</div></div>
+          <form class="gc-composer" id="gcComposer" autocomplete="off">
+            <input id="gcInput" type="text" maxlength="300" placeholder="Message global chat…" />
+            <button type="submit" class="gc-send" id="gcSend" aria-label="Send"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-send"/></svg></button>
+          </form>
+          <div class="gc-foot" id="gcFoot">Messages are public. Don't share personal info.</div>
+        </div>
+      </div><!-- /page chat -->
 
       <!-- ============ PAGE: SETTINGS ============ -->
       <div class="nav-page" data-page="settings">
@@ -12552,25 +12723,25 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
-        <!-- ARENA CONTROLS: leave match, more options -->
+        <!-- ARENA CONTROLS: icon + label so each is self-explanatory (labels hide on mobile) -->
         <div class="arena-controls">
-          <button class="arena-ctrl-btn" id="cameraAdjustBtn" title="Adjust camera">
-            <svg viewBox="0 0 24 24"><use href="#i-camera"/></svg>
+          <button class="arena-ctrl-btn" id="cameraAdjustBtn" title="Adjust camera" aria-label="Adjust camera">
+            <svg viewBox="0 0 24 24"><use href="#i-camera"/></svg><span class="actl-label">Camera</span>
           </button>
-          <button class="arena-ctrl-btn" id="addFriendInGameBtn" title="Add as friend">
-            <svg viewBox="0 0 24 24"><use href="#i-plus"/></svg>
+          <button class="arena-ctrl-btn" id="addFriendInGameBtn" title="Add as friend" aria-label="Add as friend">
+            <svg viewBox="0 0 24 24"><use href="#i-plus"/></svg><span class="actl-label">Friend</span>
           </button>
-          <button class="arena-ctrl-btn" id="muteOppBtn" title="Mute opponent">
-            <svg viewBox="0 0 24 24" id="muteOppIcon"><use href="#i-sound-on"/></svg>
+          <button class="arena-ctrl-btn" id="muteOppBtn" title="Mute opponent" aria-label="Mute opponent">
+            <svg viewBox="0 0 24 24" id="muteOppIcon"><use href="#i-sound-on"/></svg><span class="actl-label" id="muteOppLabel">Mute</span>
           </button>
-          <button class="arena-ctrl-btn" id="reportBtn" title="Report player">
-            <svg viewBox="0 0 24 24"><use href="#i-flag"/></svg>
+          <button class="arena-ctrl-btn" id="reportBtn" title="Report player" aria-label="Report player">
+            <svg viewBox="0 0 24 24"><use href="#i-flag"/></svg><span class="actl-label">Report</span>
           </button>
-          <button class="arena-ctrl-btn" id="arenaMoreBtn" title="More options" style="display:none;">
-            <svg viewBox="0 0 24 24"><use href="#i-more"/></svg>
+          <button class="arena-ctrl-btn" id="arenaMoreBtn" title="More options" aria-label="More options" style="display:none;">
+            <svg viewBox="0 0 24 24"><use href="#i-more"/></svg><span class="actl-label">More</span>
           </button>
-          <button class="arena-ctrl-btn danger" id="leaveMatchBtn" title="Leave match (-25 ELO)">
-            <svg viewBox="0 0 24 24"><use href="#i-out"/></svg>
+          <button class="arena-ctrl-btn danger" id="leaveMatchBtn" title="Leave match (-25 ELO)" aria-label="Leave match">
+            <svg viewBox="0 0 24 24"><use href="#i-out"/></svg><span class="actl-label">Leave</span>
           </button>
         </div>
       </div>
@@ -12751,36 +12922,6 @@ const FIREBASE_CONFIG = {
       <span id="chatWithName" style="display:none;">stranger</span>
     </section>
 
-    <!-- ============ SPECTATOR SCREEN ============ -->
-    <section class="screen" id="screen-spectate">
-      <div class="spectate-wrap">
-        <div class="spectate-head">
-          <button class="spectate-leave" id="spectateLeaveBtn"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-arrow-left"/></svg> Leave</button>
-          <div class="spectate-live-pill"><span class="dot"></span> SPECTATING · LIVE</div>
-          <div style="width:80px;"></div>
-        </div>
-        <div class="spectate-stage">
-          <div class="spectate-player" id="specP1">
-            <div class="spectate-av" id="specP1Av">?</div>
-            <div class="spectate-name" id="specP1Name">Player 1</div>
-            <div class="spectate-rank" id="specP1Rank">—</div>
-            <div class="spectate-score" id="specP1Score">0</div>
-          </div>
-          <div class="spectate-center">
-            <div class="spectate-vs">VS</div>
-            <div class="spectate-rounds" id="specRounds"></div>
-            <div class="spectate-bo" id="specBo">BEST OF 3</div>
-          </div>
-          <div class="spectate-player" id="specP2">
-            <div class="spectate-av" id="specP2Av">?</div>
-            <div class="spectate-name" id="specP2Name">Player 2</div>
-            <div class="spectate-rank" id="specP2Rank">—</div>
-            <div class="spectate-score" id="specP2Score">0</div>
-          </div>
-        </div>
-        <div class="spectate-status" id="specStatus">Connecting to match…</div>
-      </div>
-    </section>
 
   </div>
   </div><!-- /main-col -->
@@ -13173,7 +13314,7 @@ const FIREBASE_CONFIG = {
       <p>You can revoke camera access any time in your browser settings — but you won't be able to play without it.</p>
 
       <h4>2. What we store</h4>
-      <p>To run accounts, matchmaking, and leaderboards we store: your email (for login), username, country, optional bio/status, optional profile photo, avatar colour, and game data such as rating (ELO), wins/losses/draws, XP/level, streaks, match history, friends, blocked users, and reports you file. Brief "live match" state is stored temporarily so spectators can watch and is deleted shortly after the match ends.</p>
+      <p>To run accounts, matchmaking, and leaderboards we store: your email (for login), username, country, optional bio/status, optional profile photo, avatar colour, and game data such as rating (ELO), wins/losses/draws, XP/level, streaks, match history, friends, blocked users, and reports you file.</p>
 
       <h4>3. How we use it</h4>
       <p>We use this data only to: provide the game and matchmaking, show profiles/leaderboards/activity, run friends and messaging, enforce our Terms (moderation, bans), and keep the Service working. We do not use it for advertising and we do not sell it.</p>
@@ -13536,7 +13677,7 @@ const FIREBASE_CONFIG = {
   <div class="modal" style="max-width:680px;">
     <button class="modal-close" data-close="achievementsModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
     <h3>ACHIEVEMENTS</h3>
-    <p>Earn badges by playing and winning matches.</p>
+    <p>Earn badges by playing and winning matches. <b id="achModalCount" style="color:var(--mint);">0 / 0 unlocked</b></p>
     <div class="achievements-grid" id="achievementsGrid"></div>
   </div>
 </div>
@@ -14463,7 +14604,6 @@ const screens = {
   landing: $('#screen-landing'),
   matching: $('#screen-matching'),
   game: $('#screen-game'),
-  spectate: $('#screen-spectate'),
 };
 function showScreen(name){
   state.screen = name;
@@ -15603,6 +15743,7 @@ function detachUserListeners(){
   if(state.unsubInvites){ state.unsubInvites(); state.unsubInvites = null; }
   if(state.unsubLeaderboard){ state.unsubLeaderboard(); state.unsubLeaderboard = null; }
   if(state.unsubActivity){ state.unsubActivity(); state.unsubActivity = null; }
+  if(state._globalChatUnsub){ state._globalChatUnsub(); state._globalChatUnsub = null; }
   if(state._heartbeat){ clearInterval(state._heartbeat); state._heartbeat = null; }
   if(state._friendPresenceUnsubs){ state._friendPresenceUnsubs.forEach(u => { try { u(); } catch(e){} }); state._friendPresenceUnsubs = []; }
   if(state._friendPresenceTimer){ clearInterval(state._friendPresenceTimer); state._friendPresenceTimer = null; }
@@ -16476,45 +16617,98 @@ function recordThrow(gesture){
 
 // ============= ACHIEVEMENTS =============
 const ACHIEVEMENTS = [
-  { id: 'first_win', icon: '🏆', title: 'First Blood', desc: 'Win your first match', check: p => (p.wins||0) >= 1 },
-  { id: 'win_10', icon: '⚔️', title: 'Veteran', desc: 'Win 10 matches', check: p => (p.wins||0) >= 10 },
-  { id: 'win_50', icon: '🛡️', title: 'Warrior', desc: 'Win 50 matches', check: p => (p.wins||0) >= 50 },
-  { id: 'win_100', icon: '👑', title: 'Centurion', desc: 'Win 100 matches', check: p => (p.wins||0) >= 100 },
-  { id: 'streak_3', icon: '🔥', title: 'Heating Up', desc: '3-win streak', check: p => (p.bestStreak||0) >= 3 },
-  { id: 'streak_5', icon: '💥', title: 'On Fire', desc: '5-win streak', check: p => (p.bestStreak||0) >= 5 },
-  { id: 'streak_10', icon: '⚡', title: 'Unstoppable', desc: '10-win streak', check: p => (p.bestStreak||0) >= 10 },
-  { id: 'silver', icon: '🥈', title: 'Silver Tier', desc: 'Reach Silver rank', check: p => (p.rating||1000) >= 1100 },
-  { id: 'gold', icon: '🥇', title: 'Gold Tier', desc: 'Reach Gold rank', check: p => (p.rating||1000) >= 1200 },
-  { id: 'platinum', icon: '💎', title: 'Platinum Tier', desc: 'Reach Platinum rank', check: p => (p.rating||1000) >= 1400 },
-  { id: 'diamond', icon: '💠', title: 'Diamond Tier', desc: 'Reach Diamond rank', check: p => (p.rating||1000) >= 1600 },
-  { id: 'master', icon: '🌟', title: 'Master', desc: 'Reach Master rank', check: p => (p.rating||1000) >= 1800 },
-  { id: 'gm', icon: '👁️', title: 'Grandmaster', desc: 'Reach Grandmaster', check: p => (p.rating||1000) >= 2000 },
-  { id: 'games_100', icon: '🎮', title: 'Centurion Player', desc: 'Play 100 matches', check: p => (p.games||0) >= 100 },
-  { id: 'social', icon: '🤝', title: 'Social Butterfly', desc: 'Have 5+ friends', check: p => (p.friends?.length||0) >= 5 },
-  { id: 'daily_3', icon: '📅', title: 'Daily Grind', desc: '3-day daily streak', check: p => getDailyStreak() >= 3 },
-  { id: 'daily_7', icon: '🗓️', title: 'Week Warrior', desc: '7-day daily streak', check: p => getDailyStreak() >= 7 },
-  { id: 'win_rate_70', icon: '📈', title: 'Sharp', desc: '70%+ win rate (50+ games)', check: p => (p.games||0) >= 50 && (p.wins||0)/(p.games||1) >= 0.7 },
+  { id: 'first_win', icon: '🏆', title: 'First Blood', desc: 'Win your first match', check: p => (p.wins||0) >= 1, prog: p => [p.wins||0, 1] },
+  { id: 'win_10', icon: '⚔️', title: 'Veteran', desc: 'Win 10 matches', check: p => (p.wins||0) >= 10, prog: p => [p.wins||0, 10] },
+  { id: 'win_50', icon: '🛡️', title: 'Warrior', desc: 'Win 50 matches', check: p => (p.wins||0) >= 50, prog: p => [p.wins||0, 50] },
+  { id: 'win_100', icon: '👑', title: 'Centurion', desc: 'Win 100 matches', check: p => (p.wins||0) >= 100, prog: p => [p.wins||0, 100] },
+  { id: 'streak_3', icon: '🔥', title: 'Heating Up', desc: '3-win streak', check: p => (p.bestStreak||0) >= 3, prog: p => [p.bestStreak||0, 3] },
+  { id: 'streak_5', icon: '💥', title: 'On Fire', desc: '5-win streak', check: p => (p.bestStreak||0) >= 5, prog: p => [p.bestStreak||0, 5] },
+  { id: 'streak_10', icon: '⚡', title: 'Unstoppable', desc: '10-win streak', check: p => (p.bestStreak||0) >= 10, prog: p => [p.bestStreak||0, 10] },
+  { id: 'silver', icon: '🥈', title: 'Silver Tier', desc: 'Reach Silver rank', check: p => (p.rating||1000) >= 1100, prog: p => [p.rating||1000, 1100] },
+  { id: 'gold', icon: '🥇', title: 'Gold Tier', desc: 'Reach Gold rank', check: p => (p.rating||1000) >= 1200, prog: p => [p.rating||1000, 1200] },
+  { id: 'platinum', icon: '💎', title: 'Platinum Tier', desc: 'Reach Platinum rank', check: p => (p.rating||1000) >= 1400, prog: p => [p.rating||1000, 1400] },
+  { id: 'diamond', icon: '💠', title: 'Diamond Tier', desc: 'Reach Diamond rank', check: p => (p.rating||1000) >= 1600, prog: p => [p.rating||1000, 1600] },
+  { id: 'master', icon: '🌟', title: 'Master', desc: 'Reach Master rank', check: p => (p.rating||1000) >= 1800, prog: p => [p.rating||1000, 1800] },
+  { id: 'gm', icon: '👁️', title: 'Grandmaster', desc: 'Reach Grandmaster', check: p => (p.rating||1000) >= 2000, prog: p => [p.rating||1000, 2000] },
+  { id: 'games_100', icon: '🎮', title: 'Centurion Player', desc: 'Play 100 matches', check: p => (p.games||0) >= 100, prog: p => [p.games||0, 100] },
+  { id: 'social', icon: '🤝', title: 'Social Butterfly', desc: 'Have 5+ friends', check: p => (p.friends?.length||0) >= 5, prog: p => [p.friends?.length||0, 5] },
+  { id: 'daily_3', icon: '📅', title: 'Daily Grind', desc: '3-day daily streak', check: () => getDailyStreak() >= 3, prog: () => [getDailyStreak(), 3] },
+  { id: 'daily_7', icon: '🗓️', title: 'Week Warrior', desc: '7-day daily streak', check: () => getDailyStreak() >= 7, prog: () => [getDailyStreak(), 7] },
+  { id: 'win_rate_70', icon: '📈', title: 'Sharp', desc: '70%+ win rate (50+ games)', check: p => (p.games||0) >= 50 && (p.wins||0)/(p.games||1) >= 0.7, prog: p => [Math.min(p.games||0,50), 50] },
 ];
 
-function openAchievementsModal(){
-  const grid = $('#achievementsGrid');
-  if(!grid) return;
+// Set of achievement ids currently satisfied by a given profile (used for the
+// end-of-round "newly unlocked" diff).
+function achievementUnlockedIds(p){
+  const s = new Set();
+  for(const a of ACHIEVEMENTS){ try { if(a.check(p)) s.add(a.id); } catch(e){} }
+  return s;
+}
+
+// Shared renderer for the achievement badge grid (used by the modal + the page).
+// Returns the unlocked count.
+function renderAchievementCards(sel){
+  const grid = $(sel);
+  if(!grid) return 0;
   grid.innerHTML = '';
   const p = state.profile || {};
   let unlocked = 0;
   for(const a of ACHIEVEMENTS){
-    const isUnlocked = a.check(p);
+    let isUnlocked = false;
+    try { isUnlocked = a.check(p); } catch(e){}
     if(isUnlocked) unlocked++;
     const card = document.createElement('div');
     card.className = 'achievement-card ' + (isUnlocked ? 'unlocked' : 'locked');
+    let progHtml = '';
+    if(!isUnlocked && a.prog){
+      try {
+        const [cur, max] = a.prog(p);
+        const pct = Math.max(0, Math.min(100, (cur / max) * 100));
+        progHtml = `<div class="ach-prog"><div class="ach-prog-fill" style="width:${pct}%"></div></div>
+          <div class="ach-prog-txt">${Math.min(Math.round(cur), max)} / ${max}</div>`;
+      } catch(e){}
+    }
     card.innerHTML = `
+      ${isUnlocked ? '<div class="ach-check"><svg viewBox="0 0 24 24"><use href="#i-check"/></svg></div>' : ''}
       <div class="icon">${a.icon}</div>
       <div class="title">${escapeHTML(a.title)}</div>
       <div class="desc">${escapeHTML(a.desc)}</div>
+      ${progHtml}
     `;
     grid.appendChild(card);
   }
+  return unlocked;
+}
+
+function openAchievementsModal(){
+  const n = renderAchievementCards('#achievementsGrid');
+  setText('#achModalCount', `${n} / ${ACHIEVEMENTS.length} unlocked`);
   $('#achievementsModal').classList.add('show');
+}
+
+// Celebratory "achievement unlocked" reveal — a stack of shiny cards, shown at
+// the end of a match for any badges that just crossed their threshold.
+function showAchievementUnlocks(list){
+  if(!list || !list.length) return;
+  let stack = document.getElementById('achUnlockStack');
+  if(!stack){ stack = document.createElement('div'); stack.id = 'achUnlockStack'; document.body.appendChild(stack); }
+  list.forEach((a, i) => {
+    setTimeout(() => {
+      const card = document.createElement('div');
+      card.className = 'ach-unlock-toast';
+      card.innerHTML = `
+        <div class="ach-unlock-ic">${a.icon}</div>
+        <div class="ach-unlock-body">
+          <div class="ach-unlock-kicker">★ Achievement unlocked</div>
+          <div class="ach-unlock-title">${escapeHTML(a.title)}</div>
+          <div class="ach-unlock-desc">${escapeHTML(a.desc)}</div>
+        </div>`;
+      stack.appendChild(card);
+      try { sfxRankUp(); } catch(e){}
+      try { haptic(20); } catch(e){}
+      setTimeout(() => { card.classList.add('out'); setTimeout(() => card.remove(), 450); }, 4500);
+    }, i * 900);
+  });
 }
 
 // ============= SETTINGS MODAL =============
@@ -16901,14 +17095,19 @@ document.addEventListener('click', e => {
 
 // ============= DAILY CHALLENGE =============
 const DAILY_CHALLENGES = [
-  { id: 'win3', text: 'Win 3 ranked matches today', goal: 3, type: 'wins' },
-  { id: 'play5', text: 'Play 5 matches today', goal: 5, type: 'games' },
-  { id: 'streak3', text: 'Get a 3-win streak today', goal: 3, type: 'streak' },
-  { id: 'predict3', text: 'Correctly predict 3 throws today', goal: 3, type: 'predicts' },
-  { id: 'rock_w', text: 'Win 5 rounds with ROCK', goal: 5, type: 'rockWin' },
-  { id: 'paper_w', text: 'Win 5 rounds with PAPER', goal: 5, type: 'paperWin' },
-  { id: 'scissors_w', text: 'Win 5 rounds with SCISSORS', goal: 5, type: 'scissorsWin' },
+  { id: 'win3', text: 'Win 3 ranked matches today', goal: 3, type: 'wins', reward: 75 },
+  { id: 'play5', text: 'Play 5 matches today', goal: 5, type: 'games', reward: 50 },
+  { id: 'streak3', text: 'Get a 3-win streak today', goal: 3, type: 'streak', reward: 80 },
+  { id: 'predict3', text: 'Correctly predict 3 throws today', goal: 3, type: 'predicts', reward: 70 },
+  { id: 'rock_w', text: 'Win 5 rounds with ROCK', goal: 5, type: 'rockWin', reward: 60 },
+  { id: 'paper_w', text: 'Win 5 rounds with PAPER', goal: 5, type: 'paperWin', reward: 60 },
+  { id: 'scissors_w', text: 'Win 5 rounds with SCISSORS', goal: 5, type: 'scissorsWin', reward: 60 },
 ];
+// Reward (ELO) for a daily — resilient to older saved challenges that predate the field.
+function dailyReward(c){
+  if(!c) return 50;
+  return c.reward || DAILY_CHALLENGES.find(d => d.id === c.id)?.reward || 50;
+}
 
 function getTodayKey(){
   return new Date().toISOString().split('T')[0];
@@ -16952,6 +17151,10 @@ function refreshDailyChallenge(){
   }
   setText('#dailyProgressText', `${Math.min(data.progress, data.challenge.goal)}/${data.challenge.goal}`);
   setText('#dailyStreakBadge', `🔥 ${streak}`);
+  const rwd = dailyReward(data.challenge);
+  setText('#dailyRewardText', data.completed ? `✓ +${rwd} ELO earned` : `+${rwd} ELO bonus`);
+  const card = $('#dailyChallengeCard');
+  if(card) card.classList.toggle('daily-done', !!data.completed);
 }
 
 function updateDailyChallengeProgress(matchResult, roundDetails){
@@ -16994,7 +17197,10 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
   data.progress += delta;
   if(data.progress >= c.goal && !data.completed){
     data.completed = true;
-    toast(`🎉 Daily challenge complete: ${c.text}!`, 'success');
+    // Grant the advertised ELO bonus for real — folded into this match's delta
+    // by updateMatchStats so it shows in the result breakdown.
+    state._dailyBonusElo = dailyReward(c);
+    toast(`🎉 Daily complete: ${c.text} · +${dailyReward(c)} ELO!`, 'success');
     // increment streak
     const lastStreakDate = localStorage.getItem('rosham_daily_last') || '';
     const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -17056,8 +17262,8 @@ function refreshWeeklyChallenges(){
     row.className = 'weekly-row' + (c.completed ? ' done' : '');
     row.innerHTML = `
       <div class="weekly-top">
-        <span class="weekly-goal">${escapeHTML(c.text)}</span>
-        <span class="weekly-xp">${c.completed ? '✓ ' : ''}+1 LEVEL</span>
+        <span class="weekly-goal">${c.completed ? '<svg class="weekly-tick" viewBox="0 0 24 24"><use href="#i-check"/></svg> ' : ''}${escapeHTML(c.text)}</span>
+        <span class="weekly-xp">+1 LEVEL</span>
       </div>
       <div class="ui-bar"><div class="ui-bar-fill${c.completed ? ' complete' : ''}" style="width:${pct}%"></div></div>
       <div class="weekly-meta">${Math.min(c.progress, c.goal)}/${c.goal}</div>`;
@@ -17645,36 +17851,183 @@ async function loadLeaderboardFallback(){
   } catch(e){ console.warn('[leaderboard] fallback failed', e); }
 }
 function renderLeaderboard(){
-  const body = $('#leaderboardBody');
+  renderLeaderboardInto('#leaderboardBody');
+  renderLeaderboardInto('#activityPageLeaderboard');
+  setText('#lbCount', state.leaderboard?.length || 0);
+}
+// Renders a top-3 PODIUM (2nd · 1st · 3rd) + a clean list for ranks 4+.
+// Called for both the sidebar and the activity-page card so each stays live + clickable.
+function renderLeaderboardInto(sel){
+  const body = $(sel);
+  if(!body) return;
   body.innerHTML = '';
-  if(state.leaderboard.length === 0){
+  if(!state.leaderboard || state.leaderboard.length === 0){
     body.innerHTML = '<div class="side-empty">no players yet · be the first</div>';
-    setText('#lbCount', '0');
     return;
   }
-  state.leaderboard.forEach((p, i) => {
-    const rankCls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+  const players = state.leaderboard;
+  const top = players.slice(0, 3);
+  const rest = players.slice(3);
+
+  // ---- Podium for the top 3, arranged 2nd · 1st · 3rd ----
+  const podium = document.createElement('div');
+  podium.className = 'lb-podium';
+  [1, 0, 2].forEach(idx => {
+    const p = top[idx];
+    if(!p) return;
+    const place = idx + 1;
     const rank = rankFromRating(p.rating || 1000);
     const avStyle = p.photoURL
       ? `background-image:url('${p.photoURL}'); background-size:cover; background-position:center;`
       : `background:${AVATAR_COLORS[p.colorIdx||0]};`;
     const avInner = p.photoURL ? '' : escapeHTML(initialOf(p.username));
-    const row = document.createElement('div');
-    row.className = 'lb-row';
-    row.innerHTML = `
-      <div class="rank-num ${rankCls}">${i+1}</div>
-      <div class="av" style="${avStyle}">${avInner}</div>
-      <div class="meta">
-        <div class="nm">${escapeHTML(p.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
-        <div class="sub">${flagOf(p.country)} · ${p.wins||0}W ${p.losses||0}L</div>
+    const slot = document.createElement('div');
+    slot.className = `podium-slot place-${place}`;
+    slot.innerHTML = `
+      ${place === 1 ? '<div class="podium-crown"><svg viewBox="0 0 24 24"><use href="#i-crown"/></svg></div>' : ''}
+      <div class="podium-av-wrap">
+        <div class="podium-av" style="${avStyle}">${avInner}</div>
+        <div class="podium-medal">${place}</div>
       </div>
-      <div class="rating" style="color:${rank.color};"><svg viewBox="0 0 24 24" class="${rank.cls}"><use href="#${rank.icon}"/></svg> ${p.rating||1000}</div>
+      <div class="podium-name">${escapeHTML(p.username)}</div>
+      <div class="podium-elo"><svg viewBox="0 0 24 24" class="${rank.cls}"><use href="#${rank.icon}"/></svg> ${p.rating||1000}</div>
+      <div class="podium-pillar"><span>${place}</span></div>
     `;
-    row.addEventListener('click', () => openProfile(p.uid));
-    body.appendChild(row);
+    slot.addEventListener('click', () => openProfile(p.uid));
+    podium.appendChild(slot);
   });
-  setText('#lbCount', state.leaderboard.length);
+  body.appendChild(podium);
+
+  // ---- Clean list for ranks 4+ ----
+  if(rest.length){
+    const list = document.createElement('div');
+    list.className = 'lb-list';
+    rest.forEach((p, i) => {
+      const place = i + 4;
+      const rank = rankFromRating(p.rating || 1000);
+      const avStyle = p.photoURL
+        ? `background-image:url('${p.photoURL}'); background-size:cover; background-position:center;`
+        : `background:${AVATAR_COLORS[p.colorIdx||0]};`;
+      const avInner = p.photoURL ? '' : escapeHTML(initialOf(p.username));
+      const row = document.createElement('div');
+      row.className = 'lb-row';
+      row.innerHTML = `
+        <div class="rank-num">${place}</div>
+        <div class="av" style="${avStyle}">${avInner}</div>
+        <div class="meta">
+          <div class="nm">${escapeHTML(p.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+          <div class="sub">${flagOf(p.country)} · ${p.wins||0}W ${p.losses||0}L</div>
+        </div>
+        <div class="rating" style="color:${rank.color};"><svg viewBox="0 0 24 24" class="${rank.cls}"><use href="#${rank.icon}"/></svg> ${p.rating||1000}</div>
+      `;
+      row.addEventListener('click', () => openProfile(p.uid));
+      list.appendChild(row);
+    });
+    body.appendChild(list);
+  }
 }
+
+// ============= GLOBAL CHAT =============
+const GLOBAL_CHAT_LIMIT = 60;
+// Lazily attach the room listener the first time the user opens the chat page.
+function attachGlobalChat(){
+  if(state._globalChatUnsub) return;
+  try {
+    state._globalChatUnsub = onSnapshot(
+      query(collection(state.db, 'globalChat'), orderBy('createdAt', 'desc'), limit(GLOBAL_CHAT_LIMIT)),
+      (snap) => {
+        const msgs = [];
+        snap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
+        msgs.reverse(); // oldest → newest
+        state._globalChatMsgs = msgs;
+        renderGlobalChat();
+      },
+      (err) => {
+        console.warn('[globalChat] listen failed — check the globalChat Firestore rule', err);
+        const stream = $('#gcStream');
+        if(stream) stream.innerHTML = '<div class="side-empty">Chat unavailable. Publish the globalChat Firestore rule to enable it.</div>';
+      }
+    );
+  } catch(e){ console.warn('[globalChat]', e); }
+}
+function renderGlobalChat(){
+  const stream = $('#gcStream');
+  if(!stream) return;
+  const blocked = state.profile?.blocked || [];
+  const msgs = (state._globalChatMsgs || []).filter(m => !blocked.includes(m.uid));
+  if(!msgs.length){ stream.innerHTML = '<div class="side-empty">No messages yet — say something!</div>'; return; }
+  const admin = isAdmin();
+  const myUid = state.user?.uid;
+  // keep the view pinned to the bottom if the user was already there
+  const atBottom = stream.scrollHeight - stream.scrollTop - stream.clientHeight < 80;
+  stream.innerHTML = '';
+  let lastUid = null;
+  msgs.forEach(m => {
+    const mine = m.uid === myUid;
+    const grouped = m.uid === lastUid;
+    lastUid = m.uid;
+    const avStyle = m.photoURL ? `background-image:url('${m.photoURL}'); background-size:cover; background-position:center;` : `background:${AVATAR_COLORS[m.colorIdx||0]};`;
+    const avInner = m.photoURL ? '' : escapeHTML(initialOf(m.username||'?'));
+    const canDelete = mine || admin;
+    const row = document.createElement('div');
+    row.className = 'gc-msg' + (mine ? ' mine' : '') + (grouped ? ' grouped' : '');
+    row.innerHTML = `
+      <div class="gc-av" data-uid="${escapeHTML(m.uid||'')}" style="${grouped ? 'visibility:hidden;' : avStyle}">${grouped ? '' : avInner}</div>
+      <div class="gc-bubble-wrap">
+        ${grouped ? '' : `<div class="gc-meta"><span class="gc-name" data-uid="${escapeHTML(m.uid||'')}" data-username>${escapeHTML(m.username||'stranger')}</span><span class="gc-time">${m.createdAt ? timeAgo(m.createdAt) : 'now'}</span></div>`}
+        <div class="gc-bubble">${escapeHTML(m.text||'')}${canDelete ? `<button class="gc-del" data-del="${m.id}" title="Delete message" aria-label="Delete"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-trash"/></svg></button>` : ''}</div>
+      </div>`;
+    stream.appendChild(row);
+  });
+  stream.querySelectorAll('[data-uid]').forEach(el => {
+    const u = el.dataset.uid;
+    if(u) el.addEventListener('click', () => openProfile(u));
+  });
+  stream.querySelectorAll('[data-del]').forEach(el => {
+    el.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const id = el.dataset.del; if(!id) return;
+      try { await deleteDoc(doc(state.db, 'globalChat', id)); }
+      catch(err){ toast('Could not delete', 'error'); }
+    });
+  });
+  if(atBottom) stream.scrollTop = stream.scrollHeight;
+}
+function renderChatPage(){
+  attachGlobalChat();
+  renderGlobalChat();
+  const stream = $('#gcStream');
+  if(stream) requestAnimationFrame(() => { stream.scrollTop = stream.scrollHeight; });
+}
+async function sendGlobalChat(text){
+  text = (text || '').trim();
+  if(!text) return;
+  if(text.length > 300) text = text.slice(0, 300);
+  if(!state.user || !state.profile){ toast('Sign in to chat', 'error'); return; }
+  // light client-side rate limit (the rule also caps length server-side)
+  const now = Date.now();
+  if(state._lastChatSentAt && now - state._lastChatSentAt < 1200){ toast('Slow down a sec…', 'info'); return; }
+  state._lastChatSentAt = now;
+  try {
+    await addDoc(collection(state.db, 'globalChat'), {
+      uid: state.user.uid,
+      username: state.profile.username || 'player',
+      colorIdx: state.profile.colorIdx || 0,
+      photoURL: state.profile.photoURL || '',
+      text,
+      createdAt: serverTimestamp(),
+    });
+  } catch(e){
+    console.warn('[globalChat] send failed', e);
+    toast('Could not send (check the globalChat rule)', 'error');
+  }
+}
+on('#gcComposer', 'submit', (e) => {
+  e.preventDefault();
+  const inp = $('#gcInput'); if(!inp) return;
+  const v = inp.value; inp.value = '';
+  sendGlobalChat(v);
+});
 
 // ============= ACTIVITY FEED =============
 function attachActivityListener(){
@@ -18842,8 +19195,10 @@ const RTC_CONFIG = {
 
 async function enterMatch(matchData){
   cancelMatchmakingResources();
-  // Friend challenges are CASUAL — no ELO/XP (prevents farming a friend for rating/XP).
-  state.isCasual = (matchData && matchData.mode === 'challenge');
+  // Challenge matches now count as RANKED — they award ELO/XP/W-L so a victory
+  // always feels worth it (and a leaver correctly hands you the win, not 0 ELO).
+  // `isCasual` is kept as a hook for any future explicitly-friendly mode.
+  state.isCasual = (matchData && matchData.mode === 'casual');
   state.oppProfile = state.isCaller ? matchData.calleeProfile : matchData.callerProfile;
   // Let friends see you're in a match (presence) — fire-and-forget.
   try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: true }).catch(()=>{}); } catch(e){}
@@ -18963,8 +19318,6 @@ function updateHeadToHead(oppUid, result){
 function showMatchIntro(){
   const intro = $('#matchIntro');
   if(!intro) return;
-  // Broadcast initial live state for spectators
-  try { broadcastLiveMatch({ status: 'live' }); } catch(e){}
   // populate intro card
   renderAvatar($('#introYouAv'), state.profile);
   renderAvatar($('#introOppAv'), state.oppProfile || {});
@@ -20041,113 +20394,8 @@ function updateScore(){
   if(state.scoreOpp !== oldOpp && oppEl){
     oppEl.classList.remove('pop'); void oppEl.offsetWidth; oppEl.classList.add('pop');
   }
-  // Broadcast live state for spectators
-  broadcastLiveMatch();
 }
 
-// ===== SPECTATOR: live match broadcast (caller only writes) =====
-async function broadcastLiveMatch(extra){
-  try {
-    if(!state.matchId || state.isBotMatch || !state.isCaller) return;
-    if(!state.user || !state.profile) return;
-    // caller is "you", callee is opponent — store from a neutral perspective
-    const payload = {
-      matchId: state.matchId,
-      status: state.matchOver ? 'ended' : 'live',
-      p1: { uid: state.user.uid, name: state.profile.username, rating: state.profile.rating||1000, colorIdx: state.profile.colorIdx||0, photoURL: state.profile.photoURL||'', country: state.profile.country||'' },
-      p2: { uid: state.oppUid||'', name: state.oppProfile?.username||'stranger', rating: state.oppProfile?.rating||1000, colorIdx: state.oppProfile?.colorIdx||0, photoURL: state.oppProfile?.photoURL||'', country: state.oppProfile?.country||'' },
-      scoreP1: state.scoreYou||0,
-      scoreP2: state.scoreOpp||0,
-      roundsToWin: state.matchRoundsToWin||2,
-      updatedAt: serverTimestamp(),
-      ...(extra||{}),
-    };
-    await setDoc(doc(state.db, 'liveMatches', state.matchId), payload, { merge: true });
-  } catch(e){
-    // Non-critical, but a permission error here means the `liveMatches` Firestore
-    // rule is missing — that's what makes Spectator show "no live matches".
-    if(!state._liveMatchWarned){ state._liveMatchWarned = true; console.warn('[spectator] live-match broadcast failed — check the liveMatches Firestore rule', e); }
-  }
-}
-async function clearLiveMatch(){
-  try {
-    if(state.matchId && state.isCaller){
-      await updateDoc(doc(state.db, 'liveMatches', state.matchId), { status: 'ended', endedAt: serverTimestamp() });
-      // delete shortly after so spectators see the final state briefly
-      setTimeout(() => { deleteDoc(doc(state.db, 'liveMatches', state.matchId)).catch(()=>{}); }, 8000);
-    }
-  } catch(e){}
-}
-
-// ===== SPECTATOR MODE =====
-function openSpectate(matchId){
-  if(!matchId){ toast('No match to watch', 'error'); return; }
-  showScreen('spectate');
-  setText('#specStatus', 'Connecting to match…');
-  // Unsubscribe any previous
-  if(state._specUnsub){ try { state._specUnsub(); } catch(e){} state._specUnsub = null; }
-  state._specMatchId = matchId;
-  state._specUnsub = onSnapshot(doc(state.db, 'liveMatches', matchId), (snap) => {
-    if(!snap.exists()){
-      setText('#specStatus', 'This match has ended.');
-      setTimeout(() => { if(state.screen === 'spectate') leaveSpectate(); }, 2500);
-      return;
-    }
-    renderSpectate(snap.data());
-  }, (err) => {
-    setText('#specStatus', 'Could not load match.');
-  });
-}
-function renderSpectate(d){
-  if(!d) return;
-  const p1 = d.p1 || {}, p2 = d.p2 || {};
-  // avatars
-  const setAv = (sel, p) => {
-    const el = $(sel); if(!el) return;
-    if(p.photoURL){ el.style.backgroundImage = `url('${p.photoURL}')`; el.textContent = ''; }
-    else { el.style.backgroundImage = 'none'; el.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; el.textContent = initialOf(p.name||'?'); }
-  };
-  setAv('#specP1Av', p1); setAv('#specP2Av', p2);
-  setText('#specP1Name', p1.name || 'Player 1');
-  setText('#specP2Name', p2.name || 'Player 2');
-  setText('#specP1Rank', `${flagOf(p1.country)} ${rankFromRating(p1.rating||1000).tierName} · ${p1.rating||1000}`);
-  setText('#specP2Rank', `${flagOf(p2.country)} ${rankFromRating(p2.rating||1000).tierName} · ${p2.rating||1000}`);
-  // scores with pop
-  const s1El = $('#specP1Score'), s2El = $('#specP2Score');
-  const old1 = parseInt(s1El?.textContent || '0'), old2 = parseInt(s2El?.textContent || '0');
-  setText('#specP1Score', d.scoreP1 || 0);
-  setText('#specP2Score', d.scoreP2 || 0);
-  if((d.scoreP1||0) !== old1 && s1El){ s1El.classList.remove('pop'); void s1El.offsetWidth; s1El.classList.add('pop'); }
-  if((d.scoreP2||0) !== old2 && s2El){ s2El.classList.remove('pop'); void s2El.offsetWidth; s2El.classList.add('pop'); }
-  // rounds pips
-  const rtw = d.roundsToWin || 2;
-  const totalPips = rtw * 2 - 1;
-  const pipsEl = $('#specRounds');
-  if(pipsEl){
-    pipsEl.innerHTML = '';
-    let p1left = d.scoreP1||0, p2left = d.scoreP2||0;
-    for(let i=0;i<totalPips;i++){
-      const pip = document.createElement('div');
-      pip.className = 'spectate-round-pip';
-      if(p1left > 0){ pip.classList.add('p1'); p1left--; }
-      else if(p2left > 0){ pip.classList.add('p2'); p2left--; }
-      pipsEl.appendChild(pip);
-    }
-  }
-  setText('#specBo', `BEST OF ${rtw*2-1}`);
-  if(d.status === 'ended'){
-    const winner = (d.scoreP1||0) > (d.scoreP2||0) ? p1.name : (d.scoreP2||0) > (d.scoreP1||0) ? p2.name : null;
-    setText('#specStatus', winner ? `${winner} won the match!` : 'Match ended in a draw');
-  } else {
-    setText('#specStatus', 'Live — watching in real time');
-  }
-}
-function leaveSpectate(){
-  if(state._specUnsub){ try { state._specUnsub(); } catch(e){} state._specUnsub = null; }
-  state._specMatchId = null;
-  showScreen('landing');
-}
-on('#spectateLeaveBtn', 'click', leaveSpectate);
 
 function updateRoundIndicator(roundResult){
   // Light up the appropriate pip for the current round
@@ -20187,9 +20435,6 @@ async function endMatch(){
   const youWon = state.scoreYou > state.scoreOpp;
   const draw = state.scoreYou === state.scoreOpp;
   const result = draw ? 'draw' : (youWon ? 'win' : 'lose');
-
-  // Spectators: mark match ended
-  try { clearLiveMatch(); } catch(e){}
 
   // Track head-to-head locally
   if(state.oppUid && !state.isBotMatch){
@@ -20248,13 +20493,11 @@ async function applyForfeitPenalty(silent){
   state.scoreYou = 0;
   state.scoreOpp = state.matchRoundsToWin;
 
-  // Apply -25 ELO penalty (in addition to normal loss)
-  if(!state.isBotMatch && state.user && state.profile){
+  // Apply a flat -25 ELO forfeit penalty (exactly what the confirm dialog promised —
+  // not normalLoss + 25, which used to stack up to ~-41). Skip casual/bot matches.
+  if(!state.isBotMatch && !state.isCasual && state.user && state.profile){
     const myRating = state.profile.rating || 1000;
-    const oppRating = state.oppProfile?.rating || 1000;
-    const normalLoss = calcEloDelta(myRating, oppRating, 0);
-    const forfeitPenalty = -25;
-    const totalDelta = normalLoss + forfeitPenalty;
+    const totalDelta = -25;
     const newRating = Math.max(0, myRating + totalDelta);
     state._lastMatchDelta = totalDelta;
     state._lastRatingBefore = myRating;
@@ -20356,6 +20599,9 @@ let updateMatchStats = async function(matchResult){
   }
   const myRating = state.profile.rating || 1000;
   const oppRating = state.oppProfile?.rating || 1000;
+  // Snapshot which achievements are unlocked BEFORE this match settles, so we can
+  // reveal any that newly cross their threshold (see the result flow).
+  const _achBefore = achievementUnlockedIds(state.profile);
   // ===== REVAMPED RANKED ELO =====
   // Wins always feel rewarding: a guaranteed floor + performance bonuses.
   // Losses are softened so the climb feels fair, not punishing.
@@ -20375,15 +20621,23 @@ let updateMatchStats = async function(matchResult){
     // Win-streak bonus (compounds, capped)
     if(streakBefore >= 2){ const sb = Math.min(15, (streakBefore) * 3); delta += sb; breakdown.push({ label:`${streakBefore+1}-win streak`, amount:sb }); }
   } else if(matchResult === 'draw'){
-    delta = 2; breakdown.push({ label:'Draw', amount:2 });
+    delta = 3; breakdown.push({ label:'Draw', amount:3 });
   } else {
-    // Loss: softer than classic ELO, and gentler when you lose to a stronger player.
-    const base = -16;
-    const cushion = oppRating > myRating ? Math.min(8, Math.round((oppRating - myRating) / 50)) : 0;
+    // Loss: much softer than classic ELO so the climb feels fair — and gentler
+    // still when you lose to a stronger player.
+    const base = -14;
+    const cushion = oppRating > myRating ? Math.min(10, Math.round((oppRating - myRating) / 40)) : 0;
     delta = base + cushion; breakdown.push({ label:'Loss', amount:base });
     if(cushion) breakdown.push({ label:'Tough opponent', amount:cushion });
-    // Don't let a single loss erase more than a typical win.
-    delta = Math.max(-22, delta);
+    // A single loss can never erase more than a clean win's base.
+    delta = Math.max(-18, delta);
+  }
+  // Daily-challenge ELO bonus (set when a daily completed this match) — folded in
+  // here so it lands atomically and shows in the result breakdown.
+  if(state._dailyBonusElo){
+    delta += state._dailyBonusElo;
+    breakdown.push({ label:'Daily challenge', amount: state._dailyBonusElo });
+    state._dailyBonusElo = 0;
   }
   const newRating = Math.max(0, myRating + delta);
   state._lastMatchDelta = delta;
@@ -20451,6 +20705,12 @@ let updateMatchStats = async function(matchResult){
     if(leveledUp){
       state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
     }
+    // Diff achievements now that wins/rating/streak/games/XP are all applied — the
+    // result flow will pop a celebratory card for anything newly unlocked.
+    try {
+      const achAfter = achievementUnlockedIds(state.profile);
+      state._lastUnlockedAchievements = ACHIEVEMENTS.filter(a => achAfter.has(a.id) && !_achBefore.has(a.id));
+    } catch(e){ state._lastUnlockedAchievements = []; }
     // SEASONAL TITLE: if this win pushed you into a higher season tier, record &
     // celebrate it (e.g. "Genesis Diamond"). Stored per season number.
     try {
@@ -20794,6 +21054,17 @@ function showMatchResultScreen(result){
   // Show overlay
   overlay.classList.add('show');
   populateMatchXpCard();
+
+  // Reveal any achievements unlocked this match — staggered after the result settles
+  // (and after rank-up / level-up overlays if those are also pending).
+  if(state._lastUnlockedAchievements && state._lastUnlockedAchievements.length){
+    const achList = state._lastUnlockedAchievements;
+    state._lastUnlockedAchievements = [];
+    let achDelay = 2200;
+    if(state._pendingRankUp) achDelay = 13000;
+    else if(state._pendingLevelUp) achDelay = 5500;
+    setTimeout(() => { try { showAchievementUnlocks(achList); } catch(e){} }, achDelay);
+  }
 
   // After a moment, animate to new rating
   setTimeout(() => {
@@ -21393,6 +21664,10 @@ let teardownMatch = async function(){
   state.isCaller = false;
   state.isCasual = false;
   state._oppMuted = false;
+  // reset the mute-opponent control UI for the next match
+  { const mb = $('#muteOppBtn'); if(mb){ mb.classList.remove('danger'); mb.title = 'Mute opponent'; }
+    const mi = $('#muteOppIcon'); if(mi) mi.innerHTML = '<use href="#i-sound-on"/>';
+    const ml = $('#muteOppLabel'); if(ml) ml.textContent = 'Mute'; }
   $('#oppVideo').srcObject = null;
   clearChat();
   console.log('[teardown] complete');
@@ -21812,8 +22087,6 @@ function showNavPage(page){
   document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
   try { syncMobileNav(page); } catch(e){}
   try { closeSidebarMobile(); } catch(e){}
-  // Detach the live-matches listener unless we're on the activity page
-  if(page !== 'activity' && state._liveMatchesUnsub){ try { state._liveMatchesUnsub(); } catch(e){} state._liveMatchesUnsub = null; }
   // populate the page being shown
   try {
     if(page === 'home') renderHomePage();
@@ -21822,6 +22095,7 @@ function showNavPage(page){
     else if(page === 'achievements') renderAchievementsPage();
     else if(page === 'activity') renderActivityPage();
     else if(page === 'friends') renderFriendsPage();
+    else if(page === 'chat') renderChatPage();
     else if(page === 'settings') renderSettingsPage();
   } catch(e){ console.warn('[nav] page render', e); }
   // scroll content to top
@@ -22007,6 +22281,9 @@ function renderAchievementsPage(){
   const unlockedTitles = titlesUnlockedAt(lvl.level).length;
   setText('#ascTitles', unlockedTitles + '/' + TITLES.length);
   setText('#ascTotalXp', (p.totalXp||0).toLocaleString());
+  // Badge grid (shared with the achievements modal)
+  const badgeCount = renderAchievementCards('#achPageGrid');
+  setText('#achPageCount', `${badgeCount} / ${ACHIEVEMENTS.length}`);
   const grid = $('#achTitlesGrid');
   if(grid){
     grid.innerHTML = '';
@@ -22060,9 +22337,7 @@ function renderActivityPage(){
   const src = $('#globalActivityBody');
   const dst = $('#activityPageBody');
   if(src && dst) dst.innerHTML = src.innerHTML || '<div class="side-empty">No recent matches</div>';
-  const lb = $('#leaderboardBody');
-  const lbDst = $('#activityPageLeaderboard');
-  if(lb && lbDst) lbDst.innerHTML = lb.innerHTML || '<div class="side-empty">No players ranked yet</div>';
+  try { renderLeaderboardInto('#activityPageLeaderboard'); } catch(e){}
   const stats = $('#globalActiveStats');
   if(stats) setText('#activityPageStats', stats.textContent);
   // stat row
@@ -22072,37 +22347,8 @@ function renderActivityPage(){
   setText('#actRecentCount', recent || '—');
   const topElo = (state.leaderboard && state.leaderboard[0]) ? (state.leaderboard[0].rating || '—') : '—';
   setText('#actTopElo', topElo);
-  // Live matches (spectate)
-  attachLiveMatches();
 }
 
-// Subscribe to live matches for the spectate list (only while on activity page)
-function attachLiveMatches(){
-  if(state._liveMatchesUnsub){ try { state._liveMatchesUnsub(); } catch(e){} state._liveMatchesUnsub = null; }
-  const body = $('#liveMatchesBody');
-  if(!body) return;
-  state._liveMatchesUnsub = onSnapshot(collection(state.db, 'liveMatches'), (snap) => {
-    const live = [];
-    snap.forEach(d => { const m = d.data(); if(m && m.status === 'live') live.push({ id: d.id, ...m }); });
-    setText('#liveMatchCount', live.length);
-    if(live.length === 0){ body.innerHTML = '<div class="side-empty">No live matches right now</div>'; return; }
-    body.innerHTML = '';
-    live.slice(0, 12).forEach(m => {
-      const p1 = m.p1 || {}, p2 = m.p2 || {};
-      const row = document.createElement('div');
-      row.className = 'activity-row';
-      row.style.alignItems = 'center';
-      row.innerHTML = `
-        <div class="body">
-          <div class="b-text"><b>${escapeHTML(p1.name||'?')}</b> <span class="win">${m.scoreP1||0}</span> – <span class="lose">${m.scoreP2||0}</span> <b>${escapeHTML(p2.name||'?')}</b></div>
-          <div class="b-time">${rankFromRating(p1.rating||1000).tierName} vs ${rankFromRating(p2.rating||1000).tierName}</div>
-        </div>
-        <button class="watch-btn" data-watch="${m.id}"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-eye"/></svg> Watch</button>`;
-      row.querySelector('[data-watch]').addEventListener('click', () => openSpectate(m.id));
-      body.appendChild(row);
-    });
-  }, () => {});
-}
 function renderFriendsPage(){
   setText('#friendCountPage', $('#friendCount')?.textContent || '0/0');
   renderFriendsInto('#friendsBodyPage');
@@ -22750,6 +22996,7 @@ on('#moreSheet', 'click', (e) => {
     switch(act){
       case 'profile': if(state.user) openProfile(state.user.uid); break;
       case 'activity': showNavPage('activity'); break;
+      case 'chat': showNavPage('chat'); break;
       case 'achievements': showNavPage('achievements'); break;
       case 'settings': showNavPage('settings'); break;
       case 'help': $('#helpBtn')?.click(); break;
@@ -22957,12 +23204,10 @@ function saveForfeitNoticeSync(){
   // localStorage so the next session can notify the user. Also fire-and-forget
   // the Firestore writes (may not complete on unload, but localStorage will).
   try {
-    if(!state.user || !state.profile || state.isBotMatch || state.matchOver) return;
+    if(!state.user || !state.profile || state.isBotMatch || state.isCasual || state.matchOver) return;
     if(state.screen !== 'game') return;
     const myRating = state.profile.rating || 1000;
-    const oppRating = state.oppProfile?.rating || 1000;
-    const normalLoss = calcEloDelta(myRating, oppRating, 0);
-    const totalDelta = normalLoss + (-25);
+    const totalDelta = -25;
     const newRating = Math.max(0, myRating + totalDelta);
     const notice = {
       uid: state.user.uid,
@@ -23340,6 +23585,8 @@ on('#muteOppBtn', 'click', () => {
   if(ic) ic.innerHTML = `<use href="#i-sound-${state._oppMuted ? 'off' : 'on'}"/>`;
   const btn = $('#muteOppBtn');
   if(btn){ btn.classList.toggle('danger', state._oppMuted); btn.title = state._oppMuted ? 'Unmute opponent' : 'Mute opponent'; }
+  const lbl = $('#muteOppLabel');
+  if(lbl) lbl.textContent = state._oppMuted ? 'Muted' : 'Mute';
   haptic(10);
   toast(state._oppMuted ? 'Opponent muted' : 'Opponent unmuted', state._oppMuted ? 'info' : 'success');
 });
@@ -23460,7 +23707,7 @@ try {
 } catch(e){}
 
 // ============= INIT =============
-console.log('%c🪨 ROSHCAM v1.0 — LAUNCH · volume mixer · rich DMs · streamer privacy · spectator + moderation', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
+console.log('%c🪨 ROSHCAM v1.0 — LAUNCH · volume mixer · rich DMs · streamer privacy · global chat + moderation', 'color:#3cffb9; font-weight:bold; font-size:14px; background:#08070d; padding:6px 12px; border-radius:4px;');
 
 // ============= ELO FORFEIT ON REFRESH/CLOSE =============
 // If the user closes the tab / refreshes / navigates away mid-match,
