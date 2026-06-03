@@ -655,7 +655,11 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .admin-report-row .arr-target{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; }
 .admin-report-row .arr-reason{ font-size:12px; color:var(--coral); margin-top:2px; }
 .admin-report-row .arr-meta{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:4px; }
+.admin-report-row .arr-actions{ display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
 .admin-report-row .arr-action{ padding:6px 12px; border-radius:9px; background:var(--coral); border:none; color:#fff; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; cursor:pointer; flex-shrink:0; }
+.admin-report-row .arr-dismiss{ padding:6px 12px; border-radius:9px; background:transparent; border:1px solid var(--line); color:var(--text-dim); font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; cursor:pointer; transition:opacity .18s; }
+.admin-report-row .arr-dismiss:hover{ border-color:var(--text-dim); color:var(--text); }
+.admin-report-row{ transition:opacity .18s; }
 .admin-action-card{ margin-top:12px; padding:14px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); }
 .admin-dur-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:10px 0; }
 .admin-dur-btn{ padding:9px 8px; border-radius:10px; background:var(--surface); border:1px solid var(--line); color:var(--text); font-family:var(--font-mono); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; cursor:pointer; }
@@ -4428,6 +4432,45 @@ h1.section-title .accent{
   width: 100%;
   padding: 24px;
 }
+
+/* ===== MATCHMAKING SCREEN v2 (radar) ===== */
+.mm-wrap{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0; min-height:100%; padding:24px 18px; text-align:center; }
+.mm-radar{ position:relative; width:220px; height:220px; display:grid; place-items:center; margin-bottom:8px; }
+.mm-ring{ position:absolute; inset:0; border-radius:50%; border:1.5px solid rgba(34,211,163,.5); opacity:0; animation:mmRing 2.6s ease-out infinite; }
+.mm-ring.d2{ animation-delay:.85s; } .mm-ring.d3{ animation-delay:1.7s; }
+@keyframes mmRing{ 0%{ transform:scale(.32); opacity:.0; } 12%{ opacity:.7; } 100%{ transform:scale(1); opacity:0; } }
+.mm-sweep{ position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:conic-gradient(from 0deg, rgba(34,211,163,.35), transparent 28%); -webkit-mask:radial-gradient(circle, transparent 30%, #000 31%); mask:radial-gradient(circle, transparent 30%, #000 31%);
+  animation:mmSweep 2.4s linear infinite; }
+@keyframes mmSweep{ to{ transform:rotate(360deg); } }
+.mm-core{ position:relative; z-index:2; width:96px; height:96px; border-radius:50%; display:grid; place-items:center;
+  background:radial-gradient(circle at 50% 35%, rgba(34,211,163,.18), var(--surface)); border:1px solid rgba(34,211,163,.4); box-shadow:0 0 30px -6px rgba(34,211,163,.6); }
+.mm-core-av{ width:74px; height:74px; border-radius:50%; background-size:cover; background-position:center; display:grid; place-items:center;
+  font-family:var(--font-display); font-stretch:75%; font-weight:800; font-size:30px; color:#06120e; animation:mmCorePulse 2s ease-in-out infinite; }
+@keyframes mmCorePulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.06);} }
+.mm-blip{ position:absolute; width:9px; height:9px; border-radius:50%; background:var(--coral); box-shadow:0 0 10px var(--coral); opacity:0; }
+.mm-blip.b1{ top:24%; left:74%; animation:mmBlip 2.4s ease-in-out .3s infinite; }
+.mm-blip.b2{ top:70%; left:22%; background:var(--violet); box-shadow:0 0 10px var(--violet); animation:mmBlip 2.4s ease-in-out 1.1s infinite; }
+.mm-blip.b3{ top:78%; left:68%; background:#5fc9ff; box-shadow:0 0 10px #5fc9ff; animation:mmBlip 2.4s ease-in-out 1.7s infinite; }
+@keyframes mmBlip{ 0%,100%{ opacity:0; transform:scale(.4);} 40%{ opacity:1; transform:scale(1);} }
+body.low-power .mm-sweep, body.low-power .mm-ring, body.low-power .mm-blip, body.low-power .mm-core-av{ animation:none !important; }
+body.low-power .mm-ring{ opacity:.25; }
+.mm-head{ margin-top:6px; }
+.mm-title{ font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:clamp(26px,6vw,38px); letter-spacing:-.01em; }
+.mm-dots i{ display:inline-block; animation:mmDot 1.4s infinite; opacity:.3; } .mm-dots i:nth-child(2){ animation-delay:.2s; } .mm-dots i:nth-child(3){ animation-delay:.4s; }
+@keyframes mmDot{ 0%,60%,100%{ opacity:.3;} 30%{ opacity:1;} }
+.mm-feed{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); margin-top:8px; min-height:16px; }
+.mm-tip{ display:inline-flex; align-items:center; gap:8px; margin-top:20px; padding:9px 16px; border-radius:999px; background:var(--surface-2); border:1px solid var(--line); font-size:12.5px; color:var(--text-dim); max-width:90vw; }
+.mm-tip svg{ color:var(--mint); flex:0 0 auto; }
+.mm-tip #mmTipText{ transition:opacity .2s ease; }
+.mm-stats{ display:flex; align-items:center; gap:0; margin-top:22px; background:var(--surface-2); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+.mm-stat{ display:flex; flex-direction:column; align-items:center; gap:3px; padding:13px 22px; }
+.mm-stat + .mm-stat{ border-left:1px solid var(--line-soft); }
+.mm-stat-v{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:22px; }
+.mm-stat-l{ font-family:var(--font-mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
+.mm-actions{ margin-top:24px; display:flex; flex-direction:column; gap:8px; align-items:center; }
+.mm-cancel{ min-width:200px; justify-content:center; }
+@media(max-width:480px){ .mm-radar{ width:180px; height:180px; } .mm-core{ width:82px; height:82px; } .mm-core-av{ width:62px; height:62px; font-size:24px; } .mm-stat{ padding:11px 16px; } }
 
 /* CLEAN SEARCHING ORB — minimal, no over-the-top effects */
 .searching-orb{
@@ -10099,6 +10142,88 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
 .ci-accept:hover{
   background: linear-gradient(135deg, #ff4d6e 0%, #ff8c50 100%);
 }
+
+/* Draining countdown bar (shared by incoming + sent challenge modals) */
+.ci-cd-track{
+  height: 4px;
+  margin: -8px 24px 16px;
+  background: rgba(255,255,255,.06);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.ci-cd-fill{
+  height: 100%;
+  width: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--coral), #ff7a3d);
+  box-shadow: 0 0 10px var(--coral-glow);
+  transition: width 1s linear;
+}
+.ci-cd-fill.cd-low{
+  background: linear-gradient(90deg, #ff2d4d, #ff5a3d);
+  animation: ciCdLowPulse .7s ease-in-out infinite;
+}
+@keyframes ciCdLowPulse{ 0%,100%{ opacity:.65; } 50%{ opacity:1; } }
+
+/* Punchy entrance for the challenge modals (overrides the generic modalSlideIn) */
+.challenge-modal{ animation: ciSlamIn .42s cubic-bezier(.2,1.35,.4,1) both; }
+@keyframes ciSlamIn{
+  0%{ transform: scale(.8) translateY(16px); opacity: 0; }
+  60%{ transform: scale(1.03) translateY(0); opacity: 1; }
+  100%{ transform: scale(1) translateY(0); }
+}
+
+/* ===== Challenge SENT / waiting state ===== */
+.cs-orbit{
+  position: relative;
+  width: 132px;
+  height: 132px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 6px;
+}
+.cs-orbit-ring{
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255,51,88,.32);
+  animation: csOrbitSpin 9s linear infinite;
+}
+.cs-orbit-dot{
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 9px; height: 9px;
+  margin: -4.5px;
+  border-radius: 50%;
+  background: var(--coral);
+  box-shadow: 0 0 10px var(--coral-glow);
+  animation: csOrbit 2.6s linear infinite;
+}
+.cs-orbit-dot.d2{ animation-delay: -.87s; opacity: .7; }
+.cs-orbit-dot.d3{ animation-delay: -1.74s; opacity: .45; }
+@keyframes csOrbit{
+  from{ transform: rotate(0deg) translateX(60px) rotate(0deg); }
+  to{ transform: rotate(360deg) translateX(60px) rotate(-360deg); }
+}
+@keyframes csOrbitSpin{ to{ transform: rotate(360deg); } }
+.cs-av-wrap{ width: 80px; height: 80px; margin: 0; }
+.challenge-modal .cs-av-wrap .ci-avatar.av-xl{ width: 80px; height: 80px; font-size: 32px; border-radius: 22px; }
+.cs-status{ font-style: normal !important; font-weight: 600; }
+.cs-dots{ display: inline-block; width: 14px; text-align: left; animation: csDots 1.4s steps(4,end) infinite; overflow: hidden; vertical-align: bottom; }
+@keyframes csDots{ 0%{ width: 0; } 100%{ width: 14px; } }
+
+/* Honor low-power + reduced-motion: drop the orbiting bits, keep a calm static avatar */
+body.low-power .cs-orbit-ring,
+body.reduced-motion .cs-orbit-ring{ animation: none !important; }
+body.low-power .cs-orbit-dot,
+body.reduced-motion .cs-orbit-dot,
+body.low-power .cs-dots,
+body.reduced-motion .cs-dots{ display: none !important; }
+body.low-power .challenge-modal,
+body.reduced-motion .challenge-modal,
+body.low-power .ci-cd-fill.cd-low,
+body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
+
 .modal::-webkit-scrollbar{width:6px;}
 .modal::-webkit-scrollbar-thumb{background:var(--surface-3); border-radius:3px;}
 .modal h3{
@@ -10986,6 +11111,24 @@ body.low-power .play-hero{ box-shadow: none !important; }
   .mobile-nav{ display: none !important; }
   .hx-hero{ padding: 16px; }
 }
+
+/* ===== Start-match loading overlay (instant feedback before matchmaking) ===== */
+.start-loader{ position:fixed; inset:0; z-index:9000; display:grid; place-items:center;
+  background:radial-gradient(circle at 50% 40%, rgba(34,211,163,.10), transparent 60%), rgba(6,5,11,.96);
+  -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); opacity:0; pointer-events:none; transition:opacity .22s ease; }
+.start-loader.show{ opacity:1; pointer-events:auto; }
+.sl-inner{ display:flex; flex-direction:column; align-items:center; gap:20px; }
+.sl-spinner{ position:relative; width:70px; height:70px; }
+.sl-spinner span{ position:absolute; inset:0; border-radius:50%; border:3px solid transparent; }
+.sl-spinner span:nth-child(1){ border-top-color:var(--mint); animation:slSpin 1s linear infinite; }
+.sl-spinner span:nth-child(2){ border-right-color:var(--coral); animation:slSpin 1.4s linear infinite reverse; inset:8px; }
+.sl-spinner span:nth-child(3){ border-bottom-color:var(--violet); animation:slSpin 1.8s linear infinite; inset:16px; }
+@keyframes slSpin{ to{ transform:rotate(360deg); } }
+.sl-text{ font-family:var(--font-display); font-stretch:80%; font-weight:700; font-size:15px; letter-spacing:.02em; color:var(--text-dim); animation:slPulse 1.4s ease-in-out infinite; }
+@keyframes slPulse{ 0%,100%{ opacity:.6; } 50%{ opacity:1; } }
+body.low-power .sl-spinner span{ animation-duration:1.4s !important; }
+body.reduced-motion .sl-text{ animation:none; }
+
 </style>
 </head>
 <body>
@@ -11021,42 +11164,16 @@ body.low-power .play-hero{ box-shadow: none !important; }
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
+    <!-- Gesture icons now reference your own PNGs (rock.png / paper.png / scissors.png
+         placed next to index.html). They render anywhere these symbols are <use>d. -->
     <symbol id="i-rock" viewBox="0 0 64 64">
-      <!-- ROCK: red closed fist (emoji-style) with white knuckle detailing -->
-      <g>
-        <path fill="#ed1b24" d="M15 28c0-6.5 4.8-11.2 12-12 2.6-.3 4.4 0 7 .2v8.3c0 1.2 1.8 1.2 1.8 0V16.6c1.4.1 2.7.3 4 .5v7.6c0 1.2 1.9 1.2 1.9 0v-7.2c1.4.3 2.7.7 3.9 1.2v6.7c0 1.2 1.9 1.2 1.9 0v-5.7c2.5 1.6 3.6 4.2 3.6 7.6v13.4c0 6.6-4.6 11.6-12.4 12.4-4 .4-12.7.5-18-1.6-5.4-2.1-7.7-6.8-7.7-12.6V28z"/>
-        <path fill="#ed1b24" d="M15 31.5c-3.4 0-6.2 2.6-6.2 6s2.8 6 6.2 6c1.8 0 3.5-.8 4.7-2v-8.3c-1.2-1-2.9-1.7-4.7-1.7z"/>
-        <g fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20.5 27.5c4.4-3.3 9.8-3.3 14.3-.4"/>
-          <path d="M36 26.5c3-1.4 6.4-1.2 9 .6"/>
-          <path d="M46 28.5c2.2-.6 4.4-.2 6 1.1"/>
-          <path d="M19.8 40.5c3.3 2.2 7.4 2.4 11 .6"/>
-        </g>
-      </g>
+      <image href="rock.png" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet"/>
     </symbol>
     <symbol id="i-paper" viewBox="0 0 64 64">
-      <!-- PAPER: green flat hand from the side, fingers together pointing right -->
-      <g>
-        <path fill="#2e9e34" d="M8 31c0-5 4-8 9.5-8 3.4 0 6.7 1 12.5 1h22.7c2.3 0 3.8 1.3 3.8 3.2 0 1.9-1.5 3.1-3.8 3.1H38c-1.2 0-1.2 1.7 0 1.7h20.2c2.3 0 3.8 1.2 3.8 3.1s-1.5 3.2-3.8 3.2H38c-1.2 0-1.2 1.7 0 1.7h17.8c2.2 0 3.6 1.2 3.6 3 0 1.9-1.4 3.1-3.6 3.1H38c-1.2 0-1.2 1.7 0 1.7h13.7c2.1 0 3.5 1.1 3.5 2.9s-1.4 3-3.5 3H30c-6 0-9-1.2-13.5-4C11 49.5 8 45 8 38.5V31z"/>
-        <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-          <path d="M30 25.5c3 1.3 4.6 3.3 4.6 6.2"/>
-          <path d="M27 38.5c3.4 1 6.6 1 10.4-.2"/>
-        </g>
-      </g>
+      <image href="paper.png" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet"/>
     </symbol>
     <symbol id="i-scissors" viewBox="0 0 64 64">
-      <!-- SCISSORS: yellow hand, index + middle in a V, others folded -->
-      <g>
-        <path fill="#f7b500" d="M21 38c0-2.2 1.2-3.5 3.4-3.5h14c2.2 0 3.6 1.3 3.6 3.5v5.5c0 8.4-5.6 13.5-12.5 13.5S21 51.9 21 43.5V38z"/>
-        <path fill="#f7b500" d="M39 35.5c0-2.6 1.6-4.6 4-4.6s4 1.9 4 4.5V37h-8v-1.5z"/>
-        <path fill="#f7b500" d="M45 41c2.1 0 4 1.7 4 4s-1.7 4-3.9 4H42v-8h3z"/>
-        <path fill="#f7b500" d="M30.5 36.5 21.2 16.8c-.9-1.9-.2-4 1.7-4.8 1.8-.8 3.8 0 4.7 1.8l9.2 19.5-6.3 3.2z"/>
-        <path fill="#f7b500" d="M41.5 33 39 11.7c-.2-2 1.2-3.7 3.2-3.9 1.9-.2 3.6 1.2 3.8 3.1l2.5 20.8-7 1.3z"/>
-        <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round">
-          <path d="M27 38.5c3.3 1 6.4 1 10-.2"/>
-          <path d="M40.5 39.5c2.4.6 4.2.5 6.3-.4"/>
-        </g>
-      </g>
+      <image href="scissors.png" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet"/>
     </symbol>
     <symbol id="i-send" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m21.854 2.147-10.94 10.939"/></symbol>
     <symbol id="i-next" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m6 17 5-5-5-5M13 17l5-5-5-5"/></symbol>
@@ -11363,8 +11480,8 @@ service cloud.firestore {
     }
     match /reports/{reportId} {
       allow create: if request.auth != null && request.resource.data.reporter == request.auth.uid;
-      // Only the admin can read / triage reports.
-      allow read, list, update: if request.auth != null && request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1';
+      // Only the admin can read / triage / dismiss (delete) reports.
+      allow read, list, update, delete: if request.auth != null && request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1';
     }
     match /liveMatches/{matchId} {
       // Spectators: anyone signed in can watch; players write their own live state.
@@ -12004,6 +12121,7 @@ const FIREBASE_CONFIG = {
         <div class="rank-ladder" id="rankLadder"></div>
       </div><!-- /page rank -->
 
+
       <!-- ============ PAGE: FRIENDS ============ -->
       <div class="nav-page" data-page="friends">
         <div class="page-header">
@@ -12244,39 +12362,35 @@ const FIREBASE_CONFIG = {
 
     <!-- ====== MATCHING ====== -->
     <section class="screen" id="screen-matching">
-      <div class="match-wrap" id="matchSearchView">
-        <!-- Minimal searching state -->
-        <div class="searching-orb">
-          <div class="orb-ring"></div>
-          <div class="orb-ring r2"></div>
-          <div class="orb-core">
-            <svg viewBox="0 0 24 24" class="orb-hand" width="44" height="44" data-anim="wiggle"><use href="#i-swords"/></svg>
+      <div class="match-wrap mm-wrap" id="matchSearchView">
+        <!-- Animated radar: expanding rings + sweeping beam, your avatar at center -->
+        <div class="mm-radar">
+          <span class="mm-ring"></span><span class="mm-ring d2"></span><span class="mm-ring d3"></span>
+          <span class="mm-sweep"></span>
+          <div class="mm-core">
+            <div class="mm-core-av" id="mmAvatar">?</div>
           </div>
+          <span class="mm-blip b1"></span><span class="mm-blip b2"></span><span class="mm-blip b3"></span>
         </div>
-        <div class="match-search-text">
-          <h2 class="match-title">FINDING OPPONENT</h2>
-          <div class="match-feed" id="matchFeed">searching the world…</div>
+
+        <div class="mm-head">
+          <h2 class="mm-title">FINDING OPPONENT<span class="mm-dots"><i>.</i><i>.</i><i>.</i></span></h2>
+          <div class="mm-feed" id="matchFeed">scanning the globe…</div>
         </div>
-        <div class="match-search-stats">
-          <div class="search-stat">
-            <span class="search-stat-val" id="queueSize">—</span>
-            <span class="search-stat-lbl">searching</span>
-          </div>
-          <div class="search-stat-divider"></div>
-          <div class="search-stat">
-            <span class="search-stat-val" id="searchElapsed">0s</span>
-            <span class="search-stat-lbl">elapsed</span>
-          </div>
-          <div class="search-stat-divider"></div>
-          <div class="search-stat">
-            <span class="search-stat-val">🌍</span>
-            <span class="search-stat-lbl">worldwide</span>
-          </div>
+
+        <!-- Rotating pro-tip while you wait -->
+        <div class="mm-tip" id="mmTip"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-zap"/></svg> <span id="mmTipText">Hold a clear gesture before the timer ends.</span></div>
+
+        <div class="mm-stats">
+          <div class="mm-stat"><span class="mm-stat-v" id="queueSize">—</span><span class="mm-stat-l">in queue</span></div>
+          <div class="mm-stat"><span class="mm-stat-v" id="searchElapsed">0s</span><span class="mm-stat-l">searching</span></div>
+          <div class="mm-stat"><span class="mm-stat-v">🌍</span><span class="mm-stat-l">worldwide</span></div>
         </div>
+
         <div id="matchDebug" style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); max-width:380px; text-align:left; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2); display:none; white-space:pre-wrap; max-height:140px; overflow-y:auto;"></div>
-        <div class="match-search-actions">
-          <button class="btn btn-ghost" id="cancelMatchBtn">Cancel</button>
-          <button class="btn btn-ghost" id="debugMatchBtn" style="font-size:11px; opacity:.6;">Debug</button>
+        <div class="mm-actions">
+          <button class="btn btn-ghost mm-cancel" id="cancelMatchBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg> Cancel search</button>
+          <button class="btn btn-ghost" id="debugMatchBtn" style="font-size:11px; opacity:.5;">Debug</button>
         </div>
       </div>
 
@@ -13661,6 +13775,7 @@ const FIREBASE_CONFIG = {
       <span class="ci-countdown-num" id="chalCountdownNum">30</span>
       <span class="ci-countdown-text">s</span>
     </div>
+    <div class="ci-cd-track"><div class="ci-cd-fill" id="chalCdFill"></div></div>
 
     <!-- Actions -->
     <div class="ci-actions">
@@ -13671,6 +13786,50 @@ const FIREBASE_CONFIG = {
       <button class="btn btn-primary ci-accept" id="chalAccept">
         <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-play"/></svg>
         Accept &amp; play
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- CHALLENGE SENT / WAITING MODAL (shown to the challenger while waiting for a response) -->
+<div class="modal-bg" id="challengeSentModal">
+  <div class="modal challenge-modal cs-modal">
+    <div class="ci-glow-strip"></div>
+
+    <div class="ci-header">
+      <div class="ci-pulse-dot"></div>
+      <span class="ci-label">CHALLENGE SENT</span>
+      <div class="ci-pulse-dot"></div>
+    </div>
+
+    <div class="ci-profile">
+      <div class="cs-orbit">
+        <span class="cs-orbit-ring"></span>
+        <span class="cs-orbit-dot d1"></span>
+        <span class="cs-orbit-dot d2"></span>
+        <span class="cs-orbit-dot d3"></span>
+        <div class="ci-avatar-wrap cs-av-wrap">
+          <div class="ci-avatar-glow"></div>
+          <div class="ci-avatar av-xl" id="chalSentAv">?</div>
+        </div>
+      </div>
+      <div class="ci-name" id="chalSentName">—</div>
+      <div class="ci-handle" id="chalSentHandle">@stranger</div>
+    </div>
+
+    <p class="ci-tagline cs-status" id="chalSentStatus">waiting for them to accept<span class="cs-dots">…</span></p>
+
+    <div class="ci-countdown cs-countdown">
+      <span class="ci-countdown-text">Expires in</span>
+      <span class="ci-countdown-num" id="chalSentCountdownNum">35</span>
+      <span class="ci-countdown-text">s</span>
+    </div>
+    <div class="ci-cd-track"><div class="ci-cd-fill" id="chalSentCdFill"></div></div>
+
+    <div class="ci-actions">
+      <button class="btn btn-ghost ci-decline" id="chalSentCancel" style="flex:1;">
+        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg>
+        Cancel challenge
       </button>
     </div>
   </div>
@@ -14149,6 +14308,7 @@ function seasonTitleForRating(rating){
   for(const t of SEASON_TITLE_TIERS){ if(rating >= t.minRating) best = t; }
   return best; // null below Gold
 }
+
 // XP award calculation for a finished match.
 // opts: { result, roundsWon, roundsLost, correctPredictions, streakAfter, firstWinOfSession }
 // ============= SEASONS =============
@@ -15156,7 +15316,9 @@ async function initFirebase(){
   state.auth = getAuth(state.fbApp);
   state.db = getFirestore(state.fbApp);
   onAuthStateChanged(state.auth, onAuthChanged);
-  watchGlobalStats();
+  // NOTE: watchGlobalStats() is started AFTER auth completes (in onAuthChanged) —
+  // queue/matches reads require auth, so starting it here on a cold load failed
+  // silently and left the player counts stuck at "—" until a manual refresh.
   // Periodic global cleanup: anyone signed in cleans up matches >2min old
   setInterval(async () => {
     if(!state.user || state.screen === 'game') return;
@@ -15247,8 +15409,8 @@ async function onAuthChanged(user){
   }
   $('#signOutBtn').style.display = '';
   $('#userChip').style.display = '';
-  const ab = $('#achievementsBtn'); if(ab) ab.style.display = '';
-  const sb = $('#settingsBtn'); if(sb) sb.style.display = '';
+  // (legacy #achievementsBtn / #settingsBtn stay hidden — they are click-target
+  //  shims only; showing them rendered as two empty "dots" in the topbar.)
   setText('#chipName', state.profile.username);
   renderAvatar($('#chipAv'), state.profile);
   updateChipRating();
@@ -15261,6 +15423,8 @@ async function onAuthChanged(user){
   // Fire-and-forget so it doesn't delay reaching the landing screen.
   updateDoc(doc(state.db, 'users', user.uid), { lastSeen: serverTimestamp(), inMatch: false }).catch(()=>{});
 
+  // Start global player-count listeners now that we're authenticated (idempotent).
+  watchGlobalStats();
   attachSocialListeners();
   attachActivityListener();
   attachNotificationListener();
@@ -15451,6 +15615,8 @@ function detachUserListeners(){
 
 // ============= GLOBAL STATS =============
 function watchGlobalStats(){
+  if(state._globalStatsAttached) return; // idempotent — only attach once
+  state._globalStatsAttached = true;
   try {
     onSnapshot(collection(state.db, 'queue'), (snap) => {
       // Count only fresh queue entries (heartbeat within last 15s)
@@ -15540,8 +15706,15 @@ function setupAuthUI(){
     const email = ($('#signinForm input[name=email]')?.value || '').trim();
     if(!email){ showErr('#authError', 'Enter your email above first, then tap "Forgot password?"'); return; }
     try {
-      await sendPasswordResetEmail(state.auth, email);
-      toast(`Password reset email sent to ${email}`, 'success');
+      // Pass a continue-URL back to the app — a real return link makes the email
+      // look legitimate to mail providers and reduces spam-foldering.
+      const actionCodeSettings = { url: location.origin + location.pathname, handleCodeInApp: false };
+      await sendPasswordResetEmail(state.auth, email, actionCodeSettings);
+      // Show a clear in-app confirmation that also tells them to check spam.
+      const note = $('#authError');
+      if(note){ note.style.color = 'var(--mint)'; note.textContent = `Reset link sent to ${email}. Check your inbox — and your spam/junk folder (from noreply@…firebaseapp.com). Mark it "not spam" to find future emails easily.`; }
+      toast('Reset email sent — check spam too', 'success');
+      setTimeout(() => { const n = $('#authError'); if(n) n.style.color = ''; }, 12000);
     } catch(err){ showErr('#authError', friendlyError(err)); }
   });
   $('#signupForm').addEventListener('submit', async (e) => {
@@ -17194,24 +17367,30 @@ async function sendChallenge(targetUid){
       createdAt: serverTimestamp(),
       status: 'pending',
     });
-    toast('Challenge sent · waiting for response…', 'success');
-
-    // Show searching screen with custom feed
-    showScreen('matching');
-    $('#matchSearchView').style.display = '';
-    $('#matchFoundView').style.display = 'none';
-    setText('#matchFeed', '');
-    $('#matchFeed').innerHTML = `<span class="blink">●</span> waiting for opponent to accept…`;
+    // Show the dedicated "challenge sent / waiting" modal (instead of hijacking the radar)
+    const tdata = targetSnap.exists() ? targetSnap.data() : {};
+    renderAvatar($('#chalSentAv'), { username: tdata.username, photoURL: tdata.photoURL, colorIdx: tdata.colorIdx });
+    setText('#chalSentName', tdata.username || 'stranger');
+    setText('#chalSentHandle', '@' + (tdata.username || 'stranger'));
+    setText('#chalSentStatus', '');
+    $('#chalSentStatus').innerHTML = 'waiting for them to accept<span class="cs-dots">…</span>';
+    state._sentInviteRef = inviteRef;
+    startChallengeSentCountdown();
+    $('#challengeSentModal').classList.add('show');
+    sfxNotify();
 
     // Listen for invite status changes
     const inviteUnsub = onSnapshot(inviteRef, async (snap) => {
       if(!snap.exists()){
-        // got rejected/deleted
-        if(state.screen === 'matching' && !state.matchId){
+        // declined/deleted/expired by the other side
+        if(!state.matchId){
+          stopChallengeSentCountdown();
+          $('#challengeSentModal').classList.remove('show');
           toast('Challenge declined or expired', 'error');
-          showScreen('landing');
         }
         inviteUnsub();
+        if(state._inviteWaitUnsub === inviteUnsub) state._inviteWaitUnsub = null;
+        state._sentInviteRef = null;
         return;
       }
       const data = snap.data();
@@ -17227,6 +17406,14 @@ async function sendChallenge(targetUid){
           const m = matchSnap.data();
           state.oppProfile = state.isCaller ? m.calleeProfile : m.callerProfile;
           inviteUnsub();
+          if(state._inviteWaitUnsub === inviteUnsub) state._inviteWaitUnsub = null;
+          state._sentInviteRef = null;
+          // accepted! brief confirmation, then hand off to the VS reveal
+          stopChallengeSentCountdown();
+          setText('#chalSentStatus', '');
+          $('#chalSentStatus').innerHTML = '<b style="color:var(--mint)">accepted!</b> starting match…';
+          setTimeout(() => $('#challengeSentModal').classList.remove('show'), 900);
+          showScreen('matching');
           showMatchFound();
           sfxMatch();
           setTimeout(() => enterMatch(m), 1800);
@@ -17299,13 +17486,20 @@ async function handleIncomingChallenge(inv){
     } catch(e){}
   }
 
-  // Countdown — auto-decline after 30s
+  // Countdown — auto-decline after 30s, with a draining progress bar
   let timeLeft = 30;
+  const cdTotal = 30;
   setText('#chalCountdownNum', timeLeft);
+  const cdFill = $('#chalCdFill');
+  if(cdFill){ cdFill.style.width = '100%'; cdFill.classList.remove('cd-low'); }
   if(state._chalCountdown) clearInterval(state._chalCountdown);
   state._chalCountdown = setInterval(() => {
     timeLeft--;
     setText('#chalCountdownNum', Math.max(0, timeLeft));
+    if(cdFill){
+      cdFill.style.width = Math.max(0, (timeLeft / cdTotal) * 100) + '%';
+      if(timeLeft <= 8) cdFill.classList.add('cd-low');
+    }
     if(timeLeft <= 0){
       clearInterval(state._chalCountdown);
       state._chalCountdown = null;
@@ -17337,6 +17531,41 @@ on('#chalReject', 'click', async () => {
   $('#challengeModal').classList.remove('show');
   state.pendingChallenge = null;
   try { await deleteDoc(doc(state.db, 'invites', inv.id)); } catch(e){}
+});
+
+// ----- Challenger-side "waiting for response" countdown (35s, with draining bar) -----
+function startChallengeSentCountdown(){
+  const total = 35;
+  let t = total;
+  setText('#chalSentCountdownNum', t);
+  const fill = $('#chalSentCdFill');
+  if(fill){ fill.style.width = '100%'; fill.classList.remove('cd-low'); }
+  if(state._chalSentCountdown) clearInterval(state._chalSentCountdown);
+  state._chalSentCountdown = setInterval(() => {
+    t--;
+    setText('#chalSentCountdownNum', Math.max(0, t));
+    if(fill){
+      fill.style.width = Math.max(0, (t / total) * 100) + '%';
+      if(t <= 10) fill.classList.add('cd-low');
+    }
+    if(t <= 0){
+      stopChallengeSentCountdown();
+      // expired with no answer — cancel cleanly
+      $('#chalSentCancel')?.click();
+    }
+  }, 1000);
+}
+function stopChallengeSentCountdown(){
+  if(state._chalSentCountdown){ clearInterval(state._chalSentCountdown); state._chalSentCountdown = null; }
+}
+on('#chalSentCancel', 'click', async () => {
+  stopChallengeSentCountdown();
+  $('#challengeSentModal').classList.remove('show');
+  if(state._inviteWaitUnsub){ state._inviteWaitUnsub(); state._inviteWaitUnsub = null; }
+  if(state._sentInviteRef){
+    try { await deleteDoc(state._sentInviteRef); } catch(e){}
+    state._sentInviteRef = null;
+  }
 });
 
 async function createDirectMatch(oppUid, inv){
@@ -18016,6 +18245,28 @@ on('#viewBlockedBtn', 'click', async () => {
 });
 
 // ============= MATCHMAKING =============
+const MM_TIPS = [
+  'Hold a clear gesture before the timer hits zero.',
+  'Predict your opponent\'s throw for bonus ELO.',
+  'Rock beats scissors · scissors beats paper · paper beats rock.',
+  'Win streaks earn extra rating — string them together.',
+  'Beating a higher-ranked player gives an upset bonus.',
+  'Keep your hand well-lit and centered for best detection.',
+  'A clean 2–0 sweep rewards more ELO than a 2–1 win.',
+  'Watch their eyes — players telegraph their throw.',
+];
+function startMatchmakingTips(){
+  stopMatchmakingTips();
+  let i = Math.floor(Math.random() * MM_TIPS.length);
+  setText('#mmTipText', MM_TIPS[i]);
+  state._mmTipTimer = setInterval(() => {
+    i = (i + 1) % MM_TIPS.length;
+    const el = $('#mmTipText'); if(!el) return;
+    el.style.opacity = '0';
+    setTimeout(() => { el.textContent = MM_TIPS[i]; el.style.opacity = '1'; }, 200);
+  }, 4000);
+}
+function stopMatchmakingTips(){ if(state._mmTipTimer){ clearInterval(state._mmTipTimer); state._mmTipTimer = null; } }
 async function findMatch(){
   if(!state.user || !state.cameraReady) return;
   // Moderation: banned players can't matchmake
@@ -18036,7 +18287,16 @@ async function findMatch(){
   showScreen('matching');
   $('#matchSearchView').style.display = '';
   $('#matchFoundView').style.display = 'none';
-  setText('#matchFeed', 'cleaning up…');
+  setText('#matchFeed', 'scanning the globe…');
+  // Put your avatar in the radar core + start the rotating tips.
+  try {
+    const av = $('#mmAvatar');
+    if(av){
+      if(state.profile?.photoURL){ av.style.backgroundImage = `url('${state.profile.photoURL}')`; av.textContent = ''; }
+      else { av.style.backgroundImage = 'none'; av.style.background = AVATAR_COLORS[state.profile?.colorIdx||0]; av.textContent = initialOf(state.profile?.username||'?'); }
+    }
+    startMatchmakingTips();
+  } catch(e){}
 
   // NEW: start elapsed-time counter for matchmaking screen
   state._searchStartedAt = Date.now();
@@ -18426,6 +18686,8 @@ service cloud.firestore {
 }
 
 function cancelMatchmakingResources(){
+  try { stopMatchmakingTips(); } catch(e){}
+  try { stopChallengeSentCountdown(); } catch(e){}
   if(state._pairInterval){ clearInterval(state._pairInterval); state._pairInterval = null; }
   if(state._myMatchUnsub){ state._myMatchUnsub(); state._myMatchUnsub = null; }
   if(state._inviteWaitUnsub){ state._inviteWaitUnsub(); state._inviteWaitUnsub = null; }
@@ -20092,14 +20354,40 @@ let updateMatchStats = async function(matchResult){
     state._lastRatingAfter = state.profile.rating || 1000;
     return;
   }
-  let score = 0.5;
-  if(matchResult === 'win') score = 1;
-  else if(matchResult === 'lose') score = 0;
   const myRating = state.profile.rating || 1000;
   const oppRating = state.oppProfile?.rating || 1000;
-  const delta = calcEloDelta(myRating, oppRating, score);
-  const newRating = myRating + delta;
+  // ===== REVAMPED RANKED ELO =====
+  // Wins always feel rewarding: a guaranteed floor + performance bonuses.
+  // Losses are softened so the climb feels fair, not punishing.
+  let delta = 0;
+  const breakdown = [];
+  const margin = (state.scoreYou || 0) - (state.scoreOpp || 0); // +2 = clean sweep
+  const reads = state._matchPredictionsCorrect || 0;
+  const streakBefore = state.profile.currentStreak || 0;
+  if(matchResult === 'win'){
+    delta = 25; breakdown.push({ label:'Win', amount:25 });
+    // Clean sweep (2–0) bonus
+    if(margin >= 2){ delta += 8; breakdown.push({ label:'Clean sweep', amount:8 }); }
+    // Upset bonus: beating a higher-rated opponent pays more (up to +20)
+    if(oppRating > myRating){ const up = Math.min(20, Math.round((oppRating - myRating) / 25)); if(up > 0){ delta += up; breakdown.push({ label:'Upset bonus', amount:up }); } }
+    // Read bonus: outpredicting your opponent
+    if(reads > 0){ const r = Math.min(10, reads * 3); delta += r; breakdown.push({ label:`${reads} read${reads>1?'s':''}`, amount:r }); }
+    // Win-streak bonus (compounds, capped)
+    if(streakBefore >= 2){ const sb = Math.min(15, (streakBefore) * 3); delta += sb; breakdown.push({ label:`${streakBefore+1}-win streak`, amount:sb }); }
+  } else if(matchResult === 'draw'){
+    delta = 2; breakdown.push({ label:'Draw', amount:2 });
+  } else {
+    // Loss: softer than classic ELO, and gentler when you lose to a stronger player.
+    const base = -16;
+    const cushion = oppRating > myRating ? Math.min(8, Math.round((oppRating - myRating) / 50)) : 0;
+    delta = base + cushion; breakdown.push({ label:'Loss', amount:base });
+    if(cushion) breakdown.push({ label:'Tough opponent', amount:cushion });
+    // Don't let a single loss erase more than a typical win.
+    delta = Math.max(-22, delta);
+  }
+  const newRating = Math.max(0, myRating + delta);
   state._lastMatchDelta = delta;
+  state._lastEloBreakdown = breakdown;
   state._lastRatingBefore = myRating;
   state._lastRatingAfter = newRating;
 
@@ -21435,13 +21723,37 @@ window.addEventListener('keydown', _unlockAudioOnce);
 // Start a ranked match — ensures audio + camera are ready first.
 async function startRankedMatch(){
   ensureAudio();
-  if(!state.cameraReady){
-    const ok = await setupCamera();
-    if(!ok) return;
-    await setupHands();
+  // Show an instant loading overlay so the wait for camera + hand-tracking to
+  // initialise never looks like a freeze/crash.
+  showStartLoader('Starting camera…');
+  try {
+    if(!state.cameraReady){
+      const ok = await setupCamera();
+      if(!ok){ hideStartLoader(); return; }
+      setStartLoaderText('Loading hand tracking…');
+      await setupHands();
+    }
+    setStartLoaderText('Finding a stranger…');
+    findMatch();
+  } finally {
+    // findMatch() swaps to the matching screen; give it a beat then clear.
+    setTimeout(hideStartLoader, 400);
   }
-  findMatch();
 }
+function showStartLoader(text){
+  let el = $('#startLoader');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'startLoader';
+    el.className = 'start-loader';
+    el.innerHTML = `<div class="sl-inner"><div class="sl-spinner"><span></span><span></span><span></span></div><div class="sl-text" id="startLoaderText">Starting…</div></div>`;
+    document.body.appendChild(el);
+  }
+  setStartLoaderText(text || 'Starting…');
+  requestAnimationFrame(() => el.classList.add('show'));
+}
+function setStartLoaderText(t){ const el = $('#startLoaderText'); if(el) el.textContent = t; }
+function hideStartLoader(){ const el = $('#startLoader'); if(el) el.classList.remove('show'); }
 on('#findBtn', 'click', startRankedMatch);
 // Home "Play" button + any [data-goto-play] → go to the Play page (mode picker)
 document.querySelectorAll('[data-goto-play]').forEach(el => el.addEventListener('click', () => { haptic(10); showNavPage('play'); }));
@@ -22917,14 +23229,31 @@ async function loadAdminReports(){
           ${r.details ? `<div class="arr-meta">"${escapeHTML(r.details)}"</div>` : ''}
           <div class="arr-meta">by @${escapeHTML(r.reporterUsername || '?')} · ${when}</div>
         </div>
-        <button class="arr-action">Action</button>`;
+        <div class="arr-actions">
+          <button class="arr-action">Action</button>
+          <button class="arr-dismiss" title="Dismiss / delete this report">Dismiss</button>
+        </div>`;
       row.querySelector('.arr-action').addEventListener('click', () => showAdminAction(r.reported, r.reportedUsername));
+      row.querySelector('.arr-dismiss').addEventListener('click', () => dismissReport(r.id, row));
       box.appendChild(row);
     });
   } catch(e){
     console.error('[admin] reports', e);
     box.innerHTML = '<div class="side-empty">Could not load reports (need a Firestore index on reports.createdAt)</div>';
   }
+}
+// Remove/dismiss a single report (admin). Requires the reports delete rule for admin.
+async function dismissReport(id, rowEl){
+  if(!id) return;
+  if(!confirm('Dismiss and delete this report?')) return;
+  try {
+    await deleteDoc(doc(state.db, 'reports', id));
+    if(rowEl){ rowEl.style.opacity = '0'; setTimeout(() => rowEl.remove(), 180); }
+    _adminReports = _adminReports.filter(r => r.id !== id);
+    toast('Report dismissed', 'success');
+    const box = $('#adminReports');
+    if(box && _adminReports.length === 0) setTimeout(() => { box.innerHTML = '<div class="side-empty">No reports 🎉</div>'; }, 200);
+  } catch(e){ console.warn('[admin] dismiss', e); toast('Could not dismiss (check Firestore reports delete rule)', 'error'); }
 }
 let _adminTarget = null, _adminDuration = null;
 function showAdminAction(uid, username){
