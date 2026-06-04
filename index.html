@@ -206,11 +206,11 @@ body::after{
   linear-gradient(90deg, var(--rank-color, var(--mint)) 0%, var(--rank-color-2, #5fc9ff) 100%) !important;
   box-shadow: 0 0 12px var(--rank-color, rgba(34,211,163,.4)); }
 /* Daily-challenge fills stay coral/amber to read as "challenge" not rank */
-#dailyProgressFill, #playDailyFill{ background:
+.dc-fill{ background:
   linear-gradient(180deg, rgba(255,255,255,.26), transparent 55%),
   linear-gradient(90deg, #ffd33d, var(--coral)) !important;
   box-shadow: 0 0 10px rgba(255,140,66,.4); }
-#dailyProgressFill.complete, #playDailyFill.complete{ background:
+.dc-fill.complete{ background:
   linear-gradient(180deg, rgba(255,255,255,.28), transparent 55%),
   linear-gradient(90deg, var(--mint), #15a079) !important; }
 /* Rank bar keeps its rank-colour gradient but gains the glossy top + glow */
@@ -1695,7 +1695,7 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
   content:''; position:absolute; inset:0 0 auto 0; height:2px; pointer-events:none;
   background:linear-gradient(90deg, transparent, var(--amber), transparent); opacity:.5;
 }
-#weeklyChallengeCard.challenge-card::after{ background:linear-gradient(90deg, transparent, var(--violet), transparent); }
+.js-weekly-card.challenge-card::after{ background:linear-gradient(90deg, transparent, var(--violet), transparent); }
 .daily-goal-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
 .daily-goal-row .daily-card-goal{ flex:1; }
 .daily-reroll-btn{
@@ -2348,6 +2348,16 @@ h1.section-title .accent{
 }
 .hero-cta-row{ display: grid; grid-template-columns: 1fr; gap: 8px; }
 .hero-cta-row .btn-icon-action{ justify-content: center; padding: 13px 14px; font-size: 13px; }
+/* Spacebar key hint on the home Play button — desktop only */
+.cta-kbd-space{
+  margin-left: auto; display: inline-flex; align-items: center;
+  padding: 3px 8px; border-radius: 8px;
+  background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.22);
+  color: #fff; opacity: .85;
+}
+.cta-kbd-space svg{ display: block; }
+/* Hide the keyboard hint entirely on touch / no-hover devices */
+@media (hover: none), (pointer: coarse){ .cta-kbd-space{ display: none; } }
 /* Match-options as a clean segmented control above the CTA */
 .hero-strip-right .match-options{ display: flex; gap: 6px; margin-bottom: 4px; }
 .hero-strip-right .opt-pill{ flex: 1; justify-content: center; }
@@ -2539,37 +2549,38 @@ h1.section-title .accent{
 .daily-card .daily-reward{ color: var(--mint); font-weight: 700; }
 
 /* ===== Daily challenge card — premium accent + real reward pill ===== */
-#dailyChallengeCard{
+.challenge-stack{ display: flex; flex-direction: column; gap: 14px; }
+.js-daily-card{
   position: relative;
   border-color: rgba(255,107,0,.28);
   background: radial-gradient(120% 80% at 0% 0%, rgba(255,107,0,.08), transparent 55%), var(--surface);
 }
-#dailyChallengeCard.daily-done{
+.js-daily-card.daily-done{
   border-color: rgba(60,255,185,.42);
   background: radial-gradient(120% 80% at 0% 0%, rgba(60,255,185,.1), transparent 55%), var(--surface);
   box-shadow: 0 0 22px rgba(60,255,185,.12);
 }
-#dailyChallengeCard .daily-reward{
+.js-daily-card .daily-reward{
   font-family: var(--font-mono); font-size: 10px; font-weight: 800;
   letter-spacing: .03em; padding: 3px 9px; border-radius: 999px;
   background: rgba(255,107,0,.14); border: 1px solid rgba(255,107,0,.35);
   color: #ff8a3d !important;
 }
-#dailyChallengeCard.daily-done .daily-reward{
+.js-daily-card.daily-done .daily-reward{
   background: rgba(60,255,185,.14); border-color: rgba(60,255,185,.4); color: var(--mint) !important;
 }
-#dailyChallengeCard .daily-streak-mini{ animation: dailyFlame 2.4s ease-in-out infinite; }
+.js-daily-card .daily-streak-mini{ animation: dailyFlame 2.4s ease-in-out infinite; }
 @keyframes dailyFlame{ 0%,100%{ box-shadow: 0 0 0 rgba(255,107,0,0); } 50%{ box-shadow: 0 0 10px rgba(255,107,0,.45); } }
 
 /* ===== Weekly rows — reward pill + clearer completed state ===== */
-#weeklyChallengeCard .weekly-xp{
+.js-weekly-card .weekly-xp{
   padding: 3px 8px; border-radius: 999px;
   background: rgba(60,255,185,.12); border: 1px solid rgba(60,255,185,.3);
 }
-#weeklyChallengeCard .weekly-row.done{ opacity: 1; }
-#weeklyChallengeCard .weekly-row.done .weekly-goal{ color: var(--mint); }
+.js-weekly-card .weekly-row.done{ opacity: 1; }
+.js-weekly-card .weekly-row.done .weekly-goal{ color: var(--mint); }
 .weekly-tick{ width: 13px; height: 13px; color: var(--mint); vertical-align: -2px; }
-body.low-power #dailyChallengeCard .daily-streak-mini{ animation: none; }
+body.low-power .js-daily-card .daily-streak-mini{ animation: none; }
 
 /* ===== GLOBAL CHAT PAGE ===== */
 .gc-shell{ display: flex; flex-direction: column; height: min(680px, calc(100vh - 250px)); min-height: 340px; }
@@ -5379,52 +5390,63 @@ h2.match-title{
   box-shadow: 0 0 12px var(--mint-glow);
 }
 
-/* RESPONSIVE — a clean, tight side-by-side face-off that fits any phone
-   with no scrolling and no off-screen overflow. */
+/* RESPONSIVE — on phones the face-off STACKS vertically: you on top,
+   a big VS in the middle, opponent on the bottom. Each player is a wide
+   horizontal card so names/stats have room and nothing overflows. */
 @media (max-width: 900px){
-  .match-found-v2{ padding: max(16px, env(safe-area-inset-top)) 0 max(16px, env(safe-area-inset-bottom)); }
+  .match-found-v2{ padding: max(16px, env(safe-area-inset-top)) 14px max(16px, env(safe-area-inset-bottom)); justify-content: center; }
   .mf-stage{
-    grid-template-columns: 1fr auto 1fr;
-    gap: clamp(6px, 2vw, 14px);
-    padding: 0 10px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+    padding: 0;
+    width: 100%;
+    max-width: 460px;
     align-items: stretch;
-    max-width: 560px;
   }
-  .mf-center{ order: 0; gap: 8px; justify-content: flex-start; }
+  /* Player → wide horizontal card (avatar left · name/rank/stats right) */
   .mf-player{
-    padding: 14px 8px 12px;
-    gap: 7px;
-    border-radius: 16px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas: "av name" "av rank" "av stats";
+    column-gap: 14px; row-gap: 3px;
+    align-items: center; text-align: left;
+    padding: 14px 16px; border-radius: 16px;
     backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    justify-content: flex-start;
   }
-  .mf-player-side-label{ font-size: 8.5px; letter-spacing: .12em; top: -8px; padding: 3px 9px; }
-  .mf-avatar{ width: clamp(52px, 17vw, 72px); height: clamp(52px, 17vw, 72px); border-radius: 16px; font-size: clamp(22px, 7vw, 30px); }
+  .mf-player-side-label{ top: -8px; left: 16px; font-size: 8px; letter-spacing: .14em; padding: 2px 9px; }
+  .mf-avatar-wrap{ grid-area: av; align-self: center; }
+  .mf-avatar{ width: 60px; height: 60px; border-radius: 15px; font-size: 26px; }
   .mf-avatar-rank{ width: 24px; height: 24px; bottom: -6px; right: -6px; padding: 3px; }
-  .mf-name{ font-size: clamp(12px, 3.6vw, 15px); margin-top: 2px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mf-rank-line{ font-size: 9px; gap: 3px; flex-wrap: wrap; justify-content: center; }
+  .mf-name{ grid-area: name; align-self: end; font-size: 17px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mf-rank-line{ grid-area: rank; font-size: 9.5px; gap: 5px; justify-content: flex-start; flex-wrap: wrap; }
   .mf-elo{ font-size: 12px; }
   .mf-elo-unit{ font-size: 8px; }
-  /* Compact stat chips that wrap gracefully instead of a tall stacked column */
-  .mf-stats-mini{ flex-direction: row; flex-wrap: wrap; gap: 4px; width: 100%; padding-top: 8px; margin-top: 2px; justify-content: center; border-top: 1px solid var(--line-soft); }
-  .mf-stat-mini{ width: auto; justify-content: center; padding: 3px 7px; font-size: 10px; gap: 4px; }
-  .mf-stat-mini svg{ display: none; }
-  /* Center VS column — compact */
-  .mf-vs{ font-size: clamp(30px, 9vw, 44px); }
-  .mf-h2h{ padding: 7px 10px; margin-top: 6px; min-width: 0; width: 100%; }
+  .mf-stats-mini{ grid-area: stats; flex-direction: row; flex-wrap: wrap; gap: 5px; justify-content: flex-start; margin-top: 4px; }
+  .mf-stat-mini{ width: auto; justify-content: center; padding: 3px 8px; font-size: 10px; gap: 4px; }
+  /* Center VS row sits BETWEEN the two cards */
+  .mf-center{ order: 0; flex-direction: row; align-items: center; justify-content: center; gap: 14px; }
+  .mf-vs{ font-size: clamp(36px, 12vw, 54px); }
+  .mf-h2h{ padding: 6px 12px; margin: 0; min-width: 0; }
   .mf-h2h-title{ font-size: 8px; }
-  .mf-h2h-row{ font-size: 18px; gap: 7px; }
-  .mf-h2h-score{ font-size: clamp(20px, 6vw, 28px); }
+  .mf-h2h-row{ font-size: 18px; gap: 8px; }
+  .mf-h2h-score{ font-size: 24px; }
   .mf-h2h-label{ font-size: 8px; text-align: center; }
-  .mf-banner{ margin-bottom: 16px; font-size: 11px; padding: 8px 18px; letter-spacing: .2em; }
+  .mf-banner{ margin-bottom: 14px; font-size: 11px; padding: 8px 18px; letter-spacing: .2em; }
   .mf-bg-grid{ opacity: .4; }
-  .mf-bg-glow{ width: 64vw; height: 64vw; filter: blur(90px); }
-  .mf-footer{ width: min(360px, 90vw); bottom: max(22px, env(safe-area-inset-bottom)); }
+  /* Glows reposition top/bottom to echo the vertical face-off */
+  .mf-bg-glow{ width: 78vw; height: 34vh; filter: blur(90px); }
+  .mf-bg-glow.you{ left: 50%; top: 16%; transform: translateX(-50%); }
+  .mf-bg-glow.opp{ left: 50%; right: auto; top: 84%; transform: translateX(-50%); }
+  /* Footer flows below the stack (no absolute overlap on short screens) */
+  .mf-footer{ position: static; transform: none; width: min(420px, 100%); margin: 16px auto 0; }
 }
 @media (max-width: 380px){
-  .mf-stat-mini{ font-size: 9px; padding: 2px 5px; }
+  .mf-stat-mini{ font-size: 9px; padding: 2px 6px; }
   .mf-player-side-label{ font-size: 8px; }
-  .mf-player{ padding: 12px 6px 10px; }
+  .mf-player{ padding: 12px 13px; }
+  .mf-avatar{ width: 54px; height: 54px; font-size: 22px; }
+  .mf-name{ font-size: 16px; }
 }
 @keyframes vsSlam{
   0%{transform:scale(2) rotate(-20deg); opacity:0;}
@@ -6181,151 +6203,122 @@ h2.match-title{
    Win/Lose: a refined, translucent centered card.
    Draw: a slim glass pill (a draw is just a replay — stay subtle).
    ============================================================ */
+/* The round result is a TOP banner — it never sits over the centre of the
+   arena (so both players' faces stay visible). Win/Lose = compact card,
+   Draw = slim pill. */
 .duel-result{
   position: absolute;
   inset: 0;
   display: none;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   z-index: 18;
   pointer-events: none;
-  padding: 16px;
+  padding: clamp(46px, 11vh, 110px) 14px 14px;
 }
 .duel-result.show{ display: flex; }
 .duel-result-inner{
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 22px 30px 24px;
-  background: linear-gradient(180deg, rgba(20,18,30,.62), rgba(8,5,15,.66));
-  backdrop-filter: blur(18px) saturate(1.25);
-  -webkit-backdrop-filter: blur(18px) saturate(1.25);
+  gap: 9px;
+  padding: 13px 22px 15px;
+  background: linear-gradient(180deg, rgba(22,20,32,.7), rgba(8,5,15,.74));
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
   border: 1px solid rgba(255,255,255,.10);
-  border-radius: 26px;
+  border-radius: 22px;
   position: relative;
   overflow: hidden;
-  max-width: min(380px, 92vw);
+  max-width: min(480px, 94vw);
   pointer-events: auto;
-  box-shadow: 0 24px 64px -20px rgba(0,0,0,.75);
-  animation: resultPop .5s cubic-bezier(.2,1.5,.34,1) both;
+  box-shadow: 0 26px 64px -24px rgba(0,0,0,.82);
+  animation: resultPop .42s cubic-bezier(.2,1.5,.34,1) both;
 }
-/* Colored top accent + soft wash from the top — premium, not heavy */
 .duel-result-inner::before{
   content:""; position:absolute; top:0; left:0; right:0; height:3px;
   background: var(--rr-accent, var(--text-faint)); opacity:.95;
 }
 .duel-result-inner::after{
   content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
-  background: radial-gradient(130% 80% at 50% -12%, var(--rr-wash, transparent), transparent 62%);
+  background: radial-gradient(130% 90% at 50% -10%, var(--rr-wash, transparent), transparent 60%);
 }
 .duel-result-inner > *{ position: relative; z-index: 1; }
 @keyframes resultPop{
-  0%{ opacity: 0; transform: scale(.88) translateY(10px); }
-  100%{ opacity: 1; transform: scale(1) translateY(0); }
+  0%{ opacity: 0; transform: translateY(-14px) scale(.96); }
+  100%{ opacity: 1; transform: translateY(0) scale(1); }
 }
 .duel-result-inner.win{
-  --rr-accent: var(--mint); --rr-wash: rgba(34,211,163,.20);
+  --rr-accent: var(--mint); --rr-wash: rgba(34,211,163,.22);
   border-color: rgba(34,211,163,.34);
-  box-shadow: 0 24px 64px -20px rgba(0,0,0,.75), 0 0 48px -12px var(--mint-glow);
+  box-shadow: 0 26px 64px -24px rgba(0,0,0,.82), 0 0 46px -14px var(--mint-glow);
 }
 .duel-result-inner.lose{
-  --rr-accent: var(--coral); --rr-wash: rgba(255,51,88,.17);
+  --rr-accent: var(--coral); --rr-wash: rgba(255,51,88,.18);
   border-color: rgba(255,51,88,.30);
-  box-shadow: 0 24px 64px -20px rgba(0,0,0,.75), 0 0 48px -12px var(--coral-glow);
+  box-shadow: 0 26px 64px -24px rgba(0,0,0,.82), 0 0 46px -14px var(--coral-glow);
 }
 .duel-result-inner.draw{ --rr-accent: var(--amber); --rr-wash: rgba(255,200,60,.14); }
-.duel-result-headwrap{
-  display: flex; flex-direction: column; align-items: center; gap: 5px;
-}
-.duel-result-picks{
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
+
+/* Main row: picks + headline/detail side by side (compact banner) */
+.duel-result-main{ display: flex; align-items: center; gap: 16px; }
+.duel-result-headwrap{ display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.duel-result-picks{ display: flex; align-items: center; gap: 11px; }
 .duel-result-pick{
-  width: 72px; height: 72px;
-  border-radius: 18px;
+  width: 56px; height: 56px;
+  border-radius: 15px;
   background: linear-gradient(180deg, rgba(43,41,57,.92), rgba(20,19,28,.92));
   border: 1.5px solid var(--line);
-  display: grid;
-  place-items: center;
-  position: relative;
+  display: grid; place-items: center; position: relative;
   transition: transform .4s cubic-bezier(.2,1.6,.4,1), box-shadow .4s, border-color .4s, opacity .3s;
-  box-shadow: 0 8px 22px rgba(0,0,0,.45);
+  box-shadow: 0 8px 20px rgba(0,0,0,.45);
 }
-.duel-result-pick svg{ width: 42px; height: 42px; }
+.duel-result-pick svg{ width: 32px; height: 32px; }
 .duel-result-pick.rock svg{ color: var(--coral); }
 .duel-result-pick.paper svg{ color: var(--mint); }
 .duel-result-pick.scissors svg{ color: var(--amber); }
 .duel-result-pick.winner{
-  transform: scale(1.14);
+  transform: scale(1.12);
   border-color: var(--mint);
   background: linear-gradient(180deg, rgba(34,211,163,.20), rgba(20,19,28,.92));
-  box-shadow: 0 0 34px -4px var(--mint), 0 10px 26px rgba(0,0,0,.5);
+  box-shadow: 0 0 30px -4px var(--mint), 0 10px 24px rgba(0,0,0,.5);
 }
 .duel-result-pick.loser{ opacity: .4; filter: grayscale(.55); transform: scale(.9); }
 .duel-result-vs{
-  font-family: var(--font-display);
-  font-stretch: 60%;
-  font-weight: 800;
-  font-size: 22px;
-  color: var(--text-faint);
-  opacity: .5;
-  letter-spacing: -.04em;
+  font-family: var(--font-display); font-stretch: 60%; font-weight: 800;
+  font-size: 17px; color: var(--text-faint); opacity: .5; letter-spacing: -.04em;
 }
 .duel-result-headline{
-  font-family: var(--font-display);
-  font-stretch: 55%;
-  font-weight: 800;
-  font-size: clamp(40px, 9vw, 56px);
-  line-height: .9;
-  letter-spacing: -.04em;
-  text-transform: uppercase;
+  font-family: var(--font-display); font-stretch: 55%; font-weight: 800;
+  font-size: clamp(30px, 7vw, 46px); line-height: .92; letter-spacing: -.04em; text-transform: uppercase;
 }
 .duel-result-headline.win{
   background: linear-gradient(180deg, #fff 5%, var(--mint) 55%, #25c186 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 22px var(--mint-glow));
+  filter: drop-shadow(0 0 20px var(--mint-glow));
 }
 .duel-result-headline.lose{
   background: linear-gradient(180deg, #fff 5%, var(--coral) 55%, #c01546 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 22px var(--coral-glow));
+  filter: drop-shadow(0 0 20px var(--coral-glow));
 }
 .duel-result-headline.draw{
   background: linear-gradient(180deg, #fff 5%, var(--amber) 55%, #c89e1d 100%);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 0 18px var(--amber-glow));
+  filter: drop-shadow(0 0 16px var(--amber-glow));
 }
 .duel-result-detail{
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text-dim);
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  font-weight: 600;
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim);
+  letter-spacing: .1em; text-transform: uppercase; font-weight: 600;
 }
 .duel-result-prediction{
-  display: none;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  border-radius: 999px;
+  display: none; align-items: center; gap: 8px; padding: 5px 13px; border-radius: 999px;
   background: linear-gradient(90deg, rgba(176,140,255,.2), rgba(60,255,185,.2));
-  border: 1px solid var(--violet);
-  color: var(--violet);
-  font-family: var(--font-display);
-  font-stretch: 65%;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
+  border: 1px solid var(--violet); color: var(--violet);
+  font-family: var(--font-display); font-stretch: 65%; font-weight: 700;
+  font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
 }
-.duel-result-prediction.show{
-  display: inline-flex;
-  animation: predBadgeIn2 .6s cubic-bezier(.2,1.8,.4,1);
-}
+.duel-result-prediction.show{ display: inline-flex; animation: predBadgeIn2 .6s cubic-bezier(.2,1.8,.4,1); }
 .duel-result-prediction svg{ width: 14px; height: 14px; }
 @keyframes predBadgeIn2{
   0%{ opacity: 0; transform: scale(0) rotate(-180deg); }
@@ -6333,50 +6326,30 @@ h2.match-title{
   100%{ opacity: 1; transform: scale(1) rotate(0); }
 }
 .duel-result-commentary{
-  display: none;
-  align-items: center;
-  gap: 10px;
-  margin-top: 4px;
-  padding: 9px 14px;
-  border-radius: 12px;
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.07);
-  font-family: var(--font-body);
-  font-size: 12.5px;
-  color: var(--text);
-  font-style: italic;
-  max-width: 340px;
-  text-align: left;
+  display: none; align-items: center; gap: 9px; margin-top: 2px;
+  padding: 7px 13px; border-radius: 11px;
+  background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.07);
+  font-family: var(--font-body); font-size: 12px; color: var(--text);
+  font-style: italic; max-width: 360px; text-align: left;
 }
-.duel-result-commentary.show{
-  display: flex;
-  animation: commentaryIn .5s cubic-bezier(.2,1.6,.4,1);
-}
-.duel-result-commentary .mic{ font-size: 20px; flex-shrink: 0; }
-@keyframes commentaryIn{
-  from{ opacity: 0; transform: translateY(8px); }
-  to{ opacity: 1; transform: translateY(0); }
-}
+.duel-result-commentary.show{ display: flex; animation: commentaryIn .5s cubic-bezier(.2,1.6,.4,1); }
+.duel-result-commentary .mic{ font-size: 18px; flex-shrink: 0; }
+@keyframes commentaryIn{ from{ opacity: 0; transform: translateY(6px); } to{ opacity: 1; transform: translateY(0); } }
 
-/* ===== DRAW — slim glass pill. A draw just replays, so keep it tiny
-   and out of the way (the top announcer carries "REPLAY THE ROUND"). ===== */
-.duel-result.rr-draw{ align-items: flex-start; padding-top: clamp(64px, 16vh, 150px); }
+/* ===== DRAW — slim glass pill (a draw just replays). ===== */
+.duel-result.rr-draw{ padding-top: clamp(40px, 9vh, 84px); }
 .duel-result-inner.draw{
-  flex-direction: row;
-  gap: 13px;
-  padding: 9px 18px 9px 11px;
-  border-radius: 999px;
-  max-width: min(440px, 94vw);
+  flex-direction: row; gap: 12px; padding: 7px 16px 7px 9px;
+  border-radius: 999px; max-width: min(440px, 94vw);
 }
-.duel-result-inner.draw .duel-result-picks{ gap: 7px; }
-.duel-result-inner.draw .duel-result-pick{
-  width: 38px; height: 38px; border-radius: 11px; box-shadow: none; border-width: 1px;
-}
-.duel-result-inner.draw .duel-result-pick svg{ width: 22px; height: 22px; }
-.duel-result-inner.draw .duel-result-vs{ font-size: 13px; }
-.duel-result-inner.draw .duel-result-headwrap{ flex-direction: row; align-items: baseline; gap: 9px; white-space: nowrap; }
-.duel-result-inner.draw .duel-result-headline{ font-size: 26px; }
-.duel-result-inner.draw .duel-result-detail{ font-size: 9.5px; opacity: .85; }
+.duel-result-inner.draw .duel-result-main{ gap: 11px; }
+.duel-result-inner.draw .duel-result-picks{ gap: 6px; }
+.duel-result-inner.draw .duel-result-pick{ width: 36px; height: 36px; border-radius: 10px; box-shadow: none; border-width: 1px; }
+.duel-result-inner.draw .duel-result-pick svg{ width: 21px; height: 21px; }
+.duel-result-inner.draw .duel-result-vs{ font-size: 12px; }
+.duel-result-inner.draw .duel-result-headwrap{ flex-direction: row; align-items: baseline; gap: 8px; white-space: nowrap; }
+.duel-result-inner.draw .duel-result-headline{ font-size: 23px; }
+.duel-result-inner.draw .duel-result-detail{ font-size: 9px; opacity: .85; }
 .duel-result-inner.draw .duel-result-prediction,
 .duel-result-inner.draw .duel-result-commentary,
 .duel-result-inner.draw .rating-delta{ display: none !important; }
@@ -6805,23 +6778,23 @@ h2.match-title{
   }
   .duel-gesture-indicator{ transform: scale(.7); }
 
-  /* Result overlay: compact card, smaller picks + headline.
-     Sits in the upper third so it never covers either player's face. */
-  .duel-result{ align-items: flex-start; padding-top: clamp(40px, 11vh, 96px); }
-  .duel-result-inner{ padding: 16px 18px 18px; gap: 9px; border-radius: 20px; max-width: 90vw; }
-  .duel-result-picks{ gap: 12px; }
-  .duel-result-pick{ width: 56px; height: 56px; border-radius: 14px; }
-  .duel-result-pick svg{ width: 32px; height: 32px; }
-  .duel-result-vs{ font-size: 18px; }
-  .duel-result-headline{ font-size: clamp(34px, 12vw, 48px); }
-  .duel-result-detail{ font-size: 10px; }
-  .duel-result-commentary{ font-size: 12px; padding: 8px 12px; }
+  /* Result banner: pinned near the top so it never covers either face. */
+  .duel-result{ padding-top: clamp(34px, 9vh, 80px); }
+  .duel-result-inner{ padding: 11px 16px 13px; gap: 8px; border-radius: 18px; max-width: 94vw; }
+  .duel-result-main{ gap: 12px; }
+  .duel-result-picks{ gap: 9px; }
+  .duel-result-pick{ width: 48px; height: 48px; border-radius: 13px; }
+  .duel-result-pick svg{ width: 28px; height: 28px; }
+  .duel-result-vs{ font-size: 15px; }
+  .duel-result-headline{ font-size: clamp(28px, 9vw, 40px); }
+  .duel-result-detail{ font-size: 9.5px; }
+  .duel-result-commentary{ font-size: 11.5px; padding: 7px 11px; }
   /* Draw pill stays tiny + near the very top on phones */
-  .duel-result.rr-draw{ padding-top: clamp(28px, 8vh, 70px); }
-  .duel-result-inner.draw{ padding: 8px 15px 8px 9px; gap: 10px; }
-  .duel-result-inner.draw .duel-result-pick{ width: 34px; height: 34px; }
-  .duel-result-inner.draw .duel-result-pick svg{ width: 19px; height: 19px; }
-  .duel-result-inner.draw .duel-result-headline{ font-size: 22px; }
+  .duel-result.rr-draw{ padding-top: clamp(26px, 7vh, 64px); }
+  .duel-result-inner.draw{ padding: 7px 14px 7px 8px; gap: 9px; }
+  .duel-result-inner.draw .duel-result-pick{ width: 33px; height: 33px; }
+  .duel-result-inner.draw .duel-result-pick svg{ width: 18px; height: 18px; }
+  .duel-result-inner.draw .duel-result-headline{ font-size: 21px; }
 
   /* ---- BOTTOM DOCK: redesigned as an app action bar ---- */
   .duel-dock{
@@ -9266,7 +9239,9 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
 
 /* ----- LEGEND: extra cinematic layers ----- */
 /* Gold bloom behind the icon */
-.legend-rankup .rankup-bloom{ background:radial-gradient(circle, rgba(255,215,0,.9) 0%, rgba(255,97,195,.25) 38%, transparent 64%); }
+.legend-rankup .rankup-bloom{ background:radial-gradient(circle, rgba(255,215,0,.95) 0%, rgba(255,97,195,.28) 38%, transparent 64%); }
+/* Gold embers instead of pink dots */
+.legend-rankup .rankup-particles .particle{ background:#ffd700 !important; box-shadow:0 0 8px #ffd700, 0 0 14px rgba(255,170,40,.7) !important; }
 /* A slow, premium medal-shine ring that sweeps around the new icon */
 .legend-rankup .rankup-sweep-wrap::after{
   content:''; position:absolute; inset:-8%; border-radius:50%; z-index:0; pointer-events:none;
@@ -9276,18 +9251,52 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
   opacity:0; animation: legendRingIn .8s 2.8s forwards, rankupSpinRays 6s linear 2.8s infinite;
 }
 @keyframes legendRingIn{ to{ opacity:.9; } }
-/* "LEGEND" — grander, with a soft breathing scale on top of the shimmer */
-.legend-rankup .rankup-rank-name-shimmer{
-  text-shadow:0 0 50px rgba(255,215,0,.4);
-  animation:legendTitleShimmer 3s linear infinite, legendTitleBreath 4s ease-in-out 1s infinite !important;
+
+/* CROWN — drops down over the icon for the apex reveal */
+.rankup-crown{
+  position:absolute; left:50%; top:-18px; transform:translate(-50%,-30px) scale(.4) rotate(-12deg);
+  font-size:clamp(40px,9vw,68px); line-height:1; z-index:3; opacity:0;
+  filter:drop-shadow(0 6px 14px rgba(0,0,0,.5)) drop-shadow(0 0 18px rgba(255,215,0,.8));
+  pointer-events:none; display:none;
 }
-@keyframes legendTitleBreath{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.035); } }
+.legend-rankup .rankup-crown{ display:block; animation:legendCrownDrop .9s 3s cubic-bezier(.2,1.5,.4,1) forwards, legendCrownFloat 3.4s ease-in-out 4s infinite; }
+@keyframes legendCrownDrop{
+  0%{ opacity:0; transform:translate(-50%,-46px) scale(.3) rotate(-16deg); }
+  60%{ opacity:1; transform:translate(-50%,-2px) scale(1.12) rotate(4deg); }
+  100%{ opacity:1; transform:translate(-50%,0) scale(1) rotate(0deg); }
+}
+@keyframes legendCrownFloat{ 0%,100%{ transform:translate(-50%,0) rotate(0deg);} 50%{ transform:translate(-50%,-5px) rotate(-3deg);} }
+
+/* "LEGEND" — huge, with a sunburst behind it + breathing scale.
+   legendTitleFade animates ONLY opacity (so the infinite breath keeps the
+   transform); without it the animation override would leave the title at 0. */
+.legend-rankup .rankup-rank-name-shimmer{
+  position:relative; isolation:isolate;
+  font-size:clamp(64px,17vw,150px) !important; letter-spacing:.04em;
+  text-shadow:0 0 60px rgba(255,215,0,.45);
+  animation:legendTitleFade .7s 2.4s both, legendTitleShimmer 3s linear infinite, legendTitleBreath 4s ease-in-out 2.6s infinite !important;
+}
+@keyframes legendTitleFade{ from{ opacity:0; } to{ opacity:1; } }
+@keyframes legendTitleBreath{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.04); } }
+.legend-rankup .rankup-rank-name-shimmer::before{
+  content:''; position:absolute; left:50%; top:50%; width:160%; aspect-ratio:1; z-index:-1;
+  transform:translate(-50%,-50%) scale(0); transform-origin:center;
+  background:conic-gradient(from 0deg, rgba(255,215,0,.0), rgba(255,215,0,.22) 6%, transparent 12%, transparent 18%, rgba(255,170,40,.18) 24%, transparent 30%, transparent 36%, rgba(255,215,0,.22) 42%, transparent 48%, transparent 54%, rgba(255,170,40,.18) 60%, transparent 66%, transparent 72%, rgba(255,215,0,.22) 78%, transparent 84%, transparent 90%, rgba(255,170,40,.18) 96%, transparent);
+  -webkit-mask:radial-gradient(circle, #000 10%, transparent 62%); mask:radial-gradient(circle, #000 10%, transparent 62%);
+  opacity:0; pointer-events:none;
+  animation:legendSunburstIn 1s 2.8s ease-out forwards, rankupSpinRays 16s linear 2.8s infinite;
+}
+@keyframes legendSunburstIn{ to{ opacity:1; transform:translate(-50%,-50%) scale(1); } }
+
 /* Apex sub-line glows gold */
 .legend-rankup .rankup-sub{ color:#ffe9a8; letter-spacing:.3em; }
 .legend-rankup .rankup-from{ color:#ffce6e; }
-/* Lite legend: drop the rotating ring + breathing transform */
+.legend-rankup .rankup-new-tier{ color:#fff; text-shadow:0 0 16px rgba(255,215,0,.9); }
+/* Lite legend: drop the rotating/animated extras (keep the look, lose the cost) */
 .rankup-lite.legend-rankup .rankup-sweep-wrap::after{ animation:legendRingIn .8s 2.8s forwards; }
-.rankup-lite.legend-rankup .rankup-rank-name-shimmer{ animation:legendTitleShimmer 3s linear infinite !important; }
+.rankup-lite.legend-rankup .rankup-rank-name-shimmer{ animation:legendTitleFade .7s 2.4s both, legendTitleShimmer 3s linear infinite !important; }
+.rankup-lite.legend-rankup .rankup-rank-name-shimmer::before{ animation:legendSunburstIn 1s 2.8s ease-out forwards; }
+.rankup-lite.legend-rankup .rankup-crown{ animation:legendCrownDrop .9s 3s cubic-bezier(.2,1.5,.4,1) forwards; }
 
 /* Animated rays — two layers spinning opposite directions */
 .rankup-rays{
@@ -9742,25 +9751,12 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
   55%{ opacity:.5; }
   100%{ opacity:.32; transform:translate(-50%,-50%) scale(1); }
 }
-/* Cinematic letterbox bars — only for the apex (Legend) reveal */
-.rankup-bar{
-  position:absolute; left:0; right:0; height:9vh; background:#000; z-index:6;
-  pointer-events:none; opacity:0;
-}
-.rankup-bar.top{ top:0; transform:translateY(-100%); }
-.rankup-bar.bot{ bottom:0; transform:translateY(100%); }
-.legend-rankup .rankup-bar{ animation: rankupBarIn .9s .15s cubic-bezier(.2,.8,.2,1) forwards; }
-.legend-rankup .rankup-bar.bot{ animation-name: rankupBarInBot; }
-@keyframes rankupBarIn{ to{ opacity:1; transform:translateY(0); } }
-@keyframes rankupBarInBot{ to{ opacity:1; transform:translateY(0); } }
-
 @media (max-width: 600px){
   .rankup-center-stage{ width: 230px; height: 230px; }
   .rankup-old-icon{ width: 124px !important; height: 124px !important; }
   .rankup-new-icon{ width: 162px !important; height: 162px !important; }
   .rankup-sweep-wrap{ width: 176px; height: 176px; }
   .rankup-content{ padding: 24px 18px; }
-  .rankup-bar{ height: 7vh; }
 }
 
 /* ============================================================
@@ -11656,7 +11652,6 @@ body.reduced-motion .sl-text{ animation:none; }
       <button class="nav-item" data-nav="activity"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg><span>Activity</span></button>
       <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
-      <button class="nav-item" id="navMessages"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg><span>Messages</span><span class="nav-badge" id="navMsgBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span></button>
       <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span>Settings</span></button>
       <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none; color:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Moderation</span></button>
@@ -12061,7 +12056,12 @@ const FIREBASE_CONFIG = {
               <button class="btn-cta hx-cta" id="homePlayBtn" data-goto-play>
                 <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
                 <span>Play</span>
-                <kbd class="cta-kbd">SPACE</kbd>
+                <kbd class="cta-kbd cta-kbd-space" aria-label="Press spacebar">
+                  <svg viewBox="0 0 36 16" width="34" height="15" aria-hidden="true">
+                    <rect x="1.5" y="1.5" width="33" height="13" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M9 8.5v3M27 8.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                  </svg>
+                </kbd>
               </button>
               <button class="btn-icon-action hx-cam-btn" id="cameraSetupBtn" title="Adjust your camera">
                 <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
@@ -12221,36 +12221,8 @@ const FIREBASE_CONFIG = {
           <!-- RIGHT COLUMN -->
           <div class="home-col">
 
-            <!-- Daily challenge -->
-            <div class="card challenge-card" id="dailyChallengeCard">
-              <div class="card-hd">
-                <div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily challenge</div>
-                <span class="daily-streak-mini" id="dailyStreakBadge" title="Daily completion streak">🔥 0</span>
-              </div>
-              <div class="daily-goal-row">
-                <div class="daily-card-goal" id="dailyChallengeText">Win 3 ranked matches today</div>
-                <button class="daily-reroll-btn" id="dailyRerollBtn" title="Reroll (1 per day)" aria-label="Reroll challenge"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-rotate"/></svg></button>
-              </div>
-              <div class="rank-card-progress">
-                <div class="ui-bar"><div class="ui-bar-fill" id="dailyProgressFill" style="width:0%"></div></div>
-                <div class="rank-card-meta">
-                  <span id="dailyProgressText">0/3</span>
-                  <span class="daily-reward" id="dailyRewardText">+50 ELO bonus</span>
-                </div>
-              </div>
-              <div class="challenge-reset" id="dailyResetIn">Resets in 24h</div>
-            </div>
-
-            <!-- Weekly challenges (XP) -->
-            <div class="card challenge-card" id="weeklyChallengeCard">
-              <div class="card-hd">
-                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg> Weekly challenges</div>
-                <span class="daily-streak-mini" id="weeklyDoneBadge">0/3</span>
-              </div>
-              <div class="weekly-list" id="weeklyList"></div>
-              <div class="weekly-foot" id="weeklyFoot">Clear all 3 for a <b>bonus level</b></div>
-              <div class="challenge-reset" id="weeklyResetIn">Resets in 7d</div>
-            </div>
+            <!-- Daily + Weekly challenges (mounted by JS) -->
+            <div class="challenge-stack" id="homeChallengeSlot"></div>
 
             <!-- Friends -->
             <div class="card" id="friendsCard">
@@ -12388,17 +12360,7 @@ const FIREBASE_CONFIG = {
               <div class="rank-card-meta"><span id="playRankNext">—</span><span class="rank-card-stats"><b id="playRankWR">—</b> win rate</span></div>
             </div>
           </div>
-          <div class="card">
-            <div class="card-hd">
-              <div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily challenge</div>
-              <span class="daily-streak-mini" id="playDailyStreak">🔥 0</span>
-            </div>
-            <div class="daily-card-goal" id="playDailyText">Win 3 ranked matches today</div>
-            <div class="rank-card-progress">
-              <div class="ui-bar"><div class="ui-bar-fill" id="playDailyFill" style="width:0%"></div></div>
-              <div class="rank-card-meta"><span id="playDailyProgress">0/3</span><span class="daily-reward">+50 ELO bonus</span></div>
-            </div>
-          </div>
+          <div class="challenge-stack" id="playChallengeSlot"></div>
         </div>
 
         <!-- The throws -->
@@ -13047,14 +13009,16 @@ const FIREBASE_CONFIG = {
 
           <div class="duel-result" id="resultDisplay">
             <div class="duel-result-inner" id="resultInner">
-              <div class="duel-result-picks">
-                <div class="duel-result-pick" id="resultYouPick"><svg></svg></div>
-                <div class="duel-result-vs">vs</div>
-                <div class="duel-result-pick" id="resultOppPick"><svg></svg></div>
-              </div>
-              <div class="duel-result-headwrap">
-                <h2 class="duel-result-headline" id="resultHeadline">—</h2>
-                <div class="duel-result-detail" id="resultDetail">—</div>
+              <div class="duel-result-main">
+                <div class="duel-result-picks">
+                  <div class="duel-result-pick" id="resultYouPick"><svg></svg></div>
+                  <div class="duel-result-vs">vs</div>
+                  <div class="duel-result-pick" id="resultOppPick"><svg></svg></div>
+                </div>
+                <div class="duel-result-headwrap">
+                  <h2 class="duel-result-headline" id="resultHeadline">—</h2>
+                  <div class="duel-result-detail" id="resultDetail">—</div>
+                </div>
               </div>
               <div class="duel-result-prediction" id="predictionBadge">
                 <svg viewBox="0 0 24 24"><use href="#i-star"/></svg>
@@ -13161,9 +13125,6 @@ const FIREBASE_CONFIG = {
 
 <!-- RANK UP OVERLAY -->
 <div class="rankup-overlay" id="rankupOverlay">
-  <!-- Cinematic letterbox bars (animate in for the apex Legend reveal) -->
-  <div class="rankup-bar top"></div>
-  <div class="rankup-bar bot"></div>
 
   <!-- Animated rays background -->
   <div class="rankup-rays"></div>
@@ -13203,6 +13164,8 @@ const FIREBASE_CONFIG = {
 
       <!-- NEW RANK (zooms in from depth) -->
       <div class="rankup-new-rank" id="rankupNewRank">
+        <!-- Crown — drops in for the apex (Legend) reveal only -->
+        <div class="rankup-crown" id="rankupCrown" aria-hidden="true">👑</div>
         <!-- Light sweep across the new icon -->
         <div class="rankup-sweep-wrap">
           <svg class="rankup-new-icon" id="rankupIcon" width="220" height="220"></svg>
@@ -13213,7 +13176,7 @@ const FIREBASE_CONFIG = {
       </div>
     </div>
 
-    <!-- Big tier name underneath -->
+    <!-- Big tier name underneath (sunburst behind it for Legend) -->
     <h2 id="rankupRankName" class="rankup-rank-name-shimmer">SILVER</h2>
     <div class="rankup-sub" id="rankupSub">1100 RATING</div>
     <div class="rankup-from" id="rankupFrom">Promoted from Bronze III</div>
@@ -16527,11 +16490,11 @@ function attachChatListener(){
             colorIdx: data['color_' + otherUid] || 0,
           };
         });
-        [$('#chatBadge'), $('#navMsgBadge')].forEach(badge => {
-          if(!badge) return;
+        const badge = $('#chatBadge');
+        if(badge){
           if(totalUnread > 0){ badge.style.display = ''; badge.textContent = totalUnread > 9 ? '9+' : totalUnread; }
           else badge.style.display = 'none';
-        });
+        }
         if($('#chatPanel').classList.contains('show') && $('#chatThread').style.display === 'none') renderChatConvList();
       },
       (err) => console.warn('[chat] index listener', err)
@@ -17426,20 +17389,17 @@ document.querySelectorAll('.stat-mini').forEach(c => {
   c.addEventListener('click', openStatsModal);
 });
 
-// Reroll today's daily challenge (one per day)
-on('#dailyRerollBtn', 'click', (e) => { e.stopPropagation(); rerollDailyChallenge(); });
-
-// Daily challenge card click → show toast with info
+// Reroll today's daily challenge (delegated — works on Home + Play instances)
 document.addEventListener('click', e => {
-  const card = e.target.closest('.daily-challenge-card');
+  const rb = e.target.closest('.dc-reroll');
+  if(rb){ e.stopPropagation(); rerollDailyChallenge(); return; }
+  // Daily card click → quick info toast
+  const card = e.target.closest('.js-daily-card');
   if(card){
     const data = getDailyChallenge();
     const left = Math.max(0, data.challenge.goal - data.progress);
-    if(data.completed){
-      toast('✓ Daily challenge complete! Come back tomorrow for a new one.', 'success');
-    } else {
-      toast(`${data.challenge.text} — ${left} to go`, 'success');
-    }
+    if(data.completed) toast('✓ Daily challenge complete! Come back tomorrow for a new one.', 'success');
+    else toast(`${data.challenge.text} — ${left} to go`, 'success');
   }
 });
 
@@ -17529,15 +17489,53 @@ function rerollDailyChallenge(){
 }
 
 // A small celebratory confetti burst centered on a challenge card.
+// Confetti micro-burst on each instance of a challenge card (home + play).
 function celebrateChallenge(sel){
-  const el = typeof sel === 'string' ? $(sel) : sel;
-  if(!el) return;
-  el.classList.remove('just-completed'); void el.offsetWidth; el.classList.add('just-completed');
-  if(document.body.classList.contains('low-power')) return;
-  const r = el.getBoundingClientRect();
-  const cx = r.left + r.width / 2, cy = r.top + Math.min(r.height / 2, 90);
-  ['#22d3a3','#ffd33d','#9b7bff','#5fc9ff'].forEach((c, i) => setTimeout(() => burst(cx, cy, c, 26), i * 60));
+  const els = document.querySelectorAll(typeof sel === 'string' ? sel : '');
+  const list = els.length ? els : (sel && sel.nodeType ? [sel] : []);
+  list.forEach(el => {
+    if(!el || !el.offsetParent) return; // skip hidden instances
+    el.classList.remove('just-completed'); void el.offsetWidth; el.classList.add('just-completed');
+    if(document.body.classList.contains('low-power')) return;
+    const r = el.getBoundingClientRect();
+    const cx = r.left + r.width / 2, cy = r.top + Math.min(r.height / 2, 90);
+    ['#22d3a3','#ffd33d','#9b7bff','#5fc9ff'].forEach((c, i) => setTimeout(() => burst(cx, cy, c, 26), i * 60));
+  });
   try { haptic([12, 30, 18]); } catch(e){}
+}
+
+// ===== Reusable challenge cards (mounted on Home + Play) =====
+function challengeCardsHTML(){
+  return `
+    <div class="card challenge-card js-daily-card">
+      <div class="card-hd">
+        <div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily challenge</div>
+        <span class="daily-streak-mini dc-streak" title="Daily completion streak">🔥 0</span>
+      </div>
+      <div class="daily-goal-row">
+        <div class="daily-card-goal dc-text">Win 3 ranked matches today</div>
+        <button class="daily-reroll-btn dc-reroll" type="button" title="Reroll (1 per day)" aria-label="Reroll challenge"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-rotate"/></svg></button>
+      </div>
+      <div class="rank-card-progress">
+        <div class="ui-bar"><div class="ui-bar-fill dc-fill" style="width:0%"></div></div>
+        <div class="rank-card-meta"><span class="dc-count">0/3</span><span class="daily-reward dc-reward">+50 ELO bonus</span></div>
+      </div>
+      <div class="challenge-reset dc-reset">Resets in 24h</div>
+    </div>
+    <div class="card challenge-card js-weekly-card">
+      <div class="card-hd">
+        <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg> Weekly challenges</div>
+        <span class="daily-streak-mini wc-badge">0/3</span>
+      </div>
+      <div class="weekly-list wc-list"></div>
+      <div class="weekly-foot wc-foot">Clear all 3 for a <b>bonus level</b></div>
+      <div class="challenge-reset wc-reset">Resets in 7d</div>
+    </div>`;
+}
+function mountChallengeCards(){
+  document.querySelectorAll('#homeChallengeSlot, #playChallengeSlot').forEach(slot => {
+    if(slot && !slot.dataset.mounted){ slot.innerHTML = challengeCardsHTML(); slot.dataset.mounted = '1'; }
+  });
 }
 
 function getDailyStreak(){
@@ -17547,30 +17545,30 @@ function getDailyStreak(){
 }
 
 function refreshDailyChallenge(){
+  mountChallengeCards();
   const data = getDailyChallenge();
   const streak = getDailyStreak();
-  setText('#dailyChallengeText', data.challenge.text);
-  const pct = Math.min(100, (data.progress / data.challenge.goal) * 100);
-  const fill = $('#dailyProgressFill');
-  if(fill){
-    fill.style.width = pct + '%';
-    fill.classList.toggle('complete', data.completed);
-  }
-  setText('#dailyProgressText', `${Math.min(data.progress, data.challenge.goal)}/${data.challenge.goal}`);
-  setText('#dailyStreakBadge', `🔥 ${streak}`);
   const rwd = dailyReward(data.challenge);
-  setText('#dailyRewardText', data.completed ? `✓ +${rwd} ELO earned` : `+${rwd} ELO bonus`);
-  setText('#dailyResetIn', `Resets in ${fmtCountdown(msUntilMidnight())}`);
-  // Reroll button state
-  const reroll = $('#dailyRerollBtn');
-  if(reroll){
-    const can = !data.completed && data.rerolls > 0;
-    reroll.disabled = !can;
-    reroll.title = can ? 'Swap for a different challenge (1 per day)' : (data.completed ? 'Challenge complete' : 'No rerolls left today');
-    reroll.style.display = '';
-  }
-  const card = $('#dailyChallengeCard');
-  if(card) card.classList.toggle('daily-done', !!data.completed);
+  const pct = Math.min(100, (data.progress / data.challenge.goal) * 100);
+  const countTxt = `${Math.min(data.progress, data.challenge.goal)}/${data.challenge.goal}`;
+  const resetTxt = `Resets in ${fmtCountdown(msUntilMidnight())}`;
+  const canReroll = !data.completed && data.rerolls > 0;
+  document.querySelectorAll('.js-daily-card').forEach(card => {
+    const set = (s, t) => { const el = card.querySelector(s); if(el) el.textContent = t; };
+    set('.dc-text', data.challenge.text);
+    set('.dc-count', countTxt);
+    set('.dc-streak', `🔥 ${streak}`);
+    set('.dc-reward', data.completed ? `✓ +${rwd} ELO earned` : `+${rwd} ELO bonus`);
+    set('.dc-reset', resetTxt);
+    const fill = card.querySelector('.dc-fill');
+    if(fill){ fill.style.width = pct + '%'; fill.classList.toggle('complete', data.completed); }
+    const reroll = card.querySelector('.dc-reroll');
+    if(reroll){
+      reroll.disabled = !canReroll;
+      reroll.title = canReroll ? 'Swap for a different challenge (1 per day)' : (data.completed ? 'Challenge complete' : 'No rerolls left today');
+    }
+    card.classList.toggle('daily-done', !!data.completed);
+  });
 }
 
 function updateDailyChallengeProgress(matchResult, roundDetails){
@@ -17623,7 +17621,7 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
     // by updateMatchStats so it shows in the result breakdown.
     state._dailyBonusElo = dailyReward(c);
     toast(`🎉 Daily complete: ${c.text} · +${dailyReward(c)} ELO!`, 'success');
-    try { celebrateChallenge('#dailyChallengeCard'); } catch(e){}
+    try { celebrateChallenge('.js-daily-card'); } catch(e){}
     // increment streak
     const lastStreakDate = localStorage.getItem('rosham_daily_last') || '';
     const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
@@ -17676,42 +17674,32 @@ function getWeeklyChallenges(){
   return data;
 }
 function refreshWeeklyChallenges(){
-  const box = $('#weeklyList');
-  if(!box) return;
+  mountChallengeCards();
+  const lists = document.querySelectorAll('.wc-list');
+  if(!lists.length) return;
   const data = getWeeklyChallenges();
-  box.innerHTML = '';
   let done = 0;
-  data.challenges.forEach(c => {
+  const rowsHTML = data.challenges.map(c => {
     if(c.completed) done++;
     const pct = Math.min(100, (c.progress / c.goal) * 100);
-    const row = document.createElement('div');
-    row.className = 'weekly-row' + (c.completed ? ' done' : '');
-    row.innerHTML = `
+    return `<div class="weekly-row${c.completed ? ' done' : ''}">
       <div class="weekly-top">
         <span class="weekly-goal">${c.completed ? '<svg class="weekly-tick" viewBox="0 0 24 24"><use href="#i-check"/></svg> ' : ''}${escapeHTML(c.text)}</span>
         <span class="weekly-xp">+1 LEVEL</span>
       </div>
       <div class="ui-bar"><div class="ui-bar-fill${c.completed ? ' complete' : ''}" style="width:${pct}%"></div></div>
-      <div class="weekly-meta">${Math.min(c.progress, c.goal)}/${c.goal}</div>`;
-    box.appendChild(row);
-  });
-  const badge = $('#weeklyDoneBadge');
-  if(badge){
-    badge.textContent = `${done}/3`;
-    badge.classList.toggle('all-done', done === 3);
-  }
-  setText('#weeklyResetIn', `Resets in ${fmtCountdown(msUntilWeekReset())}`);
-  // "Clear all 3" bonus banner
-  const foot = $('#weeklyFoot');
-  if(foot){
-    if(done === 3 && data.bonusClaimed){
-      foot.innerHTML = '<b style="color:var(--mint)">✓ All cleared — bonus level claimed!</b>';
-    } else if(done === 3){
-      foot.innerHTML = 'All challenges done — claiming bonus…';
-    } else {
-      foot.innerHTML = `Clear all 3 for a <b>bonus level</b> · ${3 - done} to go`;
-    }
-  }
+      <div class="weekly-meta">${Math.min(c.progress, c.goal)}/${c.goal}</div>
+    </div>`;
+  }).join('');
+  const resetTxt = `Resets in ${fmtCountdown(msUntilWeekReset())}`;
+  const footHTML = (done === 3 && data.bonusClaimed)
+    ? '<b style="color:var(--mint)">✓ All cleared — bonus level claimed!</b>'
+    : (done === 3 ? 'All challenges done — claiming bonus…'
+                  : `Clear all 3 for a <b>bonus level</b> · ${3 - done} to go`);
+  lists.forEach(list => { list.innerHTML = rowsHTML; });
+  document.querySelectorAll('.wc-badge').forEach(b => { b.textContent = `${done}/3`; b.classList.toggle('all-done', done === 3); });
+  document.querySelectorAll('.wc-foot').forEach(f => { f.innerHTML = footHTML; });
+  document.querySelectorAll('.wc-reset').forEach(r => { r.textContent = resetTxt; });
 }
 // Award XP (used by weekly challenges) — also handles the level-up toast.
 async function grantXp(amount, reason){
@@ -17753,7 +17741,7 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
       // Each weekly challenge grants a FULL level's worth of XP at your current level.
       const curLvl = levelFromXp(state.profile?.totalXp || 0).level;
       grantXp(xpForLevel(curLvl), 'Weekly challenge · +1 level');
-      try { celebrateChallenge('#weeklyChallengeCard'); } catch(e){}
+      try { celebrateChallenge('.js-weekly-card'); } catch(e){}
     }
   });
   // BONUS: clearing all three in a week grants an extra level, once.
@@ -21603,8 +21591,8 @@ function showMatchResultScreen(result){
       setTimeout(() => {
         showRankUp(state._pendingRankUp.from, state._pendingRankUp.to);
         state._pendingRankUp = null;
-        // After rank-up auto-dismisses, show level-up
-        if(state._pendingLevelUp) setTimeout(showLevelUpIfPending, 9500);
+        // The level-up is shown by showRankUp's dismiss handler once the
+        // player taps continue (the rank-up no longer auto-dismisses).
       }, 1800);
     } else {
       // No rank-up — show level-up shortly after result settles
@@ -21790,6 +21778,12 @@ function showRankUp(oldRank, newRank){
     document.removeEventListener('keydown', keydismiss);
     if(isLegend) stopLegendSound();
     flushMenuMusic();
+    // Any queued level-up shows right after the player dismisses the rank-up
+    if(state._pendingLevelUp){
+      const lu = state._pendingLevelUp;
+      state._pendingLevelUp = null;
+      setTimeout(() => { try { showLevelUp(lu); } catch(e){} }, 350);
+    }
   };
   const keydismiss = (e) => { if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); } };
   // Hold dismissal until the entrance has played (longer for Legend)
@@ -21799,8 +21793,8 @@ function showRankUp(oldRank, newRank){
     if(hint) hint.classList.add('ready');
   }, isLegend ? 6200 : 4400);
 
-  // auto-dismiss if untouched (Legend lingers so you can soak it in)
-  timers.push(setTimeout(() => { if(overlay.classList.contains('show')) dismiss(); }, isLegend ? 15000 : 9500));
+  // No auto-dismiss — the celebration stays up until the player taps continue
+  // (click / tap / Space / Enter / Esc).
 }
 
 // ============= RANK-DOWN POPUP (after forfeit-by-refresh) =============
@@ -22727,8 +22721,10 @@ function renderHomePage(){
 // Keep the challenge reset countdowns ticking (once a minute, only the labels).
 setInterval(() => {
   try {
-    if($('#dailyResetIn')) setText('#dailyResetIn', `Resets in ${fmtCountdown(msUntilMidnight())}`);
-    if($('#weeklyResetIn')) setText('#weeklyResetIn', `Resets in ${fmtCountdown(msUntilWeekReset())}`);
+    const dTxt = `Resets in ${fmtCountdown(msUntilMidnight())}`;
+    const wTxt = `Resets in ${fmtCountdown(msUntilWeekReset())}`;
+    document.querySelectorAll('.dc-reset').forEach(el => el.textContent = dTxt);
+    document.querySelectorAll('.wc-reset').forEach(el => el.textContent = wTxt);
   } catch(e){}
 }, 60000);
 
@@ -23214,12 +23210,9 @@ function renderPlayPage(){
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games>0 ? Math.round(((p.wins||0)/games)*100) : 0;
   setText('#playRankWR', wr+'%');
-  // mirror daily challenge
-  setText('#playDailyText', $('#dailyChallengeText')?.textContent || 'Win 3 ranked matches today');
-  setText('#playDailyProgress', $('#dailyProgressText')?.textContent || '0/3');
-  setText('#playDailyStreak', $('#dailyStreakBadge')?.textContent || '🔥 0');
-  const df = $('#dailyProgressFill'); const pdf = $('#playDailyFill');
-  if(df && pdf) pdf.style.width = df.style.width;
+  // Daily + weekly challenge cards (mounted on the play page too)
+  try { refreshDailyChallenge(); } catch(e){}
+  try { refreshWeeklyChallenges(); } catch(e){}
 }
 
 // ===== CAMERA CALIBRATION WIZARD =====
@@ -23553,18 +23546,10 @@ on('#chatBtn', 'click', (e) => {
 });
 // click outside closes flyouts
 document.addEventListener('click', (e) => {
-  if(!e.target.closest('#notifPanel, #chatPanel, #notifBtn, #chatBtn, #navMessages')) closeAllFlyouts();
+  if(!e.target.closest('#notifPanel, #chatPanel, #notifBtn, #chatBtn')) closeAllFlyouts();
 });
 on('#notifClearBtn', 'click', clearAllNotifications);
 on('#chatBackBtn', 'click', () => { clearDmTyping(); cancelDmReply(); state._chatThreadGlobal = false; $('#chatThread').classList.remove('is-global'); $('#chatThread').style.display = 'none'; $('#chatConvList').style.display = ''; const p=$('#chatEmojiPalette'); if(p) p.style.display='none'; renderChatConvList(); });
-// Sidebar "Messages" → open the Messages flyout (which holds Global Chat + DMs)
-on('#navMessages', 'click', (e) => {
-  e.stopPropagation();
-  const p = $('#chatPanel');
-  const wasOpen = p.classList.contains('show');
-  closeAllFlyouts();
-  if(!wasOpen){ p.classList.add('show'); renderChatConvList(); }
-});
 on('#chatThreadSend', 'click', sendChatMessage);
 on('#chatThreadInput', 'keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); sendChatMessage(); } });
 on('#chatThreadInput', 'input', onDmTyping);
