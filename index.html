@@ -603,6 +603,11 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .report-reason .rr-radio{ width:16px; height:16px; border-radius:50%; border:2px solid var(--text-faint); flex-shrink:0; position:relative; }
 .report-reason.selected .rr-radio{ border-color:var(--coral); }
 .report-reason.selected .rr-radio::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--coral); }
+.report-evidence{ margin-top:12px; }
+.report-evidence-row{ display:flex; align-items:center; gap:9px; font-size:12.5px; color:var(--text-dim); cursor:pointer; }
+.report-evidence-row input{ width:16px; height:16px; accent-color:var(--coral); }
+.report-shot-wrap{ margin-top:9px; border-radius:10px; overflow:hidden; border:1px solid var(--line); background:#000; max-height:150px; display:flex; justify-content:center; }
+.report-shot-wrap img{ max-width:100%; max-height:150px; object-fit:contain; display:block; }
 .warn-icon{ width:72px; height:72px; border-radius:50%; background:rgba(255,170,40,.12); display:grid; place-items:center; color:#ffaa28; margin:0 auto; }
 .warn-item{ padding:12px 14px; border-radius:12px; background:var(--surface-2); border:1px solid rgba(255,170,40,.3); }
 .warn-item-reason{ font-weight:700; font-size:13px; }
@@ -620,6 +625,8 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .admin-report-row .arr-body{ flex:1; min-width:0; }
 .admin-report-row .arr-target{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; }
 .admin-report-row .arr-reason{ font-size:12px; color:var(--coral); margin-top:2px; }
+.admin-report-row .arr-evidence{ margin-top:6px; max-width:120px; max-height:80px; border-radius:8px; border:1px solid var(--line); cursor:zoom-in; display:block; object-fit:cover; }
+.admin-report-row .arr-evidence.big{ max-width:100%; max-height:320px; cursor:zoom-out; object-fit:contain; }
 .admin-report-row .arr-meta{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:4px; }
 .admin-report-row .arr-actions{ display:flex; flex-direction:column; gap:6px; flex-shrink:0; }
 .admin-report-row .arr-action{ padding:6px 12px; border-radius:9px; background:var(--coral); border:none; color:#fff; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; cursor:pointer; flex-shrink:0; }
@@ -649,18 +656,26 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 @media (max-width:600px){ .scroll-top-btn{ bottom:calc(86px + env(safe-area-inset-bottom,0px)); right:14px; } }
 
 /* ============ ACCESSIBILITY MODES ============ */
+/* The settings toggle applies `reduced-motion`; older code used `reduce-motion`.
+   Honour BOTH so reduced motion actually kills every animation globally. */
 body.reduce-motion *,
 body.reduce-motion *::before,
-body.reduce-motion *::after {
+body.reduce-motion *::after,
+body.reduced-motion *,
+body.reduced-motion *::before,
+body.reduced-motion *::after {
   animation-duration: 0.001s !important;
   animation-delay: 0s !important;
   animation-iteration-count: 1 !important;
   transition-duration: 0.05s !important;
+  scroll-behavior: auto !important;
 }
-body.reduce-motion .grain,
-body.reduce-motion .noise,
-body.reduce-motion body::before,
-body.reduce-motion body::after { animation: none !important; }
+body.reduce-motion .grain, body.reduce-motion .noise,
+body.reduce-motion .orb, body.reduce-motion .ambient-orb,
+body.reduced-motion .grain, body.reduced-motion .noise,
+body.reduced-motion .orb, body.reduced-motion .ambient-orb,
+body.reduce-motion body::before, body.reduce-motion body::after,
+body.reduced-motion body::before, body.reduced-motion body::after { animation: none !important; }
 
 body.high-contrast{
   --text: #ffffff;
@@ -1696,6 +1711,13 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
   background:linear-gradient(90deg, transparent, var(--amber), transparent); opacity:.5;
 }
 .js-weekly-card.challenge-card::after{ background:linear-gradient(90deg, transparent, var(--violet), transparent); }
+.js-quest-card.challenge-card::after{ background:linear-gradient(90deg, transparent, var(--mint), transparent); }
+.quest-track{ display:flex; gap:6px; align-items:center; margin:10px 0 2px; }
+.qc-dot{ flex:1; height:4px; border-radius:999px; background:var(--surface-3); transition:background .25s; }
+.qc-dot.active{ background:var(--mint); box-shadow:0 0 8px -1px var(--mint); }
+.qc-dot.done{ background:var(--mint); opacity:.7; }
+.js-quest-card .qc-fill{ background:linear-gradient(180deg, rgba(255,255,255,.26), transparent 55%), linear-gradient(90deg, var(--mint), #18b88c) !important; }
+.js-quest-card .daily-reward{ color:var(--mint) !important; background:rgba(34,211,163,.12); border:1px solid rgba(34,211,163,.3); font-family:var(--font-mono); font-size:10px; font-weight:800; padding:3px 9px; border-radius:999px; }
 .daily-goal-row{ display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
 .daily-goal-row .daily-card-goal{ flex:1; }
 .daily-reroll-btn{
@@ -5768,6 +5790,19 @@ h2.match-title{
   0%, 100%{ box-shadow: inset 0 0 0 0 rgba(255,107,0,0); }
   50%{ box-shadow: inset 0 0 80px rgba(255,107,0,.45); }
 }
+/* Loss streak — "ice cold" frost tint on your video */
+.duel-video.ice-cold{
+  animation: duelColdGlow 2s ease-in-out infinite;
+}
+@keyframes duelColdGlow{
+  0%, 100%{ box-shadow: inset 0 0 0 0 rgba(95,201,255,0); }
+  50%{ box-shadow: inset 0 0 80px rgba(95,201,255,.4); }
+}
+.duel-video.ice-cold::after{
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
+  background: radial-gradient(120% 90% at 50% 0%, rgba(95,201,255,.14), transparent 60%);
+  mix-blend-mode: screen;
+}
 
 /* VS DIVIDER — minimal & clean */
 .duel-divider{
@@ -6691,6 +6726,49 @@ h2.match-title{
   0%, 100%{ transform: scale(1) rotate(-5deg); }
   50%{ transform: scale(1.15) rotate(5deg); }
 }
+/* Ice-cold badge — mirror of the fire badge, blue palette */
+.duel-cold-badge{
+  position: absolute;
+  top: 80px;
+  right: 24px;
+  z-index: 12;
+  display: none;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #5fc9ff, #3a7bd5);
+  font-family: var(--font-display);
+  font-stretch: 60%;
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(58,123,213,.5), 0 0 40px rgba(95,201,255,.3);
+  animation: coldBadgePulse 2s ease-in-out infinite;
+}
+.duel-cold-badge.show{ display: inline-flex; }
+.duel-cold-badge .emoji{ font-size: 15px; animation: coldShiver .9s ease-in-out infinite; }
+.duel-cold-badge .count{ padding: 2px 8px; background: rgba(0,0,0,.3); border-radius: 999px; font-size: 11px; }
+@keyframes coldBadgePulse{
+  0%, 100%{ box-shadow: 0 8px 24px rgba(58,123,213,.5), 0 0 40px rgba(95,201,255,.3); }
+  50%{ box-shadow: 0 8px 32px rgba(58,123,213,.7), 0 0 60px rgba(95,201,255,.5); }
+}
+@keyframes coldShiver{ 0%,100%{ transform: translateX(-1px) rotate(-4deg); } 50%{ transform: translateX(1px) rotate(4deg); } }
+@media (max-width: 600px){ .duel-cold-badge{ top: 56px; right: 10px; padding: 7px 11px; font-size: 10px; } }
+/* Fair-play / anti-cheat warning badge */
+.duel-fairplay-warn{
+  position:absolute; top:128px; right:24px; z-index:12; display:none; align-items:center; gap:7px;
+  padding:8px 13px; border-radius:999px; background:rgba(255,170,40,.14); border:1px solid rgba(255,170,40,.55);
+  color:#ffce6e; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+}
+.duel-fairplay-warn.show{ display:inline-flex; animation: fpWarnIn .4s cubic-bezier(.2,1.6,.4,1), fpWarnPulse 2s ease-in-out .4s infinite; }
+.duel-fairplay-warn .emoji{ font-size:13px; }
+@keyframes fpWarnIn{ from{ opacity:0; transform:translateY(-8px); } to{ opacity:1; transform:translateY(0); } }
+@keyframes fpWarnPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,170,40,0); } 50%{ box-shadow:0 0 16px -2px rgba(255,170,40,.5); } }
+@media (max-width: 600px){ .duel-fairplay-warn{ top: 100px; right: 10px; padding: 6px 10px; font-size: 9px; } }
 
 /* Emote flash overlays on the duel videos */
 .duel-emote-flash{
@@ -10643,6 +10721,48 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
 .pm-rankprog-cur{ color:var(--text); font-weight:700; }
 .pm-rankprog-next{ color:var(--text-faint); }
 .pm-rankprog-label{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:5px; text-align:right; }
+/* Daily login reward popup */
+.login-reward-card{ position:relative; overflow:hidden; }
+.login-reward-card::before{ content:''; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(120% 80% at 50% -10%, rgba(255,211,61,.18), transparent 60%); }
+.lr-gift{ font-size:64px; line-height:1; margin:6px 0 4px; animation:lrGiftPop .6s cubic-bezier(.2,1.7,.4,1) both, lrGiftFloat 3s ease-in-out 1s infinite; }
+@keyframes lrGiftPop{ from{ transform:scale(.3) rotate(-12deg); opacity:0; } to{ transform:scale(1) rotate(0); opacity:1; } }
+@keyframes lrGiftFloat{ 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-6px) rotate(2deg); } }
+.lr-eyebrow{ font-family:var(--font-mono); font-size:10px; letter-spacing:.3em; color:var(--text-faint); font-weight:700; }
+.lr-amount{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:46px; line-height:1; margin:6px 0 4px;
+  background:linear-gradient(180deg,#fff,#ffd33d); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 0 20px rgba(255,211,61,.4)); }
+.lr-streak{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
+/* Season reset popup */
+.season-reset-row{ display:flex; align-items:center; justify-content:center; gap:14px; margin:4px 0; }
+.srr-col{ flex:1; padding:10px 8px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
+.srr-label{ font-family:var(--font-mono); font-size:9px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:3px; }
+.srr-val{ font-family:var(--font-display); font-stretch:70%; font-weight:800; font-size:18px; }
+.srr-val.mint{ color:var(--mint); }
+.srr-arrow{ color:var(--text-faint); font-size:18px; flex:0 0 auto; }
+.season-reward{ margin-top:12px; padding:9px 14px; border-radius:10px; font-size:13px; color:var(--text);
+  background:color-mix(in srgb, var(--amber) 12%, var(--surface-2)); border:1px solid color-mix(in srgb, var(--amber) 35%, transparent); }
+.season-reward b{ color:var(--amber); }
+/* Showcase — featured badges near the top of the profile */
+.pm-showcase{ display:flex; gap:10px; margin:0 0 16px; }
+.pm-sc-badge{ flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; padding:12px 8px; border:1px solid var(--line); border-radius:14px;
+  background:radial-gradient(120% 90% at 50% 0%, rgba(255,211,61,.10), transparent 60%), var(--surface-2); }
+.pm-sc-ic{ font-size:30px; line-height:1; filter:drop-shadow(0 2px 6px rgba(0,0,0,.5)); }
+.pm-sc-name{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:11px; text-align:center; color:var(--text); letter-spacing:-.01em; }
+/* Full badge grid */
+.pm-badges-section h4{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:12px; letter-spacing:.1em; color:var(--text-dim); margin:0 0 12px; }
+.pm-badges-count{ color:var(--amber); font-family:var(--font-mono); font-size:11px; margin-left:6px; }
+.pm-badges{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:4px; }
+.pm-badge{ width:40px; height:40px; border-radius:11px; display:grid; place-items:center; font-size:21px;
+  background:var(--surface-2); border:1px solid var(--line); cursor:default; transition:transform .15s; }
+.pm-badge:hover{ transform:translateY(-2px); }
+.pm-badge.featured{ border-color:var(--amber); box-shadow:0 0 0 1px var(--amber), 0 0 14px -4px var(--amber); }
+/* Showcase picker (edit profile) */
+.showcase-pick{ display:flex; flex-wrap:wrap; gap:8px; }
+.showcase-chip{ display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:999px; cursor:pointer;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim); font-family:var(--font-body); font-size:12px; transition:all .15s; }
+.showcase-chip .sc-ic{ font-size:15px; }
+.showcase-chip:hover{ border-color:var(--line-bright); color:var(--text); }
+.showcase-chip.active{ border-color:var(--amber); color:var(--text); background:color-mix(in srgb, var(--amber) 12%, var(--surface-2)); box-shadow:0 0 0 1px var(--amber); }
 .profile-modal .av-xl .emoji-av{font-size:46px;}
 .profile-modal .pm-name{
   font-family:var(--font-display); font-stretch:60%;
@@ -11097,7 +11217,14 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 8px 24px rgba(255,45,107,.2);
 }
-.disconnect-banner.show{display:block; animation: bannerSlideUp .4s cubic-bezier(.2,1.6,.4,1);}
+.disconnect-banner.show{display:flex; align-items:center; justify-content:center; gap:9px; animation: bannerSlideUp .4s cubic-bezier(.2,1.6,.4,1), dcBannerPulse 1.6s ease-in-out .4s infinite;}
+.disconnect-banner.show::before{
+  content:''; width:10px; height:10px; border-radius:50%; flex:0 0 auto;
+  border:2px solid rgba(255,45,107,.35); border-top-color:var(--coral);
+  animation: dcSpin .8s linear infinite;
+}
+@keyframes dcSpin{ to{ transform: rotate(360deg); } }
+@keyframes dcBannerPulse{ 0%,100%{ box-shadow:0 8px 24px rgba(255,45,107,.2); } 50%{ box-shadow:0 8px 30px rgba(255,45,107,.4), 0 0 0 1px rgba(255,45,107,.3); } }
 @keyframes bannerSlideUp{
   from{ opacity: 0; transform: translateY(10px); }
   to{ opacity: 1; transform: translateY(0); }
@@ -13060,6 +13187,14 @@ const FIREBASE_CONFIG = {
           <span>ON FIRE</span>
           <span class="count" id="fireCount">3</span>
         </div>
+        <div class="duel-cold-badge" id="iceColdBadge">
+          <span class="emoji">❄️</span>
+          <span>ICE COLD</span>
+          <span class="count" id="coldCount">3</span>
+        </div>
+        <div class="duel-fairplay-warn" id="fairplayWarn" title="Your opponent's throws are arriving suspiciously late. You can report them.">
+          <span class="emoji">⚠️</span><span>SUSPICIOUS TIMING</span>
+        </div>
 
         <!-- Hidden but referenced by JS -->
         <div id="roundState" style="display:none;"></div>
@@ -13906,6 +14041,8 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="pm-status" id="pmStatus" style="display:none;">—</div>
     <div class="bio" id="pmBio" style="display:none;">—</div>
+    <!-- Showcase — up to 3 featured badges -->
+    <div class="pm-showcase" id="pmShowcase" style="display:none;"></div>
     <!-- Recent form (last matches) -->
     <div class="pm-form-wrap" id="pmFormWrap" style="display:none;">
       <span class="pm-form-label">RECENT FORM</span>
@@ -13944,6 +14081,10 @@ const FIREBASE_CONFIG = {
     </div>
     <!-- Last seen -->
     <div class="pm-lastseen" id="pmLastSeen"></div>
+    <div class="pm-badges-section" id="pmBadgesSection" style="display:none;">
+      <h4>BADGES <span class="pm-badges-count" id="pmBadgesCount"></span></h4>
+      <div class="pm-badges" id="pmBadges"></div>
+    </div>
     <div class="match-history" id="pmHistorySection" style="display:none;">
       <h4>RECENT MATCHES</h4>
       <div class="mh-list" id="pmHistoryList"></div>
@@ -14023,6 +14164,10 @@ const FIREBASE_CONFIG = {
       <div class="field">
         <label>Profile accent <span style="color:var(--text-faint); font-weight:400;">· tints your profile banner</span></label>
         <div class="accent-pick" id="accentPick"></div>
+      </div>
+      <div class="field">
+        <label>Showcase badges <span style="color:var(--text-faint); font-weight:400;">· pick up to 3 to feature on your profile</span></label>
+        <div class="showcase-pick" id="showcasePick"></div>
       </div>
       <div class="field">
         <label>Privacy</label>
@@ -14209,9 +14354,56 @@ const FIREBASE_CONFIG = {
     <p style="color:var(--text-dim); font-size:13px; margin:0 0 16px;">Why are you reporting <b id="reportTargetName">this player</b>? They'll also be blocked from matching with you.</p>
     <div class="report-reasons" id="reportReasons"></div>
     <textarea id="reportDetails" placeholder="Add details (optional)…" maxlength="300" style="width:100%; margin-top:12px; min-height:70px; resize:vertical; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:12px; color:var(--text); font-family:var(--font-body); font-size:13px;"></textarea>
+    <div class="report-evidence" id="reportEvidence" style="display:none;">
+      <label class="report-evidence-row">
+        <input type="checkbox" id="reportAttachShot" checked />
+        <span>Attach a snapshot of their camera as evidence</span>
+      </label>
+      <div class="report-shot-wrap"><img id="reportEvidenceImg" alt="evidence snapshot" /></div>
+    </div>
     <div style="display:flex; gap:8px; margin-top:14px;">
       <button class="btn btn-ghost" data-close="reportModal" style="flex:1;">Cancel</button>
       <button class="btn btn-primary" id="reportSubmitBtn" style="flex:1; background:var(--coral);">Submit report</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW SEASON / SOFT RESET -->
+<div class="modal-bg" id="seasonModal">
+  <div class="modal login-reward-card" style="max-width:380px; text-align:center;">
+    <div class="lr-eyebrow" id="seasonEyebrow">NEW SEASON</div>
+    <div class="lr-amount" id="seasonName" style="font-size:34px;">Season 2</div>
+    <p style="color:var(--text-dim); font-size:13px; line-height:1.5; margin:6px 0 14px;">A fresh season has begun. Ratings were softly reset — climb again to prove it wasn't a fluke.</p>
+    <div class="season-reset-row">
+      <div class="srr-col"><div class="srr-label">Last season</div><div class="srr-val" id="seasonOldRating">—</div></div>
+      <div class="srr-arrow">→</div>
+      <div class="srr-col"><div class="srr-label">Starting now</div><div class="srr-val mint" id="seasonNewRating">—</div></div>
+    </div>
+    <div class="season-reward" id="seasonReward" style="display:none;"></div>
+    <button class="btn btn-primary" data-close="seasonModal" style="width:100%; margin-top:16px;">Let's go</button>
+  </div>
+</div>
+
+<!-- DAILY LOGIN REWARD -->
+<div class="modal-bg" id="loginRewardModal">
+  <div class="modal login-reward-card" style="max-width:340px; text-align:center;">
+    <div class="lr-gift">🎁</div>
+    <div class="lr-eyebrow">DAILY REWARD</div>
+    <div class="lr-amount" id="lrAmount">+100 XP</div>
+    <div class="lr-streak" id="lrStreak">Day 1 login streak 🔥</div>
+    <button class="btn btn-primary" id="lrClaimBtn" data-close="loginRewardModal" style="width:100%; margin-top:16px;">Claim</button>
+  </div>
+</div>
+
+<!-- SURRENDER / FORFEIT CONFIRM -->
+<div class="modal-bg" id="surrenderModal">
+  <div class="modal" style="max-width:380px; text-align:center;">
+    <div style="font-size:46px; line-height:1; margin:4px 0 10px;">🏳️</div>
+    <h3 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:24px; margin:0 0 8px;">Leave this match?</h3>
+    <p style="color:var(--text-dim); font-size:13.5px; line-height:1.5; margin:0 0 18px;">You'll take a <b style="color:var(--coral);">-25 ELO</b> forfeit penalty and the win goes to your opponent. Only leave if you really have to.</p>
+    <div style="display:flex; gap:8px;">
+      <button class="btn btn-ghost" data-close="surrenderModal" style="flex:1;">Keep playing</button>
+      <button class="btn btn-danger" id="surrenderConfirmBtn" style="flex:1; background:var(--coral);">Forfeit (-25 ELO)</button>
     </div>
   </div>
 </div>
@@ -14490,6 +14682,10 @@ const RANKS = [
   { id:'champion',    name:'Champion',    icon:'i-rank-champion',    cls:'rank-champion',    base:4250, color:'#ff8c42', color2:'#e06a1f' },
   { id:'legend',      name:'Legend',      icon:'i-rank-legend',      cls:'rank-legend',      base:5000, color:'#ff61c3', color2:'#d62f9e' },
 ];
+// Placement matches — a new player's rank stays hidden until they finish these.
+const PLACEMENT_TOTAL = 5;
+function placementsDone(p){ return Math.min(PLACEMENT_TOTAL, (p && p.placementsDone) || 0); }
+function inPlacements(p){ return placementsDone(p) < PLACEMENT_TOTAL; }
 // Tier width within a rank (except Grandmaster which is open-ended top tier)
 const TIER_WIDTHS = {
   bronze: 100/3, silver: 200/3, gold: 200/3, platinum: 200/3,
@@ -14703,6 +14899,50 @@ function seasonCountdownText(){
   if(s.daysLeft >= 1) return `${s.daysLeft}d ${s.hoursLeft}h left`;
   if(s.hoursLeft >= 1) return `${s.hoursLeft}h ${s.minsLeft}m left`;
   return `${s.minsLeft}m left`;
+}
+// SOFT RESET — once per new season, ratings are pulled toward 1000 (high ranks
+// drop most, low ranks barely move) and a season-end XP reward is granted based
+// on the rank you finished at. Runs at most once per season (idempotent).
+async function applySeasonSoftReset(){
+  if(!state.user || !state.profile || state._seasonProcessing) return;
+  const cur = getSeason().number;
+  const processed = state.profile.seasonProcessed || 0;
+  if(processed >= cur) return;
+  state._seasonProcessing = true;
+  const isFirstRun = !state.profile.seasonProcessed;
+  const oldRating = state.profile.rating || 1000;
+  const target = 1000;
+  let newRating = oldRating;
+  let rewardXp = 0, prevRankName = null;
+  if(!isFirstRun){
+    if(oldRating > target) newRating = Math.round(target + (oldRating - target) * 0.5);
+    const prevRank = rankFromRating(oldRating);
+    prevRankName = prevRank.tierName;
+    rewardXp = Math.min(2500, 200 + prevRank.index * 150);  // higher finish → bigger reward
+  }
+  try {
+    const updates = { seasonProcessed: cur };
+    if(newRating !== oldRating) updates.rating = newRating;
+    await updateDoc(doc(state.db, 'users', state.user.uid), updates);
+    state.profile.seasonProcessed = cur;
+    if(newRating !== oldRating) state.profile.rating = newRating;
+  } catch(e){ console.warn('[season] soft reset failed', e); state._seasonProcessing = false; return; }
+  if(!isFirstRun){
+    if(rewardXp) grantXp(rewardXp, 'Season reward', { silent: true });
+    try { showSeasonResetPopup(getSeason(), oldRating, newRating, prevRankName, rewardXp); } catch(e){}
+  }
+  state._seasonProcessing = false;
+}
+function showSeasonResetPopup(season, oldRating, newRating, prevRankName, rewardXp){
+  setText('#seasonName', `Season ${season.number} · ${season.name}`);
+  setText('#seasonOldRating', `${oldRating}${prevRankName ? ' · ' + prevRankName : ''}`);
+  setText('#seasonNewRating', newRating);
+  const rw = $('#seasonReward');
+  if(rw){
+    if(rewardXp){ rw.style.display = ''; rw.innerHTML = `🏅 Season reward: <b>+${rewardXp} XP</b>`; }
+    else rw.style.display = 'none';
+  }
+  $('#seasonModal')?.classList.add('show');
 }
 // ===== WEEKEND 2× XP — Friday 18:00 through Sunday 23:59 (local time) =====
 function isDoubleXP(){
@@ -15916,6 +16156,17 @@ function refreshStatsUI(){
       nextMarker.style.display = 'none';
     }
   } catch(e){}
+
+  // PLACEMENTS — hide the rank until the player finishes their placement matches
+  if(inPlacements(p)){
+    const done = placementsDone(p);
+    setText('#rankNameCurrent', 'Placement');
+    setText('#rankNextLabel', `${done}/${PLACEMENT_TOTAL} placement matches · rank hidden`);
+    if(fill){ fill.style.width = (done / PLACEMENT_TOTAL * 100) + '%'; fill.style.setProperty('--rank-color', 'var(--violet)'); }
+    const nm = $('#rc2Next'); if(nm) nm.style.display = 'none';
+    const glow2 = $('#rc2IconGlow'); if(glow2) glow2.style.background = 'radial-gradient(circle, var(--violet), transparent 70%)';
+    const bi = $('#rankIconCurrent'); if(bi) bi.style.color = 'var(--text-dim)';
+  }
 
   // Update the NEW rank-display icon
   const rankIcon = $('#rankIconCurrent');
@@ -17530,6 +17781,19 @@ function challengeCardsHTML(){
       <div class="weekly-list wc-list"></div>
       <div class="weekly-foot wc-foot">Clear all 3 for a <b>bonus level</b></div>
       <div class="challenge-reset wc-reset">Resets in 7d</div>
+    </div>
+    <div class="card challenge-card js-quest-card">
+      <div class="card-hd">
+        <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-target"/></svg> Quest line</div>
+        <span class="daily-streak-mini qc-step">1/5</span>
+      </div>
+      <div class="daily-card-goal qc-text">Play 3 matches</div>
+      <div class="rank-card-progress">
+        <div class="ui-bar"><div class="ui-bar-fill qc-fill" style="width:0%"></div></div>
+        <div class="rank-card-meta"><span class="qc-count">0/3</span><span class="daily-reward qc-reward">+150 XP</span></div>
+      </div>
+      <div class="quest-track qc-track"></div>
+      <div class="challenge-reset qc-foot">Finish the chain for a <b>huge bonus</b></div>
     </div>`;
 }
 function mountChallengeCards(){
@@ -17702,14 +17966,14 @@ function refreshWeeklyChallenges(){
   document.querySelectorAll('.wc-reset').forEach(r => { r.textContent = resetTxt; });
 }
 // Award XP (used by weekly challenges) — also handles the level-up toast.
-async function grantXp(amount, reason){
+async function grantXp(amount, reason, opts={}){
   if(!amount || !state.user || !state.profile) return;
   const before = state.profile.totalXp || 0;
   const after = before + amount;
   const oldL = levelFromXp(before), newL = levelFromXp(after);
   state.profile.totalXp = after;
   try { await updateDoc(doc(state.db, 'users', state.user.uid), { totalXp: increment(amount) }); } catch(e){ console.warn('[xp] grant', e); }
-  try { toast(`+${amount} XP · ${reason}`, 'success'); } catch(e){}
+  if(!opts.silent){ try { toast(`+${amount} XP · ${reason}`, 'success'); } catch(e){} }
   if(newL.level > oldL.level){
     let newTitles = [];
     try { const had = titlesUnlockedAt(oldL.level).map(t => t.id); newTitles = titlesUnlockedAt(newL.level).filter(t => !had.includes(t.id)); } catch(e){}
@@ -17752,6 +18016,93 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
     setTimeout(() => toast('🏆 All weekly challenges cleared — bonus level!', 'success'), 600);
   }
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
+}
+
+// ============= QUEST LINE (chained challenges → big finale reward) =============
+const QUEST_CHAIN = [
+  { id:'q1', text:'Play 3 matches',              goal:3,  type:'games',      xp:150 },
+  { id:'q2', text:'Win 5 matches',               goal:5,  type:'wins',       xp:250 },
+  { id:'q3', text:'Win 20 rounds',               goal:20, type:'roundsWon',  xp:350 },
+  { id:'q4', text:'Read 10 throws correctly',    goal:10, type:'predicts',   xp:450 },
+  { id:'q5', text:'Win 3 flawless matches',      goal:3,  type:'flawless',   xp:600 },
+];
+const QUEST_FINALE_XP = 2000;
+function getQuestState(){
+  let d;
+  try { d = JSON.parse(localStorage.getItem('rosham_quests_' + (state.user?.uid||'anon')) || 'null'); } catch(e){ d = null; }
+  if(!d || typeof d.step !== 'number'){ d = { step:0, progress:0, doneAll:false }; }
+  return d;
+}
+function saveQuestState(d){ try { localStorage.setItem('rosham_quests_' + (state.user?.uid||'anon'), JSON.stringify(d)); } catch(e){} }
+function refreshQuests(){
+  mountChallengeCards();
+  const cards = document.querySelectorAll('.js-quest-card');
+  if(!cards.length) return;
+  const d = getQuestState();
+  const total = QUEST_CHAIN.length;
+  const done = d.doneAll || d.step >= total;
+  const q = done ? null : QUEST_CHAIN[d.step];
+  cards.forEach(card => {
+    const set = (s,t)=>{ const el=card.querySelector(s); if(el) el.textContent=t; };
+    if(done){
+      set('.qc-step', `${total}/${total}`);
+      set('.qc-text', '✓ Quest line complete!');
+      set('.qc-count', '');
+      set('.qc-reward', 'All done');
+      const f=card.querySelector('.qc-fill'); if(f){ f.style.width='100%'; f.classList.add('complete'); }
+      const foot=card.querySelector('.qc-foot'); if(foot) foot.innerHTML='<b style="color:var(--mint)">Finale bonus claimed 🎉</b>';
+    } else {
+      const pct = Math.min(100, (d.progress / q.goal) * 100);
+      set('.qc-step', `${d.step+1}/${total}`);
+      set('.qc-text', q.text);
+      set('.qc-count', `${Math.min(d.progress,q.goal)}/${q.goal}`);
+      set('.qc-reward', `+${q.xp} XP`);
+      const f=card.querySelector('.qc-fill'); if(f){ f.style.width=pct+'%'; f.classList.remove('complete'); }
+      const foot=card.querySelector('.qc-foot'); if(foot) foot.innerHTML='Finish the chain for a <b>huge bonus</b>';
+    }
+    // step dots
+    const track = card.querySelector('.qc-track');
+    if(track){
+      track.innerHTML = QUEST_CHAIN.map((_,i) =>
+        `<span class="qc-dot ${i < d.step || done ? 'done' : (i === d.step ? 'active' : '')}"></span>`).join('');
+    }
+  });
+}
+function updateQuestProgress(matchResult, roundDetails){
+  if(state.isBotMatch) return;
+  const d = getQuestState();
+  if(d.doneAll || d.step >= QUEST_CHAIN.length) return;
+  let q = QUEST_CHAIN[d.step];
+  let guard = 0;
+  // A single match can complete more than one step — loop while progress overflows.
+  while(q && guard++ < 10){
+    let delta = 0;
+    switch(q.type){
+      case 'games': delta = 1; break;
+      case 'wins': delta = matchResult === 'win' ? 1 : 0; break;
+      case 'roundsWon': delta = roundDetails?.wonRounds || 0; break;
+      case 'predicts': delta = roundDetails?.predictedCorrect || 0; break;
+      case 'flawless': delta = roundDetails?.flawless ? 1 : 0; break;
+      case 'beststreak': { const cs = state.profile?.currentStreak || 0; d.progress = Math.max(d.progress, cs); break; }
+    }
+    if(delta) d.progress += delta;
+    if(d.progress >= q.goal){
+      grantXp(q.xp, `Quest · ${q.text}`);
+      try { celebrateChallenge('.js-quest-card'); } catch(e){}
+      d.step += 1; d.progress = 0;
+      q = QUEST_CHAIN[d.step];
+      if(d.step >= QUEST_CHAIN.length){
+        d.doneAll = true;
+        grantXp(QUEST_FINALE_XP, 'Quest line complete!', { silent:true });
+        setTimeout(() => { try { toast(`🏆 Quest line complete — +${QUEST_FINALE_XP} XP bonus!`, 'success'); launchConfetti(); } catch(e){} }, 700);
+        break;
+      }
+      // only the 'games' step auto-advances every match; others need fresh match data
+      if(q && q.type !== 'games' && q.type !== 'beststreak') break;
+    } else break;
+  }
+  saveQuestState(d);
+  refreshQuests();
 }
 
 // ============= RECENT PLAYERS =============
@@ -18617,15 +18968,24 @@ async function openProfile(uid){
     const lvlNow = levelFromXp(p.totalXp || 0);
     setText('#pmAvLvl', lvlNow.level);
 
-    // Rank progress to next tier
+    // Rank progress to next tier (or placement progress for unranked players)
     try {
-      const rp = rankProgressToNext(rating);
-      const fill = $('#pmRankProgFill'); if(fill) fill.style.width = Math.round(rp.progress * 100) + '%';
-      setText('#pmRankProgCur', rank.tierName);
-      // derive the next tier name from the "to next" delta
-      const nextRank = rankFromRating(rating + (rp.toNext || 1));
-      setText('#pmRankProgNext', rp.toNext > 0 ? nextRank.tierName : 'MAX');
-      setText('#pmRankProgLabel', rp.toNext > 0 ? `${rp.toNext} ELO to ${nextRank.tierName}` : 'Apex rank reached');
+      if(inPlacements(p)){
+        const done = placementsDone(p);
+        setText('#pmRankName', 'Unranked');
+        setText('#pmRankProgCur', 'Placement');
+        setText('#pmRankProgNext', `${done}/${PLACEMENT_TOTAL}`);
+        const fill = $('#pmRankProgFill'); if(fill){ fill.style.width = (done / PLACEMENT_TOTAL * 100) + '%'; }
+        setText('#pmRankProgLabel', `${PLACEMENT_TOTAL - done} placement matches to a rank`);
+      } else {
+        const rp = rankProgressToNext(rating);
+        const fill = $('#pmRankProgFill'); if(fill) fill.style.width = Math.round(rp.progress * 100) + '%';
+        setText('#pmRankProgCur', rank.tierName);
+        // derive the next tier name from the "to next" delta
+        const nextRank = rankFromRating(rating + (rp.toNext || 1));
+        setText('#pmRankProgNext', rp.toNext > 0 ? nextRank.tierName : 'MAX');
+        setText('#pmRankProgLabel', rp.toNext > 0 ? `${rp.toNext} ELO to ${nextRank.tierName}` : 'Apex rank reached');
+      }
     } catch(e){}
 
     if(p.status){ $('#pmStatus').textContent = p.status; $('#pmStatus').style.display = ''; }
@@ -18739,11 +19099,42 @@ async function openProfile(uid){
         } else { h2hEl.style.display = 'none'; }
       } else { h2hEl.style.display = 'none'; }
     }
+    try { renderProfileBadges(p); } catch(e){ console.warn('[profile] badges', e); }
     loadProfileComments(uid);
     $('#profileModal').classList.add('show');
   } catch(e){
     console.error(e);
     toast('Could not load profile', 'error');
+  }
+}
+
+// ===== PROFILE BADGES + SHOWCASE =====
+function renderProfileBadges(p){
+  let unlockedIds;
+  try { unlockedIds = achievementUnlockedIds(p); } catch(e){ unlockedIds = new Set(); }
+  const unlocked = ACHIEVEMENTS.filter(a => unlockedIds.has(a.id));
+  // Showcase — up to 3 featured (only those still unlocked)
+  const showcaseIds = Array.isArray(p.showcase) ? p.showcase.slice(0, 3) : [];
+  const showcase = showcaseIds.map(id => ACHIEVEMENTS.find(a => a.id === id)).filter(a => a && unlockedIds.has(a.id));
+  const scEl = $('#pmShowcase');
+  if(scEl){
+    if(showcase.length){
+      scEl.style.display = '';
+      scEl.innerHTML = showcase.map(a =>
+        `<div class="pm-sc-badge" title="${escapeHTML(a.title)} — ${escapeHTML(a.desc)}"><span class="pm-sc-ic">${a.icon}</span><span class="pm-sc-name">${escapeHTML(a.title)}</span></div>`
+      ).join('');
+    } else scEl.style.display = 'none';
+  }
+  // Full badge grid
+  const sec = $('#pmBadgesSection'), grid = $('#pmBadges'), count = $('#pmBadgesCount');
+  if(sec && grid){
+    if(unlocked.length){
+      sec.style.display = '';
+      if(count) count.textContent = `${unlocked.length}/${ACHIEVEMENTS.length}`;
+      grid.innerHTML = unlocked.map(a =>
+        `<div class="pm-badge${showcaseIds.includes(a.id) ? ' featured' : ''}" title="${escapeHTML(a.title)} — ${escapeHTML(a.desc)}">${a.icon}</div>`
+      ).join('');
+    } else sec.style.display = 'none';
   }
 }
 
@@ -18922,6 +19313,37 @@ async function shareProfile(username, rating, tier){
   try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied profile link', 'success'); }
   catch(e){ toast('Could not share', 'error'); }
 }
+// Showcase picker — toggle up to 3 unlocked badges to feature on your profile
+function buildShowcasePicker(){
+  const box = $('#showcasePick');
+  if(!box) return;
+  const p = state.profile || {};
+  let unlockedIds;
+  try { unlockedIds = achievementUnlockedIds(p); } catch(e){ unlockedIds = new Set(); }
+  const unlocked = ACHIEVEMENTS.filter(a => unlockedIds.has(a.id));
+  state._pendingShowcase = (Array.isArray(p.showcase) ? p.showcase : []).filter(id => unlockedIds.has(id)).slice(0, 3);
+  if(!unlocked.length){
+    box.innerHTML = '<div style="font-size:12px; color:var(--text-faint);">Unlock achievements to feature them here.</div>';
+    return;
+  }
+  box.innerHTML = '';
+  unlocked.forEach(a => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.className = 'showcase-chip' + (state._pendingShowcase.includes(a.id) ? ' active' : '');
+    b.dataset.ach = a.id; b.title = a.title + ' — ' + a.desc;
+    b.innerHTML = `<span class="sc-ic">${a.icon}</span><span class="sc-nm">${escapeHTML(a.title)}</span>`;
+    b.addEventListener('click', () => {
+      const i = state._pendingShowcase.indexOf(a.id);
+      if(i >= 0){ state._pendingShowcase.splice(i, 1); b.classList.remove('active'); }
+      else {
+        if(state._pendingShowcase.length >= 3){ toast('You can feature up to 3 badges', 'info'); return; }
+        state._pendingShowcase.push(a.id); b.classList.add('active');
+      }
+      haptic(9);
+    });
+    box.appendChild(b);
+  });
+}
 function openEditProfile(){
   const p = state.profile;
   $('#editProfileForm input[name=username]').value = p.username;
@@ -18955,6 +19377,7 @@ function openEditProfile(){
   }
   document.querySelectorAll('#colorPick button').forEach((b, i) => b.classList.toggle('active', i === (p.colorIdx || 0)));
   document.querySelectorAll('#accentPick button').forEach(b => b.classList.toggle('active', (b.dataset.accent || '') === (p.accent || '')));
+  buildShowcasePicker();
   // default acceptChallenges to true (only false if explicitly disabled)
   $('#editAcceptChallenges').checked = (p.acceptChallenges !== false);
   pendingPhotoDataURL = null;
@@ -19023,16 +19446,18 @@ on('#editProfileForm', 'submit', async (e) => {
       try { await deleteDoc(doc(state.db, 'usernames', state.profile.username.toLowerCase())); } catch(e){}
     }
     const newTitle = state._pendingTitle || state.profile.equippedTitle || 'rookie';
+    const newShowcase = Array.isArray(state._pendingShowcase) ? state._pendingShowcase.slice(0, 3) : (state.profile.showcase || []);
     const updates = {
       username: newUsername, country: newCountry, bio: newBio, status: newStatus,
       colorIdx: newColorIdx, accent: newAccent, equippedTitle: newTitle,
+      showcase: newShowcase,
       acceptChallenges: newAcceptChallenges,
     };
     if(pendingPhotoDataURL !== null){
       updates.photoURL = pendingPhotoDataURL;
     }
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
-    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, accent:newAccent, equippedTitle:newTitle, acceptChallenges:newAcceptChallenges };
+    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, accent:newAccent, equippedTitle:newTitle, showcase:newShowcase, acceptChallenges:newAcceptChallenges };
     if(pendingPhotoDataURL !== null) state.profile.photoURL = pendingPhotoDataURL;
     setText('#chipName', newUsername);
     renderAvatar($('#chipAv'), state.profile);
@@ -19907,7 +20332,7 @@ function handlePeerMessage(msg){
       updateOppReadyUI(msg.ready, msg.progress);
       maybeStartRound();
       break;
-    case 'gesture': state.oppGesture = msg.value; state.oppThrowIn = true; revealIfBothIn(); break;
+    case 'gesture': state.oppGesture = msg.value; state.oppThrowIn = true; try { checkThrowTiming(msg); } catch(e){} revealIfBothIn(); break;
     // NEW: authoritative round result from the caller
     // The caller computes the outcome and broadcasts. The callee applies it
     // verbatim so both sides display identical results — no more "I see WIN, they see DRAW".
@@ -20344,6 +20769,9 @@ function resetMatchUI(){
   state.scoreOpp = 0;
   state.streak = 0;
   state.streakType = null;
+  try { updateOnFireStatus(); } catch(e){}   // clear any lingering streak badges
+  state._suspiciousThrows = 0; state._fairplayFlagged = false;
+  { const fw = $('#fairplayWarn'); if(fw) fw.classList.remove('show'); }
   state.matchOver = false;
   state.matchRoundsToWin = state.preferredBestOf ? Math.ceil(state.preferredBestOf / 2) : 2; // best of 3 default — may grow during overtime
   state._endMatchCalled = false; // reset for new match
@@ -20454,6 +20882,7 @@ async function runCountdown(){
     await sleep(_cdStep);
   }
   state.phase = 'shoot';
+  state._shootAt = Date.now();   // anti-cheat: reference point for throw timing
   cd.textContent = 'SHOOT!';
   cd.classList.add('shoot');
   setText('#roundState', 'THROW NOW');
@@ -20493,7 +20922,8 @@ async function runCountdown(){
     state.oppGesture = moves[(Math.random()*3)|0];
     state.oppThrowIn = true;
   }
-  sendPeer({type:'gesture', value: state.myGesture});
+  state._myThrowDt = state._shootAt ? (Date.now() - state._shootAt) : 0;
+  sendPeer({type:'gesture', value: state.myGesture, dt: state._myThrowDt});
   await sleep(180);
   revealIfBothIn();
 }
@@ -20853,16 +21283,62 @@ function showCommentatorQuote(result, yourMove, oppMove, predicted){
 }
 
 // On-fire status — show big badge + glow on video when on 3+ win streak
+// ===== FAIR PLAY / ANTI-CHEAT (throw timing) =====
+// In a P2P match a tampered client could read the opponent's gesture message and
+// then send a winning counter. We can't be authoritative client-side, but we CAN
+// detect the tell-tale pattern: the opponent's throw consistently arriving long
+// after our own throw (the "wait, peek, and counter" stall). Conservative
+// thresholds keep laggy-but-honest players from being flagged.
+function checkThrowTiming(msg){
+  if(state.isBotMatch || state.isCasual) return;
+  if(!state._shootAt) return;
+  const arrivalDt = Date.now() - state._shootAt;          // my SHOOT → their throw received
+  const myDt = state._myThrowDt || 0;
+  const ping = state.oppPingMs || 120;
+  const expectedMax = Math.max(myDt, 700) + ping + 1100;  // generous fair-play window
+  const theirDt = typeof msg.dt === 'number' ? msg.dt : null;
+  const tooLate = arrivalDt > expectedMax;
+  const reportedLate = theirDt != null && theirDt > 1800; // they admit a very late throw
+  if(tooLate || reportedLate){
+    state._suspiciousThrows = (state._suspiciousThrows || 0) + 1;
+    if(state._suspiciousThrows >= 2 && !state._fairplayFlagged){
+      state._fairplayFlagged = true;
+      flagFairPlay();
+    }
+  }
+}
+function flagFairPlay(){
+  try { toast('⚠️ Unusual throw timing detected from your opponent', 'error'); } catch(e){}
+  const ind = $('#fairplayWarn'); if(ind) ind.classList.add('show');
+  try {
+    if(state.user && state.oppUid && !state.isBotMatch){
+      addDoc(collection(state.db, 'fairplay'), {
+        reporter: state.user.uid,
+        reported: state.oppUid,
+        reportedUsername: state.oppProfile?.username || '',
+        kind: 'late_throw',
+        count: state._suspiciousThrows || 0,
+        oppPingMs: state.oppPingMs || null,
+        status: 'open',
+        createdAt: serverTimestamp(),
+      }).catch(() => {});
+    }
+  } catch(e){}
+}
+
 function updateOnFireStatus(){
-  const badge = $('#onFireBadge');
+  const fireBadge = $('#onFireBadge');
+  const coldBadge = $('#iceColdBadge');
   const yourVideo = $('#yourVideoWrap');
-  if(state.streakType === 'W' && state.streak >= 3){
-    if(badge) badge.classList.add('show');
-    setText('#fireCount', state.streak);
-    if(yourVideo) yourVideo.classList.add('on-fire');
-  } else {
-    if(badge) badge.classList.remove('show');
-    if(yourVideo) yourVideo.classList.remove('on-fire');
+  const onFire = state.streakType === 'W' && state.streak >= 3;
+  const iceCold = state.streakType === 'L' && state.streak >= 3;
+  if(fireBadge) fireBadge.classList.toggle('show', onFire);
+  if(coldBadge) coldBadge.classList.toggle('show', iceCold);
+  if(onFire) setText('#fireCount', state.streak);
+  if(iceCold) setText('#coldCount', state.streak);
+  if(yourVideo){
+    yourVideo.classList.toggle('on-fire', onFire);
+    yourVideo.classList.toggle('ice-cold', iceCold);
   }
 }
 
@@ -20948,6 +21424,11 @@ async function endMatch(){
       wonRounds: state.scoreYou || 0,
       flawless: _flawless,
     }); } catch(e){ console.error('[weekly]', e); }
+    try { updateQuestProgress(result, {
+      predictedCorrect: state._matchPredictionsCorrect || 0,
+      wonRounds: state.scoreYou || 0,
+      flawless: _flawless,
+    }); } catch(e){ console.error('[quest]', e); }
   }
 
   // Update profile stats + ELO (once per match, not per round)
@@ -20961,13 +21442,17 @@ async function endMatch(){
 }
 
 // NEW: Leave match voluntarily — counts as forfeit with -25 ELO penalty
-async function forfeitMatch(){
+function forfeitMatch(){
   if(state.screen !== 'game' || state.matchOver) return;
-  if(!confirm('Leave this match?\n\nYou will lose -25 ELO as a forfeit penalty. Use only if you must leave.')) return;
+  $('#surrenderModal')?.classList.add('show');
+}
+on('#surrenderConfirmBtn', 'click', async () => {
+  $('#surrenderModal')?.classList.remove('show');
+  if(state.screen !== 'game' || state.matchOver) return;
   await applyForfeitPenalty(false);
   toast('You forfeited the match (-25 ELO penalty)', 'error');
   showMatchResultScreen('lose');
-}
+});
 
 // NEW: Silent forfeit — used by beforeunload/refresh handler.
 // `silent` skips UI changes (toast, result overlay) since the page is closing.
@@ -21139,7 +21624,14 @@ let updateMatchStats = async function(matchResult){
   const newRank = rankFromRating(newRating);
   const rankedUp = newRank.index > oldRank.index;
 
+  // Placement matches: rank stays hidden until PLACEMENT_TOTAL ranked games are done.
+  const placedBefore = state.profile.placementsDone || 0;
+  const wasInPlacement = placedBefore < PLACEMENT_TOTAL;
+  const justFinishedPlacement = wasInPlacement && (placedBefore + 1) >= PLACEMENT_TOTAL;
+  state._inPlacementMatch = wasInPlacement; // suppress rank-up while unranked
+
   const updates = { games: increment(1), lastSeen: serverTimestamp(), rating: increment(delta) };
+  if(wasInPlacement) updates.placementsDone = increment(1);
   if(matchResult === 'win') updates.wins = increment(1);
   else if(matchResult === 'lose') updates.losses = increment(1);
   else updates.draws = increment(1);
@@ -21192,6 +21684,10 @@ let updateMatchStats = async function(matchResult){
     }
     // Apply XP locally
     state.profile.totalXp = newTotalXp;
+    if(wasInPlacement) state.profile.placementsDone = placedBefore + 1;
+    if(justFinishedPlacement){
+      setTimeout(() => { try { toast(`🎯 Placements complete — you're ${newRank.tierName}!`, 'success'); } catch(e){} }, 1400);
+    }
     if(leveledUp){
       state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
     }
@@ -21247,7 +21743,8 @@ let updateMatchStats = async function(matchResult){
       createdAt: serverTimestamp(),
     });
 
-    if(rankedUp){
+    // No rank-up celebration while still in placements (rank is hidden)
+    if(rankedUp && !state._inPlacementMatch){
       state._pendingRankUp = { from: oldRank, to: newRank };
     }
   } catch(e){ console.warn('match stat update fail', e); }
@@ -22689,6 +23186,8 @@ function renderHomeSpotlight(p){
 }
 function renderHomePage(){
   if(!state.profile) return;
+  try { claimDailyLoginReward(); } catch(e){}
+  try { applySeasonSoftReset(); } catch(e){}
   try { refreshSeasonUI(); } catch(e){}
   const p = state.profile;
   // welcome banner
@@ -22706,6 +23205,7 @@ function renderHomePage(){
   setText('#wbStreakNum', loginStreak);
   try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
+  try { refreshQuests(); } catch(e){}
   try { paintMnavAvatar(); } catch(e){}
   try { renderHomeSpotlight(p); } catch(e){ console.warn('[home] spotlight', e); }
   // world strip
@@ -23047,6 +23547,26 @@ window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
 })();
 
 // Daily login streak (localStorage)
+// Daily login reward — once per day, XP scales with the login streak.
+function claimDailyLoginReward(){
+  if(!state.user || !state.profile) return;
+  const key = 'rosham_login_reward_' + state.user.uid;
+  const today = new Date().toDateString();
+  let last; try { last = localStorage.getItem(key); } catch(e){ last = null; }
+  if(last === today) return;
+  try { localStorage.setItem(key, today); } catch(e){}  // mark first → no re-entry
+  const streak = getLoginStreak();
+  const amount = Math.min(300, 100 + (Math.max(1, streak) - 1) * 25);
+  try { showLoginReward(amount, streak); } catch(e){}
+  grantXp(amount, 'Daily login', { silent: true });
+}
+function showLoginReward(amount, streak){
+  setText('#lrAmount', `+${amount} XP`);
+  setText('#lrStreak', `Day ${streak} login streak 🔥`);
+  const m = $('#loginRewardModal');
+  if(m){ m.classList.add('show'); if(!document.body.classList.contains('low-power')){ try { setTimeout(()=>launchConfetti(), 200); } catch(e){} } }
+}
+
 function getLoginStreak(){
   try {
     const uid = state.user?.uid || 'anon';
@@ -23213,6 +23733,7 @@ function renderPlayPage(){
   // Daily + weekly challenge cards (mounted on the play page too)
   try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
+  try { refreshQuests(); } catch(e){}
 }
 
 // ===== CAMERA CALIBRATION WIZARD =====
@@ -23864,16 +24385,38 @@ document.addEventListener('visibilitychange', () => {
 // Report player — exposed as helper for any UI element to call
 // ===== REPORT FLOW (modal with reason) =====
 let _reportReason = null;
+let _reportEvidence = null;
+// Grab a compressed snapshot of the opponent's camera as report evidence.
+function captureOppFrame(){
+  try {
+    const v = $('#oppVideo');
+    if(!v || !v.videoWidth) return null;
+    const w = 360, h = Math.max(1, Math.round(360 * (v.videoHeight / v.videoWidth)));
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    c.getContext('2d').drawImage(v, 0, 0, w, h);
+    return c.toDataURL('image/jpeg', 0.5);
+  } catch(e){ console.warn('[report] capture failed', e); return null; }
+}
 function reportPlayer(){
   if(!state.oppUid || state.isBotMatch){ toast("Can't report this player", 'error'); return; }
   _reportReason = null;
+  // Capture webcam evidence (only meaningful while in a live match)
+  _reportEvidence = (state.screen === 'game') ? captureOppFrame() : null;
+  const ev = $('#reportEvidence'), evImg = $('#reportEvidenceImg'), evChk = $('#reportAttachShot');
+  if(ev){
+    if(_reportEvidence){ ev.style.display = ''; if(evImg) evImg.src = _reportEvidence; if(evChk) evChk.checked = true; }
+    else ev.style.display = 'none';
+  }
   setText('#reportTargetName', '@' + (state.oppProfile?.username || 'this player'));
+  // If our fair-play check flagged this opponent, pre-select "cheating".
+  const preselect = state._fairplayFlagged ? 'cheating' : null;
   const box = $('#reportReasons');
   if(box){
     box.innerHTML = '';
     REPORT_REASONS.forEach(r => {
       const el = document.createElement('div');
-      el.className = 'report-reason';
+      el.className = 'report-reason' + (r.id === preselect ? ' selected' : '');
+      if(r.id === preselect) _reportReason = r.id;
       el.innerHTML = `<span class="rr-radio"></span><span>${r.label}</span>`;
       el.addEventListener('click', () => {
         _reportReason = r.id;
@@ -23883,7 +24426,8 @@ function reportPlayer(){
       box.appendChild(el);
     });
   }
-  const det = $('#reportDetails'); if(det) det.value = '';
+  const det = $('#reportDetails');
+  if(det) det.value = state._fairplayFlagged ? 'Auto-flagged: opponent throws arrived suspiciously late.' : '';
   $('#reportModal')?.classList.add('show');
 }
 on('#reportSubmitBtn', 'click', async () => {
@@ -23891,12 +24435,14 @@ on('#reportSubmitBtn', 'click', async () => {
   if(!state.user || !state.oppUid){ toast("Can't report this player", 'error'); return; }
   const reasonLabel = (REPORT_REASONS.find(r => r.id === _reportReason) || {}).label || _reportReason;
   const details = $('#reportDetails')?.value?.trim() || '';
+  const attachShot = $('#reportAttachShot')?.checked;
+  const evidence = (attachShot && _reportEvidence) ? _reportEvidence : null;
   const btn = $('#reportSubmitBtn');
   if(btn) btn.disabled = true;
   try {
     // The report write is the critical path — if this fails, surface a real error
     // (don't show a false "thanks" toast like the old code did).
-    await addDoc(collection(state.db, 'reports'), {
+    const reportDoc = {
       reporter: state.user.uid,
       reporterUsername: state.profile?.username || '',
       reported: state.oppUid,
@@ -23906,7 +24452,9 @@ on('#reportSubmitBtn', 'click', async () => {
       details,
       status: 'open',
       createdAt: serverTimestamp(),
-    });
+    };
+    if(evidence){ reportDoc.evidence = evidence; reportDoc.hasEvidence = true; }
+    await addDoc(collection(state.db, 'reports'), reportDoc);
     // Blocking the player is best-effort — never let it fail the report.
     try {
       await updateDoc(doc(state.db, 'users', state.user.uid), { blocked: arrayUnion(state.oppUid), friends: arrayRemove(state.oppUid) });
@@ -23988,6 +24536,7 @@ async function loadAdminReports(){
           <div class="arr-target">@${escapeHTML(r.reportedUsername || r.reported?.slice(0,6) || '?')}</div>
           <div class="arr-reason">${escapeHTML(r.reasonLabel || r.reason || 'reported')}</div>
           ${r.details ? `<div class="arr-meta">"${escapeHTML(r.details)}"</div>` : ''}
+          ${r.evidence ? `<img class="arr-evidence" src="${r.evidence}" alt="evidence" title="Webcam evidence — click to enlarge" />` : ''}
           <div class="arr-meta">by @${escapeHTML(r.reporterUsername || '?')} · ${when}</div>
         </div>
         <div class="arr-actions">
@@ -23996,6 +24545,8 @@ async function loadAdminReports(){
         </div>`;
       row.querySelector('.arr-action').addEventListener('click', () => showAdminAction(r.reported, r.reportedUsername));
       row.querySelector('.arr-dismiss').addEventListener('click', () => dismissReport(r.id, row));
+      const evImg = row.querySelector('.arr-evidence');
+      if(evImg) evImg.addEventListener('click', () => evImg.classList.toggle('big'));
       box.appendChild(row);
     });
   } catch(e){
