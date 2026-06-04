@@ -32,6 +32,28 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* ===== APP PRELOADER (defined first so it paints immediately) ===== */
+#appPreloader{
+  position:fixed; inset:0; z-index:99999; display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 50% 34%, #15131e, #08070d 72%);
+  transition:opacity .5s ease, visibility .5s;
+}
+#appPreloader.hide{ opacity:0; visibility:hidden; pointer-events:none; }
+#appPreloader .pl-inner{ display:flex; flex-direction:column; align-items:center; gap:20px; animation:plIn .5s ease-out; }
+@keyframes plIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+#appPreloader .pl-throws{ display:flex; gap:16px; font-size:42px; line-height:1; }
+#appPreloader .pl-throw{ display:inline-block; opacity:.22; transform:translateY(4px) scale(.9);
+  animation:plThrow 1.5s cubic-bezier(.4,0,.3,1) infinite; filter:drop-shadow(0 8px 14px rgba(0,0,0,.45)); }
+#appPreloader .pl-throw.t2{ animation-delay:.22s; } #appPreloader .pl-throw.t3{ animation-delay:.44s; }
+@keyframes plThrow{ 0%,100%{ opacity:.22; transform:translateY(5px) scale(.9); } 30%{ opacity:1; transform:translateY(-7px) scale(1.14); } }
+#appPreloader .pl-wordmark{ font-family:'Bricolage Grotesque', system-ui, sans-serif; font-weight:800; font-size:36px; letter-spacing:-.02em; color:#fafafa; }
+#appPreloader .pl-wordmark span{ background:linear-gradient(135deg,#ff3358,#a48bff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+#appPreloader .pl-bar{ width:190px; height:4px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+#appPreloader .pl-bar span{ display:block; height:100%; width:42%; border-radius:999px; background:linear-gradient(90deg,#22d3a3,#ff3358); animation:plBar 1.25s ease-in-out infinite; }
+@keyframes plBar{ 0%{ transform:translateX(-130%); } 100%{ transform:translateX(360%); } }
+#appPreloader .pl-tag{ font-family:'Geist Mono', ui-monospace, monospace; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#6e6c7a; }
+@media (prefers-reduced-motion: reduce){ #appPreloader .pl-throw, #appPreloader .pl-bar span{ animation-duration:.001s; } }
+
 :root{
   /* v9 — REFINED MODERN PALETTE
    * Inspired by Linear/Vercel: less neon, more deliberate */
@@ -759,12 +781,20 @@ html{ scroll-behavior: smooth; }
 /* Icons inside buttons should never inherit stroke wider than needed */
 svg[data-lucide-icon]{ flex-shrink: 0; }
 
-/* Prestige badge + level pip treatment (max level / Prestige N) */
-.pm-prestige{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.1em; padding:3px 8px; border-radius:999px;
-  background:linear-gradient(135deg,#fff6c0,#ffd700 45%,#ff61c3); color:#1c1402; box-shadow:0 0 14px -3px rgba(255,215,0,.6); }
-.level-badge.is-prestige, .pm-level-badge.is-prestige{ position:relative; box-shadow:0 0 0 1.5px #ffd700, 0 0 14px -2px rgba(255,215,0,.7); }
-.level-badge.is-prestige::after, .pm-level-badge.is-prestige::after{ content:'✦'; position:absolute; top:-6px; right:-6px; font-size:10px; color:#ffd700; text-shadow:0 1px 3px rgba(0,0,0,.6); }
-.pm-av-lvl.prestige-pip{ background:linear-gradient(135deg,#fff6c0,#ffd700 45%,#ff61c3) !important; color:#1c1402 !important; }
+/* Prestige badge + level pip treatment (max level / Prestige N).
+   Colour follows the prestige tier via --pr-glow so each prestige is distinct. */
+.pm-prestige{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.1em; padding:3px 9px; border-radius:999px;
+  background:linear-gradient(135deg, var(--pr-a,#fff6c0), var(--pr-b,#ffd700)); color:var(--pr-t,#1c1402);
+  box-shadow:0 0 16px -3px var(--pr-glow,#ffd700); animation:prestigePulse 2.4s ease-in-out infinite; }
+@keyframes prestigePulse{ 0%,100%{ box-shadow:0 0 12px -4px var(--pr-glow,#ffd700); } 50%{ box-shadow:0 0 20px -2px var(--pr-glow,#ffd700); } }
+.level-badge.is-prestige, .pm-level-badge.is-prestige{ position:relative; overflow:visible;
+  box-shadow:0 0 0 1.5px var(--pr-glow,#ffd700), 0 0 16px -2px var(--pr-glow,#ffd700); }
+/* The little star + prestige number, in the tier colour */
+.level-badge.is-prestige::after, .pm-level-badge.is-prestige::after{
+  content:'✦' attr(data-prestige); position:absolute; top:-8px; right:-10px;
+  font-family:var(--font-mono); font-size:8px; font-weight:800; line-height:1; padding:2px 4px; border-radius:999px;
+  background:var(--pr-glow,#ffd700); color:#0a0a0f; box-shadow:0 1px 4px rgba(0,0,0,.5); }
+.pm-av-lvl.prestige-pip{ box-shadow:0 0 0 2px var(--surface), 0 0 12px -1px #ffd700 !important; }
 
 /* Robust avatars — photo overlays a gradient+initial and falls back cleanly */
 .av-photo-host{ position: relative; overflow: hidden; }
@@ -6665,14 +6695,14 @@ h2.match-title{
 }
 /* In-match options popover */
 .ingame-settings{
-  position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 40;
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
   width: 224px; padding: 8px; border-radius: 14px;
   background: var(--surface); border: 1px solid var(--line);
   box-shadow: 0 18px 40px -12px rgba(0,0,0,.7);
   display: none; flex-direction: column; gap: 2px;
 }
 .ingame-settings.show{ display: flex; animation: igsIn .2s ease-out; }
-@keyframes igsIn{ from{ opacity: 0; transform: translateY(6px); } to{ opacity: 1; transform: none; } }
+@keyframes igsIn{ from{ opacity: 0; transform: translateY(-6px); } to{ opacity: 1; transform: none; } }
 .igs-title{ font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); padding: 4px 8px 6px; }
 .igs-row{ display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 8px; border-radius: 10px; background: none; border: none; color: var(--text); cursor: pointer; text-align: left; transition: background .12s; }
 .igs-row:hover{ background: var(--surface-2); }
@@ -9356,6 +9386,8 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
 
 /* ----- LEGEND: extra cinematic layers ----- */
 /* Gold bloom behind the icon */
+/* Rank-reveal (out of placements) — no old rank to shatter, just the arrival */
+.rankup-reveal .rankup-old-rank, .rankup-reveal .rankup-shards, .rankup-reveal .rankup-flash{ display:none !important; }
 .legend-rankup .rankup-bloom{ background:radial-gradient(circle, rgba(255,215,0,.95) 0%, rgba(255,97,195,.28) 38%, transparent 64%); }
 /* Gold embers instead of pink dots */
 .legend-rankup .rankup-particles .particle{ background:#ffd700 !important; box-shadow:0 0 8px #ffd700, 0 0 14px rgba(255,170,40,.7) !important; }
@@ -9883,7 +9915,9 @@ body.low-power .legend-rankup::before, body.low-power .legend-rankup::after{ ani
    while keeping the core reveal so it still feels great.
    ============================================================ */
 .rankup-lite .rankup-rays.r2{ display:none; }
-.rankup-lite .rankup-rays{ filter:none; opacity:.16 !important; }
+.rankup-lite .rankup-rays{ filter:none; opacity:.16 !important; animation:none !important; }
+.rankup-lite .rankup-sweep-wrap::before{ animation:rankupNewHalo 1.5s 2.6s ease-out forwards !important; }
+.rankup-lite .rankup-bloom{ animation:rankupBloomIn 1.2s 2.3s ease-out forwards; }
 .rankup-lite .rankup-bloom{ mix-blend-mode:normal; }
 .rankup-lite .rankup-beams{ display:none; }
 .rankup-lite .rankup-particles .particle{ box-shadow:none; }
@@ -11541,6 +11575,13 @@ body.low-power *{
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
 }
+/* Touch devices (not necessarily low-power): trim the heaviest always-on blur
+   so frames stay smooth without going fully solid. */
+@media (hover: none) and (pointer: coarse){
+  .duel-result-inner{ backdrop-filter: blur(11px) saturate(1.15); -webkit-backdrop-filter: blur(11px) saturate(1.15); }
+  .mf-player{ backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); }
+  .center-overlay .duel-intro{ backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+}
 /* Replace translucent blurred surfaces with solid ones so they still read well */
 body.low-power .topbar,
 body.low-power .mobile-nav,
@@ -11737,6 +11778,20 @@ body.reduced-motion .sl-text{ animation:none; }
 </style>
 </head>
 <body>
+<!-- ===== APP PRELOADER (shown until the app is ready) ===== -->
+<div id="appPreloader">
+  <div class="pl-inner">
+    <div class="pl-throws">
+      <span class="pl-throw t1">🪨</span>
+      <span class="pl-throw t2">📄</span>
+      <span class="pl-throw t3">✂️</span>
+    </div>
+    <div class="pl-wordmark">ROSH<span>CAM</span></div>
+    <div class="pl-bar"><span></span></div>
+    <div class="pl-tag">warming up the arena…</div>
+  </div>
+</div>
+
 <!-- ===== FIRST-VISIT AGE GATE ===== -->
 <div class="age-gate" id="ageGate" style="display:none;">
   <div class="age-gate-card">
@@ -12277,7 +12332,6 @@ const FIREBASE_CONFIG = {
               <button class="btn-cta hx-cta" id="homePlayBtn" data-goto-play>
                 <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
                 <span>Play</span>
-                <kbd class="cta-kbd cta-kbd-space" aria-label="Press spacebar"><span class="ck-glyph">⎵</span></kbd>
               </button>
               <button class="btn-icon-action hx-cam-btn" id="cameraSetupBtn" title="Adjust your camera">
                 <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
@@ -13163,11 +13217,6 @@ const FIREBASE_CONFIG = {
               <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-sound-on"/></svg></span>
               <span class="igs-label">Mute my mic</span>
               <span class="set-toggle off" id="igsMic"></span>
-            </button>
-            <button class="igs-row" id="igsSelfRow" type="button">
-              <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-eye-off"/></svg></span>
-              <span class="igs-label">Hide my self-cam</span>
-              <span class="set-toggle off" id="igsSelf"></span>
             </button>
             <button class="igs-row" id="igsFlipRow" type="button">
               <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-rotate"/></svg></span>
@@ -14527,7 +14576,7 @@ const FIREBASE_CONFIG = {
     <p style="color:var(--text-dim); font-size:13.5px; line-height:1.5; margin:0 0 18px;">You'll take a <b style="color:var(--coral);">-25 ELO</b> forfeit penalty and the win goes to your opponent. Only leave if you really have to.</p>
     <div style="display:flex; gap:8px;">
       <button class="btn btn-ghost" data-close="surrenderModal" style="flex:1;">Keep playing</button>
-      <button class="btn btn-danger" id="surrenderConfirmBtn" style="flex:1; background:var(--coral);">Forfeit (-25 ELO)</button>
+      <button class="btn btn-danger" id="surrenderConfirmBtn" style="flex:1; background:var(--coral); color:#fff;">Forfeit (-25 ELO)</button>
     </div>
   </div>
 </div>
@@ -14808,7 +14857,13 @@ const RANKS = [
 ];
 // Placement matches — a new player's rank stays hidden until they finish these.
 const PLACEMENT_TOTAL = 5;
-function placementsDone(p){ return Math.min(PLACEMENT_TOTAL, (p && p.placementsDone) || 0); }
+function placementsDone(p){
+  if(!p) return PLACEMENT_TOTAL;
+  // Grandfather pre-placement accounts: if they've already played but have no
+  // placement counter, treat placements as complete (so they keep their rank/ELO).
+  if(p.placementsDone == null && (p.games || 0) > 0) return PLACEMENT_TOTAL;
+  return Math.min(PLACEMENT_TOTAL, Math.max((p.placementsDone || 0), 0));
+}
 function inPlacements(p){ return placementsDone(p) < PLACEMENT_TOTAL; }
 // Tier width within a rank (except Grandmaster which is open-ended top tier)
 const TIER_WIDTHS = {
@@ -14939,8 +14994,8 @@ const LEVEL_TIERS = [
   { min:30, a:'#ff3d68', b:'#d8264f', t:'#fff' },     // 30-39 coral
   { min:40, a:'#a48bff', b:'#7a5fdc', t:'#fff' },     // 40-49 violet
   { min:50, a:'#ff61c3', b:'#a48bff', t:'#fff' },     // 50-69 magenta→violet
-  { min:70, a:'#ffd700', b:'#ff61c3', t:'#1c1402' }, // 70-98 prismatic
-  { min:99, a:'#ffffff', b:'#ffd700', t:'#1c1402' }, // 99    max — white-gold
+  { min:70, a:'#c77dff', b:'#ff61c3', t:'#fff' },    // 70-98 prismatic violet→magenta
+  { min:99, a:'#ffe98a', b:'#ffb300', t:'#1c1402' }, // 99    max — solid gold (pre-prestige)
 ];
 function levelTier(level){
   let tier = LEVEL_TIERS[0];
@@ -14949,20 +15004,41 @@ function levelTier(level){
 }
 function levelGradient(level){ const t = levelTier(level); return `linear-gradient(135deg, ${t.a}, ${t.b})`; }
 // Paint a level badge element: gradient bg + readable text colour.
+// Each prestige rank has its own colour so it's instantly readable: gold first,
+// then climbing through the spectrum (cycles after the list, getting more exotic).
+const PRESTIGE_TIERS = [
+  { a:'#fff6c0', b:'#ffd700', t:'#1c1402', glow:'#ffd700' }, // P1  gold
+  { a:'#bfe9ff', b:'#5fc9ff', t:'#04121c', glow:'#5fc9ff' }, // P2  diamond
+  { a:'#d6c4ff', b:'#a48bff', t:'#0c0820', glow:'#a48bff' }, // P3  amethyst
+  { a:'#ffc7ea', b:'#ff61c3', t:'#fff',     glow:'#ff61c3' }, // P4  rose
+  { a:'#ffd0a8', b:'#ff7a3d', t:'#1c0c02', glow:'#ff7a3d' }, // P5  ember
+  { a:'#b9ffe5', b:'#22d3a3', t:'#04221a', glow:'#22d3a3' }, // P6  emerald
+  { a:'#ff5a8a', b:'#ff3358', t:'#fff',     glow:'#ff3358' }, // P7  crimson
+  { a:'#ffffff', b:'#c9d2dc', t:'#0a0a0f', glow:'#ffffff' }, // P8  platinum
+];
+function prestigeTier(prestige){ return PRESTIGE_TIERS[((prestige||1) - 1) % PRESTIGE_TIERS.length]; }
 function paintLevelBadge(elOrSel, level, prestige){
   const el = typeof elOrSel === 'string' ? $(elOrSel) : elOrSel;
   if(!el) return;
-  const t = levelTier(level || 1);
-  el.style.background = `linear-gradient(135deg, ${t.a}, ${t.b})`;
-  el.style.color = t.t;
   const pr = prestige || 0;
   el.classList.toggle('is-prestige', pr > 0);
-  if(pr > 0){ el.dataset.prestige = pr; el.style.background = 'linear-gradient(135deg, #fff6c0, #ffd700 45%, #ff61c3)'; el.style.color = '#1c1402'; }
-  else delete el.dataset.prestige;
+  if(pr > 0){
+    const pt = prestigeTier(pr);
+    el.dataset.prestige = pr;
+    el.style.background = `linear-gradient(135deg, ${pt.a}, ${pt.b})`;
+    el.style.color = pt.t;
+    el.style.setProperty('--pr-glow', pt.glow);
+  } else {
+    const t = levelTier(level || 1);
+    el.style.background = `linear-gradient(135deg, ${t.a}, ${t.b})`;
+    el.style.color = t.t;
+    el.style.removeProperty('--pr-glow');
+    delete el.dataset.prestige;
+  }
 }
 
 // ===== PRESTIGE — earned once you hit the max level (99), then every
-// PRESTIGE_XP beyond. Reaching max = Prestige 1, with a special gold badge. =====
+// PRESTIGE_XP beyond. Reaching max = Prestige 1, climbing colours after. =====
 const PRESTIGE_XP = 200000;
 function prestigeFromXp(totalXp){
   const maxXp = totalXpForLevel(99);
@@ -15207,8 +15283,17 @@ const screens = {
   matching: $('#screen-matching'),
   game: $('#screen-game'),
 };
+let _preloaderHidden = false;
+function hidePreloader(){
+  if(_preloaderHidden) return;
+  _preloaderHidden = true;
+  const pl = document.getElementById('appPreloader');
+  if(pl){ pl.classList.add('hide'); setTimeout(() => pl.remove(), 600); }
+}
 function showScreen(name){
   state.screen = name;
+  // The app is interactive the moment any screen is shown — drop the preloader.
+  hidePreloader();
   try {
     Object.entries(screens).forEach(([k, el]) => el && el.classList.toggle('active', k === name));
   } catch(e){ console.error('[showScreen]', e); }
@@ -15437,6 +15522,9 @@ function launchConfetti(){
 function animateParticles(){
   pctx.clearRect(0,0,pCanvas.width,pCanvas.height);
   particles = particles.filter(p => p.life > 0);
+  // Hard cap so a burst storm never tanks the frame rate (esp. on phones).
+  const _cap = (window.matchMedia && window.matchMedia('(max-width: 760px)').matches) ? 220 : 600;
+  if(particles.length > _cap) particles = particles.slice(-_cap);
   for(const p of particles){
     p.vy += p.g; p.x += p.vx; p.y += p.vy; p.life--;
     pctx.globalAlpha = Math.max(0, p.life / 100);
@@ -19183,7 +19271,12 @@ async function openProfile(uid){
     const lvlNow = levelFromXp(p.totalXp || 0);
     const pmPrestige = prestigeFromXp(p.totalXp || 0);
     setText('#pmAvLvl', pmPrestige > 0 ? '99' : lvlNow.level);
-    const avLvlEl = $('#pmAvLvl'); if(avLvlEl) avLvlEl.classList.toggle('prestige-pip', pmPrestige > 0);
+    const avLvlEl = $('#pmAvLvl');
+    if(avLvlEl){
+      avLvlEl.classList.toggle('prestige-pip', pmPrestige > 0);
+      if(pmPrestige > 0){ const pt = prestigeTier(pmPrestige); avLvlEl.style.background = `linear-gradient(135deg, ${pt.a}, ${pt.b})`; avLvlEl.style.color = pt.t; avLvlEl.style.setProperty('--pr-glow', pt.glow); }
+      else { avLvlEl.style.background = ''; avLvlEl.style.color = ''; }
+    }
 
     // Rank progress to next tier (or placement progress for unranked players)
     try {
@@ -19231,8 +19324,12 @@ async function openProfile(uid){
     setText('#pmLevelStat', lvl.level);
     const pmPrEl = $('#pmPrestige');
     if(pmPrEl){
-      if(pmPrestige > 0){ pmPrEl.style.display = ''; pmPrEl.innerHTML = `✦ PRESTIGE ${pmPrestige}`; }
-      else pmPrEl.style.display = 'none';
+      if(pmPrestige > 0){
+        const pt = prestigeTier(pmPrestige);
+        pmPrEl.style.display = ''; pmPrEl.textContent = `✦ PRESTIGE ${pmPrestige}`;
+        pmPrEl.style.setProperty('--pr-a', pt.a); pmPrEl.style.setProperty('--pr-b', pt.b);
+        pmPrEl.style.setProperty('--pr-t', pt.t); pmPrEl.style.setProperty('--pr-glow', pt.glow);
+      } else pmPrEl.style.display = 'none';
     }
     let pTitle = p.equippedTitle ? titleById(p.equippedTitle) : null;
     if(!pTitle || lvl.level < pTitle.level){
@@ -20998,9 +21095,6 @@ function resetMatchUI(){
   try { updateOnFireStatus(); } catch(e){}   // clear any lingering streak badges
   state._suspiciousThrows = 0; state._fairplayFlagged = false;
   { const fw = $('#fairplayWarn'); if(fw) fw.classList.remove('show'); }
-  // Reset hidden-self-cam each match (avoid starting blind); keep mic/mirror prefs.
-  state._selfCamHidden = false;
-  $('#yourVideoWrap')?.classList.remove('self-hidden');
   $('#inMatchSettings')?.classList.remove('show');
   state.matchOver = false;
   state.matchRoundsToWin = state.preferredBestOf ? Math.ceil(state.preferredBestOf / 2) : 2; // best of 3 default — may grow during overtime
@@ -21916,7 +22010,8 @@ let updateMatchStats = async function(matchResult){
     state.profile.totalXp = newTotalXp;
     if(wasInPlacement) state.profile.placementsDone = placedBefore + 1;
     if(justFinishedPlacement){
-      setTimeout(() => { try { toast(`🎯 Placements complete — you're ${newRank.tierName}!`, 'success'); } catch(e){} }, 1400);
+      // Celebrate the rank reveal with the (placement-flavoured) rank-up overlay.
+      state._pendingRankReveal = newRank;
     }
     if(leveledUp){
       state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
@@ -22314,7 +22409,12 @@ function showMatchResultScreen(result){
         showLevelUp(lu);
       }
     };
-    if(state._pendingRankUp){
+    if(state._pendingRankReveal){
+      setTimeout(() => {
+        showRankUp(null, state._pendingRankReveal, { reveal: true });
+        state._pendingRankReveal = null;
+      }, 1800);
+    } else if(state._pendingRankUp){
       setTimeout(() => {
         showRankUp(state._pendingRankUp.from, state._pendingRankUp.to);
         state._pendingRankUp = null;
@@ -22335,8 +22435,13 @@ function calcEloDelta(myRating, oppRating, score, K=48){
 
 
 // ============= RANK UP =============
-function showRankUp(oldRank, newRank){
+function showRankUp(oldRank, newRank, opts){
+  opts = opts || {};
   const overlay = $('#rankupOverlay');
+  // REVEAL mode — first rank out of placements (no "old rank" to shatter).
+  const reveal = !!opts.reveal || !oldRank;
+  if(!oldRank) oldRank = newRank;
+  overlay.classList.toggle('rankup-reveal', reveal);
 
   // LEGEND is the apex rank — give it a dramatically more premium celebration.
   const isLegend = newRank.id === 'legend';
@@ -22370,10 +22475,9 @@ function showRankUp(oldRank, newRank){
   // Big title
   setText('#rankupRankName', newRank.name.toUpperCase());
   setText('#rankupSub', isLegend ? `THE APEX · ${state.profile.rating} RATING` : `${state.profile.rating} RATING`);
-  setText('#rankupFrom', isLegend ? `Only the very best ever make it here.` : `Promoted from ${oldRank.tierName}`);
-  // Legend gets an apex tagline instead of a generic "promoted from"
+  setText('#rankupFrom', reveal ? `Placement matches complete — welcome to the ladder!` : (isLegend ? `Only the very best ever make it here.` : `Promoted from ${oldRank.tierName}`));
   const eyebrow = $('#rankupLabel');
-  if(eyebrow) eyebrow.textContent = isLegend ? 'APEX RANK REACHED' : 'PROMOTION';
+  if(eyebrow) eyebrow.textContent = reveal ? 'RANK ASSIGNED' : (isLegend ? 'APEX RANK REACHED' : 'PROMOTION');
 
   // Continue hint adapts to input type (no "SPACE" key on a phone)
   const hint = $('#rankupContinueHint');
@@ -22462,7 +22566,7 @@ function showRankUp(oldRank, newRank){
   //  2.0  screen flash (peak of the transition)
   //  2.2–3.4  NEW rank zooms in from depth (small + blurred → full)
   //  2.8  big tier title resolves · 3.4/4.8 light sweeps
-  const burstSize = perf.lite ? 70 : 200;
+  const burstSize = perf.mobile ? 40 : (perf.lite ? 70 : 200);
   if(isLegend){
     // The custom epic Legend sound carries the whole sequence.
     later(() => { if(!playLegendSound()) sfxRankUp(); }, 100);
@@ -24359,6 +24463,7 @@ on('#footerHelpBtn', 'click', () => $('#helpModal')?.classList.add('show'));
   const gate = $('#ageGate');
   if(!gate) return;
   gate.style.display = 'flex';
+  try { hidePreloader(); } catch(e){}   // the gate IS the first interaction
   on('#ageGateYes', 'click', () => {
     try { localStorage.setItem('rosham_age_ok', '1'); } catch(e){}
     gate.style.display = 'none';
@@ -24881,7 +24986,6 @@ on('#inMatchSettingsBtn', 'click', (e) => {
   if(open){
     // reflect current state on the toggles
     $('#igsMic')?.classList.toggle('off', !state._micMuted);
-    $('#igsSelf')?.classList.toggle('off', !state._selfCamHidden);
     $('#igsFlip')?.classList.toggle('off', !state._camMirrored);
   }
 });
@@ -24890,12 +24994,6 @@ on('#igsMicRow', 'click', () => {
   try { state.localStream?.getAudioTracks().forEach(t => t.enabled = !state._micMuted); } catch(e){}
   $('#igsMic')?.classList.toggle('off', !state._micMuted);
   toast(state._micMuted ? 'Mic muted' : 'Mic on', state._micMuted ? 'info' : 'success');
-  haptic(9);
-});
-on('#igsSelfRow', 'click', () => {
-  state._selfCamHidden = !state._selfCamHidden;
-  $('#yourVideoWrap')?.classList.toggle('self-hidden', state._selfCamHidden);
-  $('#igsSelf')?.classList.toggle('off', !state._selfCamHidden);
   haptic(9);
 });
 on('#igsFlipRow', 'click', () => {
@@ -25285,6 +25383,8 @@ if(isConfigured()){
 } else {
   showScreen('noconfig');
 }
+// Safety net: never let the preloader linger if init stalls (e.g. slow Firebase).
+setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
