@@ -759,6 +759,18 @@ html{ scroll-behavior: smooth; }
 /* Icons inside buttons should never inherit stroke wider than needed */
 svg[data-lucide-icon]{ flex-shrink: 0; }
 
+/* Prestige badge + level pip treatment (max level / Prestige N) */
+.pm-prestige{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.1em; padding:3px 8px; border-radius:999px;
+  background:linear-gradient(135deg,#fff6c0,#ffd700 45%,#ff61c3); color:#1c1402; box-shadow:0 0 14px -3px rgba(255,215,0,.6); }
+.level-badge.is-prestige, .pm-level-badge.is-prestige{ position:relative; box-shadow:0 0 0 1.5px #ffd700, 0 0 14px -2px rgba(255,215,0,.7); }
+.level-badge.is-prestige::after, .pm-level-badge.is-prestige::after{ content:'✦'; position:absolute; top:-6px; right:-6px; font-size:10px; color:#ffd700; text-shadow:0 1px 3px rgba(0,0,0,.6); }
+.pm-av-lvl.prestige-pip{ background:linear-gradient(135deg,#fff6c0,#ffd700 45%,#ff61c3) !important; color:#1c1402 !important; }
+
+/* Robust avatars — photo overlays a gradient+initial and falls back cleanly */
+.av-photo-host{ position: relative; overflow: hidden; }
+.av-photo-host .av-init{ position: absolute; inset: 0; display: grid; place-items: center; }
+.av-photo-host .av-photo{ position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+
 .app{position:relative; z-index:2; min-height:100vh; display:flex; max-width:100%; overflow-x:clip;}
 
 /* ===== SIDEBAR ===== */
@@ -2371,13 +2383,19 @@ h1.section-title .accent{
 .hero-cta-row{ display: grid; grid-template-columns: 1fr; gap: 8px; }
 .hero-cta-row .btn-icon-action{ justify-content: center; padding: 13px 14px; font-size: 13px; }
 /* Spacebar key hint on the home Play button — desktop only */
+/* A wide 3D keycap that reads unmistakably as the SPACEBAR (the long key) */
 .cta-kbd-space{
-  margin-left: auto; display: inline-flex; align-items: center;
-  padding: 3px 8px; border-radius: 8px;
-  background: rgba(0,0,0,.22); border: 1px solid rgba(255,255,255,.22);
-  color: #fff; opacity: .85;
+  margin-left: auto; display: inline-flex; align-items: flex-end; justify-content: center;
+  width: 56px; height: 22px; padding-bottom: 3px; border-radius: 6px;
+  background: linear-gradient(180deg, rgba(255,255,255,.26), rgba(255,255,255,.07) 55%, rgba(255,255,255,.03));
+  border: 1px solid rgba(255,255,255,.32);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.45), inset 0 -2px 3px rgba(0,0,0,.28), 0 2px 0 rgba(0,0,0,.35);
+  color: #fff;
 }
-.cta-kbd-space svg{ display: block; }
+.cta-kbd-space .ck-glyph{
+  font-size: 15px; line-height: 1; font-weight: 700; opacity: .9;
+  transform: translateY(-1px); text-shadow: 0 1px 1px rgba(0,0,0,.3);
+}
 /* Hide the keyboard hint entirely on touch / no-hover devices */
 @media (hover: none), (pointer: coarse){ .cta-kbd-space{ display: none; } }
 /* Match-options as a clean segmented control above the CTA */
@@ -6643,7 +6661,28 @@ h2.match-title{
   display: flex;
   gap: 6px;
   align-items: center;
+  position: relative;
 }
+/* In-match options popover */
+.ingame-settings{
+  position: absolute; bottom: calc(100% + 8px); right: 0; z-index: 40;
+  width: 224px; padding: 8px; border-radius: 14px;
+  background: var(--surface); border: 1px solid var(--line);
+  box-shadow: 0 18px 40px -12px rgba(0,0,0,.7);
+  display: none; flex-direction: column; gap: 2px;
+}
+.ingame-settings.show{ display: flex; animation: igsIn .2s ease-out; }
+@keyframes igsIn{ from{ opacity: 0; transform: translateY(6px); } to{ opacity: 1; transform: none; } }
+.igs-title{ font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-faint); padding: 4px 8px 6px; }
+.igs-row{ display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 8px; border-radius: 10px; background: none; border: none; color: var(--text); cursor: pointer; text-align: left; transition: background .12s; }
+.igs-row:hover{ background: var(--surface-2); }
+.igs-ic{ width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: var(--surface-2); color: var(--text-dim); flex: 0 0 auto; }
+.igs-label{ flex: 1; font-size: 13px; }
+.igs-row .set-toggle{ flex: 0 0 auto; }
+/* Hide-self-cam + mirror-camera states */
+.duel-video.self-hidden::after{ content: 'Self-cam hidden'; position: absolute; inset: 0; z-index: 5; display: grid; place-items: center;
+  background: var(--bg-2); color: var(--text-faint); font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+#yourVideo.cam-flipped{ transform: scaleX(1) !important; }
 .arena-ctrl-btn{
   min-width: 46px; height: 44px;
   padding: 4px 8px;
@@ -10668,18 +10707,31 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
 /* Profile modal */
 /* ===== Profile modal — revamped header (cover banner + avatar ring) ===== */
 .profile-modal .pm-banner{
-  height: 98px;
+  height: 116px;
   margin: -32px -32px 0;
   border-radius: 24px 24px 0 0;
   background: linear-gradient(135deg, var(--coral), var(--violet));
   position: relative; overflow: hidden;
+  box-shadow: inset 0 -1px 0 rgba(255,255,255,.06);
 }
+/* Grid texture, faded toward the bottom-right */
 .profile-modal .pm-banner::after{
-  content:''; position:absolute; inset:0;
-  background-image: linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
-  background-size: 22px 22px;
-  -webkit-mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 72%);
-  mask-image: radial-gradient(ellipse 90% 90% at 15% 0%, #000, transparent 72%);
+  content:''; position:absolute; inset:0; z-index:1;
+  background-image: linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px);
+  background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 100% at 18% -10%, #000, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 100% at 18% -10%, #000, transparent 75%);
+}
+/* Smooth fade into the modal so the avatar + name sit cleanly below it */
+.profile-modal .pm-banner::before{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:60%; z-index:2; pointer-events:none;
+  background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--surface) 92%, transparent) 92%);
+}
+/* Faint rank-icon watermark */
+.profile-modal .pm-banner-mark{
+  position:absolute; right:-12px; top:50%; transform:translateY(-50%) rotate(-8deg);
+  width:150px; height:150px; opacity:.13; color:#fff; z-index:1; pointer-events:none;
+  filter:drop-shadow(0 4px 10px rgba(0,0,0,.3));
 }
 .profile-modal .profile-head{display:flex; gap:18px; align-items:flex-end; margin:0 0 18px; position:relative; z-index:1;}
 /* Avatar straddles the banner; the name/info stay below it so text is always legible */
@@ -11386,27 +11438,67 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
 .friend-card:hover{ border-color: var(--line-bright, rgba(255,255,255,.16)); background: var(--surface-3); }
 .friend-card:active{ transform: scale(.99); }
 .friend-card.is-online{ border-color: rgba(34,211,163,.28); }
-.friend-card.is-pinned{ background: linear-gradient(180deg, rgba(255,211,61,.06), var(--surface-2)); border-color: rgba(255,211,61,.3); }
-.fc-pin-mark{ font-size: 11px; margin-right: 2px; }
+.friend-card.is-pinned{ background: linear-gradient(180deg, rgba(255,211,61,.07), var(--surface-2)); border-color: rgba(255,211,61,.32); }
+.fc-pin-mark{ width: 12px; height: 12px; color: var(--amber); flex: 0 0 auto; }
 .fc-av-wrap{ position: relative; flex: 0 0 auto; }
-.friend-card .av{ width: 44px; height: 44px; border-radius: 13px; }
-.fc-status-dot{ position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%;
+.friend-card .av{ width: 46px; height: 46px; border-radius: 14px; font-family: var(--font-display); font-stretch: 80%; font-weight: 800; font-size: 18px; color: #fff; }
+.fc-status-dot{ position: absolute; bottom: -2px; right: -2px; width: 13px; height: 13px; border-radius: 50%; z-index: 2;
   background: var(--text-faint); border: 2.5px solid var(--surface-2); }
 .fc-status-dot.on{ background: var(--mint); box-shadow: 0 0 8px rgba(34,211,163,.7); }
 .fc-status-dot.game{ background: var(--amber); box-shadow: 0 0 8px rgba(255,179,0,.7); }
 .fc-meta{ flex: 1; min-width: 0; }
-.friend-card .nm{ font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
+.friend-card .nm{ font-size: 14.5px; font-weight: 700; display: flex; align-items: center; gap: 6px; min-width: 0; overflow: hidden; }
 .friend-card .nm .rank-mini{ width: 14px; height: 14px; flex-shrink: 0; }
-.fc-status-line{ font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 2px;
+.fc-status-line{ font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 3px;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.fc-status-line.on{ color: var(--mint); }
-.fc-status-line.game{ color: var(--amber); }
-.friend-card .friend-actions{ flex: 0 0 auto; gap: 6px; }
-.friend-card .icon-btn{ width: 38px; height: 38px; }
+.fc-status-line b{ color: var(--text-dim); }
+.fc-status-line.on{ color: var(--mint); } .fc-status-line.on b{ color: var(--mint); }
+.fc-status-line.game{ color: var(--amber); } .fc-status-line.game b{ color: var(--amber); }
+.friend-card .friend-actions{ display: flex; flex: 0 0 auto; gap: 6px; }
+.friend-card .icon-btn{ width: 36px; height: 36px; border-radius: 10px; }
+.friend-card .icon-btn svg{ width: 17px; height: 17px; }
+.friend-card .pin-btn.active{ color: var(--amber); border-color: rgba(255,211,61,.45); background: color-mix(in srgb, var(--amber) 12%, var(--surface-2)); }
 @media (max-width: 560px){
   .friend-card{ padding: 10px; gap: 10px; }
   .friend-card .av{ width: 42px; height: 42px; }
 }
+
+/* ===== Full leaderboard (Rank page) — search + filters ===== */
+.lb-full-card{ padding: 14px; }
+.lb-controls{ display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.lb-search{ flex: 1; min-width: 160px; display: flex; align-items: center; gap: 8px; padding: 0 12px; height: 40px;
+  background: var(--surface-2); border: 1px solid var(--line); border-radius: 11px; color: var(--text-faint); }
+.lb-search:focus-within{ border-color: var(--mint); color: var(--mint); }
+.lb-search input{ flex: 1; min-width: 0; background: none; border: none; outline: none; color: var(--text); font-family: var(--font-body); font-size: 14px; }
+.lb-filters{ display: flex; gap: 6px; }
+.lb-filter{ padding: 8px 13px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--line);
+  color: var(--text-dim); font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .04em; cursor: pointer; transition: all .15s; }
+.lb-filter:hover{ color: var(--text); border-color: var(--line-bright); }
+.lb-filter.active{ background: color-mix(in srgb, var(--mint) 14%, var(--surface-2)); border-color: var(--mint); color: var(--mint); }
+.lb-full-body{ display: flex; flex-direction: column; gap: 4px; max-height: 480px; overflow-y: auto; }
+.lbf-row{ display: flex; align-items: center; gap: 12px; padding: 9px 10px; border-radius: 12px; cursor: pointer; transition: background .12s; }
+.lbf-row:hover{ background: var(--surface-2); }
+.lbf-row.me{ background: color-mix(in srgb, var(--mint) 9%, var(--surface-2)); box-shadow: inset 0 0 0 1px rgba(34,211,163,.3); }
+.lbf-pos{ width: 30px; flex: 0 0 auto; text-align: center; font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 15px; color: var(--text-faint); }
+.lbf-pos.gold{ color: #ffd33d; } .lbf-pos.silver{ color: #c9d2dc; } .lbf-pos.bronze{ color: #e08a4f; }
+.lbf-av{ width: 38px; height: 38px; border-radius: 11px; flex: 0 0 auto; font-family: var(--font-display); font-weight: 800; font-size: 15px; color: #fff; }
+.lbf-meta{ flex: 1; min-width: 0; }
+.lbf-name{ display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lbf-name .rank-mini{ width: 14px; height: 14px; flex: 0 0 auto; }
+.lbf-you{ font-family: var(--font-mono); font-size: 8px; font-weight: 800; letter-spacing: .1em; padding: 1px 5px; border-radius: 5px; background: var(--mint); color: #04130d; }
+.lbf-sub{ font-family: var(--font-mono); font-size: 10.5px; color: var(--text-faint); margin-top: 2px; }
+.lbf-rating{ font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 16px; color: var(--text); flex: 0 0 auto; }
+.lbf-rating span{ font-family: var(--font-mono); font-size: 8px; color: var(--text-faint); margin-left: 3px; }
+
+/* ===== Skeleton loaders ===== */
+.sk{ background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%); background-size: 200% 100%; border-radius: 7px; animation: skShimmer 1.3s ease-in-out infinite; }
+@keyframes skShimmer{ to{ background-position: -200% 0; } }
+body.reduced-motion .sk, body.low-power .sk{ animation: none; }
+.lb-skel{ display: flex; align-items: center; gap: 12px; padding: 9px 10px; }
+.lb-skel .sk-num{ width: 18px; height: 14px; }
+.lb-skel .sk-av{ width: 38px; height: 38px; border-radius: 11px; flex: 0 0 auto; }
+.lb-skel .sk-line{ flex: 1; height: 14px; }
+.lb-skel .sk-rating{ width: 44px; height: 16px; }
 
 /* ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== */
 .more-sheet{ position: fixed; inset: 0; z-index: 90; display: none; align-items: flex-end;
@@ -11751,6 +11843,8 @@ body.reduced-motion .sl-text{ animation:none; }
     <symbol id="i-handshake" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m11 17 2 2a1 1 0 1 0 3-3"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4M21 3v9M3 21l1.5-1.5"/></symbol>
     <symbol id="i-share" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/></symbol>
     <symbol id="i-user-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M19 8v6M22 11h-6"/></symbol>
+    <symbol id="i-user-minus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M22 11h-6"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></symbol>
     <!-- RANK ICONS -->
     <symbol id="i-rank-bronze" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/></symbol>
     <symbol id="i-rank-silver" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/><circle cx="12" cy="12" r="3" fill="rgba(0,0,0,.3)"/></symbol>
@@ -12183,12 +12277,7 @@ const FIREBASE_CONFIG = {
               <button class="btn-cta hx-cta" id="homePlayBtn" data-goto-play>
                 <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
                 <span>Play</span>
-                <kbd class="cta-kbd cta-kbd-space" aria-label="Press spacebar">
-                  <svg viewBox="0 0 36 16" width="34" height="15" aria-hidden="true">
-                    <rect x="1.5" y="1.5" width="33" height="13" rx="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/>
-                    <path d="M9 8.5v3M27 8.5v3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                  </svg>
-                </kbd>
+                <kbd class="cta-kbd cta-kbd-space" aria-label="Press spacebar"><span class="ck-glyph">⎵</span></kbd>
               </button>
               <button class="btn-icon-action hx-cam-btn" id="cameraSetupBtn" title="Adjust your camera">
                 <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
@@ -12241,8 +12330,8 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
-        <!-- Spotlight row — throw style + pro tip (rank/next-rank now live in the rank card) -->
-        <div class="home-grid home-spotlight home-spotlight-2" style="margin-top:14px;">
+        <!-- Spotlight row — throw style (rank/next-rank live in the rank card) -->
+        <div class="home-spotlight-single" style="margin-top:14px;">
           <div class="card hs-card" id="hsThrowCard">
             <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Your throw style</div></div>
             <div class="hs-throws" id="hsThrows">
@@ -12251,10 +12340,6 @@ const FIREBASE_CONFIG = {
               <div class="hs-throw"><div class="hs-throw-bar violet"><span id="hsScissorsBar" style="height:0%"></span></div><svg viewBox="0 0 64 64" width="22" height="22" style="color:#a48bff"><use href="#i-scissors"/></svg><b id="hsScissorsPct">0%</b></div>
             </div>
             <div class="hs-throw-note" id="hsThrowNote">Play matches to reveal your favourite throw.</div>
-          </div>
-          <div class="card hs-card" id="hsTipCard">
-            <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Pro tip</div></div>
-            <div class="hs-tip" id="hsTip">—</div>
           </div>
         </div>
 
@@ -12604,6 +12689,22 @@ const FIREBASE_CONFIG = {
         </div>
         <div class="psection"><h3>Rank ladder</h3></div>
         <div class="rank-ladder" id="rankLadder"></div>
+
+        <div class="psection" style="margin-top:18px;"><h3>Global leaderboard</h3></div>
+        <div class="card lb-full-card">
+          <div class="lb-controls">
+            <div class="lb-search">
+              <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-search"/></svg>
+              <input id="lbSearch" type="text" placeholder="Search players…" maxlength="20" autocomplete="off" />
+            </div>
+            <div class="lb-filters">
+              <button class="lb-filter active" data-lbfilter="all">All</button>
+              <button class="lb-filter" data-lbfilter="friends">Friends</button>
+              <button class="lb-filter" data-lbfilter="region">My region</button>
+            </div>
+          </div>
+          <div class="lb-full-body" id="lbFullBody"><div class="side-empty">Loading leaderboard…</div></div>
+        </div>
       </div><!-- /page rank -->
 
 
@@ -13053,6 +13154,27 @@ const FIREBASE_CONFIG = {
           <button class="arena-ctrl-btn" id="muteOppBtn" title="Mute opponent" aria-label="Mute opponent">
             <svg viewBox="0 0 24 24" id="muteOppIcon"><use href="#i-sound-on"/></svg><span class="actl-label" id="muteOppLabel">Mute</span>
           </button>
+          <button class="arena-ctrl-btn" id="inMatchSettingsBtn" title="In-match options" aria-label="In-match options">
+            <svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span class="actl-label">Options</span>
+          </button>
+          <div class="ingame-settings" id="inMatchSettings">
+            <div class="igs-title">In-match options</div>
+            <button class="igs-row" id="igsMicRow" type="button">
+              <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-sound-on"/></svg></span>
+              <span class="igs-label">Mute my mic</span>
+              <span class="set-toggle off" id="igsMic"></span>
+            </button>
+            <button class="igs-row" id="igsSelfRow" type="button">
+              <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-eye-off"/></svg></span>
+              <span class="igs-label">Hide my self-cam</span>
+              <span class="set-toggle off" id="igsSelf"></span>
+            </button>
+            <button class="igs-row" id="igsFlipRow" type="button">
+              <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-rotate"/></svg></span>
+              <span class="igs-label">Mirror my camera</span>
+              <span class="set-toggle off" id="igsFlip"></span>
+            </button>
+          </div>
           <button class="arena-ctrl-btn" id="reportBtn" title="Report player" aria-label="Report player">
             <svg viewBox="0 0 24 24"><use href="#i-flag"/></svg><span class="actl-label">Report</span>
           </button>
@@ -14022,7 +14144,7 @@ const FIREBASE_CONFIG = {
   <div class="modal profile-modal">
     <button class="modal-close" data-close="profileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
     <!-- Rank-tinted cover banner -->
-    <div class="pm-banner" id="pmBanner"></div>
+    <div class="pm-banner" id="pmBanner"><svg class="pm-banner-mark" id="pmBannerMark" viewBox="0 0 24 24"></svg></div>
     <div class="profile-head">
       <div class="pm-av-wrap">
         <div class="av-xl" id="pmAv">?</div>
@@ -14034,6 +14156,7 @@ const FIREBASE_CONFIG = {
         <div class="pm-title-row" id="pmTitleRow">
           <span class="pm-level-badge" id="pmLevelBadge">1</span>
           <span class="pm-title" id="pmTitle">Rookie</span>
+          <span class="pm-prestige" id="pmPrestige" style="display:none;">✦ PRESTIGE 1</span>
         </div>
         <div class="pm-sub" id="pmSub">—</div>
         <div class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></div>
@@ -14099,6 +14222,7 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="modal-actions" id="pmActions">
       <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block</button>
+      <button class="btn btn-primary" id="pmEditBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-edit"/></svg> Edit profile</button>
       <button class="btn" id="pmShareBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-send"/></svg> Share</button>
       <button class="btn" id="pmMessageBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Message</button>
       <button class="btn" id="pmAddFriendBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-plus"/></svg> Add friend</button>
@@ -14825,12 +14949,25 @@ function levelTier(level){
 }
 function levelGradient(level){ const t = levelTier(level); return `linear-gradient(135deg, ${t.a}, ${t.b})`; }
 // Paint a level badge element: gradient bg + readable text colour.
-function paintLevelBadge(elOrSel, level){
+function paintLevelBadge(elOrSel, level, prestige){
   const el = typeof elOrSel === 'string' ? $(elOrSel) : elOrSel;
   if(!el) return;
   const t = levelTier(level || 1);
   el.style.background = `linear-gradient(135deg, ${t.a}, ${t.b})`;
   el.style.color = t.t;
+  const pr = prestige || 0;
+  el.classList.toggle('is-prestige', pr > 0);
+  if(pr > 0){ el.dataset.prestige = pr; el.style.background = 'linear-gradient(135deg, #fff6c0, #ffd700 45%, #ff61c3)'; el.style.color = '#1c1402'; }
+  else delete el.dataset.prestige;
+}
+
+// ===== PRESTIGE — earned once you hit the max level (99), then every
+// PRESTIGE_XP beyond. Reaching max = Prestige 1, with a special gold badge. =====
+const PRESTIGE_XP = 200000;
+function prestigeFromXp(totalXp){
+  const maxXp = totalXpForLevel(99);
+  if((totalXp || 0) < maxXp) return 0;
+  return 1 + Math.floor(((totalXp || 0) - maxXp) / PRESTIGE_XP);
 }
 
 // Titles unlocked at level milestones. Player can equip any unlocked title.
@@ -15195,20 +15332,19 @@ function setRankIconEl(el, rankId){
 function renderAvatar(el, profile){
   if(!el) return;
   const colorIdx = profile.colorIdx || 0;
+  // Always render a gradient + initial as the base, then overlay the photo as an
+  // <img> that simply falls back to the initial if it fails to load. This avoids
+  // the old "black box" bug when a photoURL is broken/blocked.
+  el.classList.add('av-photo-host');
+  el.style.backgroundImage = '';
+  el.style.background = AVATAR_COLORS[colorIdx];
+  el.innerHTML = `<span class="av-init">${escapeHTML(initialOf(profile.username))}</span>`;
   if(profile.photoURL){
-    el.textContent = '';
-    el.innerHTML = '';
-    // Clear ANY prior background then set image
-    el.style.background = '';
-    el.style.backgroundColor = '#000';
-    el.style.backgroundImage = `url("${profile.photoURL}")`;
-    el.style.backgroundSize = 'cover';
-    el.style.backgroundPosition = 'center';
-    el.style.backgroundRepeat = 'no-repeat';
-  } else {
-    el.textContent = initialOf(profile.username);
-    el.style.backgroundImage = '';
-    el.style.background = AVATAR_COLORS[colorIdx];
+    const img = document.createElement('img');
+    img.className = 'av-photo'; img.alt = '';
+    img.onerror = () => { img.remove(); };
+    img.src = profile.photoURL;
+    el.appendChild(img);
   }
 }
 
@@ -15792,6 +15928,9 @@ async function setupCamera(){
     }
     videoEl.srcObject = stream;
     state.localStream = stream;
+    // Re-apply the player's in-match preferences to the fresh stream/preview
+    try { if(state._micMuted) stream.getAudioTracks().forEach(t => t.enabled = false); } catch(e){}
+    try { $('#yourVideo')?.classList.toggle('cam-flipped', !!state._camMirrored); } catch(e){}
     await new Promise(res => { videoEl.onloadedmetadata = res; });
     videoEl.play();
     overlayCanvas.width = 640;
@@ -16206,7 +16345,8 @@ function refreshStatsUI(){
 
   // ===== LEVEL STRIP =====
   const lvl = levelFromXp(p.totalXp || 0);
-  setText('#heroLevelBadge', lvl.level); paintLevelBadge('#heroLevelBadge', lvl.level);
+  const heroPrestige = prestigeFromXp(p.totalXp || 0);
+  setText('#heroLevelBadge', heroPrestige > 0 ? '99' : lvl.level); paintLevelBadge('#heroLevelBadge', lvl.level, heroPrestige);
   setText('#chipLevel', lvl.level);
   // Equipped title (default to highest unlocked if none set)
   let equipped = p.equippedTitle ? titleById(p.equippedTitle) : null;
@@ -16220,7 +16360,7 @@ function refreshStatsUI(){
     titleEl.textContent = equipped.name;
     titleEl.style.setProperty('--title-color', equipped.color);
   }
-  setText('#heroXpText', `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
+  setText('#heroXpText', heroPrestige > 0 ? `✦ PRESTIGE ${heroPrestige}` : (lvl.level >= 99 ? 'MAX LEVEL' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`));
   const lvlFill = $('#levelBarFill');
   if(lvlFill) lvlFill.style.width = (lvl.progress * 100) + '%';
   updateSidebarProfile();
@@ -18716,6 +18856,78 @@ function renderLeaderboardInto(sel){
   }
 }
 
+// ===== Searchable / filterable full leaderboard (Rank page) =====
+state._lbFull = [];
+state._lbFilter = 'all';
+async function loadFullLeaderboard(){
+  const body = $('#lbFullBody');
+  if(state._lbFull.length === 0 && body){ body.innerHTML = lbSkeleton(8); }
+  try {
+    let players = [];
+    try {
+      const snap = await getDocs(query(collection(state.db, 'users'), orderBy('rating', 'desc'), limit(100)));
+      snap.forEach(d => { const u = d.data(); if(u && u.username) players.push({ uid: d.id, ...u }); });
+    } catch(err){
+      const snap = await getDocs(query(collection(state.db, 'users'), limit(150)));
+      snap.forEach(d => { const u = d.data(); if(u && u.username) players.push({ uid: d.id, ...u }); });
+      players.sort((a,b) => (b.rating||1000) - (a.rating||1000));
+    }
+    state._lbFull = players;
+  } catch(e){ console.warn('[leaderboard] full load', e); }
+  renderFullLeaderboard();
+}
+function lbSkeleton(n){
+  let s = '';
+  for(let i=0;i<n;i++) s += '<div class="lb-skel"><div class="sk sk-num"></div><div class="sk sk-av"></div><div class="sk sk-line"></div><div class="sk sk-rating"></div></div>';
+  return s;
+}
+function renderFullLeaderboard(){
+  const body = $('#lbFullBody');
+  if(!body) return;
+  const q = ($('#lbSearch')?.value || '').trim().toLowerCase();
+  const filter = state._lbFilter || 'all';
+  const myUid = state.user?.uid;
+  const friends = state.profile?.friends || [];
+  const myCountry = state.profile?.country;
+  let list = state._lbFull.slice();
+  // keep an absolute-rank index before filtering so positions stay true
+  list.forEach((p, i) => { p._absRank = i + 1; });
+  if(filter === 'friends') list = list.filter(p => p.uid === myUid || friends.includes(p.uid));
+  else if(filter === 'region') list = list.filter(p => p.country && p.country === myCountry);
+  if(q) list = list.filter(p => (p.username || '').toLowerCase().includes(q));
+  if(list.length === 0){
+    body.innerHTML = `<div class="side-empty">${q ? 'No players match “' + escapeHTML(q) + '”' : (filter === 'friends' ? 'None of your friends are on the board yet' : 'No players here yet')}</div>`;
+    return;
+  }
+  body.innerHTML = '';
+  list.slice(0, 50).forEach(p => {
+    const rank = rankFromRating(p.rating || 1000);
+    const row = document.createElement('div');
+    row.className = 'lbf-row' + (p.uid === myUid ? ' me' : '');
+    const pos = p._absRank;
+    const posCls = pos === 1 ? 'gold' : pos === 2 ? 'silver' : pos === 3 ? 'bronze' : '';
+    row.innerHTML = `
+      <div class="lbf-pos ${posCls}">${pos}</div>
+      <div class="av av-photo-host lbf-av" style="background:${AVATAR_COLORS[p.colorIdx||0]};"><span class="av-init">${escapeHTML(initialOf(p.username))}</span></div>
+      <div class="lbf-meta">
+        <div class="lbf-name">${escapeHTML(p.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg>${p.uid === myUid ? '<span class="lbf-you">YOU</span>' : ''}</div>
+        <div class="lbf-sub">${flagOf(p.country)} ${rank.tierName}</div>
+      </div>
+      <div class="lbf-rating">${p.rating||1000}<span>ELO</span></div>`;
+    if(p.photoURL){ const h = row.querySelector('.av-photo-host'); if(h){ const img = document.createElement('img'); img.className='av-photo'; img.alt=''; img.onerror=()=>img.remove(); img.src=p.photoURL; h.appendChild(img); } }
+    row.addEventListener('click', () => p.uid && openProfile(p.uid));
+    body.appendChild(row);
+  });
+}
+on('#lbSearch', 'input', () => renderFullLeaderboard());
+document.addEventListener('click', (e) => {
+  const f = e.target.closest('.lb-filter');
+  if(!f) return;
+  state._lbFilter = f.dataset.lbfilter;
+  document.querySelectorAll('.lb-filter').forEach(b => b.classList.toggle('active', b === f));
+  renderFullLeaderboard();
+});
+
 // ============= GLOBAL CHAT =============
 const GLOBAL_CHAT_LIMIT = 60;
 // Lazily attach the room listener the first time the user opens the chat page.
@@ -18960,13 +19172,18 @@ async function openProfile(uid){
     const banner = $('#pmBanner');
     if(banner){
       const accent = p.accent || rank.color;
-      banner.style.background = `radial-gradient(120% 160% at 0% 0%, ${accent}44, transparent 60%), linear-gradient(135deg, ${rank.color}33, ${(rank.color2||rank.color)}1a 60%, transparent)`;
+      const c2 = rank.color2 || rank.color;
+      banner.style.background = `radial-gradient(110% 140% at 8% -20%, ${accent}, transparent 55%), radial-gradient(120% 160% at 100% 120%, ${c2}aa, transparent 60%), linear-gradient(120deg, ${rank.color}, ${c2})`;
     }
+    const bMark = $('#pmBannerMark');
+    if(bMark){ bMark.innerHTML = `<use href="#${rank.icon}"/>`; }
     // Avatar rank ring + level pip
     const avRing = $('#pmAvRing');
     if(avRing) avRing.style.boxShadow = `0 0 0 2.5px ${rank.color}, 0 0 18px -2px ${rank.color}`;
     const lvlNow = levelFromXp(p.totalXp || 0);
-    setText('#pmAvLvl', lvlNow.level);
+    const pmPrestige = prestigeFromXp(p.totalXp || 0);
+    setText('#pmAvLvl', pmPrestige > 0 ? '99' : lvlNow.level);
+    const avLvlEl = $('#pmAvLvl'); if(avLvlEl) avLvlEl.classList.toggle('prestige-pip', pmPrestige > 0);
 
     // Rank progress to next tier (or placement progress for unranked players)
     try {
@@ -19008,10 +19225,15 @@ async function openProfile(uid){
     setText('#pmCurStreak', p.currentStreak || 0);
     setText('#pmDraws', p.draws || 0);
 
-    // Level + title
+    // Level + title (+ prestige at max level)
     const lvl = levelFromXp(p.totalXp || 0);
-    setText('#pmLevelBadge', lvl.level); paintLevelBadge('#pmLevelBadge', lvl.level);
+    setText('#pmLevelBadge', pmPrestige > 0 ? '99' : lvl.level); paintLevelBadge('#pmLevelBadge', lvl.level, pmPrestige);
     setText('#pmLevelStat', lvl.level);
+    const pmPrEl = $('#pmPrestige');
+    if(pmPrEl){
+      if(pmPrestige > 0){ pmPrEl.style.display = ''; pmPrEl.innerHTML = `✦ PRESTIGE ${pmPrestige}`; }
+      else pmPrEl.style.display = 'none';
+    }
     let pTitle = p.equippedTitle ? titleById(p.equippedTitle) : null;
     if(!pTitle || lvl.level < pTitle.level){
       const unl = titlesUnlockedAt(lvl.level);
@@ -19024,7 +19246,7 @@ async function openProfile(uid){
     }
     // Level XP bar
     setText('#pmLevelTitle', pTitle.name);
-    setText('#pmLevelXpText', lvl.level >= 99 ? 'MAX' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
+    setText('#pmLevelXpText', pmPrestige > 0 ? `✦ PRESTIGE ${pmPrestige}` : (lvl.level >= 99 ? 'MAX' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`));
     const pmLevelFill = $('#pmLevelBarFill');
     if(pmLevelFill) pmLevelFill.style.width = (lvl.progress * 100) + '%';
     const pmTitleColorEl = $('#pmLevelTitle');
@@ -19050,12 +19272,16 @@ async function openProfile(uid){
     await loadMatchHistory(uid);
 
     // actions
+    const editBtn = $('#pmEditBtn');
     if(uid === state.user.uid){
       $('#pmAddFriendBtn').style.display = 'none';
       $('#pmChallengeBtn').style.display = 'none';
       $('#pmBlockBtn').style.display = 'none';
       const msgBtn = $('#pmMessageBtn'); if(msgBtn) msgBtn.style.display = 'none';
+      // Your own profile: shown exactly as others see it, plus an Edit button
+      if(editBtn){ editBtn.style.display = ''; editBtn.onclick = () => { $('#profileModal').classList.remove('show'); openEditProfile(); }; }
     } else {
+      if(editBtn) editBtn.style.display = 'none';
       const isFriend = state.profile.friends?.includes(uid);
       const isBlocked = state.profile.blocked?.includes(uid);
       $('#pmAddFriendBtn').style.display = (isFriend || isBlocked) ? 'none' : '';
@@ -20772,6 +20998,10 @@ function resetMatchUI(){
   try { updateOnFireStatus(); } catch(e){}   // clear any lingering streak badges
   state._suspiciousThrows = 0; state._fairplayFlagged = false;
   { const fw = $('#fairplayWarn'); if(fw) fw.classList.remove('show'); }
+  // Reset hidden-self-cam each match (avoid starting blind); keep mic/mirror prefs.
+  state._selfCamHidden = false;
+  $('#yourVideoWrap')?.classList.remove('self-hidden');
+  $('#inMatchSettings')?.classList.remove('show');
   state.matchOver = false;
   state.matchRoundsToWin = state.preferredBestOf ? Math.ceil(state.preferredBestOf / 2) : 2; // best of 3 default — may grow during overtime
   state._endMatchCalled = false; // reset for new match
@@ -23178,11 +23408,6 @@ function renderHomeSpotlight(p){
       }
     }
   } catch(e){}
-  // Pro tip — rotates daily
-  try {
-    const dayIdx = Math.floor(Date.now() / 86400000) % PRO_TIPS.length;
-    setText('#hsTip', PRO_TIPS[dayIdx]);
-  } catch(e){}
 }
 function renderHomePage(){
   if(!state.profile) return;
@@ -23247,6 +23472,7 @@ setInterval(() => { try { if(state.screen === 'landing') refreshSeasonUI(); } ca
 function renderRankPage(){
   if(!state.profile) return;
   try { refreshSeasonUI(); } catch(e){}
+  try { loadFullLeaderboard(); } catch(e){}
   const p = state.profile;
   const rating = p.rating || 1000;
   const rank = rankFromRating(rating);
@@ -23619,23 +23845,25 @@ function buildFriendCard(f){
   const pinned = isPinned(f.uid);
   const row = document.createElement('div');
   row.className = 'friend-card' + (pres.online ? ' is-online' : '') + (pinned ? ' is-pinned' : '');
-  const avStyle = f.photoURL ? `background-image:url('${f.photoURL}'); background-size:cover; background-position:center;` : `background:${AVATAR_COLORS[f.colorIdx||0]};`;
-  const avInner = f.photoURL ? '' : escapeHTML(initialOf(f.username));
   row.innerHTML = `
     <div class="fc-av-wrap">
-      <div class="av" style="${avStyle}">${avInner}</div>
-      <span class="fc-status-dot ${pres.cls}"></span>
+      <div class="av av-photo-host" style="background:${AVATAR_COLORS[f.colorIdx||0]};"><span class="av-init">${escapeHTML(initialOf(f.username))}</span></div>
+      <span class="fc-status-dot ${pres.cls}" title="${escapeHTML(pres.label)}"></span>
     </div>
     <div class="fc-meta">
-      <div class="nm">${pinned ? '<span class="fc-pin-mark">📌</span>' : ''}${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
-      <div class="fc-status-line ${pres.cls}">${flagOf(f.country)} ${pres.label} · ${f.rating||1000}</div>
+      <div class="nm">${pinned ? '<svg viewBox="0 0 24 24" class="fc-pin-mark"><use href="#i-pin"/></svg>' : ''}${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+      <div class="fc-status-line ${pres.cls}">${flagOf(f.country)} ${pres.label} · <b>${f.rating||1000}</b></div>
     </div>
     <div class="friend-actions">
-      <button class="icon-btn${pinned ? ' accept' : ''}" data-action="pin" data-uid="${f.uid}" title="${pinned ? 'Unpin' : 'Pin to top'}"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg></button>
+      <button class="icon-btn pin-btn${pinned ? ' active' : ''}" data-action="pin" data-uid="${f.uid}" title="${pinned ? 'Unpin' : 'Pin to top'}"><svg viewBox="0 0 24 24"><use href="#i-pin"/></svg></button>
       <button class="icon-btn" data-action="message" data-uid="${f.uid}" title="Message"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></button>
-      ${pres.online ? `<button class="icon-btn accept" data-action="challenge" data-uid="${f.uid}" title="Challenge"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></button>` : ''}
-      <button class="icon-btn danger" data-action="remove" title="Remove friend" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+      ${pres.online ? `<button class="icon-btn accept" data-action="challenge" data-uid="${f.uid}" title="Challenge"><svg viewBox="0 0 24 24"><use href="#i-swords"/></svg></button>` : ''}
+      <button class="icon-btn danger" data-action="remove" title="Remove friend" data-uid="${f.uid}"><svg viewBox="0 0 24 24"><use href="#i-user-minus"/></svg></button>
     </div>`;
+  if(f.photoURL){
+    const host = row.querySelector('.av-photo-host');
+    if(host){ const img = document.createElement('img'); img.className = 'av-photo'; img.alt = ''; img.onerror = () => img.remove(); img.src = f.photoURL; host.appendChild(img); }
+  }
   row.querySelectorAll('button').forEach(btn => btn.addEventListener('click', (e) => {
     e.stopPropagation();
     const a = btn.dataset.action, u = btn.dataset.uid;
@@ -23977,7 +24205,7 @@ on('#setBlockRequests', 'click', async () => {
 });
 
 // Sidebar profile → open profile editor / stats
-on('#sidebarProfile', 'click', () => openStatsModal());
+on('#sidebarProfile', 'click', () => { if(state.user) openProfile(state.user.uid); else openStatsModal(); });
 on('#homeRankCard', 'click', (e) => { if(!e.target.closest('#rankViewMoreBtn')) showNavPage('rank'); });
 
 // ===== HAMBURGER (mobile) =====
@@ -24643,6 +24871,44 @@ on('#adminUserLookup', 'click', async () => {
 
 // NEW: Leave match button (forfeit with ELO penalty)
 on('#leaveMatchBtn', 'click', forfeitMatch);
+
+// ===== IN-MATCH OPTIONS (mute mic · hide self-cam · mirror camera) =====
+on('#inMatchSettingsBtn', 'click', (e) => {
+  e.stopPropagation();
+  const p = $('#inMatchSettings');
+  if(!p) return;
+  const open = p.classList.toggle('show');
+  if(open){
+    // reflect current state on the toggles
+    $('#igsMic')?.classList.toggle('off', !state._micMuted);
+    $('#igsSelf')?.classList.toggle('off', !state._selfCamHidden);
+    $('#igsFlip')?.classList.toggle('off', !state._camMirrored);
+  }
+});
+on('#igsMicRow', 'click', () => {
+  state._micMuted = !state._micMuted;
+  try { state.localStream?.getAudioTracks().forEach(t => t.enabled = !state._micMuted); } catch(e){}
+  $('#igsMic')?.classList.toggle('off', !state._micMuted);
+  toast(state._micMuted ? 'Mic muted' : 'Mic on', state._micMuted ? 'info' : 'success');
+  haptic(9);
+});
+on('#igsSelfRow', 'click', () => {
+  state._selfCamHidden = !state._selfCamHidden;
+  $('#yourVideoWrap')?.classList.toggle('self-hidden', state._selfCamHidden);
+  $('#igsSelf')?.classList.toggle('off', !state._selfCamHidden);
+  haptic(9);
+});
+on('#igsFlipRow', 'click', () => {
+  state._camMirrored = !state._camMirrored;
+  $('#yourVideo')?.classList.toggle('cam-flipped', state._camMirrored);
+  $('#igsFlip')?.classList.toggle('off', !state._camMirrored);
+  haptic(9);
+});
+// close the popover on outside click
+document.addEventListener('click', (e) => {
+  const p = $('#inMatchSettings');
+  if(p && p.classList.contains('show') && !e.target.closest('#inMatchSettings, #inMatchSettingsBtn')) p.classList.remove('show');
+});
 // Mute the opponent's audio directly in a match (independent of your master mute).
 on('#muteOppBtn', 'click', () => {
   const vid = $('#oppVideo'); if(!vid) return;
