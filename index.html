@@ -781,6 +781,12 @@ html{ scroll-behavior: smooth; }
 /* Icons inside buttons should never inherit stroke wider than needed */
 svg[data-lucide-icon]{ flex-shrink: 0; }
 
+/* Unranked / placement state — clearly violet + "locked" feeling */
+#homeRankCard.is-unranked .rc2-tier{ color: var(--violet); }
+#homeRankCard.is-unranked .rc2-rating{ color: var(--text-faint); }
+.pm-rating.pm-unranked{ color: var(--violet); border-color: color-mix(in srgb, var(--violet) 38%, transparent);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--violet) 13%, var(--surface-2)), var(--surface)); }
+
 /* Prestige badge + level pip treatment (max level / Prestige N).
    Colour follows the prestige tier via --pr-glow so each prestige is distinct. */
 .pm-prestige{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.1em; padding:3px 9px; border-radius:999px;
@@ -16384,15 +16390,20 @@ function refreshStatsUI(){
     }
   } catch(e){}
 
-  // PLACEMENTS — hide the rank until the player finishes their placement matches
+  // PLACEMENTS — rank AND ELO stay hidden until the player finishes placements
   if(inPlacements(p)){
     const done = placementsDone(p);
-    setText('#rankNameCurrent', 'Placement');
-    setText('#rankNextLabel', `${done}/${PLACEMENT_TOTAL} placement matches · rank hidden`);
+    const left = PLACEMENT_TOTAL - done;
+    setText('#rankNameCurrent', 'Unranked');
+    setText('#heroRating', '—');                 // ELO hidden until ranked
+    setText('#rankNextLabel', `🔒 Play ${left} more match${left === 1 ? '' : 'es'} to unlock your rank & ELO`);
     if(fill){ fill.style.width = (done / PLACEMENT_TOTAL * 100) + '%'; fill.style.setProperty('--rank-color', 'var(--violet)'); }
     const nm = $('#rc2Next'); if(nm) nm.style.display = 'none';
     const glow2 = $('#rc2IconGlow'); if(glow2) glow2.style.background = 'radial-gradient(circle, var(--violet), transparent 70%)';
     const bi = $('#rankIconCurrent'); if(bi) bi.style.color = 'var(--text-dim)';
+    const card = $('#homeRankCard'); if(card) card.classList.add('is-unranked');
+  } else {
+    const card = $('#homeRankCard'); if(card) card.classList.remove('is-unranked');
   }
 
   // Update the NEW rank-display icon
@@ -16404,7 +16415,7 @@ function refreshStatsUI(){
     rankIcon.appendChild(svg2);
     rankIcon.setAttribute('class', rank.cls);
   }
-  setText('#heroRating', rating);
+  if(!inPlacements(p)) setText('#heroRating', rating);  // keep '—' while unranked
 
   // legacy stat tiles (now hidden but kept for back-compat)
   const statRating = $('#statRating');
@@ -16812,16 +16823,24 @@ async function renderFriends(){
       snap.forEach(d => { state._friendDocs[d.id] = d.data(); });
     }
     // Self-healing mutual check: if someone I list no longer lists me back
-    // (they removed me), drop them from my side too so it converges both ways.
+    // (they removed me), drop them too so it converges. BUT give a grace window
+    // so a freshly-accepted friend isn't ripped out mid-handshake (the accept is
+    // a two-step write across both users and can briefly look one-sided).
     const myUid = state.user?.uid;
+    const now = Date.now();
+    state._nonMutualSince = state._nonMutualSince || {};
     const stale = friendUids.filter(fid => {
       const fd = state._friendDocs[fid];
-      return fd && Array.isArray(fd.friends) && !fd.friends.includes(myUid);
+      const nonMutual = fd && Array.isArray(fd.friends) && !fd.friends.includes(myUid);
+      if(!nonMutual){ delete state._nonMutualSince[fid]; return false; }
+      if(!state._nonMutualSince[fid]){ state._nonMutualSince[fid] = now; return false; }
+      return (now - state._nonMutualSince[fid]) > 60000; // 60s grace for the handshake
     });
     if(stale.length){
       try {
         await updateDoc(doc(state.db, 'users', myUid), { friends: arrayRemove(...stale) });
         state.profile.friends = (state.profile.friends||[]).filter(x => !stale.includes(x));
+        stale.forEach(fid => delete state._nonMutualSince[fid]);
       } catch(e){ console.warn('[friend] mutual-cleanup', e); }
     }
     renderFriendsFromCache();
@@ -17405,25 +17424,48 @@ function recordThrow(gesture){
 }
 
 // ============= ACHIEVEMENTS =============
+// True once the player has actually reached a rank tier (uses the REAL rank
+// bases, and never counts while still unranked / in placements).
+function rankReached(p, rankId){
+  if(!p || inPlacements(p)) return false;
+  const base = (RANKS.find(r => r.id === rankId) || {}).base;
+  return base != null && (p.rating || 1000) >= base;
+}
 const ACHIEVEMENTS = [
+  // ----- Wins -----
   { id: 'first_win', icon: '🏆', title: 'First Blood', desc: 'Win your first match', check: p => (p.wins||0) >= 1, prog: p => [p.wins||0, 1] },
   { id: 'win_10', icon: '⚔️', title: 'Veteran', desc: 'Win 10 matches', check: p => (p.wins||0) >= 10, prog: p => [p.wins||0, 10] },
   { id: 'win_50', icon: '🛡️', title: 'Warrior', desc: 'Win 50 matches', check: p => (p.wins||0) >= 50, prog: p => [p.wins||0, 50] },
   { id: 'win_100', icon: '👑', title: 'Centurion', desc: 'Win 100 matches', check: p => (p.wins||0) >= 100, prog: p => [p.wins||0, 100] },
-  { id: 'streak_3', icon: '🔥', title: 'Heating Up', desc: '3-win streak', check: p => (p.bestStreak||0) >= 3, prog: p => [p.bestStreak||0, 3] },
-  { id: 'streak_5', icon: '💥', title: 'On Fire', desc: '5-win streak', check: p => (p.bestStreak||0) >= 5, prog: p => [p.bestStreak||0, 5] },
-  { id: 'streak_10', icon: '⚡', title: 'Unstoppable', desc: '10-win streak', check: p => (p.bestStreak||0) >= 10, prog: p => [p.bestStreak||0, 10] },
-  { id: 'silver', icon: '🥈', title: 'Silver Tier', desc: 'Reach Silver rank', check: p => (p.rating||1000) >= 1100, prog: p => [p.rating||1000, 1100] },
-  { id: 'gold', icon: '🥇', title: 'Gold Tier', desc: 'Reach Gold rank', check: p => (p.rating||1000) >= 1200, prog: p => [p.rating||1000, 1200] },
-  { id: 'platinum', icon: '💎', title: 'Platinum Tier', desc: 'Reach Platinum rank', check: p => (p.rating||1000) >= 1400, prog: p => [p.rating||1000, 1400] },
-  { id: 'diamond', icon: '💠', title: 'Diamond Tier', desc: 'Reach Diamond rank', check: p => (p.rating||1000) >= 1600, prog: p => [p.rating||1000, 1600] },
-  { id: 'master', icon: '🌟', title: 'Master', desc: 'Reach Master rank', check: p => (p.rating||1000) >= 1800, prog: p => [p.rating||1000, 1800] },
-  { id: 'gm', icon: '👁️', title: 'Grandmaster', desc: 'Reach Grandmaster', check: p => (p.rating||1000) >= 2000, prog: p => [p.rating||1000, 2000] },
-  { id: 'games_100', icon: '🎮', title: 'Centurion Player', desc: 'Play 100 matches', check: p => (p.games||0) >= 100, prog: p => [p.games||0, 100] },
-  { id: 'social', icon: '🤝', title: 'Social Butterfly', desc: 'Have 5+ friends', check: p => (p.friends?.length||0) >= 5, prog: p => [p.friends?.length||0, 5] },
+  { id: 'win_250', icon: '💪', title: 'Conqueror', desc: 'Win 250 matches', check: p => (p.wins||0) >= 250, prog: p => [p.wins||0, 250] },
+  // ----- Streaks -----
+  { id: 'streak_3', icon: '🔥', title: 'Heating Up', desc: 'Get a 3-win streak', check: p => (p.bestStreak||0) >= 3, prog: p => [p.bestStreak||0, 3] },
+  { id: 'streak_5', icon: '💥', title: 'On Fire', desc: 'Get a 5-win streak', check: p => (p.bestStreak||0) >= 5, prog: p => [p.bestStreak||0, 5] },
+  { id: 'streak_10', icon: '⚡', title: 'Unstoppable', desc: 'Get a 10-win streak', check: p => (p.bestStreak||0) >= 10, prog: p => [p.bestStreak||0, 10] },
+  { id: 'streak_15', icon: '🌪️', title: 'Rampage', desc: 'Get a 15-win streak', check: p => (p.bestStreak||0) >= 15, prog: p => [p.bestStreak||0, 15] },
+  // ----- Ranks (real tier thresholds, only after placements) -----
+  { id: 'ranked', icon: '🎯', title: 'Ranked', desc: 'Complete your placement matches', check: p => !inPlacements(p) && (p.games||0) >= PLACEMENT_TOTAL, prog: p => [Math.min(placementsDone(p), PLACEMENT_TOTAL), PLACEMENT_TOTAL] },
+  { id: 'silver', icon: '🥈', title: 'Silver', desc: 'Reach Silver rank', check: p => rankReached(p,'silver'), prog: p => [p.rating||1000, 1200] },
+  { id: 'gold', icon: '🥇', title: 'Gold', desc: 'Reach Gold rank', check: p => rankReached(p,'gold'), prog: p => [p.rating||1000, 1500] },
+  { id: 'platinum', icon: '💎', title: 'Platinum', desc: 'Reach Platinum rank', check: p => rankReached(p,'platinum'), prog: p => [p.rating||1000, 1900] },
+  { id: 'diamond', icon: '💠', title: 'Diamond', desc: 'Reach Diamond rank', check: p => rankReached(p,'diamond'), prog: p => [p.rating||1000, 2350] },
+  { id: 'master', icon: '🌟', title: 'Master', desc: 'Reach Master rank', check: p => rankReached(p,'master'), prog: p => [p.rating||1000, 2900] },
+  { id: 'gm', icon: '👁️', title: 'Grandmaster', desc: 'Reach Grandmaster rank', check: p => rankReached(p,'grandmaster'), prog: p => [p.rating||1000, 3550] },
+  { id: 'champion', icon: '🔱', title: 'Champion', desc: 'Reach Champion rank', check: p => rankReached(p,'champion'), prog: p => [p.rating||1000, 4250] },
+  { id: 'legend', icon: '🏅', title: 'Legend', desc: 'Reach Legend — the apex', check: p => rankReached(p,'legend'), prog: p => [p.rating||1000, 5000] },
+  // ----- Activity -----
+  { id: 'games_100', icon: '🎮', title: 'Regular', desc: 'Play 100 matches', check: p => (p.games||0) >= 100, prog: p => [p.games||0, 100] },
+  { id: 'games_500', icon: '🕹️', title: 'Devoted', desc: 'Play 500 matches', check: p => (p.games||0) >= 500, prog: p => [p.games||0, 500] },
+  { id: 'draws_10', icon: '🤝', title: 'Mind Meld', desc: 'Draw 10 matches', check: p => (p.draws||0) >= 10, prog: p => [p.draws||0, 10] },
+  // ----- Progression -----
+  { id: 'level_25', icon: '📈', title: 'Seasoned', desc: 'Reach level 25', check: p => levelFromXp(p.totalXp||0).level >= 25, prog: p => [levelFromXp(p.totalXp||0).level, 25] },
+  { id: 'level_50', icon: '🚀', title: 'Elite', desc: 'Reach level 50', check: p => levelFromXp(p.totalXp||0).level >= 50, prog: p => [levelFromXp(p.totalXp||0).level, 50] },
+  { id: 'prestige', icon: '✦', title: 'Prestige', desc: 'Reach Prestige', check: p => prestigeFromXp(p.totalXp||0) >= 1, prog: p => [Math.min(levelFromXp(p.totalXp||0).level, 99), 99] },
+  // ----- Social + dedication -----
+  { id: 'social', icon: '🫂', title: 'Social Butterfly', desc: 'Have 5+ friends', check: p => (p.friends?.length||0) >= 5, prog: p => [p.friends?.length||0, 5] },
   { id: 'daily_3', icon: '📅', title: 'Daily Grind', desc: '3-day daily streak', check: () => getDailyStreak() >= 3, prog: () => [getDailyStreak(), 3] },
   { id: 'daily_7', icon: '🗓️', title: 'Week Warrior', desc: '7-day daily streak', check: () => getDailyStreak() >= 7, prog: () => [getDailyStreak(), 7] },
-  { id: 'win_rate_70', icon: '📈', title: 'Sharp', desc: '70%+ win rate (50+ games)', check: p => (p.games||0) >= 50 && (p.wins||0)/(p.games||1) >= 0.7, prog: p => [Math.min(p.games||0,50), 50] },
+  { id: 'win_rate_70', icon: '🎓', title: 'Sharp', desc: '70%+ win rate (50+ games)', check: p => (p.games||0) >= 50 && (p.wins||0)/(p.games||1) >= 0.7, prog: p => [Math.min(p.games||0,50), 50] },
 ];
 
 // Set of achievement ids currently satisfied by a given profile (used for the
@@ -18836,6 +18878,7 @@ function trimProfile(p){
     rating: p.rating || 1000,
     colorIdx: p.colorIdx || 0,
     wins: p.wins || 0, losses: p.losses || 0, games: p.games || 0, bestStreak: p.bestStreak || 0,
+    placementsDone: (p.placementsDone == null ? null : p.placementsDone),
     bio: p.bio || '',
   };
 }
@@ -18878,11 +18921,12 @@ function renderLeaderboardInto(sel){
   const body = $(sel);
   if(!body) return;
   body.innerHTML = '';
-  if(!state.leaderboard || state.leaderboard.length === 0){
+  // Only ranked players appear (filter out anyone still in placements)
+  const players = (state.leaderboard || []).filter(p => !inPlacements(p));
+  if(players.length === 0){
     body.innerHTML = '<div class="side-empty">no players yet · be the first</div>';
     return;
   }
-  const players = state.leaderboard;
   const top = players.slice(0, 3);
   const rest = players.slice(3);
 
@@ -18977,7 +19021,8 @@ function renderFullLeaderboard(){
   const myUid = state.user?.uid;
   const friends = state.profile?.friends || [];
   const myCountry = state.profile?.country;
-  let list = state._lbFull.slice();
+  // Only ranked players appear on the leaderboard (unranked = still in placements)
+  let list = state._lbFull.filter(p => !inPlacements(p));
   // keep an absolute-rank index before filtering so positions stay true
   list.forEach((p, i) => { p._absRank = i + 1; });
   if(filter === 'friends') list = list.filter(p => p.uid === myUid || friends.includes(p.uid));
@@ -19282,12 +19327,16 @@ async function openProfile(uid){
     try {
       if(inPlacements(p)){
         const done = placementsDone(p);
+        const left = PLACEMENT_TOTAL - done;
         setText('#pmRankName', 'Unranked');
+        setText('#pmRating', '—');                                  // ELO hidden until ranked
+        const pmRatingWrap = $('#pmRating')?.parentElement; if(pmRatingWrap) pmRatingWrap.classList.add('pm-unranked');
         setText('#pmRankProgCur', 'Placement');
         setText('#pmRankProgNext', `${done}/${PLACEMENT_TOTAL}`);
         const fill = $('#pmRankProgFill'); if(fill){ fill.style.width = (done / PLACEMENT_TOTAL * 100) + '%'; }
-        setText('#pmRankProgLabel', `${PLACEMENT_TOTAL - done} placement matches to a rank`);
+        setText('#pmRankProgLabel', `🔒 ${left} more match${left === 1 ? '' : 'es'} to unlock rank & ELO`);
       } else {
+        const pmRatingWrap = $('#pmRating')?.parentElement; if(pmRatingWrap) pmRatingWrap.classList.remove('pm-unranked');
         const rp = rankProgressToNext(rating);
         const fill = $('#pmRankProgFill'); if(fill) fill.style.width = Math.round(rp.progress * 100) + '%';
         setText('#pmRankProgCur', rank.tierName);
@@ -19381,8 +19430,23 @@ async function openProfile(uid){
       if(editBtn) editBtn.style.display = 'none';
       const isFriend = state.profile.friends?.includes(uid);
       const isBlocked = state.profile.blocked?.includes(uid);
-      $('#pmAddFriendBtn').style.display = (isFriend || isBlocked) ? 'none' : '';
-      $('#pmAddFriendBtn').onclick = () => { addFriendByUsername(p.username); $('#profileModal').classList.remove('show'); };
+      // Did THIS person send ME a friend request? If so, the button accepts it.
+      const incomingReq = (state.pendingRequests || []).find(r => r.from === uid);
+      const addBtn = $('#pmAddFriendBtn');
+      if(addBtn){
+        if(isFriend || isBlocked){ addBtn.style.display = 'none'; }
+        else if(incomingReq){
+          addBtn.style.display = '';
+          addBtn.classList.add('btn-mint');
+          addBtn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Accept request';
+          addBtn.onclick = () => { acceptFriendRequest(incomingReq.id, uid); $('#profileModal').classList.remove('show'); };
+        } else {
+          addBtn.style.display = '';
+          addBtn.classList.remove('btn-mint');
+          addBtn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-plus"/></svg> Add friend';
+          addBtn.onclick = () => { addFriendByUsername(p.username); $('#profileModal').classList.remove('show'); };
+        }
+      }
       $('#pmChallengeBtn').style.display = isBlocked ? 'none' : '';
       $('#pmChallengeBtn').onclick = () => { sendChallenge(uid); $('#profileModal').classList.remove('show'); };
       // Message — opens a DM thread in the Messages flyout
@@ -20299,8 +20363,9 @@ async function showMatchFound(){
     myRankSvg.setAttribute('height', '38');
     myRankSvg.style.color = myRank.color || '';
   }
-  setText('#mfYouTier', (myRank.tierName || 'Bronze I').toUpperCase());
-  setText('#mfYouElo', state.profile.rating || 1000);
+  const youUnranked = inPlacements(state.profile);
+  setText('#mfYouTier', youUnranked ? 'UNRANKED' : (myRank.tierName || 'Bronze I').toUpperCase());
+  setText('#mfYouElo', youUnranked ? '—' : (state.profile.rating || 1000));
   setText('#mfYouWins', state.profile.wins || 0);
   const myGames = state.profile.games || ((state.profile.wins||0) + (state.profile.losses||0) + (state.profile.draws||0));
   const myWr = myGames > 0 ? Math.round(((state.profile.wins||0) / myGames) * 100) : 0;
@@ -20335,8 +20400,9 @@ async function showMatchFound(){
     oppRankSvg.setAttribute('height', '38');
     oppRankSvg.style.color = oRank.color || '';
   }
-  setText('#mfOppTier', (oRank.tierName || 'Bronze I').toUpperCase());
-  setText('#mfOppElo', o.rating || 1000);
+  const oppUnranked = inPlacements(o);
+  setText('#mfOppTier', oppUnranked ? 'UNRANKED' : (oRank.tierName || 'Bronze I').toUpperCase());
+  setText('#mfOppElo', oppUnranked ? '—' : (o.rating || 1000));
   setText('#mfOppWins', o.wins || 0);
   const oGames = o.games || ((o.wins||0) + (o.losses||0) + (o.draws||0));
   const oWr = oGames > 0 ? Math.round(((o.wins||0) / oGames) * 100) : 0;
@@ -23582,21 +23648,36 @@ function renderRankPage(){
   const rank = rankFromRating(rating);
   setRankIconEl($('#rankPageIcon'), rank.id);
   const ic = $('#rankPageIcon'); if(ic) ic.style.color = rank.color;
-  setText('#rankPageTier', rank.tierName);
-  setText('#rankPageRating', rating);
-  const prog = rankProgressToNext(rating);
-  const fill = $('#rankPageFill'); if(fill) fill.style.width = (prog.progress*100) + '%';
-  setText('#rankPageNext', prog.nextLabel);
+  const fill = $('#rankPageFill');
+  if(inPlacements(p)){
+    const done = placementsDone(p); const left = PLACEMENT_TOTAL - done;
+    if(ic) ic.style.color = 'var(--text-dim)';
+    setText('#rankPageTier', 'Unranked');
+    setText('#rankPageRating', '—');
+    if(fill) fill.style.width = (done/PLACEMENT_TOTAL*100) + '%';
+    setText('#rankPageNext', `🔒 ${left} placement match${left === 1 ? '' : 'es'} left to unlock your rank & ELO`);
+  } else {
+    setText('#rankPageTier', rank.tierName);
+    setText('#rankPageRating', rating);
+    const prog = rankProgressToNext(rating);
+    if(fill) fill.style.width = (prog.progress*100) + '%';
+    setText('#rankPageNext', prog.nextLabel);
+  }
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games > 0 ? Math.round(((p.wins||0)/games)*100) : 0;
   setText('#rpsWins', p.wins||0);
   setText('#rpsLosses', p.losses||0);
   setText('#rpsWR', wr+'%');
   setText('#rpsStreak', p.bestStreak||0);
-  // percentile + global rank
-  const gr = computeGlobalRank(rating);
-  setText('#pctTop', 'Top ' + gr.pct + '%');
-  setText('#pctGlobalRank', gr.rank ? '#' + gr.rank : '#—');
+  // percentile + global rank (hidden while unranked)
+  if(inPlacements(p)){
+    setText('#pctTop', 'Top —');
+    setText('#pctGlobalRank', '#—');
+  } else {
+    const gr = computeGlobalRank(rating);
+    setText('#pctTop', 'Top ' + gr.pct + '%');
+    setText('#pctGlobalRank', gr.rank ? '#' + gr.rank : '#—');
+  }
   // ladder
   const ladder = $('#rankLadder');
   if(ladder){
@@ -24054,11 +24135,21 @@ function renderPlayPage(){
   const rank = rankFromRating(rating);
   setRankIconEl($('#playRankIcon'), rank.id);
   const ic = $('#playRankIcon'); if(ic) ic.style.color = rank.color;
-  setText('#playRankTier', rank.tierName);
-  setText('#playRankRating', rating);
-  const prog = rankProgressToNext(rating);
-  const fill = $('#playRankFill'); if(fill){ fill.style.width = (prog.progress*100)+'%'; fill.style.setProperty('--rank-color', rank.color); fill.style.setProperty('--rank-color-2', rank.color2 || rank.color); }
-  setText('#playRankNext', prog.nextLabel);
+  const fill = $('#playRankFill');
+  if(inPlacements(p)){
+    const done = placementsDone(p); const left = PLACEMENT_TOTAL - done;
+    if(ic) ic.style.color = 'var(--text-dim)';
+    setText('#playRankTier', 'Unranked');
+    setText('#playRankRating', '—');
+    if(fill){ fill.style.width = (done/PLACEMENT_TOTAL*100)+'%'; fill.style.setProperty('--rank-color', 'var(--violet)'); fill.style.setProperty('--rank-color-2', '#7a5fdc'); }
+    setText('#playRankNext', `🔒 ${left} more to unlock rank`);
+  } else {
+    setText('#playRankTier', rank.tierName);
+    setText('#playRankRating', rating);
+    const prog = rankProgressToNext(rating);
+    if(fill){ fill.style.width = (prog.progress*100)+'%'; fill.style.setProperty('--rank-color', rank.color); fill.style.setProperty('--rank-color-2', rank.color2 || rank.color); }
+    setText('#playRankNext', prog.nextLabel);
+  }
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games>0 ? Math.round(((p.wins||0)/games)*100) : 0;
   setText('#playRankWR', wr+'%');
@@ -24724,6 +24815,11 @@ function captureOppFrame(){
   try {
     const v = $('#oppVideo');
     if(!v || !v.videoWidth) return null;
+    // NEVER capture while the opponent's camera is intentionally hidden (the
+    // "NO PEEKING" round phase). The <video> still holds a live frame even when
+    // CSS-hidden, so reporting must not become a way to peek at their throw.
+    const obscured = $('#oppObscured')?.classList.contains('show') || v.style.visibility === 'hidden';
+    if(obscured) return null;
     const w = 360, h = Math.max(1, Math.round(360 * (v.videoHeight / v.videoWidth)));
     const c = document.createElement('canvas'); c.width = w; c.height = h;
     c.getContext('2d').drawImage(v, 0, 0, w, h);
