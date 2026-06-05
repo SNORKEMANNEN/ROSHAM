@@ -720,20 +720,14 @@ body.high-contrast .btn-primary{
   background: #ff2d6b;
   border: 2px solid #fff;
 }
-/* Larger UI text (accessibility) */
-/* Larger text — the app uses fixed px sizes, so bump the readable text across the
-   board (~16% on common content). Tiny UI chrome is left alone to avoid breakage. */
-body.ui-large{ font-size: 17px; }
-body.ui-large p, body.ui-large .set-title, body.ui-large .settings-row-title{ font-size: 15px; }
-body.ui-large .set-sub, body.ui-large .settings-row-sub{ font-size: 13px; }
-body.ui-large .btn, body.ui-large .nav-item, body.ui-large input, body.ui-large select, body.ui-large textarea{ font-size: 15px; }
-body.ui-large .nav-item span, body.ui-large .mobile-nav-item span{ font-size: 13px; }
-body.ui-large .chat-msg .text, body.ui-large .b-text, body.ui-large .activity-row .b-text,
-body.ui-large .friend-card .nm, body.ui-large .lbf-name, body.ui-large .mh-name{ font-size: 15px; }
-body.ui-large .stat-tile-l, body.ui-large .asc-l, body.ui-large .pm-stat .l{ font-size: 12px; }
-body.ui-large .stat-tile-v, body.ui-large .pm-stat .v{ font-size: 1.08em; }
-body.ui-large .section-title, body.ui-large .card-hd-title, body.ui-large .psection h3{ font-size: 1.06em; }
-body.ui-large .hx-title, body.ui-large .welcome-title{ font-size: 1.05em; }
+/* Larger UI text (accessibility) — the app uses fixed px sizes everywhere, so
+   scale the menu pages + modals up as a whole. This reliably ENLARGES everything
+   (text + spacing) instead of fighting per-element defaults. The in-game arena is
+   left untouched so the camera/round layout never shifts. */
+body.ui-large .nav-page,
+body.ui-large .modal,
+body.ui-large .more-sheet,
+body.ui-large .login-reward-card{ zoom: 1.14; }
 /* Color-blind mode — swap the green/red win-loss pair for CB-safe blue/orange */
 body.colorblind{ --mint:#3a9bff; --coral:#ff9a3d; }
 body.colorblind .pm-form-pip.win, body.colorblind .qr-you.win{ background: linear-gradient(135deg,#3a9bff,#2e7fd0) !important; color:#04121c !important; }
@@ -1380,6 +1374,13 @@ body.reduced-motion .nav-page.active, body.low-power .nav-page.active{ animation
 .dxp-banner::after{ content:''; position:absolute; inset:0; background:linear-gradient(110deg, transparent 35%, rgba(255,255,255,.18) 50%, transparent 65%); transform:translateX(-120%); animation:dxpSheen 3s ease-in-out 1s infinite; pointer-events:none; }
 @keyframes dxpSheen{ 0%{ transform:translateX(-120%);} 55%,100%{ transform:translateX(160%);} }
 body.reduced-motion .dxp-banner::after, body.low-power .dxp-banner::after{ animation:none; opacity:0; }
+/* Compact persistent 2× XP pill (topbar) — visible on every page during the weekend */
+.dxp-pill{ display:inline-flex; align-items:center; gap:5px; padding:5px 11px; border-radius:999px; margin-right:8px; flex:0 0 auto; cursor:pointer;
+  background:linear-gradient(135deg,#ffd33d,#ff9a3d); color:#1c1402; border:none; font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:12px; letter-spacing:.03em;
+  box-shadow:0 0 16px -4px rgba(255,211,61,.7); animation:dxpPillPulse 2s ease-in-out infinite; }
+@keyframes dxpPillPulse{ 0%,100%{ box-shadow:0 0 13px -5px rgba(255,211,61,.6); } 50%{ box-shadow:0 0 20px -2px rgba(255,211,61,.95); } }
+body.reduced-motion .dxp-pill, body.low-power .dxp-pill{ animation:none; }
+@media (max-width:600px){ .dxp-pill{ font-size:11px; padding:4px 9px; margin-right:5px; } }
 .dxp-bolt{ width:44px; height:44px; flex-shrink:0; border-radius:12px; display:grid; place-items:center; background:linear-gradient(135deg,#ffd33d,#ff8c42); color:#1c1402; box-shadow:0 0 16px rgba(255,180,60,.6); animation:dxpPulse 1.6s ease-in-out infinite; }
 @keyframes dxpPulse{ 0%,100%{ transform:scale(1);} 50%{ transform:scale(1.08);} }
 body.reduced-motion .dxp-bolt, body.low-power .dxp-bolt{ animation:none; }
@@ -12244,15 +12245,15 @@ body.reduced-motion .sl-text{ animation:none; }
     <symbol id="i-pin" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1 2 2 0 0 0 0-4H8a2 2 0 0 0 0 4 1 1 0 0 1 1 1z"/></symbol>
     <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
     <!-- RANK ICONS -->
-    <symbol id="i-rank-bronze" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/></symbol>
-    <symbol id="i-rank-silver" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/><circle cx="12" cy="12" r="3" fill="rgba(0,0,0,.3)"/></symbol>
-    <symbol id="i-rank-gold" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L15 8 L22 9 L17 14 L18 21 L12 18 L6 21 L7 14 L2 9 L9 8 Z"/><path fill="rgba(255,255,255,.3)" d="M12 5 L13.5 8.5 L17 9 L14.5 11.5 L15 15 L12 13.5 Z"/></symbol>
-    <symbol id="i-rank-platinum" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 L18 4 L22 10 L22 14 L18 20 L12 23 L6 20 L2 14 L2 10 L6 4 Z"/><path fill="rgba(0,0,0,.3)" d="M12 7 L16 12 L12 17 L8 12 Z"/></symbol>
-    <symbol id="i-rank-diamond" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2 L20 9 L12 22 L4 9 Z"/><path fill="rgba(255,255,255,.3)" d="M12 2 L16 6 L12 12 L8 6 Z M12 12 L20 9 L16 6 Z"/></symbol>
-    <symbol id="i-rank-master" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 L14 7 L20 7 L15 11 L17 17 L12 14 L7 17 L9 11 L4 7 L10 7 Z M12 14 L17 19 L12 23 L7 19 Z"/></symbol>
-    <symbol id="i-rank-grandmaster" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path fill="rgba(0,0,0,.4)" d="M12 4 L14 10 L20 10 L15 14 L17 20 L12 16 L7 20 L9 14 L4 10 L10 10 Z"/></symbol>
-    <symbol id="i-rank-champion" viewBox="0 0 24 24"><path fill="currentColor" d="M3 7 L7.5 11 L12 3.5 L16.5 11 L21 7 L19 19.5 L5 19.5 Z"/><path fill="rgba(0,0,0,.35)" d="M5 19.5 L19 19.5 L18.5 16.5 L5.5 16.5 Z"/><circle cx="3" cy="7" r="1.7" fill="currentColor"/><circle cx="21" cy="7" r="1.7" fill="currentColor"/><circle cx="12" cy="3.5" r="1.9" fill="currentColor"/></symbol>
-    <symbol id="i-rank-legend" viewBox="0 0 24 24"><path fill="currentColor" d="M12 1 L13.9 8.1 L21 6 L15.8 12 L21 18 L13.9 15.9 L12 23 L10.1 15.9 L3 18 L8.2 12 L3 6 L10.1 8.1 Z"/><circle cx="12" cy="12" r="3" fill="rgba(255,255,255,.6)"/></symbol>
+    <symbol id="i-rank-bronze" viewBox="0 0 24 24"><image href="bronze.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-silver" viewBox="0 0 24 24"><image href="silver.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-gold" viewBox="0 0 24 24"><image href="gold.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-platinum" viewBox="0 0 24 24"><image href="platinum.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-diamond" viewBox="0 0 24 24"><image href="diamond.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-master" viewBox="0 0 24 24"><image href="master.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-grandmaster" viewBox="0 0 24 24"><image href="grandmaster.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-champion" viewBox="0 0 24 24"><image href="champion.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <symbol id="i-rank-legend" viewBox="0 0 24 24"><image href="legend.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
   </defs>
 </svg>
 
@@ -12305,6 +12306,7 @@ body.reduced-motion .sl-text{ animation:none; }
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
       <div class="stat"><span>· <b id="matchCount">0</b> active matches</span></div>
     </div>
+    <button class="dxp-pill" id="dxpPill" style="display:none;" title="Double XP weekend"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-zap"/></svg> 2× XP</button>
     <div class="topbar-spacer"></div>
     <div class="header-actions" id="headerActions">
       <button class="btn btn-ghost" id="helpBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg> How to play</button>
@@ -12875,6 +12877,11 @@ const FIREBASE_CONFIG = {
 
       <!-- ============ PAGE: PLAY ============ -->
       <div class="nav-page" data-page="play">
+        <div class="dxp-banner" style="display:none; margin:0 0 14px;">
+          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-mult">2×</div>
+        </div>
         <!-- ARENA HERO -->
         <section class="hx-hero play-hero">
           <div class="hx-hero-glow"></div>
@@ -12995,6 +13002,11 @@ const FIREBASE_CONFIG = {
         <div class="page-header">
           <h2 class="page-title">ACTIVITY</h2>
           <p class="page-subtitle">Live matches and recent results from around the world.</p>
+        </div>
+        <div class="dxp-banner" style="display:none;">
+          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-mult">2×</div>
         </div>
         <div class="stat-grid-4" style="margin-bottom:14px;">
           <div class="stat-tile">
@@ -13156,6 +13168,11 @@ const FIREBASE_CONFIG = {
         <div class="page-header">
           <h2 class="page-title">ACHIEVEMENTS</h2>
           <p class="page-subtitle">Titles, milestones and bragging rights.</p>
+        </div>
+        <div class="dxp-banner" style="display:none;">
+          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-mult">2×</div>
         </div>
         <div class="ach-level-banner">
           <div class="ach-level-badge" id="achLevelBadge">1</div>
@@ -25009,14 +25026,29 @@ function refreshSeasonUI(){
   setText('#seasonTime', `Season ends ${s.daysLeft >= 1 ? 'in ' + s.daysLeft + ' days' : seasonCountdownText()}`);
   const bar = $('#seasonBarFill'); if(bar) bar.style.width = (s.progress * 100) + '%';
   setText('#scDays', s.daysLeft);
-  // Weekend 2× XP banners (rank page + home)
+  // Weekend 2× XP — toggle EVERY banner/pill (.dxp-banner, .dxp-pill) at once.
   const on = isDoubleXP();
-  const showHide = (sel) => { const el = $(sel); if(el) el.style.display = on ? '' : 'none'; };
-  showHide('#dxpBanner'); showHide('#dxpBannerHome');
-  if(on){ setText('#dxpSub', `Double XP on every match · ${doubleXpEndsText()}`); }
+  document.querySelectorAll('.dxp-banner').forEach(el => el.style.display = on ? '' : 'none');
+  document.querySelectorAll('.dxp-pill').forEach(el => el.style.display = on ? '' : 'none');
+  if(on){ document.querySelectorAll('.dxp-sub').forEach(el => el.textContent = `Double XP on every match · ${doubleXpEndsText()}`); }
+  // First time you land during a 2× weekend → a celebratory one-time toast.
+  if(on) try { maybeDoubleXpToast(); } catch(e){}
+}
+// Show a "2× XP weekend" toast once per weekend.
+function maybeDoubleXpToast(){
+  if(!isDoubleXP()) return;
+  const d = new Date(), dow = d.getDay();
+  // Anchor the toast to THIS weekend's Saturday so it shows exactly once per weekend.
+  const satOffset = dow === 5 ? 1 : dow === 6 ? 0 : -1; // Fri eve→tomorrow, Sat→today, Sun→yesterday
+  const sat = new Date(d); sat.setDate(d.getDate() + satOffset);
+  const key = 'rosham_dxp_toast_' + sat.toDateString();
+  try { if(localStorage.getItem(key)) return; localStorage.setItem(key, '1'); } catch(e){}
+  if(state._dxpToastShown) return; state._dxpToastShown = true;
+  setTimeout(() => { try { toast(`⚡ It's 2× XP weekend! Double XP on every match · ${doubleXpEndsText()}`, 'success', { duration: 7000 }); } catch(e){} }, 1400);
 }
 // Tick the season/2x UI once a minute so the countdown stays live.
 setInterval(() => { try { if(state.screen === 'landing') refreshSeasonUI(); } catch(e){} }, 60000);
+on('#dxpPill', 'click', () => { try { toast(`⚡ 2× XP weekend — double XP on every match · ${doubleXpEndsText()}`, 'success', { duration: 5000 }); } catch(e){} });
 
 function renderRankPage(){
   if(!state.profile) return;
