@@ -3759,6 +3759,11 @@ body.low-power .achievement-card.unlocked::after{ display: none; }
 .ach-unlock-title{ font-family: var(--font-display); font-stretch: 72%; font-weight: 800; font-size: 16px; color: var(--text); line-height: 1.1; }
 .ach-unlock-desc{ font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); }
 body.low-power .ach-unlock-toast, body.low-power .ach-unlock-toast::before{ animation: none; }
+/* Level-up shares the achievement toast frame but in mint, so end-of-match
+   popups stack uniformly under each other instead of overlapping. */
+.ach-unlock-toast.levelup-card{ background: linear-gradient(135deg, rgba(34,211,163,.16), rgba(34,211,163,.04)), var(--surface); border-color: rgba(34,211,163,.42); box-shadow: 0 12px 32px rgba(0,0,0,.5), 0 0 24px rgba(34,211,163,.18); }
+.ach-unlock-toast.levelup-card .lu-kicker{ color: var(--mint); }
+.ach-unlock-toast .lu-card-badge{ width:42px; height:42px; font-size:19px; }
 
 @media (max-width: 600px){
   .stats-grid{ grid-template-columns: repeat(2, 1fr); }
@@ -9387,6 +9392,9 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
 }
 
 /* ============ RANK UP OVERLAY ============ */
+/* Registered so it can smoothly INTERPOLATE in CSS — the bg recolours from the
+   old rank to the new rank during the promotion instead of snapping. */
+@property --rank-bg-color{ syntax:'<color>'; inherits:true; initial-value:#ffd33d; }
 .rankup-overlay{
   position:fixed; inset:0;
   background:
@@ -9396,8 +9404,17 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
   align-items:center; justify-content:center;
   z-index:500;
   overflow:hidden;
+  transition: --rank-bg-color 1s ease;
 }
 .rankup-overlay.show{display:flex; animation: fadeIn .4s;}
+/* Full-screen ambient colour wash driven by --rank-bg-color (old → new). */
+.rankup-ambient{
+  position:absolute; inset:0; z-index:0; pointer-events:none; opacity:0; mix-blend-mode:screen;
+  background: radial-gradient(circle at 50% 42%, var(--rank-bg-color, var(--amber)), transparent 58%);
+  animation: rankupAmbientIn 1s .3s ease forwards;
+}
+@keyframes rankupAmbientIn{ to{ opacity:.20; } }
+body.reduced-motion .rankup-ambient, body.low-power .rankup-ambient{ animation:rankupAmbientIn .5s .2s ease forwards; }
 
 /* ===== LEGEND rank-up — apex-tier premium treatment ===== */
 .legend-rankup{
@@ -9545,24 +9562,24 @@ body.reduced-motion .rk-seal-label, body.low-power .rk-seal-label{ animation:non
   position:absolute;
   inset:-50%;
   background: conic-gradient(from 0deg at 50% 50%,
-    transparent 0deg, var(--rank-color, var(--amber)) 4deg,
+    transparent 0deg, var(--rank-bg-color, var(--amber)) 4deg,
     transparent 8deg, transparent 30deg,
-    var(--rank-color, var(--amber)) 34deg, transparent 38deg,
-    transparent 60deg, var(--rank-color, var(--amber)) 64deg,
+    var(--rank-bg-color, var(--amber)) 34deg, transparent 38deg,
+    transparent 60deg, var(--rank-bg-color, var(--amber)) 64deg,
     transparent 68deg, transparent 90deg,
-    var(--rank-color, var(--amber)) 94deg, transparent 98deg,
-    transparent 120deg, var(--rank-color, var(--amber)) 124deg,
+    var(--rank-bg-color, var(--amber)) 94deg, transparent 98deg,
+    transparent 120deg, var(--rank-bg-color, var(--amber)) 124deg,
     transparent 128deg, transparent 150deg,
-    var(--rank-color, var(--amber)) 154deg, transparent 158deg,
-    transparent 180deg, var(--rank-color, var(--amber)) 184deg,
+    var(--rank-bg-color, var(--amber)) 154deg, transparent 158deg,
+    transparent 180deg, var(--rank-bg-color, var(--amber)) 184deg,
     transparent 188deg, transparent 210deg,
-    var(--rank-color, var(--amber)) 214deg, transparent 218deg,
-    transparent 240deg, var(--rank-color, var(--amber)) 244deg,
+    var(--rank-bg-color, var(--amber)) 214deg, transparent 218deg,
+    transparent 240deg, var(--rank-bg-color, var(--amber)) 244deg,
     transparent 248deg, transparent 270deg,
-    var(--rank-color, var(--amber)) 274deg, transparent 278deg,
-    transparent 300deg, var(--rank-color, var(--amber)) 304deg,
+    var(--rank-bg-color, var(--amber)) 274deg, transparent 278deg,
+    transparent 300deg, var(--rank-bg-color, var(--amber)) 304deg,
     transparent 308deg, transparent 330deg,
-    var(--rank-color, var(--amber)) 334deg, transparent 338deg
+    var(--rank-bg-color, var(--amber)) 334deg, transparent 338deg
   );
   animation: rankupSpinRays 18s linear infinite;
   opacity:.18;
@@ -10264,6 +10281,69 @@ body.reduced-motion .rk-seal-label, body.low-power .rk-seal-label{ animation:non
 }
 
 /* ============ LEVEL UP OVERLAY ============ */
+/* ===== PRESTIGE UP — pinnacle celebration ===== */
+.prestige-overlay{
+  position:fixed; inset:0; z-index:512; display:none; align-items:center; justify-content:center; overflow:hidden;
+  background: radial-gradient(circle at 50% 42%, rgba(22,18,32,.55), rgba(6,5,11,.97) 70%), rgba(6,5,11,.98);
+  --pr-a:#fff6c0; --pr-b:#ffd700; --pr-glow:#ffd700; --pr-text:#1c1402;
+}
+.prestige-overlay.show{ display:flex; animation: fadeIn .4s; }
+.prestige-content{ position:relative; z-index:3; display:flex; flex-direction:column; align-items:center; text-align:center; padding:24px; }
+.prestige-eyebrow{ font-family:var(--font-mono); font-size:12px; letter-spacing:.42em; font-weight:800; color:var(--pr-glow); text-shadow:0 0 18px var(--pr-glow); opacity:0; animation: prFadeUp .6s .15s forwards; }
+.prestige-rays{ position:absolute; inset:-50%; z-index:0; opacity:0; mix-blend-mode:screen; filter:blur(1px);
+  background: conic-gradient(from 0deg at 50% 50%,
+    transparent 0 6deg, var(--pr-glow) 8deg, transparent 10deg 36deg, var(--pr-glow) 38deg, transparent 40deg 66deg,
+    var(--pr-glow) 68deg, transparent 70deg 96deg, var(--pr-glow) 98deg, transparent 100deg 126deg, var(--pr-glow) 128deg,
+    transparent 130deg 156deg, var(--pr-glow) 158deg, transparent 160deg 186deg, var(--pr-glow) 188deg, transparent 190deg 216deg,
+    var(--pr-glow) 218deg, transparent 220deg 246deg, var(--pr-glow) 248deg, transparent 250deg 276deg, var(--pr-glow) 278deg,
+    transparent 280deg 306deg, var(--pr-glow) 308deg, transparent 310deg 336deg, var(--pr-glow) 338deg, transparent 340deg);
+  mask-image:radial-gradient(ellipse 60% 60% at center, #000 25%, transparent 78%);
+  -webkit-mask-image:radial-gradient(ellipse 60% 60% at center, #000 25%, transparent 78%);
+  animation: prRaysIn 1s .2s forwards, rankupSpinRays 22s linear infinite;
+}
+.prestige-rays.r2{ animation: prRaysIn 1s .4s forwards, rankupSpinRays 30s linear infinite reverse; }
+@keyframes prRaysIn{ to{ opacity:.22; } }
+.prestige-bloom{ position:absolute; left:50%; top:42%; width:min(80vw,620px); height:min(80vw,620px); transform:translate(-50%,-50%) scale(.5); border-radius:50%; z-index:0; pointer-events:none; mix-blend-mode:screen; opacity:0;
+  background:radial-gradient(circle, var(--pr-glow) 0%, transparent 60%); animation: prBloom 1.4s .3s cubic-bezier(.2,.7,.2,1) forwards; }
+@keyframes prBloom{ 0%{opacity:0; transform:translate(-50%,-50%) scale(.5);} 55%{opacity:.45;} 100%{opacity:.28; transform:translate(-50%,-50%) scale(1);} }
+.prestige-particles{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+.prestige-particles .particle{ position:absolute; width:5px; height:5px; border-radius:50%; opacity:0; animation: rankupParticle 3s ease-out infinite; }
+.prestige-emblem{ position:relative; width:200px; height:200px; display:grid; place-items:center; margin:8px 0 12px; animation: prEmblemIn 1s .15s cubic-bezier(.15,1.4,.4,1) both; }
+@keyframes prEmblemIn{ 0%{opacity:0; transform:scale(.3) rotate(-160deg); filter:blur(10px);} 60%{opacity:1; filter:blur(0);} 100%{opacity:1; transform:scale(1) rotate(0);} }
+.prestige-ring{ position:absolute; inset:0; border-radius:50%; border:2px solid var(--pr-glow); opacity:.5; animation: prSpin 9s linear infinite; }
+.prestige-ring.r2{ inset:-18px; border-style:dashed; opacity:.32; animation: prSpin 13s linear infinite reverse; }
+@keyframes prSpin{ to{ transform:rotate(360deg); } }
+.prestige-core{ position:relative; width:128px; height:128px; border-radius:50%; display:grid; place-items:center; z-index:2;
+  background: radial-gradient(circle at 38% 30%, var(--pr-a), var(--pr-b) 72%);
+  box-shadow:0 0 0 5px rgba(255,255,255,.08), 0 0 48px var(--pr-glow), inset 0 2px 10px rgba(255,255,255,.4), inset 0 -8px 18px rgba(0,0,0,.3);
+  animation: prCorePulse 2.4s ease-in-out 1.2s infinite; }
+@keyframes prCorePulse{ 0%,100%{ box-shadow:0 0 0 5px rgba(255,255,255,.08), 0 0 40px var(--pr-glow), inset 0 2px 10px rgba(255,255,255,.4), inset 0 -8px 18px rgba(0,0,0,.3);} 50%{ box-shadow:0 0 0 7px rgba(255,255,255,.12), 0 0 66px var(--pr-glow), inset 0 2px 10px rgba(255,255,255,.4), inset 0 -8px 18px rgba(0,0,0,.3);} }
+.prestige-core-star{ position:absolute; width:118px; height:118px; color:rgba(255,255,255,.22); }
+.prestige-core-num{ position:relative; z-index:1; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:58px; color:var(--pr-text,#1c1402); text-shadow:0 1px 2px rgba(255,255,255,.4); animation: prNumPop .5s .7s cubic-bezier(.2,1.7,.4,1) both; }
+@keyframes prNumPop{ from{opacity:0; transform:scale(.3);} to{opacity:1; transform:scale(1);} }
+.prestige-orbit{ position:absolute; inset:0; z-index:1; pointer-events:none; }
+.prestige-orbit .pr-star{ position:absolute; left:50%; top:50%; width:18px; height:18px; margin:-9px; color:var(--pr-glow); filter:drop-shadow(0 0 6px var(--pr-glow)); opacity:0;
+  transform: rotate(var(--a)) translateY(-104px) rotate(calc(-1 * var(--a))) scale(.2);
+  animation: prStarIn .5s calc(.9s + var(--i)*.08s) cubic-bezier(.2,1.6,.4,1) forwards; }
+.prestige-orbit .pr-star svg{ width:100%; height:100%; }
+@keyframes prStarIn{ to{ opacity:1; transform: rotate(var(--a)) translateY(-104px) rotate(calc(-1 * var(--a))) scale(1); } }
+.prestige-title{ font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:clamp(34px,8vw,62px); line-height:1; letter-spacing:.01em; margin:2px 0 4px;
+  background:linear-gradient(100deg, var(--pr-a), #fff, var(--pr-b), var(--pr-a)); background-size:300% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  filter:drop-shadow(0 0 16px color-mix(in srgb, var(--pr-glow) 60%, transparent));
+  opacity:0; animation: prFadeUp .6s .9s forwards, prTitleShimmer 3s linear 1.4s infinite; }
+@keyframes prTitleShimmer{ to{ background-position:300% 0; } }
+.prestige-tier-name{ font-family:var(--font-display); font-stretch:75%; font-weight:800; font-size:18px; letter-spacing:.16em; text-transform:uppercase; color:var(--pr-glow); text-shadow:0 0 14px var(--pr-glow); opacity:0; animation: prFadeUp .6s 1.05s forwards; }
+.prestige-sub{ font-family:var(--font-body); font-size:14px; color:var(--text-dim); margin-top:10px; max-width:320px; line-height:1.5; opacity:0; animation: prFadeUp .6s 1.2s forwards; }
+.prestige-hint{ font-family:var(--font-mono); font-size:11px; letter-spacing:.2em; color:var(--text-faint); margin-top:22px; opacity:0; }
+.prestige-hint.ready{ animation: prHintPulse 1.6s ease-in-out infinite; }
+@keyframes prHintPulse{ 0%,100%{opacity:.35;} 50%{opacity:.8;} }
+@keyframes prFadeUp{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
+body.low-power .prestige-rays, body.reduced-motion .prestige-rays{ animation:prRaysIn .6s forwards !important; opacity:.14 !important; }
+body.low-power .prestige-ring, body.reduced-motion .prestige-ring,
+body.low-power .prestige-core, body.reduced-motion .prestige-core,
+body.low-power .prestige-rays.r2, body.reduced-motion .prestige-rays.r2{ animation:none !important; }
+
 .levelup-overlay{
   position: fixed; inset: 0;
   background:
@@ -10860,9 +10940,10 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
   width:150px; height:150px; opacity:.13; color:#fff; z-index:1; pointer-events:none;
   filter:drop-shadow(0 4px 10px rgba(0,0,0,.3));
 }
-.profile-modal .profile-head{display:flex; gap:18px; align-items:flex-end; margin:0 0 18px; position:relative; z-index:1;}
-/* Avatar straddles the banner; the name/info stay below it so text is always legible */
-.profile-modal .pm-av-wrap{ position:relative; flex-shrink:0; transform:translateY(-32px); margin-bottom:-22px; }
+.profile-modal .profile-head{display:flex; gap:16px; align-items:flex-start; margin:0 0 18px; position:relative; z-index:1;}
+/* Avatar straddles the banner a touch, but its centre lines up with the username
+   so the photo and name read as one row. */
+.profile-modal .pm-av-wrap{ position:relative; flex-shrink:0; transform:translateY(-26px); margin-bottom:-14px; }
 .profile-modal .pm-av-ring{ position:absolute; inset:-4px; border-radius:26px; pointer-events:none; }
 .profile-modal .pm-av-lvl{
   position:absolute; bottom:-7px; right:-7px;
@@ -11184,6 +11265,23 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
   font-family:var(--font-mono); font-size:7px; font-weight:700; color:#fff; letter-spacing:.04em;
   display:grid; place-items:center; text-shadow:0 1px 3px rgba(0,0,0,.8);
 }
+/* Live banner preview in the edit modal */
+.edit-banner-preview{ height:72px; border-radius:14px; margin:0 0 16px; position:relative; overflow:hidden; border:1px solid var(--line); box-shadow:inset 0 -1px 0 rgba(255,255,255,.06); background:linear-gradient(125deg,#2a2740,#1a1828); }
+.edit-banner-preview .pm-banner-mark{ position:absolute; right:-6px; top:50%; transform:translateY(-50%) rotate(-8deg); width:92px; height:92px; opacity:.16; color:#fff; pointer-events:none; filter:drop-shadow(0 3px 8px rgba(0,0,0,.3)); }
+/* Banner-style picker (accent or an unlocked rank background) */
+.banner-pick{ display:flex; gap:8px; flex-wrap:wrap; }
+.banner-opt{ display:flex; flex-direction:column; align-items:center; gap:5px; width:62px; padding:7px 4px 6px; border-radius:12px;
+  border:1.5px solid var(--line); background:var(--surface-2); cursor:pointer; transition:all .15s; }
+.banner-opt:hover{ border-color:var(--line-bright); transform:translateY(-1px); }
+.banner-opt.active{ border-color:#fff; box-shadow:0 0 0 1px #fff, 0 0 16px -4px rgba(255,255,255,.5); }
+.banner-opt.locked{ opacity:.5; filter:grayscale(.4); cursor:not-allowed; }
+.banner-opt.locked:hover{ transform:none; border-color:var(--line); }
+.banner-opt .bo-swatch{ width:48px; height:30px; border-radius:8px; display:grid; place-items:center; overflow:hidden; }
+.banner-opt .bo-swatch.bo-accent{ background:radial-gradient(120% 150% at 12% -15%, var(--bo,#7a78ff), transparent 62%), linear-gradient(125deg, var(--bo,#7a78ff), #14121e); }
+.banner-opt .bo-swatch.bo-rank{ background:radial-gradient(120% 150% at 12% -15%, var(--bo,#888), transparent 62%), linear-gradient(125deg, var(--bo,#888), var(--bo2,#555)); }
+.banner-opt .bo-swatch.bo-rank svg{ width:18px; height:18px; color:#fff; opacity:.92; filter:drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+.banner-opt .bo-lbl{ font-family:var(--font-mono); font-size:8.5px; letter-spacing:.03em; color:var(--text-dim); white-space:nowrap; }
+.banner-opt.active .bo-lbl{ color:var(--text); }
 
 /* Photo upload + cropper */
 .photo-section{display:flex; flex-direction:column; gap:12px;}
@@ -13540,6 +13638,10 @@ const FIREBASE_CONFIG = {
 <!-- RANK UP OVERLAY -->
 <div class="rankup-overlay" id="rankupOverlay">
 
+  <!-- Ambient colour wash — starts on the OLD rank's colour, then shifts to the
+       NEW rank's colour as the promotion lands (drives the whole bg palette). -->
+  <div class="rankup-ambient" id="rankupAmbient"></div>
+
   <!-- Animated rays background -->
   <div class="rankup-rays"></div>
   <div class="rankup-rays r2"></div>
@@ -13692,6 +13794,30 @@ const FIREBASE_CONFIG = {
       <div class="levelup-title-list" id="levelupTitleList"></div>
     </div>
     <div class="levelup-hint"><kbd>SPACE</kbd> to continue</div>
+  </div>
+</div>
+
+<!-- ===== PRESTIGE UP — pinnacle celebration (max level + every prestige beyond) ===== -->
+<div class="prestige-overlay" id="prestigeOverlay">
+  <div class="prestige-rays"></div>
+  <div class="prestige-rays r2"></div>
+  <div class="prestige-bloom"></div>
+  <div class="prestige-particles" id="prestigeParticles"></div>
+  <div class="prestige-content">
+    <div class="prestige-eyebrow" id="prestigeEyebrow">PRESTIGE</div>
+    <div class="prestige-emblem" id="prestigeEmblem">
+      <div class="prestige-ring"></div>
+      <div class="prestige-ring r2"></div>
+      <div class="prestige-orbit" id="prestigeStars"></div>
+      <div class="prestige-core">
+        <svg class="prestige-core-star" viewBox="0 0 24 24"><use href="#i-star"/></svg>
+        <div class="prestige-core-num" id="prestigeNum">1</div>
+      </div>
+    </div>
+    <h2 class="prestige-title" id="prestigeTitle">PRESTIGE 1</h2>
+    <div class="prestige-tier-name" id="prestigeTierName">Gold</div>
+    <div class="prestige-sub" id="prestigeSub">You hit the pinnacle and prestiged!</div>
+    <div class="prestige-hint" id="prestigeHint">Tap to continue</div>
   </div>
 </div>
 
@@ -14403,6 +14529,8 @@ const FIREBASE_CONFIG = {
   <div class="modal">
     <button class="modal-close" data-close="editProfileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
     <h3>EDIT PROFILE</h3>
+    <!-- Live banner preview — reflects accent / banner choices as you pick them -->
+    <div class="edit-banner-preview" id="editBannerPreview"><svg class="pm-banner-mark" id="editBannerMark" viewBox="0 0 24 24"></svg></div>
     <form id="editProfileForm" style="display:flex; flex-direction:column; gap:14px;">
       <div class="field">
         <label>Username</label>
@@ -14453,8 +14581,12 @@ const FIREBASE_CONFIG = {
         <div class="color-pick" id="colorPick"></div>
       </div>
       <div class="field">
-        <label>Profile accent <span style="color:var(--text-faint); font-weight:400;">· tints your profile banner</span></label>
+        <label>Profile accent <span style="color:var(--text-faint); font-weight:400;">· your banner colour</span></label>
         <div class="accent-pick" id="accentPick"></div>
+      </div>
+      <div class="field">
+        <label>Profile banner <span style="color:var(--text-faint); font-weight:400;">· accent colour, or a rank background you've unlocked</span></label>
+        <div class="banner-pick" id="bannerPick"></div>
       </div>
       <div class="field">
         <label>Showcase badges <span style="color:var(--text-faint); font-weight:400;">· pick up to 3 to feature on your profile</span></label>
@@ -15124,16 +15256,24 @@ function levelGradient(level){ const t = levelTier(level); return `linear-gradie
 // Each prestige rank has its own colour so it's instantly readable: gold first,
 // then climbing through the spectrum (cycles after the list, getting more exotic).
 const PRESTIGE_TIERS = [
-  { a:'#fff6c0', b:'#ffd700', t:'#1c1402', glow:'#ffd700' }, // P1  gold
-  { a:'#bfe9ff', b:'#5fc9ff', t:'#04121c', glow:'#5fc9ff' }, // P2  diamond
-  { a:'#d6c4ff', b:'#a48bff', t:'#0c0820', glow:'#a48bff' }, // P3  amethyst
-  { a:'#ffc7ea', b:'#ff61c3', t:'#fff',     glow:'#ff61c3' }, // P4  rose
-  { a:'#ffd0a8', b:'#ff7a3d', t:'#1c0c02', glow:'#ff7a3d' }, // P5  ember
-  { a:'#b9ffe5', b:'#22d3a3', t:'#04221a', glow:'#22d3a3' }, // P6  emerald
-  { a:'#ff5a8a', b:'#ff3358', t:'#fff',     glow:'#ff3358' }, // P7  crimson
-  { a:'#ffffff', b:'#c9d2dc', t:'#0a0a0f', glow:'#ffffff' }, // P8  platinum
+  { name:'Gold',     a:'#fff6c0', b:'#ffd700', t:'#1c1402', glow:'#ffd700' }, // P1
+  { name:'Diamond',  a:'#bfe9ff', b:'#5fc9ff', t:'#04121c', glow:'#5fc9ff' }, // P2
+  { name:'Amethyst', a:'#d6c4ff', b:'#a48bff', t:'#0c0820', glow:'#a48bff' }, // P3
+  { name:'Rose',     a:'#ffc7ea', b:'#ff61c3', t:'#fff',     glow:'#ff61c3' }, // P4
+  { name:'Ember',    a:'#ffd0a8', b:'#ff7a3d', t:'#1c0c02', glow:'#ff7a3d' }, // P5
+  { name:'Emerald',  a:'#b9ffe5', b:'#22d3a3', t:'#04221a', glow:'#22d3a3' }, // P6
+  { name:'Crimson',  a:'#ff5a8a', b:'#ff3358', t:'#fff',     glow:'#ff3358' }, // P7
+  { name:'Platinum', a:'#ffffff', b:'#c9d2dc', t:'#0a0a0f', glow:'#ffffff' }, // P8
 ];
 function prestigeTier(prestige){ return PRESTIGE_TIERS[((prestige||1) - 1) % PRESTIGE_TIERS.length]; }
+// Display name for a prestige number — tier name, plus a cycle suffix once you
+// climb past the 8 base tiers (e.g. "Gold II" at prestige 9).
+function prestigeName(prestige){
+  const t = prestigeTier(prestige);
+  const cycle = Math.floor(((prestige || 1) - 1) / PRESTIGE_TIERS.length);
+  const roman = ['', '', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+  return t.name + (cycle > 0 ? ' ' + (roman[cycle + 1] || (cycle + 1)) : '');
+}
 function paintLevelBadge(elOrSel, level, prestige){
   const el = typeof elOrSel === 'string' ? $(elOrSel) : elOrSel;
   if(!el) return;
@@ -15376,6 +15516,7 @@ const state = {
   _sessionHadWin: false,        // for "first win today" bonus
   _lastXpAward: null,           // breakdown of last match's XP for result screen
   _pendingLevelUp: null,        // { from, to, newTitles } shown after result
+  _pendingPrestige: null,       // { from, to, level } prestige celebration after result
   // social
   unsubFriends: null,
   unsubRequests: null,
@@ -16098,6 +16239,13 @@ const sfxAchievement=()=>{
   setTimeout(() => tone(1175, 0.08, 'triangle', 0.11), 80);
   setTimeout(() => tone(1760, 0.18, 'sine', 0.10), 170);
 };
+// Prestige fanfare — a grand rising arpeggio with a sustained chord, for the
+// pinnacle moment (distinct from rank-up and level-up).
+const sfxPrestige=()=>{
+  const notes = [523, 659, 784, 1047, 1319];
+  notes.forEach((n, i) => setTimeout(() => tone(n, 0.16, 'triangle', 0.12), i * 95));
+  setTimeout(() => { tone(1047, 0.55, 'triangle', 0.13); tone(1568, 0.55, 'sine', 0.09); tone(2093, 0.5, 'sine', 0.06); }, 540);
+};
 
 // Combo popup display
 function showComboPopup(streak){
@@ -16196,19 +16344,115 @@ async function setupCamera(){
     try { if(state._micMuted) stream.getAudioTracks().forEach(t => t.enabled = false); } catch(e){}
     try { $('#yourVideo')?.classList.toggle('cam-flipped', !!state._camMirrored); } catch(e){}
     await new Promise(res => { videoEl.onloadedmetadata = res; });
-    videoEl.play();
+    playVideoSafe(videoEl);
     overlayCanvas.width = 640;
     overlayCanvas.height = 480;
     $('#camStatus').classList.add('live');
     setText('#camStatusText', state.micReady ? 'live' : 'live · no mic');
     state.cameraReady = true;
+    // Mobile reliability: watch the track + run a freeze watchdog so a suspended
+    // or OS-reclaimed camera transparently re-acquires instead of sitting dead.
+    try { attachCamTrackWatch(stream.getVideoTracks()[0]); startCamWatchdog(); } catch(e){}
     return true;
   } catch(e){
     setText('#camStatusText', 'denied');
     console.warn('[camera] setup failed', e);
-    toast('Camera access required — please allow your camera', 'error');
+    toast('Camera access required — allow it, then tap Retry', 'error', {
+      duration: 9000,
+      action: { label: 'Retry', onClick: async () => {
+        const ok = await setupCamera();
+        if(ok){ try { await setupHands(); } catch(_){} toast('Camera ready — pick a mode to play', 'success'); }
+      } },
+    });
     return false;
   }
+}
+// ===== Mobile camera reliability =====
+// Phones (especially iOS Safari) freeze or kill the camera track when the page is
+// backgrounded, an interruption hits (call/notification), or the OS reclaims the
+// camera. The <video> then sits frozen and the match looks "stuck". These helpers
+// detect a dead/stalled stream and transparently re-acquire it, replacing the
+// track in the live peer connection so the opponent keeps seeing us.
+function playVideoSafe(v){
+  if(!v) return;
+  try {
+    const p = v.play();
+    if(p && p.catch) p.catch(() => { setTimeout(() => { try { v.play().catch(()=>{}); } catch(e){} }, 300); });
+  } catch(e){}
+}
+let _camRecovering = false;
+async function recoverCamera(reason){
+  if(_camRecovering) return;
+  // Only bother while the camera is meant to be live.
+  if(!state.cameraReady && state.screen !== 'game') return;
+  _camRecovering = true;
+  console.warn('[camera] recovering —', reason);
+  try {
+    const _vd = videoIdeal();
+    const camId = (function(){ try { return localStorage.getItem('rosham_dev_cam') || ''; } catch(e){ return ''; } })();
+    const vc = { width:{ideal:_vd.w}, height:{ideal:_vd.h}, frameRate:{ideal:_vd.fps}, facingMode:'user' };
+    if(camId) vc.deviceId = { exact: camId };
+    let fresh;
+    try { fresh = await navigator.mediaDevices.getUserMedia({ video: vc, audio:false }); }
+    catch(e){ fresh = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'user' }, audio:false }); }
+    const newVideoTrack = fresh.getVideoTracks()[0];
+    if(!newVideoTrack) throw new Error('no video track');
+    // Keep the existing mic track alive; only the video died.
+    const oldStream = state.localStream;
+    const audioTracks = oldStream ? oldStream.getAudioTracks() : [];
+    if(oldStream) oldStream.getVideoTracks().forEach(t => { try { t.stop(); } catch(e){} });
+    const combined = new MediaStream();
+    combined.addTrack(newVideoTrack);
+    audioTracks.forEach(t => combined.addTrack(t));
+    if(state._micMuted) audioTracks.forEach(t => t.enabled = false);
+    state.localStream = combined;
+    videoEl.srcObject = combined;
+    playVideoSafe(videoEl);
+    // Swap the track in the live peer connection so the opponent keeps seeing us.
+    if(state.pc){
+      const sender = state.pc.getSenders().find(s => s.track && s.track.kind === 'video');
+      if(sender){ try { await sender.replaceTrack(newVideoTrack); } catch(e){ console.warn('[camera] replaceTrack', e); } }
+    }
+    attachCamTrackWatch(newVideoTrack);
+    state.cameraReady = true;
+    $('#camStatus')?.classList.add('live');
+    setText('#camStatusText', state.micReady ? 'live' : 'live · no mic');
+  } catch(e){
+    console.warn('[camera] recovery failed', e);
+    setText('#camStatusText', 'reconnecting…');
+    setTimeout(() => { _camRecovering = false; if(document.visibilityState === 'visible' && (state.screen === 'game' || state.screen === 'matching')) recoverCamera('retry'); }, 2500);
+    return;
+  }
+  _camRecovering = false;
+}
+function attachCamTrackWatch(track){
+  if(!track) return;
+  track.onended = () => recoverCamera('track ended');
+  // 'mute' fires when frames stop; it often un-mutes on its own, so wait a beat
+  // before forcing a full re-acquire.
+  track.onmute = () => {
+    clearTimeout(state._camMuteTimer);
+    state._camMuteTimer = setTimeout(() => { if(track.muted) recoverCamera('track muted'); }, 1500);
+  };
+}
+function startCamWatchdog(){
+  clearInterval(state._camWatchdog);
+  let lastTime = -1, stalls = 0;
+  state._camWatchdog = setInterval(() => {
+    if(document.visibilityState !== 'visible' || !state.cameraReady || _camRecovering) return;
+    if(state.screen !== 'game' && state.screen !== 'matching') return;
+    const v = videoEl;
+    if(!v || !v.srcObject) return;
+    if(v.paused) playVideoSafe(v);
+    // A live MediaStream advances currentTime as frames render. If it stops while
+    // we're not paused, the feed is frozen.
+    if(v.currentTime === lastTime && !v.paused) stalls++; else stalls = 0;
+    lastTime = v.currentTime;
+    // Also catch a track that ended without firing onended (happens on some phones).
+    const vt = v.srcObject.getVideoTracks ? v.srcObject.getVideoTracks()[0] : null;
+    if(vt && vt.readyState === 'ended'){ stalls = 0; recoverCamera('track ended (poll)'); return; }
+    if(stalls >= 3){ stalls = 0; recoverCamera('frozen frames'); }
+  }, 1500);
 }
 // Lazy-load MediaPipe Hands (and camera utils) only when a match actually needs
 // them — keeps them off the critical startup path for a much faster first load.
@@ -16761,6 +17005,10 @@ function setupAuthUI(){
       b.addEventListener('click', () => {
         ap.querySelectorAll('button').forEach(x => x.classList.remove('active'));
         b.classList.add('active');
+        // Keep the banner picker's "Accent" swatch + live preview in sync.
+        const accSwatch = document.querySelector('#bannerPick .banner-opt[data-banner=""]');
+        if(accSwatch) accSwatch.style.setProperty('--bo', color || '#7a78ff');
+        try { updateEditBannerPreview(); } catch(e){}
       });
       ap.appendChild(b);
     });
@@ -17722,10 +17970,16 @@ function openAchievementsModal(){
 
 // Celebratory "achievement unlocked" reveal — a stack of shiny cards, shown at
 // the end of a match for any badges that just crossed their threshold.
+// Shared fixed stack for end-of-match popups (achievements, level-ups, …) so they
+// pile up UNDER each other instead of landing on top of one another.
+function getPopupStack(){
+  let s = document.getElementById('achUnlockStack');
+  if(!s){ s = document.createElement('div'); s.id = 'achUnlockStack'; document.body.appendChild(s); }
+  return s;
+}
 function showAchievementUnlocks(list){
   if(!list || !list.length) return;
-  let stack = document.getElementById('achUnlockStack');
-  if(!stack){ stack = document.createElement('div'); stack.id = 'achUnlockStack'; document.body.appendChild(stack); }
+  const stack = getPopupStack();
   list.forEach((a, i) => {
     setTimeout(() => {
       const card = document.createElement('div');
@@ -18098,12 +18352,17 @@ document.addEventListener('click', (e) => {
   if(closeBtn){
     const modalId = closeBtn.dataset.close;
     const modal = document.getElementById(modalId);
-    if(modal) modal.classList.remove('show');
+    if(modal){
+      modal.classList.remove('show');
+      if(modalId === 'editProfileModal') maybePromptUnsavedEdit();
+    }
     return;
   }
   // Click on modal-bg backdrop (but not on the modal content itself)
   if(e.target.classList && e.target.classList.contains('modal-bg')){
+    const wasEdit = e.target.id === 'editProfileModal';
     e.target.classList.remove('show');
+    if(wasEdit) maybePromptUnsavedEdit();
   }
 });
 
@@ -19479,6 +19738,31 @@ on('#addFriendInput', 'keydown', e => {
   if(e.key === 'Enter'){ addFriendByUsername(e.target.value); e.target.value = ''; }
 });
 
+// Apply a player's chosen profile banner.
+//  • Default: the player's chosen ACCENT colour ONLY (no rank-colour mixing).
+//  • Optional: an unlocked rank background ('rank:<id>') — that rank's colour + icon.
+//  • AUTO (no accent picked): falls back to the current rank's colour gradient.
+function applyProfileBanner(bannerEl, markEl, p){
+  if(!bannerEl) return;
+  const rank = rankFromRating(p.rating || 1000);
+  const b = p.banner || '';
+  let markIcon = rank.icon;
+  if(b.indexOf('rank:') === 0){
+    const r = RANKS.find(x => x.id === b.slice(5));
+    if(r){
+      const c2 = r.color2 || r.color;
+      bannerEl.style.background = `radial-gradient(120% 150% at 12% -15%, ${r.color}, transparent 62%), linear-gradient(125deg, ${r.color}, ${c2})`;
+      markIcon = r.icon;
+    } else {
+      bannerEl.style.background = `linear-gradient(125deg, ${rank.color}, ${rank.color2 || rank.color})`;
+    }
+  } else if(p.accent){
+    bannerEl.style.background = `radial-gradient(120% 150% at 12% -15%, ${p.accent}, transparent 60%), linear-gradient(125deg, ${p.accent}, #14121e)`;
+  } else {
+    bannerEl.style.background = `radial-gradient(120% 150% at 12% -15%, ${rank.color}, transparent 62%), linear-gradient(125deg, ${rank.color}, ${rank.color2 || rank.color})`;
+  }
+  if(markEl) markEl.innerHTML = `<use href="#${markIcon}"/>`;
+}
 // ============= PROFILE VIEW =============
 async function openProfile(uid){
   try {
@@ -19506,15 +19790,8 @@ async function openProfile(uid){
     $('#pmRating').parentElement.style.color = rank.color;
     renderAvatar($('#pmAv'), p);
 
-    // Rank-tinted cover banner (honours a player's chosen accent if set)
-    const banner = $('#pmBanner');
-    if(banner){
-      const accent = p.accent || rank.color;
-      const c2 = rank.color2 || rank.color;
-      banner.style.background = `radial-gradient(110% 140% at 8% -20%, ${accent}, transparent 55%), radial-gradient(120% 160% at 100% 120%, ${c2}aa, transparent 60%), linear-gradient(120deg, ${rank.color}, ${c2})`;
-    }
-    const bMark = $('#pmBannerMark');
-    if(bMark){ bMark.innerHTML = `<use href="#${rank.icon}"/>`; }
+    // Profile banner — the player's chosen accent ONLY (or an unlocked rank background)
+    applyProfileBanner($('#pmBanner'), $('#pmBannerMark'), p);
     // Avatar rank ring + level pip
     const avRing = $('#pmAvRing');
     if(avRing) avRing.style.boxShadow = `0 0 0 2.5px ${rank.color}, 0 0 18px -2px ${rank.color}`;
@@ -19936,6 +20213,90 @@ function buildShowcasePicker(){
     box.appendChild(b);
   });
 }
+// Banner-style picker: the accent colour, plus a background for every rank the
+// player has unlocked (reached). Unlocks are gated on peak rating so a dip below
+// a tier doesn't take a banner away.
+function buildBannerPicker(p){
+  const bp = $('#bannerPick');
+  if(!bp) return;
+  const cur = (state._pendingBanner != null) ? state._pendingBanner : (p.banner || '');
+  state._pendingBanner = cur;
+  const select = (v) => {
+    state._pendingBanner = v;
+    bp.querySelectorAll('.banner-opt').forEach(x => x.classList.remove('active'));
+    const sel = bp.querySelector(`.banner-opt[data-banner="${v}"]`); if(sel) sel.classList.add('active');
+    try { haptic(9); } catch(e){}
+    updateEditBannerPreview();
+  };
+  bp.innerHTML = '';
+  // Accent option (uses the chosen accent colour)
+  const acc = document.createElement('button');
+  acc.type = 'button';
+  acc.className = 'banner-opt' + (cur.indexOf('rank:') !== 0 ? ' active' : '');
+  acc.dataset.banner = '';
+  acc.style.setProperty('--bo', p.accent || '#7a78ff');
+  acc.innerHTML = `<span class="bo-swatch bo-accent"></span><span class="bo-lbl">Accent</span>`;
+  acc.addEventListener('click', () => select(''));
+  bp.appendChild(acc);
+  // Unlocked rank backgrounds
+  const peak = Math.max(p.peakRating || 0, p.rating || 1000);
+  const ranked = !inPlacements(p);
+  RANKS.forEach(r => {
+    const unlocked = ranked && peak >= r.base;
+    const val = 'rank:' + r.id;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'banner-opt' + (cur === val ? ' active' : '') + (unlocked ? '' : ' locked');
+    btn.dataset.banner = val;
+    btn.style.setProperty('--bo', r.color);
+    btn.style.setProperty('--bo2', r.color2 || r.color);
+    btn.title = unlocked ? r.name + ' background' : `Reach ${r.name} to unlock`;
+    btn.innerHTML = `<span class="bo-swatch bo-rank ${r.cls}"><svg viewBox="0 0 24 24"><use href="#${r.icon}"/></svg></span><span class="bo-lbl">${r.name}${unlocked ? '' : ' 🔒'}</span>`;
+    if(unlocked) btn.addEventListener('click', () => select(val));
+    else btn.disabled = true;
+    bp.appendChild(btn);
+  });
+}
+// ----- Unsaved-changes guard for the edit-profile modal -----
+function serializeEditForm(){
+  const colorBtn = document.querySelector('#colorPick button.active');
+  const accentBtn = document.querySelector('#accentPick button.active');
+  return JSON.stringify({
+    u: ($('#editProfileForm input[name=username]')?.value || '').trim(),
+    c: $('#editCountry')?.value || '',
+    s: ($('#editProfileForm input[name=status]')?.value || '').trim(),
+    b: ($('#editProfileForm textarea[name=bio]')?.value || '').trim(),
+    col: colorBtn ? colorBtn.dataset.idx : '',
+    acc: accentBtn ? (accentBtn.dataset.accent || '') : '',
+    title: state._pendingTitle || '',
+    show: (state._pendingShowcase || []).slice().sort().join(','),
+    ban: state._pendingBanner || '',
+    ph: pendingPhotoDataURL === null ? 'same' : (pendingPhotoDataURL === '' ? 'removed' : 'new'),
+    ac: $('#editAcceptChallenges')?.checked ? 1 : 0,
+  });
+}
+function editFormDirty(){ return state._editSnapshot != null && serializeEditForm() !== state._editSnapshot; }
+// Live banner preview in the edit modal — reflects the current accent/banner pick.
+function updateEditBannerPreview(){
+  const accentBtn = document.querySelector('#accentPick button.active');
+  applyProfileBanner($('#editBannerPreview'), $('#editBannerMark'), {
+    accent: accentBtn ? (accentBtn.dataset.accent || '') : (state.profile?.accent || ''),
+    banner: (state._pendingBanner != null) ? state._pendingBanner : (state.profile?.banner || ''),
+    rating: state.profile?.rating || 1000,
+  });
+}
+// Called when the edit modal is dismissed without saving — offers a one-tap Save.
+function maybePromptUnsavedEdit(){
+  if(!editFormDirty()) return;
+  state._editSnapshot = null; // don't double-prompt
+  toast('Unsaved changes — want to keep them?', 'info', {
+    duration: 7000,
+    action: { label: 'Save', onClick: () => {
+      try { $('#editProfileForm').requestSubmit(); }
+      catch(e){ try { $('#editProfileForm').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true })); } catch(_){ } }
+    } },
+  });
+}
 function openEditProfile(){
   const p = state.profile;
   $('#editProfileForm input[name=username]').value = p.username;
@@ -19969,11 +20330,16 @@ function openEditProfile(){
   }
   document.querySelectorAll('#colorPick button').forEach((b, i) => b.classList.toggle('active', i === (p.colorIdx || 0)));
   document.querySelectorAll('#accentPick button').forEach(b => b.classList.toggle('active', (b.dataset.accent || '') === (p.accent || '')));
+  state._pendingBanner = p.banner || '';
+  buildBannerPicker(p);
+  updateEditBannerPreview();
   buildShowcasePicker();
   // default acceptChallenges to true (only false if explicitly disabled)
   $('#editAcceptChallenges').checked = (p.acceptChallenges !== false);
   pendingPhotoDataURL = null;
   updateEditPhotoPreview(p.photoURL || null);
+  // Snapshot the pristine form so we can detect unsaved changes on close.
+  state._editSnapshot = serializeEditForm();
   $('#editProfileModal').classList.add('show');
 }
 
@@ -20039,17 +20405,18 @@ on('#editProfileForm', 'submit', async (e) => {
     }
     const newTitle = state._pendingTitle || state.profile.equippedTitle || 'rookie';
     const newShowcase = Array.isArray(state._pendingShowcase) ? state._pendingShowcase.slice(0, 3) : (state.profile.showcase || []);
+    const newBanner = (state._pendingBanner != null) ? state._pendingBanner : (state.profile.banner || '');
     const updates = {
       username: newUsername, country: newCountry, bio: newBio, status: newStatus,
       colorIdx: newColorIdx, accent: newAccent, equippedTitle: newTitle,
-      showcase: newShowcase,
+      showcase: newShowcase, banner: newBanner,
       acceptChallenges: newAcceptChallenges,
     };
     if(pendingPhotoDataURL !== null){
       updates.photoURL = pendingPhotoDataURL;
     }
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
-    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, accent:newAccent, equippedTitle:newTitle, showcase:newShowcase, acceptChallenges:newAcceptChallenges };
+    state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, accent:newAccent, equippedTitle:newTitle, showcase:newShowcase, banner:newBanner, acceptChallenges:newAcceptChallenges };
     if(pendingPhotoDataURL !== null) state.profile.photoURL = pendingPhotoDataURL;
     setText('#chipName', newUsername);
     renderAvatar($('#chipAv'), state.profile);
@@ -20057,6 +20424,7 @@ on('#editProfileForm', 'submit', async (e) => {
     toast('Profile updated', 'success');
     $('#editProfileModal').classList.remove('show');
     pendingPhotoDataURL = null;
+    state._editSnapshot = null; // saved — clear the unsaved-changes guard
   } catch(err){
     showErr('#editError', friendlyError(err));
   }
@@ -21056,9 +21424,11 @@ function startRematch(weAccepted){
     state.matchOver = false; state._endMatchCalled = false;
     setTimeout(() => {
       showMatchIntro();
-      // Only the caller drives the countdown so both stay in sync
+      // Only the caller drives the countdown so both stay in sync — and it MUST
+      // tell the peer to start theirs too (mirrors maybeStartRound's start_round).
+      // Without this the non-caller's countdown never fired on a rematch.
       if(state.isCaller){
-        setTimeout(() => { runCountdown(); }, 3000);
+        setTimeout(() => { try { sendPeer({type:'start_round'}); } catch(e){} runCountdown(); }, 3000);
       }
       state._rematchStarting = false;
     }, 500);
@@ -21387,6 +21757,7 @@ function resetMatchUI(){
   state._matchStartedAt = Date.now();   // NEW — for duration display
   state._lastXpAward = null;            // reset XP award for fresh match
   state._pendingLevelUp = null;
+  state._pendingPrestige = null;
   state.myPrediction = null;
   setText('#scoreYou', 0);
   setText('#scoreOpp', 0);
@@ -22236,6 +22607,9 @@ let updateMatchStats = async function(matchResult){
   state._inPlacementMatch = wasInPlacement; // suppress rank-up while unranked
 
   const updates = { games: increment(1), lastSeen: serverTimestamp(), rating: increment(delta) };
+  // Track peak rating so unlocked rank backgrounds stay unlocked even after a dip.
+  const _peakBefore = state.profile.peakRating || state.profile.rating || 1000;
+  if(newRating > _peakBefore) updates.peakRating = newRating;
   if(wasInPlacement) updates.placementsDone = increment(1);
   if(matchResult === 'win') updates.wins = increment(1);
   else if(matchResult === 'lose') updates.losses = increment(1);
@@ -22265,6 +22639,9 @@ let updateMatchStats = async function(matchResult){
   const oldLevelInfo = levelFromXp(oldTotalXp);
   const newLevelInfo = levelFromXp(newTotalXp);
   const leveledUp = newLevelInfo.level > oldLevelInfo.level;
+  const oldPrestige = prestigeFromXp(oldTotalXp);
+  const newPrestige = prestigeFromXp(newTotalXp);
+  const prestigedUp = newPrestige > oldPrestige;
   updates.totalXp = increment(xpResult.xp);
   state._lastXpAward = { ...xpResult, oldLevel: oldLevelInfo, newLevel: newLevelInfo, leveledUp };
   // Detect newly unlocked titles
@@ -22281,6 +22658,7 @@ let updateMatchStats = async function(matchResult){
     else state.profile.draws = (state.profile.draws||0) + 1;
     state.profile.games = (state.profile.games||0) + 1;
     state.profile.rating = newRating;
+    state.profile.peakRating = Math.max(_peakBefore, newRating);
     if(matchResult === 'win'){
       state.profile.currentStreak = (state.profile.currentStreak || 0) + 1;
       state.profile.bestStreak = Math.max(state.profile.bestStreak || 0, state.profile.currentStreak);
@@ -22296,6 +22674,9 @@ let updateMatchStats = async function(matchResult){
     }
     if(leveledUp){
       state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles };
+    }
+    if(prestigedUp){
+      state._pendingPrestige = { from: oldPrestige, to: newPrestige, level: newLevelInfo.level };
     }
     // Diff achievements now that wins/rating/streak/games/XP are all applied — the
     // result flow will pop a celebratory card for anything newly unlocked.
@@ -22664,7 +23045,7 @@ function showMatchResultScreen(result){
     const achList = state._lastUnlockedAchievements;
     state._lastUnlockedAchievements = [];
     let achDelay = 2200;
-    if(state._pendingRankUp || state._pendingRankReveal) achDelay = 13000;
+    if(state._pendingRankUp || state._pendingRankReveal || state._pendingPrestige) achDelay = 13000;
     else if(state._pendingLevelUp) achDelay = 5500;
     setTimeout(() => { try { showAchievementUnlocks(achList); } catch(e){} }, achDelay);
   }
@@ -22688,16 +23069,14 @@ function showMatchResultScreen(result){
       }, 700);
       setTimeout(() => fill.classList.remove('animating'), 1500);
     }
-    // Pending overlays fire regardless (rank reveal out of placements / rank-up / level-up)
-    const showLevelUpIfPending = () => {
-      if(state._pendingLevelUp){ const lu = state._pendingLevelUp; state._pendingLevelUp = null; showLevelUp(lu); }
-    };
+    // Pending celebrations: a rank overlay (which then chains to prestige/level-up
+    // on dismiss), or — when there's no rank change — prestige/level-up directly.
     if(state._pendingRankReveal){
       setTimeout(() => { showRankUp(null, state._pendingRankReveal, { reveal: true }); state._pendingRankReveal = null; }, 1800);
     } else if(state._pendingRankUp){
       setTimeout(() => { showRankUp(state._pendingRankUp.from, state._pendingRankUp.to); state._pendingRankUp = null; }, 1800);
-    } else if(state._pendingLevelUp){
-      setTimeout(showLevelUpIfPending, 1800);
+    } else {
+      setTimeout(flushMatchCelebrations, 1800);
     }
   }, 900);
 }
@@ -22735,6 +23114,13 @@ function showRankUp(oldRank, newRank, opts){
   overlay.style.setProperty('--rank-color', newRank.color);
   overlay.style.setProperty('--rank-color-2', newRank.color2 || newRank.color);
   overlay.style.setProperty('--rank-color-old', oldRank.color);
+  // BACKGROUND palette: start on the OLD rank's colour (no transition), then
+  // recolour to the NEW rank's colour as the promotion lands (~2s). For a reveal
+  // there's no old rank, so it just starts on the new colour.
+  overlay.style.transition = 'none';
+  overlay.style.setProperty('--rank-bg-color', oldRank.color);
+  void overlay.offsetWidth; // commit the start colour before re-enabling the transition
+  overlay.style.transition = '';
 
   // OLD rank — full size in center
   setRankIconEl($('#rankupOldIcon'), oldRank.id);
@@ -22868,6 +23254,11 @@ function showRankUp(oldRank, newRank, opts){
     later(() => bigBurst(newRank.color, burstSize), 2000);
     later(() => { try { haptic(35); } catch(e){} }, 1820);
   }
+  // Recolour the background from the old rank to the new rank exactly as the old
+  // rank shatters and the new one arrives (skip for a reveal — no old colour).
+  if(!reveal && oldRank.color !== newRank.color){
+    later(() => overlay.style.setProperty('--rank-bg-color', newRank.color), 2000);
+  }
   // Shatter moment + new-rank arrival bursts
   later(() => bigBurst('#ffffff', burstSize), 2000);
   later(() => bigBurst(oldRank.color, burstSize), 2120);
@@ -22903,12 +23294,8 @@ function showRankUp(oldRank, newRank, opts){
     document.removeEventListener('keydown', keydismiss);
     if(isLegend) stopLegendSound();
     flushMenuMusic();
-    // Any queued level-up shows right after the player dismisses the rank-up
-    if(state._pendingLevelUp){
-      const lu = state._pendingLevelUp;
-      state._pendingLevelUp = null;
-      setTimeout(() => { try { showLevelUp(lu); } catch(e){} }, 350);
-    }
+    // Any queued prestige / level-up celebration shows right after dismiss.
+    setTimeout(() => { try { flushMatchCelebrations(); } catch(e){} }, 350);
   };
   const keydismiss = (e) => { if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); } };
   // Hold dismissal until the entrance has played (longer for Legend)
@@ -23028,21 +23415,108 @@ function checkForfeitNotice(){
 // Replaces the old full-screen overlay so it doesn't interrupt play.
 function showLevelUp(info){
   if(!info) return;
-  const toast = $('#levelupToast');
-  if(!toast){ try { sfxLevelUp(); } catch(e){} return; }
-  setText('#luToastLevel', info.to.level); paintLevelBadge('#luToastLevel', info.to.level);
-  setText('#luToastSub', `You reached Level ${info.to.level}`);
-  const tWrap = $('#luToastTitles');
-  if(tWrap){
-    if(info.newTitles && info.newTitles.length){
-      tWrap.style.display = '';
-      tWrap.innerHTML = 'New title: ' + info.newTitles.map(t => `<b style="color:${t.color || 'var(--mint)'}">${escapeHTML(t.name)}</b>`).join(', ');
-    } else { tWrap.style.display = 'none'; tWrap.innerHTML = ''; }
-  }
-  toast.classList.remove('show'); void toast.offsetWidth; toast.classList.add('show');
+  const stack = getPopupStack();
+  if(!stack){ try { sfxLevelUp(); } catch(e){} return; }
+  const titlesHTML = (info.newTitles && info.newTitles.length)
+    ? `<div class="ach-unlock-desc">New title: ${info.newTitles.map(t => `<b style="color:${t.color || 'var(--mint)'}">${escapeHTML(t.name)}</b>`).join(', ')}</div>`
+    : '';
+  const card = document.createElement('div');
+  card.className = 'ach-unlock-toast levelup-card';
+  card.innerHTML = `
+    <div class="lut-badge lu-card-badge">${info.to.level}</div>
+    <div class="ach-unlock-body">
+      <div class="ach-unlock-kicker lu-kicker">▲ Level up</div>
+      <div class="ach-unlock-title">Level ${info.to.level}</div>
+      ${titlesHTML || `<div class="ach-unlock-desc">You reached level ${info.to.level}</div>`}
+    </div>`;
+  stack.appendChild(card);
+  try { paintLevelBadge(card.querySelector('.lu-card-badge'), info.to.level); } catch(e){}
   try { sfxLevelUp(); } catch(e){}
-  clearTimeout(state._luToastTimer);
-  state._luToastTimer = setTimeout(() => { toast.classList.remove('show'); }, 4200);
+  try { haptic(18); } catch(e){}
+  setTimeout(() => { card.classList.add('out'); setTimeout(() => card.remove(), 450); }, 4600);
+}
+
+// ============= PRESTIGE UP =============
+function showPrestigeUp(info){
+  const overlay = $('#prestigeOverlay');
+  if(!overlay || !info){ try { sfxPrestige(); } catch(e){} return; }
+  const p = info.to;
+  const tier = prestigeTier(p);
+  overlay.style.setProperty('--pr-a', tier.a);
+  overlay.style.setProperty('--pr-b', tier.b);
+  overlay.style.setProperty('--pr-glow', tier.glow);
+  overlay.style.setProperty('--pr-text', tier.t);
+  setText('#prestigeNum', p);
+  setText('#prestigeTitle', 'PRESTIGE ' + p);
+  setText('#prestigeTierName', prestigeName(p));
+  setText('#prestigeSub', info.from > 0
+    ? `You advanced to Prestige ${p} · ${prestigeName(p)}.`
+    : `You hit max level and prestiged for the first time!`);
+  const perf = fxPerf();
+  // Orbiting stars — one per prestige, capped so it stays clean.
+  const orbit = $('#prestigeStars');
+  if(orbit){
+    orbit.innerHTML = '';
+    const n = Math.min(8, Math.max(1, p));
+    for(let i = 0; i < n; i++){
+      const s = document.createElement('div');
+      s.className = 'pr-star';
+      s.style.setProperty('--a', (i * 360 / n) + 'deg');
+      s.style.setProperty('--i', i);
+      s.innerHTML = `<svg viewBox="0 0 24 24"><use href="#i-star"/></svg>`;
+      orbit.appendChild(s);
+    }
+  }
+  // Ambient particles in the tier colour.
+  const parts = $('#prestigeParticles');
+  if(parts){
+    parts.innerHTML = '';
+    const pn = perf.lite ? 12 : 36;
+    for(let i = 0; i < pn; i++){
+      const d = document.createElement('div');
+      d.className = 'particle';
+      d.style.left = (Math.random() * 100) + '%';
+      d.style.top = (Math.random() * 100) + '%';
+      d.style.animationDelay = (1 + Math.random() * 3) + 's';
+      d.style.animationDuration = (2 + Math.random() * 2.5) + 's';
+      d.style.background = tier.glow;
+      if(!perf.lite) d.style.boxShadow = `0 0 8px ${tier.glow}`;
+      parts.appendChild(d);
+    }
+  }
+  overlay.classList.add('show');
+  const burstN = perf.mobile ? 40 : (perf.lite ? 70 : 160);
+  try { sfxPrestige(); } catch(e){}
+  try { haptic(40); } catch(e){}
+  setTimeout(() => { try { bigBurst(tier.glow, burstN); } catch(e){} }, 850);
+  setTimeout(() => { try { bigBurst(tier.b, burstN); bigBurst('#ffffff', Math.round(burstN * 0.6)); } catch(e){} }, 1150);
+  if(!perf.lite){
+    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 1100);
+    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 1900);
+  }
+  // Dismiss controls
+  let dismissed = false;
+  const hint = $('#prestigeHint');
+  const dismiss = () => {
+    if(dismissed) return; dismissed = true;
+    overlay.classList.remove('show');
+    overlay.removeEventListener('click', dismiss);
+    document.removeEventListener('keydown', keyd);
+    setTimeout(flushMatchCelebrations, 300);
+  };
+  const keyd = (e) => { if(e.code === 'Escape' || e.code === 'Enter' || e.code === 'Space'){ e.preventDefault(); dismiss(); } };
+  setTimeout(() => {
+    overlay.addEventListener('click', dismiss);
+    document.addEventListener('keydown', keyd);
+    if(hint) hint.classList.add('ready');
+  }, 2600);
+}
+// Fire the next queued match-end celebration: prestige overlay (blocking) first,
+// then the level-up stack card. Called after the result settles and after each
+// blocking overlay (rank-up / prestige) is dismissed.
+function flushMatchCelebrations(){
+  if(state._pendingPrestige){ const pr = state._pendingPrestige; state._pendingPrestige = null; showPrestigeUp(pr); return; }
+  if(state._pendingLevelUp){ const lu = state._pendingLevelUp; state._pendingLevelUp = null; showLevelUp(lu); }
 }
 
 // ============= CHAT =============
@@ -23336,20 +23810,29 @@ function openCropper(dataURL){
     cropper.ctx = cropper.canvas.getContext('2d');
     // SHOW MODAL FIRST so dimensions are real (was 0×0 before)
     $('#cropperModal').classList.add('show');
-    // Wait one frame for layout, then measure and draw
+    // Wait one frame for layout, then measure and draw.
     requestAnimationFrame(() => {
-      const rect = cropper.stage.getBoundingClientRect();
-      const size = Math.max(200, Math.min(rect.width || 360, rect.height || 360));
-      cropper.canvas.width = size;
-      cropper.canvas.height = size;
-      // initial fit: cover (zoom so smaller dim fills)
-      cropper.baseScale = Math.max(size / img.width, size / img.height);
+      // clientWidth is the UNTRANSFORMED layout size — getBoundingClientRect()
+      // would return a shrunken value mid slide-in (scale .94→1), sizing the
+      // canvas wrong and making the editor look blurry/cramped.
+      const cssSize = Math.max(200, cropper.stage.clientWidth || cropper.stage.offsetWidth || 320);
+      // Render at devicePixelRatio so the preview is crisp on retina/mobile —
+      // this is why the editor looked terrible while the exported avatar was fine.
+      const dpr = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+      cropper.dpr = dpr;
+      cropper.cssSize = cssSize;
+      cropper.canvas.width = Math.round(cssSize * dpr);
+      cropper.canvas.height = Math.round(cssSize * dpr);
+      // initial fit: cover (zoom so smaller dim fills) — in CSS pixels
+      cropper.baseScale = Math.max(cssSize / img.width, cssSize / img.height);
       cropper.imgScale = 1;
       cropper.rotation = 0;
       cropper.tx = 0;
       cropper.ty = 0;
       $('#cropZoom').value = 1;
       drawCropper();
+      // Redraw after the open animation settles in case layout shifted.
+      setTimeout(() => { try { drawCropper(); } catch(e){} }, 420);
     });
   };
   img.onerror = () => {
@@ -23361,11 +23844,17 @@ function openCropper(dataURL){
 function drawCropper(){
   const c = cropper.canvas, ctx = cropper.ctx;
   if(!c || !cropper.img || c.width === 0) return;
+  const dpr = cropper.dpr || 1;
+  const cssSize = cropper.cssSize || (c.width / dpr);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
   // dark background so transparent parts are visible
   ctx.fillStyle = '#000';
   ctx.fillRect(0, 0, c.width, c.height);
   ctx.save();
-  ctx.translate(c.width/2 + cropper.tx, c.height/2 + cropper.ty);
+  // Work in CSS pixels; the dpr scale keeps everything crisp on the hi-res buffer.
+  ctx.scale(dpr, dpr);
+  ctx.translate(cssSize/2 + cropper.tx, cssSize/2 + cropper.ty);
   ctx.rotate(cropper.rotation * Math.PI / 180);
   const s = cropper.baseScale * cropper.imgScale;
   const w = cropper.img.width * s;
@@ -23471,14 +23960,14 @@ function setupCropperEvents(){
     const out = document.createElement('canvas');
     out.width = 256; out.height = 256;
     const octx = out.getContext('2d');
+    octx.imageSmoothingEnabled = true; octx.imageSmoothingQuality = 'high';
     // black background so any blank areas show as black, not transparent
     octx.fillStyle = '#1a1322';
     octx.fillRect(0, 0, 256, 256);
 
-    // Replicate cropper transform at 256×256 resolution.
-    // The preview canvas was sized `previewSize`, our output is 256.
-    // We need to scale the offsets (tx, ty) proportionally.
-    const previewSize = cropper.canvas.width || 256;
+    // Replicate cropper transform at 256×256 resolution. tx/ty are in CSS pixels,
+    // so scale them against the CSS preview size (not the dpr-inflated buffer).
+    const previewSize = cropper.cssSize || cropper.canvas.width || 256;
     const scaleRatio = 256 / previewSize;
 
     octx.save();
@@ -23939,9 +24428,19 @@ function renderAchievementsPage(){
   if(!state.profile) return;
   const p = state.profile;
   const lvl = levelFromXp(p.totalXp || 0);
-  setText('#achLevelBadge', lvl.level); paintLevelBadge('#achLevelBadge', lvl.level);
-  setText('#achLevelXp', lvl.level >= 99 ? 'MAX LEVEL' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
-  const fill = $('#achLevelFill'); if(fill) fill.style.width = (lvl.progress*100)+'%';
+  const prestige = prestigeFromXp(p.totalXp || 0);
+  setText('#achLevelBadge', lvl.level); paintLevelBadge('#achLevelBadge', lvl.level, prestige);
+  const fill = $('#achLevelFill');
+  if(prestige > 0){
+    // Past max level — show progress toward the NEXT prestige instead.
+    const maxXp = totalXpForLevel(99);
+    const into = ((p.totalXp || 0) - maxXp) % PRESTIGE_XP;
+    setText('#achLevelXp', `Prestige ${prestige} · ${prestigeName(prestige)} · ${Math.floor(into).toLocaleString()} / ${PRESTIGE_XP.toLocaleString()} XP`);
+    if(fill){ fill.style.width = (into / PRESTIGE_XP * 100) + '%'; const pt = prestigeTier(prestige); fill.style.background = `linear-gradient(90deg, ${pt.a}, ${pt.b})`; }
+  } else {
+    setText('#achLevelXp', lvl.level >= 99 ? 'MAX LEVEL' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`);
+    if(fill){ fill.style.width = (lvl.progress*100)+'%'; fill.style.background = ''; }
+  }
   let equipped = p.equippedTitle ? titleById(p.equippedTitle) : null;
   if(!equipped || lvl.level < equipped.level){ const u = titlesUnlockedAt(lvl.level); equipped = u[u.length-1] || TITLES[0]; }
   setText('#achLevelTitle', equipped.name);
@@ -24927,7 +25426,11 @@ document.addEventListener('keydown', (e) => {
     if(e.code === 'Escape'){
       // close any open modal
       const open = document.querySelector('.modal-bg.show');
-      if(open) open.classList.remove('show');
+      if(open){
+        const wasEdit = open.id === 'editProfileModal';
+        open.classList.remove('show');
+        if(wasEdit) maybePromptUnsavedEdit();
+      }
     }
   } catch(err){ console.error('[keydown]', err); }
 });
@@ -25070,6 +25573,15 @@ document.addEventListener('visibilitychange', () => {
   }
   // Tab visible again
   if(document.visibilityState === 'visible'){
+    // Mobile: the camera is frequently paused/killed while backgrounded. Resume
+    // playback and, if the track died, re-acquire it so the feed isn't stuck.
+    if(state.cameraReady){
+      playVideoSafe(videoEl);
+      try {
+        const vt = videoEl?.srcObject?.getVideoTracks?.()[0];
+        if(!vt || vt.readyState === 'ended' || vt.muted) recoverCamera('returned to foreground');
+      } catch(e){}
+    }
     // If we were forfeited (grace expired while away), show notice
     try {
       if(localStorage.getItem('rosham_tabswitch_notice')){
