@@ -721,10 +721,19 @@ body.high-contrast .btn-primary{
   border: 2px solid #fff;
 }
 /* Larger UI text (accessibility) */
+/* Larger text — the app uses fixed px sizes, so bump the readable text across the
+   board (~16% on common content). Tiny UI chrome is left alone to avoid breakage. */
 body.ui-large{ font-size: 17px; }
-body.ui-large .set-title, body.ui-large .settings-row-title, body.ui-large .page-title{ font-size: 1.06em; }
-body.ui-large .set-sub, body.ui-large .settings-row-sub, body.ui-large .chat-msg .text{ font-size: 13.5px; }
-body.ui-large .nav-item span, body.ui-large .mobile-nav-item span{ font-size: 12px; }
+body.ui-large p, body.ui-large .set-title, body.ui-large .settings-row-title{ font-size: 15px; }
+body.ui-large .set-sub, body.ui-large .settings-row-sub{ font-size: 13px; }
+body.ui-large .btn, body.ui-large .nav-item, body.ui-large input, body.ui-large select, body.ui-large textarea{ font-size: 15px; }
+body.ui-large .nav-item span, body.ui-large .mobile-nav-item span{ font-size: 13px; }
+body.ui-large .chat-msg .text, body.ui-large .b-text, body.ui-large .activity-row .b-text,
+body.ui-large .friend-card .nm, body.ui-large .lbf-name, body.ui-large .mh-name{ font-size: 15px; }
+body.ui-large .stat-tile-l, body.ui-large .asc-l, body.ui-large .pm-stat .l{ font-size: 12px; }
+body.ui-large .stat-tile-v, body.ui-large .pm-stat .v{ font-size: 1.08em; }
+body.ui-large .section-title, body.ui-large .card-hd-title, body.ui-large .psection h3{ font-size: 1.06em; }
+body.ui-large .hx-title, body.ui-large .welcome-title{ font-size: 1.05em; }
 /* Color-blind mode — swap the green/red win-loss pair for CB-safe blue/orange */
 body.colorblind{ --mint:#3a9bff; --coral:#ff9a3d; }
 body.colorblind .pm-form-pip.win, body.colorblind .qr-you.win{ background: linear-gradient(135deg,#3a9bff,#2e7fd0) !important; color:#04121c !important; }
@@ -930,7 +939,7 @@ body.in-game .main-col{ min-height: 100vh; }
   box-shadow: inset 2px 0 0 var(--mint);
 }
 /* "Prestige available" nudge on the Achievements nav entry */
-.nav-item .nav-badge.nav-prestige{ background:linear-gradient(135deg,#ffd33d,#ff9a3d); color:#1c1402; letter-spacing:.06em; font-weight:800; animation:navPrestigePulse 1.8s ease-in-out infinite; }
+.nav-item .nav-badge.nav-prestige{ flex:0 0 auto; width:20px; min-width:20px; height:20px; padding:0; border-radius:50%; font-size:11px; background:linear-gradient(135deg,#ffd33d,#ff9a3d); color:#1c1402; font-weight:800; animation:navPrestigePulse 1.8s ease-in-out infinite; }
 @keyframes navPrestigePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,211,61,.5); } 50%{ box-shadow:0 0 0 4px rgba(255,211,61,0); } }
 .mni-badge.mni-prestige{ background:linear-gradient(135deg,#ffd33d,#ff9a3d); color:#1c1402; display:flex; }
 /* Friend-requests card on the Friends page */
@@ -1408,6 +1417,14 @@ body.reduced-motion .dxp-bolt, body.low-power .dxp-bolt{ animation:none; }
 
 /* Settings */
 .settings-section-title{ font-family:var(--font-mono); font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--text-faint); margin:22px 0 10px; font-weight:700; }
+/* Settings search/filter */
+.settings-search{ display:flex; align-items:center; gap:9px; padding:11px 14px; border-radius:13px; background:var(--surface-2); border:1px solid var(--line); margin:14px 0 4px; }
+.settings-search svg{ color:var(--text-faint); flex:0 0 auto; }
+.settings-search input{ flex:1; background:none; border:none; outline:none; color:var(--text); font-size:14px; font-family:var(--font-body); min-width:0; }
+.settings-noresult{ padding:16px; text-align:center; color:var(--text-faint); font-family:var(--font-mono); font-size:12px; }
+.settings-row.set-hidden, .settings-section-title.set-hidden, .settings-list.set-hidden, .volume-row.set-hidden{ display:none !important; }
+/* Reduce screen flashes */
+body.lessflash #shootFlash, body.lessflash .rankup-flash, body.lessflash .shoot-flash{ display:none !important; }
 .account-card{ display:flex; align-items:center; gap:16px; padding:20px; border-radius:16px; background:var(--surface); border:1px solid var(--line); margin-bottom:8px; }
 .acc-av{ width:56px; height:56px; border-radius:14px; background-size:cover; background-position:center; display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:24px; color:#fff; flex-shrink:0; }
 .acc-info{ flex:1; min-width:0; }
@@ -3376,6 +3393,58 @@ body.low-power .js-daily-card .daily-streak-mini{ animation: none; }
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Rarity styling — a small label + a coloured border/glow on unlocked chips */
+.title-rar{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--rar-color,#9aa0aa); padding:1px 5px; border-radius:999px; background:color-mix(in srgb, var(--rar-color,#9aa0aa) 16%, transparent); vertical-align:middle; }
+.title-chip.unlocked.rar-rare{ border-color:color-mix(in srgb, var(--rar-color) 50%, var(--line)); }
+.title-chip.unlocked.rar-epic{ border-color:color-mix(in srgb, var(--rar-color) 60%, var(--line)); box-shadow:0 0 12px -4px var(--rar-color); }
+.title-chip.unlocked.rar-legendary{ border-color:var(--rar-color); box-shadow:0 0 16px -4px var(--rar-color); }
+.title-chip.unlocked.rar-mythic{ border-color:var(--rar-color); box-shadow:0 0 20px -3px var(--rar-color); background:radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--rar-color) 12%, transparent), transparent 60%), var(--surface-2); }
+.title-chip.locked .title-rar{ opacity:.5; }
+/* In-match hand-tracking confidence meter */
+.hand-conf{ position:absolute; left:10px; bottom:10px; z-index:14; display:flex; align-items:center; gap:7px; padding:5px 9px; border-radius:999px;
+  background:rgba(8,7,13,.62); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); border:1px solid rgba(255,255,255,.08); pointer-events:none; }
+.hand-conf .hc-label{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.14em; color:var(--text-faint); }
+.hand-conf .hc-bar{ width:54px; height:5px; border-radius:999px; background:rgba(255,255,255,.12); overflow:hidden; }
+.hand-conf .hc-bar > i{ display:block; height:100%; width:0; border-radius:999px; background:var(--coral); transition:width .12s linear, background .2s; }
+.hand-conf.good .hc-bar > i{ background:var(--mint); } .hand-conf.fair .hc-bar > i{ background:var(--amber); }
+@media (max-width: 600px){ .hand-conf{ left:8px; bottom:8px; padding:4px 7px; } .hand-conf .hc-bar{ width:42px; } }
+/* Casual (friend challenge) indicators */
+.ci-casual-note{ font-family:var(--font-mono); font-size:10.5px; letter-spacing:.03em; color:var(--text-dim); text-align:center; margin:10px 0 2px; padding:6px 10px; border-radius:999px; background:rgba(34,211,163,.08); border:1px solid rgba(34,211,163,.2); }
+.duel-intro-tagline.casual-tag{ color:var(--mint) !important; }
+/* Match history list */
+.mh-row{ display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:13px; background:var(--surface-2); border:1px solid var(--line); cursor:pointer; transition:border-color .15s; margin-bottom:6px; }
+.mh-row:hover{ border-color:var(--line-bright); }
+.mh-row.expanded{ border-color:var(--mint); margin-bottom:0; border-bottom-left-radius:0; border-bottom-right-radius:0; }
+.mh-res{ width:26px; height:26px; flex:0 0 auto; border-radius:8px; display:grid; place-items:center; font-family:var(--font-display); font-stretch:75%; font-weight:800; font-size:13px; }
+.mh-res.win{ background:linear-gradient(135deg,var(--mint),#15a079); color:#04130d; }
+.mh-res.lose{ background:linear-gradient(135deg,var(--coral),#d8264f); color:#fff; }
+.mh-res.draw{ background:var(--surface-3); color:var(--text-dim); }
+.mh-av{ width:34px; height:34px; flex:0 0 auto; border-radius:10px; display:grid; place-items:center; font-family:var(--font-display); font-weight:700; font-size:14px; color:#fff; background-size:cover; background-position:center; }
+.mh-meta{ flex:1; min-width:0; }
+.mh-name{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mh-ff{ font-family:var(--font-mono); font-size:9px; color:var(--coral); border:1px solid var(--coral); border-radius:4px; padding:0 4px; }
+.mh-sub{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); margin-top:1px; }
+.mh-delta{ font-family:var(--font-display); font-stretch:70%; font-weight:800; font-size:14px; flex:0 0 auto; }
+.mh-delta.up{ color:var(--mint); } .mh-delta.down{ color:var(--coral); } .mh-delta.same{ color:var(--text-dim); }
+.mh-delta.casual{ font-size:10px; font-family:var(--font-mono); color:var(--mint); }
+.mh-chev{ color:var(--text-faint); transition:transform .2s; flex:0 0 auto; }
+.mh-row.expanded .mh-chev{ transform:rotate(180deg); }
+.mh-detail{ display:none; flex-direction:column; gap:5px; padding:9px 12px 11px; margin-bottom:6px; border:1px solid var(--mint); border-top:none; border-radius:0 0 13px 13px; background:rgba(34,211,163,.04); }
+.mh-detail.open{ display:flex; }
+.mh-round{ display:flex; align-items:center; gap:8px; font-size:12px; font-family:var(--font-mono); }
+.mh-round .mh-rn{ color:var(--text-faint); width:24px; }
+.mh-round .mh-throw{ color:var(--text-dim); }
+.mh-round .mh-vs{ color:var(--text-faint); font-size:10px; }
+.mh-round .mh-rr{ margin-left:auto; font-weight:700; }
+.mh-round .mh-rr.win{ color:var(--mint); } .mh-round .mh-rr.lose{ color:var(--coral); } .mh-round .mh-rr.draw{ color:var(--amber); }
+/* Global player-search results (find any player) */
+.lb-global-results{ margin:0 0 10px; padding:8px; border-radius:13px; background:var(--surface-2); border:1px solid var(--line); }
+.lbg-title{ font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--text-faint); padding:2px 6px 8px; }
+.lbg-row{ width:100%; display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:10px; background:none; border:none; cursor:pointer; color:var(--text); transition:background .12s; text-align:left; }
+.lbg-row:hover{ background:var(--surface-3); }
+.lbg-ic{ width:28px; height:28px; flex:0 0 auto; border-radius:8px; display:grid; place-items:center; background:var(--surface-3); color:var(--text-dim); }
+.lbg-name{ flex:1; font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; }
+.lbg-view{ font-family:var(--font-mono); font-size:11px; color:var(--mint); }
 .title-chip-req{
   font-family: var(--font-mono);
   font-size: 8px;
@@ -11056,6 +11125,18 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
 .lr-amount{ font-family:var(--font-display); font-stretch:65%; font-weight:800; font-size:46px; line-height:1; margin:6px 0 4px;
   background:linear-gradient(180deg,#fff,#ffd33d); -webkit-background-clip:text; background-clip:text; color:transparent; filter:drop-shadow(0 0 20px rgba(255,211,61,.4)); }
 .lr-streak{ font-family:var(--font-mono); font-size:12px; color:var(--text-dim); }
+/* 7-day login calendar */
+.lr-calendar{ display:grid; grid-template-columns:repeat(7,1fr); gap:5px; margin:16px 0 4px; }
+.lr-day{ display:flex; flex-direction:column; align-items:center; gap:3px; padding:7px 2px; border-radius:10px; border:1px solid var(--line); background:var(--surface-2); }
+.lr-day-n{ font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:.04em; color:var(--text-faint); }
+.lr-day-x{ font-family:var(--font-display); font-stretch:75%; font-weight:800; font-size:11px; color:var(--text-dim); }
+.lr-day.done{ background:rgba(34,211,163,.10); border-color:rgba(34,211,163,.3); }
+.lr-day.done .lr-day-x{ color:var(--mint); }
+.lr-day.today{ background:linear-gradient(135deg, rgba(255,211,61,.18), rgba(255,154,61,.06)); border-color:var(--amber); box-shadow:0 0 14px -4px var(--amber); transform:scale(1.06); }
+.lr-day.today .lr-day-n{ color:var(--amber); } .lr-day.today .lr-day-x{ color:var(--text); }
+.lr-day.future{ opacity:.55; }
+.lr-comeback{ margin-top:12px; padding:9px 12px; border-radius:10px; font-size:12.5px; color:var(--text); background:rgba(34,211,163,.1); border:1px solid rgba(34,211,163,.28); }
+.lr-comeback b{ color:var(--mint); }
 /* Season reset popup */
 .season-reset-row{ display:flex; align-items:center; justify-content:center; gap:14px; margin:4px 0; }
 .srr-col{ flex:1; padding:10px 8px; border:1px solid var(--line); border-radius:12px; background:var(--surface-2); }
@@ -12190,7 +12271,7 @@ body.reduced-motion .sl-text{ animation:none; }
       <button class="nav-item" data-nav="activity"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg><span>Activity</span></button>
       <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
-      <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span><span class="nav-badge nav-prestige" id="navPrestigeBadge" style="display:none;">✦ PRESTIGE</span></button>
+      <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span><span class="nav-badge nav-prestige" id="navPrestigeBadge" title="Prestige available" style="display:none;">✦</span></button>
       <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span>Settings</span></button>
       <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none; color:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Moderation</span></button>
     </nav>
@@ -13011,7 +13092,7 @@ const FIREBASE_CONFIG = {
           <div class="lb-controls">
             <div class="lb-search">
               <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-search"/></svg>
-              <input id="lbSearch" type="text" placeholder="Search players…" maxlength="20" autocomplete="off" />
+              <input id="lbSearch" type="text" placeholder="Search any player by username…" maxlength="20" autocomplete="off" />
             </div>
             <div class="lb-filters">
               <button class="lb-filter active" data-lbfilter="all">All</button>
@@ -13020,6 +13101,7 @@ const FIREBASE_CONFIG = {
               <button class="lb-filter" data-lbfilter="streak">🔥 Streak</button>
             </div>
           </div>
+          <div class="lb-global-results" id="lbGlobalResults" style="display:none;"></div>
           <div class="lb-full-body" id="lbFullBody"><div class="side-empty">Loading leaderboard…</div></div>
         </div>
       </div><!-- /page rank -->
@@ -13134,6 +13216,12 @@ const FIREBASE_CONFIG = {
           <button class="acc-edit-btn" id="setAccEdit">Edit</button>
         </div>
 
+        <div class="settings-search">
+          <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-search"/></svg>
+          <input id="settingsSearch" type="text" placeholder="Search settings…" autocomplete="off" />
+        </div>
+        <div class="settings-noresult" id="settingsNoResult" style="display:none;">No settings match your search.</div>
+
         <div class="settings-section-title">PROFILE</div>
         <div class="settings-list">
           <button class="settings-row" id="setEditProfile">
@@ -13149,6 +13237,11 @@ const FIREBASE_CONFIG = {
           <button class="settings-row" id="setCalibrate">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-check"/></svg></div>
             <div class="set-text"><div class="set-title">Run calibration wizard</div><div class="set-sub">Re-test your camera, face &amp; hand detection</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
+          <button class="settings-row" id="setMatchHistory">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-clock"/></svg></div>
+            <div class="set-text"><div class="set-title">Match history</div><div class="set-sub">Your recent matches, round by round</div></div>
             <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
           </button>
         </div>
@@ -13257,6 +13350,16 @@ const FIREBASE_CONFIG = {
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-chat"/></svg></div>
             <div class="set-text"><div class="set-title">Floating chat bubbles</div><div class="set-sub" id="setFloatChatState">Show chat pop-ups over the arena</div></div>
             <div class="set-toggle" id="setFloatChatToggle"></div>
+          </button>
+          <button class="settings-row" id="setLessFlash">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-eye-off"/></svg></div>
+            <div class="set-text"><div class="set-title">Reduce screen flashes</div><div class="set-sub" id="setLessFlashState">Soften bright flashes during rounds</div></div>
+            <div class="set-toggle off" id="setLessFlashToggle"></div>
+          </button>
+          <button class="settings-row" id="setAutoMute">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-sound-off"/></svg></div>
+            <div class="set-text"><div class="set-title">Auto-mute in background</div><div class="set-sub" id="setAutoMuteState">Mute audio when the app isn't focused</div></div>
+            <div class="set-toggle off" id="setAutoMuteToggle"></div>
           </button>
         </div>
 
@@ -13591,6 +13694,7 @@ const FIREBASE_CONFIG = {
             <div class="duel-badge" id="youReadyBadge"><span class="dot"></span><span>show hand</span></div>
           </div>
           <div class="duel-badge live" id="camStatus" style="display:none;"><span class="dot"></span><span id="camStatusText">camera…</span></div>
+          <div class="hand-conf" id="handConf" style="display:none;"><span class="hc-label">TRACKING</span><div class="hc-bar"><i id="handConfFill"></i></div></div>
           <div class="duel-gesture-indicator" id="yourDetected" style="display:none;">
             <span class="icon" id="yourDetectedIcon"></span>
             <span id="yourDetectedText">—</span>
@@ -14308,6 +14412,16 @@ const FIREBASE_CONFIG = {
 </div>
 
 <!-- FULL STATS MODAL -->
+<!-- MATCH HISTORY -->
+<div class="modal-bg" id="matchHistoryModal">
+  <div class="modal" style="max-width:560px;">
+    <button class="modal-close" data-close="matchHistoryModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3>MATCH HISTORY</h3>
+    <p style="margin-bottom:14px;">Your last 30 matches — tap one to see it round by round.</p>
+    <div id="matchHistoryList"><div class="side-empty">Loading…</div></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="statsModal">
   <div class="modal" style="max-width:680px;">
     <button class="modal-close" data-close="statsModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
@@ -14896,6 +15010,7 @@ const FIREBASE_CONFIG = {
       <span class="ci-countdown-text">s</span>
     </div>
     <div class="ci-cd-track"><div class="ci-cd-fill" id="chalCdFill"></div></div>
+    <div class="ci-casual-note">🤝 Casual match · no ELO, XP or rank change</div>
 
     <!-- Actions -->
     <div class="ci-actions">
@@ -14995,11 +15110,13 @@ const FIREBASE_CONFIG = {
 
 <!-- DAILY LOGIN REWARD -->
 <div class="modal-bg" id="loginRewardModal">
-  <div class="modal login-reward-card" style="max-width:340px; text-align:center;">
+  <div class="modal login-reward-card" style="max-width:380px; text-align:center;">
     <div class="lr-gift">🎁</div>
     <div class="lr-eyebrow">DAILY REWARD</div>
     <div class="lr-amount" id="lrAmount">+100 XP</div>
     <div class="lr-streak" id="lrStreak">Day 1 login streak 🔥</div>
+    <div class="lr-calendar" id="lrCalendar"></div>
+    <div class="lr-comeback" id="lrComeback" style="display:none;"></div>
     <button class="btn btn-primary" id="lrClaimBtn" data-close="loginRewardModal" style="width:100%; margin-top:16px;">Claim</button>
   </div>
 </div>
@@ -15162,7 +15279,7 @@ import {
   getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, addDoc,
   collection, onSnapshot, serverTimestamp, query, where, getDocs,
   runTransaction, orderBy, limit, increment, writeBatch, documentId,
-  arrayUnion, arrayRemove,
+  arrayUnion, arrayRemove, startAt, endAt,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 
 /* =========================================================
@@ -15494,31 +15611,40 @@ function canPrestige(p){ return levelOf(p).level >= MAX_LEVEL; }
 
 // Titles unlocked at level milestones. Player can equip any unlocked title.
 const TITLES = [
-  { id:'rookie',       name:'Rookie',          level:1,  color:'#9aa0aa' },
-  { id:'challenger',   name:'Challenger',      level:3,  color:'#7fd1ff' },
-  { id:'contender',    name:'Contender',       level:5,  color:'#5dffba' },
-  { id:'brawler',      name:'Brawler',         level:8,  color:'#ffd33d' },
-  { id:'duelist',      name:'Duelist',         level:12, color:'#ff9a3d' },
-  { id:'gladiator',    name:'Gladiator',       level:16, color:'#ff7a3d' },
-  { id:'warlord',      name:'Warlord',         level:20, color:'#ff3d68' },
-  { id:'mindreader',   name:'Mind Reader',     level:25, color:'#a48bff' },
-  { id:'unstoppable',  name:'Unstoppable',     level:30, color:'#c77dff' },
-  { id:'legend',       name:'Legend',          level:40, color:'#ff3d9a' },
-  { id:'mythic',       name:'Mythic',          level:50, color:'#ffd700' },
+  { id:'rookie',       name:'Rookie',          level:1,  color:'#9aa0aa', rarity:'common' },
+  { id:'challenger',   name:'Challenger',      level:3,  color:'#7fd1ff', rarity:'common' },
+  { id:'contender',    name:'Contender',       level:5,  color:'#5dffba', rarity:'common' },
+  { id:'brawler',      name:'Brawler',         level:8,  color:'#ffd33d', rarity:'rare' },
+  { id:'duelist',      name:'Duelist',         level:12, color:'#ff9a3d', rarity:'rare' },
+  { id:'gladiator',    name:'Gladiator',       level:16, color:'#ff7a3d', rarity:'rare' },
+  { id:'warlord',      name:'Warlord',         level:20, color:'#ff3d68', rarity:'epic' },
+  { id:'mindreader',   name:'Mind Reader',     level:25, color:'#a48bff', rarity:'epic' },
+  { id:'unstoppable',  name:'Unstoppable',     level:30, color:'#c77dff', rarity:'epic' },
+  { id:'legend',       name:'Legend',          level:40, color:'#ff3d9a', rarity:'legendary' },
+  { id:'mythic',       name:'Mythic',          level:50, color:'#ffd700', rarity:'legendary' },
 ];
+// Title rarity tiers — drive the chip colour, glow and a small label.
+const RARITY = {
+  common:    { label:'Common',    color:'#9aa0aa' },
+  rare:      { label:'Rare',      color:'#5f9bff' },
+  epic:      { label:'Epic',      color:'#c77dff' },
+  legendary: { label:'Legendary', color:'#ffb300' },
+  mythic:    { label:'Mythic',    color:'#ff5ec4' },
+};
+function titleRarity(t){ return RARITY[(t && t.rarity)] || RARITY.common; }
 function titlesUnlockedAt(level){
   return TITLES.filter(t => level >= t.level);
 }
 // Prestige titles — earned by prestiging (one per prestige tier). Equippable.
 const PRESTIGE_TITLES = [
-  { id:'pt1', name:'Gold Prestige',     prestige:1, color:'#ffd700' },
-  { id:'pt2', name:'Diamond Prestige',  prestige:2, color:'#5fc9ff' },
-  { id:'pt3', name:'Amethyst Prestige', prestige:3, color:'#a48bff' },
-  { id:'pt4', name:'Rose Prestige',     prestige:4, color:'#ff61c3' },
-  { id:'pt5', name:'Ember Prestige',    prestige:5, color:'#ff7a3d' },
-  { id:'pt6', name:'Emerald Prestige',  prestige:6, color:'#22d3a3' },
-  { id:'pt7', name:'Crimson Prestige',  prestige:7, color:'#ff3358' },
-  { id:'pt8', name:'Platinum Prestige', prestige:8, color:'#e8edf2' },
+  { id:'pt1', name:'Gold Prestige',     prestige:1, color:'#ffd700', rarity:'epic' },
+  { id:'pt2', name:'Diamond Prestige',  prestige:2, color:'#5fc9ff', rarity:'epic' },
+  { id:'pt3', name:'Amethyst Prestige', prestige:3, color:'#a48bff', rarity:'epic' },
+  { id:'pt4', name:'Rose Prestige',     prestige:4, color:'#ff61c3', rarity:'legendary' },
+  { id:'pt5', name:'Ember Prestige',    prestige:5, color:'#ff7a3d', rarity:'legendary' },
+  { id:'pt6', name:'Emerald Prestige',  prestige:6, color:'#22d3a3', rarity:'legendary' },
+  { id:'pt7', name:'Crimson Prestige',  prestige:7, color:'#ff3358', rarity:'mythic' },
+  { id:'pt8', name:'Platinum Prestige', prestige:8, color:'#e8edf2', rarity:'mythic' },
 ];
 function prestigeTitlesUnlocked(prestige){ return PRESTIGE_TITLES.filter(t => (prestige || 0) >= t.prestige); }
 function titleById(id){
@@ -16714,13 +16840,29 @@ async function setupHands(){
 }
 function onHandsResults(results){
   overlayCtx.clearRect(0,0,overlayCanvas.width, overlayCanvas.height);
+  let conf = 0;
   if(results.multiHandLandmarks && results.multiHandLandmarks.length){
     if(state._showSkeleton !== false) drawLandmarks(results.multiHandLandmarks[0]);
     const g = classifyGesture(results.multiHandLandmarks[0]);
     setCurrentGesture(stabilizeGesture(g));
+    const hs = (results.multiHandedness && results.multiHandedness[0] && results.multiHandedness[0].score) || 0.85;
+    // Hand present = solid base; a recognised gesture lifts it; a stable (committed)
+    // gesture maxes it out — so the meter rewards holding a clear shape.
+    conf = 0.42 * hs + (g ? 0.26 : 0) + (state.currentGesture ? 0.32 : 0);
   } else {
     setCurrentGesture(null);
   }
+  state._handConfidence = (state._handConfidence || 0) * 0.6 + Math.min(1, conf) * 0.4;
+  updateHandConfMeter(state._handConfidence);
+}
+function updateHandConfMeter(c){
+  const el = $('#handConf'); if(!el) return;
+  const show = state.cameraReady && (state.screen === 'game' || state.screen === 'matching');
+  el.style.display = show ? 'flex' : 'none';
+  if(!show) return;
+  const fill = $('#handConfFill'); if(fill) fill.style.width = Math.round(c * 100) + '%';
+  el.classList.toggle('good', c >= 0.7);
+  el.classList.toggle('fair', c >= 0.4 && c < 0.7);
 }
 function drawLandmarks(landmarks){
   const w = overlayCanvas.width, h = overlayCanvas.height;
@@ -18004,6 +18146,52 @@ function refreshStatsSummary(){
 }
 
 // ============= FULL STATS MODAL =============
+// ===== MATCH HISTORY =====
+function moveEmoji(m){ return m === 'rock' ? '✊' : m === 'paper' ? '✋' : m === 'scissors' ? '✌️' : '—'; }
+async function openMatchHistory(){
+  const modal = $('#matchHistoryModal'); if(!modal) return;
+  if(!state.user){ toast('Sign in to view history', 'error'); return; }
+  modal.classList.add('show');
+  const list = $('#matchHistoryList'); if(list) list.innerHTML = skeletonRows(5);
+  try {
+    // Equality filter only (no orderBy) so it never needs a composite index.
+    const snap = await getDocs(query(collection(state.db, 'matchHistory'), where('uid', '==', state.user.uid), limit(60)));
+    const items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+    items.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    renderMatchHistory(items.slice(0, 30));
+  } catch(e){
+    console.warn('[history]', e);
+    if(list) renderEmptyState(list, { icon:'i-clock', text:"Couldn't load your match history." });
+  }
+}
+function renderMatchHistory(items){
+  const list = $('#matchHistoryList'); if(!list) return;
+  if(!items.length){ renderEmptyState(list, { icon:'i-clock', text:'No matches yet — play a few games to build your history!' }); return; }
+  list.innerHTML = '';
+  items.forEach(m => {
+    const res = m.result || 'match';
+    const win = res === 'win', lose = res === 'lose' || res === 'forfeit';
+    const cls = win ? 'win' : lose ? 'lose' : 'draw';
+    const row = document.createElement('div');
+    row.className = 'mh-row ' + cls;
+    const avStyle = m.oppPhotoURL ? `background-image:url('${m.oppPhotoURL}');background-size:cover;background-position:center;` : `background:${AVATAR_COLORS[m.oppColorIdx||0]};`;
+    const deltaStr = m.casual ? '<span class="mh-delta casual">casual</span>'
+      : (m.delta != null && !m.bot ? `<span class="mh-delta ${m.delta > 0 ? 'up' : m.delta < 0 ? 'down' : 'same'}">${m.delta > 0 ? '+' : ''}${m.delta}</span>` : '');
+    row.innerHTML = `
+      <div class="mh-res ${cls}">${win ? 'W' : lose ? 'L' : 'D'}</div>
+      <div class="av mh-av" style="${avStyle}">${m.oppPhotoURL ? '' : escapeHTML(initialOf(m.oppUsername || '?'))}</div>
+      <div class="mh-meta"><div class="mh-name">${escapeHTML(m.oppUsername || 'stranger')}${m.forfeit ? ' <span class="mh-ff">forfeit</span>' : ''}</div><div class="mh-sub">${escapeHTML(m.score || '')} · ${timeAgo(m.createdAt)}</div></div>
+      ${deltaStr}
+      <svg class="mh-chev" viewBox="0 0 24 24" width="15" height="15"><use href="#i-chevron-down"/></svg>`;
+    const detail = document.createElement('div');
+    detail.className = 'mh-detail';
+    detail.innerHTML = (m.rounds && m.rounds.length)
+      ? m.rounds.map((r, i) => `<div class="mh-round"><span class="mh-rn">R${i+1}</span><span class="mh-throw">${moveEmoji(r.y)} you</span><span class="mh-vs">vs</span><span class="mh-throw">opp ${moveEmoji(r.o)}</span><span class="mh-rr ${r.r === 'win' ? 'win' : (r.r === 'lose' || r.r === 'forfeit') ? 'lose' : 'draw'}">${r.r === 'win' ? 'won' : (r.r === 'lose' || r.r === 'forfeit') ? 'lost' : 'drew'}</span></div>`).join('')
+      : '<div class="mh-round" style="color:var(--text-faint); justify-content:center;">No round detail saved for this match.</div>';
+    row.addEventListener('click', () => { const open = detail.classList.toggle('open'); row.classList.toggle('expanded', open); });
+    list.appendChild(row); list.appendChild(detail);
+  });
+}
 function openStatsModal(){
   if(!state.profile){ toast('Sign in to view stats', 'error'); return; }
   const p = state.profile;
@@ -18287,6 +18475,8 @@ function applySettings(){
   document.body.classList.toggle('colorblind', !!s.colorblind);
   // floating chat bubbles — default ON
   state._floatChatOff = (s.floatChat === false);
+  document.body.classList.toggle('lessflash', !!s.lessFlash);
+  state._autoMuteBg = !!s.autoMuteBg;
   // mirror camera (persisted)
   if(s.mirror != null){ state._camMirrored = !!s.mirror; try { $('#yourVideo')?.classList.toggle('cam-flipped', state._camMirrored); } catch(e){} }
   // Camera adjustments
@@ -19790,7 +19980,32 @@ function renderFullLeaderboard(){
     body.appendChild(row);
   });
 }
-on('#lbSearch', 'input', () => renderFullLeaderboard());
+on('#lbSearch', 'input', () => { renderFullLeaderboard(); scheduleGlobalPlayerSearch(); });
+// Global player search — find ANY player by username (not just the loaded top 100),
+// via a case-insensitive prefix lookup on the `usernames` index.
+function scheduleGlobalPlayerSearch(){
+  clearTimeout(state._playerSearchTimer);
+  state._playerSearchTimer = setTimeout(runGlobalPlayerSearch, 320);
+}
+async function runGlobalPlayerSearch(){
+  const box = $('#lbGlobalResults'); if(!box) return;
+  const q = ($('#lbSearch')?.value || '').trim().toLowerCase().replace(/^@/, '');
+  if(q.length < 2){ box.style.display = 'none'; box.innerHTML = ''; return; }
+  // Skip if the loaded board already shows matches for this query.
+  const localHit = (state._lbFull || []).some(p => (p.username || '').toLowerCase().includes(q));
+  try {
+    const snap = await getDocs(query(collection(state.db, 'usernames'), orderBy(documentId()), startAt(q), endAt(q + String.fromCharCode(0xf8ff)), limit(8)));
+    const found = [];
+    snap.forEach(d => { const data = d.data() || {}; if(data.uid) found.push({ name: d.id, uid: data.uid }); });
+    const seen = new Set((state._lbFull || []).filter(p => (p.username||'').toLowerCase().includes(q)).map(p => p.uid));
+    const extra = found.filter(f => !seen.has(f.uid));
+    if(extra.length === 0){ box.style.display = 'none'; box.innerHTML = ''; return; }
+    box.style.display = '';
+    box.innerHTML = `<div class="lbg-title">Found ${extra.length} more player${extra.length===1?'':'s'}</div>` +
+      extra.map(f => `<button class="lbg-row" data-uid="${f.uid}"><span class="lbg-ic"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-user"/></svg></span><span class="lbg-name">${escapeHTML(f.name)}</span><span class="lbg-view">View →</span></button>`).join('');
+    box.querySelectorAll('.lbg-row').forEach(b => b.addEventListener('click', () => openProfile(b.dataset.uid)));
+  } catch(e){ console.warn('[player-search]', e); box.style.display = 'none'; }
+}
 document.addEventListener('click', (e) => {
   const f = e.target.closest('.lb-filter');
   if(!f) return;
@@ -21364,10 +21579,10 @@ const RTC_CONFIG = {
 
 async function enterMatch(matchData){
   cancelMatchmakingResources();
-  // Challenge matches now count as RANKED — they award ELO/XP/W-L so a victory
-  // always feels worth it (and a leaver correctly hands you the win, not 0 ELO).
-  // `isCasual` is kept as a hook for any future explicitly-friendly mode.
-  state.isCasual = (matchData && matchData.mode === 'casual');
+  // Friend challenges are CASUAL — just for fun, no ELO / XP / W-L (anti-exploit:
+  // you can't farm rating off a friend). This is made clear on the VS + result UI.
+  state.isCasual = (matchData && (matchData.mode === 'casual' || matchData.mode === 'challenge'));
+  state._rematchStreak = 0;   // fresh opponent → reset the rematch counter
   state.oppProfile = state.isCaller ? matchData.calleeProfile : matchData.callerProfile;
   // Let friends see you're in a match (presence) — fire-and-forget.
   try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: true }).catch(()=>{}); } catch(e){}
@@ -21497,22 +21712,26 @@ function showMatchIntro(){
   setText('#introYouRank', myRank.tierName);
   setText('#introOppRank', oppRank.tierName);
 
-  // head-to-head history
+  // head-to-head history — or the live rematch streak vs this opponent.
   const h2h = getHeadToHead(state.oppUid);
   const total = h2h.wins + h2h.losses + h2h.draws;
-  if(total === 0){
+  if(state._rematchStreak > 0){
+    setText('#introHistory', `🔥 REMATCH #${state._rematchStreak} · ${h2h.wins}W – ${h2h.losses}L vs this player`);
+  } else if(total === 0){
     setText('#introHistory', 'FIRST TIME FACING THIS PLAYER');
   } else {
     setText('#introHistory', `H2H: ${h2h.wins}W – ${h2h.losses}L${h2h.draws ? ' – ' + h2h.draws + 'D' : ''} (${total} matches)`);
   }
 
-  // tagline based on rank diff
+  // tagline based on rank diff — or a clear CASUAL note for friend challenges.
   const ratingDiff = (state.oppProfile?.rating || 1000) - (state.profile.rating || 1000);
   let tagline = 'BEST OF 3 · MAY THE BEST HAND WIN';
-  if(ratingDiff > 200) tagline = 'UNDERDOG · TIME TO PROVE YOURSELF';
+  if(state.isCasual) tagline = '🤝 CASUAL MATCH · NO ELO OR XP';
+  else if(ratingDiff > 200) tagline = 'UNDERDOG · TIME TO PROVE YOURSELF';
   else if(ratingDiff < -200) tagline = 'FAVORITE · DEFEND YOUR CROWN';
   else if(Math.abs(ratingDiff) < 50) tagline = 'EVENLY MATCHED · WINNER TAKES ALL';
   setText('#introTagline', tagline);
+  const tagEl = $('#introTagline'); if(tagEl) tagEl.classList.toggle('casual-tag', !!state.isCasual);
 
   // hide other elements during intro
   $('#handPrompt').classList.remove('show');
@@ -21710,6 +21929,7 @@ function startRematch(weAccepted){
   // Guard against double-trigger
   if(state._rematchStarting) return;
   state._rematchStarting = true;
+  state._rematchStreak = (state._rematchStreak || 0) + 1;   // consecutive rematches vs same opp
   state.rematch = {};
   resetRematchUI();
   // Hide result overlay + any offer box
@@ -23003,15 +23223,20 @@ let updateMatchStats = async function(matchResult){
     refreshStatsUI();
     updateChipRating();
 
-    // Match history
+    // Match history (with a compact round-by-round log for the detail view)
+    const roundsLog = (state._matchRoundHistory || []).map(r => ({ y: r.yourMove || '', o: r.oppMove || '', r: r.result || '' }));
     await addDoc(collection(state.db, 'matchHistory'), {
       uid: state.user.uid,
       username: state.profile.username,
       oppUid: state.oppUid,
       oppUsername: state.oppProfile?.username || '',
+      oppColorIdx: state.oppProfile?.colorIdx || 0,
+      oppPhotoURL: state.oppProfile?.photoURL || '',
       result: matchResult,
       delta,
+      casual: !!state.isCasual,
       score: `${state.scoreYou}-${state.scoreOpp}`,
+      rounds: roundsLog,
       ratingBefore: myRating,
       ratingAfter: newRating,
       createdAt: serverTimestamp(),
@@ -23317,7 +23542,18 @@ function showMatchResultScreen(result){
   const fill = $('#matchRankFill');
   const mrIcon = $('#matchRankIcon');
   setRankIconEl(mrIcon, rankBefore.id);
-  if(unranked){
+  if(state.isCasual){
+    // CASUAL (friend challenge) — clearly no ELO / XP / rank change.
+    if(mrIcon) mrIcon.style.color = rankBefore.color;
+    setText('#matchRankTier', rankBefore.tierName);
+    setText('#matchRankRating', '🤝 Casual match');
+    deltaEl.className = 'delta same';
+    deltaEl.textContent = 'no ELO / XP';
+    setText('#matchRankCurLabel', 'Friend challenge');
+    setText('#matchRankNextLabel', "Casual matches don't affect your rank, ELO or XP");
+    const progC = rankProgressToNext(ratingBefore);
+    if(fill){ fill.style.setProperty('--rank-color', rankBefore.color); fill.style.setProperty('--rank-color-2', rankBefore.color2); fill.style.transition = 'none'; fill.style.width = (progC.progress * 100) + '%'; }
+  } else if(unranked){
     // UNRANKED — hide ELO/rank, show how many placement matches remain.
     const done = placementsDone(state.profile), left = PLACEMENT_TOTAL - done;
     if(mrIcon) mrIcon.style.color = 'var(--text-dim)';
@@ -24886,13 +25122,15 @@ function renderAchievementsPage(){
     TITLES.forEach(t => {
       const unlocked = lvl.level >= t.level;
       const isEq = t.id === p.equippedTitle;
+      const rar = titleRarity(t);
       const chip = document.createElement('div');
-      chip.className = 'title-chip ' + (unlocked ? 'unlocked' : 'locked') + (isEq ? ' equipped' : '');
+      chip.className = 'title-chip rar-' + (t.rarity || 'common') + ' ' + (unlocked ? 'unlocked' : 'locked') + (isEq ? ' equipped' : '');
       chip.style.setProperty('--chip-color', t.color);
+      chip.style.setProperty('--rar-color', rar.color);
       chip.innerHTML = `
         <span class="title-chip-dot"></span>
         <div class="title-chip-body">
-          <div class="title-chip-name">${t.name}</div>
+          <div class="title-chip-name">${t.name} <span class="title-rar">${rar.label}</span></div>
           <div class="title-chip-req">${unlocked ? 'unlocked' : 'level ' + t.level}</div>
         </div>
         <svg class="title-chip-check" viewBox="0 0 24 24"><use href="#i-check"/></svg>`;
@@ -24903,13 +25141,15 @@ function renderAchievementsPage(){
     PRESTIGE_TITLES.forEach(t => {
       const unlocked = prestige >= t.prestige;
       const isEq = t.id === p.equippedTitle;
+      const rar = titleRarity(t);
       const chip = document.createElement('div');
-      chip.className = 'title-chip prestige-title-chip ' + (unlocked ? 'unlocked' : 'locked') + (isEq ? ' equipped' : '');
+      chip.className = 'title-chip prestige-title-chip rar-' + (t.rarity || 'epic') + ' ' + (unlocked ? 'unlocked' : 'locked') + (isEq ? ' equipped' : '');
       chip.style.setProperty('--chip-color', t.color);
+      chip.style.setProperty('--rar-color', rar.color);
       chip.innerHTML = `
         <span class="title-chip-dot"></span>
         <div class="title-chip-body">
-          <div class="title-chip-name">✦ ${t.name}</div>
+          <div class="title-chip-name">✦ ${t.name} <span class="title-rar">${rar.label}</span></div>
           <div class="title-chip-req">${unlocked ? 'unlocked' : 'prestige ' + t.prestige}</div>
         </div>
         <svg class="title-chip-check" viewBox="0 0 24 24"><use href="#i-check"/></svg>`;
@@ -25056,6 +25296,8 @@ function renderSettingsPage(){
   setTog('setContrastToggle', !!sset.contrast);
   setTog('setColorblindToggle', !!sset.colorblind);
   setTog('setFloatChatToggle', sset.floatChat !== false);
+  setTog('setLessFlashToggle', !!sset.lessFlash);
+  setTog('setAutoMuteToggle', !!sset.autoMuteBg);
 }
 
 // Load saved client preferences (volume, motion, haptics, streamer)
@@ -25158,6 +25400,9 @@ window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
 
 // Daily login streak (localStorage)
 // Daily login reward — once per day, XP scales with the login streak.
+// Escalating 7-day reward cycle (XP), peaking on day 7.
+const DAILY_REWARDS = [100, 125, 150, 175, 200, 250, 350];
+function dailyRewardForStreak(streak){ return DAILY_REWARDS[(Math.max(1, streak) - 1) % 7]; }
 function claimDailyLoginReward(){
   if(!state.user || !state.profile) return;
   const key = 'rosham_login_reward_' + state.user.uid;
@@ -25165,34 +25410,61 @@ function claimDailyLoginReward(){
   let last; try { last = localStorage.getItem(key); } catch(e){ last = null; }
   if(last === today) return;
   try { localStorage.setItem(key, today); } catch(e){}  // mark first → no re-entry
-  const streak = getLoginStreak();
-  const amount = Math.min(300, 100 + (Math.max(1, streak) - 1) * 25);
-  try { showLoginReward(amount, streak); } catch(e){}
-  grantXp(amount, 'Daily login', { silent: true });
+  const info = computeLoginStreak();
+  const dayInWeek = ((info.streak - 1) % 7) + 1;
+  let amount = dailyRewardForStreak(info.streak);
+  let comebackBonus = 0;
+  if(info.comeback){ comebackBonus = Math.min(250, 50 + info.daysAway * 25); amount += comebackBonus; }
+  try { showLoginReward(amount, info.streak, dayInWeek, comebackBonus); } catch(e){}
+  grantXp(amount, comebackBonus ? 'Welcome back' : 'Daily login', { silent: true });
 }
-function showLoginReward(amount, streak){
+function showLoginReward(amount, streak, dayInWeek, comebackBonus){
   setText('#lrAmount', `+${amount} XP`);
   setText('#lrStreak', `Day ${streak} login streak 🔥`);
+  const cal = $('#lrCalendar');
+  if(cal){
+    cal.innerHTML = DAILY_REWARDS.map((amt, i) => {
+      const day = i + 1;
+      const st = day < dayInWeek ? 'done' : day === dayInWeek ? 'today' : 'future';
+      return `<div class="lr-day ${st}"><div class="lr-day-n">D${day}</div><div class="lr-day-x">${day === 7 ? '🏆' : '+' + amt}</div></div>`;
+    }).join('');
+  }
+  const cb = $('#lrComeback');
+  if(cb){
+    if(comebackBonus > 0){ cb.style.display = ''; cb.innerHTML = `👋 Welcome back! <b>+${comebackBonus} XP</b> comeback bonus`; }
+    else cb.style.display = 'none';
+  }
   const m = $('#loginRewardModal');
   if(m){ m.classList.add('show'); if(!document.body.classList.contains('low-power')){ try { setTimeout(()=>launchConfetti(), 200); } catch(e){} } }
 }
-
-function getLoginStreak(){
+// Compute (and persist) the login streak once per day, with comeback detection.
+// Cached in state so multiple callers in the same day agree.
+function computeLoginStreak(){
+  const today = new Date().toDateString();
+  if(state._loginInfo && state._loginInfo.day === today) return state._loginInfo;
+  let info = { streak: 1, comeback: false, daysAway: 0, day: today };
   try {
     const uid = state.user?.uid || 'anon';
     const key = 'rosham_login_' + uid;
     const raw = localStorage.getItem(key);
-    const today = new Date().toDateString();
-    const yesterday = new Date(Date.now()-86400000).toDateString();
-    let data = raw ? JSON.parse(raw) : { last:null, streak:0 };
-    if(data.last === today) return data.streak;
-    if(data.last === yesterday) data.streak += 1;
-    else data.streak = 1;
-    data.last = today;
-    localStorage.setItem(key, JSON.stringify(data));
-    return data.streak;
-  } catch(e){ return 1; }
+    const yesterday = new Date(Date.now() - 86400000).toDateString();
+    let data = raw ? JSON.parse(raw) : { last: null, streak: 0, ts: 0 };
+    if(data.last === today){ info = { streak: data.streak, comeback: false, daysAway: 0, day: today }; }
+    else {
+      if(data.last === yesterday){ data.streak += 1; }
+      else {
+        if(data.streak >= 2 && data.ts){ info.daysAway = Math.max(2, Math.round((Date.now() - data.ts) / 86400000)); info.comeback = true; }
+        data.streak = 1;
+      }
+      data.last = today; data.ts = Date.now();
+      localStorage.setItem(key, JSON.stringify(data));
+      info.streak = data.streak;
+    }
+  } catch(e){}
+  state._loginInfo = info;
+  return info;
 }
+function getLoginStreak(){ return computeLoginStreak().streak; }
 
 // Render friends from cache into an arbitrary container (used by friends page)
 // ===== Pinned (favorite) friends — stored locally per user =====
@@ -25512,6 +25784,7 @@ on('#calibStep3Next', 'click', calibComplete);
 on('#calibFinish', 'click', closeCalibration);
 // Re-runnable from settings
 on('#setCalibrate', 'click', () => { try { localStorage.removeItem(CALIB_KEY); } catch(e){} openCalibration(); });
+on('#setMatchHistory', 'click', openMatchHistory);
 
 
 // ===== HOME quick links =====
@@ -25610,6 +25883,29 @@ function toggleSetting(key){ const s = getSettings(); s[key] = !s[key]; saveSett
 on('#setBigText', 'click', () => toggleSetting('bigText'));
 on('#setContrast', 'click', () => toggleSetting('contrast'));
 on('#setColorblind', 'click', () => toggleSetting('colorblind'));
+on('#setLessFlash', 'click', () => toggleSetting('lessFlash'));
+on('#setAutoMute', 'click', () => toggleSetting('autoMuteBg'));
+// Settings search/filter
+on('#settingsSearch', 'input', () => {
+  const q = ($('#settingsSearch')?.value || '').trim().toLowerCase();
+  const page = document.querySelector('.nav-page[data-page="settings"]'); if(!page) return;
+  let anyVisible = false;
+  page.querySelectorAll('.settings-list').forEach(list => {
+    let listVisible = false;
+    list.querySelectorAll('.settings-row, .volume-row').forEach(row => {
+      const txt = (row.textContent || '').toLowerCase();
+      const match = !q || txt.includes(q);
+      row.classList.toggle('set-hidden', !match);
+      if(match) listVisible = true;
+    });
+    list.classList.toggle('set-hidden', !listVisible);
+    // hide the section title that precedes an empty list
+    const title = list.previousElementSibling;
+    if(title && title.classList.contains('settings-section-title')) title.classList.toggle('set-hidden', !listVisible);
+    if(listVisible) anyVisible = true;
+  });
+  const nr = $('#settingsNoResult'); if(nr) nr.style.display = (q && !anyVisible) ? 'block' : 'none';
+});
 on('#setFloatChat', 'click', () => { const s = getSettings(); s.floatChat = (s.floatChat === false); saveSettings(s); applySettings(); renderSettingsPage(); haptic(9); });
 on('#setNotify', 'click', async () => {
   if(notifyEnabled()){ try { localStorage.setItem('rosham_notify', '0'); } catch(e){} renderSettingsPage(); return; }
@@ -26113,6 +26409,13 @@ function showGraceOverlay(){
 function hideGraceOverlay(){ const ov = $('#graceOverlay'); if(ov) ov.classList.remove('show'); }
 
 document.addEventListener('visibilitychange', () => {
+  // Auto-mute in background (setting) — suspend/resume the WebAudio graph.
+  try {
+    if(state._autoMuteBg && typeof audioCtx !== 'undefined' && audioCtx){
+      if(document.visibilityState === 'hidden') audioCtx.suspend();
+      else if(!state.muted) audioCtx.resume();
+    }
+  } catch(e){}
   // when hidden, mark queue entry as stale so others skip it
   if(document.visibilityState === 'hidden' && state.user && state.screen === 'matching'){
     try { deleteDoc(doc(state.db, 'queue', state.user.uid)); } catch(e){}
