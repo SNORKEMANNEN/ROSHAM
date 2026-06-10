@@ -12,16 +12,18 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="ROSHCAM" />
 <meta name="format-detection" content="telephone=no" />
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2308070d'/%3E%3Ctext x='50' y='52' font-size='62' text-anchor='middle' dominant-baseline='central'%3E%F0%9F%AA%A8%3C/text%3E%3C/svg%3E" />
-<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22ROSHCAM%22%2C%22short_name%22%3A%22ROSHCAM%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2308070d%22%2C%22theme_color%22%3A%22%2308070d%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Froshcam.com%2Ficon-192.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%7D%2C%7B%22src%22%3A%22https%3A%2F%2Froshcam.com%2Ficon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D" />
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='88'%3E%F0%9F%AA%A8%3C/text%3E%3C/svg%3E" />
+<link rel="apple-touch-icon" href="logo.png" />
+<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22ROSHCAM%22%2C%22short_name%22%3A%22ROSHCAM%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2308070d%22%2C%22theme_color%22%3A%22%2308070d%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Froshcam.com%2Flogo.png%22%2C%22sizes%22%3A%221024x1024%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D" />
+<link rel="icon" type="image/png" href="logo.png" />
 <meta property="og:title" content="ROSHCAM — live rock paper scissors with strangers" />
 <meta property="og:description" content="Real webcam rock · paper · scissors against strangers. Read their eyes, throw first, climb the ranked ladder." />
 <meta property="og:type" content="website" />
 <meta property="og:url" content="https://roshcam.com" />
+<meta property="og:image" content="https://roshcam.com/logo.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="ROSHCAM — live rock paper scissors" />
 <meta name="twitter:description" content="Real webcam rock · paper · scissors against strangers. Ranked ELO, friends, leaderboards." />
+<meta name="twitter:image" content="https://roshcam.com/logo.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12118,12 +12120,298 @@ body.low-power .play-hero{ box-shadow: none !important; }
 body.low-power .sl-spinner span{ animation-duration:1.4s !important; }
 body.reduced-motion .sl-text{ animation:none; }
 
+
+/* ════════════════════════════════════════════════════════════════════
+   V10 — SUPERNOVA OVERHAUL
+   A purely additive presentation layer: brand logo, aurora backdrop,
+   animated gradient type, kinetic buttons/cards/nav, ambient sparks,
+   scroll-reveals and screen-entrance choreography.
+   Every effect is disabled under prefers-reduced-motion, body.low-power,
+   body.reduced-motion and (where it matters for FPS) body.in-game.
+   ════════════════════════════════════════════════════════════════════ */
+
+@property --v10ang{ syntax:'<angle>'; initial-value:0deg; inherits:false; }
+
+/* ---------- shared keyframes ---------- */
+@keyframes v10Rise{ from{ opacity:0; transform:translateY(16px) scale(.99); } to{ opacity:1; transform:none; } }
+@keyframes v10GradFlow{ 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
+@keyframes v10RingSpin{ to{ transform:rotate(360deg); } }
+@keyframes v10Breathe{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.06); } }
+@keyframes v10LogoFloat{ 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-7px) rotate(3deg); } }
+@keyframes v10Spin{ to{ --v10ang:360deg; } }
+@keyframes v10Grid{ from{ background-position:0 0, 0 0; } to{ background-position:36px 36px, 36px 36px; } }
+@keyframes v10GlowPulse{ 0%,100%{ opacity:.75; transform:scaleX(1); } 50%{ opacity:1; transform:scaleX(1.12); } }
+@keyframes v10FloatY{ 0%,100%{ transform:translateY(0) rotate(-6deg); } 50%{ transform:translateY(-18px) rotate(8deg); } }
+@keyframes v10CtaSheen{ 0%{ left:-80%; } 36%{ left:140%; } 100%{ left:140%; } }
+@keyframes v10Sweep{ to{ left:130%; } }
+@keyframes v10CtaPulse{
+  0%,100%{ box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 8px 24px -8px var(--coral-glow), 0 0 0 0 rgba(255,51,88,.32); }
+  50%{ box-shadow:0 1px 0 rgba(255,255,255,.18) inset, 0 10px 30px -8px var(--coral-glow), 0 0 0 12px rgba(255,51,88,0); }
+}
+@keyframes v10Ping{
+  0%{ box-shadow:0 0 0 0 rgba(255,51,88,.40), 0 0 8px var(--coral); }
+  70%,100%{ box-shadow:0 0 0 8px rgba(255,51,88,0), 0 0 8px var(--coral); }
+}
+@keyframes v10Twinkle{ 0%,100%{ opacity:0; } 50%{ opacity:.55; } }
+@keyframes v10SparkDrift{ from{ transform:translateY(0); } to{ transform:translateY(-14vh); } }
+@keyframes v10Aur1{ from{ transform:translate3d(0,0,0) scale(1); } to{ transform:translate3d(9vw,7vh,0) scale(1.18) rotate(18deg); } }
+@keyframes v10Aur2{ from{ transform:translate3d(0,0,0) scale(1.1); } to{ transform:translate3d(-8vw,10vh,0) scale(.94) rotate(-14deg); } }
+@keyframes v10Aur3{ from{ transform:translate3d(0,0,0) scale(.95); } to{ transform:translate3d(6vw,-9vh,0) scale(1.16) rotate(10deg); } }
+@keyframes v10Ripple{ to{ transform:scale(1); opacity:0; } }
+
+/* ---------- aurora backdrop ---------- */
+.aurora{ position:fixed; inset:-12vh -12vw; z-index:-3; pointer-events:none; overflow:hidden; opacity:.55; }
+.au-blob{ position:absolute; border-radius:50%; filter:blur(90px) saturate(130%); mix-blend-mode:screen; will-change:transform; }
+.au-blob.a1{ width:55vw; height:55vw; left:-12vw; top:-16vh;
+  background:radial-gradient(circle at 35% 35%, rgba(255,51,88,.30), rgba(255,51,88,0) 65%);
+  animation:v10Aur1 38s ease-in-out infinite alternate; }
+.au-blob.a2{ width:48vw; height:48vw; right:-10vw; top:6vh;
+  background:radial-gradient(circle at 60% 40%, rgba(155,123,255,.28), rgba(155,123,255,0) 65%);
+  animation:v10Aur2 46s ease-in-out infinite alternate; }
+.au-blob.a3{ width:52vw; height:52vw; left:18vw; bottom:-22vh;
+  background:radial-gradient(circle at 50% 60%, rgba(34,211,163,.22), rgba(61,215,255,0) 68%);
+  animation:v10Aur3 52s ease-in-out infinite alternate; }
+
+/* ---------- ambient sparks (spawned by the FX script) ---------- */
+.amb-spark{
+  position:absolute; border-radius:50%; background:#fff; opacity:0;
+  box-shadow:0 0 6px 1px rgba(255,255,255,.55);
+  animation-name:v10Twinkle, v10SparkDrift;
+  animation-timing-function:ease-in-out, linear;
+  animation-iteration-count:infinite, infinite;
+}
+
+/* ---------- cursor aurora (fine pointers only, spawned by FX script) ---------- */
+#cursorGlow{
+  position:fixed; left:0; top:0; width:520px; height:520px; z-index:0; pointer-events:none;
+  background:radial-gradient(circle, rgba(155,123,255,.05) 0%, rgba(255,51,88,.035) 32%, transparent 64%);
+  mix-blend-mode:screen;
+}
+
+/* ---------- brand logo everywhere ---------- */
+.tb-logo img, .sidebar-logo .logo-mark img{ width:100%; height:100%; object-fit:cover; border-radius:inherit; display:block; }
+.auth-brand .tb-logo, .age-gate-logo .tb-logo, .topbar-brand .tb-logo{
+  background:transparent; overflow:hidden;
+  box-shadow:0 4px 16px -6px rgba(0,0,0,.6), 0 0 18px -8px var(--coral-glow);
+}
+.sidebar-logo .logo-mark{
+  background:transparent; overflow:hidden;
+  box-shadow:0 4px 16px -6px rgba(0,0,0,.6), 0 0 18px -8px var(--mint-glow);
+}
+.tb-logo img, .sidebar-logo .logo-mark img{ transition:transform .7s cubic-bezier(.3,.7,.2,1.3); }
+.auth-brand:hover .tb-logo img, .age-gate-logo:hover .tb-logo img,
+.topbar-brand:hover .tb-logo img, .sidebar-logo:hover .logo-mark img{ transform:rotate(360deg); }
+.sidebar-logo .logo-word{
+  background:linear-gradient(110deg, #fafafa 32%, var(--coral) 46%, var(--violet) 54%, #fafafa 68%);
+  background-size:240% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:v10GradFlow 7s ease-in-out infinite;
+}
+.app-footer-brand{ display:inline-flex; align-items:center; gap:9px; }
+.footer-logo{ width:22px; height:22px; border-radius:6px; opacity:.92; }
+
+/* ---------- preloader: logo + twin orbit rings ---------- */
+#appPreloader .pl-logo-wrap{ position:relative; width:96px; height:96px; display:grid; place-items:center; margin-bottom:2px; }
+#appPreloader .pl-logo{
+  width:64px; height:64px; border-radius:22%;
+  box-shadow:0 12px 32px -10px rgba(0,0,0,.8), 0 0 36px -10px var(--coral-glow);
+  animation:v10Breathe 2.6s ease-in-out infinite;
+}
+#appPreloader .pl-logo-ring{
+  position:absolute; inset:5px; border-radius:50%; border:2px solid transparent;
+  border-top-color:#ff3358; border-right-color:rgba(155,123,255,.8);
+  animation:v10RingSpin 1.4s linear infinite;
+}
+#appPreloader .pl-logo-ring.r2{
+  inset:-5px; border-top-color:#22d3a3; border-right-color:transparent;
+  opacity:.65; animation:v10RingSpin 2.4s linear infinite reverse;
+}
+
+/* ---------- animated gradient type ---------- */
+.hx-wordmark .hx-cam, .auth-headline .accent, h1.section-title .accent, #appPreloader .pl-wordmark span{
+  background:linear-gradient(115deg, var(--mint), var(--cyan) 25%, var(--violet) 50%, var(--coral) 75%, var(--mint) 100%);
+  background-size:280% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:v10GradFlow 8s ease-in-out infinite;
+}
+.hx-wordmark{ text-shadow:0 0 40px rgba(155,123,255,.18); }
+
+/* ---------- home hero: brand row, conic border, drifting grid, floaters ---------- */
+.hx-brandrow{ display:flex; align-items:center; gap:18px; }
+.hx-logo{
+  width:clamp(52px, 6.5vw, 78px); aspect-ratio:1; border-radius:24%;
+  box-shadow:0 10px 30px -10px rgba(0,0,0,.7), 0 0 30px -10px var(--violet-glow);
+  animation:v10LogoFloat 6s ease-in-out infinite;
+}
+.hx-hero::before{
+  content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
+  background:conic-gradient(from var(--v10ang),
+    transparent 0%, rgba(255,51,88,.55) 8%, rgba(155,123,255,.5) 18%, transparent 30%,
+    transparent 55%, rgba(34,211,163,.45) 68%, transparent 80%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite:exclude;
+  animation:v10Spin 10s linear infinite;
+  pointer-events:none; z-index:1;
+}
+.hx-hero-inner{ position:relative; z-index:2; }
+.hx-hero-grid{ animation:v10Grid 14s linear infinite; }
+.hx-hero-glow{ animation:v10GlowPulse 7s ease-in-out infinite; }
+.hx-floaties{ position:absolute; inset:0; pointer-events:none; z-index:0; }
+.hx-float{
+  position:absolute; font-size:30px; opacity:.12; line-height:1;
+  filter:blur(.4px) drop-shadow(0 6px 14px rgba(0,0,0,.5));
+  animation:v10FloatY 16s ease-in-out infinite;
+}
+.hx-float.f1{ left:5%;  top:18%;    animation-duration:14s; }
+.hx-float.f2{ left:15%; top:64%;    font-size:38px; animation-duration:18s; animation-delay:-6s; }
+.hx-float.f3{ right:9%; top:22%;    font-size:26px; animation-duration:16s; animation-delay:-3s; }
+.hx-float.f4{ right:21%; bottom:14%; font-size:34px; animation-duration:20s; animation-delay:-9s; }
+.hx-float.f5{ left:41%; top:8%;     font-size:22px; animation-duration:17s; animation-delay:-12s; }
+.hx-float.f6{ right:37%; bottom:6%;  font-size:28px; animation-duration:15s; animation-delay:-5s; }
+
+/* ---------- kinetic buttons ---------- */
+.btn, .btn-cta, .topbar-icon-btn, .nav-item, .mobile-nav-item{ -webkit-tap-highlight-color:transparent; }
+.btn-cta{ overflow:hidden; }
+.btn-cta::after{
+  content:""; position:absolute; top:0; bottom:0; left:-80%; width:55%;
+  background:linear-gradient(105deg, transparent, rgba(255,255,255,.30), transparent);
+  transform:skewX(-18deg); pointer-events:none;
+  animation:v10CtaSheen 3.6s ease-in-out infinite;
+}
+.btn-cta:hover{ transform:translateY(-2px); }
+.btn-cta:active{ transform:translateY(1px) scale(.98); }
+.hx-cta{ animation:v10CtaPulse 2.8s ease-in-out infinite; }
+.btn-primary, .btn-google{ position:relative; overflow:hidden; }
+.btn-primary::after, .btn-google::after{
+  content:""; position:absolute; top:0; bottom:0; left:-70%; width:55%;
+  background:linear-gradient(105deg, transparent, rgba(255,255,255,.32), transparent);
+  transform:skewX(-18deg); pointer-events:none;
+}
+.btn-primary:hover::after, .btn-google:hover::after{ animation:v10Sweep .7s ease forwards; }
+
+/* ---------- ripple (spawned by FX script) ---------- */
+.fx-ripple-clip{
+  position:absolute; inset:0; overflow:hidden; border-radius:inherit; pointer-events:none;
+}
+.fx-ripple{
+  position:absolute; border-radius:50%; pointer-events:none; transform:scale(0); opacity:.5;
+  background:radial-gradient(circle, rgba(255,255,255,.5), rgba(255,255,255,.15) 55%, transparent 70%);
+  animation:v10Ripple .6s ease-out forwards;
+}
+
+/* ---------- sidebar nav: gradient rail + springy icons ---------- */
+.nav-item{ position:relative; overflow:hidden; }
+.nav-item::before{
+  content:""; position:absolute; left:0; top:18%; bottom:18%; width:3px; border-radius:999px;
+  background:linear-gradient(180deg, var(--coral), var(--violet));
+  transform:scaleY(0); opacity:0; transition:transform .25s cubic-bezier(.2,.8,.2,1), opacity .2s;
+}
+.nav-item.active::before{ transform:scaleY(1); opacity:1; }
+.nav-item svg{ transition:transform .2s cubic-bezier(.34,1.56,.64,1); }
+.nav-item:hover svg{ transform:translateX(2px) scale(1.12); }
+.mobile-nav-item .mni-icon{ transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.mobile-nav-item.active .mni-icon{ transform:translateY(-2px) scale(1.12); }
+
+/* ---------- topbar: flowing accent line ---------- */
+.topbar::after{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px; pointer-events:none; opacity:.7;
+  background:linear-gradient(90deg, transparent, rgba(255,51,88,.45) 30%, rgba(155,123,255,.45) 55%, rgba(34,211,163,.4) 75%, transparent);
+  background-size:220% 100%;
+  animation:v10GradFlow 9s ease-in-out infinite;
+}
+
+/* ---------- cards: lift, glow, brighter edges ---------- */
+.card{ transition:border-color .25s, box-shadow .25s, transform .25s; }
+.card:hover{ border-color:var(--line-bright); box-shadow:0 10px 30px -14px rgba(0,0,0,.6); }
+.card.clickable:hover{
+  transform:translateY(-3px);
+  box-shadow:0 16px 40px -16px rgba(0,0,0,.7), 0 0 24px -12px var(--coral-glow);
+}
+
+/* ---------- live dots ping ---------- */
+.live-dot{ animation:soft 1.2s ease-in-out infinite, v10Ping 2.4s cubic-bezier(.4,0,.6,1) infinite; }
+
+/* ---------- auth screen choreography ---------- */
+.auth-card{ transition:box-shadow .3s; }
+.auth-card:hover{ box-shadow:0 36px 90px -34px rgba(0,0,0,.8), 0 0 40px -18px var(--violet-glow); }
+.auth-feat{ transition:transform .25s cubic-bezier(.2,.8,.2,1); }
+.auth-feat:hover{ transform:translateX(5px); }
+.auth-feat .af-ic{ transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.auth-feat:hover .af-ic{ transform:scale(1.12) rotate(-6deg); }
+.screen.active .auth-intro > *{ animation:v10Rise .55s cubic-bezier(.22,.9,.3,1) both; }
+.screen.active .auth-intro > *:nth-child(1){ animation-delay:.03s; }
+.screen.active .auth-intro > *:nth-child(2){ animation-delay:.09s; }
+.screen.active .auth-intro > *:nth-child(3){ animation-delay:.15s; }
+.screen.active .auth-intro > *:nth-child(4){ animation-delay:.21s; }
+.screen.active .auth-intro > *:nth-child(5){ animation-delay:.27s; }
+.screen.active .auth-card{ animation:v10Rise .6s cubic-bezier(.22,.9,.3,1) .15s both; }
+
+/* ---------- page-switch choreography (dashboard tabs) ---------- */
+.nav-page.active > *{ animation:v10Rise .5s cubic-bezier(.22,.9,.3,1) both; }
+.nav-page.active > *:nth-child(1){ animation-delay:.02s; }
+.nav-page.active > *:nth-child(2){ animation-delay:.07s; }
+.nav-page.active > *:nth-child(3){ animation-delay:.12s; }
+.nav-page.active > *:nth-child(4){ animation-delay:.17s; }
+.nav-page.active > *:nth-child(5){ animation-delay:.22s; }
+.nav-page.active > *:nth-child(6){ animation-delay:.27s; }
+.nav-page.active > *:nth-child(7){ animation-delay:.32s; }
+.nav-page.active > *:nth-child(n+8){ animation-delay:.36s; }
+
+/* ---------- scroll reveal (classes applied by FX script) ---------- */
+.rv{ opacity:0; transform:translateY(12px) scale(.985);
+  transition:opacity .55s cubic-bezier(.2,.7,.2,1), transform .55s cubic-bezier(.2,.7,.2,1); }
+.rv.rv-in{ opacity:1; transform:none; }
+
+/* ---------- chrome polish ---------- */
+::selection{ background:rgba(155,123,255,.35); color:#fff; }
+::-webkit-scrollbar-thumb:hover{ background:linear-gradient(180deg, var(--coral), var(--violet)); }
+
+/* ---------- kill switches: accessibility, low power, in-match FPS ---------- */
+@media (max-width:720px){
+  .aurora{ display:none; }
+  .hx-brandrow{ gap:12px; }
+  .hx-logo{ width:46px; }
+}
+body.in-game .aurora, body.in-game #cursorGlow, body.in-game .amb-spark{ display:none !important; }
+body.low-power .aurora, body.low-power .hx-floaties, body.low-power #cursorGlow, body.low-power .amb-spark,
+body.reduced-motion .aurora, body.reduced-motion .hx-floaties, body.reduced-motion #cursorGlow, body.reduced-motion .amb-spark{
+  display:none !important;
+}
+body.low-power .hx-hero::before, body.low-power .btn-cta::after, body.low-power .topbar::after,
+body.low-power .hx-hero-grid, body.low-power .hx-hero-glow, body.low-power .hx-cta,
+body.low-power .hx-logo, body.low-power .sidebar-logo .logo-word,
+body.reduced-motion .hx-hero::before, body.reduced-motion .btn-cta::after, body.reduced-motion .topbar::after,
+body.reduced-motion .hx-hero-grid, body.reduced-motion .hx-hero-glow, body.reduced-motion .hx-cta,
+body.reduced-motion .hx-logo, body.reduced-motion .sidebar-logo .logo-word{
+  animation:none !important;
+}
+body.low-power .nav-page.active > *, body.reduced-motion .nav-page.active > *,
+body.low-power .screen.active .auth-intro > *, body.reduced-motion .screen.active .auth-intro > *,
+body.low-power .screen.active .auth-card, body.reduced-motion .screen.active .auth-card{
+  animation:none !important;
+}
+@media (prefers-reduced-motion: reduce){
+  .aurora, .hx-floaties, #cursorGlow, .amb-spark{ display:none !important; }
+  .hx-hero::before, .hx-hero-grid, .hx-hero-glow, .hx-logo, .hx-cta, .btn-cta::after,
+  .topbar::after, .sidebar-logo .logo-word, .live-dot,
+  #appPreloader .pl-logo, #appPreloader .pl-logo-ring,
+  .hx-wordmark .hx-cam, .auth-headline .accent, h1.section-title .accent, #appPreloader .pl-wordmark span,
+  .nav-page.active > *, .screen.active .auth-intro > *, .screen.active .auth-card{
+    animation:none !important;
+  }
+  .rv{ opacity:1; transform:none; transition:none; }
+}
 </style>
 </head>
 <body>
 <!-- ===== APP PRELOADER (shown until the app is ready) ===== -->
 <div id="appPreloader">
   <div class="pl-inner">
+    <div class="pl-logo-wrap">
+      <span class="pl-logo-ring"></span>
+      <span class="pl-logo-ring r2"></span>
+      <img class="pl-logo" src="logo.png" alt="ROSHCAM logo" />
+    </div>
     <div class="pl-throws">
       <span class="pl-throw t1">🪨</span>
       <span class="pl-throw t2">📄</span>
@@ -12138,7 +12426,7 @@ body.reduced-motion .sl-text{ animation:none; }
 <!-- ===== FIRST-VISIT AGE GATE ===== -->
 <div class="age-gate" id="ageGate" style="display:none;">
   <div class="age-gate-card">
-    <div class="age-gate-logo"><span class="tb-logo"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-rock"/></svg></span> ROSHCAM</div>
+    <div class="age-gate-logo"><span class="tb-logo"><img src="logo.png" alt="" /></span> ROSHCAM</div>
     <h2 class="age-gate-title">Are you 13 or older?</h2>
     <p class="age-gate-text">ROSHCAM connects you to <b>real strangers over live webcam</b>. You'll be visible and audible to other players. By entering you confirm you are at least <b>13 years old</b> (or the minimum age in your country) and that you accept our <button class="age-gate-link" data-open-legal="terms">Terms</button> and <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>.</p>
     <div class="age-gate-actions">
@@ -12156,6 +12444,12 @@ body.reduced-motion .sl-text{ animation:none; }
   <span class="amb-orb o2"></span>
   <span class="amb-orb o3"></span>
   <span class="amb-orb o4"></span>
+</div>
+<!-- Aurora sheet — slow conic color wash behind everything (off in low-power / reduced-motion) -->
+<div class="aurora" aria-hidden="true">
+  <span class="au-blob a1"></span>
+  <span class="au-blob a2"></span>
+  <span class="au-blob a3"></span>
 </div>
 <div class="shoot-flash" id="shootFlash"></div>
 <div class="win-vignette" id="winVignette"></div>
@@ -12262,7 +12556,7 @@ body.reduced-motion .sl-text{ animation:none; }
   <!-- ===== LEFT SIDEBAR ===== -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
-      <span class="logo-mark"><span class="dot"></span></span>
+      <span class="logo-mark"><img src="logo.png" alt="ROSHCAM logo" /></span>
       <span class="logo-word">ROSHCAM</span>
     </div>
 
@@ -12301,7 +12595,7 @@ body.reduced-motion .sl-text{ animation:none; }
 
   <header class="topbar">
     <button class="hamburger" id="hamburgerBtn" title="Menu"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-menu"/></svg></button>
-    <div class="topbar-brand"><span class="tb-logo"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-rock"/></svg></span>ROSHCAM</div>
+    <div class="topbar-brand"><span class="tb-logo"><img src="logo.png" alt="" /></span>ROSHCAM</div>
     <div class="live-stats" id="liveStats">
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
       <div class="stat"><span>· <b id="matchCount">0</b> active matches</span></div>
@@ -12546,7 +12840,7 @@ const FIREBASE_CONFIG = {
       <div class="auth-layout">
         <!-- LEFT: what ROSHCAM is -->
         <div class="auth-intro">
-          <div class="auth-brand"><span class="tb-logo"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-rock"/></svg></span> ROSHCAM</div>
+          <div class="auth-brand"><span class="tb-logo"><img src="logo.png" alt="ROSHCAM logo" /></span> ROSHCAM</div>
           <h1 class="auth-headline">Rock. Paper. Scissors.<br><span class="accent">Against real people.</span></h1>
           <p class="auth-tagline">Get matched with a stranger worldwide over live webcam, read their eyes, and throw first. Climb a ranked ladder from Bronze all the way to Legend.</p>
           <div class="auth-features">
@@ -12624,7 +12918,7 @@ const FIREBASE_CONFIG = {
 
       <!-- Auth footer -->
       <footer class="app-footer">
-        <div class="app-footer-brand">ROSHCAM</div>
+        <div class="app-footer-brand"><img class="footer-logo" src="logo.png" alt="" /> ROSHCAM</div>
         <div class="app-footer-links">
           <button data-open-legal="terms">Terms of Service</button>
           <span class="app-footer-dot">·</span>
@@ -12666,12 +12960,23 @@ const FIREBASE_CONFIG = {
         <section class="hx-hero">
           <div class="hx-hero-glow"></div>
           <div class="hx-hero-grid"></div>
+          <div class="hx-floaties" aria-hidden="true">
+            <span class="hx-float f1">🪨</span>
+            <span class="hx-float f2">📄</span>
+            <span class="hx-float f3">✂️</span>
+            <span class="hx-float f4">🪨</span>
+            <span class="hx-float f5">📄</span>
+            <span class="hx-float f6">✂️</span>
+          </div>
           <div class="hx-hero-inner">
             <div class="hx-hero-top">
               <span class="hx-badge"><span class="live-dot"></span> Live worldwide</span>
               <span class="hx-badge ghost"><b id="heroOnlineCount">—</b> playing now</span>
             </div>
-            <h1 class="hx-wordmark">ROSH<span class="hx-cam">CAM</span></h1>
+            <div class="hx-brandrow">
+              <img class="hx-logo" src="logo.png" alt="" aria-hidden="true" />
+              <h1 class="hx-wordmark">ROSH<span class="hx-cam">CAM</span></h1>
+            </div>
             <p class="hx-tag">Webcam rock · paper · scissors against real strangers. Read their eyes, throw first, and climb from Bronze to Grandmaster.</p>
             <div class="hx-play">
               <button class="btn-cta hx-cta" id="homePlayBtn" data-goto-play>
@@ -13444,7 +13749,7 @@ const FIREBASE_CONFIG = {
 
         <!-- ===== APP FOOTER ===== -->
         <footer class="app-footer">
-          <div class="app-footer-brand">ROSHCAM</div>
+          <div class="app-footer-brand"><img class="footer-logo" src="logo.png" alt="" /> ROSHCAM</div>
           <div class="app-footer-links">
             <button data-open-legal="terms">Terms of Service</button>
             <span class="app-footer-dot">·</span>
@@ -15273,6 +15578,121 @@ const FIREBASE_CONFIG = {
 
 <!-- MediaPipe is lazy-loaded on demand (see loadMediaPipe) so it never blocks
      first paint / app startup. Lucide is deferred so it doesn't block either. -->
+<script>
+/* ===== V10 SUPERNOVA FX layer — decorative only, fully guarded ===== */
+(function(){
+  'use strict';
+  var reduce = false;
+  try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
+  function lowPower(){
+    var c = document.body.classList;
+    return c.contains('low-power') || c.contains('reduced-motion');
+  }
+
+  /* Twinkling sparks drifting up through the ambient layer */
+  function spawnSparks(){
+    var host = document.querySelector('.ambient');
+    if(!host) return;
+    var n = Math.min(22, Math.max(10, Math.floor(window.innerWidth / 80)));
+    for(var i = 0; i < n; i++){
+      var s = document.createElement('span');
+      s.className = 'amb-spark';
+      var size = (Math.random() * 2.2 + 1.2).toFixed(1);
+      s.style.cssText =
+        'left:' + (Math.random() * 100).toFixed(2) + '%;' +
+        'top:' + (Math.random() * 100).toFixed(2) + '%;' +
+        'width:' + size + 'px;height:' + size + 'px;' +
+        'animation-duration:' + (Math.random() * 7 + 5).toFixed(2) + 's,' + (Math.random() * 26 + 18).toFixed(2) + 's;' +
+        'animation-delay:' + (Math.random() * 8).toFixed(2) + 's,0s;';
+      host.appendChild(s);
+    }
+  }
+
+  /* Pointer ripple on buttons and nav items */
+  function bindRipples(){
+    document.addEventListener('pointerdown', function(ev){
+      if(lowPower()) return;
+      var b = ev.target && ev.target.closest ? ev.target.closest('.btn, .btn-cta, .nav-item') : null;
+      if(!b) return;
+      try{
+        var r = b.getBoundingClientRect();
+        var d = Math.max(r.width, r.height) * 2.1;
+        var clip = document.createElement('span');
+        clip.className = 'fx-ripple-clip';
+        var rip = document.createElement('span');
+        rip.className = 'fx-ripple';
+        rip.style.cssText = 'width:' + d + 'px;height:' + d + 'px;left:' + (ev.clientX - r.left - d / 2) + 'px;top:' + (ev.clientY - r.top - d / 2) + 'px;';
+        clip.appendChild(rip);
+        b.appendChild(clip);
+        setTimeout(function(){ clip.remove(); }, 650);
+      }catch(e){}
+    }, { passive: true });
+  }
+
+  /* Soft aurora that follows the cursor (fine pointers only) */
+  function cursorGlow(){
+    var fine = false;
+    try{ fine = window.matchMedia('(pointer: fine)').matches; }catch(e){}
+    if(!fine) return;
+    var g = document.createElement('div');
+    g.id = 'cursorGlow';
+    document.body.appendChild(g);
+    var x = innerWidth / 2, y = innerHeight / 2, tx = x, ty = y, raf = null;
+    function step(){
+      x += (tx - x) * .12; y += (ty - y) * .12;
+      g.style.transform = 'translate(' + (x - 260) + 'px,' + (y - 260) + 'px)';
+      if(Math.abs(tx - x) + Math.abs(ty - y) > .5) raf = requestAnimationFrame(step);
+      else raf = null;
+    }
+    document.addEventListener('pointermove', function(ev){
+      tx = ev.clientX; ty = ev.clientY;
+      if(!raf) raf = requestAnimationFrame(step);
+    }, { passive: true });
+  }
+
+  /* Magnetic pull on the big play CTA */
+  function magnetic(){
+    document.querySelectorAll('.hx-cta').forEach(function(el){
+      el.addEventListener('pointermove', function(ev){
+        if(lowPower()) return;
+        var r = el.getBoundingClientRect();
+        var dx = (ev.clientX - r.left - r.width / 2) / (r.width / 2);
+        var dy = (ev.clientY - r.top - r.height / 2) / (r.height / 2);
+        el.style.translate = (dx * 5).toFixed(1) + 'px ' + (dy * 4).toFixed(1) + 'px';
+      });
+      el.addEventListener('pointerleave', function(){ el.style.translate = ''; });
+    });
+  }
+
+  /* Reveal-on-view for cards and feature rows */
+  function reveals(){
+    if(!('IntersectionObserver' in window)) return;
+    var els = document.querySelectorAll('.card, .auth-feat');
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(!en.isIntersecting) return;
+        var el = en.target;
+        io.unobserve(el);
+        el.classList.add('rv-in');
+        // hand styling back to the base rules once the entrance has played
+        setTimeout(function(){ el.classList.remove('rv', 'rv-in'); }, 700);
+      });
+    }, { threshold: .08 });
+    els.forEach(function(el){ el.classList.add('rv'); io.observe(el); });
+  }
+
+  function init(){
+    if(reduce) return;          // respect OS-level reduced motion entirely
+    try{ spawnSparks(); }catch(e){}
+    try{ bindRipples(); }catch(e){}
+    try{ cursorGlow(); }catch(e){}
+    try{ magnetic(); }catch(e){}
+    try{ reveals(); }catch(e){}
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
 <script defer src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 
 <script type="module">
