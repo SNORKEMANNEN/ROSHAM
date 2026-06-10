@@ -15,6 +15,7 @@
 <link rel="apple-touch-icon" href="logo.png" />
 <link rel="manifest" href="data:application/json,%7B%22name%22%3A%22ROSHCAM%22%2C%22short_name%22%3A%22ROSHCAM%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2308070d%22%2C%22theme_color%22%3A%22%2308070d%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Froshcam.com%2Flogo.png%22%2C%22sizes%22%3A%221024x1024%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D" />
 <link rel="icon" type="image/png" href="logo.png" />
+<link rel="preload" as="image" href="logo.png" />
 <meta property="og:title" content="ROSHCAM — live rock paper scissors with strangers" />
 <meta property="og:description" content="Real webcam rock · paper · scissors against strangers. Read their eyes, throw first, climb the ranked ladder." />
 <meta property="og:type" content="website" />
@@ -12463,13 +12464,16 @@ input:focus, select:focus, textarea:focus{
 
 /* ---------- SETTINGS v2 — grouped cards in a responsive grid ---------- */
 .settings-grid{
-  display:grid; grid-template-columns:repeat(auto-fit, minmax(min(420px, 100%), 1fr));
-  gap:16px; align-items:start; max-width:1080px;
+  /* Masonry-style columns: groups pack tightly instead of leaving big
+     row-aligned gaps like the old grid did. */
+  columns:2 400px; column-gap:16px; max-width:1080px;
 }
 .settings-group{
   background:linear-gradient(180deg, color-mix(in srgb, var(--surface) 92%, #fff 1.5%), var(--surface));
   border:1px solid var(--line); border-radius:18px; padding:6px 16px 12px;
   box-shadow:0 1px 0 rgba(255,255,255,.03) inset;
+  break-inside:avoid; -webkit-column-break-inside:avoid; page-break-inside:avoid;
+  margin-bottom:16px; display:block; width:100%;
 }
 .settings-group:has(> .settings-list.set-hidden){ display:none; }
 .settings-group .settings-section-title{
@@ -12493,7 +12497,6 @@ input:focus, select:focus, textarea:focus{
   background:transparent; border:none; border-radius:12px; padding:13px 10px;
 }
 .settings-group .settings-row:hover{ background:rgba(255,255,255,.04); transform:none; }
-.settings-group .settings-row + .settings-row{ position:relative; }
 .settings-group .set-ico{
   width:36px; height:36px; border-radius:10px; display:grid; place-items:center; flex-shrink:0;
   background:rgba(255,255,255,.05); color:var(--text-dim);
@@ -12683,47 +12686,68 @@ input:focus, select:focus, textarea:focus{
 .ep-section:first-child{ margin-top:0; }
 .ep-section svg{ color:var(--violet); }
 
-/* ---------- IN-MATCH FEEDBACK (edges only — never over the cams) ---------- */
-.round-beam{
-  position:fixed; left:0; right:0; top:0; height:3px; z-index:160; pointer-events:none; opacity:0;
+/* ---------- PRE-MATCH READY-UP ---------- */
+.pre-ready{
+  position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom, 0px));
+  transform:translateX(-50%) translateY(16px);
+  z-index:150; opacity:0; pointer-events:none;
+  transition:opacity .35s, transform .45s cubic-bezier(.2,1.3,.35,1);
 }
-.round-beam.fire{ animation:roundBeam 1.1s cubic-bezier(.2,.7,.3,1) both; }
-.round-beam.win{ background:linear-gradient(90deg, transparent, var(--mint) 35%, #5dffba 50%, var(--mint) 65%, transparent); }
-.round-beam.lose{ background:linear-gradient(90deg, transparent, var(--coral) 35%, #ff7090 50%, var(--coral) 65%, transparent); }
-body.colorblind .round-beam.win{ background:linear-gradient(90deg, transparent, #3a9bff 35%, #7cc1ff 50%, #3a9bff 65%, transparent); }
-body.colorblind .round-beam.lose{ background:linear-gradient(90deg, transparent, #ff9a3d 35%, #ffc183 50%, #ff9a3d 65%, transparent); }
-@keyframes roundBeam{
-  0%{ opacity:0; transform:scaleX(.2); }
-  18%{ opacity:1; transform:scaleX(1); }
-  70%{ opacity:.85; }
-  100%{ opacity:0; transform:scaleX(1); }
+.pre-ready.show{ opacity:1; transform:translateX(-50%) translateY(0); pointer-events:auto; }
+.pre-ready-card{
+  display:flex; flex-direction:column; align-items:center; gap:11px;
+  padding:16px 22px 18px; border-radius:18px;
+  background:rgba(13,11,20,.92); border:1px solid var(--line-bright, var(--line));
+  box-shadow:0 24px 60px -20px rgba(0,0,0,.8), 0 0 32px -16px var(--coral-glow);
+  backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
+  max-width:min(420px, 92vw); text-align:center;
 }
-body.lessflash .round-beam{ display:none !important; }
-.match-point-tag{
-  position:fixed; top:10px; left:50%; transform:translateX(-50%) translateY(-26px);
-  z-index:161; pointer-events:none; opacity:0;
-  font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.14em;
-  padding:7px 16px; border-radius:999px;
-  background:rgba(12,10,18,.92); border:1px solid var(--line-bright, var(--line));
-  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
-  transition:opacity .35s, transform .45s cubic-bezier(.2,1.4,.35,1);
+.pr-title{ font-weight:700; font-size:14px; }
+.pr-title span{ font-weight:500; font-size:12px; color:var(--text-dim); }
+.pr-status{ display:flex; align-items:center; gap:10px; }
+.pr-chip{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.06em;
+  padding:6px 13px; border-radius:999px;
+  background:rgba(255,255,255,.05); border:1px solid var(--line);
+  color:var(--text-dim); transition:color .25s, border-color .25s, background .25s;
+  max-width:150px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
-.match-point-tag.show{ opacity:1; transform:translateX(-50%) translateY(0); }
-.match-point-tag.you{ color:var(--mint); border-color:rgba(34,211,163,.45); box-shadow:0 0 22px -8px var(--mint-glow); animation:mpPulse 1.6s ease-in-out infinite; }
-.match-point-tag.opp{ color:var(--coral); border-color:rgba(255,51,88,.45); box-shadow:0 0 22px -8px var(--coral-glow); animation:mpPulse 1.6s ease-in-out infinite; }
-.match-point-tag.both{ color:var(--amber, #ffd33d); border-color:rgba(255,211,61,.45); box-shadow:0 0 22px -8px rgba(255,211,61,.5); animation:mpPulse 1.1s ease-in-out infinite; }
-@keyframes mpPulse{ 0%,100%{ transform:translateX(-50%) translateY(0) scale(1); } 50%{ transform:translateX(-50%) translateY(0) scale(1.05); } }
-.duel-video.you.streak-aura{
-  box-shadow:0 0 0 2px rgba(34,211,163,.55), 0 0 26px -6px var(--mint-glow);
-  animation:streakAura 1.8s ease-in-out infinite;
+.pr-dot{ width:7px; height:7px; border-radius:50%; background:var(--text-faint); flex-shrink:0; transition:background .25s, box-shadow .25s; }
+.pr-chip.ready{ color:var(--mint); border-color:rgba(34,211,163,.45); background:rgba(34,211,163,.08); }
+.pr-chip.ready .pr-dot{ background:var(--mint); box-shadow:0 0 8px var(--mint); }
+.pr-vs{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:12px; color:var(--text-faint); }
+.pr-ready-btn{ min-width:200px; justify-content:center; font-size:17px; padding:13px 30px; }
+.pr-wait{
+  font-family:var(--font-mono); font-size:11.5px; color:var(--mint); letter-spacing:.04em;
+  animation:soft 1.4s ease-in-out infinite;
 }
-@keyframes streakAura{
-  0%,100%{ box-shadow:0 0 0 2px rgba(34,211,163,.55), 0 0 22px -6px var(--mint-glow); }
-  50%{ box-shadow:0 0 0 3px rgba(34,211,163,.85), 0 0 36px -6px var(--mint-glow); }
+@media (max-width:640px){
+  .pre-ready{ bottom:calc(120px + env(safe-area-inset-bottom, 0px)); width:92vw; }
+  .pre-ready-card{ width:100%; }
 }
-body.colorblind .duel-video.you.streak-aura{
-  animation:none; box-shadow:0 0 0 2.5px rgba(58,155,255,.7), 0 0 26px -6px rgba(58,155,255,.5);
+
+/* ---------- topbar profile button ---------- */
+.topbar-me{ padding:3px !important; }
+.tb-me-av{
+  width:27px; height:27px; border-radius:50%; display:grid; place-items:center;
+  font-size:12px; font-weight:800; color:#fff;
+  background-color:var(--surface-3); background-size:cover; background-position:center;
+  box-shadow:0 0 0 1.5px var(--line-bright, var(--line));
+  transition:box-shadow .2s, transform .2s;
 }
+.topbar-me:hover .tb-me-av{ box-shadow:0 0 0 2px var(--coral); transform:scale(1.06); }
+
+/* ---------- settings search clear ---------- */
+.settings-search{ position:relative; }
+.ss-clear{
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  width:24px; height:24px; border-radius:50%; border:none; cursor:pointer;
+  display:none; place-items:center; color:var(--text-dim);
+  background:rgba(255,255,255,.07);
+}
+.ss-clear:hover{ color:var(--text); background:rgba(255,255,255,.13); }
+.settings-search.has-text .ss-clear{ display:grid; }
 
 /* ---------- RANK REWARD polish on the result card ---------- */
 #matchRankDelta.delta{ animation:deltaPop .55s cubic-bezier(.2,1.6,.4,1) both .35s; }
@@ -12743,18 +12767,182 @@ body.colorblind .duel-video.you.streak-aura{
   55%{ filter:brightness(1.4); transform:scale(1.06) rotate(2deg); }
   100%{ filter:brightness(1); transform:scale(1); }
 }
-#matchRankNextLabel.mr-close{ color:var(--amber, #ffd33d); font-weight:700; animation:mpPulse 1.8s ease-in-out infinite; transform:none; }
+#matchRankNextLabel.mr-close{ color:var(--amber, #ffd33d); font-weight:700; animation:mrClosePulse 1.8s ease-in-out infinite; }
+@keyframes mrClosePulse{ 0%,100%{ opacity:1; } 50%{ opacity:.65; } }
 
 /* ---------- unranked rank icon ---------- */
 .rank-unranked{ color:var(--violet); }
+
+/* Pre-existing fix: .opp-away-banner .dot referenced an undefined 'pulse' keyframe */
+@keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.45; transform:scale(.8); } }
+
+/* ════════════════════════════════════════════════════════════════════
+   V13 — LAUNCH
+   New-user setup, update log, and the mobile overhaul: bottom-sheet
+   modals, floating game dock, press feedback, and phone-tier perf.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- NEW-USER (post-Google username pick) ---------- */
+.nu-wrap{ flex:1; display:flex; align-items:center; justify-content:center; padding:20px 0; }
+.nu-card{
+  width:min(480px, 100%);
+  background:
+    radial-gradient(130% 110% at 50% -10%, rgba(155,123,255,.10), transparent 55%),
+    linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid var(--line); border-radius:24px; padding:30px 28px 24px;
+  box-shadow:0 32px 80px -34px rgba(0,0,0,.7);
+  animation:v10Rise .55s cubic-bezier(.22,.9,.3,1) both;
+}
+.nu-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.nu-logo{ width:42px; height:42px; border-radius:12px; box-shadow:0 8px 22px -8px rgba(0,0,0,.7), 0 0 20px -8px var(--violet-glow); }
+.nu-title{ margin:0 0 6px; font-size:clamp(30px, 6vw, 42px) !important; }
+.nu-card .section-sub{ margin-bottom:18px; }
+.nu-preview{
+  position:relative; display:flex; align-items:center; gap:13px;
+  padding:14px 16px; margin-bottom:18px; border-radius:16px;
+  background:rgba(255,255,255,.03); border:1px dashed var(--line-bright, var(--line));
+  animation:v10Rise .55s cubic-bezier(.22,.9,.3,1) .12s both;
+}
+.nu-prev-av{
+  width:46px; height:46px; border-radius:50%; display:grid; place-items:center; flex-shrink:0;
+  font-family:var(--font-display); font-weight:800; font-size:19px; color:#08070d;
+  background:linear-gradient(135deg, var(--mint), #159f78);
+  box-shadow:0 0 0 2px rgba(34,211,163,.35), 0 6px 16px -8px var(--mint-glow);
+}
+.nu-prev-name{ font-weight:800; font-size:16.5px; letter-spacing:-.01em; word-break:break-all; }
+.nu-prev-flag{ font-size:14px; }
+.nu-prev-sub{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.05em; margin-top:2px; }
+.nu-prev-tag{
+  position:absolute; top:-8px; right:12px;
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.14em;
+  padding:3px 8px; border-radius:999px; color:var(--violet);
+  background:var(--bg-2); border:1px solid color-mix(in srgb, var(--violet) 40%, transparent);
+}
+.nu-input-row{ display:flex; gap:8px; }
+.nu-input-row input{ flex:1; min-width:0; }
+.nu-dice{
+  flex-shrink:0; width:46px; border-radius:12px; border:1px solid var(--line);
+  background:var(--surface-2); font-size:19px; cursor:pointer;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), border-color .2s, background .2s;
+}
+.nu-dice:hover{ border-color:var(--line-bright, var(--line)); background:var(--surface-3); transform:rotate(-14deg) scale(1.08); }
+.nu-dice:active{ transform:rotate(14deg) scale(.94); }
+.nu-avail{ font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; min-height:16px; margin-top:6px; color:var(--text-faint); }
+.nu-avail.checking{ color:var(--text-dim); animation:soft 1.2s ease-in-out infinite; }
+.nu-avail.ok{ color:var(--mint); }
+.nu-avail.taken{ color:var(--coral); }
+.nu-continue{ width:100%; min-height:48px; font-size:15px; justify-content:center; margin-top:4px; }
+.nu-note{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.04em; text-align:center; margin:14px 0 0; }
+
+/* ---------- UPDATE LOG ---------- */
+.ul-intro{ color:var(--text-dim); font-size:13px; margin:-6px 0 18px; }
+.ul-list{ display:flex; flex-direction:column; gap:18px; }
+.ul-release{
+  position:relative; padding:16px 16px 12px; border-radius:16px;
+  background:rgba(255,255,255,.025); border:1px solid var(--line);
+}
+.ul-release.latest{
+  border-color:color-mix(in srgb, var(--mint) 35%, transparent);
+  box-shadow:0 0 28px -16px var(--mint-glow);
+}
+.ul-release.latest::before{
+  content:"LATEST"; position:absolute; top:-9px; right:14px;
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.14em;
+  padding:3px 9px; border-radius:999px; color:#06120e;
+  background:linear-gradient(135deg, var(--mint), #159f78);
+}
+.ul-rel-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:10px; flex-wrap:wrap; }
+.ul-ver{
+  font-family:var(--font-mono); font-size:12px; font-weight:800; color:var(--violet);
+  padding:2px 9px; border-radius:7px; background:rgba(155,123,255,.10);
+}
+.ul-rel-title{ font-weight:800; font-size:14.5px; letter-spacing:-.01em; }
+.ul-date{ margin-left:auto; font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.05em; }
+.ul-items{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+.ul-items li{ display:flex; align-items:baseline; gap:9px; font-size:13px; color:var(--text-dim); line-height:1.45; }
+.ul-tag{
+  flex-shrink:0; font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.1em;
+  padding:2.5px 7px; border-radius:6px;
+}
+.ul-tag.new{ color:var(--mint); background:rgba(34,211,163,.10); border:1px solid rgba(34,211,163,.3); }
+.ul-tag.improved{ color:var(--violet); background:rgba(155,123,255,.10); border:1px solid rgba(155,123,255,.3); }
+.ul-tag.fixed{ color:var(--amber, #ffd33d); background:rgba(255,211,61,.08); border:1px solid rgba(255,211,61,.3); }
+
+/* ---------- MOBILE OVERHAUL ---------- */
+@supports (min-height: 100dvh){ .app{ min-height:100dvh; } }
+body.in-game{ overscroll-behavior:none; }
+@media (max-width: 760px){
+  html, body{ overscroll-behavior-y:contain; }
+  .btn, .btn-cta, .settings-row, .nav-item, .mobile-nav-item, .card.clickable, .topbar-icon-btn{ touch-action:manipulation; }
+  /* prevent the iOS auto-zoom on focused inputs */
+  input, select, textarea{ font-size:16px !important; }
+  /* press feedback — the single biggest "native feel" win on touch */
+  .btn:active, .btn-cta:active{ transform:scale(.96); }
+  .card.clickable:active{ transform:scale(.98); transition-duration:.08s; }
+  .settings-row:active{ background:rgba(255,255,255,.07); }
+  .topbar-icon-btn:active{ transform:scale(.88); }
+
+  /* floating game dock */
+  .mobile-nav{
+    left:10px; right:10px; bottom:calc(10px + env(safe-area-inset-bottom, 0px));
+    border-radius:24px; border:1px solid var(--line-bright, var(--line));
+    padding:7px 6px;
+    background:rgba(13,11,20,.88);
+    backdrop-filter:blur(14px) saturate(150%);
+    -webkit-backdrop-filter:blur(14px) saturate(150%);
+    box-shadow:0 18px 44px -14px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.05) inset;
+  }
+  .mobile-nav-item{ transition:transform .22s cubic-bezier(.34,1.56,.64,1), color .15s; }
+  .mobile-nav-item:active{ transform:scale(.88); }
+  .mobile-nav-item.active .mni-icon{
+    background:linear-gradient(180deg, rgba(34,211,163,.20), rgba(34,211,163,.06));
+    box-shadow:0 0 16px -7px var(--mint-glow);
+  }
+  /* keep content clear of the floating dock */
+  body:not(.in-game) .app.logged-in .screen{ padding-bottom:104px; }
+
+  /* bottom-sheet modals */
+  .modal-bg{ align-items:flex-end; padding:0; }
+  .modal{
+    width:100%; max-width:100%;
+    border-radius:24px 24px 0 0; border-bottom:none;
+    max-height:92dvh;
+    padding:30px 20px calc(22px + env(safe-area-inset-bottom, 0px));
+    animation:sheetUp .42s cubic-bezier(.18,.9,.3,1);
+  }
+  .modal::after{
+    content:""; position:absolute; top:9px; left:50%; transform:translateX(-50%);
+    width:44px; height:4.5px; border-radius:999px; background:rgba(255,255,255,.20);
+  }
+  /* full-bleed heroes inside sheets follow the new padding */
+  .profile-modal .pm-banner{ margin:-30px -20px 0; border-radius:24px 24px 0 0; }
+  .lr-hero{ margin:-30px -20px 16px; }
+
+  /* toasts ride above the dock */
+  .toast-stack{ bottom:calc(92px + env(safe-area-inset-bottom, 0px)); }
+  body.in-game .toast-stack{ bottom:calc(24px + env(safe-area-inset-bottom, 0px)); }
+
+  /* cheaper compositing on phone GPUs */
+  .topbar{ backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); }
+  .modal-bg{ backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .amb-spark{ display:none; }
+
+  /* thumb-friendly hero CTA + snappier page entrances */
+  .hx-cta{ min-height:56px; font-size:17px; }
+  .nav-page.active > *{ animation-duration:.36s; }
+  .nu-card{ padding:24px 18px 20px; border-radius:20px; }
+}
+@keyframes sheetUp{ from{ transform:translateY(55%); opacity:.55; } to{ transform:none; opacity:1; } }
+@media (prefers-reduced-motion: reduce){
+  .modal{ animation:none; }
+  .nu-card, .nu-preview{ animation:none; }
+}
 
 /* ---------- kill switches for the new effects ---------- */
 body.low-power .lr-rays, body.reduced-motion .lr-rays{ display:none !important; }
 body.low-power .lr-v2 .lr-gift, body.reduced-motion .lr-v2 .lr-gift,
 body.low-power .lr-v2 .lr-amount, body.reduced-motion .lr-v2 .lr-amount,
 body.low-power .lr-claim, body.reduced-motion .lr-claim,
-body.low-power .duel-video.you.streak-aura, body.reduced-motion .duel-video.you.streak-aura,
-body.low-power .match-point-tag, body.reduced-motion .match-point-tag,
 body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankprog .ui-bar-fill::after{
   animation:none !important;
 }
@@ -12762,7 +12950,6 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
   .lr-rays{ display:none !important; }
   .lr-v2 .lr-gift, .lr-v2 .lr-amount, .lr-v2 .lr-day, .lr-claim,
   .onb-stage > *, .onb-ranks .onb-rk.big,
-  .round-beam.fire, .match-point-tag, .duel-video.you.streak-aura,
   #matchRankDelta.delta, .mr-tier-flash, #matchRankFill.animating::after,
   .toast2::after, .pm-rankprog .ui-bar-fill::after{
     animation:none !important;
@@ -12771,6 +12958,7 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
 </style>
 </head>
 <body>
+<noscript><div style="position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;background:#08070d;color:#fafafa;font-family:system-ui;text-align:center;padding:24px;">ROSHCAM needs JavaScript (and a webcam) to play. Please enable JavaScript and reload.</div></noscript>
 <!-- ===== APP PRELOADER (shown until the app is ready) ===== -->
 <div id="appPreloader">
   <div class="pl-inner">
@@ -12821,8 +13009,19 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
 <div class="shoot-flash" id="shootFlash"></div>
 <div class="win-vignette" id="winVignette"></div>
 <div class="lose-vignette" id="loseVignette"></div>
-<div class="round-beam" id="roundBeam"></div>
-<div class="match-point-tag" id="matchPointTag"></div>
+<!-- PRE-MATCH READY-UP — both players see each other and must press READY -->
+<div class="pre-ready" id="preReadyBar" aria-live="polite">
+  <div class="pre-ready-card">
+    <div class="pr-title">Say hi 👋 <span>· the match starts when you're both ready</span></div>
+    <div class="pr-status">
+      <span class="pr-chip" id="prChipYou"><span class="pr-dot"></span>You</span>
+      <span class="pr-vs">VS</span>
+      <span class="pr-chip" id="prChipOpp"><span class="pr-dot"></span><span id="prOppName">opponent</span></span>
+    </div>
+    <button class="btn-cta pr-ready-btn" id="preReadyBtn"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-check"/></svg> READY <span class="key">R</span></button>
+    <div class="pr-wait" id="prWait" style="display:none;">✓ You're ready — waiting for your opponent…</div>
+  </div>
+</div>
 <div class="combo-popup" id="comboPopup"></div>
 <div class="spotlight-you" id="spotlightYou"></div>
 <canvas id="particles"></canvas>
@@ -12986,6 +13185,9 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
         <span class="notif-badge" id="chatBadge" style="display:none;">0</span>
       </button>
       <button class="topbar-icon-btn" id="muteBtn" title="Toggle sound"><svg viewBox="0 0 24 24" width="18" height="18" id="muteIcon"><use href="#i-sound-on"/></svg></button>
+      <button class="topbar-icon-btn topbar-me" id="topbarProfileBtn" title="Your profile — exactly as others see it">
+        <span class="tb-me-av" id="topbarAv">?</span>
+      </button>
       <!-- hidden legacy refs kept for JS compatibility -->
       <div class="user-chip" id="userChip" style="display:none;">
         <div class="av" id="chipAv">?</div>
@@ -13300,22 +13502,43 @@ const FIREBASE_CONFIG = {
 
     <!-- ====== POST-GOOGLE SIGNUP ====== -->
     <section class="screen" id="screen-newuser">
-      <div class="auth-wrap">
-        <span class="eyebrow"><span class="dot"></span>almost there</span>
-        <h1 class="section-title">PICK YOUR <span class="accent">handle.</span></h1>
-        <p class="section-sub">Choose a unique username and country.</p>
-        <form class="auth-form" id="newUserForm">
-          <div class="field">
-            <label>Username</label>
-            <input type="text" name="username" required minlength="2" maxlength="20" placeholder="neonFox" />
+      <div class="nu-wrap">
+        <div class="nu-card">
+          <div class="nu-head">
+            <img class="nu-logo" src="logo.png" alt="" />
+            <span class="eyebrow"><span class="dot"></span>one last step</span>
           </div>
-          <div class="field">
-            <label>Country</label>
-            <select name="country" id="newUserCountry" required></select>
+          <h1 class="section-title nu-title">PICK YOUR <span class="accent">handle.</span></h1>
+          <p class="section-sub">This is how the world will know you in the arena.</p>
+
+          <!-- Live preview: exactly how you'll appear to opponents -->
+          <div class="nu-preview">
+            <div class="nu-prev-av" id="nuPrevAv">?</div>
+            <div class="nu-prev-info">
+              <div class="nu-prev-name"><span id="nuPrevName">your_handle</span> <span class="nu-prev-flag" id="nuPrevFlag">🌍</span></div>
+              <div class="nu-prev-sub">1000 ELO · Level 1 · Rookie</div>
+            </div>
+            <span class="nu-prev-tag">PREVIEW</span>
           </div>
-          <button class="btn btn-primary" type="submit">Continue</button>
-        </form>
-        <div class="error-msg" id="newUserError"></div>
+
+          <form class="auth-form" id="newUserForm">
+            <div class="field">
+              <label>Username</label>
+              <div class="nu-input-row">
+                <input type="text" name="username" required minlength="2" maxlength="20" placeholder="neonFox" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" />
+                <button type="button" class="nu-dice" id="nuDice" title="Roll a random username">🎲</button>
+              </div>
+              <div class="nu-avail" id="nuAvail"></div>
+            </div>
+            <div class="field">
+              <label>Country</label>
+              <select name="country" id="newUserCountry" required></select>
+            </div>
+            <button class="btn btn-primary nu-continue" type="submit">Lock it in — let's play <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-next"/></svg></button>
+          </form>
+          <div class="error-msg" id="newUserError"></div>
+          <p class="nu-note">You can change your username, country and avatar any time in Settings.</p>
+        </div>
       </div>
     </section>
 
@@ -14072,8 +14295,13 @@ const FIREBASE_CONFIG = {
         <div class="settings-list">
           <div class="settings-row" style="cursor:default;">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
-            <div class="set-text"><div class="set-title">ROSHCAM</div><div class="set-sub">Version 1.0 · Real-time webcam Rock Paper Scissors</div></div>
+            <div class="set-text"><div class="set-title">ROSHCAM</div><div class="set-sub" id="aboutVersion">Real-time webcam Rock Paper Scissors</div></div>
           </div>
+          <button class="settings-row" id="setUpdateLog">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-star"/></svg></div>
+            <div class="set-text"><div class="set-title">What's new</div><div class="set-sub">Update log — latest features &amp; fixes</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
           <button class="settings-row" data-open-legal="terms">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></div>
             <div class="set-text"><div class="set-title">Terms of Service</div><div class="set-sub">The rules for using ROSHCAM</div></div>
@@ -15080,6 +15308,16 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- UPDATE LOG -->
+<div class="modal-bg" id="updateLogModal">
+  <div class="modal" style="max-width:520px;">
+    <button class="modal-close" data-close="updateLogModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3>UPDATE LOG</h3>
+    <p class="ul-intro">Everything new in ROSHCAM, newest first.</p>
+    <div class="ul-list" id="updateLogList"></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="helpModal">
   <div class="modal">
     <button class="modal-close" data-close="helpModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
@@ -16042,6 +16280,16 @@ const FIREBASE_CONFIG = {
 
   /* Magnetic CTA effect removed by design: the play button stays put. */
 
+  /* Tiny haptic tick on the mobile dock — makes tab switches feel physical */
+  function dockHaptics(){
+    document.addEventListener('click', function(ev){
+      if(!ev.target || !ev.target.closest) return;
+      if(ev.target.closest('.mobile-nav-item')){
+        try { if(navigator.vibrate) navigator.vibrate(8); } catch(e){}
+      }
+    }, { passive: true });
+  }
+
   /* Reveal-on-view for cards and feature rows */
   function reveals(){
     if(!('IntersectionObserver' in window)) return;
@@ -16064,6 +16312,7 @@ const FIREBASE_CONFIG = {
     try{ spawnSparks(); }catch(e){}
     try{ bindRipples(); }catch(e){}
     try{ cursorGlow(); }catch(e){}
+    try{ dockHaptics(); }catch(e){}
     try{ reveals(); }catch(e){}
   }
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
@@ -16708,6 +16957,8 @@ function showScreen(name){
     // Always close the mobile drawer + flyouts on screen change
     closeSidebarMobile?.();
     closeAllFlyouts?.();
+    // The pre-match ready bar only ever belongs to the game screen
+    if(name !== 'game'){ const prb = document.getElementById('preReadyBar'); if(prb) prb.classList.remove('show'); }
     // Toggle in-game flag (hides mobile bottom nav during a match)
     document.body.classList.toggle('in-game', name === 'game');
     // First-run onboarding the first time a signed-in player reaches the home screen
@@ -16958,23 +17209,19 @@ function fxPerf(){
 }
 // Celebratory confetti raining from the top (used on a match win).
 function launchConfetti(){
-  if(document.body.classList.contains('low-power')) return;
-  const colors = ['#22d3a3','#9b7bff','#ffd33d','#ff3d68','#5fc9ff','#ff8c42'];
-  const W = window.innerWidth;
-  for(let i=0;i<140;i++){
-    particles.push({
-      x: Math.random()*W,
-      y: -20 - Math.random()*120,
-      vx: (Math.random()-.5)*3,
-      vy: 2 + Math.random()*4,
-      g: 0.05 + Math.random()*0.05,
-      life: 150 + Math.random()*90,
-      size: 4 + Math.random()*5,
-      color: colors[(Math.random()*colors.length)|0],
-    });
-  }
+  /* Confetti has been removed site-wide — the 140-particle showers measurably
+     hurt frame rate on phones. Celebrations now rely on the lighter overlay
+     animations instead. (Kept as a no-op so existing call sites stay safe.) */
 }
+let _pCanvasDirty = false;
 function animateParticles(){
+  // Idle skip: when there's nothing to draw, do zero canvas work per frame.
+  if(particles.length === 0){
+    if(_pCanvasDirty){ pctx.clearRect(0, 0, pCanvas.width, pCanvas.height); _pCanvasDirty = false; }
+    requestAnimationFrame(animateParticles);
+    return;
+  }
+  _pCanvasDirty = true;
   pctx.clearRect(0,0,pCanvas.width,pCanvas.height);
   particles = particles.filter(p => p.life > 0);
   // Hard cap so a burst storm never tanks the frame rate (esp. on phones).
@@ -17871,7 +18118,10 @@ async function onAuthChanged(user){
       if(!user.isAnonymous){
         showScreen('newuser');
         const suggested = (user.displayName || user.email?.split('@')[0] || 'player').replace(/[^a-zA-Z0-9_]/g,'').slice(0,20);
-        $('#newUserForm input[name=username]').value = suggested;
+        const nuInput = $('#newUserForm input[name=username]');
+        nuInput.value = suggested;
+        // refresh the live preview + availability check for the suggestion
+        try { nuInput.dispatchEvent(new Event('input', { bubbles: true })); } catch(e){}
         return;
       } else {
         const username = 'guest_' + user.uid.slice(0,6);
@@ -17983,6 +18233,12 @@ function updateSidebarProfile(){
   if(av){
     if(p.photoURL){ av.style.backgroundImage = `url('${p.photoURL}')`; av.textContent = ''; }
     else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; av.textContent = initialOf(p.username||'?'); }
+  }
+  // Mirror the avatar into the topbar profile button
+  const tav = $('#topbarAv');
+  if(tav){
+    if(p.photoURL){ tav.style.backgroundImage = `url('${p.photoURL}')`; tav.textContent = ''; }
+    else { tav.style.backgroundImage = 'none'; tav.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; tav.textContent = initialOf(p.username||'?'); }
   }
   const lvl = levelOf(p);
   setText('#sidebarLevel', lvl.level); paintLevelBadge('#sidebarLevel', lvl.level);
@@ -21626,6 +21882,7 @@ function maybePromptUnsavedEdit(){
 }
 function openEditProfile(){
   const p = state.profile;
+  setTimeout(() => { try { $('#editProfileForm input[name=username]')?.focus({ preventScroll: true }); } catch(e){} }, 120);
   $('#editProfileForm input[name=username]').value = p.username;
   $('#editCountry').value = p.country || 'XX';
   const statusInput = $('#editProfileForm input[name=status]'); if(statusInput) statusInput.value = p.status || '';
@@ -22419,6 +22676,11 @@ async function enterMatch(matchData){
   try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: true }).catch(()=>{}); } catch(e){}
   showScreen('game');
   resetMatchUI();
+  // PRE-MATCH READY-UP: once connected, both players see each other and must
+  // press READY before the first round's gesture system arms.
+  state._prematch = true;
+  state._preReadyYou = false;
+  state._preReadyOpp = false;
   setupOppPanel();
   setText('#youName', state.profile.username);
   const myRank = rankFromRating(state.profile.rating || 1000);
@@ -22611,7 +22873,7 @@ function setupOppPanel(){
 }
 
 function setupDataChannel(dc){
-  dc.onopen = () => { addChat('sys', 'connected · show your hand to begin'); onPeerConnected(); };
+  dc.onopen = () => { addChat('sys', state._prematch ? 'connected · say hi and press READY' : 'connected · show your hand to begin'); onPeerConnected(); };
   dc.onclose = () => { if(state.phase !== 'ended') onPeerDisconnected(); };
   dc.onmessage = (e) => {
     let msg; try{ msg = JSON.parse(e.data); }catch{ return; }
@@ -22620,14 +22882,23 @@ function setupDataChannel(dc){
 }
 let sendPeer = function(msg){ if(state.dataChannel?.readyState === 'open') state.dataChannel.send(JSON.stringify(msg)); };
 function onPeerConnected(){
-  setText('#roundState', 'HOLD UP A HAND TO READY UP');
-  $('#handPrompt').classList.add('show');
-  startReadySystem();
+  if(state._prematch){
+    enterPreReadyPhase();
+  } else {
+    setText('#roundState', 'HOLD UP A HAND TO READY UP');
+    $('#handPrompt').classList.add('show');
+    startReadySystem();
+  }
   // Guard against double-init (onPeerConnected fires from both dc.onopen and the
   // connectionstatechange handler) — keep a single ping/resync timer.
   if(state.pingTimer) clearInterval(state.pingTimer);
   state.pingTimer = setInterval(() => {
     sendPeer({type:'ping', t: Date.now()});
+    if(state._prematch){
+      // Re-announce a pressed READY so a dropped message can't stall the start.
+      if(state._preReadyYou) sendPeer({type:'pre_ready'});
+      return;
+    }
     // Resync ready-state so a dropped 'ready_state' message can't permanently
     // stall the round: re-announce our current readiness, then re-check start.
     if(state.phase === 'idle' || state.phase === 'done'){
@@ -22636,11 +22907,63 @@ function onPeerConnected(){
     }
   }, 2000);
 }
+
+// ============= PRE-MATCH READY-UP =============
+// The social opener: both cams are live and visible, nothing starts until both
+// players press READY. The per-round gesture-ready system arms afterwards.
+function enterPreReadyPhase(){
+  setText('#roundState', 'PRESS READY TO START');
+  $('#handPrompt')?.classList.remove('show');
+  showOppVideo();   // the whole point: you see each other before it gets serious
+  setText('#prOppName', '@' + (state.oppProfile?.username || 'opponent'));
+  updatePreReadyUI();
+  $('#preReadyBar')?.classList.add('show');
+}
+function updatePreReadyUI(){
+  $('#prChipYou')?.classList.toggle('ready', !!state._preReadyYou);
+  $('#prChipOpp')?.classList.toggle('ready', !!state._preReadyOpp);
+  const btn = $('#preReadyBtn'), wait = $('#prWait');
+  if(btn) btn.style.display = state._preReadyYou ? 'none' : '';
+  if(wait) wait.style.display = (state._preReadyYou && !state._preReadyOpp) ? '' : 'none';
+}
+function pressPreReady(){
+  if(!state._prematch || state._preReadyYou) return;
+  state._preReadyYou = true;
+  sendPeer({type:'pre_ready'});
+  updatePreReadyUI();
+  try { sfxReady(); } catch(e){}
+  try { haptic(12); } catch(e){}
+  checkPreReadyStart();
+}
+function checkPreReadyStart(){
+  if(!state._prematch || !state._preReadyYou || !state._preReadyOpp) return;
+  state._prematch = false;
+  $('#preReadyBar')?.classList.remove('show');
+  hideOppVideo();   // anti-cheat hiding takes over again for the rounds
+  setText('#roundState', 'HOLD UP A HAND TO READY UP');
+  $('#handPrompt')?.classList.add('show');
+  startReadySystem();
+  try { showAnnouncer('BOTH READY — LET’S GO!', 1800); } catch(e){}
+  try { haptic(20); } catch(e){}
+}
+on('#preReadyBtn', 'click', pressPreReady);
 function handlePeerMessage(msg){
   // Any inbound message proves the peer is back — cancel a pending reconnect grace.
   if(state._reconnecting) onPeerReconnected();
   switch(msg.type){
+    case 'pre_ready':
+      state._preReadyOpp = true;
+      updatePreReadyUI();
+      checkPreReadyStart();
+      break;
     case 'ready_state':
+      // Compatibility: clients on an old cached build skip the ready-up phase
+      // and go straight to gesture-charging — treat that as an implicit READY.
+      if(state._prematch && !state._preReadyOpp){
+        state._preReadyOpp = true;
+        updatePreReadyUI();
+        checkPreReadyStart();
+      }
       state.oppGestureReady = msg.ready;
       updateOppReadyUI(msg.ready, msg.progress);
       maybeStartRound();
@@ -22920,6 +23243,7 @@ function startReadySystem(){
 }
 function onGestureFrame(){
   if(state.screen !== 'game') return;
+  if(state._prematch) return;   // gesture-ready only arms after both press READY
   if(state.phase !== 'idle' && state.phase !== 'done') return;
   // NOTE: do NOT hard-gate on the data channel here. The charge meter must build
   // locally as soon as you hold a gesture — gating on dataChannel.readyState made
@@ -23044,6 +23368,7 @@ function updateOppReadyUI(isReady, progress){
   }
 }
 function maybeStartRound(){
+  if(state._prematch) return;
   if(state.myGestureReady && state.oppGestureReady && state.phase === 'idle' && !state.countdownRunning){
     state.countdownRunning = true;
     if(state.isCaller){ sendPeer({type:'start_round'}); runCountdown(); }
@@ -23113,8 +23438,6 @@ function resetMatchUI(){
   state.myPrediction = null;
   setText('#scoreYou', 0);
   setText('#scoreOpp', 0);
-  const mpTag = $('#matchPointTag'); if(mpTag) mpTag.classList.remove('show', 'you', 'opp', 'both');
-  document.querySelector('.duel-video.you')?.classList.remove('streak-aura');
   resetRoundIndicator();
   resetPredictionPicker();
   updateOnFireStatus();
@@ -23438,20 +23761,6 @@ function applyRoundResult(result, yourMove, oppMove){
     (state.scoreOpp >= state.matchRoundsToWin && state.scoreOpp > state.scoreYou)
   );
 
-  // MATCH POINT indicator — a small tension cue at the top edge, never over the cams.
-  try {
-    const mp = $('#matchPointTag');
-    if(mp){
-      const youMP = !matchOver && state.scoreYou === state.matchRoundsToWin - 1;
-      const oppMP = !matchOver && state.scoreOpp === state.matchRoundsToWin - 1;
-      mp.classList.remove('show', 'you', 'opp', 'both');
-      if(youMP || oppMP){
-        mp.textContent = youMP && oppMP ? '⚡ SUDDEN DEATH' : youMP ? '🔥 MATCH POINT' : '⚠️ DEFEND MATCH POINT';
-        mp.classList.add('show', youMP && oppMP ? 'both' : youMP ? 'you' : 'opp');
-      }
-    }
-  } catch(e){}
-
   if(matchOver){
     state.matchOver = true;
     setTimeout(() => {
@@ -23505,9 +23814,6 @@ function showRoundResultUI(result, yourMove, oppMove, predictionCorrect){
     setTimeout(() => bigBurst('#5dffba'), 200);
     const wv = $('#winVignette');
     if(wv){ wv.classList.remove('fire'); void wv.offsetWidth; wv.classList.add('fire'); }
-    // Edge beam sweep + streak aura on your tile border (never covers the cams)
-    const rbW = $('#roundBeam'); if(rbW){ rbW.className = 'round-beam win'; void rbW.offsetWidth; rbW.classList.add('fire'); }
-    document.querySelector('.duel-video.you')?.classList.toggle('streak-aura', state.streakType === 'W' && state.streak >= 2);
     if(resultDisplay){
       const starWrap = document.createElement('div');
       starWrap.className = 'win-stars';
@@ -23540,8 +23846,6 @@ function showRoundResultUI(result, yourMove, oppMove, predictionCorrect){
     }
     const lv = $('#loseVignette');
     if(lv){ lv.classList.remove('fire'); void lv.offsetWidth; lv.classList.add('fire'); }
-    const rbL = $('#roundBeam'); if(rbL){ rbL.className = 'round-beam lose'; void rbL.offsetWidth; rbL.classList.add('fire'); }
-    document.querySelector('.duel-video.you')?.classList.remove('streak-aura');
     try { if(navigator.vibrate) navigator.vibrate([120, 60, 40]); } catch(e){}
   } else if(result === 'draw'){
     if(headline){ headline.textContent = 'DRAW'; headline.classList.add('draw'); }
@@ -23737,6 +24041,10 @@ function resetRoundIndicator(){
 async function endMatch(){
   if(state._endMatchCalled) return; // prevent double-call
   state._endMatchCalled = true;
+
+  // The match can end during the ready-up phase (opponent left) — clear it.
+  state._prematch = false;
+  $('#preReadyBar')?.classList.remove('show');
 
   // SYNC: notify opponent that our side is ending the match
   // (if they haven't ended on their side yet)
@@ -25826,6 +26134,7 @@ function renderHomeSpotlight(p){
 function renderHomePage(){
   if(!state.profile) return;
   try { claimDailyLoginReward(); } catch(e){}
+  try { maybeShowUpdateToast(); } catch(e){}
   try { applySeasonSoftReset(); } catch(e){}
   try { refreshSeasonUI(); } catch(e){}
   const p = state.profile;
@@ -26277,6 +26586,153 @@ window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
   document.addEventListener('scroll', (e) => { if(e.target && e.target.id === 'screen-landing') onScroll(); }, true);
   btn.addEventListener('click', () => { const el = scroller(); if(el) el.scrollTo({ top:0, behavior:'smooth' }); });
 })();
+
+// ===== QUALITY OF LIFE =====
+// Your own profile from the topbar — exactly the public view others get.
+on('#topbarProfileBtn', 'click', () => { if(state.user) openProfile(state.user.uid); });
+// Esc closes the topmost open modal (then flyouts).
+document.addEventListener('keydown', (e) => {
+  if(e.key !== 'Escape') return;
+  const open = document.querySelectorAll('.modal-bg.show');
+  if(open.length){
+    const m = open[open.length - 1];
+    m.classList.remove('show');
+    if(m.id === 'editProfileModal'){ try { maybePromptUnsavedEdit(); } catch(_){} }
+    e.preventDefault();
+    return;
+  }
+  try { closeAllFlyouts?.(); } catch(_){}
+});
+// Keyboard shortcuts: M = mute · R = ready up · ? = how to play (never while typing).
+document.addEventListener('keydown', (e) => {
+  const t = e.target;
+  if(t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+  if(e.metaKey || e.ctrlKey || e.altKey) return;
+  if(e.key === 'm' || e.key === 'M'){ $('#muteBtn')?.click(); }
+  else if(e.key === 'r' || e.key === 'R'){ if(state._prematch) pressPreReady(); }
+  else if(e.key === '?'){ $('#helpBtn')?.click(); }
+});
+// Settings search: one-tap clear button.
+(() => {
+  const wrap = document.querySelector('.settings-search'); const inp = $('#settingsSearch');
+  if(!wrap || !inp) return;
+  const btn = document.createElement('button');
+  btn.type = 'button'; btn.className = 'ss-clear'; btn.title = 'Clear search';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-close"/></svg>';
+  btn.addEventListener('click', () => { inp.value = ''; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.focus(); });
+  wrap.appendChild(btn);
+  inp.addEventListener('input', () => wrap.classList.toggle('has-text', !!inp.value));
+})();
+
+// ===== UPDATE LOG =====
+const APP_VERSION = '1.3.0';
+const UPDATE_LOG = [
+  { v: '1.3.0', date: 'June 2026', title: 'Launch ready 🚀', items: [
+    ['new', 'Mobile overhaul — bottom-sheet menus, floating game dock, press feedback everywhere'],
+    ['new', 'This update log — find it any time in Settings → What’s new'],
+    ['new', 'Redesigned username setup with live profile preview, availability check and a 🎲 randomizer'],
+    ['improved', 'Performance: lighter blur on phones, idle canvas skipped, assets cached offline'],
+    ['improved', 'Offline / back-online notices'],
+  ]},
+  { v: '1.2.0', date: 'June 2026', title: 'Ready up!', items: [
+    ['new', 'Pre-match ready-up — see each other, say hi, and press READY to start'],
+    ['new', 'Your profile in the topbar, exactly as others see it'],
+    ['new', 'Keyboard shortcuts: M mute · R ready · ? help · Esc close'],
+    ['improved', 'Settings packs into clean columns'],
+    ['fixed', 'Confetti removed — big frame-rate win on phones'],
+  ]},
+  { v: '1.1.0', date: 'June 2026', title: 'Faster everything', items: [
+    ['improved', 'Page loads ~75% smaller: audio split out, all art optimized'],
+    ['new', 'Settings, profile, daily reward and onboarding redesigned'],
+    ['new', 'Unranked players get their own emblem'],
+    ['fixed', 'Delete account now erases everything — matches, messages, comments, all of it'],
+  ]},
+  { v: '1.0.0', date: 'June 2026', title: 'A new look', items: [
+    ['new', 'ROSHCAM logo, favicon and a full visual overhaul'],
+  ]},
+];
+function renderUpdateLog(){
+  const list = $('#updateLogList'); if(!list) return;
+  list.innerHTML = UPDATE_LOG.map((rel, i) => `
+    <div class="ul-release${i === 0 ? ' latest' : ''}">
+      <div class="ul-rel-head">
+        <span class="ul-ver">v${rel.v}</span>
+        <span class="ul-rel-title">${rel.title}</span>
+        <span class="ul-date">${rel.date}</span>
+      </div>
+      <ul class="ul-items">
+        ${rel.items.map(([kind, text]) => `<li><span class="ul-tag ${kind}">${kind.toUpperCase()}</span><span>${text}</span></li>`).join('')}
+      </ul>
+    </div>`).join('');
+}
+function openUpdateLog(){
+  renderUpdateLog();
+  $('#updateLogModal')?.classList.add('show');
+  try { localStorage.setItem('rosham_seen_version', APP_VERSION); } catch(e){}
+}
+on('#setUpdateLog', 'click', openUpdateLog);
+setText('#aboutVersion', `Version ${APP_VERSION} · Real-time webcam Rock Paper Scissors`);
+// One gentle "what's new" nudge per version (never on a first visit).
+function maybeShowUpdateToast(){
+  try {
+    const seen = localStorage.getItem('rosham_seen_version');
+    if(seen === APP_VERSION) return;
+    if(!seen){ localStorage.setItem('rosham_seen_version', APP_VERSION); return; }
+    localStorage.setItem('rosham_seen_version', APP_VERSION);
+    setTimeout(() => {
+      toast(`✨ ROSHCAM updated to v${APP_VERSION}`, 'success', { duration: 6000, action: { label: "What's new", onClick: openUpdateLog } });
+    }, 2200);
+  } catch(e){}
+}
+
+// ===== NEW-USER SCREEN: live preview, availability check, dice =====
+(() => {
+  const inp = document.querySelector('#newUserForm input[name=username]');
+  const sel = $('#newUserCountry');
+  if(!inp) return;
+  let availTimer = null, availSeq = 0;
+  const ADJ = ['neon', 'turbo', 'shadow', 'cosmic', 'royal', 'rapid', 'lucky', 'mighty', 'pixel', 'hyper', 'frost', 'blaze', 'ninja', 'mega', 'wild'];
+  const NOUN = ['Fox', 'Wolf', 'Tiger', 'Falcon', 'Viper', 'Panda', 'Shark', 'Dragon', 'Ghost', 'Knight', 'Comet', 'Storm', 'Raven', 'Lynx', 'Otter'];
+  function updatePreview(){
+    const name = (inp.value || '').trim() || 'your_handle';
+    setText('#nuPrevName', name);
+    const av = $('#nuPrevAv'); if(av) av.textContent = (name[0] || '?').toUpperCase();
+    const cc = COUNTRIES.find(x => x.code === sel?.value);
+    setText('#nuPrevFlag', cc ? cc.flag : '🌍');
+  }
+  function checkAvail(){
+    const el = $('#nuAvail'); if(!el) return;
+    const name = (inp.value || '').trim();
+    if(!/^[a-zA-Z0-9_]{2,20}$/.test(name)){
+      el.className = 'nu-avail';
+      el.textContent = name ? '2–20 letters, numbers or _' : '';
+      return;
+    }
+    el.className = 'nu-avail checking'; el.textContent = 'checking…';
+    const seq = ++availSeq;
+    reserveUsername(name, state.user?.uid, true)
+      .then(() => { if(seq === availSeq){ el.className = 'nu-avail ok'; el.textContent = '✓ available'; } })
+      .catch(() => { if(seq === availSeq){ el.className = 'nu-avail taken'; el.textContent = '✕ already taken'; } });
+  }
+  inp.addEventListener('input', () => { updatePreview(); clearTimeout(availTimer); availTimer = setTimeout(checkAvail, 450); });
+  sel?.addEventListener('change', updatePreview);
+  on('#nuDice', 'click', () => {
+    inp.value = ADJ[(Math.random() * ADJ.length) | 0] + NOUN[(Math.random() * NOUN.length) | 0] + ((Math.random() * 99) | 0);
+    updatePreview();
+    clearTimeout(availTimer); availTimer = setTimeout(checkAvail, 200);
+    try { haptic(8); } catch(e){}
+  });
+  updatePreview();
+})();
+
+// ===== CONNECTIVITY NOTICES =====
+window.addEventListener('offline', () => { try { toast("📡 You're offline — some features won't work", 'error', { duration: 4500 }); } catch(e){} });
+window.addEventListener('online', () => { try { toast('✓ Back online', 'success'); } catch(e){} });
+
+// ===== SERVICE WORKER (instant repeat loads; network-first for the app itself) =====
+if('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')){
+  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+}
 
 // Daily login streak (localStorage)
 // Daily login reward — once per day, XP scales with the login streak.
