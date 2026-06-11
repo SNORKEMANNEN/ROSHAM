@@ -6,6 +6,7 @@
 <title>ROSHCAM — live rock paper scissors with strangers</title>
 <meta name="description" content="Real rock paper scissors against strangers using your webcam. Hand-gesture detection, ranked ELO, friends, leaderboards." />
 <meta name="theme-color" content="#08070d" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
 <!-- Installable / standalone app (iOS + Android) -->
 <meta name="mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -12350,6 +12351,7 @@ body.reduced-motion .sl-text{ animation:none; }
 
 /* ---------- chrome polish ---------- */
 ::selection{ background:rgba(155,123,255,.35); color:#fff; }
+#screen-landing{ scrollbar-gutter:stable; }   /* no layout jump when the scrollbar appears */
 ::-webkit-scrollbar-thumb:hover{ background:linear-gradient(180deg, var(--coral), var(--violet)); }
 
 /* ---------- kill switches: accessibility, low power, in-match FPS ---------- */
@@ -13132,12 +13134,19 @@ body.in-game{ overscroll-behavior:none; }
 
 /* ---------- LOW-END DEVICES: kill the expensive compositing entirely ---------- */
 body.low-power .topbar, body.low-power .modal-bg, body.low-power .mobile-nav,
-body.low-power .toast2, body.low-power .pre-ready-card, body.low-power .arena-bar,
-body.low-power .match-point-tag{
+body.low-power .toast2, body.low-power .pre-ready-card, body.low-power .arena-bar{
   backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
 }
 body.low-power .toast2::after{ animation:none !important; }
 body.low-power .grain, body.low-power .noise{ display:none !important; }
+
+/* ---------- IN-MATCH: every GPU cycle belongs to the webcams ----------
+   backdrop blur over live video is the single heaviest compositing cost;
+   solid fills look identical over the dark stage. */
+body.in-game .arena-bar{ backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(8,5,15,.97); }
+body.in-game .duel-dock{ backdrop-filter:none; -webkit-backdrop-filter:none; }
+body.in-game .toast2{ backdrop-filter:none; -webkit-backdrop-filter:none; }
+body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(13,11,20,.97); }
 
 /* ---------- READY-UP v2 ---------- */
 .pre-ready-card{
@@ -13151,7 +13160,7 @@ body.low-power .grain, body.low-power .noise{ display:none !important; }
   .pre-ready-card{ max-width:none; width:100%; padding:14px 16px 16px; gap:10px; }
   .pr-ready-btn{ width:100%; min-height:52px; font-size:18px; }
   /* lift your PiP cam above the full-width ready sheet */
-  #screen-game.prematch .duel-video.you{ bottom:215px; }
+  #screen-game.prematch .duel-video.you{ bottom:238px; }
 }
 
 /* ---------- kill switches for the new effects ---------- */
@@ -14515,6 +14524,11 @@ const FIREBASE_CONFIG = {
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-star"/></svg></div>
             <div class="set-text"><div class="set-title">What's new</div><div class="set-sub">Update log — latest features &amp; fixes</div></div>
             <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
+          <button class="settings-row" id="setDevLogs">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-activity"/></svg></div>
+            <div class="set-text"><div class="set-title">Developer logs</div><div class="set-sub" id="setDevLogsState">Off · console output is hidden for privacy</div></div>
+            <div class="set-toggle off" id="setDevLogsToggle"></div>
           </button>
           <button class="settings-row" data-open-legal="terms">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></div>
@@ -16426,6 +16440,16 @@ const FIREBASE_CONFIG = {
     console.log('%cSTOP!', 'color:#ff3358;font-size:44px;font-weight:900;');
     console.log('%cIf someone told you to paste code here, it is a scam (Self-XSS) — it would give them control of your ROSHCAM account.', 'font-size:13px;');
   } catch(e){}
+  /* Production console silencing — the app logs uids, match ids and internal
+     state for debugging; none of that belongs in players' consoles.
+     Re-enable via Settings → About → Developer logs (localStorage rosham_debug). */
+  try {
+    if(localStorage.getItem('rosham_debug') !== '1'){
+      var noop = function(){};
+      console.log = noop; console.info = noop; console.debug = noop; console.warn = noop;
+      // console.error stays — real failures must remain visible
+    }
+  } catch(e){}
   var reduce = false;
   try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
   function lowPower(){
@@ -17343,6 +17367,8 @@ function renderAvatar(el, profile){
   if(profile.photoURL){
     const img = document.createElement('img');
     img.className = 'av-photo'; img.alt = '';
+    img.loading = 'lazy';       // long friend/leaderboard lists: fetch on scroll
+    img.decoding = 'async';     // never block the main thread on avatar decode
     img.onerror = () => { img.remove(); };
     img.src = profile.photoURL;
     el.appendChild(img);
@@ -22682,7 +22708,7 @@ function showRulesError(){
       </p>
       <p style="color:var(--text-dim); margin-bottom:14px; line-height:1.5; font-size:14px;">
         <b>If "Try Again" keeps failing, your Firestore Rules need updating:</b><br>
-        1. Open <a href="https://console.firebase.google.com/" target="_blank" style="color:var(--mint);">Firebase Console</a> → your project<br>
+        1. Open <a href="https://console.firebase.google.com/" target="_blank" rel="noopener" style="color:var(--mint);">Firebase Console</a> → your project<br>
         2. <b>Firestore Database → Rules</b> tab<br>
         3. <b>Replace ALL the rules</b> with the block below<br>
         4. Click <b>Publish</b><br>
@@ -23222,7 +23248,11 @@ function _peerAllow(kind, max, windowMs){
 }
 function handlePeerMessage(msg){
   if(!msg || typeof msg !== 'object' || typeof msg.type !== 'string') return;
-  if(msg.type === 'gesture' && !VALID_GESTURES.includes(msg.value)) return;
+  if(msg.type === 'gesture'){
+    if(!VALID_GESTURES.includes(msg.value)) return;
+    if(typeof msg.dt !== 'number' || !isFinite(msg.dt)) msg.dt = 0;   // throw-timing must be numeric
+  }
+  if(msg.type === 'pong' && (typeof msg.t !== 'number' || !isFinite(msg.t))) return;  // NaN ping guard
   if(msg.type === 'round_result' && !['win', 'lose', 'draw', 'forfeit'].includes(msg.result)) return;
   if(msg.type === 'start_round' && (state.phase !== 'idle' || state.countdownRunning || state._prematch)) return;
   if(msg.type === 'chat'){
@@ -26938,8 +26968,20 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ===== UPDATE LOG =====
-const APP_VERSION = '1.3.5';
+const APP_VERSION = '1.3.7';
 const UPDATE_LOG = [
+  { v: '1.3.7', date: 'June 2026', title: 'Rock solid', items: [
+    ['improved', 'Matches run noticeably smoother — heavy blur effects step aside while the webcams are live'],
+    ['improved', 'Avatar images in long lists load lazily and never block the page'],
+    ['fixed', 'Hardened more peer-message fields (ping timing, throw timing) against tampered clients'],
+    ['fixed', 'Your mini-cam no longer collides with the ready-up sheet on phones'],
+    ['fixed', 'No more layout jump when the home page scrollbar appears'],
+  ]},
+  { v: '1.3.6', date: 'June 2026', title: 'Quiet console', items: [
+    ['fixed', 'Privacy: the browser console no longer prints user ids, match ids or internal state'],
+    ['new', 'Settings → About → Developer logs re-enables console output when you need to debug'],
+    ['improved', 'Stricter referrer policy and safer external links'],
+  ]},
   { v: '1.3.5', date: 'June 2026', title: 'Locked down', items: [
     ['fixed', 'Security: messages from your opponent’s client are now strictly validated before touching the game (closed an HTML-injection hole)'],
     ['new', 'Anti-spam: chat and emotes from opponents are rate-limited'],
@@ -27019,6 +27061,22 @@ function openUpdateLog(){
   try { localStorage.setItem('rosham_seen_version', APP_VERSION); } catch(e){}
 }
 on('#setUpdateLog', 'click', openUpdateLog);
+// Developer logs toggle — console output is silenced in production for privacy
+(() => {
+  let devOn = false;
+  try { devOn = localStorage.getItem('rosham_debug') === '1'; } catch(e){}
+  const sync = () => {
+    $('#setDevLogsToggle')?.classList.toggle('off', !devOn);
+    setText('#setDevLogsState', devOn ? 'On · reload to apply' : 'Off · console output is hidden for privacy');
+  };
+  sync();
+  on('#setDevLogs', 'click', () => {
+    devOn = !devOn;
+    try { localStorage.setItem('rosham_debug', devOn ? '1' : '0'); } catch(e){}
+    sync();
+    toast(devOn ? 'Developer logs on — reload to apply' : 'Developer logs off — reload to apply', 'info');
+  });
+})();
 setText('#aboutVersion', `Version ${APP_VERSION} · Real-time webcam Rock Paper Scissors`);
 // One gentle "what's new" nudge per version (never on a first visit).
 function maybeShowUpdateToast(){
