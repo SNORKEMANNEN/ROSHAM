@@ -12964,6 +12964,196 @@ body.in-game{ overscroll-behavior:none; }
   .nu-card, .nu-preview{ animation:none; }
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   V14 — ARENA v3
+   In-match decluttering. Desktop: lighter top bar, icon-only controls,
+   demoted secondary chrome. Mobile: FaceTime layout — opponent fills
+   the stage, your camera is a PiP card, and the dock is one slim row.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- desktop: quieter top bar ---------- */
+.arena-player{ background:transparent; border-color:transparent; }
+.arena-player.you .arena-player-av{ box-shadow:0 0 0 2px rgba(34,211,163,.40); }
+.arena-player.opp .arena-player-av{ box-shadow:0 0 0 2px rgba(255,51,88,.40); }
+.arena-player-meta{ opacity:.8; }
+.arena-score-num{ font-size:26px; }
+.arena-score-label{ font-size:8px; opacity:.65; letter-spacing:.18em; }
+.conn-chip{ transform:scale(.92); opacity:.8; }
+
+/* controls: icon-only everywhere — tooltips carry the labels */
+.actl-label{ display:none !important; }
+.arena-ctrl-btn{ width:40px; min-width:40px; height:40px; padding:0; opacity:.7; transition:opacity .15s, background .15s, transform .15s; }
+.arena-ctrl-btn:hover{ opacity:1; }
+.arena-ctrl-btn:active{ transform:scale(.92); }
+.arena-ctrl-btn.danger{ opacity:1; margin-left:8px; }
+
+/* demote secondary chrome inside the stage */
+.duel-badge{ background:rgba(8,6,14,.72); }
+.duel-result-commentary{ opacity:.85; font-size:12px; }
+.hand-conf{ opacity:.8; transform:scale(.92); transform-origin:bottom left; }
+
+/* dock: slimmer, calmer */
+.duel-dock{ padding-top:9px; padding-bottom:9px; }
+.dock-divider{ opacity:.5; }
+.dock-emote-toggle{ display:none; }
+
+/* ---------- mobile (≤600px): FaceTime layout ---------- */
+@media (max-width: 600px){
+  /* stage = opponent full-bleed, you = PiP card */
+  .battle-stage{ display:block; }
+  .duel-divider{ display:none; }
+  .duel-video.opp{ position:absolute; inset:0; border:none; }
+  .duel-video.you{
+    position:absolute; right:10px; bottom:12px; z-index:7;
+    width:clamp(108px, 34vw, 150px); height:auto; aspect-ratio:3/4;
+    border-radius:16px; overflow:hidden; border:1.5px solid rgba(34,211,163,.45);
+    box-shadow:0 14px 34px -10px rgba(0,0,0,.85), 0 0 18px -10px var(--mint-glow);
+  }
+  /* keep only the essentials inside the PiP */
+  .duel-video.you .duel-overlay{ left:6px; top:6px; }
+  .duel-video.you .duel-badge{ font-size:7.5px; padding:3px 7px; }
+  .duel-video.you #camStatus, .duel-video.you .hand-conf{ display:none !important; }
+  .duel-video.you .duel-gesture-indicator{ transform:scale(.55); transform-origin:bottom left; left:4px; bottom:4px; }
+  .duel-video.opp .duel-overlay{ right:10px; top:10px; }
+  .duel-video.opp .duel-badge{ font-size:9px; }
+
+  /* top bar: just faces, names and the score */
+  .arena-player{ padding:2px 4px; }
+  .arena-player-av{ width:28px; height:28px; font-size:12px; }
+  .arena-player-name{ font-size:11px; }
+  .arena-score-num{ font-size:22px; }
+  .conn-chip{ display:none; }
+
+  /* fire/cold badges: smaller, out of the way */
+  .duel-fire-badge, .duel-cold-badge{ transform:scale(.82); transform-origin:top right; }
+
+  /* commentator line is desktop flavour only */
+  .duel-result-commentary{ display:none; }
+
+  /* ---- ONE-ROW DOCK: [predict pill] [emotes] [chat] ---- */
+  .duel-dock{
+    position:relative;
+    flex-direction:row; align-items:center; gap:8px;
+    padding:8px 10px calc(8px + env(safe-area-inset-bottom, 0px));
+  }
+  .dock-predict{
+    flex-direction:row; align-items:center; gap:7px; width:auto; flex:1; min-width:0;
+    padding:4px 6px 4px 9px; border-radius:13px;
+    background:rgba(255,255,255,.04); border:1px solid var(--line-soft);
+  }
+  .dock-predict-label{
+    display:block; width:auto; text-align:left;
+    font-size:7.5px; letter-spacing:.14em; white-space:nowrap;
+  }
+  .dock-predict-btns{ display:flex; gap:6px; width:auto; flex:1; }
+  .dock-predict-btn{ height:40px; width:auto; flex:1; border-radius:10px; }
+  .dock-predict-btn svg{ width:21px; height:21px; }
+  .dock-mobile-row{ flex:0 0 auto; gap:8px; }
+  .dock-chat-toggle{ width:44px; height:44px; border-radius:13px; }
+  .dock-emote-toggle{
+    display:grid; place-items:center; flex:0 0 auto;
+    width:44px; height:44px; border-radius:13px; font-size:20px;
+    background:var(--surface-2); border:1px solid var(--line); cursor:pointer;
+  }
+  .duel-dock.emotes-open .dock-emote-toggle{ border-color:var(--mint); background:rgba(34,211,163,.10); }
+  /* emotes hide behind the toggle; open as a strip floating above the dock */
+  .dock-emotes{ display:none; }
+  .duel-dock.emotes-open .dock-emotes{
+    display:flex; position:absolute; left:8px; right:8px; bottom:calc(100% + 8px);
+    background:rgba(10,8,16,.96); border:1px solid var(--line); border-radius:16px;
+    padding:8px; gap:6px; overflow-x:auto; z-index:55;
+    -webkit-overflow-scrolling:touch; scrollbar-width:none;
+    box-shadow:0 -10px 30px rgba(0,0,0,.5);
+    animation:v10Rise .25s cubic-bezier(.2,.9,.3,1);
+  }
+  .duel-dock.emotes-open .dock-emotes::-webkit-scrollbar{ display:none; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   V15 — POLISH ROUND
+   Title cosmetics fixed, home + play refresh, ready-up v2.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- TITLES: no more truncation soup ---------- */
+.titles-grid{ grid-template-columns:repeat(auto-fill, minmax(218px, 1fr)); gap:10px; }
+.title-chip{ padding:11px 13px; border-radius:13px; align-items:flex-start; }
+.title-chip-dot{ margin-top:4px; }
+.title-chip-name{
+  white-space:normal; overflow:visible; text-overflow:clip;
+  line-height:1.3; display:flex; align-items:center; gap:7px; flex-wrap:wrap;
+}
+.title-rar{ flex:0 0 auto; }
+.title-chip-req{ margin-top:2px; }
+
+/* ---------- HOME v2 ---------- */
+.stat-tile{
+  position:relative; overflow:hidden;
+  display:flex; flex-direction:column; align-items:flex-start; justify-content:center; gap:2px;
+  text-align:left; padding:14px 16px; min-height:68px; border-radius:14px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.012));
+  border:1px solid var(--line);
+}
+.stat-tile-ic{ position:absolute; right:12px; top:12px; width:20px; height:20px; opacity:.22; }
+.stat-tile-v{ font-size:24px; line-height:1.1; }
+.stat-tile-l{
+  font-size:9.5px; letter-spacing:.12em; text-transform:uppercase; opacity:.85;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%;
+}
+.hx-tip{
+  display:flex; align-items:center; gap:9px; margin-top:12px;
+  font-size:12.5px; color:var(--text-dim); line-height:1.4;
+  padding:9px 13px; border-radius:12px;
+  background:rgba(255,255,255,.03); border:1px solid var(--line-soft);
+}
+.hx-tip-ic{ font-size:14px; flex-shrink:0; }
+.hs-throws{ gap:18px; }
+.hs-throw-bar{ background:rgba(255,255,255,.05); border-radius:999px; overflow:hidden; }
+.hs-throw-bar span{ border-radius:999px; }
+.hs-throw b{ font-size:14px; }
+.rc2-icon{ transition:transform .25s cubic-bezier(.34,1.56,.64,1); filter:drop-shadow(0 8px 18px rgba(0,0,0,.55)); }
+.rankcard2:hover .rc2-icon{ transform:scale(1.06); }
+.home-grid{ gap:16px; }
+
+/* ---------- PLAY v2 ---------- */
+.play-hero{ padding:26px 28px 20px; }
+.mode-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-top:14px; }
+.mode-card{ border-radius:20px; transition:transform .2s, border-color .2s, box-shadow .2s; }
+.mode-card:not(.mode-locked):hover{
+  transform:translateY(-4px); border-color:var(--line-bright, var(--line));
+  box-shadow:0 20px 44px -18px rgba(0,0,0,.7);
+}
+.mode-card:not(.mode-locked):active{ transform:translateY(-1px) scale(.99); }
+.mode-card.mode-ranked{ border-color:rgba(34,211,163,.35); box-shadow:0 0 34px -18px var(--mint-glow); }
+.mode-card.mode-ranked:hover{ box-shadow:0 0 44px -14px var(--mint-glow), 0 20px 44px -18px rgba(0,0,0,.7); }
+.mode-card.mode-locked{ opacity:.65; }
+@media (max-width: 760px){
+  .mode-grid{ grid-template-columns:1fr; }
+}
+
+/* ---------- LOW-END DEVICES: kill the expensive compositing entirely ---------- */
+body.low-power .topbar, body.low-power .modal-bg, body.low-power .mobile-nav,
+body.low-power .toast2, body.low-power .pre-ready-card, body.low-power .arena-bar,
+body.low-power .match-point-tag{
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+}
+body.low-power .toast2::after{ animation:none !important; }
+body.low-power .grain, body.low-power .noise{ display:none !important; }
+
+/* ---------- READY-UP v2 ---------- */
+.pre-ready-card{
+  border-color:rgba(34,211,163,.25);
+  box-shadow:0 24px 60px -20px rgba(0,0,0,.85), 0 0 36px -16px var(--mint-glow);
+}
+.pr-ready-btn{ box-shadow:0 14px 34px -12px var(--coral-glow); }
+@media (max-width: 600px){
+  .pre-ready{ left:10px; right:10px; transform:translateY(16px); bottom:calc(78px + env(safe-area-inset-bottom, 0px)); }
+  .pre-ready.show{ transform:translateY(0); }
+  .pre-ready-card{ max-width:none; width:100%; padding:14px 16px 16px; gap:10px; }
+  .pr-ready-btn{ width:100%; min-height:52px; font-size:18px; }
+  /* lift your PiP cam above the full-width ready sheet */
+  #screen-game.prematch .duel-video.you{ bottom:215px; }
+}
+
 /* ---------- kill switches for the new effects ---------- */
 body.low-power .lr-rays, body.reduced-motion .lr-rays{ display:none !important; }
 body.low-power .lr-v2 .lr-gift, body.reduced-motion .lr-v2 .lr-gift,
@@ -13608,6 +13798,7 @@ const FIREBASE_CONFIG = {
                 <span class="hx-you-streak-lbl">day streak</span>
               </div>
             </div>
+            <div class="hx-tip" id="hxTip" style="display:none;"><span class="hx-tip-ic">💡</span><span id="hxTipText"></span></div>
           </div>
         </section>
 
@@ -14800,7 +14991,8 @@ const FIREBASE_CONFIG = {
             <button class="dock-emote-btn emote-btn" data-emote="🤔" title="hmm">🤔</button>
             <button class="dock-emote-btn emote-btn" data-emote="😡" title="angry">😡</button>
           </div>
-          <button class="dock-chat-toggle" id="dockChatToggle" title="Chat"><svg viewBox="0 0 24 24"><use href="#i-chat"/></svg></button>
+          <button class="dock-emote-toggle" id="dockEmoteToggle" title="Emotes" aria-label="Emotes">😀</button>
+          <button class="dock-chat-toggle" id="dockChatToggle" title="Chat" aria-label="Chat"><svg viewBox="0 0 24 24"><use href="#i-chat"/></svg></button>
         </div>
 
       </div>
@@ -16227,6 +16419,13 @@ const FIREBASE_CONFIG = {
 /* ===== V10 SUPERNOVA FX layer — decorative only, fully guarded ===== */
 (function(){
   'use strict';
+  /* Clickjacking guard — never let ROSHCAM run inside someone else's iframe */
+  try { if(window.top !== window.self) window.top.location = window.self.location; } catch(e){}
+  /* Self-XSS scam warning */
+  try {
+    console.log('%cSTOP!', 'color:#ff3358;font-size:44px;font-weight:900;');
+    console.log('%cIf someone told you to paste code here, it is a scam (Self-XSS) — it would give them control of your ROSHCAM account.', 'font-size:13px;');
+  } catch(e){}
   var reduce = false;
   try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
   function lowPower(){
@@ -16975,7 +17174,10 @@ function showScreen(name){
     closeSidebarMobile?.();
     closeAllFlyouts?.();
     // The pre-match ready bar only ever belongs to the game screen
-    if(name !== 'game'){ const prb = document.getElementById('preReadyBar'); if(prb) prb.classList.remove('show'); }
+    if(name !== 'game'){
+      const prb = document.getElementById('preReadyBar'); if(prb) prb.classList.remove('show');
+      document.getElementById('screen-game')?.classList.remove('prematch');
+    }
     // Toggle in-game flag (hides mobile bottom nav during a match)
     document.body.classList.toggle('in-game', name === 'game');
     // First-run onboarding the first time a signed-in player reaches the home screen
@@ -18143,7 +18345,7 @@ async function onAuthChanged(user){
       } else {
         const username = 'guest_' + user.uid.slice(0,6);
         const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
-        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, totalXp:0, equippedTitle:'rookie', colorIdx, photoURL:'', bio:'', isAnon:true, friends:[], blocked:[] };
+        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, totalXp:0, prestige:0, prestigeXp:0, equippedTitle:'rookie', colorIdx, photoURL:'', bio:'', isAnon:true, friends:[], blocked:[] };
         await setDoc(ref, { ...state.profile, createdAt: serverTimestamp(), lastSeen: serverTimestamp() });
       }
     } else {
@@ -18582,7 +18784,15 @@ function setupAuthUI(){
   });
 }
 
+// Basic profanity guard for usernames. (A serious moderation pass needs
+// server-side filtering — this stops the obvious drive-bys.)
+const BANNED_NAME_PARTS = ['fuck','shit','bitch','cunt','nigg','faggot','retard','hitler','nazi','rape','whore','slut','penis','kuksuger','fitte','jævel'];
+function nameAllowed(name){
+  const n = (name || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  return !BANNED_NAME_PARTS.some(w => n.includes(w));
+}
 async function reserveUsername(username, uid, checkOnly=false){
+  if(!nameAllowed(username)) throw new Error('That username is not allowed');
   const ref = doc(state.db, 'usernames', username.toLowerCase());
   const existing = await getDoc(ref);
   if(existing.exists()){
@@ -22107,6 +22317,11 @@ function startMatchmakingTips(){
 function stopMatchmakingTips(){ if(state._mmTipTimer){ clearInterval(state._mmTipTimer); state._mmTipTimer = null; } }
 async function findMatch(){
   if(!state.user || !state.cameraReady) return;
+  // Two tabs share one camera + one queue entry — that combination produces
+  // ghost matches. Warn (don't block — the other tab may just be a leftover).
+  try {
+    if(otherTabActive()) toast('ROSHCAM looks open in another tab — close it if matchmaking misbehaves', 'info', { duration: 5000 });
+  } catch(e){}
   // Moderation: banned players can't matchmake
   const ban = getBanStatus(state.profile);
   if(ban){ showBanScreen(ban); return; }
@@ -22707,6 +22922,25 @@ async function enterMatch(matchData){
   // NEW: Show match intro card (slides in, lasts ~2.8s)
   showMatchIntro();
 
+  // CONNECTION WATCHDOG — the #1 "game never starts" cause is WebRTC silently
+  // failing to establish (dead public TURN relay, hostile NAT). Instead of
+  // leaving the player on CONNECTING… forever, bail out after 25s and recover.
+  clearTimeout(state._connWatchdog);
+  state._connWatchdog = setTimeout(async () => {
+    const dcOpen = state.dataChannel?.readyState === 'open';
+    const st = state.pc?.connectionState;
+    if(state.screen !== 'game' || dcOpen || st === 'connected' || state._endMatchCalled) return;
+    console.warn('[watchdog] connection never established (state:', st, ')');
+    if(state.isCasual){
+      toast('Could not connect to your friend — try the challenge again', 'error', { duration: 4500 });
+      try { await teardownMatch(); } catch(e){}
+      showScreen('landing');
+    } else {
+      toast('Could not connect to your opponent — finding a new one…', 'error', { duration: 4000 });
+      try { await nextStranger(); } catch(e){}
+    }
+  }, 25000);
+
   state.pc = new RTCPeerConnection(RTC_CONFIG);
   if(state.localStream) state.localStream.getTracks().forEach(t => state.pc.addTrack(t, state.localStream));
   state.remoteStream = new MediaStream();
@@ -22897,6 +23131,7 @@ function setupDataChannel(dc){
 }
 let sendPeer = function(msg){ if(state.dataChannel?.readyState === 'open') state.dataChannel.send(JSON.stringify(msg)); };
 function onPeerConnected(){
+  clearTimeout(state._connWatchdog);   // connection established — watchdog stands down
   if(state._prematch){
     enterPreReadyPhase();
   } else {
@@ -22932,6 +23167,7 @@ function enterPreReadyPhase(){
   showOppVideo();   // the whole point: you see each other before it gets serious
   setText('#prOppName', '@' + (state.oppProfile?.username || 'opponent'));
   updatePreReadyUI();
+  $('#screen-game')?.classList.add('prematch');
   $('#preReadyBar')?.classList.add('show');
 }
 function updatePreReadyUI(){
@@ -22949,10 +23185,18 @@ function pressPreReady(){
   try { sfxReady(); } catch(e){}
   try { haptic(12); } catch(e){}
   checkPreReadyStart();
+  // If the opponent hasn't readied after 25s, say so instead of dangling.
+  setTimeout(() => {
+    if(state._prematch && state._preReadyYou && !state._preReadyOpp){
+      const w = $('#prWait');
+      if(w) w.textContent = 'Opponent still not ready — they may have stepped away. Use Leave ↗ to find a new match.';
+    }
+  }, 25000);
 }
 function checkPreReadyStart(){
   if(!state._prematch || !state._preReadyYou || !state._preReadyOpp) return;
   state._prematch = false;
+  $('#screen-game')?.classList.remove('prematch');
   $('#preReadyBar')?.classList.remove('show');
   hideOppVideo();   // anti-cheat hiding takes over again for the rounds
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
@@ -22962,7 +23206,35 @@ function checkPreReadyStart(){
   try { haptic(20); } catch(e){}
 }
 on('#preReadyBtn', 'click', pressPreReady);
+// ===== PEER MESSAGE HARDENING =====
+// Everything in a peer message comes from the OTHER player's client, which can
+// be freely modified. Validate every field before it can reach game state or
+// the DOM (msg.value used to flow unvalidated into innerHTML via <use href>).
+const VALID_GESTURES = ['rock', 'paper', 'scissors'];
+const _peerBuckets = {};
+function _peerAllow(kind, max, windowMs){
+  const now = Date.now();
+  const b = _peerBuckets[kind] || (_peerBuckets[kind] = []);
+  while(b.length && now - b[0] > windowMs) b.shift();
+  if(b.length >= max) return false;
+  b.push(now);
+  return true;
+}
 function handlePeerMessage(msg){
+  if(!msg || typeof msg !== 'object' || typeof msg.type !== 'string') return;
+  if(msg.type === 'gesture' && !VALID_GESTURES.includes(msg.value)) return;
+  if(msg.type === 'round_result' && !['win', 'lose', 'draw', 'forfeit'].includes(msg.result)) return;
+  if(msg.type === 'start_round' && (state.phase !== 'idle' || state.countdownRunning || state._prematch)) return;
+  if(msg.type === 'chat'){
+    if(typeof msg.text !== 'string' || !msg.text.trim()) return;
+    msg.text = msg.text.slice(0, 140);
+    if(!_peerAllow('chat', 8, 10000)) return;          // max 8 messages / 10s
+  }
+  if(msg.type === 'emote'){
+    if(typeof msg.emoji !== 'string') return;
+    msg.emoji = [...msg.emoji].slice(0, 3).join('');   // a couple of codepoints, never paragraphs
+    if(!_peerAllow('emote', 6, 5000)) return;          // max 6 emotes / 5s
+  }
   // Any inbound message proves the peer is back — cancel a pending reconnect grace.
   if(state._reconnecting) onPeerReconnected();
   switch(msg.type){
@@ -23453,6 +23725,8 @@ function resetMatchUI(){
   state.myPrediction = null;
   setText('#scoreYou', 0);
   setText('#scoreOpp', 0);
+  setText('#arenaScoreLabel', 'BEST OF 3');
+  document.querySelector('.duel-dock')?.classList.remove('emotes-open', 'chat-open');
   resetRoundIndicator();
   resetPredictionPicker();
   updateOnFireStatus();
@@ -23553,6 +23827,10 @@ async function runCountdown(){
   state._shootAt = Date.now();   // anti-cheat: reference point for throw timing
   cd.textContent = 'SHOOT!';
   cd.classList.add('shoot');
+  // Reveal the opponent's cam AT the shoot moment — you should see their throw
+  // live, not after the fact. Reaction-cheating is still caught by the
+  // fairplay throw-timing check.
+  showOppVideo();
   setText('#roundState', 'THROW NOW');
   $('#shootFlash').classList.remove('fire'); void $('#shootFlash').offsetWidth; $('#shootFlash').classList.add('fire');
   sfxShoot();
@@ -23767,8 +24045,9 @@ function applyRoundResult(result, yourMove, oppMove){
     // Both have hit the current threshold — raise it by 1 (overtime)
     state.matchRoundsToWin = Math.max(state.scoreYou, state.scoreOpp) + 1;
     console.log('[match] OVERTIME — both at threshold, new target:', state.matchRoundsToWin);
-    // Visual signal of overtime
+    // Visual signal of overtime (the score label tracks the live target too)
     try { showAnnouncer('OVERTIME — FIRST TO ' + state.matchRoundsToWin); } catch(e){}
+    try { setText('#arenaScoreLabel', 'OT · FIRST TO ' + state.matchRoundsToWin); } catch(e){}
   }
 
   const matchOver = !isDraw && (
@@ -24059,6 +24338,7 @@ async function endMatch(){
 
   // The match can end during the ready-up phase (opponent left) — clear it.
   state._prematch = false;
+  $('#screen-game')?.classList.remove('prematch');
   $('#preReadyBar')?.classList.remove('show');
 
   // SYNC: notify opponent that our side is ending the match
@@ -25565,6 +25845,11 @@ function onPeerReconnected(){
 let teardownMatch = async function(){
   console.log('[teardown] starting cleanup');
   stopCountdownSample();
+  // Clear the pre-match ready-up state + connection watchdog for this match.
+  state._prematch = false;
+  clearTimeout(state._connWatchdog);
+  $('#screen-game')?.classList.remove('prematch');
+  $('#preReadyBar')?.classList.remove('show');
   // Clear in-match presence so friends see you as free again.
   try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: false }).catch(()=>{}); } catch(e){}
   // CRITICAL: set phase to 'ended' BEFORE closing pc/dc, so the close handlers
@@ -26037,7 +26322,9 @@ async function refreshDebugInfo(){
 }
 // Auto-refresh debug info every 2s while visible
 setInterval(() => { if($('#matchDebug')?.style.display === 'block') refreshDebugInfo(); }, 2000);
-on('#nextBtn', 'click', nextStranger);
+// NOTE: #nextBtn is wired to playAgain() further up. It used to ALSO be wired
+// to nextStranger() here — one click ran teardown + findMatch TWICE, leaving
+// duplicate queue entries and poisoned listeners (matches that never start).
 on('#helpBtn', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
 
 // ===== SIDEBAR NAV =====
@@ -26139,10 +26426,30 @@ function renderHomeSpotlight(p){
     }
   } catch(e){}
 }
+// Rotating daily tip on the home hero — one per calendar day.
+const HOME_TIPS = [
+  'Most players open with Rock. Most players also know that. Layer two.',
+  'Watch their eyes during the countdown — hesitation usually means a switch.',
+  'On a losing streak? Players repeat what just beat you. Counter it.',
+  'Win streaks earn bonus ELO — protect a 3-streak like it\'s match point.',
+  'Your throw history is on the home page — if you can read yours, they can too.',
+  'Paper is the rarest opener at high ranks. Use that.',
+  'The 7-day login cycle peaks at day 7 — don\'t break the chain.',
+  'Predicting their throw before the round pays XP when you\'re right.',
+  'After a draw, most people switch to what would have beaten THEIR last throw.',
+  'Good lighting = faster hand detection = your throw lands on time.',
+  'Challenge friends from their profile — casual matches never risk ELO.',
+  'Hold your gesture steady through “SHOOT!” — flickering hands read late.',
+];
 function renderHomePage(){
   if(!state.profile) return;
   try { claimDailyLoginReward(); } catch(e){}
   try { maybeShowUpdateToast(); } catch(e){}
+  try {
+    const day = Math.floor(Date.now() / 86400000);
+    setText('#hxTipText', HOME_TIPS[day % HOME_TIPS.length]);
+    const tipEl = $('#hxTip'); if(tipEl) tipEl.style.display = '';
+  } catch(e){}
   try { applySeasonSoftReset(); } catch(e){}
   try { refreshSeasonUI(); } catch(e){}
   const p = state.profile;
@@ -26631,8 +26938,36 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ===== UPDATE LOG =====
-const APP_VERSION = '1.3.1';
+const APP_VERSION = '1.3.5';
 const UPDATE_LOG = [
+  { v: '1.3.5', date: 'June 2026', title: 'Locked down', items: [
+    ['fixed', 'Security: messages from your opponent’s client are now strictly validated before touching the game (closed an HTML-injection hole)'],
+    ['new', 'Anti-spam: chat and emotes from opponents are rate-limited'],
+    ['new', 'Clickjacking protection and a self-XSS console warning'],
+    ['new', 'Usernames pass a profanity check'],
+    ['improved', 'Weak devices auto-enable low power mode (and it now disables far more heavy effects)'],
+    ['improved', 'A second open tab is detected and warned about before queueing'],
+  ]},
+  { v: '1.3.4', date: 'June 2026', title: 'Matches that actually start', items: [
+    ['fixed', 'Critical: the Next button ran matchmaking twice per click, leaving ghost queue entries and matches that never started'],
+    ['fixed', 'A 25s connection watchdog now recovers from failed connections — auto-requeues instead of “CONNECTING…” forever'],
+    ['fixed', 'Ready-up state is fully cleaned up when a match is torn down mid-phase'],
+    ['improved', 'If your opponent never readies up, the ready screen now tells you instead of dangling'],
+    ['fixed', 'Guest profiles get the same progression fields as full accounts'],
+  ]},
+  { v: '1.3.3', date: 'June 2026', title: 'See the throw', items: [
+    ['fixed', 'You now see your opponent’s camera the moment “SHOOT!” hits — watch the throw live'],
+    ['improved', 'Ready-up phase: cleaner card, full-width on mobile, your mini-cam lifts out of the way'],
+    ['improved', 'Home page refresh: clearer stat tiles, daily tip, polished rank & throw-style cards'],
+    ['improved', 'Play page: bolder mode cards with ranked front and centre'],
+    ['fixed', 'Title cosmetics no longer truncate into “Challenger …” soup'],
+  ]},
+  { v: '1.3.2', date: 'June 2026', title: 'Arena, decluttered', items: [
+    ['new', 'Mobile matches now use a FaceTime-style layout — opponent fills the screen, your camera floats as a mini card'],
+    ['new', 'One-row match dock on phones: predictions, emotes and chat each a tap away'],
+    ['improved', 'Cleaner match screen on desktop — icon-only controls, quieter top bar'],
+    ['improved', 'The score label now tracks overtime (“OT · FIRST TO 3”)'],
+  ]},
   { v: '1.3.1', date: 'June 2026', title: 'Polish pass', items: [
     ['new', 'Brand-new onboarding — shorter, cleaner, and it flows straight into camera setup'],
     ['improved', 'Camera calibration redesigned — and it no longer pops up over the tutorial'],
@@ -26725,7 +27060,11 @@ function maybeShowUpdateToast(){
     const seq = ++availSeq;
     reserveUsername(name, state.user?.uid, true)
       .then(() => { if(seq === availSeq){ el.className = 'nu-avail ok'; el.textContent = '✓ available'; } })
-      .catch(() => { if(seq === availSeq){ el.className = 'nu-avail taken'; el.textContent = '✕ already taken'; } });
+      .catch((err) => {
+        if(seq !== availSeq) return;
+        el.className = 'nu-avail taken';
+        el.textContent = /not allowed/i.test(err?.message || '') ? '✕ not allowed' : '✕ already taken';
+      });
   }
   inp.addEventListener('input', () => { updatePreview(); clearTimeout(availTimer); availTimer = setTimeout(checkAvail, 450); });
   sel?.addEventListener('change', updatePreview);
@@ -26764,6 +27103,31 @@ function maybeShowUpdateToast(){
     const b = $(sel); if(!b) return;
     new MutationObserver(syncTitle).observe(b, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['style'] });
   });
+})();
+
+// ===== MULTI-TAB DETECTION (BroadcastChannel) =====
+let _otherTabSeen = 0;
+try {
+  const _tabBC = new BroadcastChannel('rosham_tabs');
+  _tabBC.onmessage = (e) => {
+    if(e.data === 'hello') _tabBC.postMessage('here');
+    if(e.data === 'here' || e.data === 'hello') _otherTabSeen = Date.now();
+  };
+  _tabBC.postMessage('hello');
+  setInterval(() => _tabBC.postMessage('hello'), 5000);
+} catch(e){}
+function otherTabActive(){ return Date.now() - _otherTabSeen < 11000; }
+
+// ===== AUTO LOW-POWER ON WEAK HARDWARE (a manual choice always wins) =====
+(() => {
+  try {
+    if(localStorage.getItem('rosham_low_power') !== null) return;   // already decided
+    const weak = (navigator.deviceMemory && navigator.deviceMemory <= 2)
+              || (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 3);
+    if(!weak) return;
+    setLowPower(true);
+    setTimeout(() => { try { toast('⚡ Low power mode enabled for smoother play — change any time in Settings', 'info', { duration: 6500 }); } catch(e){} }, 2600);
+  } catch(e){}
 })();
 
 // ===== CONNECTIVITY NOTICES =====
@@ -28313,12 +28677,20 @@ on('#dockChatToggle', 'click', () => {
   const dock = document.querySelector('.duel-dock');
   if(dock){
     dock.classList.toggle('chat-open');
+    dock.classList.remove('emotes-open');
     if(dock.classList.contains('chat-open')){
       setTimeout(() => $('#chatInput')?.focus(), 100);
       // clear unread badge
       $('#dockChatToggle')?.classList.remove('has-unread');
     }
   }
+});
+// Mobile: emotes live behind a toggle so the dock stays one slim row
+on('#dockEmoteToggle', 'click', () => {
+  const dock = document.querySelector('.duel-dock');
+  if(!dock) return;
+  dock.classList.toggle('emotes-open');
+  dock.classList.remove('chat-open');
 });
 
 // ===== MOBILE: arena "more" button opens an action sheet =====
