@@ -5902,6 +5902,7 @@ h2.match-title{
   font-family: var(--font-display);
   font-stretch: 60%;
   font-weight: 800;
+  font-variant-numeric: tabular-nums; /* score flips don't shift the layout */
   font-size: 26px;
   line-height: 1;
   letter-spacing: -.04em;
@@ -6310,9 +6311,11 @@ h2.match-title{
   display: none;
   align-items: center;
   justify-content: center;
-  background: rgba(8,5,15,.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  background: rgba(8,5,15,.72);
+  /* Lighter blur — a 24px backdrop blur over two live video streams cost real
+     frame time on phones right at the most timing-critical moment. */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255,255,255,.08);
 }
 .duel-countdown.show{ display: flex; }
@@ -7089,7 +7092,14 @@ h2.match-title{
   .duel-divider{ width: 100%; height: 48px; flex-direction: row; }
   .duel-divider-vs{ font-size: 24px; }
   .duel-divider::before, .duel-divider::after{ display: none; }
-  .duel-countdown{ font-size: clamp(110px, 28vw, 200px) !important; }
+  /* Scale the circle WITH the number — the digits used to outgrow the fixed
+     160px circle on tablet widths and spill outside it. */
+  .duel-countdown{
+    font-size: clamp(110px, 28vw, 200px) !important;
+    width: clamp(160px, 38vw, 270px) !important;
+    height: clamp(160px, 38vw, 270px) !important;
+  }
+  .duel-countdown.shoot{ width: auto !important; height: auto !important; }
   .duel-intro-inner{ gap: clamp(14px, 4vh, 28px); padding: 24px 18px; max-width: 100%; }
   .duel-intro-vs{ grid-template-columns: 1fr; grid-template-rows: auto auto auto; gap: clamp(12px, 3.5vh, 22px); }
   .duel-intro-vs-text{ font-size: clamp(40px, 14vw, 64px); }
@@ -12863,6 +12873,10 @@ input:focus, select:focus, textarea:focus{
 .nu-avail.taken{ color:var(--coral); }
 .nu-continue{ width:100%; min-height:48px; font-size:15px; justify-content:center; margin-top:4px; }
 .nu-note{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.04em; text-align:center; margin:14px 0 0; }
+/* Social preferences (accept friend requests / challenges) shown at signup */
+.nu-social{ display:flex; flex-direction:column; gap:9px; }
+.nu-social .toggle-row{ margin:0; }
+.nu-social-note{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.04em; margin-top:2px; }
 
 /* ---------- UPDATE LOG ---------- */
 .ul-intro{ color:var(--text-dim); font-size:13px; margin:-6px 0 18px; }
@@ -13207,7 +13221,17 @@ body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none
   background:linear-gradient(180deg, #ffd95e, var(--amber, #ffd33d)); color:#1c1402; border:none; font-weight:800;
 }
 .xpb-card:not(.empty) .xpb-use:hover{ background:linear-gradient(180deg, #ffe27e, #ffd95e); }
-.boost-pill{ border-color:rgba(255,211,61,.5) !important; color:var(--amber, #ffd33d) !important; animation:soft 1.8s ease-in-out infinite; }
+/* Token boost pill — dark glassy pill with amber text so the countdown stays
+   readable (the old amber-on-amber-gradient made the timer near-invisible),
+   and visually distinct from the solid-amber weekend pill. */
+.boost-pill{
+  background:linear-gradient(180deg, rgba(255,211,61,.16), rgba(255,154,61,.07)) !important;
+  border:1px solid rgba(255,211,61,.55) !important;
+  color:var(--amber, #ffd33d) !important;
+  box-shadow:0 0 14px -6px rgba(255,211,61,.6);
+  animation:soft 1.8s ease-in-out infinite;
+}
+.boost-pill #boostPillTime{ font-variant-numeric:tabular-nums; }
 @media (max-width:600px){
   .xpboost-panel{ padding:14px; }
   .xpb-grid{ gap:8px; }
@@ -13447,30 +13471,43 @@ body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none
 
 /* ---------- sidebar profile dropdown ---------- */
 .sidebar-foot{ position:relative; }
+/* Styled to match the flyout panels (notifications / messages) so every
+   popover in the app shares one surface language: same gradient surface,
+   same border, same shadow, same mono section header. */
 .sp-menu{
   position:absolute; left:8px; right:8px; bottom:calc(100% + 10px); z-index:120;
   display:flex; flex-direction:column; gap:2px; padding:6px;
-  background:rgba(19,16,28,.98); border:1px solid var(--line-bright, var(--line));
+  background:linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid var(--line);
   border-radius:16px;
-  box-shadow:0 24px 60px -18px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.02) inset;
-  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  box-shadow:0 24px 60px rgba(0,0,0,.6);
   opacity:0; pointer-events:none; transform:translateY(10px) scale(.97);
   transform-origin:bottom center;
   transition:opacity .22s ease, transform .28s cubic-bezier(.2,1.2,.3,1);
 }
 .sp-menu.open{ opacity:1; pointer-events:auto; transform:translateY(0) scale(1); }
+.sp-menu-head{
+  display:flex; align-items:center; justify-content:space-between;
+  margin:-6px -6px 4px; padding:12px 14px;
+  border-bottom:1px solid var(--line-soft);
+  font-family:var(--font-mono); font-size:10px; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim);
+}
+.sp-menu-head b{ color:var(--text); font-weight:700; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .sp-menu-item{
   display:flex; align-items:center; gap:11px;
   padding:10px 12px; border-radius:10px; border:none; cursor:pointer;
   background:transparent; color:var(--text); font-size:13px; font-weight:600; text-align:left;
   transition:background .14s, transform .14s;
 }
-.sp-menu-item svg{ color:var(--text-dim); flex-shrink:0; }
-.sp-menu-item:hover{ background:rgba(255,255,255,.06); }
+.sp-menu-item svg{ color:var(--text-dim); flex-shrink:0; transition:color .14s; }
+.sp-menu-item:hover{ background:var(--surface-2); }
+.sp-menu-item:hover svg{ color:var(--text); }
 .sp-menu-item:active{ transform:scale(.98); }
 .sp-menu-item.danger{ color:var(--coral); }
 .sp-menu-item.danger svg{ color:var(--coral); opacity:.85; }
 .sp-menu-item.danger:hover{ background:rgba(255,51,88,.08); }
+.sp-menu-item.danger:hover svg{ color:var(--coral); }
 .sp-menu-divider{ height:1px; margin:4px 8px; background:var(--line-soft); }
 #sidebarProfile{ cursor:pointer; }
 #sidebarProfile .sp-chevron{ transition:transform .3s cubic-bezier(.2,.9,.3,1.4); }
@@ -13767,6 +13804,7 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
     <div class="sidebar-foot">
       <!-- Profile dropdown — slides up over the chip -->
       <div class="sp-menu" id="spMenu">
+        <div class="sp-menu-head"><span>Account</span><b id="spMenuName">—</b></div>
         <button class="sp-menu-item" data-spm="profile"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-user"/></svg> View profile</button>
         <button class="sp-menu-item" data-spm="edit"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-edit"/></svg> Edit profile</button>
         <button class="sp-menu-item" data-spm="camera"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-camera"/></svg> Camera &amp; tracking</button>
@@ -14110,6 +14148,19 @@ const FIREBASE_CONFIG = {
               <label>Password</label>
               <input type="password" name="password" required minlength="6" placeholder="6+ characters" autocomplete="new-password" />
             </div>
+            <div class="field nu-social">
+              <label>Social</label>
+              <label class="toggle-row">
+                <input type="checkbox" name="acceptFriends" checked />
+                <span class="toggle-track"><span class="toggle-knob"></span></span>
+                <span class="toggle-label">Accept friend requests</span>
+              </label>
+              <label class="toggle-row">
+                <input type="checkbox" name="acceptChallenges" checked />
+                <span class="toggle-track"><span class="toggle-knob"></span></span>
+                <span class="toggle-label">Accept challenges from other players</span>
+              </label>
+            </div>
             <button class="btn btn-primary" type="submit" style="margin-top:6px;">Create account</button>
           </form>
 
@@ -14167,6 +14218,20 @@ const FIREBASE_CONFIG = {
             <div class="field">
               <label>Country</label>
               <select name="country" id="newUserCountry" required></select>
+            </div>
+            <div class="field nu-social">
+              <label>Social</label>
+              <label class="toggle-row">
+                <input type="checkbox" name="acceptFriends" checked />
+                <span class="toggle-track"><span class="toggle-knob"></span></span>
+                <span class="toggle-label">Accept friend requests</span>
+              </label>
+              <label class="toggle-row">
+                <input type="checkbox" name="acceptChallenges" checked />
+                <span class="toggle-track"><span class="toggle-knob"></span></span>
+                <span class="toggle-label">Accept challenges from other players</span>
+              </label>
+              <div class="nu-social-note">You can change both any time in Settings → Privacy.</div>
             </div>
             <button class="btn btn-primary nu-continue" type="submit">Lock it in — let's play <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-next"/></svg></button>
           </form>
@@ -14404,7 +14469,7 @@ const FIREBASE_CONFIG = {
       <div class="nav-page" data-page="play">
         <div class="dxp-banner" style="display:none; margin:0 0 14px;">
           <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
-          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
           <div class="dxp-mult">2×</div>
         </div>
         <!-- ARENA HERO -->
@@ -14533,7 +14598,7 @@ const FIREBASE_CONFIG = {
         </div>
         <div class="dxp-banner" style="display:none;">
           <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
-          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
           <div class="dxp-mult">2×</div>
         </div>
         <div class="stat-grid-4" style="margin-bottom:14px;">
@@ -14596,7 +14661,7 @@ const FIREBASE_CONFIG = {
         <!-- Weekend 2× XP banner — only shown during the weekend window -->
         <div class="dxp-banner" id="dxpBanner" style="display:none;">
           <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
-          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub" id="dxpSub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub" id="dxpSub">Double XP on every match · ends Sun 11:59 PM</div></div>
           <div class="dxp-mult">2×</div>
         </div>
         <div class="card rank-page-hero">
@@ -14699,7 +14764,7 @@ const FIREBASE_CONFIG = {
         </div>
         <div class="dxp-banner" style="display:none;">
           <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
-          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 23:59</div></div>
+          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
           <div class="dxp-mult">2×</div>
         </div>
         <div class="ach-level-banner">
@@ -16965,11 +17030,11 @@ const FIREBASE_CONFIG = {
 // ============= CUSTOM AUDIO DATA (base64 data URIs) =============
 // RANKUP_SFX_DATA: the user's rank-up sound (~7s). MENU_MUSIC_DATA: looping
 // main-menu music (~30s). Empty string => fall back to synth / no music.
-/*RANKUP_DATA_START*/const RANKUP_SFX_DATA = "sfx-rankup.mp3";/*RANKUP_DATA_END*/
-/*MUSIC_DATA_START*/const MENU_MUSIC_DATA = "menu-music.mp3";/*MUSIC_DATA_END*/
-/*MATCHFOUND_DATA_START*/const MATCH_FOUND_SFX_DATA = "sfx-matchfound.mp3";
-/*COUNTDOWN_DATA_START*/const COUNTDOWN_SFX_DATA = "sfx-countdown.mp3";
-/*LEGEND_DATA_START*/const LEGEND_SFX_DATA = "sfx-legend.mp3";
+/*RANKUP_DATA_START*/const RANKUP_SFX_DATA = "sfxrankup.mp3";/*RANKUP_DATA_END*/
+/*MUSIC_DATA_START*/const MENU_MUSIC_DATA = "menumusic.mp3";/*MUSIC_DATA_END*/
+/*MATCHFOUND_DATA_START*/const MATCH_FOUND_SFX_DATA = "sfxmatchfound.mp3";
+/*COUNTDOWN_DATA_START*/const COUNTDOWN_SFX_DATA = "sfxcountdown.mp3";
+/*LEGEND_DATA_START*/const LEGEND_SFX_DATA = "sfxlegend.mp3";
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
@@ -17445,7 +17510,7 @@ function showSeasonResetPopup(season, oldRating, newRating, prevRankName, reward
   }
   $('#seasonModal')?.classList.add('show');
 }
-// ===== WEEKEND 2× XP — Friday 18:00 through Sunday 23:59 (local time) =====
+// ===== WEEKEND 2× XP — Friday 6 pm through Sunday 11:59 pm (player's local time) =====
 function isDoubleXP(){
   const d = new Date();
   const day = d.getDay(); // 0 Sun … 6 Sat
@@ -17454,13 +17519,21 @@ function isDoubleXP(){
   if(day === 5 && d.getHours() >= 18) return true; // Friday evening
   return false;
 }
+// 12-hour clock (e.g. "11:59 PM"), rendered in the player's own locale/timezone.
+function _fmt12h(hours, minutes){
+  const d = new Date(); d.setHours(hours, minutes, 0, 0);
+  try { return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true }); }
+  catch(e){
+    const ap = hours >= 12 ? 'PM' : 'AM';
+    const h = hours % 12 || 12;
+    return `${h}:${String(minutes).padStart(2, '0')} ${ap}`;
+  }
+}
 function doubleXpEndsText(){
-  // Rough "ends Sunday midnight" indicator
-  const d = new Date();
-  const day = d.getDay();
-  if(day === 0){ const h = 23 - d.getHours(); return `${h}h left`; }
-  if(day === 6){ return `ends Sun 23:59`; }
-  return `ends Sun 23:59`;
+  const day = new Date().getDay();
+  const end = _fmt12h(23, 59); // Sunday 11:59 PM, local time
+  if(day === 0) return `ends tonight ${end}`;
+  return `ends Sun ${end}`;
 }
 
 function calcMatchXp(opts){
@@ -17970,31 +18043,22 @@ async function initSampleAudio(){
       sampleAudio.sfxGain.gain.value = 1;
       sampleAudio.sfxGain.connect(audioCtx.destination);
     }
-    // Decode rank-up
-    if(!sampleAudio.rankupBuf && typeof RANKUP_SFX_DATA !== 'undefined' && RANKUP_SFX_DATA){
-      const ab = await _loadAudioData(RANKUP_SFX_DATA);
-      if(ab) sampleAudio.rankupBuf = await audioCtx.decodeAudioData(ab);
-    }
-    // Decode music
-    if(!sampleAudio.musicBuf && typeof MENU_MUSIC_DATA !== 'undefined' && MENU_MUSIC_DATA){
-      const ab = await _loadAudioData(MENU_MUSIC_DATA);
-      if(ab) sampleAudio.musicBuf = await audioCtx.decodeAudioData(ab);
-    }
-    // Decode match-found (VS screen) sfx
-    if(!sampleAudio.matchFoundBuf && typeof MATCH_FOUND_SFX_DATA !== 'undefined' && MATCH_FOUND_SFX_DATA){
-      const ab = await _loadAudioData(MATCH_FOUND_SFX_DATA);
-      if(ab) sampleAudio.matchFoundBuf = await audioCtx.decodeAudioData(ab);
-    }
-    // Decode in-match countdown sfx
-    if(!sampleAudio.countdownBuf && typeof COUNTDOWN_SFX_DATA !== 'undefined' && COUNTDOWN_SFX_DATA){
-      const ab = await _loadAudioData(COUNTDOWN_SFX_DATA);
-      if(ab) sampleAudio.countdownBuf = await audioCtx.decodeAudioData(ab);
-    }
-    // Decode the epic Legend rank-up sound
-    if(!sampleAudio.legendBuf && typeof LEGEND_SFX_DATA !== 'undefined' && LEGEND_SFX_DATA){
-      const ab = await _loadAudioData(LEGEND_SFX_DATA);
-      if(ab) sampleAudio.legendBuf = await audioCtx.decodeAudioData(ab);
-    }
+    // Fetch + decode all five samples IN PARALLEL — first audio becomes ready
+    // several seconds sooner than the old one-after-another chain.
+    const jobs = [
+      ['rankupBuf',     typeof RANKUP_SFX_DATA      !== 'undefined' ? RANKUP_SFX_DATA      : ''],
+      ['musicBuf',      typeof MENU_MUSIC_DATA      !== 'undefined' ? MENU_MUSIC_DATA      : ''],
+      ['matchFoundBuf', typeof MATCH_FOUND_SFX_DATA !== 'undefined' ? MATCH_FOUND_SFX_DATA : ''],
+      ['countdownBuf',  typeof COUNTDOWN_SFX_DATA   !== 'undefined' ? COUNTDOWN_SFX_DATA   : ''],
+      ['legendBuf',     typeof LEGEND_SFX_DATA      !== 'undefined' ? LEGEND_SFX_DATA      : ''],
+    ];
+    await Promise.all(jobs.map(async ([key, src]) => {
+      if(sampleAudio[key] || !src) return;
+      const ab = await _loadAudioData(src);
+      if(!ab) return;
+      try { sampleAudio[key] = await audioCtx.decodeAudioData(ab); }
+      catch(e){ console.error('[audio] decode failed for', src, e); }
+    }));
     sampleAudio.ready = true;
     // If the music file failed (slow host, first-deploy 404), retry a couple of
     // times instead of staying silent for the whole session.
@@ -18878,6 +18942,7 @@ function updateSidebarProfile(){
   if(!state.profile) return;
   const p = state.profile;
   setText('#sidebarName', p.username || '—');
+  setText('#spMenuName', p.username ? '@' + p.username : '—');
   setText('#sidebarRating', p.rating || 1000);
   const av = $('#sidebarAv');
   if(av){
@@ -18950,14 +19015,18 @@ function refreshStatsUI(){
     const card = $('#homeRankCard'); if(card) card.classList.remove('is-unranked');
   }
 
-  // Update the NEW rank-display icon
-  const rankIcon = $('#rankIconCurrent');
-  if(rankIcon){
-    rankIcon.innerHTML = '';
-    const svg2 = document.createElementNS('http://www.w3.org/2000/svg','use');
-    svg2.setAttribute('href', '#' + rank.icon);
-    rankIcon.appendChild(svg2);
-    rankIcon.setAttribute('class', rank.cls);
+  // Update the NEW rank-display icon — but NOT during placements, or this
+  // would overwrite the unranked.png icon set just above with the rating-derived
+  // rank art (the "Your rank doesn't show unranked" bug).
+  if(!inPlacements(p)){
+    const rankIcon = $('#rankIconCurrent');
+    if(rankIcon){
+      rankIcon.innerHTML = '';
+      const svg2 = document.createElementNS('http://www.w3.org/2000/svg','use');
+      svg2.setAttribute('href', '#' + rank.icon);
+      rankIcon.appendChild(svg2);
+      rankIcon.setAttribute('class', rank.cls);
+    }
   }
   if(!inPlacements(p)) setText('#heroRating', rating);  // keep '—' while unranked
 
@@ -19163,7 +19232,7 @@ function setupAuthUI(){
       await reserveUsername(username, null, true);
       const cred = await createUserWithEmailAndPassword(state.auth, fd.get('email'), fd.get('password'));
       try { await updateProfile(cred.user, { displayName: username }); } catch(e){}
-      await createProfile(cred.user.uid, username, fd.get('country'));
+      await createProfile(cred.user.uid, username, fd.get('country'), socialPrefsFrom(fd));
     } catch(err){ showErr('#authError', friendlyError(err)); }
   });
   $('#guestBtn').addEventListener('click', async () => {
@@ -19208,7 +19277,7 @@ function setupAuthUI(){
     }
     try {
       await reserveUsername(username, state.user.uid);
-      await createProfile(state.user.uid, username, fd.get('country'));
+      await createProfile(state.user.uid, username, fd.get('country'), socialPrefsFrom(fd));
       await onAuthChanged(state.user);
     } catch(err){ showErr('#newUserError', friendlyError(err)); }
   });
@@ -19231,7 +19300,7 @@ async function reserveUsername(username, uid, checkOnly=false){
     await setDoc(ref, { uid, createdAt: serverTimestamp() });
   }
 }
-async function createProfile(uid, username, country){
+async function createProfile(uid, username, country, opts = {}){
   await reserveUsername(username, uid);
   const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
   await setDoc(doc(state.db, 'users', uid), {
@@ -19243,7 +19312,17 @@ async function createProfile(uid, username, country){
     createdAt: serverTimestamp(),
     lastSeen: serverTimestamp(),
     friends: [], blocked: [],
+    // Social preferences chosen during signup (both default to allowing)
+    blockFriendRequests: !!opts.blockFriendRequests,
+    acceptChallenges: opts.acceptChallenges !== false,
   });
+}
+// Read the signup forms' social toggles (unchecked boxes are absent from FormData)
+function socialPrefsFrom(fd){
+  return {
+    blockFriendRequests: fd.get('acceptFriends') == null,
+    acceptChallenges: fd.get('acceptChallenges') != null,
+  };
 }
 function friendlyError(err){
   const code = err.code || '';
@@ -27071,10 +27150,13 @@ function refreshSeasonUI(){
   setText('#seasonTime', `Season ends ${s.daysLeft >= 1 ? 'in ' + s.daysLeft + ' days' : seasonCountdownText()}`);
   const bar = $('#seasonBarFill'); if(bar) bar.style.width = (s.progress * 100) + '%';
   setText('#scDays', s.daysLeft);
-  // Weekend 2× XP — toggle EVERY banner/pill (.dxp-banner, .dxp-pill) at once.
+  // Weekend 2× XP — toggle every weekend banner/pill at once. The token boost
+  // pill (#boostPill) also carries .dxp-pill for styling but has its OWN
+  // visibility logic (updateBoostPill) — excluding it here fixes the bug where
+  // it flashed into the navbar during weekends with no token active.
   const on = isDoubleXP();
   document.querySelectorAll('.dxp-banner').forEach(el => el.style.display = on ? '' : 'none');
-  document.querySelectorAll('.dxp-pill').forEach(el => el.style.display = on ? '' : 'none');
+  document.querySelectorAll('.dxp-pill:not(.boost-pill)').forEach(el => el.style.display = on ? '' : 'none');
   if(on){ document.querySelectorAll('.dxp-sub').forEach(el => el.textContent = `Double XP on every match · ${doubleXpEndsText()}`); }
   // First time you land during a 2× weekend → a celebratory one-time toast.
   if(on) try { maybeDoubleXpToast(); } catch(e){}
@@ -27491,6 +27573,7 @@ document.addEventListener('keydown', (e) => {
     return;
   }
   try { closeAllFlyouts?.(); } catch(_){}
+  try { toggleSpMenu?.(false); } catch(_){}
 });
 // Keyboard shortcuts: M = mute · R = ready up · ? = how to play (never while typing).
 document.addEventListener('keydown', (e) => {
@@ -27514,8 +27597,17 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ===== UPDATE LOG =====
-const APP_VERSION = '2.2.0';
+const APP_VERSION = '2.2.1';
 const UPDATE_LOG = [
+  { v: '2.2.1', date: 'June 2026', title: 'Sound on 🔊', items: [
+    ['fixed', 'All sounds are back — menu music, match-found, countdown, rank-up and the Legend fanfare were pointing at the wrong file names'],
+    ['fixed', 'Your rank on Home now shows the unranked emblem during placement matches'],
+    ['fixed', 'The 2× XP token pill no longer flashes in the navbar when you have no boost running, and its timer is actually readable now'],
+    ['new', 'Choose whether you accept friend requests and challenges right at signup — including after Google sign-in'],
+    ['improved', '2× XP weekend times show as a normal 12-hour clock in your local time'],
+    ['improved', 'Profile dropdown restyled to match the rest of the app, with your handle up top'],
+    ['improved', 'Sounds load in parallel (audio is ready sooner) and the in-match countdown no longer overflows its circle on tablets'],
+  ]},
   { v: '2.2.0', date: 'June 2026', title: 'Profile power', items: [
     ['new', 'Click your profile in the sidebar → a smooth dropdown with View/Edit profile, Camera & tracking, Match history, Sign out and more (the arrow flips!)'],
     ['new', 'Profile cards redesigned again — tighter hero, glass stat tiles, sticky action bar, fully mobile-friendly'],
