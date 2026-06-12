@@ -4419,12 +4419,12 @@ body.low-power .ach-unlock-toast, body.low-power .ach-unlock-toast::before{ anim
 }
 .hand-mini[data-g="rock"]{--c:var(--coral)}
 .hand-mini[data-g="paper"]{--c:var(--mint)}
-.hand-mini[data-g="scissors"]{--c:var(--amber)}
+.hand-mini[data-g="scissors"]{--c:var(--violet)}
 .hand-mini svg{width:42px; height:42px; transition: transform .2s;}
 .hand-mini:hover svg{ transform: scale(1.1); }
 .hand-mini[data-g="rock"] svg{color:var(--coral);}
 .hand-mini[data-g="paper"] svg{color:var(--mint);}
-.hand-mini[data-g="scissors"] svg{color:var(--amber);}
+.hand-mini[data-g="scissors"] svg{color:var(--violet);}
 
 .match-options{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px;}
 .opt-pill{
@@ -6209,7 +6209,7 @@ h2.match-title{
 .duel-gesture-indicator .icon svg{ width: 14px; height: 14px; }
 .duel-gesture-indicator.rock{ color: var(--coral); border-color: rgba(255,45,107,.35); }
 .duel-gesture-indicator.paper{ color: var(--mint); border-color: rgba(60,255,185,.35); }
-.duel-gesture-indicator.scissors{ color: var(--amber); border-color: rgba(255,206,61,.35); }
+.duel-gesture-indicator.scissors{ color: var(--violet); border-color: rgba(155,123,255,.35); }
 
 /* Avatar placeholder when opp not connected */
 .duel-placeholder{
@@ -6583,7 +6583,7 @@ h2.match-title{
 .duel-result-pick svg{ width: 32px; height: 32px; }
 .duel-result-pick.rock svg{ color: var(--coral); }
 .duel-result-pick.paper svg{ color: var(--mint); }
-.duel-result-pick.scissors svg{ color: var(--amber); }
+.duel-result-pick.scissors svg{ color: var(--violet); }
 .duel-result-pick.winner{
   transform: scale(1.12);
   border-color: var(--mint);
@@ -7599,7 +7599,7 @@ h2.match-title{
 }
 .opp-thrown[data-g="rock"] svg{color:var(--coral);}
 .opp-thrown[data-g="paper"] svg{color:var(--mint);}
-.opp-thrown[data-g="scissors"] svg{color:var(--amber);}
+.opp-thrown[data-g="scissors"] svg{color:var(--violet);}
 @keyframes slamIn{
   0%{transform: scale(2) rotate(-15deg); opacity:0;}
   60%{transform: scale(.9) rotate(2deg); opacity:1;}
@@ -9268,7 +9268,7 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
 .result-vs .pick svg{width:48px; height:48px;}
 .result-vs .pick.rock svg{color:var(--coral);}
 .result-vs .pick.paper svg{color:var(--mint);}
-.result-vs .pick.scissors svg{color:var(--amber);}
+.result-vs .pick.scissors svg{color:var(--violet);}
 .result-vs .pick.winner{
   transform: scale(1.22);
   box-shadow:
@@ -12632,7 +12632,7 @@ input:focus, select:focus, textarea:focus{
 }
 .onb-gestures .og:nth-child(1){ box-shadow:0 0 22px -12px var(--coral-glow); }
 .onb-gestures .og:nth-child(2){ box-shadow:0 0 22px -12px var(--mint-glow); }
-.onb-gestures .og:nth-child(3){ box-shadow:0 0 22px -12px rgba(255,211,61,.5); }
+.onb-gestures .og:nth-child(3){ box-shadow:0 0 22px -12px var(--violet-glow); }
 .onb-ranks{ display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:22px; }
 .onb-ranks .onb-rk{ width:44px; height:44px; filter:drop-shadow(0 6px 12px rgba(0,0,0,.5)); }
 .onb-ranks .onb-rk.big{ width:58px; height:58px; animation:lrGift 2.6s ease-in-out infinite; }
@@ -13283,51 +13283,71 @@ body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none
    V17 — CINEMATIC MATCH RESULTS + NAVBAR & MOBILE FIXES
    ════════════════════════════════════════════════════════════════════ */
 
-/* ---------- MATCH RESULTS — full cinematic redesign ---------- */
+/* ---------- MATCH RESULTS — "podium" redesign ----------
+   Dark card, centered emblem + headline, the result colour lives only in
+   accents (ring, gradient text, score, borders) — no more solid colour slab. */
 .match-result-overlay{ --mr-a:var(--violet); --mr-b:#5fc9ff; }
 .match-result-overlay.win{ --mr-a:var(--mint); --mr-b:#5fc9ff; }
 .match-result-overlay.lose{ --mr-a:var(--coral); --mr-b:#ff9a3d; }
 .match-result-overlay.draw{ --mr-a:var(--violet); --mr-b:#5fc9ff; }
 .match-result-overlay .mr-bg{
   background:
-    radial-gradient(95% 60% at 50% 0%, color-mix(in srgb, var(--mr-a) 15%, transparent), transparent 70%),
-    rgba(5,4,9,.94);
+    radial-gradient(90% 55% at 50% 0%, color-mix(in srgb, var(--mr-a) 13%, transparent), transparent 70%),
+    rgba(5,4,9,.95);
 }
-.match-result-card-v2{ animation:mrCardIn .65s cubic-bezier(.2,1.15,.3,1) both; }
+.match-result-card-v2{
+  animation:mrCardIn .65s cubic-bezier(.2,1.15,.3,1) both;
+  border:1px solid color-mix(in srgb, var(--mr-a) 26%, var(--line));
+  box-shadow:0 40px 100px -40px rgba(0,0,0,.9), 0 0 60px -30px var(--mr-a);
+}
 @keyframes mrCardIn{ from{ opacity:0; transform:scale(.92) translateY(28px); } to{ opacity:1; transform:none; } }
 .match-result-card-v2 > *{ animation:v10Rise .5s cubic-bezier(.22,.9,.3,1) both; }
 .match-result-card-v2 > *:nth-child(1){ animation-delay:.05s; }
-.match-result-card-v2 > *:nth-child(2){ animation-delay:.15s; }
-.match-result-card-v2 > *:nth-child(3){ animation-delay:.25s; }
-.match-result-card-v2 > *:nth-child(4){ animation-delay:.35s; }
-.match-result-card-v2 > *:nth-child(5){ animation-delay:.45s; }
-.match-result-card-v2 > *:nth-child(6){ animation-delay:.55s; }
-.match-result-card-v2 > *:nth-child(n+7){ animation-delay:.62s; }
-/* headline strip: rotating light rays behind a huge gradient title */
-.mr-headline-strip{ position:relative; overflow:hidden; }
-.mr-headline-strip::before{
-  content:""; position:absolute; left:50%; top:50%; width:620px; height:620px;
-  margin:-310px 0 0 -310px; pointer-events:none;
-  background:repeating-conic-gradient(transparent 0 13deg, color-mix(in srgb, var(--mr-a) 6%, transparent) 13deg 26deg);
-  animation:mrRays 36s linear infinite;
+.match-result-card-v2 > *:nth-child(2){ animation-delay:.16s; }
+.match-result-card-v2 > *:nth-child(3){ animation-delay:.27s; }
+.match-result-card-v2 > *:nth-child(4){ animation-delay:.38s; }
+.match-result-card-v2 > *:nth-child(n+5){ animation-delay:.48s; }
+/* the colour slab is gone: dark hero with a soft top glow */
+.mr-headline-strip, .mr-headline-strip.win, .mr-headline-strip.lose, .mr-headline-strip.draw{
+  background:radial-gradient(130% 150% at 50% -40%, color-mix(in srgb, var(--mr-a) 17%, transparent), transparent 62%);
+  padding:26px 22px 16px;
 }
-@keyframes mrRays{ to{ transform:rotate(360deg); } }
-.mr-headline-strip > *{ position:relative; z-index:1; }
+.mr-headline-strip::after{ display:none; }   /* retire the old shine sweep */
+.mrc-top{ flex-direction:column; align-items:center; gap:11px; text-align:center; }
+.mr-headline-icon{
+  width:30px !important; height:30px !important; padding:14px; border-radius:50%;
+  background:color-mix(in srgb, var(--mr-a) 12%, transparent);
+  box-shadow:0 0 0 1.5px color-mix(in srgb, var(--mr-a) 55%, transparent), 0 0 36px -8px var(--mr-a);
+  color:var(--mr-a);
+  animation:lrGift 3s ease-in-out infinite;
+}
+.mr-headline-text{ display:flex; flex-direction:column; align-items:center; gap:3px; }
 .match-result-headline{
+  font-size:clamp(38px, 7vw, 54px); line-height:1;
   background:linear-gradient(115deg, var(--mr-a), var(--mr-b) 50%, var(--mr-a));
   background-size:240% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
   animation:v10GradFlow 4.5s ease-in-out infinite;
-  filter:drop-shadow(0 0 26px color-mix(in srgb, var(--mr-a) 40%, transparent));
+  filter:drop-shadow(0 0 24px color-mix(in srgb, var(--mr-a) 38%, transparent));
 }
-.mr-headline-icon{
-  color:var(--mr-a);
-  filter:drop-shadow(0 0 14px color-mix(in srgb, var(--mr-a) 70%, transparent));
-  animation:lrGift 3s ease-in-out infinite;
+.match-result-sub{ color:var(--text-dim); letter-spacing:.16em; }
+/* scoreline becomes its own glassy band */
+.mrc-scoreline{
+  margin-top:14px; padding:13px 16px; border-radius:16px;
+  background:rgba(255,255,255,.035);
+  border:1px solid color-mix(in srgb, var(--mr-a) 18%, var(--line));
 }
+.mrc-av{
+  border-radius:15px;
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--mr-a) 45%, transparent), 0 8px 22px -10px rgba(0,0,0,.8);
+}
+.mrc-score{ font-variant-numeric:tabular-nums; }
 .mrc-score .you{ color:var(--mr-a); text-shadow:0 0 22px color-mix(in srgb, var(--mr-a) 50%, transparent); }
-.mrc-score span{ animation:mrScorePop .55s cubic-bezier(.2,1.6,.4,1) both .4s; display:inline-block; }
+.mrc-score .dash{ opacity:.4; }
+.mrc-score span{ animation:mrScorePop .55s cubic-bezier(.2,1.6,.4,1) both .45s; display:inline-block; }
 @keyframes mrScorePop{ from{ opacity:0; transform:scale(.4); } to{ opacity:1; transform:none; } }
-.mrc-av{ box-shadow:0 0 0 2px color-mix(in srgb, var(--mr-a) 45%, transparent), 0 8px 22px -10px rgba(0,0,0,.8); }
+/* one clean action row: Lobby | Rematch | PLAY AGAIN */
+.match-result-actions{ display:grid; grid-template-columns:1fr 1fr 1.7fr; gap:9px; }
+.match-result-actions .btn{ justify-content:center; min-height:46px; }
 #matchEndAgainBtn{
   background:linear-gradient(180deg, color-mix(in srgb, var(--mr-a) 88%, #fff 10%), var(--mr-a));
   border:none; color:#06120e; font-weight:800;
@@ -13336,15 +13356,37 @@ body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none
 }
 .match-result-overlay.lose #matchEndAgainBtn{ color:#fff; }
 #matchEndAgainBtn:hover{ transform:translateY(-2px); box-shadow:0 16px 38px -10px color-mix(in srgb, var(--mr-a) 80%, transparent); }
-#matchRankFill{ position:relative; }
-body.low-power .mr-headline-strip::before{ display:none; }
+.match-result-extra{ display:flex; justify-content:center; gap:8px; }
+@media (max-width:520px){
+  .match-result-actions{ grid-template-columns:1fr 1fr; }
+  #matchEndAgainBtn{ grid-column:1 / -1; grid-row:1; min-height:50px; }
+}
 @media (prefers-reduced-motion: reduce){
-  .mr-headline-strip::before{ display:none; }
   .match-result-card-v2, .match-result-card-v2 > *, .mrc-score span, .match-result-headline, .mr-headline-icon{ animation:none !important; }
 }
-@media (max-width:600px){
-  .mr-headline-strip::before{ width:420px; height:420px; margin:-210px 0 0 -210px; }
+
+/* ---------- both-ready GO cue ---------- */
+.duel-video.go-flash{ animation:goFlash .9s ease-out; }
+@keyframes goFlash{
+  0%{ box-shadow:inset 0 0 0 0 rgba(34,211,163,0); }
+  25%{ box-shadow:inset 0 0 0 4px rgba(34,211,163,.85); }
+  100%{ box-shadow:inset 0 0 0 4px rgba(34,211,163,0); }
 }
+.duel-prompt.show{ animation:promptPunch .5s cubic-bezier(.2,1.4,.4,1); }
+@keyframes promptPunch{ from{ opacity:0; transform:scale(.78); } to{ opacity:1; transform:scale(1); } }
+
+/* ---------- preloader as a real loading screen ---------- */
+#appPreloader .pl-bar{ width:min(280px, 70vw); height:5px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+#appPreloader .pl-bar span{
+  display:block; height:100%; width:0; border-radius:inherit;
+  background:linear-gradient(90deg, var(--coral), var(--violet));
+  animation:none; transition:width .22s ease;
+}
+#appPreloader .pl-meta{
+  display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+  width:min(280px, 70vw);
+}
+#appPreloader .pl-pct{ font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-dim); font-variant-numeric:tabular-nums; }
 
 /* ---------- navbar: What's new + mobile topbar declutter ---------- */
 .whatsnew-btn{ font-size:15px; }
@@ -13399,6 +13441,119 @@ body.low-power .mr-headline-strip::before{ display:none; }
 .xpb-card-ic img{ width:40px; height:40px; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,.55)); }
 .lr-token-img{ width:26px; height:26px; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); }
 
+/* ════════════════════════════════════════════════════════════════════
+   V18 — PROFILE DROPDOWN, PROFILE MODAL v3, RANK CHASE, MISC
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- sidebar profile dropdown ---------- */
+.sidebar-foot{ position:relative; }
+.sp-menu{
+  position:absolute; left:8px; right:8px; bottom:calc(100% + 10px); z-index:120;
+  display:flex; flex-direction:column; gap:2px; padding:6px;
+  background:rgba(19,16,28,.98); border:1px solid var(--line-bright, var(--line));
+  border-radius:16px;
+  box-shadow:0 24px 60px -18px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.02) inset;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  opacity:0; pointer-events:none; transform:translateY(10px) scale(.97);
+  transform-origin:bottom center;
+  transition:opacity .22s ease, transform .28s cubic-bezier(.2,1.2,.3,1);
+}
+.sp-menu.open{ opacity:1; pointer-events:auto; transform:translateY(0) scale(1); }
+.sp-menu-item{
+  display:flex; align-items:center; gap:11px;
+  padding:10px 12px; border-radius:10px; border:none; cursor:pointer;
+  background:transparent; color:var(--text); font-size:13px; font-weight:600; text-align:left;
+  transition:background .14s, transform .14s;
+}
+.sp-menu-item svg{ color:var(--text-dim); flex-shrink:0; }
+.sp-menu-item:hover{ background:rgba(255,255,255,.06); }
+.sp-menu-item:active{ transform:scale(.98); }
+.sp-menu-item.danger{ color:var(--coral); }
+.sp-menu-item.danger svg{ color:var(--coral); opacity:.85; }
+.sp-menu-item.danger:hover{ background:rgba(255,51,88,.08); }
+.sp-menu-divider{ height:1px; margin:4px 8px; background:var(--line-soft); }
+#sidebarProfile{ cursor:pointer; }
+#sidebarProfile .sp-chevron{ transition:transform .3s cubic-bezier(.2,.9,.3,1.4); }
+#sidebarProfile.menu-open .sp-chevron{ transform:rotate(180deg); }
+#sidebarProfile.menu-open{ background:rgba(255,255,255,.05); border-radius:12px; }
+
+/* ---------- rank chase: bar burns when the next tier is close ---------- */
+.ui-bar-fill.near-up{
+  animation:nearUp 1.5s ease-in-out infinite;
+}
+@keyframes nearUp{
+  0%,100%{ box-shadow:0 0 10px -2px var(--rank-color, var(--mint)); filter:brightness(1); }
+  50%{ box-shadow:0 0 20px 0 var(--rank-color, var(--mint)); filter:brightness(1.25); }
+}
+.rc2-next-label.near-up{ color:var(--amber, #ffd33d); font-weight:700; animation:soft 1.8s ease-in-out infinite; }
+
+/* ---------- clickable names ---------- */
+#chatMessages .who.opp, #floatingChat .who.opp, #mfOppName, #mfYouName, #chatThreadName{ cursor:pointer; }
+#chatMessages .who.opp:hover, #chatThreadName:hover{ text-decoration:underline; }
+
+/* ---------- PROFILE MODAL v3 — game card, mobile-first ---------- */
+.profile-modal{ padding-top:0 !important; }
+.profile-modal .pm-banner{
+  height:158px; margin:0 -32px 0; border-radius:22px 22px 0 0;
+}
+.profile-modal .profile-head{ margin-top:-34px; }
+.profile-modal .av-xl{
+  width:92px; height:92px; border-radius:26px; font-size:36px;
+  box-shadow:0 14px 34px -12px rgba(0,0,0,.85);
+}
+.profile-modal .pm-av-lvl{ font-size:12px; }
+.profile-modal .pm-name{ font-size:27px; letter-spacing:-.02em; }
+.profile-modal .pm-title-row{ flex-wrap:wrap; }
+.profile-modal .pm-rating{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:6px 12px; border-radius:999px; margin-top:6px;
+  background:rgba(255,255,255,.04); border:1px solid var(--line);
+  font-weight:700;
+}
+.profile-modal .pm-stats{ gap:8px; }
+.profile-modal .pm-stat{ padding:12px 8px; border-radius:14px; }
+.profile-modal .pm-stat .v{ font-size:21px; }
+.profile-modal .pm-rankprog{
+  padding:14px; border-radius:16px;
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+  margin-bottom:14px;
+}
+.profile-modal .pm-rankprog .ui-bar{ height:10px; border-radius:999px; }
+.profile-modal .pm-level-bar-wrap{
+  padding:14px; border-radius:16px;
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+}
+.profile-modal .modal-actions{
+  position:sticky; bottom:-32px; z-index:5;
+  margin:18px -32px -32px; padding:14px 24px calc(14px + env(safe-area-inset-bottom, 0px));
+  background:linear-gradient(180deg, transparent, rgba(13,11,20,.97) 26%);
+  border-top:1px solid var(--line-soft);
+}
+@media (max-width:600px){
+  .profile-modal .pm-banner{ height:128px; margin:0 -20px 0; border-radius:24px 24px 0 0; }
+  .profile-modal .profile-head{ flex-direction:column; align-items:center; text-align:center; gap:10px; margin-top:-44px; }
+  .profile-modal .pm-head-info{ display:flex; flex-direction:column; align-items:center; }
+  .profile-modal .pm-name{ font-size:23px; justify-content:center; }
+  .profile-modal .pm-stats{ grid-template-columns:repeat(2, 1fr); }
+  .profile-modal .pm-stats-2{ grid-template-columns:repeat(2, 1fr); }
+  .profile-modal .modal-actions{
+    margin:16px -20px calc(-22px - env(safe-area-inset-bottom, 0px));
+    padding:12px 16px calc(14px + env(safe-area-inset-bottom, 0px));
+    flex-wrap:wrap;
+  }
+  .profile-modal .modal-actions .btn{ flex:1 1 44%; justify-content:center; min-height:44px; }
+}
+/* staggered entrance inside the profile sheet */
+.modal-bg.show .profile-modal > *{ animation:v10Rise .4s cubic-bezier(.22,.9,.3,1) both; }
+.modal-bg.show .profile-modal > *:nth-child(2){ animation-delay:.05s; }
+.modal-bg.show .profile-modal > *:nth-child(3){ animation-delay:.1s; }
+.modal-bg.show .profile-modal > *:nth-child(4){ animation-delay:.15s; }
+.modal-bg.show .profile-modal > *:nth-child(n+5){ animation-delay:.2s; }
+@media (prefers-reduced-motion: reduce){
+  .sp-menu{ transition:none; }
+  .modal-bg.show .profile-modal > *, .ui-bar-fill.near-up{ animation:none !important; }
+}
+
 /* ---------- READY-UP v2 ---------- */
 .pre-ready-card{
   border-color:rgba(34,211,163,.25);
@@ -13438,19 +13593,12 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
 <!-- ===== APP PRELOADER (shown until the app is ready) ===== -->
 <div id="appPreloader">
   <div class="pl-inner">
-    <div class="pl-logo-wrap">
-      <span class="pl-logo-ring"></span>
-      <span class="pl-logo-ring r2"></span>
-      <img class="pl-logo" src="logo.png" alt="ROSHCAM logo" />
-    </div>
-    <div class="pl-throws">
-      <span class="pl-throw t1">🪨</span>
-      <span class="pl-throw t2">📄</span>
-      <span class="pl-throw t3">✂️</span>
-    </div>
     <div class="pl-wordmark">ROSH<span>CAM</span></div>
-    <div class="pl-bar"><span></span></div>
-    <div class="pl-tag">warming up the arena…</div>
+    <div class="pl-bar"><span id="plBarFill"></span></div>
+    <div class="pl-meta">
+      <span class="pl-tag" id="plStatus">Loading assets…</span>
+      <span class="pl-pct" id="plPct">0%</span>
+    </div>
   </div>
 </div>
 
@@ -13617,6 +13765,17 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
     </nav>
 
     <div class="sidebar-foot">
+      <!-- Profile dropdown — slides up over the chip -->
+      <div class="sp-menu" id="spMenu">
+        <button class="sp-menu-item" data-spm="profile"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-user"/></svg> View profile</button>
+        <button class="sp-menu-item" data-spm="edit"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-edit"/></svg> Edit profile</button>
+        <button class="sp-menu-item" data-spm="camera"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-camera"/></svg> Camera &amp; tracking</button>
+        <button class="sp-menu-item" data-spm="history"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-clock"/></svg> Match history</button>
+        <button class="sp-menu-item" data-spm="whatsnew"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-star"/></svg> What's new</button>
+        <div class="sp-menu-divider"></div>
+        <button class="sp-menu-item danger" data-spm="signout"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-out"/></svg> Sign out</button>
+        <button class="sp-menu-item danger" data-spm="delete"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-trash"/></svg> Delete account</button>
+      </div>
       <div class="sidebar-profile" id="sidebarProfile">
         <div class="sp-av" id="sidebarAv">?</div>
         <div class="sp-info">
@@ -15797,7 +15956,7 @@ const FIREBASE_CONFIG = {
         <div style="font-size:11px; color:var(--text-faint); font-family:var(--font-mono); margin-top:2px;">open palm</div>
       </div>
       <div style="text-align:center; padding:14px; border:1px solid var(--line); border-radius:14px; background: var(--surface-2);">
-        <svg viewBox="0 0 24 24" style="width:42px; height:42px; color:var(--amber)"><use href="#i-scissors"/></svg>
+        <svg viewBox="0 0 24 24" style="width:42px; height:42px; color:var(--violet)"><use href="#i-scissors"/></svg>
         <div style="font-weight:600; font-size:13px;">SCISSORS</div>
         <div style="font-size:11px; color:var(--text-faint); font-family:var(--font-mono); margin-top:2px;">2 fingers</div>
       </div>
@@ -15923,7 +16082,7 @@ const FIREBASE_CONFIG = {
         <span class="throw-bar-val" id="paperCount">0</span>
       </div>
       <div class="throw-bar-row">
-        <span class="throw-bar-icon" style="color:var(--amber);"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-scissors"/></svg></span>
+        <span class="throw-bar-icon" style="color:var(--violet);"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-scissors"/></svg></span>
         <span class="throw-bar-label">SCISSORS</span>
         <div class="throw-bar-track"><div class="throw-bar-fill" style="background:var(--amber)" id="scissorsBar"></div></div>
         <span class="throw-bar-val" id="scissorsCount">0</span>
@@ -16604,11 +16763,10 @@ const FIREBASE_CONFIG = {
     <div class="calib-step active" data-calib-step="0">
       <div class="calib-icon"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-camera"/></svg></div>
       <h3 class="calib-title">Camera calibration</h3>
-      <p class="calib-sub">ROSHCAM reads your hand from your webcam, so good setup = fewer missed throws. This 4-step check tunes your framing, lighting and gesture detection. Takes ~40 seconds and makes matches far more reliable.</p>
+      <p class="calib-sub">ROSHCAM reads your hand from your webcam, so good setup = fewer missed throws. This quick check tunes your framing and lighting. Takes ~20 seconds and makes matches far more reliable.</p>
       <ul class="calib-checklist">
         <li><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg> Camera &amp; framing</li>
         <li><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg> Lighting quality</li>
-        <li><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg> Rock · Paper · Scissors test</li>
       </ul>
       <button class="btn btn-primary" id="calibStart" style="width:100%;">Start calibration</button>
       <button class="btn btn-ghost" id="calibSkip" style="width:100%; margin-top:8px;">Skip for now</button>
@@ -16639,29 +16797,11 @@ const FIREBASE_CONFIG = {
       <button class="btn btn-primary" id="calibStep2Next" style="width:100%;" disabled>Measuring…</button>
     </div>
 
-    <!-- 3: Gesture test -->
-    <div class="calib-step" data-calib-step="3">
-      <div class="calib-preview">
-        <video id="calibVideo2" autoplay playsinline muted></video>
-        <canvas id="calibHandCanvas"></canvas>
-        <div class="calib-preview-overlay" id="calibHandState"><span class="dot"></span> Show your hand…</div>
-      </div>
-      <div class="calib-gesture-targets">
-        <div class="cgt" data-g="rock"><svg viewBox="0 0 64 64" width="26" height="26"><use href="#i-rock"/></svg><span>Rock</span><i class="cgt-check"></i></div>
-        <div class="cgt" data-g="paper"><svg viewBox="0 0 64 64" width="26" height="26"><use href="#i-paper"/></svg><span>Paper</span><i class="cgt-check"></i></div>
-        <div class="cgt" data-g="scissors"><svg viewBox="0 0 64 64" width="26" height="26"><use href="#i-scissors"/></svg><span>Scissors</span><i class="cgt-check"></i></div>
-      </div>
-      <h3 class="calib-title">Test all three throws</h3>
-      <p class="calib-sub" id="calibGesturePrompt">Make each shape clearly — we'll tick them off as they're detected. This trains your muscle memory for real matches.</p>
-      <button class="btn btn-primary" id="calibStep3Next" style="width:100%;" disabled>Make all 3 to continue…</button>
-      <button class="btn btn-ghost" id="calibStep3Skip" style="width:100%; margin-top:8px;">Skip the test</button>
-    </div>
-
     <!-- 4: Done -->
-    <div class="calib-step" data-calib-step="4">
+    <div class="calib-step" data-calib-step="3">
       <div class="calib-icon success"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-check"/></svg></div>
       <h3 class="calib-title">Calibration complete!</h3>
-      <p class="calib-sub" id="calibDoneSummary">Camera, lighting and all three gestures verified. You're ready to throw hands.</p>
+      <p class="calib-sub" id="calibDoneSummary">Camera and lighting verified. You're ready to throw hands.</p>
       <button class="btn btn-primary" id="calibFinish" style="width:100%;">Let's play</button>
     </div>
   </div>
@@ -16689,6 +16829,26 @@ const FIREBASE_CONFIG = {
       console.log = noop; console.info = noop; console.debug = noop; console.warn = noop;
       // console.error stays — real failures must remain visible
     }
+  } catch(e){}
+  /* Loading-screen progress: smooth simulated % that the app completes on boot */
+  try {
+    (function(){
+      var fill = document.getElementById('plBarFill');
+      var pct = document.getElementById('plPct');
+      var status = document.getElementById('plStatus');
+      if(!fill) return;
+      var msgs = ['Loading assets…', 'Tuning hand tracking…', 'Connecting to the arena…', 'Sharpening scissors…', 'Almost there…'];
+      var p = 0, mi = -1;
+      var iv = setInterval(function(){
+        if(!document.getElementById('appPreloader')){ clearInterval(iv); return; }
+        var step = p < 55 ? (4 + Math.random() * 9) : p < 85 ? (1.4 + Math.random() * 3.2) : (0.3 + Math.random() * 0.7);
+        p = Math.min(96, p + step);
+        fill.style.width = p + '%';
+        if(pct) pct.textContent = Math.round(p) + '%';
+        var ni = Math.min(msgs.length - 1, Math.floor(p / 21));
+        if(status && ni !== mi){ mi = ni; status.textContent = msgs[ni]; }
+      }, 170);
+    })();
   } catch(e){}
   var reduce = false;
   try{ reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }catch(e){}
@@ -17421,8 +17581,12 @@ let _preloaderHidden = false;
 function hidePreloader(){
   if(_preloaderHidden) return;
   _preloaderHidden = true;
+  // Snap the loading bar to 100% so the exit feels earned, then fade.
+  const fill = document.getElementById('plBarFill'); if(fill) fill.style.width = '100%';
+  const pct = document.getElementById('plPct'); if(pct) pct.textContent = '100%';
+  const st = document.getElementById('plStatus'); if(st) st.textContent = 'Ready!';
   const pl = document.getElementById('appPreloader');
-  if(pl){ pl.classList.add('hide'); setTimeout(() => pl.remove(), 600); }
+  if(pl){ setTimeout(() => { pl.classList.add('hide'); setTimeout(() => pl.remove(), 600); }, 180); }
 }
 function showScreen(name){
   state.screen = name;
@@ -18432,7 +18596,7 @@ function drawLandmarks(landmarks){
   const connections = [[0,1],[1,2],[2,3],[3,4],[0,5],[5,6],[6,7],[7,8],[5,9],[9,10],[10,11],[11,12],[9,13],[13,14],[14,15],[15,16],[13,17],[17,18],[18,19],[19,20],[0,17]];
   const color = state.currentGesture === 'rock' ? '#ff3d68'
               : state.currentGesture === 'paper' ? '#5dffba'
-              : state.currentGesture === 'scissors' ? '#ffd33d'
+              : state.currentGesture === 'scissors' ? '#a48bff'
               : 'rgba(255,255,255,.6)';
   // store hand center for any other UI needs
   state.handCenter = {
@@ -18750,7 +18914,10 @@ function refreshStatsUI(){
     fill.style.width = (prog.progress * 100) + '%';
     fill.style.setProperty('--rank-color', rank.color);
     fill.style.setProperty('--rank-color-2', rank.color2);
+    // Almost at the next tier → the bar burns so the chase feels real
+    fill.classList.toggle('near-up', !inPlacements(p) && prog.toNext > 0 && prog.progress >= 0.85);
   }
+  { const nl = $('#rankNextLabel'); if(nl) nl.classList.toggle('near-up', !inPlacements(p) && prog.toNext > 0 && prog.progress >= 0.85); }
   // Redesigned rank card: glow behind the big current-rank icon + the NEXT rank
   // shown as a small marker at the end of the progress bar.
   try {
@@ -19826,7 +19993,7 @@ function renderLevelPanel(){
   if(titleEl) titleEl.style.setProperty('--title-color', equipped.color);
 
   const unlocked = titlesUnlockedAt(lvl.level);
-  setText('#titlesUnlockedCount', `${unlocked.length}/${TITLES.length} unlocked`);
+  setText('#titlesUnlockedCount', `${unlocked.length + prestigeTitlesUnlocked(prestige).length}/${TITLES.length + PRESTIGE_TITLES.length} unlocked`);
 
   // Render title chips
   const grid = $('#titlesGrid');
@@ -23542,6 +23709,9 @@ function pressPreReady(){
   if(!state._prematch || state._preReadyYou) return;
   state._preReadyYou = true;
   sendPeer({type:'pre_ready'});
+  // Belt & braces: resend shortly after, so one dropped packet can't add a
+  // multi-second wait for the 2s resync tick.
+  setTimeout(() => { if(state._prematch) sendPeer({type:'pre_ready'}); }, 350);
   updatePreReadyUI();
   try { sfxReady(); } catch(e){}
   try { haptic(12); } catch(e){}
@@ -23557,14 +23727,21 @@ function pressPreReady(){
 function checkPreReadyStart(){
   if(!state._prematch || !state._preReadyYou || !state._preReadyOpp) return;
   state._prematch = false;
+  sendPeer({type:'pre_ready'});   // idempotent ack so the other side never waits on the resync
   $('#screen-game')?.classList.remove('prematch');
   $('#preReadyBar')?.classList.remove('show');
   hideOppVideo();   // anti-cheat hiding takes over again for the rounds
   setText('#roundState', 'HOLD UP A HAND TO READY UP');
   $('#handPrompt')?.classList.add('show');
   startReadySystem();
-  try { showAnnouncer('BOTH READY — LET’S GO!', 1800); } catch(e){}
-  try { haptic(20); } catch(e){}
+  // Unmistakable "the match has begun" moment: announcer + green ring pulse
+  // on both tiles + sound + haptic.
+  try { showAnnouncer('⚔️ MATCH START — SHOW YOUR HAND!', 2400); } catch(e){}
+  document.querySelectorAll('.duel-video').forEach(v => {
+    v.classList.remove('go-flash'); void v.offsetWidth; v.classList.add('go-flash');
+  });
+  try { sfxReady(); } catch(e){}
+  try { haptic(25); } catch(e){}
 }
 on('#preReadyBtn', 'click', pressPreReady);
 // ===== PEER MESSAGE HARDENING =====
@@ -23934,7 +24111,7 @@ function onGestureFrame(){
 function gestureColor(g){
   return g === 'rock' ? '#ff3d68'
        : g === 'paper' ? '#5dffba'
-       : g === 'scissors' ? '#ffd33d'
+       : g === 'scissors' ? '#a48bff'
        : '#a48bff';
 }
 
@@ -24178,7 +24355,7 @@ async function runCountdown(){
   setText('#roundState', 'GET READY…');
   $('#oppDetectedText').textContent = 'thinking…';
 
-  await sleep(600);
+  await sleep(400);
 
   // Custom countdown sample plays once across the whole 3·2·1 sequence.
   // Falls back to the per-tick synth beeps if no sample is available.
@@ -26925,12 +27102,12 @@ function renderRankPage(){
   const p = state.profile;
   const rating = p.rating || 1000;
   const rank = rankFromRating(rating);
-  setRankIconEl($('#rankPageIcon'), rank.id);
+  setRankIconEl($('#rankPageIcon'), inPlacements(p) ? 'unranked' : rank.id);
   const ic = $('#rankPageIcon'); if(ic) ic.style.color = rank.color;
   const fill = $('#rankPageFill');
   if(inPlacements(p)){
     const done = placementsDone(p); const left = PLACEMENT_TOTAL - done;
-    if(ic) ic.style.color = 'var(--text-dim)';
+    if(ic) ic.style.color = 'var(--violet)';
     setText('#rankPageTier', 'Unranked');
     setText('#rankPageRating', '—');
     if(fill) fill.style.width = (done/PLACEMENT_TOTAL*100) + '%';
@@ -27337,8 +27514,25 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ===== UPDATE LOG =====
-const APP_VERSION = '2.1.0';
+const APP_VERSION = '2.2.0';
 const UPDATE_LOG = [
+  { v: '2.2.0', date: 'June 2026', title: 'Profile power', items: [
+    ['new', 'Click your profile in the sidebar → a smooth dropdown with View/Edit profile, Camera & tracking, Match history, Sign out and more (the arrow flips!)'],
+    ['new', 'Profile cards redesigned again — tighter hero, glass stat tiles, sticky action bar, fully mobile-friendly'],
+    ['improved', 'Scissors is purple everywhere now (yellow belongs to XP tokens)'],
+    ['improved', 'Rank bar ignites when you are within reach of the next tier'],
+    ['fixed', 'Private chats with friends are visible again (security-rules fix — re-publish firestore.rules!)'],
+    ['fixed', 'Unranked emblem shows correctly on the Rank and Play pages'],
+    ['fixed', 'Titles counter includes prestige titles; install-app nag toast removed'],
+    ['improved', 'Camera calibration is now just framing + lighting — the flaky gesture test is gone'],
+    ['improved', 'Loading screen simplified; opponent names are clickable in chat and the VS screen'],
+  ]},
+  { v: '2.1.1', date: 'June 2026', title: 'Cleaner finish', items: [
+    ['improved', 'Match results redesigned again — dark podium card, no more giant colour slab, one clean action row'],
+    ['improved', 'Both players ready → instant “MATCH START” moment: announcer, green ring pulse on both cams, sound and haptics'],
+    ['improved', 'Ready signals are double-sent so a dropped packet can’t delay the start'],
+    ['improved', 'The loading screen is a real loading screen now — live percentage and status steps'],
+  ]},
   { v: '2.1.0', date: 'June 2026', title: 'Match fix & cinema results', items: [
     ['fixed', 'Critical: rounds desynced — one player counted down while the other froze. Matches start reliably again'],
     ['new', 'Match results completely redesigned — cinematic victory/defeat screen with light rays and staggered reveals'],
@@ -27533,6 +27727,25 @@ function attachUserSearch(inputSel){
 }
 attachUserSearch('#addFriendInput');
 attachUserSearch('#addFriendInputPage');
+
+// ===== CLICKABLE PROFILE NAMES =====
+// Anywhere the opponent's name shows during a match or in match chat, a click
+// opens their profile. The DM thread header opens the person you're chatting with.
+document.addEventListener('click', (e) => {
+  if(!e.target.closest) return;
+  if(e.target.closest('#chatMessages .who.opp') || e.target.closest('#floatingChat .who.opp')){
+    if(state.oppUid) openProfile(state.oppUid);
+  }
+});
+on('#mfOppName', 'click', () => { if(state.oppUid && !state.isBotMatch) openProfile(state.oppUid); });
+on('#mfOppAv', 'click', () => { if(state.oppUid && !state.isBotMatch) openProfile(state.oppUid); });
+on('#mfYouName', 'click', () => { if(state.user) openProfile(state.user.uid); });
+on('#chatThreadName', 'click', () => {
+  const cid = state._activeChatConvId;
+  if(!cid || !state.user) return;
+  const other = String(cid).split('__').find(u => u && u !== state.user.uid);
+  if(other) openProfile(other);
+});
 
 // ===== CONNECTIVITY NOTICES =====
 window.addEventListener('offline', () => { try { toast("📡 You're offline — some features won't work", 'error', { duration: 4500 }); } catch(e){} });
@@ -27783,8 +27996,8 @@ function renderPlayPage(){
   const p = state.profile;
   const rating = p.rating||1000;
   const rank = rankFromRating(rating);
-  setRankIconEl($('#playRankIcon'), rank.id);
-  const ic = $('#playRankIcon'); if(ic) ic.style.color = rank.color;
+  setRankIconEl($('#playRankIcon'), inPlacements(p) ? 'unranked' : rank.id);
+  const ic = $('#playRankIcon'); if(ic) ic.style.color = inPlacements(p) ? 'var(--violet)' : rank.color;
   const fill = $('#playRankFill');
   if(inPlacements(p)){
     const done = placementsDone(p); const left = PLACEMENT_TOTAL - done;
@@ -27816,7 +28029,7 @@ let calibHands = null;
 let calibStepIdx = 0;
 let calibHandSeen = false;
 
-const CALIB_STEPS = 5;
+const CALIB_STEPS = 4;
 function setCalibStep(idx){
   calibStepIdx = idx;
   document.querySelectorAll('.calib-step').forEach(s => s.classList.toggle('active', +s.dataset.calibStep === idx));
@@ -27893,57 +28106,8 @@ async function calibStep2(){
 }
 // ---- Step 3: GESTURE TEST — must form rock, paper AND scissors ----
 let calibGesturesDone = { rock:false, paper:false, scissors:false };
-async function calibStep3(){
-  setCalibStep(3);
-  clearInterval(calibLightTimer);
-  calibGesturesDone = { rock:false, paper:false, scissors:false };
-  document.querySelectorAll('.cgt').forEach(c => c.classList.remove('done'));
-  const nextBtn = $('#calibStep3Next');
-  if(nextBtn){ nextBtn.disabled = true; nextBtn.textContent = 'Make all 3 to continue…'; }
-  try {
-    const stream = await calibGetStream();
-    const v2 = $('#calibVideo2'); if(v2){ v2.srcObject = stream; }
-    try { await loadMediaPipe(); } catch(e){}
-    if(typeof Hands !== 'undefined'){
-      if(calibHands){ try { calibHands.close(); } catch(e){} }
-      calibHands = new Hands({ locateFile: (f) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${f}` });
-      // Lenient thresholds: this is a learning step, not an exam — accept hands
-      // in poor light rather than frustrating new players.
-      calibHands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.42, minTrackingConfidence: 0.35 });
-      calibHands.onResults((res) => {
-        const st = $('#calibHandState');
-        if(res.multiHandLandmarks && res.multiHandLandmarks.length > 0){
-          const g = classifyGesture(res.multiHandLandmarks[0]);
-          if(st){ st.classList.add('ok'); st.innerHTML = `<span class="dot"></span> ${g ? g.toUpperCase() : 'Hand detected'}`; }
-          if(g && !calibGesturesDone[g]){
-            calibGesturesDone[g] = true;
-            const cell = document.querySelector(`.cgt[data-g="${g}"]`); if(cell) cell.classList.add('done');
-            try { haptic(12); sfxReady && sfxReady(); } catch(e){}
-            const allDone = calibGesturesDone.rock && calibGesturesDone.paper && calibGesturesDone.scissors;
-            if(allDone && nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'All set →'; }
-            else {
-              const left = ['rock','paper','scissors'].filter(x => !calibGesturesDone[x]);
-              setText('#calibGesturePrompt', `Nice! Still need: ${left.join(', ')}.`);
-            }
-          }
-        } else if(st && !st.classList.contains('ok')){ st.innerHTML = '<span class="dot"></span> Show your hand…'; }
-      });
-      const pump = async () => {
-        if(calibStepIdx !== 3 || !calibHands || !v2) return;
-        try { await calibHands.send({ image: v2 }); } catch(e){}
-        setTimeout(pump, 90);
-      };
-      v2.addEventListener('loadeddata', pump, { once: true });
-      if(v2.readyState >= 2) pump();
-    } else {
-      setTimeout(() => { if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; } }, 2000);
-    }
-  } catch(e){
-    if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
-  }
-}
 function calibComplete(){
-  setCalibStep(4);
+  setCalibStep(3);
   clearInterval(calibLightTimer);
   calibStopStream();
   try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){}
@@ -27956,9 +28120,7 @@ function closeCalibration(){
 on('#calibStart', 'click', calibStep1);
 on('#calibSkip', 'click', () => { try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){} closeCalibration(); });
 on('#calibStep1Next', 'click', calibStep2);
-on('#calibStep2Next', 'click', calibStep3);
-on('#calibStep3Next', 'click', calibComplete);
-on('#calibStep3Skip', 'click', calibComplete);
+on('#calibStep2Next', 'click', calibComplete);
 on('#calibFinish', 'click', closeCalibration);
 // Re-runnable from settings
 on('#setCalibrate', 'click', () => { try { localStorage.removeItem(CALIB_KEY); } catch(e){} openCalibration(); });
@@ -28278,7 +28440,32 @@ on('#setBlockRequests', 'click', async () => {
 });
 
 // Sidebar profile → open profile editor / stats
-on('#sidebarProfile', 'click', () => { if(state.user) openProfile(state.user.uid); else openStatsModal(); });
+// ===== SIDEBAR PROFILE DROPDOWN =====
+function toggleSpMenu(force){
+  const menu = $('#spMenu'), prof = $('#sidebarProfile');
+  if(!menu) return;
+  const open = force !== undefined ? force : !menu.classList.contains('open');
+  menu.classList.toggle('open', open);
+  prof?.classList.toggle('menu-open', open);
+}
+on('#sidebarProfile', 'click', (e) => { e.stopPropagation(); toggleSpMenu(); try { haptic(8); } catch(_){} });
+document.addEventListener('click', (e) => {
+  if(!e.target.closest || (!e.target.closest('#spMenu') && !e.target.closest('#sidebarProfile'))) toggleSpMenu(false);
+});
+const SP_ACTIONS = {
+  profile: () => { if(state.user) openProfile(state.user.uid); },
+  edit: () => openEditProfile(),
+  camera: () => $('#setCamera')?.click(),
+  history: () => $('#setMatchHistory')?.click(),
+  whatsnew: () => openUpdateLog(),
+  signout: () => $('#signOutBtn')?.click(),
+  delete: () => $('#setDeleteAccount')?.click(),
+};
+document.querySelectorAll('.sp-menu-item').forEach(b => b.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleSpMenu(false);
+  try { SP_ACTIONS[b.dataset.spm]?.(); } catch(err){}
+}));
 on('#homeRankCard', 'click', (e) => { if(!e.target.closest('#rankViewMoreBtn')) showNavPage('rank'); });
 
 // ===== HAMBURGER (mobile) =====
@@ -29427,12 +29614,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   _deferredInstall = e;
   const row = $('#setInstall'); if(row) row.style.display = '';
-  try {
-    if(localStorage.getItem('rosham_install_prompted') !== '1'){
-      localStorage.setItem('rosham_install_prompted', '1');
-      setTimeout(() => { if(_deferredInstall) toast('Install ROSHCAM for a full-screen app experience', 'info', { duration: 8000, action: { label: 'Install', onClick: triggerInstall } }); }, 5000);
-    }
-  } catch(err){}
+  // (Install nag toast removed — Settings > Install app is the quiet home for this.)
 });
 window.addEventListener('appinstalled', () => { _deferredInstall = null; const r = $('#setInstall'); if(r) r.style.display = 'none'; try { toast('Installed — welcome to ROSHCAM! 🎉', 'success'); } catch(e){} });
 on('#setInstall', 'click', triggerInstall);
