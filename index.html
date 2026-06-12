@@ -4657,6 +4657,8 @@ body.reduced-motion .skeleton::after, body.low-power .skeleton::after{ animation
   box-shadow:0 8px 22px -6px rgba(0,0,0,.65); opacity:0; transition:opacity .12s ease; }
 .ui-tooltip.show{ opacity:1; }
 .ui-tooltip::after{ content:''; position:absolute; left:50%; top:100%; transform:translateX(-50%); border:5px solid transparent; border-top-color:#1c1b27; }
+.ui-tooltip.below{ transform:translate(-50%, 0); }
+.ui-tooltip.below::after{ top:auto; bottom:100%; border-top-color:transparent; border-bottom-color:#1c1b27; }
 
 .friend-row, .lb-row, .req-row{
   display:flex; align-items:center; gap:12px;
@@ -13148,6 +13150,255 @@ body.in-game .duel-dock{ backdrop-filter:none; -webkit-backdrop-filter:none; }
 body.in-game .toast2{ backdrop-filter:none; -webkit-backdrop-filter:none; }
 body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none; background:rgba(13,11,20,.97); }
 
+/* ════════════════════════════════════════════════════════════════════
+   V16 — XP TOKENS, DAILY BOARD, GAME-LOBBY PLAY PAGE
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- What's new badge in the hero ---------- */
+.hx-badge.whatsnew{
+  cursor:pointer; border:1px solid rgba(155,123,255,.4); color:var(--violet);
+  background:linear-gradient(110deg, rgba(155,123,255,.10) 30%, rgba(255,51,88,.12) 50%, rgba(155,123,255,.10) 70%);
+  background-size:220% 100%; animation:v10GradFlow 5s ease-in-out infinite;
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1);
+}
+.hx-badge.whatsnew:hover{ transform:translateY(-2px) scale(1.04); }
+
+/* ---------- 2× XP BOOST panel (Play page) ---------- */
+.xpboost-panel{
+  margin-top:14px; padding:18px; border-radius:20px; position:relative; overflow:hidden;
+  background:
+    radial-gradient(130% 140% at 0% 0%, rgba(255,211,61,.07), transparent 50%),
+    radial-gradient(130% 140% at 100% 100%, rgba(155,123,255,.08), transparent 50%),
+    linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid rgba(255,211,61,.22);
+}
+.xpb-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px; }
+.xpb-title{
+  display:flex; align-items:center; gap:9px;
+  font-family:var(--font-display); font-stretch:75%; font-weight:900; font-size:17px; letter-spacing:.02em;
+}
+.xpb-ic{ font-size:19px; animation:lrGift 2.8s ease-in-out infinite; }
+.xpb-sub{ font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:.04em; }
+.xpb-active{
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.1em; color:var(--amber, #ffd33d);
+  padding:6px 13px; border-radius:999px;
+  background:rgba(255,211,61,.10); border:1px solid rgba(255,211,61,.4);
+  box-shadow:0 0 18px -8px rgba(255,211,61,.6);
+  animation:soft 1.6s ease-in-out infinite;
+}
+.xpb-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; }
+.xpb-card{
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+  padding:14px 10px 12px; border-radius:16px; text-align:center;
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), border-color .25s, box-shadow .25s;
+}
+.xpb-card:not(.empty){ border-color:rgba(255,211,61,.35); box-shadow:0 0 22px -14px rgba(255,211,61,.7); }
+.xpb-card:not(.empty):hover{ transform:translateY(-3px); }
+.xpb-card.empty{ opacity:.55; }
+.xpb-card-time{ font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.14em; color:var(--text-dim); }
+.xpb-card-ic{ font-size:26px; line-height:1; filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)); }
+.xpb-card:not(.empty) .xpb-card-ic{ animation:lrGift 3.2s ease-in-out infinite; }
+.xpb-card-count{ font-family:var(--font-display); font-stretch:75%; font-weight:800; font-size:15px; color:var(--amber, #ffd33d); }
+.xpb-card.empty .xpb-card-count{ color:var(--text-faint); }
+.xpb-use{ width:100%; justify-content:center; font-size:12px; padding:8px 10px; min-height:36px; }
+.xpb-card:not(.empty) .xpb-use{
+  background:linear-gradient(180deg, #ffd95e, var(--amber, #ffd33d)); color:#1c1402; border:none; font-weight:800;
+}
+.xpb-card:not(.empty) .xpb-use:hover{ background:linear-gradient(180deg, #ffe27e, #ffd95e); }
+.boost-pill{ border-color:rgba(255,211,61,.5) !important; color:var(--amber, #ffd33d) !important; animation:soft 1.8s ease-in-out infinite; }
+@media (max-width:600px){
+  .xpboost-panel{ padding:14px; }
+  .xpb-grid{ gap:8px; }
+  .xpb-card{ padding:11px 6px 10px; }
+  .xpb-use{ min-height:40px; }
+}
+
+/* ---------- DAILY REWARDS — game-board layout (D1-6 grid + tall D7 jackpot) ---------- */
+.lr-v2 .lr-calendar{
+  display:grid; grid-template-columns:repeat(3, 1fr) 1.25fr; grid-template-rows:1fr 1fr;
+  gap:8px; margin:0 0 4px;
+}
+.lr-v2 .lr-day{ gap:5px; padding:11px 4px 10px; border-radius:14px; justify-content:flex-start; }
+.lr-v2 .lr-day .lr-day-n{
+  font-size:8px; font-weight:800; letter-spacing:.1em; padding:2.5px 8px; border-radius:999px;
+  background:rgba(255,255,255,.06); color:var(--text-dim);
+}
+.lr-v2 .lr-day.done .lr-day-n{ background:rgba(34,211,163,.12); color:var(--mint); }
+.lr-v2 .lr-day.today .lr-day-n{ background:rgba(255,211,61,.16); color:var(--amber, #ffd33d); }
+.lr-day-big{ font-size:21px; line-height:1; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); }
+.lr-v2 .lr-day-ic{ height:24px; display:grid; place-items:center; }
+.lr-v2 .lr-day-x{ font-size:10.5px; line-height:1.25; }
+.lr-v2 .lr-day.jackpot{
+  grid-column:4; grid-row:1 / 3;
+  justify-content:center; gap:9px;
+  background:
+    radial-gradient(120% 110% at 50% 0%, rgba(155,123,255,.16), transparent 60%),
+    rgba(255,255,255,.025);
+  border:1px solid rgba(155,123,255,.4);
+  box-shadow:0 0 26px -14px var(--violet-glow);
+}
+.lr-v2 .lr-day.jackpot .lr-day-big{ font-size:38px; animation:lrGift 2.4s ease-in-out infinite; }
+.lr-v2 .lr-day.jackpot .lr-day-x{ font-size:12px; font-weight:800; }
+.lr-v2 .lr-day.jackpot.today{ box-shadow:0 0 30px -8px var(--amber, #ffd33d); border-color:var(--amber, #ffd33d); }
+.lr-amp{ color:var(--text-faint); font-size:.6em; font-weight:400; }
+
+/* ---------- HOME: tighter rank card ---------- */
+.rankcard2 .card-hd{ margin-bottom:10px; }
+.rankcard2 .rc2-hero{ gap:13px; margin-bottom:10px; }
+.rankcard2 .rc2-icon-wrap, .rankcard2 .rc2-icon{ width:62px; height:62px; }
+.rankcard2 .rc2-tier{ font-size:22px; }
+.rankcard2 .rc2-progress{ margin:8px 0; }
+.rankcard2 .level-strip{ padding:8px 10px; margin-top:8px; }
+
+/* ---------- PLAY PAGE: game-lobby feel ---------- */
+.play-hero{ padding:22px 26px 18px; }
+.play-hero .hx-wordmark{ font-size:clamp(34px, 5vw, 54px); }
+.mode-card{ padding:20px; min-height:228px; display:flex; flex-direction:column; }
+.mode-ic{
+  width:52px; height:52px; border-radius:16px; display:grid; place-items:center;
+  background:color-mix(in srgb, var(--mc, var(--mint)) 12%, transparent);
+  box-shadow:0 0 22px -10px var(--mc, var(--mint));
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.mode-ic svg{ width:26px; height:26px; color:var(--mc, var(--mint)); }
+.mode-card:hover .mode-ic{ transform:scale(1.1) rotate(-5deg); }
+.mode-name{ font-size:38px; line-height:1.05; }
+.mode-cta{
+  margin-top:auto; padding:11px 14px; border-radius:13px;
+  background:rgba(255,255,255,.04); border:1px solid var(--line);
+  transition:background .2s, border-color .2s;
+}
+.mode-card.mode-ranked .mode-cta{
+  background:linear-gradient(180deg, rgba(34,211,163,.16), rgba(34,211,163,.07));
+  border-color:rgba(34,211,163,.4); font-weight:800;
+}
+.mode-card.mode-ranked:hover .mode-cta{ background:linear-gradient(180deg, rgba(34,211,163,.24), rgba(34,211,163,.10)); }
+@media (max-width:760px){
+  .mode-card{ min-height:auto; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   V17 — CINEMATIC MATCH RESULTS + NAVBAR & MOBILE FIXES
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- MATCH RESULTS — full cinematic redesign ---------- */
+.match-result-overlay{ --mr-a:var(--violet); --mr-b:#5fc9ff; }
+.match-result-overlay.win{ --mr-a:var(--mint); --mr-b:#5fc9ff; }
+.match-result-overlay.lose{ --mr-a:var(--coral); --mr-b:#ff9a3d; }
+.match-result-overlay.draw{ --mr-a:var(--violet); --mr-b:#5fc9ff; }
+.match-result-overlay .mr-bg{
+  background:
+    radial-gradient(95% 60% at 50% 0%, color-mix(in srgb, var(--mr-a) 15%, transparent), transparent 70%),
+    rgba(5,4,9,.94);
+}
+.match-result-card-v2{ animation:mrCardIn .65s cubic-bezier(.2,1.15,.3,1) both; }
+@keyframes mrCardIn{ from{ opacity:0; transform:scale(.92) translateY(28px); } to{ opacity:1; transform:none; } }
+.match-result-card-v2 > *{ animation:v10Rise .5s cubic-bezier(.22,.9,.3,1) both; }
+.match-result-card-v2 > *:nth-child(1){ animation-delay:.05s; }
+.match-result-card-v2 > *:nth-child(2){ animation-delay:.15s; }
+.match-result-card-v2 > *:nth-child(3){ animation-delay:.25s; }
+.match-result-card-v2 > *:nth-child(4){ animation-delay:.35s; }
+.match-result-card-v2 > *:nth-child(5){ animation-delay:.45s; }
+.match-result-card-v2 > *:nth-child(6){ animation-delay:.55s; }
+.match-result-card-v2 > *:nth-child(n+7){ animation-delay:.62s; }
+/* headline strip: rotating light rays behind a huge gradient title */
+.mr-headline-strip{ position:relative; overflow:hidden; }
+.mr-headline-strip::before{
+  content:""; position:absolute; left:50%; top:50%; width:620px; height:620px;
+  margin:-310px 0 0 -310px; pointer-events:none;
+  background:repeating-conic-gradient(transparent 0 13deg, color-mix(in srgb, var(--mr-a) 6%, transparent) 13deg 26deg);
+  animation:mrRays 36s linear infinite;
+}
+@keyframes mrRays{ to{ transform:rotate(360deg); } }
+.mr-headline-strip > *{ position:relative; z-index:1; }
+.match-result-headline{
+  background:linear-gradient(115deg, var(--mr-a), var(--mr-b) 50%, var(--mr-a));
+  background-size:240% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:v10GradFlow 4.5s ease-in-out infinite;
+  filter:drop-shadow(0 0 26px color-mix(in srgb, var(--mr-a) 40%, transparent));
+}
+.mr-headline-icon{
+  color:var(--mr-a);
+  filter:drop-shadow(0 0 14px color-mix(in srgb, var(--mr-a) 70%, transparent));
+  animation:lrGift 3s ease-in-out infinite;
+}
+.mrc-score .you{ color:var(--mr-a); text-shadow:0 0 22px color-mix(in srgb, var(--mr-a) 50%, transparent); }
+.mrc-score span{ animation:mrScorePop .55s cubic-bezier(.2,1.6,.4,1) both .4s; display:inline-block; }
+@keyframes mrScorePop{ from{ opacity:0; transform:scale(.4); } to{ opacity:1; transform:none; } }
+.mrc-av{ box-shadow:0 0 0 2px color-mix(in srgb, var(--mr-a) 45%, transparent), 0 8px 22px -10px rgba(0,0,0,.8); }
+#matchEndAgainBtn{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--mr-a) 88%, #fff 10%), var(--mr-a));
+  border:none; color:#06120e; font-weight:800;
+  box-shadow:0 12px 30px -10px color-mix(in srgb, var(--mr-a) 70%, transparent);
+  transition:transform .18s, box-shadow .18s;
+}
+.match-result-overlay.lose #matchEndAgainBtn{ color:#fff; }
+#matchEndAgainBtn:hover{ transform:translateY(-2px); box-shadow:0 16px 38px -10px color-mix(in srgb, var(--mr-a) 80%, transparent); }
+#matchRankFill{ position:relative; }
+body.low-power .mr-headline-strip::before{ display:none; }
+@media (prefers-reduced-motion: reduce){
+  .mr-headline-strip::before{ display:none; }
+  .match-result-card-v2, .match-result-card-v2 > *, .mrc-score span, .match-result-headline, .mr-headline-icon{ animation:none !important; }
+}
+@media (max-width:600px){
+  .mr-headline-strip::before{ width:420px; height:420px; margin:-210px 0 0 -210px; }
+}
+
+/* ---------- navbar: What's new + mobile topbar declutter ---------- */
+.whatsnew-btn{ font-size:15px; }
+.whatsnew-btn:hover{ box-shadow:0 0 16px -6px var(--violet-glow); border-color:rgba(155,123,255,.45); }
+@media (max-width:600px){
+  .topbar{ padding:9px 10px; gap:7px; }
+  .topbar-icon-btn, .hamburger{ width:36px; height:36px; border-radius:9px; }
+  .topbar-brand{ font-size:16px; gap:7px; }
+  .topbar-brand .tb-logo{ width:26px; height:26px; border-radius:8px; }
+  .live-stats{ display:none !important; }
+  /* "How to play" collapses to a circular ? icon */
+  #helpBtn{ font-size:0; gap:0; width:36px; min-width:36px; height:36px; padding:0; justify-content:center; border-radius:9px; }
+  #helpBtn svg{ width:16px; height:16px; }
+  #userChip{ max-width:96px; }
+  .dxp-pill, .boost-pill{ font-size:10px; padding:5px 8px; }
+}
+
+/* ---------- chat message reporting ---------- */
+.chat-msg{ position:relative; }
+.chat-msg .msg-report{
+  margin-left:7px; padding:1px 5px; border-radius:6px; border:none; cursor:pointer;
+  background:transparent; color:var(--text-faint); font-size:10px;
+  opacity:0; transition:opacity .15s, color .15s;
+}
+.chat-msg:hover .msg-report{ opacity:1; }
+.chat-msg .msg-report:hover{ color:var(--coral); }
+@media (hover: none){ .chat-msg .msg-report{ opacity:.5; } }
+
+/* ---------- live username suggestions ---------- */
+.user-suggest{
+  display:none; position:absolute; left:0; right:0; top:calc(100% + 6px); z-index:80;
+  background:rgba(18,16,26,.98); border:1px solid var(--line-bright, var(--line));
+  border-radius:13px; padding:5px; box-shadow:0 18px 44px -14px rgba(0,0,0,.8);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+}
+.user-suggest.show{ display:flex; flex-direction:column; gap:2px; animation:v10Rise .2s ease-out; }
+.us-row{
+  display:flex; align-items:center; gap:10px; width:100%;
+  padding:8px 10px; border-radius:9px; border:none; cursor:pointer;
+  background:transparent; color:var(--text); text-align:left; font-size:13px;
+}
+.us-row:hover{ background:rgba(255,255,255,.06); }
+.us-av{
+  width:26px; height:26px; border-radius:50%; display:grid; place-items:center; flex-shrink:0;
+  background:linear-gradient(135deg, var(--violet), #6c54c4); color:#fff;
+  font-weight:800; font-size:12px;
+}
+.us-name{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.us-go{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); }
+
+/* ---------- XP token artwork ---------- */
+.xpb-card-ic img{ width:40px; height:40px; object-fit:contain; filter:drop-shadow(0 4px 10px rgba(0,0,0,.55)); }
+.lr-token-img{ width:26px; height:26px; object-fit:contain; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); }
+
 /* ---------- READY-UP v2 ---------- */
 .pre-ready-card{
   border-color:rgba(34,211,163,.25);
@@ -13243,7 +13494,7 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
       <span class="pr-vs">VS</span>
       <span class="pr-chip" id="prChipOpp"><span class="pr-dot"></span><span id="prOppName">opponent</span></span>
     </div>
-    <button class="btn-cta pr-ready-btn" id="preReadyBtn"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-check"/></svg> READY <span class="key">R</span></button>
+    <button class="btn-cta pr-ready-btn" id="preReadyBtn"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-check"/></svg> READY</button>
     <div class="pr-wait" id="prWait" style="display:none;">✓ You're ready — waiting for your opponent…</div>
   </div>
 </div>
@@ -13395,10 +13646,12 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
       <div class="stat"><span>· <b id="matchCount">0</b> active matches</span></div>
     </div>
     <button class="dxp-pill" id="dxpPill" style="display:none;" title="Double XP weekend"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-zap"/></svg> 2× XP</button>
+    <button class="dxp-pill boost-pill" id="boostPill" style="display:none;" title="2× XP token active" data-goto-play>🎟️ 2× <span id="boostPillTime">0m</span></button>
     <div class="topbar-spacer"></div>
     <div class="header-actions" id="headerActions">
       <button class="btn btn-ghost" id="helpBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg> How to play</button>
       <button class="btn" id="nextBtn" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-next"/></svg>Next<span class="key">N</span></button>
+      <button class="topbar-icon-btn whatsnew-btn" id="whatsNewBtn" title="What's new" aria-label="What's new">✨</button>
       <!-- Notifications -->
       <button class="topbar-icon-btn" id="notifBtn" title="Notifications" aria-label="Notifications">
         <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-bell"/></svg>
@@ -14056,6 +14309,9 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
+        <!-- 2× XP BOOST — activate your tokens here -->
+        <div class="xpboost-panel" id="xpBoostPanel" style="display:none;"></div>
+
         <!-- Secondary actions -->
         <div class="play-actions-row">
           <button class="play-quick-btn" id="playPageCameraBtn">
@@ -14506,6 +14762,11 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Streamer mode</div><div class="set-sub" id="setStreamerState">Hides sensitive info (codes, emails, opponent names)</div></div>
             <div class="set-toggle off" id="setStreamerToggle"></div>
           </button>
+          <button class="settings-row" id="setBlockedList">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-block"/></svg></div>
+            <div class="set-text"><div class="set-title">Blocked users</div><div class="set-sub">See and manage who you've blocked</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
           <button class="settings-row" id="setBlockRequests">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-user-plus"/></svg></div>
             <div class="set-text"><div class="set-title">Friend requests</div><div class="set-sub" id="setBlockRequestsState">Allow others to send you requests</div></div>
@@ -14520,16 +14781,6 @@ const FIREBASE_CONFIG = {
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
             <div class="set-text"><div class="set-title">ROSHCAM</div><div class="set-sub" id="aboutVersion">Real-time webcam Rock Paper Scissors</div></div>
           </div>
-          <button class="settings-row" id="setUpdateLog">
-            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-star"/></svg></div>
-            <div class="set-text"><div class="set-title">What's new</div><div class="set-sub">Update log — latest features &amp; fixes</div></div>
-            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
-          </button>
-          <button class="settings-row" id="setDevLogs">
-            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-activity"/></svg></div>
-            <div class="set-text"><div class="set-title">Developer logs</div><div class="set-sub" id="setDevLogsState">Off · console output is hidden for privacy</div></div>
-            <div class="set-toggle off" id="setDevLogsToggle"></div>
-          </button>
           <button class="settings-row" data-open-legal="terms">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></div>
             <div class="set-text"><div class="set-title">Terms of Service</div><div class="set-sub">The rules for using ROSHCAM</div></div>
@@ -15518,18 +15769,6 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
-<!-- ONBOARDING — first-run interactive tutorial -->
-<div class="onb-overlay" id="onbOverlay">
-  <div class="onb-card onb-v2">
-    <div class="onb-segs" id="onbDots"></div>
-    <div class="onb-stage" id="onbStage"></div>
-    <button class="btn btn-primary onb-next" id="onbNext">Next</button>
-    <div class="onb-foot">
-      <button class="onb-link" id="onbBack" style="visibility:hidden;">← Back</button>
-      <button class="onb-link" id="onbSkip">Skip intro</button>
-    </div>
-  </div>
-</div>
 
 <!-- UPDATE LOG -->
 <div class="modal-bg" id="updateLogModal">
@@ -16415,6 +16654,7 @@ const FIREBASE_CONFIG = {
       <h3 class="calib-title">Test all three throws</h3>
       <p class="calib-sub" id="calibGesturePrompt">Make each shape clearly — we'll tick them off as they're detected. This trains your muscle memory for real matches.</p>
       <button class="btn btn-primary" id="calibStep3Next" style="width:100%;" disabled>Make all 3 to continue…</button>
+      <button class="btn btn-ghost" id="calibStep3Skip" style="width:100%; margin-top:8px;">Skip the test</button>
     </div>
 
     <!-- 4: Done -->
@@ -17085,6 +17325,11 @@ function calcMatchXp(opts){
     const bonus = xp; // doubling = +100% of the subtotal
     xp += bonus;
     breakdown.push({ label:'⚡ Weekend 2× XP', amount: bonus });
+  } else if(xpBoostActive()){
+    // 2× XP TOKEN — same doubling as the weekend (they never stack to 4×)
+    const bonus = xp;
+    xp += bonus;
+    breakdown.push({ label:'🎟️ 2× XP token', amount: bonus });
   }
   return { xp, breakdown };
 }
@@ -17204,8 +17449,6 @@ function showScreen(name){
     }
     // Toggle in-game flag (hides mobile bottom nav during a match)
     document.body.classList.toggle('in-game', name === 'game');
-    // First-run onboarding the first time a signed-in player reaches the home screen
-    if(name === 'landing' && state.profile){ try { maybeShowOnboarding(); } catch(e){} }
     // Main-menu music transitions:
     //  • landing  → clear the lowpass + play (resumes cleanly after a match)
     //  • matching → keep playing but muffled (clean lowpass sweep while searching)
@@ -17424,21 +17667,8 @@ let particles = [];
 function resizeCanvas(){ pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
-function burst(x, y, color, count=80){
-  for(let i=0;i<count;i++){
-    const ang = Math.random()*Math.PI*2;
-    const speed = 2 + Math.random()*8;
-    particles.push({x,y,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed-2,g:0.2,life:60+Math.random()*40,size:2+Math.random()*4,color});
-  }
-}
-function bigBurst(color, count=200){
-  const cx = window.innerWidth/2, cy = window.innerHeight/2;
-  for(let i=0;i<count;i++){
-    const ang = Math.random()*Math.PI*2;
-    const speed = 4 + Math.random()*14;
-    particles.push({x:cx,y:cy,vx:Math.cos(ang)*speed,vy:Math.sin(ang)*speed-3,g:0.18,life:90+Math.random()*60,size:3+Math.random()*5,color});
-  }
-}
+function burst(){ /* particle confetti removed site-wide for performance */ }
+function bigBurst(){ /* particle confetti removed site-wide for performance */ }
 // Performance tier for big celebratory animations (rank-up especially).
 // Phones / low-core / low-power / reduced-motion get a lighter sequence so it
 // never janks; desktops get the full cinematic treatment.
@@ -17545,9 +17775,9 @@ async function _loadAudioData(src){
   if(src.startsWith('data:')) return _b64ToArrayBuffer(src);
   try {
     const res = await fetch(src);
-    if(!res.ok) return null;
+    if(!res.ok){ console.error('[audio] failed to load', src, '— HTTP', res.status, '(is the file uploaded next to index.html?)'); return null; }
     return await res.arrayBuffer();
-  } catch(e){ return null; }
+  } catch(e){ console.error('[audio] failed to load', src, e); return null; }
 }
 // Decode the audio into AudioBuffers (once). Needs an unlocked context.
 async function initSampleAudio(){
@@ -17602,6 +17832,17 @@ async function initSampleAudio(){
       if(ab) sampleAudio.legendBuf = await audioCtx.decodeAudioData(ab);
     }
     sampleAudio.ready = true;
+    // If the music file failed (slow host, first-deploy 404), retry a couple of
+    // times instead of staying silent for the whole session.
+    if(!sampleAudio.musicBuf && (sampleAudio._retries || 0) < 2){
+      sampleAudio._retries = (sampleAudio._retries || 0) + 1;
+      setTimeout(() => {
+        sampleAudio.ready = false;
+        initSampleAudio().then(() => {
+          if(sampleAudio.musicBuf && (state.screen === 'landing' || state.screen === 'matching') && !state.muted) startMenuMusic();
+        });
+      }, 5000);
+    }
   } catch(e){ console.warn('[audio] decode failed', e); }
   sampleAudio.decoding = false;
 }
@@ -18438,14 +18679,10 @@ async function onAuthChanged(user){
   // Check for pending forfeit notice (set by beforeunload during a previous session)
   checkForfeitNotice();
 
-  // First-time camera calibration — only auto-opens for players who already
-  // finished (or skipped) the onboarding; first-timers reach it THROUGH the
-  // onboarding's final step instead, so the two never stack.
+  // First-time camera calibration — auto-opens once on the first landing.
   try {
-    if(!localStorage.getItem('rosham_calibrated_v1') && localStorage.getItem('rosham_onboarded')){
-      setTimeout(() => {
-        if(state.screen === 'landing' && !$('#onbOverlay')?.classList.contains('show')) openCalibration();
-      }, 900);
+    if(!localStorage.getItem('rosham_calibrated_v1')){
+      setTimeout(() => { if(state.screen === 'landing') openCalibration(); }, 900);
     }
   } catch(e){}
 }
@@ -20415,14 +20652,14 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
 
 // ============= WEEKLY CHALLENGES (3 per week, grant XP — not ELO) =============
 const WEEKLY_CHALLENGES = [
-  { id:'w_win15',      text:'Win 15 matches this week',          goal:15, type:'wins',        xp:600 },
-  { id:'w_win25',      text:'Win 25 matches this week',          goal:25, type:'wins',        xp:900 },
-  { id:'w_play30',     text:'Play 30 matches this week',         goal:30, type:'games',       xp:500 },
+  { id:'w_win15',      text:'Win 15 matches this week',          goal:15, type:'wins',        xp:600, token:'m30' },
+  { id:'w_win25',      text:'Win 25 matches this week',          goal:25, type:'wins',        xp:900, token:'m60' },
+  { id:'w_play30',     text:'Play 30 matches this week',         goal:30, type:'games',       xp:500, token:'m15' },
   { id:'w_rounds40',   text:'Win 40 rounds this week',           goal:40, type:'roundsWon',   xp:550 },
-  { id:'w_streak5',    text:'Hit a 5-win streak this week',      goal:5,  type:'streak',      xp:500 },
-  { id:'w_streak7',    text:'Hit a 7-win streak this week',      goal:7,  type:'streak',      xp:750 },
-  { id:'w_predict20',  text:'Read 20 throws correctly this week',goal:20, type:'predicts',    xp:650 },
-  { id:'w_flawless3',  text:'Win 3 flawless matches this week',  goal:3,  type:'flawless',    xp:700 },
+  { id:'w_streak5',    text:'Hit a 5-win streak this week',      goal:5,  type:'streak',      xp:500, token:'m15' },
+  { id:'w_streak7',    text:'Hit a 7-win streak this week',      goal:7,  type:'streak',      xp:750, token:'m30' },
+  { id:'w_predict20',  text:'Read 20 throws correctly this week',goal:20, type:'predicts',    xp:650, token:'m15' },
+  { id:'w_flawless3',  text:'Win 3 flawless matches this week',  goal:3,  type:'flawless',    xp:700, token:'m30' },
   { id:'w_rock15',     text:'Win 15 rounds with ROCK',           goal:15, type:'rockWin',     xp:450 },
   { id:'w_paper15',    text:'Win 15 rounds with PAPER',          goal:15, type:'paperWin',    xp:450 },
   { id:'w_scissors15', text:'Win 15 rounds with SCISSORS',       goal:15, type:'scissorsWin', xp:450 },
@@ -20460,7 +20697,7 @@ function refreshWeeklyChallenges(){
     return `<div class="weekly-row${c.completed ? ' done' : ''}">
       <div class="weekly-top">
         <span class="weekly-goal">${c.completed ? '<svg class="weekly-tick" viewBox="0 0 24 24"><use href="#i-check"/></svg> ' : ''}${escapeHTML(c.text)}</span>
-        <span class="weekly-xp">+1 LEVEL</span>
+        <span class="weekly-xp">+1 LEVEL${c.token ? ' · 🎟️ ' + (XP_TOKEN_TYPES[c.token]?.label || '') : ''}</span>
       </div>
       <div class="ui-bar"><div class="ui-bar-fill${c.completed ? ' complete' : ''}" style="width:${pct}%"></div></div>
       <div class="weekly-meta">${Math.min(c.progress, c.goal)}/${c.goal}</div>
@@ -20517,6 +20754,7 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
       // Each weekly challenge grants a FULL level's worth of XP at your current level.
       const curLvl = levelOf(state.profile).level;
       grantXp(xpForLevel(curLvl), 'Weekly challenge · +1 level');
+      if(c.token){ try { grantXpTokens({ [c.token]: 1 }, 'Weekly challenge'); } catch(e){} }
       try { celebrateChallenge('.js-weekly-card'); } catch(e){}
     }
   });
@@ -20529,6 +20767,102 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
   }
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
+
+// ============= 2× XP TOKENS (CoD-style timed boosts) =============
+// Earned from weekly challenges, the quest-line finale and daily rewards.
+// Activated on the Play page; activating while one runs ADDS time (stacking).
+const XP_TOKEN_TYPES = {
+  m15: { ms: 15 * 60e3, label: '15 MIN', img: '15min.png' },
+  m30: { ms: 30 * 60e3, label: '30 MIN', img: '30min.png' },
+  m60: { ms: 60 * 60e3, label: '1 HOUR', img: '60min.png' },
+};
+function getXpTokens(){
+  const t = state.profile?.xpTokens || {};
+  return { m15: t.m15 | 0, m30: t.m30 | 0, m60: t.m60 | 0 };
+}
+function xpBoostUntil(){ return +(state.profile?.xpBoostUntil || 0); }
+function xpBoostActive(){ return xpBoostUntil() > Date.now(); }
+function _fmtBoost(ms){
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60);
+  return h >= 1 ? `${h}h ${m}m` : m >= 1 ? `${m}m ${(s % 60).toString().padStart(2, '0')}s` : `${s}s`;
+}
+async function grantXpTokens(gift, reason, opts = {}){
+  if(!state.profile || !state.user) return;
+  const t = getXpTokens();
+  const parts = [];
+  for(const k in gift){
+    if(!XP_TOKEN_TYPES[k]) continue;
+    t[k] = (t[k] | 0) + gift[k];
+    parts.push(`${gift[k]}× ${XP_TOKEN_TYPES[k].label.toLowerCase()}`);
+  }
+  state.profile.xpTokens = t;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { xpTokens: t }); } catch(e){}
+  if(!opts.silent && parts.length){
+    try { toast(`🎟️ ${reason}: ${parts.join(' + ')} 2× XP token${parts.length > 1 || Object.values(gift)[0] > 1 ? 's' : ''}!`, 'success', { duration: 5000 }); } catch(e){}
+  }
+  try { renderXpBoostPanel(); } catch(e){}
+}
+async function activateXpToken(kind){
+  const info = XP_TOKEN_TYPES[kind]; if(!info || !state.profile) return;
+  const t = getXpTokens();
+  if(!t[kind]) return;
+  t[kind]--;
+  const until = Math.max(Date.now(), xpBoostUntil()) + info.ms;
+  state.profile.xpTokens = t;
+  state.profile.xpBoostUntil = until;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { xpTokens: t, xpBoostUntil: until }); } catch(e){}
+  try { toast(`🎟️ 2× XP active — ${_fmtBoost(until - Date.now())} on the clock. Go!`, 'success'); } catch(e){}
+  try { haptic(15); } catch(e){}
+  try { sfxReady(); } catch(e){}
+  renderXpBoostPanel();
+  updateBoostPill();
+}
+function renderXpBoostPanel(){
+  const host = $('#xpBoostPanel');
+  if(!host) return;
+  if(!state.profile){ host.style.display = 'none'; return; }
+  const t = getXpTokens();
+  const active = xpBoostActive();
+  host.innerHTML = `
+    <div class="xpb-head">
+      <div class="xpb-title"><span class="xpb-ic">🎟️</span> 2× XP BOOST</div>
+      ${active
+        ? `<span class="xpb-active"><span class="live-dot"></span> ACTIVE · <b id="xpbCountdown">${_fmtBoost(xpBoostUntil() - Date.now())}</b> left</span>`
+        : `<span class="xpb-sub">Earn tokens from weekly challenges, the quest line &amp; daily rewards</span>`}
+    </div>
+    <div class="xpb-grid">
+      ${['m15', 'm30', 'm60'].map(k => `
+        <div class="xpb-card${t[k] ? '' : ' empty'}">
+          <div class="xpb-card-time">${XP_TOKEN_TYPES[k].label}</div>
+          <div class="xpb-card-ic"><img src="${XP_TOKEN_TYPES[k].img}" alt="${XP_TOKEN_TYPES[k].label} 2× XP token" loading="lazy" decoding="async" /></div>
+          <div class="xpb-card-count">×${t[k]}</div>
+          <button class="btn xpb-use" data-token="${k}" ${t[k] ? '' : 'disabled'}>${active ? '+ Add time' : 'Activate'}</button>
+        </div>`).join('')}
+    </div>`;
+  host.querySelectorAll('.xpb-use').forEach(b => b.addEventListener('click', () => activateXpToken(b.dataset.token)));
+  host.style.display = '';
+}
+function updateBoostPill(){
+  const pill = $('#boostPill');
+  if(!pill) return;
+  const active = xpBoostActive();
+  pill.style.display = active ? '' : 'none';
+  if(active) setText('#boostPillTime', _fmtBoost(xpBoostUntil() - Date.now()));
+}
+// 1s ticker keeps the pill + panel countdown live and refreshes on expiry.
+setInterval(() => {
+  const active = xpBoostActive();
+  updateBoostPill();
+  if(active){
+    const c = $('#xpbCountdown'); if(c) c.textContent = _fmtBoost(xpBoostUntil() - Date.now());
+    state._boostWasActive = true;
+  } else if(state._boostWasActive){
+    state._boostWasActive = false;
+    try { toast('🎟️ Your 2× XP boost has ended', 'info'); } catch(e){}
+    try { renderXpBoostPanel(); } catch(e){}
+  }
+}, 1000);
 
 // ============= QUEST LINE (chained challenges → big finale reward) =============
 const QUEST_CHAIN = [
@@ -20606,7 +20940,8 @@ function updateQuestProgress(matchResult, roundDetails){
       if(d.step >= QUEST_CHAIN.length){
         d.doneAll = true;
         grantXp(QUEST_FINALE_XP, 'Quest line complete!', { silent:true });
-        setTimeout(() => { try { toast(`🏆 Quest line complete — +${QUEST_FINALE_XP} XP bonus!`, 'success'); launchConfetti(); } catch(e){} }, 700);
+        try { grantXpTokens({ m30: 2, m60: 1 }, 'Quest line finale', { silent: true }); } catch(e){}
+        setTimeout(() => { try { toast(`🏆 Quest line complete — +${QUEST_FINALE_XP} XP, 2× 30 min + 1× 1 hour 2× XP tokens!`, 'success', { duration: 7000 }); } catch(e){} }, 700);
         break;
       }
       // only the 'games' step auto-advances every match; others need fresh match data
@@ -23254,7 +23589,11 @@ function handlePeerMessage(msg){
   }
   if(msg.type === 'pong' && (typeof msg.t !== 'number' || !isFinite(msg.t))) return;  // NaN ping guard
   if(msg.type === 'round_result' && !['win', 'lose', 'draw', 'forfeit'].includes(msg.result)) return;
-  if(msg.type === 'start_round' && (state.phase !== 'idle' || state.countdownRunning || state._prematch)) return;
+  // start_round: reject only if a round is visibly in flight. NOTE: do NOT gate
+  // on state.countdownRunning — maybeStartRound() sets that flag optimistically
+  // on BOTH sides, so gating on it made the callee drop the caller's legitimate
+  // start signal (caller counted down alone, callee froze holding a gesture).
+  if(msg.type === 'start_round' && (state._prematch || (state.phase !== 'idle' && state.phase !== 'done'))) return;
   if(msg.type === 'chat'){
     if(typeof msg.text !== 'string' || !msg.text.trim()) return;
     msg.text = msg.text.slice(0, 140);
@@ -24833,9 +25172,11 @@ function showMatchResultScreen(result){
   const strip = $('#matchResultHeadlineStrip');
   const iconEl = $('#matchResultIcon');
 
-  // Set header strip + icon by result
+  // Set header strip + icon by result (overlay-level class drives the new theming)
   headline.classList.remove('win','lose','draw');
   if(strip) strip.classList.remove('win','lose','draw');
+  overlay.classList.remove('win','lose','draw');
+  overlay.classList.add(result === 'win' ? 'win' : result === 'lose' ? 'lose' : 'draw');
 
   if(result === 'win'){
     headline.textContent = 'VICTORY';
@@ -25687,6 +26028,30 @@ function addChat(who, text){
   } else {
     const label = who === 'you' ? state.profile?.username || 'you' : (state.oppProfile?.username ? '@'+state.oppProfile.username : 'stranger');
     m.innerHTML = `<span class="who ${who}">${escapeHTML(label)}</span><span class="text">${escapeHTML(text)}</span>`;
+    // Opponent messages can be reported straight from the chat.
+    if(who === 'opp' && state.oppUid){
+      const rep = document.createElement('button');
+      rep.className = 'msg-report';
+      rep.title = 'Report this message';
+      rep.textContent = '⚑';
+      const msgText = text;
+      rep.addEventListener('click', async () => {
+        if(!confirm('Report this message to the moderators?')) return;
+        try {
+          await addDoc(collection(state.db, 'reports'), {
+            reporter: state.user.uid,
+            offender: state.oppUid,
+            offenderName: state.oppProfile?.username || '',
+            type: 'chat-message',
+            text: (msgText || '').slice(0, 200),
+            createdAt: serverTimestamp(),
+          });
+          rep.disabled = true; rep.textContent = '✓';
+          toast('Message reported — thanks for keeping ROSHCAM clean', 'success');
+        } catch(e){ toast('Could not send the report', 'error'); }
+      });
+      m.appendChild(rep);
+    }
   }
   const wrap = $('#chatMessages');
   if(wrap){
@@ -26480,6 +26845,7 @@ function renderHomePage(){
     setText('#hxTipText', HOME_TIPS[day % HOME_TIPS.length]);
     const tipEl = $('#hxTip'); if(tipEl) tipEl.style.display = '';
   } catch(e){}
+  try { renderXpBoostPanel(); updateBoostPill(); } catch(e){}
   try { applySeasonSoftReset(); } catch(e){}
   try { refreshSeasonUI(); } catch(e){}
   const p = state.profile;
@@ -26720,6 +27086,9 @@ function renderAchievementsPage(){
   }
 }
 function renderActivityPage(){
+  // The leaderboard listener used to attach only when the "Top" TAB was
+  // clicked — the Activity page's Top Players panel sat empty forever.
+  try { attachLeaderboardListener(); } catch(e){}
   // Mirror the global activity + leaderboard into the activity page containers
   const src = $('#globalActivityBody');
   const dst = $('#activityPageBody');
@@ -26968,77 +27337,24 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ===== UPDATE LOG =====
-const APP_VERSION = '1.3.7';
+const APP_VERSION = '2.1.0';
 const UPDATE_LOG = [
-  { v: '1.3.7', date: 'June 2026', title: 'Rock solid', items: [
-    ['improved', 'Matches run noticeably smoother — heavy blur effects step aside while the webcams are live'],
-    ['improved', 'Avatar images in long lists load lazily and never block the page'],
-    ['fixed', 'Hardened more peer-message fields (ping timing, throw timing) against tampered clients'],
-    ['fixed', 'Your mini-cam no longer collides with the ready-up sheet on phones'],
-    ['fixed', 'No more layout jump when the home page scrollbar appears'],
+  { v: '2.1.0', date: 'June 2026', title: 'Match fix & cinema results', items: [
+    ['fixed', 'Critical: rounds desynced — one player counted down while the other froze. Matches start reliably again'],
+    ['new', 'Match results completely redesigned — cinematic victory/defeat screen with light rays and staggered reveals'],
+    ['new', 'Live username search with suggestions when adding friends'],
+    ['new', 'Report individual chat messages with the ⚑ flag'],
+    ['new', 'Blocked users list in Settings → Privacy'],
+    ['improved', 'XP tokens have their own artwork; What’s new lives in the navbar; tooltips no longer cover buttons; mobile topbar decluttered'],
+    ['fixed', 'Menu music retries loading instead of staying silent; camera calibration detects throws far more reliably (and can be skipped)'],
   ]},
-  { v: '1.3.6', date: 'June 2026', title: 'Quiet console', items: [
-    ['fixed', 'Privacy: the browser console no longer prints user ids, match ids or internal state'],
-    ['new', 'Settings → About → Developer logs re-enables console output when you need to debug'],
-    ['improved', 'Stricter referrer policy and safer external links'],
-  ]},
-  { v: '1.3.5', date: 'June 2026', title: 'Locked down', items: [
-    ['fixed', 'Security: messages from your opponent’s client are now strictly validated before touching the game (closed an HTML-injection hole)'],
-    ['new', 'Anti-spam: chat and emotes from opponents are rate-limited'],
-    ['new', 'Clickjacking protection and a self-XSS console warning'],
-    ['new', 'Usernames pass a profanity check'],
-    ['improved', 'Weak devices auto-enable low power mode (and it now disables far more heavy effects)'],
-    ['improved', 'A second open tab is detected and warned about before queueing'],
-  ]},
-  { v: '1.3.4', date: 'June 2026', title: 'Matches that actually start', items: [
-    ['fixed', 'Critical: the Next button ran matchmaking twice per click, leaving ghost queue entries and matches that never started'],
-    ['fixed', 'A 25s connection watchdog now recovers from failed connections — auto-requeues instead of “CONNECTING…” forever'],
-    ['fixed', 'Ready-up state is fully cleaned up when a match is torn down mid-phase'],
-    ['improved', 'If your opponent never readies up, the ready screen now tells you instead of dangling'],
-    ['fixed', 'Guest profiles get the same progression fields as full accounts'],
-  ]},
-  { v: '1.3.3', date: 'June 2026', title: 'See the throw', items: [
-    ['fixed', 'You now see your opponent’s camera the moment “SHOOT!” hits — watch the throw live'],
-    ['improved', 'Ready-up phase: cleaner card, full-width on mobile, your mini-cam lifts out of the way'],
-    ['improved', 'Home page refresh: clearer stat tiles, daily tip, polished rank & throw-style cards'],
-    ['improved', 'Play page: bolder mode cards with ranked front and centre'],
-    ['fixed', 'Title cosmetics no longer truncate into “Challenger …” soup'],
-  ]},
-  { v: '1.3.2', date: 'June 2026', title: 'Arena, decluttered', items: [
-    ['new', 'Mobile matches now use a FaceTime-style layout — opponent fills the screen, your camera floats as a mini card'],
-    ['new', 'One-row match dock on phones: predictions, emotes and chat each a tap away'],
-    ['improved', 'Cleaner match screen on desktop — icon-only controls, quieter top bar'],
-    ['improved', 'The score label now tracks overtime (“OT · FIRST TO 3”)'],
-  ]},
-  { v: '1.3.1', date: 'June 2026', title: 'Polish pass', items: [
-    ['new', 'Brand-new onboarding — shorter, cleaner, and it flows straight into camera setup'],
-    ['improved', 'Camera calibration redesigned — and it no longer pops up over the tutorial'],
-    ['improved', 'Click your name in the topbar to see your profile exactly as others see it'],
-    ['fixed', 'Camera now fully stops if you dismiss calibration mid-way'],
-    ['fixed', 'Debug button removed from the matchmaking screen'],
-  ]},
-  { v: '1.3.0', date: 'June 2026', title: 'Launch ready 🚀', items: [
-    ['new', 'Mobile overhaul — bottom-sheet menus, floating game dock, press feedback everywhere'],
-    ['new', 'This update log — find it any time in Settings → What’s new'],
-    ['new', 'Redesigned username setup with live profile preview, availability check and a 🎲 randomizer'],
-    ['improved', 'Performance: lighter blur on phones, idle canvas skipped, assets cached offline'],
-    ['improved', 'Offline / back-online notices'],
-  ]},
-  { v: '1.2.0', date: 'June 2026', title: 'Ready up!', items: [
-    ['new', 'Pre-match ready-up — see each other, say hi, and press READY to start'],
-    ['new', 'Your profile in the topbar, exactly as others see it'],
-    ['new', 'Keyboard shortcuts: M mute · R ready · ? help · Esc close'],
-    ['improved', 'Settings packs into clean columns'],
-    ['fixed', 'Confetti removed — big frame-rate win on phones'],
-  ]},
-  { v: '1.1.0', date: 'June 2026', title: 'Faster everything', items: [
-    ['improved', 'Page loads ~75% smaller: audio split out, all art optimized'],
-    ['new', 'Settings, profile, daily reward and onboarding redesigned'],
-    ['new', 'Unranked players get their own emblem'],
-    ['fixed', 'Delete account now erases everything — matches, messages, comments, all of it'],
-  ]},
-  { v: '1.0.0', date: 'June 2026', title: 'A new look', items: [
-    ['new', 'ROSHCAM logo, favicon and a full visual overhaul'],
+  { v: '2.0.0', date: 'June 2026', title: 'The big one 🎟️', items: [
+    ['new', '2× XP Tokens — earn 15 min / 30 min / 1 hour boosts from weekly challenges, the quest line and daily rewards. Activate them on the Play page; activating again adds time'],
+    ['new', 'Daily rewards rebuilt — new 7-day board with XP-token days and a day-7 jackpot'],
+    ['new', 'A brand-new update log (you found it!)'],
+    ['improved', 'Play page feels like a game lobby — boost panel, bolder modes'],
+    ['improved', 'Top Players now loads on the Activity page'],
+    ['improved', 'Tighter rank card on Home; onboarding removed for a faster first match'],
   ]},
 ];
 function renderUpdateLog(){
@@ -27060,23 +27376,7 @@ function openUpdateLog(){
   $('#updateLogModal')?.classList.add('show');
   try { localStorage.setItem('rosham_seen_version', APP_VERSION); } catch(e){}
 }
-on('#setUpdateLog', 'click', openUpdateLog);
-// Developer logs toggle — console output is silenced in production for privacy
-(() => {
-  let devOn = false;
-  try { devOn = localStorage.getItem('rosham_debug') === '1'; } catch(e){}
-  const sync = () => {
-    $('#setDevLogsToggle')?.classList.toggle('off', !devOn);
-    setText('#setDevLogsState', devOn ? 'On · reload to apply' : 'Off · console output is hidden for privacy');
-  };
-  sync();
-  on('#setDevLogs', 'click', () => {
-    devOn = !devOn;
-    try { localStorage.setItem('rosham_debug', devOn ? '1' : '0'); } catch(e){}
-    sync();
-    toast(devOn ? 'Developer logs on — reload to apply' : 'Developer logs off — reload to apply', 'info');
-  });
-})();
+on('#whatsNewBtn', 'click', openUpdateLog);
 setText('#aboutVersion', `Version ${APP_VERSION} · Real-time webcam Rock Paper Scissors`);
 // One gentle "what's new" nudge per version (never on a first visit).
 function maybeShowUpdateToast(){
@@ -27188,6 +27488,52 @@ function otherTabActive(){ return Date.now() - _otherTabSeen < 11000; }
   } catch(e){}
 })();
 
+// ===== LIVE USERNAME SEARCH — prefix suggestions on the add-friend inputs =====
+function attachUserSearch(inputSel){
+  const inp = $(inputSel); if(!inp) return;
+  const wrap = inp.parentElement; if(!wrap) return;
+  try { if(getComputedStyle(wrap).position === 'static') wrap.style.position = 'relative'; } catch(e){}
+  const list = document.createElement('div');
+  list.className = 'user-suggest';
+  wrap.appendChild(list);
+  let timer = null, seq = 0;
+  const hide = () => { list.classList.remove('show'); list.innerHTML = ''; };
+  inp.addEventListener('input', () => {
+    clearTimeout(timer);
+    const q = inp.value.trim().toLowerCase().replace(/^@/, '');
+    if(q.length < 2){ hide(); return; }
+    timer = setTimeout(async () => {
+      const my = ++seq;
+      try {
+        const snap = await getDocs(query(
+          collection(state.db, 'usernames'),
+          orderBy(documentId()), startAt(q), endAt(q + ''), limit(5)
+        ));
+        if(my !== seq) return;
+        const meName = (state.profile?.username || '').toLowerCase();
+        const rows = [];
+        snap.forEach(d => { if(d.id !== meName) rows.push({ name: d.id, uid: d.data()?.uid || '' }); });
+        if(!rows.length){ hide(); return; }
+        list.innerHTML = rows.map(r => `
+          <button type="button" class="us-row" data-uid="${escapeHTML(r.uid)}" data-name="${escapeHTML(r.name)}">
+            <span class="us-av">${escapeHTML(r.name[0].toUpperCase())}</span>
+            <span class="us-name">@${escapeHTML(r.name)}</span>
+            <span class="us-go">view →</span>
+          </button>`).join('');
+        list.classList.add('show');
+        list.querySelectorAll('.us-row').forEach(b => b.addEventListener('click', () => {
+          inp.value = b.dataset.name;
+          hide();
+          if(b.dataset.uid) openProfile(b.dataset.uid);
+        }));
+      } catch(e){ hide(); }
+    }, 280);
+  });
+  inp.addEventListener('blur', () => setTimeout(hide, 250));
+}
+attachUserSearch('#addFriendInput');
+attachUserSearch('#addFriendInputPage');
+
 // ===== CONNECTIVITY NOTICES =====
 window.addEventListener('offline', () => { try { toast("📡 You're offline — some features won't work", 'error', { duration: 4500 }); } catch(e){} });
 window.addEventListener('online', () => { try { toast('✓ Back online', 'success'); } catch(e){} });
@@ -27200,7 +27546,16 @@ if('serviceWorker' in navigator && (location.protocol === 'https:' || location.h
 // Daily login streak (localStorage)
 // Daily login reward — once per day, XP scales with the login streak.
 // Escalating 7-day reward cycle (XP), peaking on day 7.
-const DAILY_REWARDS = [100, 125, 150, 175, 200, 250, 350];
+// Day 3 and 6 pay out 2× XP tokens; day 7 is the jackpot (big XP + 1-hour token).
+const DAILY_REWARDS = [
+  { xp: 100 },
+  { xp: 150 },
+  { token: 'm15' },
+  { xp: 200 },
+  { token: 'm30' },
+  { xp: 300 },
+  { xp: 500, token: 'm60' },
+];
 function dailyRewardForStreak(streak){ return DAILY_REWARDS[(Math.max(1, streak) - 1) % 7]; }
 function claimDailyLoginReward(){
   if(!state.user || !state.profile) return;
@@ -27211,28 +27566,41 @@ function claimDailyLoginReward(){
   try { localStorage.setItem(key, today); } catch(e){}  // mark first → no re-entry
   const info = computeLoginStreak();
   const dayInWeek = ((info.streak - 1) % 7) + 1;
-  let amount = dailyRewardForStreak(info.streak);
+  const reward = dailyRewardForStreak(info.streak);
+  let amount = reward.xp || 0;
   let comebackBonus = 0;
   if(info.comeback){ comebackBonus = Math.min(250, 50 + info.daysAway * 25); amount += comebackBonus; }
-  try { showLoginReward(amount, info.streak, dayInWeek, comebackBonus); } catch(e){}
-  grantXp(amount, comebackBonus ? 'Welcome back' : 'Daily login', { silent: true });
+  try { showLoginReward(reward, amount, info.streak, dayInWeek, comebackBonus); } catch(e){}
+  if(amount > 0) grantXp(amount, comebackBonus ? 'Welcome back' : 'Daily login', { silent: true });
+  if(reward.token){ try { grantXpTokens({ [reward.token]: 1 }, 'Daily reward', { silent: true }); } catch(e){} }
 }
-function showLoginReward(amount, streak, dayInWeek, comebackBonus){
-  setText('#lrAmount', `+${amount} XP`);
+function _lrRewardText(r){
+  const bits = [];
+  if(r.xp) bits.push(`+${r.xp}`);
+  if(r.token) bits.push(`🎟️${XP_TOKEN_TYPES[r.token].label.replace(' ', '')}`);
+  return bits.join('<br>');
+}
+function showLoginReward(reward, amount, streak, dayInWeek, comebackBonus){
+  const headBits = [];
+  if(amount > 0) headBits.push(`+${amount} XP`);
+  if(reward.token) headBits.push(`🎟️ ${XP_TOKEN_TYPES[reward.token].label} 2× XP token`);
+  const amtEl = $('#lrAmount'); if(amtEl) amtEl.innerHTML = headBits.join(' <span class="lr-amp">&</span> ') || 'Reward!';
   setText('#lrStreak', `Day ${streak} login streak 🔥`);
   const cal = $('#lrCalendar');
   if(cal){
-    cal.innerHTML = DAILY_REWARDS.map((amt, i) => {
+    cal.innerHTML = DAILY_REWARDS.map((r, i) => {
       const day = i + 1;
       const st = day < dayInWeek ? 'done' : day === dayInWeek ? 'today' : 'future';
+      const bigIc = day === 7 ? '🎁'
+        : r.token ? `<img class="lr-token-img" src="${XP_TOKEN_TYPES[r.token].img}" alt="" loading="lazy" decoding="async">`
+        : '⚡';
       const icon = st === 'done'
-        ? '<svg viewBox="0 0 24 24" class="lr-day-check" width="13" height="13"><use href="#i-check"/></svg>'
-        : st === 'today' ? '<span class="lr-day-now">🎁</span>'
-        : (day === 7 ? '<span class="lr-day-now">🏆</span>' : '');
+        ? '<svg viewBox="0 0 24 24" class="lr-day-check" width="15" height="15"><use href="#i-check"/></svg>'
+        : `<span class="lr-day-big">${bigIc}</span>`;
       return `<div class="lr-day ${st}${day === 7 ? ' jackpot' : ''}" style="--lr-i:${i}">
-        <div class="lr-day-n">${st === 'today' ? 'TODAY' : 'D' + day}</div>
+        <div class="lr-day-n">${st === 'today' ? 'TODAY' : 'DAY ' + day}</div>
         <div class="lr-day-ic">${icon}</div>
-        <div class="lr-day-x">+${amt}</div>
+        <div class="lr-day-x">${_lrRewardText(r)}</div>
       </div>`;
     }).join('');
   }
@@ -27242,7 +27610,7 @@ function showLoginReward(amount, streak, dayInWeek, comebackBonus){
     else cb.style.display = 'none';
   }
   const m = $('#loginRewardModal');
-  if(m){ m.classList.add('show'); if(!document.body.classList.contains('low-power')){ try { setTimeout(()=>launchConfetti(), 200); } catch(e){} } }
+  if(m) m.classList.add('show');
 }
 // Compute (and persist) the login streak once per day, with comeback detection.
 // Cached in state so multiple callers in the same day agree.
@@ -27539,7 +27907,9 @@ async function calibStep3(){
     if(typeof Hands !== 'undefined'){
       if(calibHands){ try { calibHands.close(); } catch(e){} }
       calibHands = new Hands({ locateFile: (f) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${f}` });
-      calibHands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.6, minTrackingConfidence: 0.5 });
+      // Lenient thresholds: this is a learning step, not an exam — accept hands
+      // in poor light rather than frustrating new players.
+      calibHands.setOptions({ maxNumHands: 1, modelComplexity: 0, minDetectionConfidence: 0.42, minTrackingConfidence: 0.35 });
       calibHands.onResults((res) => {
         const st = $('#calibHandState');
         if(res.multiHandLandmarks && res.multiHandLandmarks.length > 0){
@@ -27561,7 +27931,7 @@ async function calibStep3(){
       const pump = async () => {
         if(calibStepIdx !== 3 || !calibHands || !v2) return;
         try { await calibHands.send({ image: v2 }); } catch(e){}
-        setTimeout(pump, 110);
+        setTimeout(pump, 90);
       };
       v2.addEventListener('loadeddata', pump, { once: true });
       if(v2.readyState >= 2) pump();
@@ -27588,6 +27958,7 @@ on('#calibSkip', 'click', () => { try { localStorage.setItem(CALIB_KEY, '1'); } 
 on('#calibStep1Next', 'click', calibStep2);
 on('#calibStep2Next', 'click', calibStep3);
 on('#calibStep3Next', 'click', calibComplete);
+on('#calibStep3Skip', 'click', calibComplete);
 on('#calibFinish', 'click', closeCalibration);
 // Re-runnable from settings
 on('#setCalibrate', 'click', () => { try { localStorage.removeItem(CALIB_KEY); } catch(e){} openCalibration(); });
@@ -27639,68 +28010,7 @@ on('#setHaptics', 'click', () => {
   try { localStorage.setItem('rosham_haptics', state.hapticsOff ? '0' : '1'); } catch(e){}
 });
 on('#setHowTo', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add('show'); });
-// ===== Onboarding (first-run tutorial) =====
-const ONB_STEPS = [
-  { ic:'👋', title:'Welcome to ROSHCAM', text:'Live Rock Paper Scissors against real people, on webcam.' },
-  { gestures:true, title:'Your hand is the controller', text:'Fist = Rock · Palm = Paper · Two fingers = Scissors. Hold it steady on camera.' },
-  { ic:'⚡', title:'Ready, set, SHOOT!', text:'Both players press READY, then throw on “SHOOT!”. Best of 3 wins.' },
-  { ranks:true, title:'Climb Bronze → Legend', text:'Win 5 placement matches to unlock your rank. Streaks climb faster.' },
-];
-let _onbIdx = 0;
-function renderOnbStep(){
-  const s = ONB_STEPS[_onbIdx]; if(!s) return;
-  const stage = $('#onbStage');
-  if(stage){
-    let visual;
-    if(s.gestures){
-      visual = `<div class="onb-gestures">
-        <div class="og"><svg viewBox="0 0 24 24"><use href="#i-rock"/></svg><span>ROCK</span></div>
-        <div class="og"><svg viewBox="0 0 24 24"><use href="#i-paper"/></svg><span>PAPER</span></div>
-        <div class="og"><svg viewBox="0 0 24 24"><use href="#i-scissors"/></svg><span>SCISSORS</span></div>
-      </div>`;
-    } else if(s.ranks){
-      visual = `<div class="onb-ranks">
-        <svg viewBox="0 0 24 24" class="onb-rk"><use href="#i-rank-bronze"/></svg>
-        <span class="onb-rk-arrow">→</span>
-        <svg viewBox="0 0 24 24" class="onb-rk"><use href="#i-rank-gold"/></svg>
-        <span class="onb-rk-arrow">→</span>
-        <svg viewBox="0 0 24 24" class="onb-rk"><use href="#i-rank-diamond"/></svg>
-        <span class="onb-rk-arrow">→</span>
-        <svg viewBox="0 0 24 24" class="onb-rk big"><use href="#i-rank-legend"/></svg>
-      </div>`;
-    } else {
-      visual = `<div class="onb-ic">${s.ic}</div>`;
-    }
-    stage.innerHTML = `${visual}<div class="onb-title">${s.title}</div><div class="onb-text">${s.text}</div>`;
-  }
-  const segs = $('#onbDots'); if(segs) segs.innerHTML = ONB_STEPS.map((_, i) => `<i class="${i === _onbIdx ? 'on' : i < _onbIdx ? 'past' : ''}"></i>`).join('');
-  const back = $('#onbBack'); if(back) back.style.visibility = _onbIdx > 0 ? 'visible' : 'hidden';
-  const next = $('#onbNext');
-  if(next){
-    let needsCalib = false;
-    try { needsCalib = !localStorage.getItem(CALIB_KEY); } catch(e){}
-    next.textContent = _onbIdx >= ONB_STEPS.length - 1 ? (needsCalib ? 'Set up my camera →' : "Let's play! 🔥") : 'Next';
-  }
-}
-function openOnboarding(){ _onbIdx = 0; renderOnbStep(); $('#onbOverlay')?.classList.add('show'); }
-function closeOnboarding(){
-  $('#onbOverlay')?.classList.remove('show');
-  try { localStorage.setItem('rosham_onboarded', '1'); } catch(e){}
-  // Flow straight into camera setup once — never stack the two on top of each other.
-  try {
-    if(!localStorage.getItem(CALIB_KEY)){
-      setTimeout(() => { if(state.screen === 'landing') openCalibration(); }, 350);
-    }
-  } catch(e){}
-}
-function maybeShowOnboarding(){
-  try { if(localStorage.getItem('rosham_onboarded')) return; } catch(e){}
-  if(state._onbShown) return; state._onbShown = true;
-  setTimeout(() => { if(state.screen === 'landing') openOnboarding(); }, 700);
-}
-on('#onbNext', 'click', () => { if(_onbIdx >= ONB_STEPS.length - 1){ closeOnboarding(); } else { _onbIdx++; renderOnbStep(); try { haptic(8); } catch(e){} } });
-on('#onbBack', 'click', () => { if(_onbIdx > 0){ _onbIdx--; renderOnbStep(); } });
-on('#onbSkip', 'click', closeOnboarding);
+// (Onboarding removed — first-run flows straight to camera calibration.)
 // Mirror camera (also persists so it survives a reload)
 on('#setCamFlip', 'click', () => {
   state._camMirrored = !state._camMirrored;
@@ -27755,6 +28065,7 @@ on('#setNotify', 'click', async () => {
   renderSettingsPage();
 });
 on('#setSignOut', 'click', () => $('#signOutBtn')?.click());
+on('#setBlockedList', 'click', () => $('#viewBlockedBtn')?.click());
 // ===== Delete account =====
 on('#setDeleteAccount', 'click', () => {
   if(!state.profile) return;
@@ -28156,8 +28467,14 @@ if(!(window.matchMedia && window.matchMedia('(hover: none)').matches)){
     if(!tipEl){ tipEl = document.createElement('div'); tipEl.className = 'ui-tooltip'; document.body.appendChild(tipEl); }
     tipEl.textContent = text;
     const r = el.getBoundingClientRect();
-    tipEl.style.left = Math.round(r.left + r.width / 2) + 'px';
-    tipEl.style.top = Math.round(r.top - 8) + 'px';
+    // Flip BELOW the element when there's no room above (topbar buttons etc.) —
+    // otherwise the tooltip lands on top of the button it describes.
+    const flip = r.top < 46;
+    tipEl.classList.toggle('below', flip);
+    // Clamp horizontally so edge buttons don't push the tip off-screen.
+    const cx = Math.min(window.innerWidth - 60, Math.max(60, r.left + r.width / 2));
+    tipEl.style.left = Math.round(cx) + 'px';
+    tipEl.style.top = Math.round(flip ? r.bottom + 9 : r.top - 9) + 'px';
     requestAnimationFrame(() => tipEl && tipEl.classList.add('show'));
   };
   const hideTip = (el) => {
