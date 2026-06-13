@@ -1256,34 +1256,100 @@ body.reduced-motion .nav-page.active, body.low-power .nav-page.active{ animation
 .ach-ladder-btn:active{ transform: scale(.96); }
 .ach-ladder-btn .alb-chev{ opacity: .7; }
 @media (max-width: 560px){ .ach-ladder-btn{ width: 100%; justify-content: center; margin-top: 4px; } .ach-level-banner{ flex-wrap: wrap; } }
-/* ===== LEVEL & PRESTIGE LADDER ===== */
-.level-ladder{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.level-ladder.flash .ladder-col{ animation: ladderFlash 1.1s ease; }
-@keyframes ladderFlash{ 0%{ box-shadow: 0 0 0 0 rgba(255,211,61,0); } 30%{ box-shadow: 0 0 0 2px rgba(255,211,61,.5), 0 0 26px -6px rgba(255,211,61,.6); } }
-.ladder-col{ background: var(--surface); border: 1px solid var(--line-soft); border-radius: 16px; padding: 14px; }
-.ladder-col-head{ display: flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 11px; font-weight: 800; letter-spacing: .12em; color: var(--text-dim); text-transform: uppercase; margin-bottom: 12px; }
-.ladder-col-head svg{ color: var(--amber, #ffd33d); }
-.ladder-col-head b{ margin-left: auto; color: var(--text); font-family: var(--font-display); font-stretch: 80%; }
-.ladder-track{ display: flex; flex-direction: column; gap: 4px; position: relative; }
-/* vertical connector behind the nodes */
-.ladder-track::before{ content: ''; position: absolute; left: 17px; top: 16px; bottom: 16px; width: 2px; background: var(--line); border-radius: 2px; }
-.ladder-rung{ display: flex; align-items: center; gap: 11px; padding: 7px 8px; border-radius: 11px; position: relative; transition: background .15s; }
-.ladder-rung.reached{ background: color-mix(in srgb, var(--rung-color) 8%, transparent); }
-.ladder-rung.current{ background: color-mix(in srgb, var(--rung-color) 16%, transparent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--rung-color) 45%, transparent); }
-.ladder-rung.locked{ opacity: .5; }
-.lr-node{ width: 32px; height: 32px; flex-shrink: 0; border-radius: 9px; display: grid; place-items: center; z-index: 1;
-  font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 14px;
-  background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--line); }
-.ladder-rung.reached .lr-node{ background: linear-gradient(135deg, color-mix(in srgb, var(--rung-color) 85%, #fff), var(--rung-color)); color: #0a0a0f; border-color: transparent; box-shadow: 0 4px 12px -4px var(--rung-color); }
-.ladder-rung.current .lr-node{ box-shadow: 0 0 0 3px color-mix(in srgb, var(--rung-color) 30%, transparent), 0 4px 12px -4px var(--rung-color); }
-.lr-node.pr{ border-radius: 50%; }
-.lr-body{ flex: 1; min-width: 0; }
-.lr-name{ font-family: var(--font-display); font-stretch: 82%; font-weight: 700; font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ladder-rung.reached .lr-name{ color: var(--rung-color); }
-.lr-req{ font-family: var(--font-mono); font-size: 9.5px; color: var(--text-faint); letter-spacing: .03em; margin-top: 1px; }
-.lr-state{ flex-shrink: 0; color: var(--text-faint); display: grid; place-items: center; }
-.ladder-rung.reached .lr-state{ color: var(--rung-color); }
-@media (max-width: 620px){ .level-ladder{ grid-template-columns: 1fr; } }
+/* ===== LEVEL & PRESTIGE PASS (battle-pass-style progression) ===== */
+.bp-pass{ display: flex; flex-direction: column; gap: 14px; }
+.bp-pass.flash .bp-pass-card{ animation: bpFlash 1.2s ease; }
+@keyframes bpFlash{ 0%{ box-shadow: 0 0 0 0 rgba(255,211,61,0); } 30%{ box-shadow: 0 0 0 2px rgba(255,211,61,.5), 0 0 30px -6px rgba(255,211,61,.55); } }
+.bp-pass-card{
+  --bp-accent: var(--mint);
+  position: relative; border-radius: 20px; padding: 16px 16px 12px;
+  background: linear-gradient(180deg, rgba(255,255,255,.035), transparent 40%), var(--surface);
+  border: 1px solid var(--line); overflow: hidden;
+  animation: bpCardIn .5s cubic-bezier(.2,.8,.2,1) both;
+}
+.bp-pass-card.prestige{ --bp-accent: #ffd33d; }
+.bp-pass-card.prestige{ animation-delay: .08s; }
+.bp-pass-card::before{ content:''; position:absolute; inset:0 0 auto 0; height:3px; background:linear-gradient(90deg, transparent, var(--bp-accent), transparent); opacity:.7; }
+@keyframes bpCardIn{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+/* header */
+.bp-head{ display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+.bp-head-badge{ width: 54px; height: 54px; flex-shrink: 0; border-radius: 15px; display: grid; place-items: center;
+  font-family: var(--font-display); font-stretch: 65%; font-weight: 800; font-size: 26px; color: #08070d;
+  background: linear-gradient(135deg, #ffd33d, #ff9a3d); box-shadow: 0 8px 22px -6px rgba(255,154,61,.6); }
+.bp-head-badge.pr{ border-radius: 50%; background: linear-gradient(135deg, #fff6c0, #ffd700); font-size: 24px; }
+.bp-head-info{ flex: 1; min-width: 0; }
+.bp-head-row{ display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.bp-head-title{ font-family: var(--font-mono); font-size: 11px; font-weight: 800; letter-spacing: .18em; color: var(--text-dim); }
+.bp-head-count{ font-family: var(--font-display); font-stretch: 75%; font-weight: 900; font-size: 21px; color: var(--text); white-space: nowrap; }
+.bp-head-count i{ font-style: normal; font-size: 12px; color: var(--text-faint); }
+.bp-head-bar{ height: 8px; border-radius: 999px; background: rgba(0,0,0,.35); overflow: hidden; margin: 7px 0 5px; }
+.bp-head-bar i{ display: block; height: 100%; width: 0; border-radius: 999px; position: relative; overflow: hidden;
+  background: linear-gradient(90deg, var(--bp-accent), color-mix(in srgb, var(--bp-accent) 55%, #fff));
+  box-shadow: 0 0 10px -2px var(--bp-accent); transition: width 1.1s cubic-bezier(.2,.8,.2,1); }
+.bp-head-bar i::after{ content:''; position:absolute; inset:0; background:linear-gradient(110deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); transform:translateX(-130%); animation: bpSheen 2.6s ease-in-out 1s infinite; }
+@keyframes bpSheen{ 0%{ transform:translateX(-130%); } 55%,100%{ transform:translateX(160%); } }
+.bp-head-sub{ font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); letter-spacing: .02em; }
+/* track */
+.bp-track-wrap{ position: relative; margin: 0 -16px; }
+.bp-track-wrap::before, .bp-track-wrap::after{ content:''; position:absolute; top:0; bottom:8px; width:26px; z-index:3; pointer-events:none; }
+.bp-track-wrap::before{ left:0; background:linear-gradient(90deg, var(--surface), transparent); }
+.bp-track-wrap::after{ right:0; background:linear-gradient(270deg, var(--surface), transparent); }
+.bp-track{ display: flex; align-items: stretch; overflow-x: auto; overflow-y: hidden; padding: 4px 16px 6px;
+  scroll-behavior: smooth; -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-snap-type: x proximity; }
+.bp-track::-webkit-scrollbar{ display: none; }
+/* node */
+.bpn{ flex: 0 0 auto; width: 66px; display: flex; flex-direction: column; align-items: center; scroll-snap-align: center;
+  animation: bpNodeIn .42s cubic-bezier(.2,1.5,.4,1) both; animation-delay: var(--d, 0s); }
+.bpn.milestone{ width: 90px; }
+@keyframes bpNodeIn{ from{ opacity:0; transform: translateY(12px) scale(.88); } to{ opacity:1; transform:none; } }
+/* reward card (fixed height keeps every rail aligned) */
+.bpn-card{ height: 84px; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 3px; padding: 0 3px; }
+.bpn-card.ghost{ visibility: hidden; }
+.bpn-ic{ width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0;
+  background: color-mix(in srgb, var(--nc) 16%, var(--surface-2)); color: var(--nc);
+  border: 1px solid color-mix(in srgb, var(--nc) 40%, transparent); transition: transform .2s; }
+.bpn-ic svg{ width: 21px; height: 21px; }
+.bpn-ic.pr{ border-radius: 50%; font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 17px; border: none; box-shadow: inset 0 1px 2px rgba(255,255,255,.4); }
+.bpn-ic.glow{ box-shadow: 0 0 18px -4px var(--nc); }
+.bpn-name{ font-family: var(--font-display); font-stretch: 82%; font-weight: 700; font-size: 10.5px; line-height: 1.1; color: var(--text); text-align: center; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bpn-rar{ font-family: var(--font-mono); font-size: 7.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
+/* rail + dot (the connecting track) */
+.bpn-rail{ position: relative; width: 100%; height: 30px; display: grid; place-items: center; }
+.bpn-rail::before{ content:''; position: absolute; left: 0; right: 0; top: 50%; height: 4px; transform: translateY(-50%); background: var(--line); }
+.bpn.reached .bpn-rail::before{ background: var(--bp-accent); box-shadow: 0 0 10px -3px var(--bp-accent); }
+.bpn.current .bpn-rail::before{ background: linear-gradient(90deg, var(--bp-accent) 0 50%, var(--line) 50% 100%); box-shadow: none; }
+.bpn-dot{ position: relative; z-index: 1; width: 16px; height: 16px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--surface-2); border: 2px solid var(--line); color: #0a0a0f; transition: transform .2s; }
+.bpn.milestone .bpn-dot{ width: 22px; height: 22px; }
+.bpn-dot svg{ width: 11px; height: 11px; }
+.bpn.reached .bpn-dot{ background: linear-gradient(135deg, color-mix(in srgb, var(--nc) 85%, #fff), var(--nc)); border-color: transparent; box-shadow: 0 3px 10px -3px var(--nc); }
+.bpn.current .bpn-dot{ box-shadow: 0 0 0 4px color-mix(in srgb, var(--nc) 28%, transparent), 0 0 18px -2px var(--nc); animation: bpDotPulse 1.6s ease-in-out infinite; }
+@keyframes bpDotPulse{ 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.18); } }
+/* locked nodes dim their reward */
+.bpn.locked .bpn-card{ opacity: .42; filter: grayscale(.55); }
+.bpn.locked .bpn-ic{ background: var(--surface-2); color: var(--text-faint); border-color: var(--line); }
+/* tier label + "you are here" */
+.bpn-tier{ margin-top: 7px; font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: .04em; color: var(--text-faint); }
+.bpn.reached .bpn-tier{ color: var(--text-dim); }
+.bpn.current .bpn-tier{ color: var(--bp-accent); }
+.bpn-here{ display: inline-block; margin-left: 4px; padding: 1px 5px; border-radius: 999px; background: var(--bp-accent); color: #08070d; font-size: 7px; font-weight: 900; letter-spacing: .06em; vertical-align: middle; animation: bpHerePulse 1.6s ease-in-out infinite; }
+@keyframes bpHerePulse{ 0%,100%{ box-shadow: 0 0 0 0 color-mix(in srgb, var(--bp-accent) 60%, transparent); } 50%{ box-shadow: 0 0 0 4px transparent; } }
+/* mobile sizing */
+@media (max-width: 560px){
+  .bp-pass-card{ padding: 14px 14px 10px; border-radius: 16px; }
+  .bp-head{ gap: 11px; margin-bottom: 12px; }
+  .bp-head-badge{ width: 46px; height: 46px; font-size: 22px; border-radius: 13px; }
+  .bp-head-count{ font-size: 18px; }
+  .bp-track-wrap{ margin: 0 -14px; }
+  .bp-track{ padding: 4px 14px 6px; }
+  .bpn{ width: 58px; } .bpn.milestone{ width: 80px; }
+  .bpn-ic{ width: 36px; height: 36px; border-radius: 11px; }
+  .bpn-card{ height: 78px; }
+}
+body.reduced-motion .bpn, body.low-power .bpn{ animation: none !important; }
+body.reduced-motion .bpn.current .bpn-dot, body.low-power .bpn.current .bpn-dot,
+body.reduced-motion .bpn-here, body.low-power .bpn-here,
+body.reduced-motion .bp-head-bar i::after, body.low-power .bp-head-bar i::after{ animation: none !important; }
 .ach-level-title{ font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 22px; }
 .ach-level-xp{ font-family: var(--font-mono); font-size: 11px; color: var(--text-faint); margin: 4px 0 8px; }
 .ach-level-bar{ height: 8px; background: rgba(0,0,0,.3); border-radius: 4px; overflow: hidden; }
@@ -14396,12 +14462,7 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
     <!-- 2× XP TOKEN crest — gunmetal shield, gold top bar, "2XP" + twin stars
          (CoD-style token art redrawn to fit the site's amber accent) -->
     <symbol id="i-xptoken" viewBox="0 0 24 24">
-      <path d="M2.6 2.6h18.8v10.9L12 22.1 2.6 13.5Z" fill="#221c0e"/>
-      <path d="M2.6 2.6h18.8v10.9L12 22.1 2.6 13.5Z" fill="none" stroke="#9a7c2a" stroke-width="1.1"/>
-      <rect x="4.7" y="4.6" width="14.6" height="2.4" rx="1.2" fill="url(#xptGrad)"/>
-      <text x="12" y="14.8" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, sans-serif" font-size="7" font-weight="800" font-style="italic" letter-spacing="-.2" fill="url(#xptGrad)">2XP</text>
-      <path d="m9.6 15.9.5 1 1.1.16-.8.78.19 1.1-.99-.52-.99.52.19-1.1-.8-.78 1.1-.16Z" fill="url(#xptGrad)"/>
-      <path d="m14.4 15.9.5 1 1.1.16-.8.78.19 1.1-.99-.52-.99.52.19-1.1-.8-.78 1.1-.16Z" fill="url(#xptGrad)"/>
+      <image href="xptoken.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/>
     </symbol>
   </defs>
 </svg>
@@ -15411,16 +15472,18 @@ const FIREBASE_CONFIG = {
             <div class="asc-l">Total XP earned</div>
           </div>
         </div>
-        <!-- LEVEL & PRESTIGE LADDER — scrolled to by "View level progress" -->
-        <div class="psection" id="ladderSection"><h3>Level &amp; Prestige ladder</h3></div>
-        <div class="level-ladder" id="achLevelLadder"></div>
-
         <div class="psection"><h3>Badges</h3><span class="psection-sub" id="achPageCount">0 / 0</span></div>
         <div class="achievements-grid" id="achPageGrid"></div>
         <div class="psection"><h3>Titles</h3></div>
         <div class="titles-grid" id="achTitlesGrid"></div>
         <div class="psection"><h3>Milestones</h3></div>
         <div class="ach-milestones" id="achMilestones"></div>
+
+        <!-- LEVEL & PRESTIGE PASS — battle-pass-style progression (scrolled to by
+             the "View level progress" button). Lives at the bottom, under the
+             achievements. Rendered + animated by renderLevelLadder(). -->
+        <div class="psection" id="ladderSection"><h3>Level &amp; Prestige pass</h3><span class="psection-sub">your climb · every tier</span></div>
+        <div class="bp-pass" id="achLevelLadder"></div>
       </div><!-- /page achievements -->
 
       <!-- ============ PAGE: GLOBAL CHAT ============ -->
@@ -28283,47 +28346,101 @@ function renderLevelLadder(p, lvl, prestige){
   if(!host) return;
   p = p || state.profile; if(!p) { host.innerHTML = ''; return; }
   lvl = lvl || levelOf(p); prestige = prestige == null ? prestigeOf(p) : prestige;
+  const atCap = lvl.level >= MAX_LEVEL;
+  const checkSvg = '<svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-check"/></svg>';
 
-  // LEVEL rungs = the title milestones + the max-level prestige cap.
-  const rungs = TITLES.map(t => ({ level: t.level, label: t.name, color: t.color, rarity: t.rarity }));
-  rungs.push({ level: MAX_LEVEL, label: 'Prestige unlocked', color: '#ffd33d', cap: true });
-  rungs.sort((a, b) => a.level - b.level);
-  // highest reached rung = "current"
-  let curRungLevel = -1;
-  rungs.forEach(r => { if(lvl.level >= r.level) curRungLevel = r.level; });
-  const checkSvg = '<svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg>';
-  const lockSvg = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-lock"/></svg>';
-  const levelHTML = rungs.map(r => {
-    const reached = lvl.level >= r.level;
-    const current = r.level === curRungLevel;
-    return `<div class="ladder-rung ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}" style="--rung-color:${r.color}">
-      <div class="lr-node">${r.cap ? '★' : r.level}</div>
-      <div class="lr-body"><div class="lr-name">${escapeHTML(r.label)}</div><div class="lr-req">Level ${r.level}${current ? ' · you are here' : ''}</div></div>
-      <div class="lr-state">${reached ? checkSvg : lockSvg}</div>
+  // Title rewards keyed by the level they unlock at.
+  const titleAt = {};
+  TITLES.forEach(t => { titleAt[t.level] = t; });
+
+  // ----- LEVEL PASS: a node per level 1..MAX_LEVEL (sparse rewards on a track) -----
+  let levelNodes = '';
+  for(let L = 1; L <= MAX_LEVEL; L++){
+    const reached = lvl.level >= L;
+    const current = lvl.level === L;
+    const cap = L === MAX_LEVEL;
+    const title = titleAt[L];
+    const milestone = !!title || cap;
+    const color = cap ? '#ffd33d' : (title ? title.color : 'var(--mint)');
+    const delay = Math.min(L * 0.016, 0.7).toFixed(3);
+    let card;
+    if(cap){
+      card = `<div class="bpn-card big" style="--nc:#ffd33d">
+        <div class="bpn-ic glow"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg></div>
+        <div class="bpn-name">Prestige</div><div class="bpn-rar">Summit</div></div>`;
+    } else if(title){
+      const rar = titleRarity(title);
+      card = `<div class="bpn-card big rar-${title.rarity || 'common'}" style="--nc:${title.color}; --rar:${rar.color}">
+        <div class="bpn-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></div>
+        <div class="bpn-name">${escapeHTML(title.name)}</div><div class="bpn-rar">${rar.label} title</div></div>`;
+    } else {
+      card = `<div class="bpn-card ghost"></div>`;
+    }
+    levelNodes += `<div class="bpn ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}${milestone ? ' milestone' : ''}" style="--nc:${color}; --d:${delay}s">
+      ${card}
+      <div class="bpn-rail"><span class="bpn-dot">${reached && milestone ? checkSvg : ''}</span></div>
+      <div class="bpn-tier">${cap ? 'MAX' : L}${current ? '<span class="bpn-here">YOU</span>' : ''}</div>
     </div>`;
-  }).join('');
+  }
 
-  // PRESTIGE rungs = the fixed climb to Prestige Master.
-  const prestigeHTML = PRESTIGE_TIERS.map((pt, i) => {
+  // ----- PRESTIGE PASS: the fixed 10-tier climb to Prestige Master -----
+  let prestigeNodes = '';
+  PRESTIGE_TIERS.forEach((pt, i) => {
     const pr = i + 1;
     const reached = prestige >= pr;
-    const current = prestige === pr || (prestige === 0 && pr === 1 && lvl.level >= MAX_LEVEL);
-    return `<div class="ladder-rung prestige ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}" style="--rung-color:${pt.glow}">
-      <div class="lr-node pr" style="background:linear-gradient(135deg,${pt.a},${pt.b});color:${pt.t}">${pt.master ? '★' : pr}</div>
-      <div class="lr-body"><div class="lr-name">${escapeHTML(pt.name)}</div><div class="lr-req">${pt.master ? 'The summit' : 'Prestige ' + pr}</div></div>
-      <div class="lr-state">${reached ? checkSvg : lockSvg}</div>
+    const current = prestige === pr || (prestige === 0 && pr === 1 && atCap);
+    const delay = Math.min(i * 0.05, 0.5).toFixed(3);
+    prestigeNodes += `<div class="bpn prestige ${reached ? 'reached' : 'locked'}${current ? ' current' : ''} milestone" style="--nc:${pt.glow}; --d:${delay}s">
+      <div class="bpn-card big" style="--nc:${pt.glow}">
+        <div class="bpn-ic pr" style="background:linear-gradient(135deg,${pt.a},${pt.b}); color:${pt.t}">${pt.master ? '★' : pr}</div>
+        <div class="bpn-name">${escapeHTML(pt.name)}</div><div class="bpn-rar">${pt.master ? 'Final rank' : 'Prestige ' + pr}</div></div>
+      <div class="bpn-rail"><span class="bpn-dot">${reached ? checkSvg : ''}</span></div>
+      <div class="bpn-tier">${pt.master ? 'MAX' : 'P' + pr}${current ? '<span class="bpn-here">YOU</span>' : ''}</div>
     </div>`;
-  }).join('');
+  });
+
+  const xpText = atCap
+    ? (isPrestigeMaster(prestige) ? 'Max level · ⭐ Prestige Master' : (prestige > 0 ? `Max level · Prestige ${prestige}` : 'Max level · Prestige available'))
+    : `${lvl.xpInLevel.toLocaleString()} / ${lvl.xpForThis.toLocaleString()} XP → Level ${lvl.level + 1}`;
+  const xpPct = atCap ? 100 : Math.round(lvl.progress * 100);
+  const prPct = Math.round(Math.min(prestige, MAX_PRESTIGE) / MAX_PRESTIGE * 100);
 
   host.innerHTML = `
-    <div class="ladder-col">
-      <div class="ladder-col-head"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-trending-up"/></svg> LEVELS <b>${lvl.level}/${MAX_LEVEL}</b></div>
-      <div class="ladder-track">${levelHTML}</div>
+    <div class="bp-pass-card">
+      <div class="bp-head">
+        <div class="bp-head-badge" id="bpLevelBadge">${lvl.level}</div>
+        <div class="bp-head-info">
+          <div class="bp-head-row"><span class="bp-head-title">LEVEL PASS</span><span class="bp-head-count">${lvl.level}<i>/${MAX_LEVEL}</i></span></div>
+          <div class="bp-head-bar"><i style="width:0" data-w="${xpPct}"></i></div>
+          <div class="bp-head-sub">${xpText}</div>
+        </div>
+      </div>
+      <div class="bp-track-wrap"><div class="bp-track" id="bpLevelTrack">${levelNodes}</div></div>
     </div>
-    <div class="ladder-col">
-      <div class="ladder-col-head"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-star"/></svg> PRESTIGE <b>${isPrestigeMaster(prestige) ? 'MASTER' : prestige + '/' + MAX_PRESTIGE}</b></div>
-      <div class="ladder-track">${prestigeHTML}</div>
+    <div class="bp-pass-card prestige">
+      <div class="bp-head">
+        <div class="bp-head-badge pr" id="bpPrestigeBadge">${prestige > 0 ? (isPrestigeMaster(prestige) ? '★' : prestige) : '✦'}</div>
+        <div class="bp-head-info">
+          <div class="bp-head-row"><span class="bp-head-title">PRESTIGE PASS</span><span class="bp-head-count">${isPrestigeMaster(prestige) ? 'MASTER' : prestige + '<i>/' + MAX_PRESTIGE + '</i>'}</span></div>
+          <div class="bp-head-bar pr"><i style="width:0" data-w="${prPct}"></i></div>
+          <div class="bp-head-sub">${prestige > 0 ? `${escapeHTML(prestigeName(prestige))} · ${isPrestigeMaster(prestige) ? 'the summit' : 'climbing'}` : 'Reach level ' + MAX_LEVEL + ' to start prestiging'}</div>
+        </div>
+      </div>
+      <div class="bp-track-wrap"><div class="bp-track" id="bpPrestigeTrack">${prestigeNodes}</div></div>
     </div>`;
+
+  try { paintLevelBadge('#bpLevelBadge', lvl.level, prestige); } catch(e){}
+  if(prestige > 0){ const pt = prestigeTier(prestige); const b = $('#bpPrestigeBadge'); if(b){ b.style.background = `linear-gradient(135deg,${pt.a},${pt.b})`; b.style.color = pt.t; } }
+
+  // Animate the XP bars from 0 → target, and centre the "you are here" tier.
+  requestAnimationFrame(() => {
+    host.querySelectorAll('.bp-head-bar i[data-w]').forEach(i => { i.style.width = (i.dataset.w || 0) + '%'; });
+    ['#bpLevelTrack', '#bpPrestigeTrack'].forEach(t => {
+      const track = $(t); if(!track) return;
+      const cur = track.querySelector('.bpn.current');
+      if(cur) track.scrollLeft = Math.max(0, cur.offsetLeft - track.clientWidth / 2 + cur.offsetWidth / 2);
+    });
+  });
 }
 // "View level progress" → smooth-scroll to the ladder and flash it.
 on('#achViewLadderBtn', 'click', () => {
