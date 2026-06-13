@@ -575,42 +575,55 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .play-hero .play-tip{ margin-top:18px; }
 .play-hero .hx-hero-inner{ padding-bottom:2px; }
 
-/* ===== GAME MODE CARDS ===== */
+/* ===== GAME MODE CARDS v2 — accent-driven (--mc set inline per card) ===== */
 .mode-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
-.mode-card{ position:relative; overflow:hidden; display:flex; flex-direction:column; text-align:left;
-  padding:20px; border-radius:22px; background:linear-gradient(180deg,var(--surface-2),var(--surface));
-  border:1px solid var(--line); cursor:pointer; color:var(--text); min-height:230px;
-  transition:transform .14s cubic-bezier(.2,1,.3,1), border-color .15s, box-shadow .15s; }
-.mode-card:hover{ transform:translateY(-4px); box-shadow:0 24px 50px -28px rgba(0,0,0,.7); }
+.mode-card{ --mc:var(--mint); position:relative; overflow:hidden; display:flex; flex-direction:column; text-align:left;
+  padding:22px 22px 18px; border-radius:22px;
+  background:
+    radial-gradient(120% 90% at 12% 0%, color-mix(in srgb, var(--mc) 10%, transparent), transparent 55%),
+    linear-gradient(180deg, var(--surface-2), var(--surface));
+  border:1px solid color-mix(in srgb, var(--mc) 24%, var(--line)); cursor:pointer; color:var(--text); min-height:240px;
+  transition:transform .16s cubic-bezier(.2,1,.3,1), border-color .18s, box-shadow .2s; }
+.mode-card:hover{ transform:translateY(-4px);
+  border-color:color-mix(in srgb, var(--mc) 65%, transparent);
+  box-shadow:0 0 40px -12px color-mix(in srgb, var(--mc) 40%, transparent), 0 26px 52px -28px rgba(0,0,0,.75); }
 .mode-card:active{ transform:translateY(-1px) scale(.995); }
-.mode-card-glow{ position:absolute; top:-40%; left:-20%; right:-20%; height:200px; filter:blur(40px); opacity:.5; pointer-events:none; }
-.mode-ranked{ border-color:rgba(34,211,163,.3); }
-.mode-ranked:hover{ border-color:var(--mint); }
-.mode-ranked .mode-card-glow{ background:radial-gradient(closest-side,rgba(34,211,163,.4),transparent); }
-.mode-friend{ border-color:rgba(255,51,88,.25); }
-.mode-friend:hover{ border-color:var(--coral); }
-.mode-friend .mode-card-glow{ background:radial-gradient(closest-side,rgba(255,51,88,.32),transparent); }
-.mode-2v2 .mode-card-glow{ background:radial-gradient(closest-side,rgba(124,77,255,.3),transparent); }
-.mode-locked{ cursor:default; opacity:.86; }
-.mode-locked:hover{ transform:none; box-shadow:none; border-color:rgba(124,77,255,.3); }
-.mode-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:auto; }
-.mode-ic{ width:52px; height:52px; border-radius:15px; display:grid; place-items:center;
-  background:color-mix(in srgb, var(--mc) 16%, transparent); color:var(--mc); }
-.mode-ic svg{ width:27px; height:27px; }
+.mode-card-glow{ position:absolute; top:-40%; left:-20%; right:-20%; height:200px; filter:blur(40px); opacity:.45; pointer-events:none;
+  background:radial-gradient(closest-side, color-mix(in srgb, var(--mc) 38%, transparent), transparent); }
+.mode-locked{ cursor:default; opacity:.8; }
+.mode-locked:hover{ transform:none; box-shadow:none; border-color:color-mix(in srgb, var(--mc) 24%, var(--line)); }
+.mode-top{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:auto; }
+/* Circular emblem with accent ring + glow (was a flat rounded square) */
+.mode-ic{ width:58px; height:58px; border-radius:50%; display:grid; place-items:center;
+  background:radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--mc) 26%, transparent), color-mix(in srgb, var(--mc) 7%, transparent));
+  border:1px solid color-mix(in srgb, var(--mc) 45%, transparent);
+  color:var(--mc);
+  box-shadow:0 0 22px -6px color-mix(in srgb, var(--mc) 55%, transparent), inset 0 0 14px -8px color-mix(in srgb, var(--mc) 45%, transparent);
+  transition:transform .25s cubic-bezier(.2,1.4,.4,1); }
+.mode-ic svg{ width:26px; height:26px; filter:drop-shadow(0 0 8px color-mix(in srgb, var(--mc) 55%, transparent)); }
+.mode-card:not(.mode-locked):hover .mode-ic{ transform:scale(1.07); }
 .mode-tag{ font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
   padding:5px 10px; border-radius:999px; background:var(--surface-3); color:var(--text-dim); display:inline-flex; align-items:center; gap:6px; }
 .mode-tag.live{ background:rgba(34,211,163,.14); color:var(--mint); }
 .mode-tag.soon{ background:rgba(124,77,255,.16); color:#b9a3ff; }
-.mode-name{ font-family:var(--font-display); font-stretch:75%; font-weight:900; font-size:34px; line-height:.95; letter-spacing:-.02em; margin:16px 0 8px; }
+.mode-name{ font-family:var(--font-display); font-stretch:75%; font-weight:900; font-size:38px; line-height:.95; letter-spacing:-.02em; margin:18px 0 8px; }
 .mode-name-sub{ font-size:22px; opacity:.85; }
-.mode-vs{ color:var(--text-faint); font-size:.7em; vertical-align:middle; margin:0 2px; }
-.mode-desc{ font-size:13px; color:var(--text-dim); line-height:1.45; margin-bottom:16px; }
-.mode-cta{ display:flex; align-items:center; justify-content:space-between; gap:10px;
-  font-family:var(--font-display); font-stretch:80%; font-weight:700; font-size:14px; margin-top:auto; }
-.mode-go{ width:38px; height:38px; border-radius:12px; display:grid; place-items:center; flex:0 0 auto;
-  background:color-mix(in srgb, var(--mc,var(--mint)) 18%, transparent); color:var(--mc,var(--mint)); transition:transform .12s; }
-.mode-card:hover .mode-go{ transform:translateX(3px); }
-.mode-locked .mode-cta{ color:var(--text-faint); }
+.mode-vs{ color:color-mix(in srgb, var(--mc) 60%, var(--text-faint)); font-size:.6em; vertical-align:middle; margin:0 4px; font-weight:700; }
+.mode-desc{ font-size:13px; color:var(--text-dim); line-height:1.5; margin-bottom:16px; }
+/* CTA reads as a real button bar pinned to the card bottom */
+.mode-cta{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-top:auto;
+  padding:9px 9px 9px 16px; border-radius:14px;
+  background:color-mix(in srgb, var(--mc) 9%, var(--bg-2));
+  border:1px solid color-mix(in srgb, var(--mc) 28%, transparent);
+  font-family:var(--font-display); font-stretch:80%; font-weight:700; font-size:14.5px;
+  transition:background .15s, border-color .15s; }
+.mode-card:not(.mode-locked):hover .mode-cta{
+  background:color-mix(in srgb, var(--mc) 17%, var(--bg-2));
+  border-color:color-mix(in srgb, var(--mc) 55%, transparent); }
+.mode-go{ width:34px; height:34px; border-radius:10px; display:grid; place-items:center; flex:0 0 auto;
+  background:color-mix(in srgb, var(--mc,var(--mint)) 22%, transparent); color:var(--mc,var(--mint)); transition:transform .15s; }
+.mode-card:not(.mode-locked):hover .mode-go{ transform:translateX(3px); }
+.mode-locked .mode-cta{ color:var(--text-faint); background:var(--bg-2); border-color:var(--line-soft); }
 @media(max-width:820px){ .mode-grid{ grid-template-columns:1fr; } .mode-card{ min-height:0; } .mode-name{ font-size:30px; margin:12px 0 6px; } }
 .play-actions-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:14px; }
 
@@ -1493,9 +1506,10 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .opp-away-banner.show{ display: flex; }
 .opp-away-banner .dot{ width: 7px; height: 7px; border-radius: 50%; background: #ffc24d; animation: pulse 1s infinite; }
 
-/* ===== CHALLENGE CARD (play page) ===== */
-.challenge-card{ background: linear-gradient(135deg, rgba(255,51,88,.10), rgba(255,51,88,.02)) !important; border-color: rgba(255,51,88,.3) !important; }
-.challenge-card:hover{ border-color: var(--coral) !important; }
+/* ===== CHALLENGE CARD (home + play) =====
+   Neutral panel — each card's accent now comes from the .ch2 design below. */
+.challenge-card{ background: linear-gradient(180deg, var(--surface), var(--bg-2)) !important; border-color: var(--line) !important; }
+.challenge-card:hover{ border-color: color-mix(in srgb, var(--cha, var(--coral)) 45%, var(--line)) !important; }
 
 /* ===== CAMERA CALIBRATION WIZARD ===== */
 .calibration-modal{ max-width: 440px; text-align: center; }
@@ -1871,10 +1885,8 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .challenge-card{ position:relative; overflow:hidden; }
 .challenge-card::after{
   content:''; position:absolute; inset:0 0 auto 0; height:2px; pointer-events:none;
-  background:linear-gradient(90deg, transparent, var(--amber), transparent); opacity:.5;
+  background:linear-gradient(90deg, transparent, var(--cha, var(--amber)), transparent); opacity:.5;
 }
-.js-weekly-card.challenge-card::after{ background:linear-gradient(90deg, transparent, var(--violet), transparent); }
-.js-quest-card.challenge-card::after{ background:linear-gradient(90deg, transparent, var(--mint), transparent); }
 .quest-track{ display:flex; gap:6px; align-items:center; margin:10px 0 2px; }
 .qc-dot{ flex:1; height:4px; border-radius:999px; background:var(--surface-3); transition:background .25s; }
 .qc-dot.active{ background:var(--mint); box-shadow:0 0 8px -1px var(--mint); }
@@ -2741,14 +2753,10 @@ h1.section-title .accent{
 
 /* ===== Daily challenge card — premium accent + real reward pill ===== */
 .challenge-stack{ display: flex; flex-direction: column; gap: 14px; }
-.js-daily-card{
-  position: relative;
-  border-color: rgba(255,107,0,.28);
-  background: radial-gradient(120% 80% at 0% 0%, rgba(255,107,0,.08), transparent 55%), var(--surface);
-}
+/* Daily card accenting now lives in the .ch2 design; only the completed
+   state keeps a mint glow so "done for today" reads at a glance. */
 .js-daily-card.daily-done{
-  border-color: rgba(60,255,185,.42);
-  background: radial-gradient(120% 80% at 0% 0%, rgba(60,255,185,.1), transparent 55%), var(--surface);
+  border-color: rgba(60,255,185,.42) !important;
   box-shadow: 0 0 22px rgba(60,255,185,.12);
 }
 .js-daily-card .daily-reward{
@@ -9593,47 +9601,143 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
 @keyframes rankupAmbientIn{ to{ opacity:.20; } }
 body.reduced-motion .rankup-ambient, body.low-power .rankup-ambient{ animation:rankupAmbientIn .5s .2s ease forwards; }
 
-/* ===== LEGEND rank-up — PRISMATIC ASCENSION (full redesign) ===== */
+/* ===== LEGEND rank-up — “ASCENSION” (v1.0, built from scratch) =====
+   League-of-Legends gold ceremony × Fortnite impact: blackout → converging
+   light streaks → white-hot impact with shockwaves & screen shake → the
+   emblem enthroned in god-rays, orbiting sparks and rising embers. */
 .legend-rankup{
   background:
-    radial-gradient(circle at 50% 40%, rgba(255,97,195,.16), transparent 55%),
-    radial-gradient(circle at 28% 72%, rgba(95,201,255,.12), transparent 60%),
-    radial-gradient(circle at 72% 66%, rgba(164,139,255,.12), transparent 60%),
-    radial-gradient(circle at center, rgba(0,0,0,.5), rgba(0,0,0,.97) 74%),
-    rgba(5,4,12,.99) !important;
+    radial-gradient(circle at 50% 38%, rgba(255,178,54,.14), transparent 46%),
+    radial-gradient(circle at 50% 80%, rgba(255,61,154,.10), transparent 55%),
+    radial-gradient(circle at center, rgba(0,0,0,.55), rgba(0,0,0,.985) 78%),
+    #040308 !important;
+  animation:lgShake .5s cubic-bezier(.36,.07,.19,.97) 2.05s both;
 }
-/* Prismatic aurora sheet sweeping behind everything */
+@keyframes lgShake{
+  0%,100%{ transform:none; }
+  15%{ transform:translate(-10px,6px); } 30%{ transform:translate(9px,-5px); }
+  45%{ transform:translate(-7px,-4px); } 60%{ transform:translate(6px,4px); }
+  75%{ transform:translate(-3px,2px); } 88%{ transform:translate(2px,-1px); }
+}
+/* Rotating god-rays — LoL-style golden ceremony light */
 .legend-rankup::before{
-  content:''; position:absolute; inset:-30%; pointer-events:none; mix-blend-mode:screen;
-  background:conic-gradient(from 0deg at 50% 50%, #ff61c3, #a48bff, #5fc9ff, #5dffba, #ffd33d, #ff7a3d, #ff61c3);
-  filter:blur(72px) saturate(1.25); opacity:0;
-  animation:legendAuroraIn 1.2s ease .1s forwards, legendAurora 16s linear infinite;
+  content:''; position:absolute; inset:-45%; pointer-events:none; mix-blend-mode:screen;
+  background:conic-gradient(from 0deg at 50% 50%,
+    transparent 0 9%, rgba(255,205,90,.16) 12%, transparent 16%,
+    transparent 24%, rgba(255,97,195,.12) 28%, transparent 32%,
+    transparent 41%, rgba(255,205,90,.14) 45%, transparent 49%,
+    transparent 58%, rgba(159,216,255,.10) 62%, transparent 66%,
+    transparent 74%, rgba(255,205,90,.15) 78%, transparent 82%,
+    transparent 91%, rgba(255,97,195,.11) 95%, transparent 100%);
+  opacity:0; animation:lgRaysIn 1s ease 2.1s forwards, lgRaysSpin 26s linear 2.1s infinite;
 }
-@keyframes legendAuroraIn{ to{ opacity:.5; } }
-@keyframes legendAurora{ to{ transform:rotate(360deg); } }
-/* Vertical light pillar shooting up behind the icon */
+@keyframes lgRaysIn{ to{ opacity:1; } }
+@keyframes lgRaysSpin{ to{ transform:rotate(360deg); } }
+/* God-pillar of light behind the emblem */
 .legend-rankup::after{
-  content:''; position:absolute; left:50%; top:0; bottom:0; width:min(58vw,400px); transform:translateX(-50%); pointer-events:none; z-index:0;
-  background:linear-gradient(to top, transparent, rgba(255,255,255,.10) 32%, rgba(255,97,195,.18) 56%, transparent);
-  -webkit-mask:linear-gradient(to top, transparent, #000 22%, #000 70%, transparent);
-  mask:linear-gradient(to top, transparent, #000 22%, #000 70%, transparent);
-  opacity:0; animation:legendPillarIn 1s 1.9s ease-out forwards, legendPillarPulse 3s ease-in-out 3s infinite;
+  content:''; position:absolute; left:50%; top:0; bottom:0; width:min(54vw,360px); transform:translateX(-50%); pointer-events:none; z-index:0;
+  background:linear-gradient(to top, transparent, rgba(255,224,140,.16) 30%, rgba(255,178,54,.22) 55%, rgba(255,97,195,.10) 75%, transparent);
+  -webkit-mask:linear-gradient(to top, transparent, #000 20%, #000 72%, transparent);
+  mask:linear-gradient(to top, transparent, #000 20%, #000 72%, transparent);
+  opacity:0; animation:lgPillar .9s ease-out 2.15s forwards, lgPillarBreath 3.2s ease-in-out 3.1s infinite;
 }
-@keyframes legendPillarIn{ to{ opacity:.85; } }
-@keyframes legendPillarPulse{ 0%,100%{ opacity:.55; } 50%{ opacity:.95; } }
-.legend-rankup.show .rankup-rays{ opacity:.42 !important; }
-.legend-rankup .rankup-beam{ background:linear-gradient(to bottom, rgba(255,97,195,.6), transparent) !important; }
-/* Prismatic icon halo — hue cycles around the spectrum */
-.legend-rankup .rankup-new-icon{ animation:legendHalo 5s linear 2.4s infinite; }
-@keyframes legendHalo{ from{ filter:drop-shadow(0 0 26px rgba(255,97,195,.9)) drop-shadow(0 0 64px rgba(95,201,255,.5)) hue-rotate(0deg); } to{ filter:drop-shadow(0 0 26px rgba(255,97,195,.9)) drop-shadow(0 0 64px rgba(95,201,255,.5)) hue-rotate(360deg); } }
-.legend-rankup .rankup-label{ background:linear-gradient(135deg,#ff61c3,#5fc9ff) !important; color:#fff !important; box-shadow:0 0 24px rgba(255,97,195,.5) !important; letter-spacing:.34em !important; }
-/* Orbiting prismatic light orbs (spawned by JS into .legend-orbs) */
-.legend-orbs{ position:absolute; left:50%; top:42%; z-index:1; pointer-events:none; opacity:0; animation:legendOrbsIn 1s 2.5s forwards, legendOrbit 16s linear 2.5s infinite; }
-@keyframes legendOrbsIn{ to{ opacity:1; } }
-@keyframes legendOrbit{ to{ transform:rotate(360deg); } }
-.legend-orbs .l-orb{ position:absolute; width:11px; height:11px; margin:-5.5px; border-radius:50%; background:var(--oc,#fff); box-shadow:0 0 14px var(--oc,#fff), 0 0 28px var(--oc,#fff); transform:rotate(var(--a)) translateX(var(--r,150px)); }
-body.reduced-motion .legend-rankup::before, body.reduced-motion .legend-rankup::after, body.reduced-motion .legend-orbs,
-body.low-power .legend-rankup::before, body.low-power .legend-rankup::after, body.low-power .legend-orbs{ animation-iteration-count:1 !important; }
+@keyframes lgPillar{ to{ opacity:.95; } }
+@keyframes lgPillarBreath{ 0%,100%{ opacity:.6; } 50%{ opacity:1; } }
+/* --- JS-spawned stage layers (inside .lg-stage) --- */
+.lg-stage{ position:absolute; inset:0; pointer-events:none; z-index:2; }
+/* converging light streaks — thin comets rushing INTO the emblem */
+.lg-streak{
+  position:absolute; left:50%; top:42%; width:3px; height:130px; border-radius:999px;
+  background:linear-gradient(to top, var(--c,#ffd35e), transparent);
+  box-shadow:0 0 12px var(--c,#ffd35e);
+  transform:rotate(var(--a)) translateY(calc(-1 * var(--d))) scaleY(.4);
+  transform-origin:center bottom; opacity:0;
+  animation:lgStreakIn .55s cubic-bezier(.5,0,.9,.4) both;
+  animation-delay:inherit;
+}
+@keyframes lgStreakIn{
+  0%{ opacity:0; transform:rotate(var(--a)) translateY(calc(-1 * var(--d))) scaleY(.4); }
+  25%{ opacity:1; }
+  100%{ opacity:0; transform:rotate(var(--a)) translateY(-40px) scaleY(1.2); }
+}
+/* white-hot impact flash */
+.lg-flash{
+  position:absolute; inset:0; background:radial-gradient(circle at 50% 42%, #fff, rgba(255,224,150,.85) 22%, transparent 62%);
+  opacity:0; animation:lgFlash .8s cubic-bezier(.1,.8,.3,1) 2.02s both;
+}
+@keyframes lgFlash{ 0%{ opacity:0; } 12%{ opacity:1; } 100%{ opacity:0; } }
+/* expanding shockwave rings */
+.lg-shock{
+  position:absolute; left:50%; top:42%; width:60px; height:60px; margin:-30px; border-radius:50%;
+  border:3px solid rgba(255,220,130,.95); box-shadow:0 0 26px rgba(255,178,54,.8), inset 0 0 18px rgba(255,178,54,.5);
+  opacity:0; animation:lgShock 1.15s cubic-bezier(.15,.75,.3,1) 2.05s both;
+}
+.lg-shock.s2{ animation-delay:2.22s; border-color:rgba(255,97,195,.8); box-shadow:0 0 26px rgba(255,97,195,.7); }
+.lg-shock.s3{ animation-delay:2.42s; border-width:1.5px; border-color:rgba(159,216,255,.7); box-shadow:0 0 20px rgba(159,216,255,.6); }
+@keyframes lgShock{ 0%{ opacity:1; transform:scale(.2); } 100%{ opacity:0; transform:scale(13); } }
+/* rising golden embers */
+.lg-ember{
+  position:absolute; bottom:-12px; width:var(--s,3px); height:var(--s,3px); border-radius:50%;
+  background:var(--c,#ffd35e); box-shadow:0 0 8px var(--c,#ffd35e), 0 0 18px var(--c,#ffd35e);
+  opacity:0; animation:lgEmber linear infinite; animation-delay:inherit;
+}
+@keyframes lgEmber{
+  0%{ opacity:0; transform:translateY(0) translateX(0); }
+  12%{ opacity:.95; }
+  88%{ opacity:.5; }
+  100%{ opacity:0; transform:translateY(-105vh) translateX(26px); }
+}
+/* orbiting spark ring hugging the emblem */
+.lg-ring{
+  position:absolute; left:50%; top:42%; width:240px; height:240px; margin:-120px; border-radius:50%;
+  background:conic-gradient(from 0deg, transparent 0 72%, rgba(255,255,255,.95) 82%, #ffd35e 88%, #ff61c3 93%, transparent 99%);
+  -webkit-mask:radial-gradient(circle, transparent 62%, #000 64% 74%, transparent 76%);
+  mask:radial-gradient(circle, transparent 62%, #000 64% 74%, transparent 76%);
+  opacity:0; animation:lgRingIn .7s 2.55s forwards, lgRaysSpin 4.5s linear 2.55s infinite;
+}
+@keyframes lgRingIn{ to{ opacity:1; } }
+@media(max-width:600px){ .lg-ring{ width:180px; height:180px; margin:-90px; } .lg-streak{ height:90px; } }
+/* emblem: molten gold-pink halo, slow breathing */
+.legend-rankup .rankup-new-icon{ animation:lgIconHalo 3.4s ease-in-out 2.5s infinite; }
+@keyframes lgIconHalo{
+  0%,100%{ filter:drop-shadow(0 0 22px rgba(255,178,54,.95)) drop-shadow(0 0 70px rgba(255,97,195,.45)); transform:scale(1); }
+  50%{ filter:drop-shadow(0 0 34px rgba(255,210,110,1)) drop-shadow(0 0 90px rgba(255,97,195,.6)); transform:scale(1.025); }
+}
+.legend-rankup .rankup-beam{ background:linear-gradient(to bottom, rgba(255,205,90,.65), transparent) !important; }
+.legend-rankup .rankup-label{
+  background:linear-gradient(135deg,#ffd35e,#ff61c3) !important; color:#190a02 !important;
+  box-shadow:0 0 28px rgba(255,178,54,.55) !important; letter-spacing:.34em !important;
+}
+/* “LEGEND” — colossal molten-metal title with shimmer sweep + chromatic edge */
+.legend-rankup .rankup-rank-name-shimmer{
+  position:relative; isolation:isolate;
+  font-size:clamp(60px,17vw,150px) !important; letter-spacing:.01em; font-style:italic;
+  background:linear-gradient(100deg, #fff7df 0%, #ffd35e 22%, #b96a14 38%, #ffe9a6 50%, #ff61c3 78%, #ffd35e 100%) !important;
+  background-size:240% 100% !important; -webkit-background-clip:text !important; background-clip:text !important;
+  -webkit-text-fill-color:transparent !important; color:transparent !important;
+  filter:drop-shadow(0 4px 0 rgba(120,40,90,.55)) drop-shadow(0 0 30px rgba(255,178,54,.45));
+  animation:lgTitleIn .65s cubic-bezier(.2,1.4,.3,1) 2.3s both, lgTitleShimmer 3.6s linear 3s infinite !important;
+}
+@keyframes lgTitleIn{ from{ opacity:0; transform:scale(1.6); letter-spacing:.3em; filter:blur(10px); } to{ opacity:1; transform:scale(1); letter-spacing:.01em; filter:blur(0); } }
+@keyframes lgTitleShimmer{ to{ background-position:240% 0; } }
+/* gold rule expanding under the title */
+.legend-rankup .rankup-rank-name-shimmer::after{
+  content:''; position:absolute; left:10%; right:10%; bottom:-12px; height:2px;
+  background:linear-gradient(90deg, transparent, #ffd35e 30%, #fff 50%, #ff61c3 70%, transparent);
+  transform:scaleX(0); animation:lgRule .7s cubic-bezier(.2,.9,.3,1) 2.75s forwards;
+}
+@keyframes lgRule{ to{ transform:scaleX(1); } }
+.legend-rankup .rankup-sub{ color:#ffe9b8; letter-spacing:.3em; text-shadow:0 0 14px rgba(255,178,54,.5); }
+.legend-rankup .rankup-from{ color:#e8b7d4; }
+.legend-rankup .rankup-new-tier{ color:#fff; text-shadow:0 0 18px rgba(255,178,54,.95); }
+/* Lite tier / accessibility: one pass of each effect, no infinite spins */
+.rankup-lite.legend-rankup .rankup-new-icon{ animation:none !important; filter:drop-shadow(0 0 20px rgba(255,178,54,.85)) !important; }
+.rankup-lite.legend-rankup::before{ animation:lgRaysIn 1s ease 2.1s forwards !important; }
+.rankup-lite.legend-rankup .lg-ring{ animation:lgRingIn .7s 2.55s forwards !important; }
+.rankup-lite.legend-rankup .lg-ember{ display:none; }
+body.reduced-motion .legend-rankup, body.low-power .legend-rankup{ animation:none !important; }
+body.reduced-motion .legend-rankup::before, body.reduced-motion .legend-rankup::after, body.reduced-motion .lg-stage > *,
+body.low-power .legend-rankup::before, body.low-power .legend-rankup::after, body.low-power .lg-stage > *{ animation-iteration-count:1 !important; }
 
 /* ----- LEGEND: extra cinematic layers ----- */
 /* Gold bloom behind the icon */
@@ -9670,41 +9774,11 @@ body.reduced-motion .rk-seal-ring, body.low-power .rk-seal-ring,
 body.reduced-motion .rk-seal-disc, body.low-power .rk-seal-disc,
 body.reduced-motion .rk-seal-lock, body.low-power .rk-seal-lock,
 body.reduced-motion .rk-seal-label, body.low-power .rk-seal-label{ animation:none !important; }
-.legend-rankup .rankup-bloom{ background:radial-gradient(circle, rgba(255,97,195,.7) 0%, rgba(95,201,255,.25) 40%, transparent 64%); }
+.legend-rankup .rankup-bloom{ background:radial-gradient(circle, rgba(255,178,54,.7) 0%, rgba(255,97,195,.25) 42%, transparent 64%); }
 /* Prismatic embers (each particle keeps its inline colour, just glows) */
 .legend-rankup .rankup-particles .particle{ box-shadow:0 0 8px currentColor, 0 0 16px currentColor !important; }
-/* Prismatic shine ring sweeping around the new icon */
-.legend-rankup .rankup-sweep-wrap::after{
-  content:''; position:absolute; inset:-10%; border-radius:50%; z-index:0; pointer-events:none;
-  background:conic-gradient(from 0deg, transparent 0 70%, rgba(255,255,255,.9) 80%, #ff61c3 86%, #5fc9ff 92%, transparent 98%);
-  -webkit-mask:radial-gradient(circle, transparent 58%, #000 60% 72%, transparent 74%);
-  mask:radial-gradient(circle, transparent 58%, #000 60% 72%, transparent 74%);
-  opacity:0; animation: legendRingIn .8s 2.6s forwards, rankupSpinRays 5s linear 2.6s infinite;
-}
-@keyframes legendRingIn{ to{ opacity:.95; } }
 /* No apex crown in the new design */
 .rankup-crown, .legend-rankup .rankup-crown{ display:none !important; }
-/* "LEGEND" — huge, full-spectrum prismatic, gently breathing */
-.legend-rankup .rankup-rank-name-shimmer{
-  position:relative; isolation:isolate;
-  font-size:clamp(58px,16vw,140px) !important; letter-spacing:.02em;
-  background:linear-gradient(100deg, #ff61c3, #a48bff, #5fc9ff, #5dffba, #ffd33d, #ff61c3) !important;
-  background-size:300% 100% !important; -webkit-background-clip:text !important; background-clip:text !important;
-  -webkit-text-fill-color:transparent !important; color:transparent !important;
-  filter:drop-shadow(0 0 24px rgba(255,97,195,.5));
-  animation:legendTitleFade .7s 2.3s both, legendTitleShimmer 4s linear infinite, legendTitleBreath 4s ease-in-out 2.6s infinite !important;
-}
-@keyframes legendTitleShimmer{ to{ background-position:300% 0; } }
-@keyframes legendTitleFade{ from{ opacity:0; } to{ opacity:1; } }
-@keyframes legendTitleBreath{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.035); } }
-.legend-rankup .rankup-sub{ color:#e7d8ff; letter-spacing:.28em; }
-.legend-rankup .rankup-from{ color:#c9b8ff; }
-.legend-rankup .rankup-new-tier{ color:#fff; text-shadow:0 0 16px rgba(255,97,195,.9); }
-/* Lite legend: keep the look, drop the continuous spins */
-.rankup-lite.legend-rankup .rankup-sweep-wrap::after{ animation:legendRingIn .8s 2.6s forwards; }
-.rankup-lite.legend-rankup .rankup-rank-name-shimmer{ animation:legendTitleFade .7s 2.3s both, legendTitleShimmer 4s linear infinite !important; }
-.rankup-lite.legend-rankup .legend-orbs{ animation:legendOrbsIn 1s 2.5s forwards !important; }
-.rankup-lite.legend-rankup .rankup-new-icon{ animation:none !important; filter:drop-shadow(0 0 20px rgba(255,97,195,.85)) !important; }
 
 /* Animated rays — two layers spinning opposite directions */
 .rankup-rays{
@@ -10184,7 +10258,6 @@ body.reduced-motion .rk-seal-label, body.low-power .rk-seal-label{ animation:non
 /* Drop the expensive animated-filter halos; use a cheap static glow */
 .rankup-lite .rankup-new-rank.settled .rankup-new-icon{ animation:none; }
 /* Aurora: keep the colour wash but stop rotating a blurred full-screen layer */
-.rankup-lite.legend-rankup::before{ animation: legendAuroraIn 1s ease .1s forwards; filter:blur(40px) saturate(1.2); }
 .rankup-lite.legend-rankup::after{ animation:none; opacity:.6; }
 .rankup-lite .rankup-sweep-wrap::before{ animation: rankupNewHalo 1.5s 2.6s ease-out forwards; }
 .rankup-lite .rankup-light-sweep.s2{ display:none; }
@@ -13133,17 +13206,8 @@ body.in-game{ overscroll-behavior:none; }
 .home-grid{ gap:16px; }
 
 /* ---------- PLAY v2 ---------- */
-.play-hero{ padding:26px 28px 20px; }
+.play-hero{ padding:26px 28px 22px; }
 .mode-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-top:14px; }
-.mode-card{ border-radius:20px; transition:transform .2s, border-color .2s, box-shadow .2s; }
-.mode-card:not(.mode-locked):hover{
-  transform:translateY(-4px); border-color:var(--line-bright, var(--line));
-  box-shadow:0 20px 44px -18px rgba(0,0,0,.7);
-}
-.mode-card:not(.mode-locked):active{ transform:translateY(-1px) scale(.99); }
-.mode-card.mode-ranked{ border-color:rgba(34,211,163,.35); box-shadow:0 0 34px -18px var(--mint-glow); }
-.mode-card.mode-ranked:hover{ box-shadow:0 0 44px -14px var(--mint-glow), 0 20px 44px -18px rgba(0,0,0,.7); }
-.mode-card.mode-locked{ opacity:.65; }
 @media (max-width: 760px){
   .mode-grid{ grid-template-columns:1fr; }
 }
@@ -13471,9 +13535,8 @@ body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none
 
 /* ---------- sidebar profile dropdown ---------- */
 .sidebar-foot{ position:relative; }
-/* Styled to match the flyout panels (notifications / messages) so every
-   popover in the app shares one surface language: same gradient surface,
-   same border, same shadow, same mono section header. */
+/* Surface matches the flyout panels; items share the sidebar nav buttons'
+   exact typography & hover language so the menu feels native to the sidebar. */
 .sp-menu{
   position:absolute; left:8px; right:8px; bottom:calc(100% + 10px); z-index:120;
   display:flex; flex-direction:column; gap:2px; padding:6px;
@@ -13481,11 +13544,24 @@ body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none
   border:1px solid var(--line);
   border-radius:16px;
   box-shadow:0 24px 60px rgba(0,0,0,.6);
-  opacity:0; pointer-events:none; transform:translateY(10px) scale(.97);
+  opacity:0; pointer-events:none; visibility:hidden;
+  transform:translateY(14px) scale(.94);
   transform-origin:bottom center;
-  transition:opacity .22s ease, transform .28s cubic-bezier(.2,1.2,.3,1);
+  transition:opacity .18s ease, transform .34s cubic-bezier(.3,1.35,.4,1), visibility 0s linear .2s;
 }
-.sp-menu.open{ opacity:1; pointer-events:auto; transform:translateY(0) scale(1); }
+.sp-menu.open{ opacity:1; pointer-events:auto; visibility:visible; transform:translateY(0) scale(1); transition-delay:0s; }
+/* Springy staggered cascade: every row slides up in sequence as the menu pops */
+.sp-menu > *{ opacity:0; transform:translateY(9px); transition:opacity .22s ease, transform .3s cubic-bezier(.22,1.3,.36,1); }
+.sp-menu.open > *{ opacity:1; transform:translateY(0); }
+.sp-menu.open > *:nth-child(1){ transition-delay:.02s; }
+.sp-menu.open > *:nth-child(2){ transition-delay:.05s; }
+.sp-menu.open > *:nth-child(3){ transition-delay:.08s; }
+.sp-menu.open > *:nth-child(4){ transition-delay:.11s; }
+.sp-menu.open > *:nth-child(5){ transition-delay:.14s; }
+.sp-menu.open > *:nth-child(6){ transition-delay:.17s; }
+.sp-menu.open > *:nth-child(7){ transition-delay:.2s; }
+.sp-menu.open > *:nth-child(8){ transition-delay:.23s; }
+.sp-menu.open > *:nth-child(9){ transition-delay:.26s; }
 .sp-menu-head{
   display:flex; align-items:center; justify-content:space-between;
   margin:-6px -6px 4px; padding:12px 14px;
@@ -13494,21 +13570,26 @@ body.in-game .pre-ready-card{ backdrop-filter:none; -webkit-backdrop-filter:none
   letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim);
 }
 .sp-menu-head b{ color:var(--text); font-weight:700; max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+/* Same recipe as .nav-item: body font 14/500, 13px gap, dim → bright on hover */
 .sp-menu-item{
-  display:flex; align-items:center; gap:11px;
-  padding:10px 12px; border-radius:10px; border:none; cursor:pointer;
-  background:transparent; color:var(--text); font-size:13px; font-weight:600; text-align:left;
-  transition:background .14s, transform .14s;
+  display:flex; align-items:center; gap:13px;
+  padding:10px 14px; border-radius:11px; border:none; cursor:pointer;
+  background:transparent; color:var(--text-dim); text-align:left;
+  font-family:var(--font-body); font-size:14px; font-weight:500; letter-spacing:-.01em;
+  transition:background .15s, color .15s;
 }
-.sp-menu-item svg{ color:var(--text-dim); flex-shrink:0; transition:color .14s; }
-.sp-menu-item:hover{ background:var(--surface-2); }
-.sp-menu-item:hover svg{ color:var(--text); }
-.sp-menu-item:active{ transform:scale(.98); }
+.sp-menu-item svg{ width:17px; height:17px; color:var(--text-faint); flex-shrink:0; transition:color .15s, transform .15s; }
+.sp-menu-item:hover{ background:rgba(255,255,255,.04); color:var(--text); }
+.sp-menu-item:hover svg{ color:var(--text); transform:translateX(2px) scale(1.1); }
+.sp-menu.open .sp-menu-item:active{ transform:scale(.98); }
 .sp-menu-item.danger{ color:var(--coral); }
 .sp-menu-item.danger svg{ color:var(--coral); opacity:.85; }
-.sp-menu-item.danger:hover{ background:rgba(255,51,88,.08); }
+.sp-menu-item.danger:hover{ background:rgba(255,51,88,.08); color:var(--coral); }
 .sp-menu-item.danger:hover svg{ color:var(--coral); }
 .sp-menu-divider{ height:1px; margin:4px 8px; background:var(--line-soft); }
+@media (prefers-reduced-motion: reduce){
+  .sp-menu, .sp-menu > *{ transition:none !important; }
+}
 #sidebarProfile{ cursor:pointer; }
 #sidebarProfile .sp-chevron{ transition:transform .3s cubic-bezier(.2,.9,.3,1.4); }
 #sidebarProfile.menu-open .sp-chevron{ transform:rotate(180deg); }
@@ -13622,6 +13703,177 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
   .toast2::after, .pm-rankprog .ui-bar-fill::after{
     animation:none !important;
   }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   V19 — CHALLENGES REDESIGN (battle-pass style: colored header strip,
+   divided rows, slim bar left + big "3 / 10" right, one shared reward
+   pill with the XP shield badge)
+   ════════════════════════════════════════════════════════════════════ */
+.ch2{ --cha: var(--coral); padding:0 !important; display:flex; flex-direction:column; }
+.ch2.ch2-daily{ --cha: var(--coral); }
+.ch2.ch2-weekly{ --cha: var(--violet); }
+.ch2.ch2-quest{ --cha: var(--mint); }
+.ch2-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:12px 16px 11px;
+  border-bottom:1px solid color-mix(in srgb, var(--cha) 26%, var(--line-soft));
+  background:linear-gradient(180deg, color-mix(in srgb, var(--cha) 11%, transparent), transparent);
+}
+.ch2-head-title{
+  display:inline-flex; align-items:center; gap:8px; min-width:0;
+  font-family:var(--font-display); font-stretch:70%; font-style:italic; font-weight:800;
+  font-size:15px; letter-spacing:.07em; text-transform:uppercase;
+  color:var(--cha); white-space:nowrap;
+}
+.ch2-head-title svg{ width:15px; height:15px; flex:0 0 auto; }
+.ch2-chip{
+  font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.05em;
+  color:var(--text-dim); padding:3px 9px; border-radius:999px;
+  border:1px solid var(--line); background:var(--surface-2); white-space:nowrap;
+}
+.ch2-chip.all-done{ background:linear-gradient(135deg, var(--mint), #15a079); color:#06251c; border-color:transparent; }
+.ch2-daily .ch2-chip{ color:#ff8a5c; border-color:rgba(255,107,0,.35); background:rgba(255,107,0,.10); }
+.ch2-rows{ display:flex; flex-direction:column; }
+.ch2-row{ display:flex; flex-direction:column; gap:8px; padding:12px 16px 13px; }
+.ch2-row + .ch2-row{ border-top:1px solid var(--line-soft); }
+.ch2-row-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; min-width:0; }
+.ch2-title{
+  display:inline-flex; align-items:center; gap:6px; min-width:0;
+  font-size:13.5px; font-weight:700; color:var(--text); line-height:1.3;
+}
+.ch2-row.done .ch2-title{ color:var(--mint); }
+.ch2-row.done .ch2-fill{ background:linear-gradient(90deg, var(--mint), #18b88c); box-shadow:0 0 10px -3px var(--mint); }
+.ch2-row.done .ch2-count{ color:var(--mint); }
+.ch2-row-side{ display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; }
+.ch2-progress{ display:flex; align-items:center; gap:12px; }
+.ch2-bar{
+  flex:1; max-width:340px; height:7px; border-radius:999px; overflow:hidden;
+  background:color-mix(in srgb, var(--cha) 13%, var(--bg-2));
+  border:1px solid color-mix(in srgb, var(--cha) 20%, transparent);
+}
+.ch2-fill{
+  display:block; height:100%; border-radius:999px; width:0%;
+  background:linear-gradient(90deg, color-mix(in srgb, var(--cha) 60%, #fff 12%), var(--cha));
+  box-shadow:0 0 10px -3px var(--cha);
+  transition:width .45s cubic-bezier(.22,.9,.3,1);
+}
+.ch2-fill.complete{ background:linear-gradient(90deg, var(--mint), #18b88c) !important; box-shadow:0 0 10px -3px var(--mint); }
+.ch2-count{
+  margin-left:auto; flex:0 0 auto;
+  font-family:var(--font-display); font-stretch:75%; font-weight:800; font-size:15px;
+  letter-spacing:.02em; color:var(--text-dim);
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+/* Shared reward pill — XP shield + label, identical across daily/weekly/quest */
+.ch2-reward{
+  display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.05em;
+  color:var(--violet); padding:3px 8px 3px 5px; border-radius:999px;
+  background:rgba(155,123,255,.10); border:1px solid rgba(155,123,255,.30);
+  white-space:nowrap;
+}
+.ch2-xp{ width:15px; height:15px; flex:0 0 auto; filter:drop-shadow(0 2px 4px rgba(0,0,0,.45)); }
+.ch2-reward.ch2-token{ color:var(--amber, #ffd33d); background:rgba(245,180,49,.10); border-color:rgba(245,180,49,.32); padding-left:8px; }
+.js-daily-card.daily-done .ch2-reward:not(.ch2-token){ color:var(--mint); background:rgba(34,211,163,.10); border-color:rgba(34,211,163,.30); }
+.ch2-tick{ width:14px; height:14px; color:var(--mint); flex:0 0 auto; }
+.ch2-reroll{
+  width:26px; height:26px; border-radius:8px; display:grid; place-items:center; flex:0 0 auto;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim);
+  cursor:pointer; transition:transform .25s ease, color .2s, border-color .2s, background .2s;
+}
+.ch2-reroll:hover:not(:disabled){ color:var(--amber); border-color:var(--amber); background:color-mix(in srgb, var(--amber) 12%, var(--surface-2)); }
+.ch2-reroll:active:not(:disabled) svg{ animation:rerollSpin .5s ease; }
+.ch2-reroll:disabled{ opacity:.32; cursor:default; }
+.ch2-foot{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-top:auto; padding:10px 16px 12px;
+  border-top:1px solid var(--line-soft);
+  font-size:11px; color:var(--text-dim);
+}
+.ch2-foot-note b{ color:var(--cha); }
+.ch2-reset{
+  margin-left:auto; display:inline-flex; align-items:center; gap:5px;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.06em;
+  color:var(--text-faint); text-transform:uppercase; white-space:nowrap;
+}
+.ch2-reset::before{ content:'⏱'; font-size:11px; opacity:.7; }
+/* ════ V19 — PLAY PAGE LAYOUT: rank panel inside the hero, compact boost left,
+        daily + weekly challenges right ════ */
+.play-hero-split{ display:flex; align-items:center; gap:22px; }
+.play-hero-main{ flex:1 1 auto; min-width:0; }
+.play-hero-rank{
+  flex:0 0 330px; display:flex; align-items:center; gap:16px;
+  padding:16px 18px; border-radius:18px;
+  background:linear-gradient(180deg, rgba(13,11,20,.72), rgba(13,11,20,.5));
+  border:1px solid var(--line); cursor:pointer;
+  transition:border-color .18s, transform .15s, box-shadow .2s;
+}
+.play-hero-rank:hover{ border-color:var(--line-bright, #3a3850); transform:translateY(-2px); box-shadow:0 18px 40px -22px rgba(0,0,0,.8); }
+.phr-icon-wrap{ position:relative; width:74px; height:74px; flex:0 0 auto; display:grid; place-items:center; }
+.phr-icon-glow{ position:absolute; inset:-14%; border-radius:50%; filter:blur(15px); opacity:.55; }
+.phr-icon{ position:relative; z-index:1; width:64px; height:64px; filter:drop-shadow(0 6px 14px rgba(0,0,0,.55)); }
+.phr-info{ flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
+.phr-tier{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:20px; line-height:1; letter-spacing:-.01em; text-transform:uppercase; }
+.phr-elo{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); letter-spacing:.04em; }
+.phr-elo b{ color:var(--text); }
+.phr-bar{ height:7px; border-radius:999px; margin-top:2px; }
+.phr-next{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.phr-view{
+  display:inline-flex; align-items:center; gap:5px; margin-top:4px; align-self:flex-start;
+  font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  color:var(--text-dim); padding:6px 10px; border-radius:9px;
+  background:rgba(255,255,255,.04); border:1px solid var(--line);
+  transition:color .15s, border-color .15s;
+}
+.play-hero-rank:hover .phr-view{ color:var(--text); border-color:var(--line-bright, #3a3850); }
+@media(max-width:980px){
+  .play-hero-split{ flex-direction:column; align-items:stretch; gap:16px; }
+  .play-hero-rank{ flex:1 1 auto; }
+}
+/* Lower row: square-ish boost panel left, challenge cards side by side right */
+.play-lower-grid{ display:grid; grid-template-columns:minmax(260px, 340px) 1fr; gap:14px; margin-top:14px; align-items:start; }
+.play-lower-grid .xpboost-panel{ margin-top:0; aspect-ratio:1/1; min-height:0; display:flex; flex-direction:column; }
+.play-lower-grid .xpb-grid{ flex:1; align-items:center; }
+.play-challenges{ display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+@media(max-width:1140px){ .play-challenges{ grid-template-columns:1fr; } }
+@media(max-width:860px){
+  .play-lower-grid{ grid-template-columns:1fr; }
+  .play-lower-grid .xpboost-panel{ aspect-ratio:auto; }
+}
+/* Mobile pass — phones get tighter, thumb-first versions of the new pieces */
+@media (max-width:600px){
+  .play-hero{ padding:18px 16px 16px; }
+  .play-hero-rank{ padding:13px 14px; gap:12px; }
+  .phr-icon-wrap{ width:60px; height:60px; }
+  .phr-icon{ width:52px; height:52px; }
+  .phr-tier{ font-size:17px; }
+  .mode-card{ padding:16px 16px 14px; }
+  .mode-ic{ width:50px; height:50px; }
+  .mode-ic svg{ width:22px; height:22px; }
+  .mode-cta{ font-size:13.5px; min-height:46px; }
+  .ch2-head{ padding:11px 13px 10px; }
+  .ch2-row{ padding:11px 13px 12px; }
+  .ch2-foot{ padding:9px 13px 11px; }
+  .ch2-reroll{ width:32px; height:32px; }   /* comfortable touch target */
+  .xpb-use{ min-height:42px; }
+  .sp-menu{ left:6px; right:6px; }
+}
+/* XP token crest sizing (replaces the old 15min/30min/60min PNGs + 🎟️) */
+.xpb-ic-svg{ width:22px; height:22px; flex:0 0 auto; filter:drop-shadow(0 3px 7px rgba(0,0,0,.5)); }
+.xpb-card-ic svg{ width:44px; height:44px; filter:drop-shadow(0 4px 10px rgba(0,0,0,.55)); }
+/* Duration sits right under the crest and must read at a glance */
+.xpb-card-time{ font-size:11px; color:var(--text); letter-spacing:.12em; }
+.xpb-card.empty .xpb-card-time{ color:var(--text-dim); }
+.boost-pill svg{ flex:0 0 auto; }
+.lr-token-svg{ width:26px; height:26px; filter:drop-shadow(0 4px 8px rgba(0,0,0,.5)); }
+.ch2-token-ic{ width:14px; height:14px; flex:0 0 auto; }
+@media (max-width:600px){
+  .ch2-head-title{ font-size:14px; }
+  .ch2-bar{ max-width:none; }
+  .ch2-count{ font-size:14px; }
+  /* Long goal text + reward pills share the line on phones — let them wrap */
+  .ch2-row-top{ flex-wrap:wrap; row-gap:5px; }
 }
 </style>
 </head>
@@ -13778,6 +14030,49 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
     <symbol id="i-rank-champion" viewBox="0 0 24 24"><image href="champion.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
     <symbol id="i-rank-legend" viewBox="0 0 24 24"><image href="legend.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
     <symbol id="i-rank-unranked" viewBox="0 0 24 24"><image href="unranked.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/></symbol>
+    <!-- Shared gradients for the reward shields / XP token crest -->
+    <linearGradient id="xpBadgeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8a63ff"/>
+      <stop offset=".55" stop-color="#7747f0"/>
+      <stop offset="1" stop-color="#a98aff"/>
+    </linearGradient>
+    <linearGradient id="eloBadgeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2fe0ae"/>
+      <stop offset=".55" stop-color="#16b88a"/>
+      <stop offset="1" stop-color="#5aedc4"/>
+    </linearGradient>
+    <linearGradient id="xptGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe27e"/>
+      <stop offset="1" stop-color="#f0a32a"/>
+    </linearGradient>
+    <!-- XP shield badge — XP-amount rewards -->
+    <symbol id="i-xp" viewBox="0 0 24 24">
+      <path d="M2.4 3.4h19.2l-1.9 11.6L12 21.6l-7.7-6.6L2.4 3.4Z" fill="#2b1f5e"/>
+      <path d="M4.7 5.4h14.6l-1.4 8.7L12 19l-5.9-4.9L4.7 5.4Z" fill="url(#xpBadgeGrad)"/>
+      <text x="12" y="14.1" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, sans-serif" font-size="8.2" font-weight="800" font-style="italic" letter-spacing="-.3" fill="#fff">XP</text>
+    </symbol>
+    <!-- Same shield, LVL wording — used when the reward is a whole level -->
+    <symbol id="i-lvl" viewBox="0 0 24 24">
+      <path d="M2.4 3.4h19.2l-1.9 11.6L12 21.6l-7.7-6.6L2.4 3.4Z" fill="#2b1f5e"/>
+      <path d="M4.7 5.4h14.6l-1.4 8.7L12 19l-5.9-4.9L4.7 5.4Z" fill="url(#xpBadgeGrad)"/>
+      <text x="12" y="13.5" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, sans-serif" font-size="6" font-weight="800" font-style="italic" letter-spacing="-.2" fill="#fff">LVL</text>
+    </symbol>
+    <!-- Same shield, ELO wording — used for rating rewards (daily challenge) -->
+    <symbol id="i-elo" viewBox="0 0 24 24">
+      <path d="M2.4 3.4h19.2l-1.9 11.6L12 21.6l-7.7-6.6L2.4 3.4Z" fill="#0d3a2c"/>
+      <path d="M4.7 5.4h14.6l-1.4 8.7L12 19l-5.9-4.9L4.7 5.4Z" fill="url(#eloBadgeGrad)"/>
+      <text x="12" y="13.5" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, sans-serif" font-size="6" font-weight="800" font-style="italic" letter-spacing="-.2" fill="#04231a">ELO</text>
+    </symbol>
+    <!-- 2× XP TOKEN crest — gunmetal shield, gold top bar, "2XP" + twin stars
+         (CoD-style token art redrawn to fit the site's amber accent) -->
+    <symbol id="i-xptoken" viewBox="0 0 24 24">
+      <path d="M2.6 2.6h18.8v10.9L12 22.1 2.6 13.5Z" fill="#221c0e"/>
+      <path d="M2.6 2.6h18.8v10.9L12 22.1 2.6 13.5Z" fill="none" stroke="#9a7c2a" stroke-width="1.1"/>
+      <rect x="4.7" y="4.6" width="14.6" height="2.4" rx="1.2" fill="url(#xptGrad)"/>
+      <text x="12" y="14.8" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, sans-serif" font-size="7" font-weight="800" font-style="italic" letter-spacing="-.2" fill="url(#xptGrad)">2XP</text>
+      <path d="m9.6 15.9.5 1 1.1.16-.8.78.19 1.1-.99-.52-.99.52.19-1.1-.8-.78 1.1-.16Z" fill="url(#xptGrad)"/>
+      <path d="m14.4 15.9.5 1 1.1.16-.8.78.19 1.1-.99-.52-.99.52.19-1.1-.8-.78 1.1-.16Z" fill="url(#xptGrad)"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -13843,7 +14138,7 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
       <div class="stat"><span>· <b id="matchCount">0</b> active matches</span></div>
     </div>
     <button class="dxp-pill" id="dxpPill" style="display:none;" title="Double XP weekend"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-zap"/></svg> 2× XP</button>
-    <button class="dxp-pill boost-pill" id="boostPill" style="display:none;" title="2× XP token active" data-goto-play>🎟️ 2× <span id="boostPillTime">0m</span></button>
+    <button class="dxp-pill boost-pill" id="boostPill" style="display:none;" title="2× XP token active" data-goto-play><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-xptoken"/></svg> 2× <span id="boostPillTime">0m</span></button>
     <div class="topbar-spacer"></div>
     <div class="header-actions" id="headerActions">
       <button class="btn btn-ghost" id="helpBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg> How to play</button>
@@ -14472,104 +14767,87 @@ const FIREBASE_CONFIG = {
           <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
           <div class="dxp-mult">2×</div>
         </div>
-        <!-- ARENA HERO -->
+        <!-- ARENA HERO — mode headline on the left, YOUR RANK panel on the right -->
         <section class="hx-hero play-hero">
           <div class="hx-hero-glow"></div>
           <div class="hx-hero-grid"></div>
-          <div class="hx-hero-inner">
-            <div class="hx-hero-top">
-              <span class="hx-badge"><span class="live-dot"></span> <b id="playHeroOnline">—</b> playing now</span>
-              <span class="hx-badge ghost">Best of 3 · winner takes ELO</span>
+          <div class="hx-hero-inner play-hero-split">
+            <div class="play-hero-main">
+              <div class="hx-hero-top">
+                <span class="hx-badge"><span class="live-dot"></span> <b id="playHeroOnline">—</b> playing now</span>
+                <span class="hx-badge ghost">Best of 3 · winner takes ELO</span>
+              </div>
+              <h1 class="hx-wordmark play-hero-title">CHOOSE YOUR <span class="hx-cam">MODE</span></h1>
+              <p class="hx-tag">Webcam rock · paper · scissors against real people. Pick a mode and throw hands.</p>
             </div>
-            <h1 class="hx-wordmark play-hero-title">CHOOSE YOUR <span class="hx-cam">MODE</span></h1>
-            <p class="hx-tag">Webcam rock · paper · scissors against real people. Pick a mode and throw hands.</p>
+            <div class="play-hero-rank" id="playRankCard" title="Open the Rank page">
+              <div class="phr-icon-wrap">
+                <div class="phr-icon-glow" id="playRankGlow"></div>
+                <svg id="playRankIcon" class="phr-icon"></svg>
+              </div>
+              <div class="phr-info">
+                <div class="phr-tier" id="playRankTier">Bronze I</div>
+                <div class="phr-elo"><span id="playRankRating">1000</span> ELO · <b id="playRankWR">—</b> WR</div>
+                <div class="ui-bar phr-bar"><div class="ui-bar-fill" id="playRankFill" style="width:0%;"></div></div>
+                <div class="phr-next" id="playRankNext">—</div>
+                <span class="phr-view">View rank progress <svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-arrow-right"/></svg></span>
+              </div>
+            </div>
           </div>
         </section>
 
         <!-- GAME MODES -->
         <div class="mode-grid">
           <!-- 1v1 Ranked -->
-          <button class="mode-card mode-ranked" id="playPageFindBtn">
+          <button class="mode-card mode-ranked" id="playPageFindBtn" style="--mc:var(--mint);">
             <div class="mode-card-glow"></div>
             <div class="mode-top">
-              <span class="mode-ic" style="--mc:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-swords"/></svg></span>
+              <span class="mode-ic"><svg viewBox="0 0 24 24"><use href="#i-swords"/></svg></span>
               <span class="mode-tag live"><span class="live-dot"></span> Ranked</span>
             </div>
             <div class="mode-name">1 <span class="mode-vs">v</span> 1</div>
             <div class="mode-desc">Get matched with a stranger worldwide. Win to climb the ladder.</div>
             <div class="mode-cta">
-              <span>Find a stranger</span>
-              <span class="mode-go"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-play"/></svg></span>
+              <span>Find a match</span>
+              <span class="mode-go"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-arrow-right"/></svg></span>
             </div>
           </button>
 
           <!-- Challenge a friend -->
-          <button class="mode-card mode-friend" id="playPageChallengeBtn">
+          <button class="mode-card mode-friend" id="playPageChallengeBtn" style="--mc:var(--coral);">
             <div class="mode-card-glow"></div>
             <div class="mode-top">
-              <span class="mode-ic" style="--mc:var(--coral);"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></span>
+              <span class="mode-ic"><svg viewBox="0 0 24 24"><use href="#i-sword"/></svg></span>
               <span class="mode-tag">Private</span>
             </div>
             <div class="mode-name">Challenge<br><span class="mode-name-sub">a friend</span></div>
             <div class="mode-desc">Pick someone from your friends list and duel them directly.</div>
             <div class="mode-cta">
               <span>Choose opponent</span>
-              <span class="mode-go" style="--mc:var(--coral);"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-arrow-right"/></svg></span>
+              <span class="mode-go"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-arrow-right"/></svg></span>
             </div>
           </button>
 
           <!-- 2v2 — coming soon -->
-          <div class="mode-card mode-2v2 mode-locked" id="play2v2Card">
+          <div class="mode-card mode-2v2 mode-locked" id="play2v2Card" style="--mc:var(--violet);">
+            <div class="mode-card-glow"></div>
             <div class="mode-top">
-              <span class="mode-ic" style="--mc:var(--violet);"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span>
+              <span class="mode-ic"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span>
               <span class="mode-tag soon">Coming soon</span>
             </div>
             <div class="mode-name">2 <span class="mode-vs">v</span> 2</div>
             <div class="mode-desc">Team up with a friend and take on a duo. Doubles the mind games.</div>
             <div class="mode-cta">
-              <span>Notify me</span>
-              <span class="mode-go" style="--mc:var(--violet);"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-zap"/></svg></span>
+              <span>Coming soon</span>
+              <span class="mode-go"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-lock"/></svg></span>
             </div>
           </div>
         </div>
 
-        <!-- 2× XP BOOST — activate your tokens here -->
-        <div class="xpboost-panel" id="xpBoostPanel" style="display:none;"></div>
-
-        <!-- Secondary actions -->
-        <div class="play-actions-row">
-          <button class="play-quick-btn" id="playPageCameraBtn">
-            <span class="pq-ic"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-camera"/></svg></span>
-            <span class="pq-text"><b>Camera setup</b><span>Test webcam &amp; hand tracking</span></span>
-            <svg viewBox="0 0 24 24" width="15" height="15" class="pq-arrow"><use href="#i-arrow-right"/></svg>
-          </button>
-          <button class="play-quick-btn" id="playPageHowBtn">
-            <span class="pq-ic"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></span>
-            <span class="pq-text"><b>How to play</b><span>Rules &amp; gestures</span></span>
-            <svg viewBox="0 0 24 24" width="15" height="15" class="pq-arrow"><use href="#i-arrow-right"/></svg>
-          </button>
-        </div>
-
-        <!-- Rank + Daily challenge row -->
-        <div class="home-grid" style="margin-top:14px;">
-          <div class="card clickable" id="playRankCard">
-            <div class="card-hd">
-              <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Your rank</div>
-              <span class="card-hd-action">View →</span>
-            </div>
-            <div class="rank-card-body">
-              <div class="rank-card-icon"><svg id="playRankIcon"></svg></div>
-              <div class="rank-card-info">
-                <div class="rank-card-tier" id="playRankTier">Bronze I</div>
-                <div class="rank-card-rating"><span id="playRankRating">1000</span><span class="elo-unit">ELO</span></div>
-              </div>
-            </div>
-            <div class="rank-card-progress">
-              <div class="ui-bar"><div class="ui-bar-fill" id="playRankFill" style="width:0%;"></div></div>
-              <div class="rank-card-meta"><span id="playRankNext">—</span><span class="rank-card-stats"><b id="playRankWR">—</b> win rate</span></div>
-            </div>
-          </div>
-          <div class="challenge-stack" id="playChallengeSlot"></div>
+        <!-- LOWER ROW: compact 2× XP boost (left) · daily + weekly challenges (right) -->
+        <div class="play-lower-grid">
+          <div class="xpboost-panel" id="xpBoostPanel" style="display:none;"></div>
+          <div class="challenge-stack play-challenges" id="playChallengeSlot"></div>
         </div>
 
         <!-- The throws -->
@@ -17707,6 +17985,12 @@ function showScreen(name){
       try { syncMobileNav('home'); } catch(e){}
       try { renderHomePage(); } catch(e){}
     }
+    // Camera lifecycle: release the webcam after idling on the menu; anything
+    // that needs it again re-acquires behind the start loader.
+    try {
+      if(name === 'landing') scheduleCameraIdleRelease();
+      else clearTimeout(state._camIdleTimer);
+    } catch(e){}
   } catch(e){}
   console.log('[screen] →', name);
 }
@@ -17948,7 +18232,8 @@ function animateParticles(){
   pctx.globalAlpha = 1;
   requestAnimationFrame(animateParticles);
 }
-animateParticles();
+// NOT auto-started: confetti is a no-op site-wide, so nothing can ever feed this
+// loop — running an empty rAF callback 60-120×/sec all session was pure waste.
 
 let audioCtx = null;
 function ensureAudio(){ if(!audioCtx){ try{ audioCtx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } }
@@ -18479,7 +18764,12 @@ async function setupCamera(){
     // Re-apply the player's in-match preferences to the fresh stream/preview
     try { if(state._micMuted) stream.getAudioTracks().forEach(t => t.enabled = false); } catch(e){}
     try { $('#yourVideo')?.classList.toggle('cam-flipped', !!state._camMirrored); } catch(e){}
-    await new Promise(res => { videoEl.onloadedmetadata = res; });
+    // Don't hang the start loader forever if metadata never fires (it can on
+    // some Android browsers) — proceed after 4s; the watchdog recovers the rest.
+    await new Promise(res => {
+      const t = setTimeout(res, 4000);
+      videoEl.onloadedmetadata = () => { clearTimeout(t); res(); };
+    });
     playVideoSafe(videoEl);
     overlayCanvas.width = 640;
     overlayCanvas.height = 480;
@@ -18590,6 +18880,33 @@ function startCamWatchdog(){
     if(stalls >= 3){ stalls = 0; recoverCamera('frozen frames'); }
   }, 1500);
 }
+// ===== Idle camera release =====
+// Keeping the webcam capturing on the menu between matches drains battery and
+// heats the device for zero benefit — sustained heat is the biggest cause of
+// "the longer I play the worse my FPS gets". After a minute idle on the menu
+// the camera is released; the next match re-acquires it behind the start loader.
+const CAMERA_IDLE_RELEASE_MS = 60000;
+function releaseCamera(){
+  if(!state.cameraReady && !state.localStream) return;
+  console.log('[camera] released — idle on menu');
+  try { clearInterval(state._camWatchdog); } catch(e){}
+  try { clearTimeout(state._camMuteTimer); } catch(e){}
+  try { state.localStream?.getTracks().forEach(t => { t.onended = null; t.onmute = null; t.stop(); }); } catch(e){}
+  state.localStream = null;
+  try { if(videoEl) videoEl.srcObject = null; } catch(e){}
+  state.cameraReady = false;
+  $('#camStatus')?.classList.remove('live');
+  setText('#camStatusText', 'off');
+}
+function scheduleCameraIdleRelease(){
+  clearTimeout(state._camIdleTimer);
+  state._camIdleTimer = setTimeout(() => {
+    // Anything camera-bound in flight? Then keep it warm.
+    if(state.screen !== 'landing') return;
+    if(state.matchId || state._sentInviteRef || state.pendingChallenge || state._prematch) return;
+    releaseCamera();
+  }, CAMERA_IDLE_RELEASE_MS);
+}
 // Lazy-load MediaPipe Hands (and camera utils) only when a match actually needs
 // them — keeps them off the critical startup path for a much faster first load.
 let _mediaPipePromise = null;
@@ -18609,21 +18926,42 @@ function loadMediaPipe(){
 }
 async function setupHands(){
   await loadMediaPipe();
-  state.hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${file}` });
-  state.hands.setOptions({ maxNumHands:1, modelComplexity:0, minDetectionConfidence:0.5, minTrackingConfidence:0.5 });
-  state.hands.onResults(onHandsResults);
+  // Reuse one Hands instance for the whole session — recreating it leaks the
+  // old WASM/GPU context (it can't be reached for close() once replaced).
+  if(!state.hands){
+    state.hands = new Hands({ locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4/${file}` });
+    state.hands.setOptions({ maxNumHands:1, modelComplexity:0, minDetectionConfidence:0.5, minTrackingConfidence:0.5 });
+    state.hands.onResults(onHandsResults);
+  }
   // Throttle hand-tracking to a sane rate. RPS gestures are basically static, so
   // running MediaPipe every frame (up to 120Hz on modern phones) just burns CPU/
   // battery. ~22fps on mobile / ~33fps desktop is plenty and a big mobile win.
+  //
+  // ONE loop per page load, no matter how often setupHands() is called — the old
+  // version started a fresh immortal rAF loop on every call, and each extra loop
+  // multiplied the inference rate until the session turned into a slideshow
+  // (the "laggy until I refresh" bug).
+  if(state._handsLoopRunning) return;
+  state._handsLoopRunning = true;
   const minGap = fxPerf().mobile ? 45 : 30;
-  let _lastSend = 0, _busy = false;
+  let _lastSend = 0, _busy = false, _busySince = 0;
   const loop = async (ts) => {
     requestAnimationFrame(loop);
-    if(_busy || videoEl.readyState < 2) return;
+    // Gestures are only consumed on the game screen — skip inference everywhere
+    // else so an idle camera doesn't keep the CPU/GPU pegged on the menu
+    // (sustained load → device heat → thermal throttling → falling FPS).
+    if(state.screen !== 'game') return;
+    if(!state.hands || !state.cameraReady || !videoEl || videoEl.readyState < 2) return;
     const now = ts || performance.now();
+    if(_busy){
+      // Watchdog: if a send() never resolves (MediaPipe wedged itself), unstick
+      // the loop instead of leaving gesture detection dead until a refresh.
+      if(now - _busySince > 4000){ console.warn('[hands] send() stalled — unsticking loop'); _busy = false; }
+      else return;
+    }
     if(now - _lastSend < minGap) return;
     _lastSend = now;
-    _busy = true;
+    _busy = true; _busySince = now;
     try { await state.hands.send({ image: videoEl }); } catch(e){}
     _busy = false;
   };
@@ -18851,6 +19189,28 @@ async function onAuthChanged(user){
       // ensure XP fields exist for legacy profiles
       if(typeof state.profile.totalXp !== 'number') state.profile.totalXp = 0;
       if(!state.profile.equippedTitle) state.profile.equippedTitle = 'rookie';
+      // ===== v1.0 PUBLIC LAUNCH RESET — wipe beta progress exactly once =====
+      if(!state.profile.launchV1){
+        const wiped = {
+          launchV1: true,
+          rating: 1000, wins: 0, losses: 0, draws: 0, games: 0,
+          bestStreak: 0, currentStreak: 0,
+          totalXp: 0, prestige: 0, prestigeXp: 0, equippedTitle: 'rookie',
+          xpTokens: {}, xpBoostUntil: 0, placementsDone: 0,
+        };
+        Object.assign(state.profile, wiped);
+        try { await updateDoc(doc(state.db, 'users', user.uid), wiped); } catch(e){ console.warn('[launch] reset write failed', e); }
+        // local progress (challenges, streaks, login rewards, quests, toasts)
+        try {
+          const kill = [];
+          for(let i = 0; i < localStorage.length; i++){
+            const k = localStorage.key(i) || '';
+            if(/^rosham_(daily|weekly|quests|recent|login_reward|dxp_toast|whatsnew)/.test(k)) kill.push(k);
+          }
+          kill.forEach(k => localStorage.removeItem(k));
+        } catch(e){}
+        setTimeout(() => { try { toast('🚀 ROSHCAM 1.0 is live — everyone starts fresh. Good luck out there!', 'success', { duration: 8000 }); } catch(e){} }, 1500);
+      }
     }
   } catch(e){
     console.error('Profile load failed', e);
@@ -20665,10 +21025,19 @@ const DAILY_CHALLENGES = [
   { id: 'flawless', text: 'Win a match without dropping a round', goal: 1, type: 'flawless', reward: 90 },
 ];
 // Reward (ELO) for a daily — resilient to older saved challenges that predate the field.
-function dailyReward(c){
-  if(!c) return 50;
-  return c.reward || DAILY_CHALLENGES.find(d => d.id === c.id)?.reward || 50;
+// Daily rewards are XP (never ELO) and SCALE with your level — at high levels a
+// level costs serious XP, so a flat 500 would be meaningless. The legacy
+// `reward` field acts as a difficulty weight: reward 50 ≈ 20% of a level,
+// reward 110 ≈ 44% of a level — at ANY level.
+function levelScaledXp(fraction){
+  const lvl = state.profile ? levelOf(state.profile).level : 1;
+  return Math.max(50, Math.round(xpForLevel(lvl) * fraction));
 }
+function dailyReward(c){
+  const w = (c && (c.reward || DAILY_CHALLENGES.find(d => d.id === c.id)?.reward)) || 50;
+  return levelScaledXp(w / 250);
+}
+const fmtXp = n => n >= 10000 ? Math.round(n / 1000) + 'k' : n >= 1000 ? (n / 1000).toFixed(1).replace('.0','') + 'k' : String(n);
 
 function getTodayKey(){
   return new Date().toISOString().split('T')[0];
@@ -20752,42 +21121,36 @@ function celebrateChallenge(sel){
 // ===== Reusable challenge cards (mounted on Home + Play) =====
 function challengeCardsHTML(){
   return `
-    <div class="card challenge-card js-daily-card">
-      <div class="card-hd">
-        <div class="card-hd-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily challenge</div>
-        <span class="daily-streak-mini dc-streak" title="Daily completion streak">🔥 0</span>
+    <div class="card challenge-card ch2 ch2-daily js-daily-card">
+      <div class="ch2-head">
+        <span class="ch2-head-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily Challenges</span>
+        <span class="ch2-chip dc-streak" title="Daily completion streak">🔥 0</span>
       </div>
-      <div class="daily-goal-row">
-        <div class="daily-card-goal dc-text">Win 3 ranked matches today</div>
-        <button class="daily-reroll-btn dc-reroll" type="button" title="Reroll (1 per day)" aria-label="Reroll challenge"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-rotate"/></svg></button>
+      <div class="ch2-rows">
+        <div class="ch2-row">
+          <div class="ch2-row-top">
+            <span class="ch2-title dc-text">Win 3 ranked matches today</span>
+            <span class="ch2-row-side">
+              <span class="ch2-reward"><svg class="ch2-xp" viewBox="0 0 24 24"><use href="#i-xp"/></svg><span class="dc-reward">+XP</span></span>
+              <span class="ch2-reward ch2-token"><svg class="ch2-token-ic" viewBox="0 0 24 24"><use href="#i-xptoken"/></svg> 15 MIN</span>
+              <button class="ch2-reroll dc-reroll" type="button" title="Reroll (1 per day)" aria-label="Reroll challenge"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-rotate"/></svg></button>
+            </span>
+          </div>
+          <div class="ch2-progress">
+            <div class="ch2-bar"><span class="ch2-fill dc-fill" style="width:0%"></span></div>
+            <span class="ch2-count dc-count">0 / 3</span>
+          </div>
+        </div>
       </div>
-      <div class="rank-card-progress">
-        <div class="ui-bar"><div class="ui-bar-fill dc-fill" style="width:0%"></div></div>
-        <div class="rank-card-meta"><span class="dc-count">0/3</span><span class="daily-reward dc-reward">+50 ELO bonus</span></div>
-      </div>
-      <div class="challenge-reset dc-reset">Resets in 24h</div>
+      <div class="ch2-foot"><span class="ch2-reset dc-reset">Resets in 24h</span></div>
     </div>
-    <div class="card challenge-card js-weekly-card">
-      <div class="card-hd">
-        <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg> Weekly challenges</div>
-        <span class="daily-streak-mini wc-badge">0/3</span>
+    <div class="card challenge-card ch2 ch2-weekly js-weekly-card">
+      <div class="ch2-head">
+        <span class="ch2-head-title"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg> Weekly Challenges</span>
+        <span class="ch2-chip wc-badge">0/3</span>
       </div>
-      <div class="weekly-list wc-list"></div>
-      <div class="weekly-foot wc-foot">Clear all 3 for a <b>bonus level</b></div>
-      <div class="challenge-reset wc-reset">Resets in 7d</div>
-    </div>
-    <div class="card challenge-card js-quest-card">
-      <div class="card-hd">
-        <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-target"/></svg> Quest line</div>
-        <span class="daily-streak-mini qc-step">1/5</span>
-      </div>
-      <div class="daily-card-goal qc-text">Play 3 matches</div>
-      <div class="rank-card-progress">
-        <div class="ui-bar"><div class="ui-bar-fill qc-fill" style="width:0%"></div></div>
-        <div class="rank-card-meta"><span class="qc-count">0/3</span><span class="daily-reward qc-reward">+150 XP</span></div>
-      </div>
-      <div class="quest-track qc-track"></div>
-      <div class="challenge-reset qc-foot">Finish the chain for a <b>huge bonus</b></div>
+      <div class="ch2-rows wc-list"></div>
+      <div class="ch2-foot"><span class="ch2-foot-note wc-foot">Clear all 3 for a <b>huge bonus</b></span><span class="ch2-reset wc-reset">Resets in 7d</span></div>
     </div>`;
 }
 function mountChallengeCards(){
@@ -20808,7 +21171,7 @@ function refreshDailyChallenge(){
   const streak = getDailyStreak();
   const rwd = dailyReward(data.challenge);
   const pct = Math.min(100, (data.progress / data.challenge.goal) * 100);
-  const countTxt = `${Math.min(data.progress, data.challenge.goal)}/${data.challenge.goal}`;
+  const countTxt = `${Math.min(data.progress, data.challenge.goal)} / ${data.challenge.goal}`;
   const resetTxt = `Resets in ${fmtCountdown(msUntilMidnight())}`;
   const canReroll = !data.completed && data.rerolls > 0;
   document.querySelectorAll('.js-daily-card').forEach(card => {
@@ -20816,7 +21179,7 @@ function refreshDailyChallenge(){
     set('.dc-text', data.challenge.text);
     set('.dc-count', countTxt);
     set('.dc-streak', `🔥 ${streak}`);
-    set('.dc-reward', data.completed ? `✓ +${rwd} ELO earned` : `+${rwd} ELO bonus`);
+    set('.dc-reward', data.completed ? `✓ +${fmtXp(rwd)} XP` : `+${fmtXp(rwd)} XP`);
     set('.dc-reset', resetTxt);
     const fill = card.querySelector('.dc-fill');
     if(fill){ fill.style.width = pct + '%'; fill.classList.toggle('complete', data.completed); }
@@ -20875,10 +21238,11 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
   data.progress += delta;
   if(data.progress >= c.goal && !data.completed){
     data.completed = true;
-    // Grant the advertised ELO bonus for real — folded into this match's delta
-    // by updateMatchStats so it shows in the result breakdown.
-    state._dailyBonusElo = dailyReward(c);
-    toast(`🎉 Daily complete: ${c.text} · +${dailyReward(c)} ELO!`, 'success');
+    // Pays XP (level-scaled) + a 15-min 2× XP token — never ELO.
+    const xpGain = dailyReward(c);
+    try { grantXp(xpGain, 'Daily challenge', { silent: true }); } catch(e){}
+    try { grantXpTokens({ m15: 1 }, 'Daily challenge', { silent: true }); } catch(e){}
+    toast(`🎉 Daily complete: ${c.text} · +${fmtXp(xpGain)} XP + 15 min 2× XP token!`, 'success');
     try { celebrateChallenge('.js-daily-card'); } catch(e){}
     // increment streak
     const lastStreakDate = localStorage.getItem('rosham_daily_last') || '';
@@ -20940,20 +21304,25 @@ function refreshWeeklyChallenges(){
   const rowsHTML = data.challenges.map(c => {
     if(c.completed) done++;
     const pct = Math.min(100, (c.progress / c.goal) * 100);
-    return `<div class="weekly-row${c.completed ? ' done' : ''}">
-      <div class="weekly-top">
-        <span class="weekly-goal">${c.completed ? '<svg class="weekly-tick" viewBox="0 0 24 24"><use href="#i-check"/></svg> ' : ''}${escapeHTML(c.text)}</span>
-        <span class="weekly-xp">+1 LEVEL${c.token ? ' · 🎟️ ' + (XP_TOKEN_TYPES[c.token]?.label || '') : ''}</span>
+    return `<div class="ch2-row${c.completed ? ' done' : ''}">
+      <div class="ch2-row-top">
+        <span class="ch2-title">${c.completed ? '<svg class="ch2-tick" viewBox="0 0 24 24"><use href="#i-check"/></svg> ' : ''}${escapeHTML(c.text)}</span>
+        <span class="ch2-row-side">
+          <span class="ch2-reward"><svg class="ch2-xp" viewBox="0 0 24 24"><use href="#i-lvl"/></svg>+1 LEVEL</span>
+          ${c.token ? `<span class="ch2-reward ch2-token"><svg class="ch2-token-ic" viewBox="0 0 24 24"><use href="#i-xptoken"/></svg> ${XP_TOKEN_TYPES[c.token]?.label || ''}</span>` : ''}
+        </span>
       </div>
-      <div class="ui-bar"><div class="ui-bar-fill${c.completed ? ' complete' : ''}" style="width:${pct}%"></div></div>
-      <div class="weekly-meta">${Math.min(c.progress, c.goal)}/${c.goal}</div>
+      <div class="ch2-progress">
+        <div class="ch2-bar"><span class="ch2-fill${c.completed ? ' complete' : ''}" style="width:${pct}%"></span></div>
+        <span class="ch2-count">${Math.min(c.progress, c.goal)} / ${c.goal}</span>
+      </div>
     </div>`;
   }).join('');
   const resetTxt = `Resets in ${fmtCountdown(msUntilWeekReset())}`;
   const footHTML = (done === 3 && data.bonusClaimed)
-    ? '<b style="color:var(--mint)">✓ All cleared — bonus level claimed!</b>'
+    ? '<b style="color:var(--mint)">✓ All cleared — huge bonus claimed! 🏆</b>'
     : (done === 3 ? 'All challenges done — claiming bonus…'
-                  : `Clear all 3 for a <b>bonus level</b> · ${3 - done} to go`);
+                  : `Clear all 3 for a <b>huge bonus</b> · ${3 - done} to go`);
   lists.forEach(list => { list.innerHTML = rowsHTML; });
   document.querySelectorAll('.wc-badge').forEach(b => { b.textContent = `${done}/3`; b.classList.toggle('all-done', done === 3); });
   document.querySelectorAll('.wc-foot').forEach(f => { f.innerHTML = footHTML; });
@@ -21004,12 +21373,15 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
       try { celebrateChallenge('.js-weekly-card'); } catch(e){}
     }
   });
-  // BONUS: clearing all three in a week grants an extra level, once.
+  // HUGE BONUS: clearing all three in a week pays out big, once — an extra
+  // level, a chunk of XP and a stack of 2× XP tokens (this replaced the old
+  // quest line as the long-form goal).
   if(data.challenges.every(c => c.completed) && !data.bonusClaimed){
     data.bonusClaimed = true; changed = true;
     const curLvl = levelOf(state.profile).level;
-    grantXp(xpForLevel(curLvl), 'Weekly clear bonus · +1 level');
-    setTimeout(() => toast('🏆 All weekly challenges cleared — bonus level!', 'success'), 600);
+    grantXp(xpForLevel(curLvl) + 1000, 'Weekly clear bonus', { silent: true });
+    try { grantXpTokens({ m30: 2, m60: 1 }, 'Weekly clear bonus', { silent: true }); } catch(e){}
+    setTimeout(() => { try { toast('🏆 ALL weekly challenges cleared — +1 level, +1000 XP, 2× 30 min + 1× 1 hour 2× XP tokens!', 'success', { duration: 8000 }); } catch(e){} }, 600);
   }
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
@@ -21018,9 +21390,9 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
 // Earned from weekly challenges, the quest-line finale and daily rewards.
 // Activated on the Play page; activating while one runs ADDS time (stacking).
 const XP_TOKEN_TYPES = {
-  m15: { ms: 15 * 60e3, label: '15 MIN', img: '15min.png' },
-  m30: { ms: 30 * 60e3, label: '30 MIN', img: '30min.png' },
-  m60: { ms: 60 * 60e3, label: '1 HOUR', img: '60min.png' },
+  m15: { ms: 15 * 60e3, label: '15 MIN' },
+  m30: { ms: 30 * 60e3, label: '30 MIN' },
+  m60: { ms: 60 * 60e3, label: '1 HOUR' },
 };
 function getXpTokens(){
   const t = state.profile?.xpTokens || {};
@@ -21072,16 +21444,16 @@ function renderXpBoostPanel(){
   const active = xpBoostActive();
   host.innerHTML = `
     <div class="xpb-head">
-      <div class="xpb-title"><span class="xpb-ic">🎟️</span> 2× XP BOOST</div>
+      <div class="xpb-title"><svg class="xpb-ic-svg" viewBox="0 0 24 24"><use href="#i-xptoken"/></svg> 2× XP BOOST</div>
       ${active
         ? `<span class="xpb-active"><span class="live-dot"></span> ACTIVE · <b id="xpbCountdown">${_fmtBoost(xpBoostUntil() - Date.now())}</b> left</span>`
-        : `<span class="xpb-sub">Earn tokens from weekly challenges, the quest line &amp; daily rewards</span>`}
+        : `<span class="xpb-sub">Earn tokens from weekly challenges &amp; daily rewards</span>`}
     </div>
     <div class="xpb-grid">
       ${['m15', 'm30', 'm60'].map(k => `
         <div class="xpb-card${t[k] ? '' : ' empty'}">
+          <div class="xpb-card-ic"><svg viewBox="0 0 24 24" role="img" aria-label="${XP_TOKEN_TYPES[k].label} 2× XP token"><use href="#i-xptoken"/></svg></div>
           <div class="xpb-card-time">${XP_TOKEN_TYPES[k].label}</div>
-          <div class="xpb-card-ic"><img src="${XP_TOKEN_TYPES[k].img}" alt="${XP_TOKEN_TYPES[k].label} 2× XP token" loading="lazy" decoding="async" /></div>
           <div class="xpb-card-count">×${t[k]}</div>
           <button class="btn xpb-use" data-token="${k}" ${t[k] ? '' : 'disabled'}>${active ? '+ Add time' : 'Activate'}</button>
         </div>`).join('')}
@@ -21110,93 +21482,8 @@ setInterval(() => {
   }
 }, 1000);
 
-// ============= QUEST LINE (chained challenges → big finale reward) =============
-const QUEST_CHAIN = [
-  { id:'q1', text:'Play 3 matches',              goal:3,  type:'games',      xp:150 },
-  { id:'q2', text:'Win 5 matches',               goal:5,  type:'wins',       xp:250 },
-  { id:'q3', text:'Win 20 rounds',               goal:20, type:'roundsWon',  xp:350 },
-  { id:'q4', text:'Read 10 throws correctly',    goal:10, type:'predicts',   xp:450 },
-  { id:'q5', text:'Win 3 flawless matches',      goal:3,  type:'flawless',   xp:600 },
-];
-const QUEST_FINALE_XP = 2000;
-function getQuestState(){
-  let d;
-  try { d = JSON.parse(localStorage.getItem('rosham_quests_' + (state.user?.uid||'anon')) || 'null'); } catch(e){ d = null; }
-  if(!d || typeof d.step !== 'number'){ d = { step:0, progress:0, doneAll:false }; }
-  return d;
-}
-function saveQuestState(d){ try { localStorage.setItem('rosham_quests_' + (state.user?.uid||'anon'), JSON.stringify(d)); } catch(e){} }
-function refreshQuests(){
-  mountChallengeCards();
-  const cards = document.querySelectorAll('.js-quest-card');
-  if(!cards.length) return;
-  const d = getQuestState();
-  const total = QUEST_CHAIN.length;
-  const done = d.doneAll || d.step >= total;
-  const q = done ? null : QUEST_CHAIN[d.step];
-  cards.forEach(card => {
-    const set = (s,t)=>{ const el=card.querySelector(s); if(el) el.textContent=t; };
-    if(done){
-      set('.qc-step', `${total}/${total}`);
-      set('.qc-text', '✓ Quest line complete!');
-      set('.qc-count', '');
-      set('.qc-reward', 'All done');
-      const f=card.querySelector('.qc-fill'); if(f){ f.style.width='100%'; f.classList.add('complete'); }
-      const foot=card.querySelector('.qc-foot'); if(foot) foot.innerHTML='<b style="color:var(--mint)">Finale bonus claimed 🎉</b>';
-    } else {
-      const pct = Math.min(100, (d.progress / q.goal) * 100);
-      set('.qc-step', `${d.step+1}/${total}`);
-      set('.qc-text', q.text);
-      set('.qc-count', `${Math.min(d.progress,q.goal)}/${q.goal}`);
-      set('.qc-reward', `+${q.xp} XP`);
-      const f=card.querySelector('.qc-fill'); if(f){ f.style.width=pct+'%'; f.classList.remove('complete'); }
-      const foot=card.querySelector('.qc-foot'); if(foot) foot.innerHTML='Finish the chain for a <b>huge bonus</b>';
-    }
-    // step dots
-    const track = card.querySelector('.qc-track');
-    if(track){
-      track.innerHTML = QUEST_CHAIN.map((_,i) =>
-        `<span class="qc-dot ${i < d.step || done ? 'done' : (i === d.step ? 'active' : '')}"></span>`).join('');
-    }
-  });
-}
-function updateQuestProgress(matchResult, roundDetails){
-  if(state.isBotMatch) return;
-  const d = getQuestState();
-  if(d.doneAll || d.step >= QUEST_CHAIN.length) return;
-  let q = QUEST_CHAIN[d.step];
-  let guard = 0;
-  // A single match can complete more than one step — loop while progress overflows.
-  while(q && guard++ < 10){
-    let delta = 0;
-    switch(q.type){
-      case 'games': delta = 1; break;
-      case 'wins': delta = matchResult === 'win' ? 1 : 0; break;
-      case 'roundsWon': delta = roundDetails?.wonRounds || 0; break;
-      case 'predicts': delta = roundDetails?.predictedCorrect || 0; break;
-      case 'flawless': delta = roundDetails?.flawless ? 1 : 0; break;
-      case 'beststreak': { const cs = state.profile?.currentStreak || 0; d.progress = Math.max(d.progress, cs); break; }
-    }
-    if(delta) d.progress += delta;
-    if(d.progress >= q.goal){
-      grantXp(q.xp, `Quest · ${q.text}`);
-      try { celebrateChallenge('.js-quest-card'); } catch(e){}
-      d.step += 1; d.progress = 0;
-      q = QUEST_CHAIN[d.step];
-      if(d.step >= QUEST_CHAIN.length){
-        d.doneAll = true;
-        grantXp(QUEST_FINALE_XP, 'Quest line complete!', { silent:true });
-        try { grantXpTokens({ m30: 2, m60: 1 }, 'Quest line finale', { silent: true }); } catch(e){}
-        setTimeout(() => { try { toast(`🏆 Quest line complete — +${QUEST_FINALE_XP} XP, 2× 30 min + 1× 1 hour 2× XP tokens!`, 'success', { duration: 7000 }); } catch(e){} }, 700);
-        break;
-      }
-      // only the 'games' step auto-advances every match; others need fresh match data
-      if(q && q.type !== 'games' && q.type !== 'beststreak') break;
-    } else break;
-  }
-  saveQuestState(d);
-  refreshQuests();
-}
+// (Quest line removed — clearing all 3 weekly challenges now pays the big
+//  bonus instead. See updateWeeklyChallengeProgress.)
 
 // ============= RECENT PLAYERS =============
 function getRecentPlayers(){
@@ -25001,11 +25288,6 @@ async function endMatch(){
       wonRounds: state.scoreYou || 0,
       flawless: _flawless,
     }); } catch(e){ console.error('[weekly]', e); }
-    try { updateQuestProgress(result, {
-      predictedCorrect: state._matchPredictionsCorrect || 0,
-      wonRounds: state.scoreYou || 0,
-      flawless: _flawless,
-    }); } catch(e){ console.error('[quest]', e); }
   }
 
   // Update profile stats + ELO (once per match, not per round)
@@ -25184,13 +25466,7 @@ let updateMatchStats = async function(matchResult){
     if(cushion) breakdown.push({ label:'Tough opponent', amount:cushion });
     delta = Math.max(base - 2, delta);
   }
-  // Daily-challenge ELO bonus (set when a daily completed this match) — folded in
-  // here so it lands atomically and shows in the result breakdown.
-  if(state._dailyBonusElo){
-    delta += state._dailyBonusElo;
-    breakdown.push({ label:'Daily challenge', amount: state._dailyBonusElo });
-    state._dailyBonusElo = 0;
-  }
+  // (Daily challenges pay level-scaled XP + tokens — they never touch ELO.)
   const newRating = Math.max(0, myRating + delta);
   state._lastMatchDelta = delta;
   state._lastEloBreakdown = breakdown;
@@ -25822,18 +26098,41 @@ function showRankUp(oldRank, newRank, opts){
   let legendOrbs = overlay.querySelector('.legend-orbs');
   if(legendOrbs){ legendOrbs.remove(); legendOrbs = null; }
   if(isLegend){
+    // LEGEND "ASCENSION" — one container holds every bespoke cinematic layer so
+    // a dismiss removes them all at once.
     legendOrbs = document.createElement('div');
-    legendOrbs.className = 'legend-orbs';
-    const orbN = perf.lite ? 6 : 9;
-    const radius = perf.mobile ? 120 : 160;
-    for(let i = 0; i < orbN; i++){
-      const o = document.createElement('div');
-      o.className = 'l-orb';
-      o.style.setProperty('--a', (i * 360 / orbN) + 'deg');
-      o.style.setProperty('--r', (radius + (i % 2 ? 22 : 0)) + 'px');
-      o.style.setProperty('--oc', LEGEND_SPECTRUM[i % LEGEND_SPECTRUM.length]);
-      legendOrbs.appendChild(o);
+    legendOrbs.className = 'legend-orbs lg-stage';
+    const GOLD = ['#ffe9a6', '#ffd35e', '#ffb036', '#ff61c3', '#9fd8ff'];
+    // 1) Converging light streaks — rush into the emblem just before impact
+    const streakN = perf.lite ? 8 : 18;
+    for(let i = 0; i < streakN; i++){
+      const st = document.createElement('i');
+      st.className = 'lg-streak';
+      st.style.setProperty('--a', (i * 360 / streakN + Math.random() * 14) + 'deg');
+      st.style.setProperty('--d', (perf.mobile ? 260 : 460) + Math.random() * 160 + 'px');
+      st.style.setProperty('--c', GOLD[i % GOLD.length]);
+      st.style.animationDelay = (1.15 + Math.random() * .65) + 's';
+      legendOrbs.appendChild(st);
     }
+    // 2) Impact: white flash + double shockwave rings + lens ring
+    const flash = document.createElement('i'); flash.className = 'lg-flash'; legendOrbs.appendChild(flash);
+    for(const cls of ['lg-shock', 'lg-shock s2', 'lg-shock s3']){
+      const sw = document.createElement('i'); sw.className = cls; legendOrbs.appendChild(sw);
+    }
+    // 3) Rising embers — slow golden sparks drifting up for the whole scene
+    const emberN = perf.lite ? 10 : 26;
+    for(let i = 0; i < emberN; i++){
+      const em = document.createElement('i');
+      em.className = 'lg-ember';
+      em.style.left = (Math.random() * 100) + '%';
+      em.style.setProperty('--c', GOLD[i % GOLD.length]);
+      em.style.setProperty('--s', (2 + Math.random() * 4).toFixed(1) + 'px');
+      em.style.animationDelay = (2 + Math.random() * 5) + 's';
+      em.style.animationDuration = (3.4 + Math.random() * 3.2) + 's';
+      legendOrbs.appendChild(em);
+    }
+    // 4) Orbiting spark ring around the emblem
+    const ring = document.createElement('i'); ring.className = 'lg-ring'; legendOrbs.appendChild(ring);
     overlay.appendChild(legendOrbs);
   }
 
@@ -27120,7 +27419,6 @@ function renderHomePage(){
   setText('#wbStreakNum', loginStreak);
   try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
-  try { refreshQuests(); } catch(e){}
   try { paintMnavAvatar(); } catch(e){}
   try { renderHomeSpotlight(p); } catch(e){ console.warn('[home] spotlight', e); }
   // world strip
@@ -27597,50 +27895,13 @@ document.addEventListener('keydown', (e) => {
 })();
 
 // ===== UPDATE LOG =====
-const APP_VERSION = '2.2.1';
+const APP_VERSION = '1.0';
 const UPDATE_LOG = [
-  { v: '2.2.1', date: 'June 2026', title: 'Sound on 🔊', items: [
-    ['fixed', 'All sounds are back — menu music, match-found, countdown, rank-up and the Legend fanfare were pointing at the wrong file names'],
-    ['fixed', 'Your rank on Home now shows the unranked emblem during placement matches'],
-    ['fixed', 'The 2× XP token pill no longer flashes in the navbar when you have no boost running, and its timer is actually readable now'],
-    ['new', 'Choose whether you accept friend requests and challenges right at signup — including after Google sign-in'],
-    ['improved', '2× XP weekend times show as a normal 12-hour clock in your local time'],
-    ['improved', 'Profile dropdown restyled to match the rest of the app, with your handle up top'],
-    ['improved', 'Sounds load in parallel (audio is ready sooner) and the in-match countdown no longer overflows its circle on tablets'],
-  ]},
-  { v: '2.2.0', date: 'June 2026', title: 'Profile power', items: [
-    ['new', 'Click your profile in the sidebar → a smooth dropdown with View/Edit profile, Camera & tracking, Match history, Sign out and more (the arrow flips!)'],
-    ['new', 'Profile cards redesigned again — tighter hero, glass stat tiles, sticky action bar, fully mobile-friendly'],
-    ['improved', 'Scissors is purple everywhere now (yellow belongs to XP tokens)'],
-    ['improved', 'Rank bar ignites when you are within reach of the next tier'],
-    ['fixed', 'Private chats with friends are visible again (security-rules fix — re-publish firestore.rules!)'],
-    ['fixed', 'Unranked emblem shows correctly on the Rank and Play pages'],
-    ['fixed', 'Titles counter includes prestige titles; install-app nag toast removed'],
-    ['improved', 'Camera calibration is now just framing + lighting — the flaky gesture test is gone'],
-    ['improved', 'Loading screen simplified; opponent names are clickable in chat and the VS screen'],
-  ]},
-  { v: '2.1.1', date: 'June 2026', title: 'Cleaner finish', items: [
-    ['improved', 'Match results redesigned again — dark podium card, no more giant colour slab, one clean action row'],
-    ['improved', 'Both players ready → instant “MATCH START” moment: announcer, green ring pulse on both cams, sound and haptics'],
-    ['improved', 'Ready signals are double-sent so a dropped packet can’t delay the start'],
-    ['improved', 'The loading screen is a real loading screen now — live percentage and status steps'],
-  ]},
-  { v: '2.1.0', date: 'June 2026', title: 'Match fix & cinema results', items: [
-    ['fixed', 'Critical: rounds desynced — one player counted down while the other froze. Matches start reliably again'],
-    ['new', 'Match results completely redesigned — cinematic victory/defeat screen with light rays and staggered reveals'],
-    ['new', 'Live username search with suggestions when adding friends'],
-    ['new', 'Report individual chat messages with the ⚑ flag'],
-    ['new', 'Blocked users list in Settings → Privacy'],
-    ['improved', 'XP tokens have their own artwork; What’s new lives in the navbar; tooltips no longer cover buttons; mobile topbar decluttered'],
-    ['fixed', 'Menu music retries loading instead of staying silent; camera calibration detects throws far more reliably (and can be skipped)'],
-  ]},
-  { v: '2.0.0', date: 'June 2026', title: 'The big one 🎟️', items: [
-    ['new', '2× XP Tokens — earn 15 min / 30 min / 1 hour boosts from weekly challenges, the quest line and daily rewards. Activate them on the Play page; activating again adds time'],
-    ['new', 'Daily rewards rebuilt — new 7-day board with XP-token days and a day-7 jackpot'],
-    ['new', 'A brand-new update log (you found it!)'],
-    ['improved', 'Play page feels like a game lobby — boost panel, bolder modes'],
-    ['improved', 'Top Players now loads on the Activity page'],
-    ['improved', 'Tighter rank card on Home; onboarding removed for a faster first match'],
+  { v: '1.0', date: 'June 2026', title: 'ROSHCAM 1.0 — public launch 🚀', items: [
+    ['new', 'ROSHCAM is officially live: real rock·paper·scissors over webcam, ranked ELO from Bronze to Legend, friends, challenges and leaderboards'],
+    ['new', 'Daily & weekly challenges with level-scaled XP and 2× XP token rewards — clear all three weeklies for a huge bonus'],
+    ['new', 'Daily login rewards, 2× XP weekends and stackable 2× XP boost tokens'],
+    ['improved', 'Everyone starts fresh for launch — placements decide your first rank. See you on the ladder!'],
   ]},
 ];
 function renderUpdateLog(){
@@ -27872,23 +28133,26 @@ function claimDailyLoginReward(){
   const info = computeLoginStreak();
   const dayInWeek = ((info.streak - 1) % 7) + 1;
   const reward = dailyRewardForStreak(info.streak);
-  let amount = reward.xp || 0;
+  // Login XP scales with level (base 500 = one full level, base 100 = 20% of one)
+  let amount = reward.xp ? levelScaledXp(reward.xp / 500) : 0;
   let comebackBonus = 0;
-  if(info.comeback){ comebackBonus = Math.min(250, 50 + info.daysAway * 25); amount += comebackBonus; }
+  if(info.comeback){ comebackBonus = Math.min(levelScaledXp(.5), levelScaledXp(.1) + info.daysAway * 25); amount += comebackBonus; }
   try { showLoginReward(reward, amount, info.streak, dayInWeek, comebackBonus); } catch(e){}
   if(amount > 0) grantXp(amount, comebackBonus ? 'Welcome back' : 'Daily login', { silent: true });
   if(reward.token){ try { grantXpTokens({ [reward.token]: 1 }, 'Daily reward', { silent: true }); } catch(e){} }
 }
+const XPT_SVG_MINI = '<svg class="lr-token-mini" viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-xptoken"/></svg>';
+const XP_SVG_MINI = '<svg class="lr-token-mini" viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-xp"/></svg>';
 function _lrRewardText(r){
   const bits = [];
-  if(r.xp) bits.push(`+${r.xp}`);
-  if(r.token) bits.push(`🎟️${XP_TOKEN_TYPES[r.token].label.replace(' ', '')}`);
+  if(r.xp) bits.push(`${XP_SVG_MINI}+${fmtXp(levelScaledXp(r.xp / 500))}`);
+  if(r.token) bits.push(`${XPT_SVG_MINI}${XP_TOKEN_TYPES[r.token].label.replace(' ', '')}`);
   return bits.join('<br>');
 }
 function showLoginReward(reward, amount, streak, dayInWeek, comebackBonus){
   const headBits = [];
   if(amount > 0) headBits.push(`+${amount} XP`);
-  if(reward.token) headBits.push(`🎟️ ${XP_TOKEN_TYPES[reward.token].label} 2× XP token`);
+  if(reward.token) headBits.push(`<svg viewBox="0 0 24 24" width="17" height="17" style="vertical-align:-3px;"><use href="#i-xptoken"/></svg> ${XP_TOKEN_TYPES[reward.token].label} 2× XP token`);
   const amtEl = $('#lrAmount'); if(amtEl) amtEl.innerHTML = headBits.join(' <span class="lr-amp">&</span> ') || 'Reward!';
   setText('#lrStreak', `Day ${streak} login streak 🔥`);
   const cal = $('#lrCalendar');
@@ -27897,8 +28161,8 @@ function showLoginReward(reward, amount, streak, dayInWeek, comebackBonus){
       const day = i + 1;
       const st = day < dayInWeek ? 'done' : day === dayInWeek ? 'today' : 'future';
       const bigIc = day === 7 ? '🎁'
-        : r.token ? `<img class="lr-token-img" src="${XP_TOKEN_TYPES[r.token].img}" alt="" loading="lazy" decoding="async">`
-        : '⚡';
+        : r.token ? `<svg class="lr-token-svg" viewBox="0 0 24 24"><use href="#i-xptoken"/></svg>`
+        : `<svg class="lr-token-svg" viewBox="0 0 24 24"><use href="#i-xp"/></svg>`;
       const icon = st === 'done'
         ? '<svg viewBox="0 0 24 24" class="lr-day-check" width="15" height="15"><use href="#i-check"/></svg>'
         : `<span class="lr-day-big">${bigIc}</span>`;
@@ -28034,10 +28298,8 @@ function renderFriendsInto(sel){
 
 // ===== PLAY PAGE buttons =====
 on('#playPageFindBtn', 'click', startRankedMatch);
-on('#playPageCameraBtn', 'click', () => $('#cameraSetupBtn')?.click());
 on('#playPageChallengeBtn', 'click', () => openChallengePicker());
-on('#playPageHowBtn', 'click', () => $('#helpBtn')?.click());
-on('#play2v2Card', 'click', () => { haptic(14); toast('2v2 is coming soon — we\'ll let you know! 🤝', 'success'); });
+on('#play2v2Card', 'click', () => { haptic(14); toast('2v2 is in the works — it\'ll land in a future update', 'info'); });
 on('#playRankCard', 'click', () => showNavPage('rank'));
 
 // ===== CHALLENGE FRIEND PICKER =====
@@ -28090,6 +28352,8 @@ function renderPlayPage(){
   const rank = rankFromRating(rating);
   setRankIconEl($('#playRankIcon'), inPlacements(p) ? 'unranked' : rank.id);
   const ic = $('#playRankIcon'); if(ic) ic.style.color = inPlacements(p) ? 'var(--violet)' : rank.color;
+  const glow = $('#playRankGlow');
+  if(glow) glow.style.background = `radial-gradient(circle, ${inPlacements(p) ? 'var(--violet)' : rank.color}, transparent 70%)`;
   const fill = $('#playRankFill');
   if(inPlacements(p)){
     const done = placementsDone(p); const left = PLACEMENT_TOTAL - done;
@@ -28111,7 +28375,6 @@ function renderPlayPage(){
   // Daily + weekly challenge cards (mounted on the play page too)
   try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
-  try { refreshQuests(); } catch(e){}
 }
 
 // ===== CAMERA CALIBRATION WIZARD =====
@@ -28736,7 +28999,7 @@ if(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)')
 
 // ===== Custom tooltips for icon buttons (hover-capable devices only) =====
 if(!(window.matchMedia && window.matchMedia('(hover: none)').matches)){
-  const TIP_SEL = '.icon-btn, .arena-ctrl-btn, .topbar-icon-btn, .daily-reroll-btn, .nav-item, .lb-filter, [data-tip]';
+  const TIP_SEL = '.icon-btn, .arena-ctrl-btn, .topbar-icon-btn, .daily-reroll-btn, .ch2-reroll, .nav-item, .lb-filter, [data-tip]';
   let tipEl = null;
   const showTip = (el) => {
     const text = el.dataset.tip || el.getAttribute('aria-label') || el.getAttribute('title');
