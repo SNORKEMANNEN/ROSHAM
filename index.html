@@ -1101,6 +1101,22 @@ body.reduced-motion .nav-item .nav-badge.nav-prestige, body.low-power .nav-item 
 .mobile-nav-item.active .mni-av{ box-shadow: 0 0 0 2px var(--mint); }
 .mobile-nav-item .mni-badge{ position: absolute; top: 4px; right: calc(50% - 16px); min-width: 15px; height: 15px; padding: 0 4px; border-radius: 999px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 9px; font-weight: 700; display: none; align-items: center; justify-content: center; }
 .mobile-nav-item{ position: relative; }
+/* active top indicator pill */
+.mobile-nav-item:not(.mni-play)::after{ content:''; position: absolute; top: 1px; left: 50%; transform: translateX(-50%) scaleX(0); width: 16px; height: 3px; border-radius: 999px; background: var(--mint); transition: transform .2s cubic-bezier(.2,1.5,.4,1); }
+.mobile-nav-item.active:not(.mni-play)::after{ transform: translateX(-50%) scaleX(1); }
+/* raised center PLAY button */
+.mobile-nav-item.mni-play{ justify-content: flex-end; gap: 5px; }
+.mni-play-btn{ width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; margin-top: -24px;
+  background: linear-gradient(135deg, var(--mint), #15a079); color: #06241b;
+  box-shadow: 0 10px 24px -6px var(--mint-glow, rgba(34,211,163,.6)), 0 0 0 5px var(--bg); transition: transform .18s, box-shadow .2s; }
+.mni-play-btn svg{ width: 26px; height: 26px; }
+.mobile-nav-item.mni-play span:last-child{ color: var(--mint); }
+.mobile-nav-item.mni-play:active .mni-play-btn{ transform: scale(.9); }
+.mobile-nav-item.mni-play.active .mni-play-btn{ box-shadow: 0 10px 26px -4px var(--mint-glow, rgba(34,211,163,.7)), 0 0 0 5px var(--bg), 0 0 0 7px rgba(34,211,163,.35); }
+/* "You" avatar tab */
+.mni-you .mni-av{ box-shadow: 0 0 0 2px var(--line-bright, rgba(255,255,255,.18)); }
+.mni-you.active .mni-av, .mni-you .mni-icon .mni-av{ transition: box-shadow .2s; }
+.mni-you.active .mni-av{ box-shadow: 0 0 0 2px var(--mint); }
 
 /* ===== NAV PAGES ===== */
 .nav-page{ display: none; }
@@ -5878,74 +5894,86 @@ h2.match-title{
    the connection bar pinned below. Each player is a full-width identity card.
    ========================================================================== */
 @media (max-width: 600px){
-  .match-found-v2{ padding: max(14px, env(safe-area-inset-top)) 12px max(14px, env(safe-area-inset-bottom)); justify-content: flex-start; }
-  /* echo the vertical face-off in the background glows + dim the grid */
-  .mf-bg-grid{ opacity: .35; }
-  .mf-bg-glow{ width: 92vw; height: 30vh; filter: blur(78px); }
-  .mf-bg-glow.you{ left: 50%; top: 12%; right: auto; transform: translateX(-50%); }
-  .mf-bg-glow.opp{ left: 50%; top: 88%; right: auto; transform: translateX(-50%); }
+  .match-found-v2{ padding: 0; justify-content: stretch; overflow: hidden; }
+  .mf-bg-grid{ opacity: .14; }
+  .mf-bg-glow{ display: none; }
 
-  .mf-banner{ margin: 8px 0 14px; font-size: 11px; padding: 9px 20px; letter-spacing: .26em; }
+  /* MATCH FOUND banner — floats at the very top */
+  .mf-banner{ position: absolute; top: max(16px, calc(env(safe-area-inset-top) + 8px)); left: 50%; transform: translateX(-50%); z-index: 6; margin: 0; font-size: 10px; padding: 8px 18px; letter-spacing: .3em; }
 
-  /* STAGE — a single vertical column that fills the screen */
+  /* STAGE — full-screen DIAGONAL two-tone split with a glowing seam */
   .mf-stage{
-    display: flex; flex-direction: column; align-items: stretch;
-    gap: 0; padding: 0; width: 100%; max-width: 480px; margin: 0 auto;
+    position: absolute; inset: 0; display: block; width: 100%; max-width: none; margin: 0; padding: 0;
     grid-template-columns: none; grid-template-rows: none;
+    background:
+      linear-gradient(158deg, transparent 48.4%, rgba(255,255,255,.9) 49.4%, rgba(255,255,255,.9) 50.6%, transparent 51.6%),
+      linear-gradient(158deg, rgba(34,211,163,.05) 6%, color-mix(in srgb, var(--mint) 17%, transparent) 30%, rgba(34,211,163,.03) 49%, transparent 50%, rgba(255,51,88,.03) 51%, color-mix(in srgb, var(--coral) 17%, transparent) 70%, rgba(255,51,88,.05) 94%),
+      var(--bg);
   }
+  /* soft neon glow along the diagonal seam */
+  .mf-stage::before{ content:''; position: absolute; inset: 0; z-index: 0; pointer-events: none; mix-blend-mode: screen; opacity: .65;
+    background: linear-gradient(158deg, transparent 47%, rgba(34,211,163,.28) 49.4%, rgba(255,51,88,.28) 50.6%, transparent 53%); filter: blur(6px); }
+  /* corner ambient glows behind each player */
+  .mf-stage::after{ content:''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background: radial-gradient(58vw 36vh at 86% 9%, rgba(34,211,163,.18), transparent 62%),
+                radial-gradient(58vw 36vh at 14% 91%, rgba(255,51,88,.18), transparent 62%); }
 
-  /* PLAYER HERO CARD — avatar (with rank crest) + identity, full width */
+  /* PLAYERS — floated into the top-right and bottom-left corners */
   .mf-player{
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-areas: "av name" "av meta" "av stats";
-    align-items: center; column-gap: 16px; row-gap: 3px;
-    text-align: left; padding: 18px 18px 16px; border-radius: 20px;
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    background: linear-gradient(110deg, rgba(26,25,37,.94), rgba(13,12,20,.86));
+    position: absolute; z-index: 3; display: flex; flex-direction: column; gap: 8px; width: min(74%, 330px);
+    background: none; border: none; box-shadow: none; padding: 0; text-align: inherit;
+    backdrop-filter: none; -webkit-backdrop-filter: none; animation: mfPlayerPop .6s cubic-bezier(.2,1.3,.4,1) both;
   }
-  .mf-player.you{ border-color: rgba(34,211,163,.5); box-shadow: 0 18px 40px -20px rgba(0,0,0,.8), inset 4px 0 0 0 var(--mint); }
-  .mf-player.opp{ border-color: rgba(255,51,88,.5);  box-shadow: 0 18px 40px -20px rgba(0,0,0,.8), inset 4px 0 0 0 var(--coral); animation-delay: .1s; }
+  .mf-player.you{ top: max(62px, 9%); right: 16px; align-items: flex-end; text-align: right; }
+  .mf-player.opp{ bottom: max(98px, 9%); left: 16px; align-items: flex-start; text-align: left; animation-delay: .12s; }
   .mf-player.you::before, .mf-player.opp::before{ display: none; }
-  .mf-player-side-label{ top: -9px; left: 16px; font-size: 8.5px; letter-spacing: .2em; padding: 3px 11px; }
+  @keyframes mfPlayerPop{ from{ opacity: 0; transform: scale(.9) translateY(8px); } to{ opacity: 1; transform: none; } }
 
-  .mf-avatar-wrap{ grid-area: av; width: 78px; height: 78px; align-self: center; margin: 0; }
-  .mf-avatar{ width: 78px; height: 78px; border-radius: 20px; font-size: 32px; }
-  .mf-avatar-glow{ inset: -8px; }
-  .mf-avatar-rank{ width: 31px; height: 31px; bottom: -9px; right: -9px; padding: 4px; }
-  .mf-name{ grid-area: name; align-self: end; font-size: 21px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-  .mf-rank-line{ grid-area: meta; font-size: 11px; gap: 6px; justify-content: flex-start; flex-wrap: wrap; }
+  .mf-player-side-label{ position: static; font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 11px; letter-spacing: .2em; padding: 4px 12px; border-radius: 999px; }
+
+  .mf-avatar-wrap{ width: 88px; height: 88px; margin: 0; }
+  .mf-avatar{ width: 88px; height: 88px; border-radius: 24px; font-size: 36px; }
+  .mf-avatar-glow{ inset: -10px; }
+  .mf-avatar-rank{ width: 34px; height: 34px; bottom: -10px; padding: 4px; }
+  .mf-player.you .mf-avatar-rank{ right: -10px; left: auto; }
+  .mf-player.opp .mf-avatar-rank{ left: -10px; right: auto; }
+
+  .mf-name{ font-size: 23px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .mf-rank-line{ font-size: 11px; gap: 6px; flex-wrap: wrap; }
+  .mf-player.you .mf-rank-line, .mf-player.you .mf-stats-mini{ justify-content: flex-end; }
+  .mf-player.opp .mf-rank-line, .mf-player.opp .mf-stats-mini{ justify-content: flex-start; }
   .mf-tier{ font-size: 11px; } .mf-elo{ font-size: 13px; } .mf-elo-unit{ font-size: 8px; }
-  .mf-stats-mini{ grid-area: stats; flex-direction: row; flex-wrap: wrap; gap: 6px; justify-content: flex-start; margin-top: 7px; }
+  .mf-stats-mini{ flex-direction: row; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
   .mf-stat-mini{ flex: 0 0 auto; width: auto; padding: 4px 9px; font-size: 10px; gap: 4px; }
 
-  /* CENTER BAND — circular VS medallion + compact H2H, between the two cards */
-  .mf-center{ order: 0; flex-direction: row; align-items: center; justify-content: center; gap: 12px; padding: 13px 0; position: relative; }
-  .mf-center::before{ content:''; position: absolute; left: 8%; right: 8%; top: 50%; height: 1px;
-    background: linear-gradient(90deg, transparent, var(--line-bright), transparent); }
-  .mf-vs{
-    position: relative; z-index: 1; width: 66px; height: 66px; border-radius: 50%;
-    display: grid; place-items: center; grid-auto-flow: column; gap: 1px; font-size: 24px; letter-spacing: -.04em;
-    background: radial-gradient(circle at 36% 30%, rgba(34,211,163,.42), rgba(255,51,88,.4) 78%), var(--bg);
-    border: 2px solid var(--line-bright);
-    box-shadow: 0 0 0 6px var(--bg), 0 12px 28px -8px rgba(0,0,0,.85);
-  }
-  .mf-vs-letter{ position: static; display: inline-block; font-size: 24px; }
+  /* CENTER — bold, tilted VS medallion on the seam + compact head-to-head */
+  .mf-center{ position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 4; flex-direction: column; align-items: center; gap: 11px; padding: 0; animation: mfVsPop .7s cubic-bezier(.2,1.6,.4,1) both .25s; }
+  .mf-center::before{ display: none; }
+  @keyframes mfVsPop{ from{ opacity: 0; transform: translate(-50%,-50%) scale(.4) rotate(-30deg); } to{ opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(0); } }
+  .mf-vs{ position: relative; width: 86px; height: 86px; display: grid; grid-auto-flow: column; place-items: center; gap: 0; font-size: 34px; letter-spacing: -.04em;
+    border-radius: 27px; transform: rotate(-8deg);
+    background: radial-gradient(circle at 34% 26%, rgba(255,255,255,.18), transparent 60%), conic-gradient(from 200deg, var(--mint), var(--coral) 58%, var(--mint));
+    border: 3px solid rgba(255,255,255,.92);
+    box-shadow: 0 0 0 6px var(--bg), 0 0 30px -4px rgba(255,255,255,.4), 0 18px 40px -10px rgba(0,0,0,.9); }
+  .mf-vs-letter{ position: static; display: inline-block; font-size: 34px; color: #fff !important; -webkit-text-fill-color: #fff; background: none; text-shadow: 0 2px 7px rgba(0,0,0,.55); animation: none; }
   .mf-vs-clash{ display: none; }
-  .mf-h2h{ position: relative; z-index: 1; padding: 8px 14px; margin: 0; min-width: 0; gap: 3px; background: var(--bg); border-radius: 13px; }
-  .mf-h2h-title{ font-size: 8px; } .mf-h2h-row{ font-size: 18px; gap: 9px; }
-  .mf-h2h-score{ font-size: 23px; } .mf-h2h-sep{ font-size: 14px; } .mf-h2h-label{ font-size: 8px; text-align: center; }
+  .mf-h2h{ position: relative; padding: 7px 14px; margin: 0; min-width: 0; gap: 2px; background: rgba(8,7,13,.82); border: 1px solid var(--line-bright, rgba(255,255,255,.16)); border-radius: 12px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .mf-h2h-title{ font-size: 7.5px; } .mf-h2h-row{ font-size: 18px; gap: 9px; }
+  .mf-h2h-score{ font-size: 22px; } .mf-h2h-sep{ font-size: 13px; } .mf-h2h-label{ font-size: 7.5px; text-align: center; }
 
-  /* CONNECTION — flows below the stack, full width */
-  .mf-footer{ position: static; transform: none; width: 100%; max-width: 480px; margin: 18px auto 0; }
+  /* CONNECTION — pinned to the bottom */
+  .mf-footer{ position: absolute; left: 0; right: 0; bottom: 0; transform: none; width: 100%; margin: 0; z-index: 5;
+    padding: 14px 18px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, transparent, var(--bg) 55%); }
+
+  body.reduced-motion .mf-player, body.low-power .mf-player, body.reduced-motion .mf-center, body.low-power .mf-center{ animation: none; }
 }
 @media (max-width: 380px){
+  .mf-player{ width: min(82%, 300px); }
+  .mf-avatar-wrap, .mf-avatar{ width: 74px; height: 74px; }
+  .mf-name{ font-size: 20px; }
+  .mf-vs{ width: 74px; height: 74px; font-size: 28px; }
+  .mf-vs-letter{ font-size: 28px; }
   .mf-stat-mini{ font-size: 9px; padding: 3px 7px; }
-  .mf-player-side-label{ font-size: 8px; }
-  .mf-player{ padding: 14px 14px 12px; }
-  .mf-avatar-wrap{ width: 66px; height: 66px; }
-  .mf-avatar{ width: 66px; height: 66px; font-size: 26px; }
-  .mf-name{ font-size: 18px; }
 }
 @keyframes vsSlam{
   0%{transform:scale(2) rotate(-20deg); opacity:0;}
@@ -11812,6 +11840,18 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
 .banner-opt .bo-lbl{ font-family:var(--font-mono); font-size:8.5px; letter-spacing:.03em; color:var(--text-dim); white-space:nowrap; }
 .banner-opt.active .bo-lbl{ color:var(--text); }
 
+/* Guest restriction note + locked profile form */
+.guest-note{ display:flex; align-items:center; gap:12px; margin:0 0 16px; padding:13px 14px; border-radius:14px;
+  background:linear-gradient(135deg, rgba(176,140,255,.13), rgba(34,211,163,.08)); border:1px solid color-mix(in srgb, var(--violet) 38%, transparent);
+  font-size:12.5px; line-height:1.5; color:var(--text-dim); }
+.guest-note svg{ color:var(--violet); flex:0 0 auto; }
+.guest-note b{ color:var(--text); }
+.guest-note-btn{ flex:0 0 auto; white-space:nowrap; padding:8px 14px; }
+.is-guest-locked #titlePick, .is-guest-locked #colorPick, .is-guest-locked #accentPick,
+.is-guest-locked .photo-actions, .is-guest-locked #bannerPick, .is-guest-locked #showcasePick{ opacity:.45; pointer-events:none; filter:grayscale(.3); }
+.is-guest-locked input:disabled, .is-guest-locked textarea:disabled, .is-guest-locked select:disabled{ cursor:not-allowed; }
+@media (max-width:480px){ .guest-note{ flex-wrap:wrap; } .guest-note-btn{ width:100%; } }
+
 /* Photo upload + cropper */
 .photo-section{display:flex; flex-direction:column; gap:12px;}
 .photo-preview{
@@ -12268,37 +12308,64 @@ body.reduced-motion .sk, body.low-power .sk{ animation: none; }
   background: rgb(4 3 9 / calc(.55 * var(--sheet-drag, 1))); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
 .more-sheet.show{ display: flex; animation: msFade .22s ease-out; }
 @keyframes msFade{ from{ opacity: 0; } to{ opacity: 1; } }
-.more-sheet-card{ width: 100%; background: var(--surface); border-radius: 24px 24px 0 0;
-  border: 1px solid var(--line); border-bottom: none; padding: 8px 16px calc(20px + env(safe-area-inset-bottom,0px));
-  box-shadow: 0 -20px 60px -20px rgba(0,0,0,.7); animation: sheetUp .32s cubic-bezier(.2,.9,.25,1); }
+.more-sheet-card{ width: 100%; max-height: 90vh; background: var(--surface); border-radius: 24px 24px 0 0;
+  border: 1px solid var(--line); border-bottom: none; padding: 8px 0 0; display: flex; flex-direction: column;
+  box-shadow: 0 -20px 60px -20px rgba(0,0,0,.7); animation: sheetUp .3s cubic-bezier(.2,.9,.25,1); touch-action: pan-y; }
+@keyframes sheetUp{ from{ transform: translateY(100%); } to{ transform: none; } }
 .more-sheet.closing .more-sheet-card{ animation: sheetDown .25s cubic-bezier(.4,0,.7,.2) forwards; }
 @keyframes sheetDown{ from{ transform: translateY(0); } to{ transform: translateY(100%); } }
-.more-sheet-handle{ width: 44px; height: 5px; border-radius: 999px; background: var(--line-bright, rgba(255,255,255,.3)); margin: 8px auto 14px; transition: background .2s, width .2s; }
-/* Bigger invisible grab target around the visible handle so it's easy to catch */
-.more-sheet-card{ touch-action: pan-y; }
-.more-sheet-card > .more-sheet-handle{ position: relative; }
-.more-sheet-card > .more-sheet-handle::before{ content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:120px; height:30px; }
-.more-sheet-profile{ display: flex; align-items: center; gap: 13px; padding: 12px; border-radius: 16px;
-  background: var(--surface-2); border: 1px solid var(--line); cursor: pointer; margin-bottom: 14px; }
-.more-sheet-profile:active{ transform: scale(.985); }
-.msp-av{ width: 46px; height: 46px; border-radius: 50%; flex: 0 0 auto; background-size: cover; background-position: center;
-  display: grid; place-items: center; font-weight: 700; font-size: 18px; color: #06120e; }
-.msp-info{ flex: 1; min-width: 0; }
-.msp-name{ font-family: var(--font-display); font-stretch: 78%; font-weight: 800; font-size: 16px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.msp-sub{ font-size: 12px; color: var(--text-dim); }
-.msp-chev{ color: var(--text-faint); flex: 0 0 auto; }
-.more-sheet-grid{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-.more-sheet-item{ display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px;
-  padding: 16px 6px; border-radius: 16px; background: var(--surface-2); border: 1px solid var(--line);
-  color: var(--text); cursor: pointer; transition: transform .1s, border-color .15s; min-height: 78px; }
-.more-sheet-item:active{ transform: scale(.94); border-color: var(--mint); }
-.msi-ic{ width: 34px; height: 34px; border-radius: 11px; display: grid; place-items: center; background: var(--surface-3); }
-.msi-ic svg{ width: 19px; height: 19px; color: var(--mint); }
-.more-sheet-item span:last-child{ font-size: 11px; font-weight: 600; text-align: center; }
-.more-sheet-signout{ width: 100%; margin-top: 14px; padding: 14px; border-radius: 14px; background: none;
-  border: 1px solid var(--line); color: var(--coral); font-family: var(--font-display); font-stretch: 80%;
-  font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-.more-sheet-signout:active{ background: rgba(255,51,88,.08); }
+.more-sheet-handle{ width: 44px; height: 5px; border-radius: 999px; background: var(--line-bright, rgba(255,255,255,.3)); margin: 8px auto 4px; flex: 0 0 auto; position: relative; }
+.more-sheet-handle::before{ content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:140px; height:32px; }
+.ms-scroll{ overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 16px calc(18px + env(safe-area-inset-bottom,0px)); scrollbar-width: none; }
+.ms-scroll::-webkit-scrollbar{ display: none; }
+/* profile card */
+.ms-profile{ display: flex; align-items: center; gap: 13px; padding: 13px; border-radius: 18px; cursor: pointer;
+  background: linear-gradient(135deg, rgba(34,211,163,.08), rgba(176,140,255,.08)), var(--surface-2); border: 1px solid var(--line); transition: transform .15s; }
+.ms-profile:active{ transform: scale(.985); }
+.ms-av{ width: 52px; height: 52px; border-radius: 50%; flex: 0 0 auto; background-size: cover; background-position: center; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 20px; color: #06120e; box-shadow: 0 0 0 2px var(--line-bright, rgba(255,255,255,.15)); overflow: hidden; }
+.ms-prof-info{ flex: 1; min-width: 0; }
+.ms-prof-top{ display: flex; align-items: center; gap: 8px; }
+.ms-prof-name{ font-family: var(--font-display); font-stretch: 78%; font-weight: 800; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-level-badge{ flex: 0 0 auto; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 7px; display: grid; place-items: center; font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 12px; color: #08070d; background: linear-gradient(135deg, #ffd33d, #ff9a3d); }
+.ms-prof-sub{ font-family: var(--font-mono); font-size: 11.5px; color: var(--text-dim); margin-top: 2px; }
+.ms-xpbar{ height: 5px; border-radius: 999px; background: rgba(0,0,0,.35); overflow: hidden; margin-top: 7px; }
+.ms-xpbar i{ display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--mint), #5dffba); transition: width .6s; }
+.ms-chev{ color: var(--text-faint); flex: 0 0 auto; }
+/* quick row */
+.ms-quick{ display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 12px; }
+.ms-quick-btn{ display: flex; align-items: center; justify-content: center; gap: 7px; padding: 11px; border-radius: 13px; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--text); font-family: var(--font-body); font-weight: 600; font-size: 12.5px; transition: transform .12s, border-color .15s; }
+.ms-quick-btn svg{ color: var(--mint); flex: 0 0 auto; }
+.ms-quick-btn:active{ transform: scale(.95); border-color: var(--mint); }
+/* section labels */
+.ms-section-label{ font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; color: var(--text-faint); margin: 18px 2px 9px; }
+/* main grid */
+.ms-grid{ display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.ms-tile{ position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 15px 8px; border-radius: 15px; cursor: pointer;
+  background: var(--surface-2); border: 1px solid var(--line); color: var(--text); transition: transform .12s, border-color .15s, background .15s; }
+.ms-tile:active{ transform: scale(.95); border-color: var(--mint); background: rgba(34,211,163,.06); }
+.ms-tile-ic{ width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-3, rgba(255,255,255,.04)); }
+.ms-tile-ic svg{ width: 20px; height: 20px; color: var(--mint); }
+.ms-tile span:last-child{ font-size: 11.5px; font-weight: 600; }
+.ms-tile-badge{ position: absolute; top: 8px; right: calc(50% - 28px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1; }
+.ms-tile-badge.ms-prestige{ background: linear-gradient(135deg,#ffd33d,#ff9a3d); color: #1c1402; }
+/* secondary list */
+.ms-list{ display: flex; flex-direction: column; gap: 4px; }
+.ms-row{ display: flex; align-items: center; gap: 13px; padding: 11px 12px; border-radius: 13px; cursor: pointer;
+  background: none; border: none; color: var(--text); transition: background .12s; text-align: left; width: 100%; }
+.ms-row:active{ background: var(--surface-2); }
+.ms-row-ic{ width: 34px; height: 34px; border-radius: 10px; flex: 0 0 auto; display: grid; place-items: center; background: var(--surface-2); }
+.ms-row-ic svg{ width: 18px; height: 18px; color: var(--text-dim); }
+.ms-row-ic.mint svg{ color: var(--mint); }
+.ms-row-t{ flex: 1; font-size: 14px; font-weight: 600; }
+.ms-row-badge{ min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+.ms-row-chev{ color: var(--text-faint); flex: 0 0 auto; }
+/* sign out */
+.ms-signout{ width: 100%; margin-top: 16px; padding: 14px; border-radius: 14px; background: none; border: 1px solid rgba(255,51,88,.3);
+  color: var(--coral); font-family: var(--font-body); font-weight: 700; font-size: 14px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; }
+.ms-signout:active{ background: rgba(255,51,88,.08); }
+body.reduced-motion .more-sheet-card, body.low-power .more-sheet-card{ animation: none; }
 
 /* ===== LOW POWER MODE — strip GPU-heavy effects for older / low-end devices ===== */
 body.low-power .grain,
@@ -12627,7 +12694,6 @@ body.reduced-motion .sl-text{ animation:none; }
 .hx-logo{
   width:clamp(52px, 6.5vw, 78px); aspect-ratio:1; border-radius:24%;
   box-shadow:0 10px 30px -10px rgba(0,0,0,.7), 0 0 30px -10px var(--violet-glow);
-  animation:v10LogoFloat 6s ease-in-out infinite;
 }
 .hx-hero::before{
   content:""; position:absolute; inset:0; border-radius:inherit; padding:1px;
@@ -14377,6 +14443,25 @@ body.reduced-motion .home-reveal, body.low-power .home-reveal{ opacity:1; transf
 }
 body.reduced-motion .rps-ring, body.reduced-motion .rps-ic, body.reduced-motion .rps-core, body.reduced-motion .hc-rps svg, body.reduced-motion .hc-glow, body.reduced-motion .hl-dot,
 body.low-power .rps-ring, body.low-power .rps-ic, body.low-power .rps-core, body.low-power .hc-rps svg, body.low-power .hc-glow, body.low-power .hl-dot{ animation:none !important; }
+
+/* "pick your handle" back button */
+.nu-card{ position: relative; }
+.nu-back{ position: absolute; left: 16px; top: 16px; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; z-index: 3;
+  color: var(--text-dim); background: var(--surface-2); border: 1px solid var(--line); transition: color .15s, border-color .15s, transform .15s; }
+.nu-back:hover{ color: var(--text); border-color: var(--line-bright, rgba(255,255,255,.2)); }
+.nu-back:active{ transform: scale(.92); }
+/* sidebar "Unranked" (no ELO while in placements) */
+.sp-unranked{ color: var(--violet); font-weight: 700; }
+/* special (exclusive / mod-granted) title chips — accent-tinted */
+.special-title-chip{ border-color: color-mix(in srgb, var(--tc, var(--chip-color, #ffd33d)) 50%, transparent) !important; box-shadow: 0 0 14px -8px color-mix(in srgb, var(--tc, var(--chip-color, #ffd33d)) 80%, transparent); }
+.special-title-chip.active, .special-title-chip.equipped{ box-shadow: 0 0 0 1px var(--tc, var(--chip-color, #ffd33d)), 0 0 18px -6px var(--tc, var(--chip-color, #ffd33d)); }
+/* moderation: owner-only tools */
+.admin-owner-tools{ margin-top: 12px; padding: 12px; border-radius: 12px; border: 1px solid color-mix(in srgb, var(--amber, #ffd33d) 30%, transparent); background: rgba(255,211,61,.05); }
+.aot-label{ font-family: var(--font-mono); font-size: 10px; font-weight: 800; letter-spacing: .12em; color: var(--amber, #ffd33d); margin-bottom: 9px; }
+.aot-row{ display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
+.aot-row input[type=text]{ flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; color: var(--text); font-size: 13px; }
+.aot-row input[type=color]{ width: 42px; height: 38px; flex: 0 0 auto; padding: 2px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; }
+.aot-note{ font-size: 10.5px; color: var(--text-faint); line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -14667,34 +14752,62 @@ body.low-power .rps-ring, body.low-power .rps-ic, body.low-power .rps-core, body
   <!-- ===== MOBILE BOTTOM NAV ===== -->
   <nav class="mobile-nav" id="mobileNav">
     <button class="mobile-nav-item active" data-mnav="home"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span>Home</span></button>
-    <button class="mobile-nav-item" data-mnav="play"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
     <button class="mobile-nav-item" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
+    <button class="mobile-nav-item mni-play" data-mnav="play" aria-label="Play"><span class="mni-play-btn"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
     <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
-    <button class="mobile-nav-item" data-mnav="settings"><span class="mni-badge mni-prestige" id="mnavPrestigeDot" style="display:none;">✦</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-menu"/></svg></span><span>More</span></button>
+    <button class="mobile-nav-item mni-you" data-mnav="settings"><span class="mni-badge mni-prestige" id="mnavPrestigeDot" style="display:none;">✦</span><span class="mni-icon"><span class="mni-av" id="mnavAv">?</span></span><span>You</span></button>
   </nav>
 
   <!-- ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== -->
   <div class="more-sheet" id="moreSheet">
     <div class="more-sheet-card">
       <div class="more-sheet-handle"></div>
-      <div class="more-sheet-profile" id="moreSheetProfile" data-act="profile">
-        <div class="msp-av" id="moreSheetAv">?</div>
-        <div class="msp-info">
-          <div class="msp-name" id="moreSheetName">—</div>
-          <div class="msp-sub" id="moreSheetSub">View profile</div>
+      <div class="ms-scroll">
+        <!-- Profile card with level + XP -->
+        <div class="ms-profile" id="moreSheetProfile" data-act="profile">
+          <div class="ms-av" id="moreSheetAv">?</div>
+          <div class="ms-prof-info">
+            <div class="ms-prof-top">
+              <span class="ms-prof-name" id="moreSheetName">—</span>
+              <span class="ms-level-badge" id="moreSheetLevel">1</span>
+            </div>
+            <div class="ms-prof-sub" id="moreSheetSub">View profile</div>
+            <div class="ms-xpbar"><i id="moreSheetXp" style="width:0%"></i></div>
+          </div>
+          <svg viewBox="0 0 24 24" width="18" height="18" class="ms-chev"><use href="#i-arrow-right"/></svg>
         </div>
-        <svg viewBox="0 0 24 24" width="18" height="18" class="msp-chev"><use href="#i-arrow-right"/></svg>
+
+        <!-- Quick actions -->
+        <div class="ms-quick">
+          <button class="ms-quick-btn" data-act="profile"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-user"/></svg><span>Profile</span></button>
+          <button class="ms-quick-btn" data-act="edit"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-edit"/></svg><span>Edit</span></button>
+          <button class="ms-quick-btn" data-act="camera"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-camera"/></svg><span>Camera</span></button>
+        </div>
+
+        <!-- Main menu (mirrors the desktop sidebar) -->
+        <div class="ms-section-label">Menu</div>
+        <div class="ms-grid">
+          <button class="ms-tile" data-act="home"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span>Home</span></button>
+          <button class="ms-tile" data-act="play"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
+          <button class="ms-tile" data-act="activity"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
+          <button class="ms-tile" data-act="rank"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
+          <button class="ms-tile" data-act="friends"><span class="ms-tile-badge" id="msFriendsBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
+          <button class="ms-tile" data-act="achievements"><span class="ms-tile-badge ms-prestige" id="msAchBadge" style="display:none;">✦</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
+        </div>
+
+        <!-- Secondary list -->
+        <div class="ms-section-label">More</div>
+        <div class="ms-list">
+          <button class="ms-row" data-act="chat"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span class="ms-row-t">Messages</span><span class="ms-row-badge" id="msChatBadge" style="display:none;">0</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
+          <button class="ms-row" data-act="history"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-clock"/></svg></span><span class="ms-row-t">Match history</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
+          <button class="ms-row" data-act="whatsnew"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg></span><span class="ms-row-t">What's new</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
+          <button class="ms-row" data-act="help"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-help"/></svg></span><span class="ms-row-t">How to play</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
+          <button class="ms-row" data-act="settings"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span class="ms-row-t">Settings</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
+          <button class="ms-row" id="moreSheetAdmin" data-act="admin" style="display:none;"><span class="ms-row-ic mint"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg></span><span class="ms-row-t">Moderation</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
+        </div>
+
+        <button class="ms-signout" data-act="signout"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-out"/></svg> Sign out</button>
       </div>
-      <div class="more-sheet-grid">
-        <button class="more-sheet-item" data-act="activity"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
-        <button class="more-sheet-item" data-act="chat"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span>Messages</span></button>
-        <button class="more-sheet-item" data-act="achievements"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
-        <button class="more-sheet-item" data-act="settings"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span>Settings</span></button>
-        <button class="more-sheet-item" data-act="help"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-help"/></svg></span><span>How to play</span></button>
-        <button class="more-sheet-item" data-act="camera"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-camera"/></svg></span><span>Camera</span></button>
-        <button class="more-sheet-item" id="moreSheetAdmin" data-act="admin" style="display:none;"><span class="msi-ic"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg></span><span>Moderation</span></button>
-      </div>
-      <button class="more-sheet-signout" data-act="signout"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-out"/></svg> Sign out</button>
     </div>
   </div>
 
@@ -14982,6 +15095,7 @@ const FIREBASE_CONFIG = {
       <div class="nu-wrap">
         <div class="nu-card">
           <div class="nu-head">
+            <button type="button" class="nu-back" id="nuBackBtn" aria-label="Back to sign in"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-arrow-left"/></svg></button>
             <img class="nu-logo" src="logo.png" alt="" />
             <span class="eyebrow"><span class="dot"></span>one last step</span>
           </div>
@@ -15105,8 +15219,7 @@ const FIREBASE_CONFIG = {
             <h2 class="ha-title">Rock, paper, scissors — <span>face&nbsp;to&nbsp;face</span> with the world.</h2>
             <p class="ha-lead">ROSHCAM is real-time webcam rock·paper·scissors against actual strangers. Your camera reads your hand, you read their eyes, and you both throw on the count of three. Win rounds, climb the ranked ladder, and level up — no download, right in your browser.</p>
             <div class="ha-cta">
-              <button class="btn-cta" data-goto-play><svg viewBox="0 0 24 24"><use href="#i-play"/></svg><span>Play now</span></button>
-              <span class="ha-cta-note"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Free · works in any browser</span>
+              <span class="ha-cta-note"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Free · no download · works in any browser</span>
             </div>
           </div>
           <div class="ha-visual" aria-hidden="true">
@@ -15169,8 +15282,8 @@ const FIREBASE_CONFIG = {
           <div class="hc-glow"></div>
           <div class="hc-rps"><svg viewBox="0 0 64 64"><use href="#i-rock"/></svg><svg viewBox="0 0 64 64"><use href="#i-paper"/></svg><svg viewBox="0 0 64 64"><use href="#i-scissors"/></svg></div>
           <h3 class="hc-h">Ready to throw hands?</h3>
-          <p class="hc-sub">Jump into a live match against a real stranger in seconds.</p>
-          <button class="btn-cta hc-btn" data-goto-play><svg viewBox="0 0 24 24"><use href="#i-play"/></svg><span>Play ROSHCAM</span></button>
+          <p class="hc-sub">Hit <b>Play</b> up top to find your first opponent in seconds.</p>
+          <button class="btn hc-btn" id="homeBackTopBtn" type="button"><svg viewBox="0 0 24 24" width="14" height="14" style="transform:rotate(-90deg)"><use href="#i-arrow-right"/></svg><span>Back to the top</span></button>
         </section>
 
         <!-- Old personal dashboard kept hidden so the rest of the app (Activity /
@@ -18028,11 +18141,15 @@ const AVATAR_COLORS = [
 ];
 
 // ============= MODERATION / ADMIN =============
-// Admin UIDs can access the moderation panel (view reports, warn/ban players).
-const ADMIN_UIDS = [
-  '9DURgNdTyUhtBso2L8Lo22R3Dru1', // AndreasSalt
-];
-function isAdmin(){ return state.user && ADMIN_UIDS.includes(state.user.uid); }
+// Role hierarchy:
+//  • OWNER  — full access: warn/ban (incl. permanent), grant custom titles, and
+//    promote/demote moderators.
+//  • MODERATOR (profile.isMod) — restricted: reports + warnings + temporary bans
+//    only. Can't permanently ban, can't grant titles/mod, can't act on the owner.
+const OWNER_UID = '9DURgNdTyUhtBso2L8Lo22R3Dru1'; // AndreasSalt
+function isOwner(){ return !!(state.user && state.user.uid === OWNER_UID); }
+function isMod(){ return !!(state.profile && state.profile.isMod); }
+function isAdmin(){ return isOwner() || isMod(); }
 const REPORT_REASONS = [
   { id:'cheating', label:'Cheating / exploiting' },
   { id:'harassment', label:'Harassment or abuse' },
@@ -18335,7 +18452,26 @@ const PRESTIGE_TITLES = [
   { id:'pt10', name:'Prestige Master',    prestige:10, color:'#ffd36e', rarity:'mythic' },
 ];
 function prestigeTitlesUnlocked(prestige){ return PRESTIGE_TITLES.filter(t => (prestige || 0) >= t.prestige); }
-function titleById(id){
+// ===== SPECIAL TITLES — exclusive (hardcoded per-UID) + custom (granted by mods) =====
+const EXCLUSIVE_TITLES = {
+  [OWNER_UID]: [
+    { id:'founder',   name:'Founder',   color:'#ffd33d', rarity:'mythic', special:true },
+    { id:'developer', name:'Developer', color:'#5fc9ff', rarity:'mythic', special:true },
+  ],
+};
+// All special titles a profile owns: hardcoded exclusives + any custom ones a mod granted.
+function specialTitlesFor(profile){
+  if(!profile) return [];
+  const ex = (profile.uid && EXCLUSIVE_TITLES[profile.uid]) || [];
+  const custom = Array.isArray(profile.customTitles)
+    ? profile.customTitles.map(t => ({ id: t.id, name: t.name, color: t.color || '#ffd33d', rarity: t.rarity || 'mythic', special: true }))
+    : [];
+  return [...ex, ...custom];
+}
+function ownsSpecialTitle(profile, id){ return specialTitlesFor(profile).some(t => t.id === id); }
+function titleById(id, profile){
+  const special = specialTitlesFor(profile || state.profile).find(t => t.id === id);
+  if(special) return special;
   const season = parseSeasonTitleId(id);
   if(season) return season;
   return TITLES.find(t => t.id === id) || PRESTIGE_TITLES.find(t => t.id === id) || TITLES[0];
@@ -20005,7 +20141,9 @@ function updateSidebarProfile(){
   const p = state.profile;
   setText('#sidebarName', p.username || '—');
   setText('#spMenuName', p.username ? '@' + p.username : '—');
-  setText('#sidebarRating', p.rating || 1000);
+  // Hide ELO in the sidebar while in placements (unranked players have no rank/ELO yet).
+  { const rw = $('#sidebarRating')?.parentElement;
+    if(rw){ rw.innerHTML = inPlacements(p) ? '<span class="sp-unranked">Unranked</span>' : `<span id="sidebarRating">${p.rating || 1000}</span> ELO`; } }
   const av = $('#sidebarAv');
   if(av){
     if(p.photoURL){ av.style.backgroundImage = `url('${p.photoURL}')`; av.textContent = ''; }
@@ -20327,6 +20465,10 @@ function setupAuthUI(){
       } catch(e){}
     }
     await signOut(state.auth);
+  });
+  // "Back" on the pick-a-handle step → sign out and return to the sign-in screen.
+  $('#nuBackBtn')?.addEventListener('click', async () => {
+    try { await signOut(state.auth); } catch(e){}
   });
   $('#newUserForm').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -21164,8 +21306,11 @@ function renderLevelPanel(){
 
 async function equipTitle(titleId){
   if(!state.user || !state.profile) return;
+  if(isGuest()){ toast('Create a free account to equip titles', 'info'); return; }
   const t = titleById(titleId);
-  if(t.isSeason){
+  if(t.special){
+    if(!ownsSpecialTitle(state.profile, titleId)){ toast('Title not available', 'error'); return; }
+  } else if(t.isSeason){
     if(!ownsSeasonTitle(state.profile, titleId)){ toast('Season title not earned', 'error'); return; }
   } else if(t.prestige){
     if(prestigeOf(state.profile) < t.prestige){ toast('Prestige title still locked', 'error'); return; }
@@ -23208,6 +23353,7 @@ function applyProfileBanner(bannerEl, markEl, p){
   const rank = rankFromRating(p.rating || 1000);
   const b = p.banner || '';
   let markIcon = rank.icon;
+  let showMark = true;
   if(b.indexOf('rank:') === 0){
     const r = RANKS.find(x => x.id === b.slice(5));
     if(r){
@@ -23219,10 +23365,11 @@ function applyProfileBanner(bannerEl, markEl, p){
     }
   } else if(p.accent){
     bannerEl.style.background = `radial-gradient(120% 150% at 12% -15%, ${p.accent}, transparent 60%), linear-gradient(125deg, ${p.accent}, #14121e)`;
+    showMark = false; // a custom accent banner shouldn't show the rank crest watermark
   } else {
     bannerEl.style.background = `radial-gradient(120% 150% at 12% -15%, ${rank.color}, transparent 62%), linear-gradient(125deg, ${rank.color}, ${rank.color2 || rank.color})`;
   }
-  if(markEl) markEl.innerHTML = `<use href="#${markIcon}"/>`;
+  if(markEl) markEl.innerHTML = showMark ? `<use href="#${markIcon}"/>` : '';
 }
 // ============= PROFILE VIEW =============
 async function openProfile(uid){
@@ -23324,7 +23471,7 @@ async function openProfile(uid){
         pmPrEl.style.setProperty('--pr-t', pt.t); pmPrEl.style.setProperty('--pr-glow', pt.glow);
       } else pmPrEl.style.display = 'none';
     }
-    let pTitle = p.equippedTitle ? titleById(p.equippedTitle) : null;
+    let pTitle = p.equippedTitle ? titleById(p.equippedTitle, p) : null;
     if(!pTitle || lvl.level < pTitle.level){
       const unl = titlesUnlockedAt(lvl.level);
       pTitle = unl[unl.length - 1] || TITLES[0];
@@ -23759,6 +23906,42 @@ function maybePromptUnsavedEdit(){
     } },
   });
 }
+// A "guest" is an anonymous (no-account) player. They can play, but identity /
+// profile customization is locked until they create a real account.
+function isGuest(){ return !!(state.user?.isAnonymous || state.profile?.isAnon); }
+// Lock the edit-profile modal for guests: disable the editable fields + Save,
+// dim the cosmetic pickers, and show a "create an account" prompt.
+function applyGuestProfileLock(){
+  const modal = $('#editProfileModal'); if(!modal) return;
+  const guest = isGuest();
+  modal.classList.toggle('is-guest-locked', guest);
+  [ '#editProfileForm input[name=username]', '#editProfileForm textarea[name=bio]',
+    '#editProfileForm input[name=status]', '#editCountry', '#pickPhotoBtn', '#removePhotoBtn',
+    '#editAcceptChallenges' ].forEach(s => { const el = $(s); if(el) el.disabled = guest; });
+  const saveBtn = modal.querySelector('#editProfileForm button[type=submit]');
+  if(saveBtn) saveBtn.disabled = guest;
+  let note = $('#editGuestNote');
+  if(guest){
+    if(!note){
+      note = document.createElement('div');
+      note.id = 'editGuestNote';
+      note.className = 'guest-note';
+      note.innerHTML = `<svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-lock"/></svg>
+        <div><b>You're playing as a guest.</b> Create a free account to claim a username, set a photo and customize your profile.</div>
+        <button type="button" class="btn btn-primary guest-note-btn" id="editGuestCreateBtn">Create account</button>`;
+      const card = modal.querySelector('.modal');
+      const title = card && card.querySelector('h3');
+      if(card){ card.insertBefore(note, title ? title.nextSibling : card.firstChild); }
+      // "Create account" → leave the temporary guest session for the auth screen.
+      note.querySelector('#editGuestCreateBtn')?.addEventListener('click', () => {
+        $('#editProfileModal')?.classList.remove('show');
+        $('#signOutBtn')?.click();
+      });
+    }
+    note.style.display = '';
+  } else if(note){ note.style.display = 'none'; }
+}
+
 function openEditProfile(){
   const p = state.profile;
   setTimeout(() => { try { $('#editProfileForm input[name=username]')?.focus({ preventScroll: true }); } catch(e){} }, 120);
@@ -23773,6 +23956,21 @@ function openEditProfile(){
     const equipped = p.equippedTitle || 'rookie';
     state._pendingTitle = equipped;
     tp.innerHTML = '';
+    // Special (exclusive / mod-granted) titles first — always available to the owner.
+    specialTitlesFor(p).forEach(t => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'title-chip special-title-chip' + (t.id === equipped ? ' active' : '');
+      chip.style.setProperty('--tc', t.color);
+      chip.innerHTML = `★ ${escapeHTML(t.name)}`;
+      chip.addEventListener('click', () => {
+        state._pendingTitle = t.id;
+        tp.querySelectorAll('.title-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        haptic(9);
+      });
+      tp.appendChild(chip);
+    });
     TITLES.forEach(t => {
       const unlocked = lvl >= t.level;
       const chip = document.createElement('button');
@@ -23822,6 +24020,8 @@ function openEditProfile(){
   updateEditPhotoPreview(p.photoURL || null);
   // Snapshot the pristine form so we can detect unsaved changes on close.
   state._editSnapshot = serializeEditForm();
+  // Guests can't customize their profile — lock the form + prompt account creation.
+  try { applyGuestProfileLock(); } catch(e){}
   $('#editProfileModal').classList.add('show');
 }
 
@@ -23870,6 +24070,8 @@ on('#photoInput', 'change', (e) => {
 
 on('#editProfileForm', 'submit', async (e) => {
   e.preventDefault();
+  // Guests can't save profile changes — they must create an account first.
+  if(isGuest()){ toast('Create a free account to customize your profile', 'info'); return; }
   showErr('#editError', '');
   const fd = new FormData(e.target);
   const newUsername = fd.get('username').trim();
@@ -28453,6 +28655,24 @@ function renderAchievementsPage(){
   const grid = $('#achTitlesGrid');
   if(grid){
     grid.innerHTML = '';
+    // Special titles (Founder / Developer / mod-granted) — shown first, always equippable.
+    specialTitlesFor(p).forEach(st => {
+      const isEq = st.id === p.equippedTitle;
+      const rar = RARITY[st.rarity] || RARITY.legendary;
+      const chip = document.createElement('div');
+      chip.className = 'title-chip special-title-chip rar-' + st.rarity + ' unlocked' + (isEq ? ' equipped' : '');
+      chip.style.setProperty('--chip-color', st.color);
+      chip.style.setProperty('--rar-color', rar.color);
+      chip.innerHTML = `
+        <span class="title-chip-dot"></span>
+        <div class="title-chip-body">
+          <div class="title-chip-name">★ ${escapeHTML(st.name)} <span class="title-rar">${rar.label}</span></div>
+          <div class="title-chip-req">exclusive</div>
+        </div>
+        <svg class="title-chip-check" viewBox="0 0 24 24"><use href="#i-check"/></svg>`;
+      chip.addEventListener('click', () => { equipTitle(st.id); renderAchievementsPage(); });
+      grid.appendChild(chip);
+    });
     TITLES.forEach(t => {
       const unlocked = lvl.level >= t.level;
       const isEq = t.id === p.equippedTitle;
@@ -28693,6 +28913,8 @@ on('#achViewLadderBtn', 'click', () => {
   }, { threshold: 0.12 });
   document.querySelectorAll(sel).forEach(e => io.observe(e));
 })();
+// Home closing banner → scroll back up to the hero (where the one Play button is).
+on('#homeBackTopBtn', 'click', () => { ($('.hx-hero') || $('#screen-home'))?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 
 function renderActivityPage(){
   // The leaderboard listener used to attach only when the "Top" TAB was
@@ -29896,17 +30118,30 @@ document.querySelectorAll('.mobile-nav-item').forEach(btn => {
 // ===== "More" bottom sheet =====
 function openMoreSheet(){
   const sheet = $('#moreSheet'); if(!sheet) return;
-  // populate the profile chip
+  // populate the profile card (avatar · name · level · rank · XP)
   if(state.profile){
+    const p = state.profile;
     const av = $('#moreSheetAv');
     if(av){
-      if(state.profile.photoURL){ av.style.backgroundImage = `url('${state.profile.photoURL}')`; av.textContent = ''; }
-      else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[state.profile.colorIdx||0]; av.textContent = initialOf(state.profile.username||'?'); }
+      if(p.photoURL){ av.style.backgroundImage = `url('${p.photoURL}')`; av.textContent = ''; }
+      else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; av.textContent = initialOf(p.username||'?'); }
     }
-    setText('#moreSheetName', state.profile.username || 'you');
-    const lvl = levelOf(state.profile);
-    const rk = rankFromRating(state.profile.rating || 1000);
-    setText('#moreSheetSub', `Lvl ${lvl.level} · ${rk.tierName} · ${state.profile.rating||1000}`);
+    setText('#moreSheetName', p.username || 'you');
+    const lvl = levelOf(p);
+    const prestige = prestigeOf(p);
+    const ranked = !inPlacements(p);
+    const rk = rankFromRating(p.rating || 1000);
+    setText('#moreSheetSub', `${ranked ? rk.tierName : 'Unranked'} · ${p.rating||1000} ELO`);
+    setText('#moreSheetLevel', lvl.level);
+    try { paintLevelBadge('#moreSheetLevel', lvl.level, prestige); } catch(e){}
+    const xp = $('#moreSheetXp'); if(xp) xp.style.width = (lvl.level >= MAX_LEVEL ? 100 : Math.round(lvl.progress * 100)) + '%';
+    // mirror the live badges
+    const fb = $('#mnavFriendsBadge');
+    const msf = $('#msFriendsBadge');
+    if(msf){ if(fb && fb.style.display !== 'none' && fb.textContent){ msf.textContent = fb.textContent; msf.style.display = 'flex'; } else { msf.style.display = 'none'; } }
+    const cb = $('#chatBadge'), msc = $('#msChatBadge');
+    if(msc){ if(cb && cb.style.display !== 'none' && cb.textContent){ msc.textContent = cb.textContent; msc.style.display = 'flex'; } else { msc.style.display = 'none'; } }
+    const ach = $('#msAchBadge'); if(ach) ach.style.display = canPrestige(p) ? 'flex' : 'none';
   }
   try { $('#moreSheetAdmin').style.display = isAdmin() ? '' : 'none'; } catch(e){}
   sheet.classList.remove('closing');
@@ -29927,10 +30162,17 @@ on('#moreSheet', 'click', (e) => {
   setTimeout(() => {
     switch(act){
       case 'profile': if(state.user) openProfile(state.user.uid); break;
+      case 'edit': openEditProfile(); break;
+      case 'home': showNavPage('home'); break;
+      case 'play': showNavPage('play'); break;
+      case 'rank': showNavPage('rank'); break;
+      case 'friends': showNavPage('friends'); break;
       case 'activity': showNavPage('activity'); break;
       case 'chat': closeAllFlyouts(); $('#chatPanel')?.classList.add('show'); renderChatConvList(); break;
       case 'achievements': showNavPage('achievements'); break;
       case 'settings': showNavPage('settings'); break;
+      case 'history': $('#setMatchHistory')?.click(); break;
+      case 'whatsnew': try { openUpdateLog(); } catch(e){} break;
       case 'help': $('#helpBtn')?.click(); break;
       case 'camera': $('#cameraSetupBtn')?.click(); break;
       case 'admin': openAdminPanel?.(); break;
@@ -30137,7 +30379,7 @@ function enableSwipeDismiss(el, onClose, opts){
   el.addEventListener('pointerup', end);
   el.addEventListener('pointercancel', end);
 }
-enableSwipeDismiss($('#moreSheet'), () => closeMoreSheet(), { cardSelector: '.more-sheet-card' });
+enableSwipeDismiss($('#moreSheet'), () => closeMoreSheet(), { cardSelector: '.more-sheet-card', scrollSelector: '.ms-scroll' });
 // Notification + chat flyouts — grab the header and fling them away to dismiss
 // (a small grab zone keeps the inner lists fully scrollable).
 enableSwipeDismiss($('#notifPanel'), () => closeAllFlyouts(), { self: true, scrollSelector: '.flyout-body', grabZone: 64, threshold: 70 });
@@ -30556,34 +30798,91 @@ function showAdminAction(uid, username){
   _adminDuration = null;
   const box = $('#adminActionBox');
   if(!box) return;
+  const owner = isOwner();
+  const targetIsOwner = uid === OWNER_UID;
   box.innerHTML = `
     <div class="admin-action-card">
-      <div style="font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:15px; margin-bottom:4px;">Action @${escapeHTML(username || uid?.slice(0,6) || '?')}</div>
+      <div style="font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:15px; margin-bottom:4px;">Action @${escapeHTML(username || uid?.slice(0,6) || '?')}${targetIsOwner ? ' <span style="color:var(--amber,#ffd33d)">· Owner</span>' : ''}</div>
+      ${targetIsOwner ? `<div class="side-empty">The owner can't be moderated.</div>` : `
       <div class="admin-dur-grid" id="adminDurGrid"></div>
       <input id="adminReason" type="text" placeholder="Reason / note (shown to user)…" maxlength="140" style="width:100%; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px; color:var(--text); font-size:13px; margin-bottom:10px;" />
       <div style="display:flex; gap:8px;">
         <button class="btn btn-ghost" id="adminUnban" style="flex:1;">Lift ban</button>
         <button class="btn btn-primary" id="adminApply" style="flex:1; background:var(--coral);">Apply</button>
-      </div>
+      </div>`}
+      ${(owner && !targetIsOwner) ? `
+      <div class="admin-owner-tools">
+        <div class="aot-label">★ Owner tools</div>
+        <div class="aot-row">
+          <input id="adminTitleName" type="text" placeholder="Custom title (e.g. VIP)…" maxlength="24" />
+          <input id="adminTitleColor" type="color" value="#ffd33d" title="Title colour" />
+          <button class="btn" id="adminGrantTitle">Grant</button>
+        </div>
+        <div class="aot-row">
+          <button class="btn" id="adminMakeMod" style="flex:1;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-shield"/></svg> Make moderator</button>
+          <button class="btn btn-ghost" id="adminRemoveMod" style="flex:1;">Remove mod</button>
+        </div>
+        <div class="aot-note">Moderators can warn &amp; temp-ban only — not grant titles/mod or permanent-ban.</div>
+      </div>` : ''}
     </div>`;
-  const grid = $('#adminDurGrid');
-  BAN_DURATIONS.forEach(d => {
-    const b = document.createElement('button');
-    b.className = 'admin-dur-btn' + (d.id === 'warn' ? ' warn-dur' : '');
-    b.textContent = d.label;
-    b.addEventListener('click', () => {
-      _adminDuration = d;
-      grid.querySelectorAll('.admin-dur-btn').forEach(x => x.classList.remove('selected'));
-      b.classList.add('selected');
+  if(!targetIsOwner){
+    const grid = $('#adminDurGrid');
+    // Moderators (non-owner) can't issue permanent bans.
+    BAN_DURATIONS.filter(d => owner || d.id !== 'perm').forEach(d => {
+      const b = document.createElement('button');
+      b.className = 'admin-dur-btn' + (d.id === 'warn' ? ' warn-dur' : '');
+      b.textContent = d.label;
+      b.addEventListener('click', () => {
+        _adminDuration = d;
+        grid.querySelectorAll('.admin-dur-btn').forEach(x => x.classList.remove('selected'));
+        b.classList.add('selected');
+      });
+      grid.appendChild(b);
     });
-    grid.appendChild(b);
-  });
-  $('#adminApply').addEventListener('click', () => applyAdminAction());
-  $('#adminUnban').addEventListener('click', () => liftBan());
+    $('#adminApply')?.addEventListener('click', () => applyAdminAction());
+    $('#adminUnban')?.addEventListener('click', () => liftBan());
+  }
+  if(owner && !targetIsOwner){
+    $('#adminGrantTitle')?.addEventListener('click', () => grantCustomTitle(uid, $('#adminTitleName')?.value, $('#adminTitleColor')?.value));
+    $('#adminMakeMod')?.addEventListener('click', () => setUserMod(uid, username, true));
+    $('#adminRemoveMod')?.addEventListener('click', () => setUserMod(uid, username, false));
+  }
+}
+// OWNER: grant a custom equippable title to a user.
+async function grantCustomTitle(uid, name, color){
+  if(!isOwner()){ toast('Owner only', 'error'); return; }
+  name = (name || '').trim();
+  if(!name){ toast('Enter a title name', 'error'); return; }
+  try {
+    const ref = doc(state.db, 'users', uid);
+    const snap = await getDoc(ref);
+    if(!snap.exists()){ toast('User not found', 'error'); return; }
+    const cur = Array.isArray(snap.data().customTitles) ? snap.data().customTitles.slice() : [];
+    if(cur.some(t => (t.name || '').toLowerCase() === name.toLowerCase())){ toast('They already have that title', 'info'); return; }
+    const id = 'custom_' + name.toLowerCase().replace(/[^a-z0-9]+/g, '_').slice(0, 18) + '_' + Math.random().toString(36).slice(2, 6);
+    cur.push({ id, name, color: color || '#ffd33d', rarity: 'mythic' });
+    await updateDoc(ref, { customTitles: cur });
+    toast(`Granted "${name}" to @${snap.data().username || uid.slice(0,6)}`, 'success');
+    try { pushNotification(uid, { type:'title', text:`🏷️ You were granted a custom title: <b>${escapeHTML(name)}</b> — equip it in Edit profile.`, actionUid:null }); } catch(e){}
+    const ti = $('#adminTitleName'); if(ti) ti.value = '';
+  } catch(e){ console.error('[admin] grant title', e); toast('Could not grant title (check Firestore rules)', 'error'); }
+}
+// OWNER: promote / demote a moderator.
+async function setUserMod(uid, username, makeMod){
+  if(!isOwner()){ toast('Owner only', 'error'); return; }
+  if(uid === OWNER_UID) return;
+  try {
+    await updateDoc(doc(state.db, 'users', uid), { isMod: !!makeMod });
+    toast(makeMod ? `@${username || uid.slice(0,6)} is now a moderator` : `Removed moderator from @${username || uid.slice(0,6)}`, 'success');
+    try { pushNotification(uid, { type:'mod', text: makeMod ? '🛡️ You are now a ROSHCAM <b>moderator</b> — open the menu to access the tools.' : 'Your moderator access was removed.', actionUid:null }); } catch(e){}
+  } catch(e){ console.error('[admin] mod', e); toast('Could not update (check Firestore rules)', 'error'); }
 }
 async function applyAdminAction(){
   if(!_adminTarget){ return; }
+  if(_adminTarget.uid === OWNER_UID){ toast("The owner can't be moderated", 'error'); return; }
   if(!_adminDuration){ toast('Pick a duration / warning', 'error'); return; }
+  // Moderators (non-owner) can't issue permanent bans.
+  if(_adminDuration.ms === -1 && !isOwner()){ toast('Only the owner can permanently ban', 'error'); return; }
   const reason = $('#adminReason')?.value?.trim() || '';
   try {
     if(_adminDuration.id === 'warn'){
