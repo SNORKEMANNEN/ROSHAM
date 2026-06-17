@@ -4,7 +4,7 @@
      picked up immediately; cache is only the offline fallback
    - static assets (images / audio): stale-while-revalidate — served from
      cache instantly, refreshed in the background */
-const VERSION = 'rosham-v1.3.0';
+const VERSION = 'rosham-v1.4.0';
 const ASSET_CACHE = VERSION + '-assets';
 const PAGE_CACHE = VERSION + '-pages';
 
@@ -13,6 +13,9 @@ const PRECACHE = [
   'rock.png', 'paper.png', 'scissors.png',
   'bronze.png', 'silver.png', 'gold.png', 'platinum.png', 'diamond.png',
   'master.png', 'grandmaster.png', 'champion.png', 'legend.png',
+  // installable-app icons (home screen / task switcher / splash)
+  'icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png',
+  'apple-touch-icon-180.png',
 ];
 
 self.addEventListener('install', (e) => {
@@ -68,4 +71,37 @@ self.addEventListener('fetch', (e) => {
       })
     );
   }
+});
+
+/* ===== Web Push =====
+   Standards-compliant push display + click routing. The client subscribes via
+   pushManager (see subscribeWebPush() in the app) and stores the subscription;
+   a backend with the matching VAPID private key sends the actual pushes. */
+self.addEventListener('push', (e) => {
+  let data = {};
+  try { data = e.data ? e.data.json() : {}; } catch(_){ try { data = { body: e.data.text() }; } catch(__){} }
+  const title = data.title || 'ROSHCAM';
+  const opts = {
+    body: data.body || '',
+    icon: data.icon || 'icon-192.png',
+    badge: 'icon-192.png',
+    tag: data.tag || 'roshcam-push',
+    renotify: !!data.renotify,
+    data: { url: data.url || '/', ...(data.data || {}) },
+    vibrate: data.vibrate || [40, 30, 60],
+  };
+  e.waitUntil(self.registration.showNotification(title, opts));
+});
+
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const target = (e.notification.data && e.notification.data.url) || '/';
+  e.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((list) => {
+      for(const c of list){
+        if('focus' in c){ c.postMessage({ type: 'notification-click', data: e.notification.data || {} }); return c.focus(); }
+      }
+      if(self.clients.openWindow) return self.clients.openWindow(target);
+    })
+  );
 });
