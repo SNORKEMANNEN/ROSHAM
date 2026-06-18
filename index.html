@@ -13,9 +13,21 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="ROSHCAM" />
 <meta name="format-detection" content="telephone=no" />
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon-180.png" />
 <link rel="apple-touch-icon" href="logo.png" />
-<link rel="manifest" href="data:application/json,%7B%22name%22%3A%22ROSHCAM%22%2C%22short_name%22%3A%22ROSHCAM%22%2C%22start_url%22%3A%22.%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait%22%2C%22background_color%22%3A%22%2308070d%22%2C%22theme_color%22%3A%22%2308070d%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Froshcam.com%2Flogo.png%22%2C%22sizes%22%3A%221024x1024%22%2C%22type%22%3A%22image%2Fpng%22%7D%5D%7D" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
 <link rel="icon" type="image/png" href="logo.png" />
+
+<!-- iOS standalone splash screens (apple-touch-startup-image) — keeps the launch
+     on-brand instead of a blank flash. Modern iPhone coverage (portrait). -->
+<link rel="apple-touch-startup-image" href="splash-1290x2796.png" media="(device-width:430px) and (device-height:932px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" />
+<link rel="apple-touch-startup-image" href="splash-1179x2556.png" media="(device-width:393px) and (device-height:852px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" />
+<link rel="apple-touch-startup-image" href="splash-1284x2778.png" media="(device-width:428px) and (device-height:926px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" />
+<link rel="apple-touch-startup-image" href="splash-1170x2532.png" media="(device-width:390px) and (device-height:844px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" />
+<link rel="apple-touch-startup-image" href="splash-1125x2436.png" media="(device-width:375px) and (device-height:812px) and (-webkit-device-pixel-ratio:3) and (orientation:portrait)" />
+<link rel="apple-touch-startup-image" href="splash-828x1792.png" media="(device-width:414px) and (device-height:896px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" />
+<link rel="apple-touch-startup-image" href="splash-750x1334.png" media="(device-width:375px) and (device-height:667px) and (-webkit-device-pixel-ratio:2) and (orientation:portrait)" />
 <link rel="preload" as="image" href="logo.png" />
 <meta property="og:title" content="ROSHCAM — live rock paper scissors with strangers" />
 <meta property="og:description" content="Real webcam rock · paper · scissors against strangers. Read their eyes, throw first, climb the ranked ladder." />
@@ -5079,42 +5091,50 @@ body.low-power .mm-ring{ opacity:.25; }
   .mm-wrap{
     position: relative; min-height: 100svh; gap: 0; overflow: hidden;
     justify-content: flex-start;
-    padding: max(26px, calc(env(safe-area-inset-top) + 14px)) 20px calc(104px + env(safe-area-inset-bottom));
+    padding: max(30px, calc(env(safe-area-inset-top) + 18px)) 22px calc(122px + env(safe-area-inset-bottom));
   }
-  /* breathing aurora backdrop — gives the search a living, premium feel */
+  /* breathing aurora + faint grid texture — immersive, premium search */
   .mm-wrap::before{
-    content:''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
     background:
-      radial-gradient(64vw 42vh at 50% 16%, rgba(34,211,163,.18), transparent 62%),
-      radial-gradient(72vw 42vh at 50% 92%, rgba(176,140,255,.15), transparent 62%);
+      radial-gradient(72vw 46vh at 50% 14%, rgba(34,211,163,.22), transparent 60%),
+      radial-gradient(82vw 46vh at 50% 96%, rgba(176,140,255,.16), transparent 62%);
     animation: mmAuroraBreathe 6.5s ease-in-out infinite;
   }
-  .mm-wrap > *{ position: relative; z-index: 1; }
-  @keyframes mmAuroraBreathe{ 0%,100%{ opacity:.7; transform:scale(1); } 50%{ opacity:1; transform:scale(1.06); } }
-  body.low-power .mm-wrap::before, body.reduced-motion .mm-wrap::before{ animation: none; }
-
-  /* eyebrow above the radar */
-  .mm-radar{ width: min(74vw, 300px); height: min(74vw, 300px); margin: 7vh auto 6px; }
-  .mm-core{ width: 112px; height: 112px; }
-  .mm-core-av{ width: 88px; height: 88px; font-size: 30px; }
-  .mm-ring{ border-width: 2px; }
-
-  .mm-head{ margin-top: 12px; }
-  .mm-title{ font-size: clamp(30px, 8.5vw, 42px); }
-  .mm-feed{ font-size: 13px; margin-top: 10px; }
-
-  /* tip + stats become a tidy centred card stack */
-  .mm-tip{ margin-top: 22px; width: 100%; max-width: 360px; justify-content: center; padding: 12px 16px; font-size: 13px; border-radius: 16px; }
-  .mm-stats{ margin-top: 14px; width: 100%; max-width: 360px; justify-content: space-around; border-radius: 18px; }
-
-  /* thumb-friendly cancel bar pinned to the bottom (anchored to the wrap, so it
-     survives transformed ancestors that would break position:fixed) */
-  .mm-actions{
-    position: absolute; left: 0; right: 0; bottom: 0; margin: 0; z-index: 5;
-    padding: 14px 18px calc(16px + env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, transparent, var(--bg) 46%);
+  .mm-wrap::after{
+    content:''; position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.55;
+    background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);
+    background-size:34px 34px;
+    -webkit-mask:radial-gradient(ellipse 78% 56% at 50% 34%, #000, transparent 80%);
+    mask:radial-gradient(ellipse 78% 56% at 50% 34%, #000, transparent 80%);
   }
-  .mm-cancel{ width: 100%; max-width: 440px; min-height: 54px; border-radius: 16px; font-size: 15px; }
+  .mm-wrap > *{ position:relative; z-index:1; }
+  @keyframes mmAuroraBreathe{ 0%,100%{ opacity:.7; transform:scale(1); } 50%{ opacity:1; transform:scale(1.06); } }
+  body.low-power .mm-wrap::before, body.reduced-motion .mm-wrap::before{ animation:none; }
+
+  /* oversized radar centrepiece with a glowing core */
+  .mm-radar{ width:min(68vw, 272px); height:min(68vw, 272px); margin:4vh auto 2px; }
+  .mm-core{ width:120px; height:120px; box-shadow:0 0 0 1px rgba(34,211,163,.45), 0 0 54px -6px var(--mint-glow), inset 0 0 32px rgba(34,211,163,.2); }
+  .mm-core-av{ width:94px; height:94px; font-size:32px; }
+  .mm-ring{ border-width:2px; }
+
+  .mm-head{ margin-top:18px; }
+  .mm-title{ font-size:clamp(28px, 8.2vw, 40px); }
+  .mm-feed{ font-size:13px; margin-top:9px; letter-spacing:.02em; }
+
+  /* tip + stats fused into one cohesive glass status panel */
+  .mm-tip{ margin-top:26px; width:100%; max-width:380px; justify-content:flex-start; text-align:left; padding:13px 16px; font-size:13px; border-radius:18px 18px 0 0; border-bottom-color:transparent; }
+  .mm-stats{ margin-top:0; width:100%; max-width:380px; justify-content:space-around; border-radius:0 0 18px 18px; border-top:none; }
+  .mm-stat{ flex:1; padding:14px 8px; }
+  .mm-stat-v{ font-size:21px; }
+
+  /* thumb-friendly cancel bar pinned to the bottom */
+  .mm-actions{
+    position:absolute; left:0; right:0; bottom:0; margin:0; z-index:5;
+    padding:16px 18px calc(18px + env(safe-area-inset-bottom));
+    background:linear-gradient(180deg, transparent, var(--bg) 46%);
+  }
+  .mm-cancel{ width:100%; max-width:440px; min-height:56px; border-radius:16px; font-size:15px; }
 }
 
 /* CLEAN SEARCHING ORB — minimal, no over-the-top effects */
@@ -5894,78 +5914,72 @@ h2.match-title{
    the connection bar pinned below. Each player is a full-width identity card.
    ========================================================================== */
 @media (max-width: 600px){
-  .match-found-v2{ padding: 0; justify-content: stretch; overflow: hidden; }
-  .mf-bg-grid{ opacity: .14; }
-  .mf-bg-glow{ display: none; }
+  .match-found-v2{ padding:0; justify-content:stretch; overflow:hidden; }
+  .mf-bg-grid{ opacity:.12; }
+  /* mint glow up top, coral down low — echoes the vertical face-off */
+  .mf-bg-glow{ display:block; width:92vw; height:42vh; filter:blur(88px); opacity:.4; }
+  .mf-bg-glow.you{ left:50%; right:auto; top:-8%; transform:translateX(-50%); }
+  .mf-bg-glow.opp{ left:50%; right:auto; top:auto; bottom:-8%; transform:translateX(-50%); }
 
-  /* MATCH FOUND banner — floats at the very top */
-  .mf-banner{ position: absolute; top: max(16px, calc(env(safe-area-inset-top) + 8px)); left: 50%; transform: translateX(-50%); z-index: 6; margin: 0; font-size: 10px; padding: 8px 18px; letter-spacing: .3em; }
+  /* MATCH FOUND banner floats at the very top */
+  .mf-banner{ position:absolute; top:max(18px, calc(env(safe-area-inset-top) + 10px)); left:50%; transform:translateX(-50%); z-index:6; margin:0; font-size:10px; padding:8px 18px; letter-spacing:.3em; }
 
-  /* STAGE — full-screen DIAGONAL two-tone split with a glowing seam */
+  /* STAGE — clean vertical face-off: YOU card · VS medallion · OPP card */
   .mf-stage{
-    position: absolute; inset: 0; display: block; width: 100%; max-width: none; margin: 0; padding: 0;
-    grid-template-columns: none; grid-template-rows: none;
-    background:
-      linear-gradient(158deg, transparent 48.4%, rgba(255,255,255,.9) 49.4%, rgba(255,255,255,.9) 50.6%, transparent 51.6%),
-      linear-gradient(158deg, rgba(34,211,163,.05) 6%, color-mix(in srgb, var(--mint) 17%, transparent) 30%, rgba(34,211,163,.03) 49%, transparent 50%, rgba(255,51,88,.03) 51%, color-mix(in srgb, var(--coral) 17%, transparent) 70%, rgba(255,51,88,.05) 94%),
-      var(--bg);
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; width:100%; max-width:none; margin:0;
+    padding: max(70px, calc(env(safe-area-inset-top) + 56px)) 16px calc(98px + env(safe-area-inset-bottom));
   }
-  /* soft neon glow along the diagonal seam */
-  .mf-stage::before{ content:''; position: absolute; inset: 0; z-index: 0; pointer-events: none; mix-blend-mode: screen; opacity: .65;
-    background: linear-gradient(158deg, transparent 47%, rgba(34,211,163,.28) 49.4%, rgba(255,51,88,.28) 50.6%, transparent 53%); filter: blur(6px); }
-  /* corner ambient glows behind each player */
-  .mf-stage::after{ content:''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-    background: radial-gradient(58vw 36vh at 86% 9%, rgba(34,211,163,.18), transparent 62%),
-                radial-gradient(58vw 36vh at 14% 91%, rgba(255,51,88,.18), transparent 62%); }
 
-  /* PLAYERS — floated into the top-right and bottom-left corners */
+  /* PLAYER -> full-width identity card */
   .mf-player{
-    position: absolute; z-index: 3; display: flex; flex-direction: column; gap: 8px; width: min(74%, 330px);
-    background: none; border: none; box-shadow: none; padding: 0; text-align: inherit;
-    backdrop-filter: none; -webkit-backdrop-filter: none; animation: mfPlayerPop .6s cubic-bezier(.2,1.3,.4,1) both;
+    position:relative; z-index:3; display:grid;
+    grid-template-columns:auto 1fr; grid-template-areas:"av name" "av rank" "av stats";
+    column-gap:15px; row-gap:3px; align-items:center; text-align:left;
+    width:100%; max-width:430px; padding:16px 18px; border-radius:22px;
+    border:1px solid; box-shadow:0 22px 50px -28px rgba(0,0,0,.9);
+    -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+    animation:mfCardIn .55s cubic-bezier(.2,1,.3,1) both;
   }
-  .mf-player.you{ top: max(62px, 9%); right: 16px; align-items: flex-end; text-align: right; }
-  .mf-player.opp{ bottom: max(98px, 9%); left: 16px; align-items: flex-start; text-align: left; animation-delay: .12s; }
-  .mf-player.you::before, .mf-player.opp::before{ display: none; }
-  @keyframes mfPlayerPop{ from{ opacity: 0; transform: scale(.9) translateY(8px); } to{ opacity: 1; transform: none; } }
+  .mf-player.you{ background:linear-gradient(120deg, rgba(34,211,163,.16), rgba(34,211,163,.02) 62%), rgba(13,17,18,.66); border-color:rgba(34,211,163,.42); }
+  .mf-player.opp{ background:linear-gradient(120deg, rgba(255,51,88,.16), rgba(255,51,88,.02) 62%), rgba(18,12,15,.66); border-color:rgba(255,51,88,.42); animation-delay:.1s; }
+  .mf-player.you::before, .mf-player.opp::before{ display:none; }
+  @keyframes mfCardIn{ from{ opacity:0; transform:translateY(16px) scale(.97); } to{ opacity:1; transform:none; } }
 
-  .mf-player-side-label{ position: static; font-family: var(--font-display); font-stretch: 75%; font-weight: 800; font-size: 11px; letter-spacing: .2em; padding: 4px 12px; border-radius: 999px; }
+  .mf-player-side-label{ position:absolute; top:-9px; left:18px; font-family:var(--font-display); font-stretch:75%; font-weight:800; font-size:9px; letter-spacing:.16em; padding:3px 11px; border-radius:999px; }
 
-  .mf-avatar-wrap{ width: 88px; height: 88px; margin: 0; }
-  .mf-avatar{ width: 88px; height: 88px; border-radius: 24px; font-size: 36px; }
-  .mf-avatar-glow{ inset: -10px; }
-  .mf-avatar-rank{ width: 34px; height: 34px; bottom: -10px; padding: 4px; }
-  .mf-player.you .mf-avatar-rank{ right: -10px; left: auto; }
-  .mf-player.opp .mf-avatar-rank{ left: -10px; right: auto; }
+  .mf-avatar-wrap{ grid-area:av; width:66px; height:66px; margin:0; align-self:center; }
+  .mf-avatar{ width:66px; height:66px; border-radius:18px; font-size:28px; }
+  .mf-avatar-glow{ inset:-8px; }
+  .mf-avatar-rank{ width:26px; height:26px; bottom:-7px; right:-7px; left:auto; padding:3px; }
+  .mf-player.opp .mf-avatar-rank{ left:auto; right:-7px; }
 
-  .mf-name{ font-size: 23px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .mf-rank-line{ font-size: 11px; gap: 6px; flex-wrap: wrap; }
-  .mf-player.you .mf-rank-line, .mf-player.you .mf-stats-mini{ justify-content: flex-end; }
-  .mf-player.opp .mf-rank-line, .mf-player.opp .mf-stats-mini{ justify-content: flex-start; }
-  .mf-tier{ font-size: 11px; } .mf-elo{ font-size: 13px; } .mf-elo-unit{ font-size: 8px; }
-  .mf-stats-mini{ flex-direction: row; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
-  .mf-stat-mini{ flex: 0 0 auto; width: auto; padding: 4px 9px; font-size: 10px; gap: 4px; }
+  .mf-name{ grid-area:name; align-self:end; font-size:19px; line-height:1.05; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .mf-rank-line{ grid-area:rank; justify-content:flex-start; font-size:10.5px; gap:6px; flex-wrap:wrap; }
+  .mf-tier{ font-size:10.5px; } .mf-elo{ font-size:12.5px; } .mf-elo-unit{ font-size:8px; }
+  .mf-stats-mini{ grid-area:stats; flex-direction:row; flex-wrap:wrap; gap:6px; justify-content:flex-start; margin-top:5px; }
+  .mf-stat-mini{ flex:0 0 auto; width:auto; padding:4px 9px; font-size:10px; gap:4px; }
 
-  /* CENTER — bold, tilted VS medallion on the seam + compact head-to-head */
-  .mf-center{ position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); z-index: 4; flex-direction: column; align-items: center; gap: 11px; padding: 0; animation: mfVsPop .7s cubic-bezier(.2,1.6,.4,1) both .25s; }
-  .mf-center::before{ display: none; }
-  @keyframes mfVsPop{ from{ opacity: 0; transform: translate(-50%,-50%) scale(.4) rotate(-30deg); } to{ opacity: 1; transform: translate(-50%,-50%) scale(1) rotate(0); } }
-  .mf-vs{ position: relative; width: 86px; height: 86px; display: grid; grid-auto-flow: column; place-items: center; gap: 0; font-size: 34px; letter-spacing: -.04em;
-    border-radius: 27px; transform: rotate(-8deg);
-    background: radial-gradient(circle at 34% 26%, rgba(255,255,255,.18), transparent 60%), conic-gradient(from 200deg, var(--mint), var(--coral) 58%, var(--mint));
-    border: 3px solid rgba(255,255,255,.92);
-    box-shadow: 0 0 0 6px var(--bg), 0 0 30px -4px rgba(255,255,255,.4), 0 18px 40px -10px rgba(0,0,0,.9); }
-  .mf-vs-letter{ position: static; display: inline-block; font-size: 34px; color: #fff !important; -webkit-text-fill-color: #fff; background: none; text-shadow: 0 2px 7px rgba(0,0,0,.55); animation: none; }
-  .mf-vs-clash{ display: none; }
-  .mf-h2h{ position: relative; padding: 7px 14px; margin: 0; min-width: 0; gap: 2px; background: rgba(8,7,13,.82); border: 1px solid var(--line-bright, rgba(255,255,255,.16)); border-radius: 12px; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-  .mf-h2h-title{ font-size: 7.5px; } .mf-h2h-row{ font-size: 18px; gap: 9px; }
-  .mf-h2h-score{ font-size: 22px; } .mf-h2h-sep{ font-size: 13px; } .mf-h2h-label{ font-size: 7.5px; text-align: center; }
+  /* CENTER — circular VS medallion + compact head-to-head between the cards */
+  .mf-center{ position:static; z-index:4; display:flex; flex-direction:column; align-items:center; gap:9px; margin:0; padding:0; animation:mfVsPop .65s cubic-bezier(.2,1.6,.4,1) both .2s; }
+  .mf-center::before{ display:none; }
+  @keyframes mfVsPop{ from{ opacity:0; transform:scale(.4) rotate(-22deg); } to{ opacity:1; transform:none; } }
+  .mf-vs{ position:relative; width:74px; height:74px; display:grid; grid-auto-flow:column; place-items:center; gap:0; font-size:31px; letter-spacing:-.04em;
+    border-radius:50%; transform:none;
+    background:radial-gradient(circle at 34% 26%, rgba(255,255,255,.24), transparent 60%), conic-gradient(from 210deg, var(--mint), var(--coral) 56%, var(--mint));
+    border:4px solid var(--bg);
+    box-shadow:0 0 0 2px rgba(255,255,255,.5), 0 0 30px -4px rgba(255,255,255,.4), 0 16px 38px -10px rgba(0,0,0,.92); }
+  .mf-vs-letter{ position:static; display:inline-block; font-size:31px; color:#fff !important; -webkit-text-fill-color:#fff; background:none; text-shadow:0 2px 6px rgba(0,0,0,.5); animation:none; }
+  .mf-vs-clash{ display:none; }
+  .mf-h2h{ position:relative; display:flex; flex-direction:column; align-items:center; padding:6px 15px; margin:0; min-width:0; gap:1px; background:rgba(8,7,13,.85); border:1px solid var(--line-bright, rgba(255,255,255,.16)); border-radius:12px; -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  .mf-h2h-title{ font-size:7.5px; } .mf-h2h-row{ font-size:17px; gap:9px; }
+  .mf-h2h-score{ font-size:21px; } .mf-h2h-sep{ font-size:13px; } .mf-h2h-label{ font-size:7.5px; text-align:center; }
 
-  /* CONNECTION — pinned to the bottom */
-  .mf-footer{ position: absolute; left: 0; right: 0; bottom: 0; transform: none; width: 100%; margin: 0; z-index: 5;
-    padding: 14px 18px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, transparent, var(--bg) 55%); }
+  /* CONNECTION pinned to the bottom */
+  .mf-footer{ position:absolute; left:0; right:0; bottom:0; transform:none; width:100%; margin:0; z-index:5;
+    padding:14px 20px calc(16px + env(safe-area-inset-bottom)); background:linear-gradient(180deg, transparent, var(--bg) 55%); }
 
-  body.reduced-motion .mf-player, body.low-power .mf-player, body.reduced-motion .mf-center, body.low-power .mf-center{ animation: none; }
+  body.reduced-motion .mf-player, body.low-power .mf-player, body.reduced-motion .mf-center, body.low-power .mf-center{ animation:none; }
 }
 @media (max-width: 380px){
   .mf-player{ width: min(82%, 300px); }
@@ -14462,6 +14476,148 @@ body.low-power .rps-ring, body.low-power .rps-ic, body.low-power .rps-core, body
 .aot-row input[type=text]{ flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; color: var(--text); font-size: 13px; }
 .aot-row input[type=color]{ width: 42px; height: 38px; flex: 0 0 auto; padding: 2px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; }
 .aot-note{ font-size: 10.5px; color: var(--text-faint); line-height: 1.4; }
+/* ============================================================
+   MOBILE EXPERIENCE LAYER (v1.4)
+   Reusable sheets, in-flow hints, keyboard/viewport handling,
+   nav behaviours, lock-in feedback, install + permission flows.
+   Tuned to the ROSHCAM surface system + mint accent. Honours
+   reduced-motion / low-power throughout.
+   ============================================================ */
+
+/* --- Reusable bottom sheet (phone hint · install · permission · camera help) --- */
+.rcm-sheet{ position:fixed; inset:0; z-index:9400; display:none; align-items:flex-end; justify-content:center;
+  background:rgb(4 3 9 / calc(.62 * var(--sheet-drag,1))); -webkit-backdrop-filter:blur(10px) saturate(140%); backdrop-filter:blur(10px) saturate(140%); }
+.rcm-sheet.show{ display:flex; animation:rcmFade .24s ease-out; }
+@keyframes rcmFade{ from{ opacity:0 } to{ opacity:1 } }
+.rcm-sheet-card{ width:100%; max-width:540px; max-height:92vh; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  background:radial-gradient(120% 80% at 50% 0%, rgba(34,211,163,.09), transparent 58%), linear-gradient(180deg,var(--surface),var(--bg-2));
+  border:1px solid var(--line-bright,var(--line)); border-bottom:none; border-radius:28px 28px 0 0;
+  padding:10px 22px calc(22px + env(safe-area-inset-bottom,0px)); box-shadow:0 -26px 80px -28px rgba(0,0,0,.85);
+  animation:rcmUp .36s cubic-bezier(.2,.9,.25,1); touch-action:pan-y; }
+.rcm-sheet.closing .rcm-sheet-card{ animation:rcmDown .26s cubic-bezier(.4,0,.7,.2) forwards; }
+@keyframes rcmUp{ from{ transform:translateY(100%); } to{ transform:none; } }
+@keyframes rcmDown{ from{ transform:none; } to{ transform:translateY(100%); } }
+.rcm-handle{ width:42px; height:5px; border-radius:999px; background:var(--line-bright,rgba(255,255,255,.28)); margin:8px auto 16px; }
+.rcm-sheet-ic{ width:66px; height:66px; margin:4px auto 16px; border-radius:21px; display:grid; place-items:center;
+  background:linear-gradient(135deg, rgba(34,211,163,.2), rgba(124,77,255,.12)); border:1px solid rgba(34,211,163,.32); color:var(--mint);
+  box-shadow:0 14px 34px -14px rgba(34,211,163,.5); animation:rcmIcPop .5s cubic-bezier(.2,1.5,.4,1) both; }
+@keyframes rcmIcPop{ from{ opacity:0; transform:scale(.7) translateY(6px); } to{ opacity:1; transform:none; } }
+.rcm-sheet-ic svg{ width:32px; height:32px; }
+.rcm-sheet-ic.warn{ background:linear-gradient(135deg, rgba(255,159,67,.2), rgba(255,61,104,.12)); border-color:rgba(255,159,67,.4); color:#ffae5e; box-shadow:0 14px 34px -14px rgba(255,159,67,.5); }
+.rcm-sheet h3{ font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:23px; text-align:center; margin:0 0 8px; color:var(--text); letter-spacing:.01em; }
+.rcm-sheet p{ color:var(--text-dim); font-size:14.5px; line-height:1.62; text-align:center; margin:0 auto 18px; max-width:42ch; }
+.rcm-steps{ display:flex; flex-direction:column; gap:9px; margin:0 0 20px; }
+.rcm-step{ display:flex; align-items:center; gap:13px; padding:12px 14px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); text-align:left;
+  animation:rcmStepIn .4s cubic-bezier(.2,.9,.3,1) both; }
+.rcm-step:nth-child(1){ animation-delay:.04s } .rcm-step:nth-child(2){ animation-delay:.1s } .rcm-step:nth-child(3){ animation-delay:.16s }
+@keyframes rcmStepIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+.rcm-step-n{ flex:0 0 auto; width:30px; height:30px; border-radius:9px; display:grid; place-items:center; background:rgba(34,211,163,.14); color:var(--mint); font-family:var(--font-mono); font-weight:700; font-size:13px; }
+.rcm-step-n svg{ width:16px; height:16px; }
+.rcm-step-t{ font-size:13.5px; color:var(--text-dim); line-height:1.45; }
+.rcm-step-t b{ color:var(--text); font-weight:600; }
+.rcm-sheet-actions{ display:flex; flex-direction:column; gap:10px; }
+.rcm-btn{ width:100%; min-height:54px; border-radius:15px; border:none; font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:16px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:9px; transition:transform .12s, filter .15s; }
+.rcm-btn:active{ transform:scale(.97); }
+.rcm-btn svg{ width:20px; height:20px; }
+.rcm-btn.primary{ background:linear-gradient(135deg, var(--mint), #25c186); color:#04130d; box-shadow:0 14px 32px -12px var(--mint-glow, rgba(34,211,163,.6)); }
+.rcm-btn.primary:active{ filter:brightness(1.05); }
+.rcm-btn.ghost{ background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim); min-height:48px; font-size:14.5px; }
+.rcm-skip{ display:block; margin:3px auto 0; background:none; border:none; color:var(--text-faint); font-size:12.5px; cursor:pointer; padding:9px; font-family:var(--font-body); }
+.rcm-skip:active{ color:var(--text-dim); }
+body.reduced-motion .rcm-sheet-card, body.reduced-motion .rcm-sheet-ic, body.reduced-motion .rcm-step,
+body.low-power .rcm-sheet-card, body.low-power .rcm-sheet-ic, body.low-power .rcm-step{ animation-duration:.001s; }
+
+/* --- Top banner (in-app browser notice) --- */
+.rcm-banner{ position:fixed; left:8px; right:8px; top:calc(env(safe-area-inset-top,0px) + 8px); z-index:9500;
+  display:flex; align-items:center; gap:11px; padding:12px 14px; border-radius:16px;
+  background:linear-gradient(135deg, rgba(255,159,67,.16), var(--surface)); border:1px solid rgba(255,159,67,.4);
+  box-shadow:0 18px 48px -18px rgba(0,0,0,.7); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  transform:translateY(calc(-100% - 20px)); transition:transform .42s cubic-bezier(.2,1,.3,1); }
+.rcm-banner.show{ transform:none; }
+.rcm-banner-ic{ flex:0 0 auto; width:34px; height:34px; border-radius:10px; display:grid; place-items:center; background:rgba(255,159,67,.18); color:#ffae5e; }
+.rcm-banner-ic svg{ width:19px; height:19px; }
+.rcm-banner-tx{ flex:1; min-width:0; font-size:12.8px; line-height:1.4; color:var(--text); }
+.rcm-banner-tx b{ font-weight:700; }
+.rcm-banner-x{ flex:0 0 auto; width:30px; height:30px; border-radius:9px; background:transparent; border:none; color:var(--text-faint); display:grid; place-items:center; cursor:pointer; }
+
+/* --- Lock-in confirmation: green frame pulse + badge when you ready up ---
+   Uses a dedicated child (.lockin-ring) so it never collides with the tile's
+   existing ::before/::after (tint + drag handle). */
+.lockin-ring{ position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:31;
+  box-shadow:0 0 0 3px var(--mint) inset, 0 0 34px rgba(34,211,163,.5) inset; opacity:0; }
+.duel-video.you.locked-in .lockin-ring{ animation:lockInPulse .6s cubic-bezier(.2,1.4,.4,1); }
+@keyframes lockInPulse{ 0%{ opacity:0; } 28%{ opacity:1; } 100%{ opacity:0; } }
+.lockin-flash{ position:absolute; left:50%; top:50%; z-index:33; pointer-events:none;
+  display:flex; align-items:center; gap:6px; padding:7px 14px; border-radius:999px; background:rgba(7,20,15,.84); border:1px solid var(--mint);
+  color:var(--mint); font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:13.5px; letter-spacing:.05em;
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); opacity:0; transform:translate(-50%,-50%) scale(.6); }
+.lockin-flash svg{ width:16px; height:16px; }
+.duel-video.you.locked-in .lockin-flash{ animation:lockInBadge .85s cubic-bezier(.2,1.5,.4,1); }
+@keyframes lockInBadge{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.6); } 22%{ opacity:1; transform:translate(-50%,-50%) scale(1.06); } 72%{ opacity:1; transform:translate(-50%,-50%) scale(1); } 100%{ opacity:0; transform:translate(-50%,-50%) scale(1); } }
+body.reduced-motion .duel-video.you.locked-in .lockin-ring, body.reduced-motion .duel-video.you.locked-in .lockin-flash{ animation-duration:.001s; }
+
+/* --- Auto-zoom toward the detected hand (mobile · default mirrored view only) ---
+   Identical transform on video + overlay keeps the skeleton aligned. Engaged from
+   JS only when NOT user-unmirrored, so it never fights the cam-flip rule. */
+#yourVideoWrap.hand-zoom #yourVideo,
+#yourVideoWrap.hand-zoom #overlay-canvas{
+  /* X origin stays centred (the tile is mirrored, so moving it would shift the
+     image sideways); we only lean vertically toward the hand + scale gently. */
+  transform-origin: 50% var(--hz-y,50%);
+  transform: scaleX(-1) scale(var(--hz-s,1));
+  transition: transform .22s cubic-bezier(.2,.8,.3,1), transform-origin .22s ease;
+}
+body.reduced-motion #yourVideoWrap.hand-zoom #yourVideo,
+body.reduced-motion #yourVideoWrap.hand-zoom #overlay-canvas{ transition:none; }
+
+/* --- Bottom nav: tuck away on scroll-down, reveal on scroll-up --- */
+.mobile-nav{ transition: transform .32s cubic-bezier(.3,.9,.3,1); will-change: transform; }
+.mobile-nav.nav-tucked{ transform: translateY(140%); }
+
+/* --- Pull-to-refresh indicator --- */
+.rcm-ptr{ position:fixed; left:50%; top:calc(env(safe-area-inset-top,0px) + 6px); transform:translate(-50%, -60px) scale(.6); z-index:9300;
+  width:42px; height:42px; border-radius:50%; display:grid; place-items:center; pointer-events:none;
+  background:var(--surface); border:1px solid var(--line-bright,var(--line)); box-shadow:0 10px 28px rgba(0,0,0,.4); opacity:0; }
+.rcm-ptr svg{ width:22px; height:22px; color:var(--mint); }
+.rcm-ptr.spin svg{ animation:rcmSpin .7s linear infinite; }
+@keyframes rcmSpin{ to{ transform:rotate(360deg); } }
+
+/* --- Subtle page slide when swiping between tabs --- */
+.nav-page.swipe-in-l{ animation:swipeInL .26s cubic-bezier(.25,.9,.3,1); }
+.nav-page.swipe-in-r{ animation:swipeInR .26s cubic-bezier(.25,.9,.3,1); }
+@keyframes swipeInL{ from{ opacity:.4; transform:translateX(7%); } to{ opacity:1; transform:none; } }
+@keyframes swipeInR{ from{ opacity:.4; transform:translateX(-7%); } to{ opacity:1; transform:none; } }
+body.reduced-motion .nav-page.swipe-in-l, body.reduced-motion .nav-page.swipe-in-r{ animation:none; }
+
+/* --- Keyboard-aware chat composers (driven by visualViewport → --kb) --- */
+@media (hover:none) and (pointer:coarse){
+  body.kb-open .chat-thread-input,
+  body.kb-open .dock-chat-input-wrap{
+    transform: translateY(calc(-1 * var(--kb,0px)));
+    transition: transform .2s cubic-bezier(.2,.9,.3,1);
+    will-change: transform;
+  }
+  /* Expanded invisible touch zones for small in-chat controls (no layout shift) */
+  .msg-actions button, .react-pop button, .gc-del, .rx-chip, .crb-cancel{ position:relative; }
+  .msg-actions button::after, .react-pop button::after, .gc-del::after, .rx-chip::after, .crb-cancel::after{
+    content:''; position:absolute; inset:-9px; border-radius:inherit; }
+}
+
+<<<<<<< HEAD
+/* --- Thumb-friendly add-friend + comfortable modal sheets on phones --- */
+@media (max-width: 600px){
+  .add-friend-input{ gap:8px; }
+  .add-friend-input input{ min-height:50px; border-radius:13px; }
+  .add-friend-input button{ min-height:50px; min-width:50px; border-radius:13px; }
+  /* a little breathing room at the bottom of every bottom-sheet modal */
+  .modal-bg .modal{ padding-bottom:calc(26px + env(safe-area-inset-bottom, 0px)); }
+  /* the profile sheet's close button clears the rank banner cleanly */
+  .profile-modal .modal-close{ z-index:5; background:rgba(8,7,13,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+}
+
+=======
+>>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
 </style>
 </head>
 <body>
@@ -14469,6 +14625,11 @@ body.low-power .rps-ring, body.low-power .rps-ic, body.low-power .rps-core, body
 <!-- ===== APP PRELOADER (shown until the app is ready) ===== -->
 <div id="appPreloader">
   <div class="pl-inner">
+    <div class="pl-logo-wrap">
+      <span class="pl-logo-ring"></span>
+      <span class="pl-logo-ring r2"></span>
+      <img class="pl-logo" src="logo.png" alt="ROSHCAM" decoding="async" fetchpriority="high" />
+    </div>
     <div class="pl-wordmark">ROSH<span>CAM</span></div>
     <div class="pl-bar"><span id="plBarFill"></span></div>
     <div class="pl-meta">
@@ -14784,24 +14945,20 @@ body.low-power .rps-ring, body.low-power .rps-ic, body.low-power .rps-core, body
           <button class="ms-quick-btn" data-act="camera"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-camera"/></svg><span>Camera</span></button>
         </div>
 
-        <!-- Main menu (mirrors the desktop sidebar) -->
-        <div class="ms-section-label">Menu</div>
+        <!-- Explore — destinations that AREN'T already on the bottom bar -->
+        <div class="ms-section-label">Explore</div>
         <div class="ms-grid">
-          <button class="ms-tile" data-act="home"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span>Home</span></button>
-          <button class="ms-tile" data-act="play"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
           <button class="ms-tile" data-act="activity"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
-          <button class="ms-tile" data-act="rank"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
-          <button class="ms-tile" data-act="friends"><span class="ms-tile-badge" id="msFriendsBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
           <button class="ms-tile" data-act="achievements"><span class="ms-tile-badge ms-prestige" id="msAchBadge" style="display:none;">✦</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
+          <button class="ms-tile" data-act="chat"><span class="ms-tile-badge" id="msChatBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span>Messages</span></button>
         </div>
 
         <!-- Secondary list -->
         <div class="ms-section-label">More</div>
         <div class="ms-list">
-          <button class="ms-row" data-act="chat"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span class="ms-row-t">Messages</span><span class="ms-row-badge" id="msChatBadge" style="display:none;">0</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
           <button class="ms-row" data-act="history"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-clock"/></svg></span><span class="ms-row-t">Match history</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
-          <button class="ms-row" data-act="whatsnew"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg></span><span class="ms-row-t">What's new</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
           <button class="ms-row" data-act="help"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-help"/></svg></span><span class="ms-row-t">How to play</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
+          <button class="ms-row" data-act="whatsnew"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg></span><span class="ms-row-t">What's new</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
           <button class="ms-row" data-act="settings"><span class="ms-row-ic"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg></span><span class="ms-row-t">Settings</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
           <button class="ms-row" id="moreSheetAdmin" data-act="admin" style="display:none;"><span class="ms-row-ic mint"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg></span><span class="ms-row-t">Moderation</span><svg viewBox="0 0 24 24" width="16" height="16" class="ms-row-chev"><use href="#i-chevron-right"/></svg></button>
         </div>
@@ -18775,6 +18932,8 @@ function hidePreloader(){
 }
 function showScreen(name){
   state.screen = name;
+  // Keep the screen awake through matchmaking + the match (released on menus).
+  try { syncWakeLock(name); } catch(e){}
   // The app is interactive the moment any screen is shown — drop the preloader.
   hidePreloader();
   try {
@@ -19562,7 +19721,19 @@ const videoEl = $('#yourVideo');
 const overlayCanvas = $('#overlay-canvas');
 const overlayCtx = overlayCanvas.getContext('2d');
 // Data saver — lower webcam resolution/framerate to cut bandwidth.
-function isDataSaver(){ try { return localStorage.getItem('rosham_datasaver') === '1'; } catch(e){ return false; } }
+function isDataSaver(){
+  try { if(localStorage.getItem('rosham_datasaver') === '1') return true; } catch(e){}
+  // Auto-respect the OS/browser Data Saver flag + very slow connections, so we
+  // drop webcam resolution/bitrate without the player having to find a setting.
+  try {
+    const c = navigator.connection || navigator.webkitConnection || navigator.mozConnection;
+    if(c){
+      if(c.saveData) return true;
+      if(c.effectiveType && /(^|-)2g$/.test(c.effectiveType)) return true;
+    }
+  } catch(e){}
+  return false;
+}
 function videoIdeal(){ return isDataSaver() ? { w:320, h:240, fps:20 } : { w:640, h:480, fps:30 }; }
 async function setupCamera(){
   // CAMERA IS REQUIRED, MIC IS OPTIONAL.
@@ -19617,13 +19788,20 @@ async function setupCamera(){
   } catch(e){
     setText('#camStatusText', 'denied');
     console.warn('[camera] setup failed', e);
-    toast('Camera access required — allow it, then tap Retry', 'error', {
-      duration: 9000,
-      action: { label: 'Retry', onClick: async () => {
-        const ok = await setupCamera();
-        if(ok){ try { await setupHands(); } catch(_){} toast('Camera ready — pick a mode to play', 'success'); }
-      } },
-    });
+    // On phones a denied/blocked camera is a dead end without guidance — show a
+    // designed help sheet (browser-specific steps + retry). Desktop keeps the toast.
+    if(isCoarse()){
+      try { showCameraHelp(e); }
+      catch(_){ toast('Camera access required — allow it, then tap Retry', 'error', { duration: 9000 }); }
+    } else {
+      toast('Camera access required — allow it, then tap Retry', 'error', {
+        duration: 9000,
+        action: { label: 'Retry', onClick: async () => {
+          const ok = await setupCamera();
+          if(ok){ try { await setupHands(); } catch(_){} toast('Camera ready — pick a mode to play', 'success'); }
+        } },
+      });
+    }
     return false;
   }
 }
@@ -19812,8 +19990,10 @@ function onHandsResults(results){
     // Hand present = solid base; a recognised gesture lifts it; a stable (committed)
     // gesture maxes it out — so the meter rewards holding a clear shape.
     conf = 0.42 * hs + (g ? 0.26 : 0) + (state.currentGesture ? 0.32 : 0);
+    try { updateHandZoom(results.multiHandLandmarks[0]); } catch(e){}
   } else {
     setCurrentGesture(null);
+    try { updateHandZoom(null); } catch(e){}
   }
   state._handConfidence = (state._handConfidence || 0) * 0.6 + Math.min(1, conf) * 0.4;
   updateHandConfMeter(state._handConfidence);
@@ -21122,11 +21302,13 @@ async function sendChatMessage(){
     input.value = '';
     const p = $('#chatEmojiPalette'); if(p) p.style.display = 'none';
     sendGlobalChat(text);
+    try { afterChatSend(input, '#chatThreadBody'); } catch(e){}
     return;
   }
   if(!state._activeChatUid || !state.user) return;
   input.value = '';
   const pal = $('#chatEmojiPalette'); if(pal) pal.style.display = 'none';
+  try { afterChatSend(input, '#chatThreadBody'); } catch(e){}
   const uid = state._activeChatUid;
   const convId = convIdFor(state.user.uid, uid);
   const replyTo = state._replyTo ? { id: state._replyTo.id, name: state._replyTo.name, text: state._replyTo.text } : null;
@@ -24201,6 +24383,9 @@ async function findMatch(){
   state.isCaller = false;
   state._matchListenerSkipLogged = false;
   showScreen('matching');
+  // Warm the hand-tracking model during the queue wait so the first round never
+  // stalls on WASM compile. Idempotent + best-effort (no-op once loaded).
+  try { loadMediaPipe().then(() => { try { setupHands(); } catch(e){} }).catch(() => {}); } catch(e){}
   $('#matchSearchView').style.display = '';
   $('#matchFoundView').style.display = 'none';
   setText('#matchFeed', 'scanning the globe…');
@@ -25443,7 +25628,7 @@ function onGestureFrame(){
   if(isReady !== state.myGestureReady){
     state.myGestureReady = isReady;
     sendPeer({type:'ready_state', ready: isReady, progress });
-    if(isReady) sfxReady();
+    if(isReady){ sfxReady(); try { flashLockIn(); } catch(e){} }
     maybeStartRound();
   } else {
     const r = Math.round(progress * 10);
@@ -25736,6 +25921,8 @@ async function runCountdown(){
     cd.textContent = b;
     cd.classList.remove('flash'); void cd.offsetWidth; cd.classList.add('flash');
     if(!_cdSample) sfxCountdown();
+    // Tactile 3·2·1 — a firmer tick on "1" so the throw beat is felt, not just seen.
+    try { haptic(b === '1' ? 22 : 12); } catch(e){}
     await sleep(_cdStep);
   }
   state.phase = 'shoot';
@@ -25752,7 +25939,7 @@ async function runCountdown(){
   // brighter spotlight burst at SHOOT
   burst(window.innerWidth/2, window.innerHeight*0.4, '#ffd33d', 40);
   burst(window.innerWidth/2, window.innerHeight*0.4, '#ff3d68', 40);
-  try { if(navigator.vibrate) navigator.vibrate(30); } catch(e){}
+  try { haptic([26, 18, 46]); } catch(e){}
   await sleep(220);
   state.myGesture = getGestureForShoot();
 
@@ -27762,6 +27949,7 @@ function sendChat(){
   addChat('you', v);
   sendPeer({type:'chat', text: v});
   inp.value = '';
+  try { afterChatSend(inp, '#chatMessages'); } catch(e){}
 }
 
 // ============= DISCONNECT / NEXT =============
@@ -28278,6 +28466,9 @@ window.addEventListener('keydown', _unlockAudioOnce);
 // ============= EVENTS =============
 // Start a ranked match — ensures audio + camera are ready first.
 async function startRankedMatch(){
+  // Mobile pre-flight: in-app-browser warning, "prop your phone" hint, and a
+  // friendly camera-permission primer — all before we touch the camera.
+  try { if(!(await mobilePreflight())) return; } catch(e){ console.warn('[preflight]', e); }
   ensureAudio();
   // Show an instant loading overlay so the wait for camera + hand-tracking to
   // initialise never looks like a freeze/crash.
@@ -29851,7 +30042,7 @@ on('#setNotify', 'click', async () => {
   if(!('Notification' in window)){ toast('Notifications are not supported on this device', 'info'); return; }
   let perm = Notification.permission;
   if(perm === 'default'){ try { perm = await Notification.requestPermission(); } catch(e){} }
-  if(perm === 'granted'){ try { localStorage.setItem('rosham_notify', '1'); } catch(e){} toast('Notifications enabled', 'success'); }
+  if(perm === 'granted'){ try { localStorage.setItem('rosham_notify', '1'); } catch(e){} toast('Notifications enabled', 'success'); try { ensurePushSubscription(); } catch(e){} }
   else { try { localStorage.setItem('rosham_notify', '0'); } catch(e){} toast('Notifications blocked — allow them in your browser settings', 'info'); }
   renderSettingsPage();
 });
@@ -30331,50 +30522,56 @@ function enableSwipeDismiss(el, onClose, opts){
   if(!el) return;
   opts = opts || {};
   const dir = opts.direction === 'up' ? -1 : 1;            // bottom sheets drag down (+1), top flyouts up (-1)
-  const grabZone = opts.grabZone != null ? opts.grabZone : 130;
+  const grabZone = opts.grabZone != null ? opts.grabZone : 90;
   const threshold = opts.threshold != null ? opts.threshold : 92;
   const getCard = () => opts.self ? el : (opts.cardSelector ? el.querySelector(opts.cardSelector) : el.firstElementChild);
-  let startY = 0, curY = 0, dragging = false, target = null, lastY = 0, lastT = 0, vel = 0, axisLocked = false, startX = 0;
+  // We hijack the gesture for a dismiss ONLY when the user grabs the handle band,
+  // or keeps pulling once the content is already scrolled to the very top. Every
+  // other touch is left untouched so the inner content scrolls freely. (Fixes the
+  // "menu won't scroll / just closes" bug.)
+  let startY = 0, startX = 0, curY = 0, lastY = 0, lastT = 0, vel = 0, target = null, scroller = null, inGrab = false, mode = '';
   el.addEventListener('pointerdown', (e) => {
+    mode = '';
     if(e.pointerType === 'mouse') return; // touch/pen only
     target = getCard();
     if(!target) return;
     const rect = target.getBoundingClientRect();
     const fromEdge = dir === 1 ? (e.clientY - rect.top) : (rect.bottom - e.clientY);
-    const scroller = opts.scrollSelector ? target.querySelector(opts.scrollSelector) : null;
-    const atEdge = !scroller || (dir === 1 ? scroller.scrollTop <= 0 : scroller.scrollTop <= 0);
-    // Start a drag from the grab zone, or anywhere when the content is at the top.
-    if(fromEdge > grabZone && !atEdge) return;
+    scroller = opts.scrollSelector ? target.querySelector(opts.scrollSelector) : target;
+    inGrab = fromEdge <= grabZone;
     startY = lastY = e.clientY; startX = e.clientX; lastT = performance.now();
-    curY = 0; vel = 0; dragging = true; axisLocked = false;
-    target.style.transition = 'none';
+    curY = 0; vel = 0; mode = 'pending';
   }, { passive: true });
   el.addEventListener('pointermove', (e) => {
-    if(!dragging || !target) return;
+    if(mode === '' || mode === 'cancel' || mode === 'done' || !target) return;
     const dy = e.clientY - startY, dx = e.clientX - startX;
-    // Lock to the vertical axis on first meaningful move so horizontal swipes
-    // (e.g. inside a list) don't accidentally drag the sheet.
-    if(!axisLocked && (Math.abs(dy) > 6 || Math.abs(dx) > 6)){
-      axisLocked = true;
-      if(Math.abs(dx) > Math.abs(dy)){ dragging = false; target.style.transition = ''; return; }
+    if(mode === 'pending'){
+      if(Math.abs(dx) < 7 && Math.abs(dy) < 7) return;          // wait for a clear intent
+      if(Math.abs(dx) > Math.abs(dy)){ mode = 'cancel'; return; } // horizontal → leave for paging/lists
+      const atTop = !scroller || (dir === 1 ? scroller.scrollTop <= 0 : true);
+      const pulling = dir === 1 ? dy > 0 : dy < 0;
+      if(pulling && (inGrab || atTop)){ mode = 'drag'; target.style.transition = 'none'; }
+      else { mode = 'cancel'; return; }                          // it's a content scroll — never hijack it
     }
+    if(mode !== 'drag') return;
+    if(e.cancelable) e.preventDefault();                         // we own it now — stop native scroll
     curY = dir === 1 ? Math.max(0, dy) : Math.min(0, dy);
     const now = performance.now();
     if(now - lastT > 0) vel = (e.clientY - lastY) / (now - lastT);
     lastY = e.clientY; lastT = now;
     target.style.transform = `translateY(${curY}px)`;
-    // Live backdrop fade for feedback.
     const mag = Math.min(1, Math.abs(curY) / 280);
     el.style.setProperty('--sheet-drag', (1 - mag * 0.75).toFixed(3));
-  }, { passive: true });
+  }, { passive: false });
   function end(){
-    if(!dragging || !target) return;
-    dragging = false;
-    target.style.transition = '';
     el.style.removeProperty('--sheet-drag');
+    if(mode !== 'drag' || !target){ mode = ''; return; }
+    mode = 'done';
+    target.style.transition = '';
     const flick = dir === 1 ? vel > 0.55 : vel < -0.55;
     if(Math.abs(curY) > threshold || flick){ target.style.transform = ''; try { haptic(14); } catch(e){} onClose(); }
     else { target.style.transform = ''; }
+    mode = '';
   }
   el.addEventListener('pointerup', end);
   el.addEventListener('pointercancel', end);
@@ -31340,6 +31537,480 @@ if(isConfigured()){
 } else {
   showScreen('noconfig');
 }
+/* ============================================================
+   MOBILE EXPERIENCE LAYER (v1.4) — runtime
+   Wake lock · model warm-up · keyboard-aware chat · nav tuck ·
+   tab swipe · pull-to-refresh · lock-in feedback · hand auto-zoom ·
+   install + camera-permission flows · in-app-browser detection ·
+   web-push scaffolding. All best-effort + reduced-motion aware.
+   ============================================================ */
+function isCoarse(){ try { return window.matchMedia('(hover:none) and (pointer:coarse)').matches; } catch(e){ return false; } }
+function isStandalone(){ try { return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true; } catch(e){ return false; } }
+function isIOS(){ try { const ua = navigator.userAgent || ''; return /iPad|iPhone|iPod/.test(ua) || (/(Macintosh)/.test(ua) && navigator.maxTouchPoints > 1); } catch(e){ return false; } }
+function isInAppBrowser(){ try { return /FBAN|FBAV|Instagram|Line\/|Twitter|TikTok|musical_ly|Snapchat|Pinterest|MicroMessenger|WhatsApp/i.test(navigator.userAgent || ''); } catch(e){ return false; } }
+function lsGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+function lsSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+function ssGet(k){ try { return sessionStorage.getItem(k); } catch(e){ return null; } }
+function ssSet(k,v){ try { sessionStorage.setItem(k,v); } catch(e){} }
+function icoSprite(id){ return '<svg viewBox="0 0 24 24"><use href="#'+id+'"/></svg>'; }
+function icoPhone(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2" width="11" height="20" rx="2.6"/><line x1="10.4" y1="18.4" x2="13.6" y2="18.4"/></svg>'; }
+async function cameraPermissionState(){ try { if(navigator.permissions && navigator.permissions.query){ const r = await navigator.permissions.query({ name: 'camera' }); return r.state; } } catch(e){} return 'unknown'; }
+function scrollChatBottom(sel){ try { const el = document.querySelector(sel); if(el) el.scrollTop = el.scrollHeight; } catch(e){} }
+function currentNavPage(){ const el = document.querySelector('.nav-page.active'); return (el && el.dataset.page) ? el.dataset.page : 'home'; }
+
+/* ---- Generic on-brand bottom sheet (promise-resolving) ---- */
+function buildSheet(opts){
+  opts = opts || {};
+  const wrap = document.createElement('div');
+  wrap.className = 'rcm-sheet';
+  const steps = (opts.steps || []).map(s => `<div class="rcm-step"><span class="rcm-step-n">${s.n || ''}</span><span class="rcm-step-t">${s.html}</span></div>`).join('');
+  const actions = (opts.actions || []).map((a,i) => `<button class="rcm-btn ${a.kind || 'primary'}" data-v="${i}">${a.html ? a.html + ' ' : ''}${a.label}</button>`).join('');
+  wrap.innerHTML = `<div class="rcm-sheet-card">
+    <div class="rcm-handle"></div>
+    ${opts.icon ? `<div class="rcm-sheet-ic ${opts.warn ? 'warn' : ''}">${opts.icon}</div>` : ''}
+    ${opts.title ? `<h3>${opts.title}</h3>` : ''}
+    ${opts.body ? `<p>${opts.body}</p>` : ''}
+    ${steps ? `<div class="rcm-steps">${steps}</div>` : ''}
+    <div class="rcm-sheet-actions">${actions}</div>
+    ${opts.skip ? `<button class="rcm-skip">${opts.skip}</button>` : ''}
+  </div>`;
+  document.body.appendChild(wrap);
+  requestAnimationFrame(() => wrap.classList.add('show'));
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = (v) => { if(done) return; done = true; wrap.classList.add('closing'); setTimeout(() => wrap.remove(), 280); resolve(v); };
+    wrap.querySelectorAll('.rcm-btn').forEach(btn => btn.addEventListener('click', () => { try { haptic(12); } catch(e){} finish(opts.actions[+btn.dataset.v].value); }));
+    const skip = wrap.querySelector('.rcm-skip');
+    if(skip) skip.addEventListener('click', () => finish(opts.skipValue !== undefined ? opts.skipValue : null));
+    if(opts.dismissible !== false){
+      wrap.addEventListener('click', (e) => { if(e.target === wrap) finish(opts.dismissValue !== undefined ? opts.dismissValue : null); });
+      try { enableSwipeDismiss(wrap, () => finish(opts.dismissValue !== undefined ? opts.dismissValue : null), { cardSelector: '.rcm-sheet-card' }); } catch(e){}
+    }
+  });
+}
+
+/* ---- "Prop your phone up" hint before ranked (once) ---- */
+async function showPhoneSetupHint(){
+  await buildSheet({
+    icon: icoPhone(), title: 'Quick setup for clean throws',
+    body: 'Ranked reads rock·paper·scissors straight off your webcam — set up once and every throw lands.',
+    steps: [
+      { n: icoPhone(), html: '<b>Prop your phone up</b> against something so both hands are free.' },
+      { n: icoSprite('i-zap'), html: '<b>Light on your hand</b>, a plain background helps tracking.' },
+      { n: icoSprite('i-target'), html: '<b>Hold your shape steady</b> until the ring fills and locks in.' },
+    ],
+    actions: [{ label: "I'm ready", kind: 'primary', value: true, html: icoSprite('i-check') }],
+    skip: 'Skip',
+  });
+  lsSet('rosham_phonehint_seen', '1');
+}
+
+<<<<<<< HEAD
+/* ---- Camera-permission primer (before the OS prompt) — informational ---- */
+async function showCameraPriming(){
+  await buildSheet({
+    icon: icoSprite('i-camera'), title: 'Your camera is the controller',
+    body: 'There are no buttons — ROSHCAM reads your real hand. Your video is peer-to-peer with your opponent only, and live only during a match.',
+    actions: [{ label: 'Continue', kind: 'primary', value: true, html: icoSprite('i-camera') }],
+  });
+=======
+/* ---- Camera-permission primer (before the OS prompt) ---- */
+async function showCameraPriming(){
+  const v = await buildSheet({
+    icon: icoSprite('i-camera'), title: 'Your camera is the controller',
+    body: 'There are no buttons — ROSHCAM reads your real hand. Your video is peer-to-peer with your opponent only.',
+    steps: [
+      { n: icoSprite('i-lock'), html: 'Live <b>only during a match</b> — never recorded or stored.' },
+      { n: icoSprite('i-eye'), html: 'Seen by your <b>current opponent</b> only, then it stops.' },
+    ],
+    actions: [{ label: 'Enable camera', kind: 'primary', value: true, html: icoSprite('i-camera') }],
+    skip: 'Not now', skipValue: false, dismissValue: false,
+  });
+  return v === true;
+>>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
+}
+
+/* ---- Camera blocked → recovery help ---- */
+function showCameraHelp(){
+  const ios = isIOS(), inApp = isInAppBrowser();
+  const steps = inApp ? [
+    { n: icoSprite('i-share'), html: 'Open the <b>•••</b> / share menu in this app.' },
+    { n: icoSprite('i-globe'), html: `Choose <b>Open in ${ios ? 'Safari' : 'Chrome'}</b> — the camera works there.` },
+  ] : ios ? [
+    { n: '1', html: 'Open <b>Settings → Safari → Camera</b>.' },
+    { n: '2', html: 'Set this site to <b>Allow</b>, then reload.' },
+  ] : [
+    { n: icoSprite('i-lock'), html: 'Tap the <b>lock icon</b> in the address bar.' },
+    { n: '2', html: 'Set <b>Camera</b> to <b>Allow</b>, then reload.' },
+  ];
+  return buildSheet({
+    warn: true, icon: icoSprite('i-camera'), title: 'Camera is blocked',
+    body: 'We need the camera to read your throws. Here’s how to switch it back on:',
+    steps,
+    actions: [{ label: 'Try again', kind: 'primary', value: 'retry', html: icoSprite('i-rotate') }],
+    skip: 'Maybe later',
+  }).then(async (v) => {
+    if(v === 'retry'){ const ok = await setupCamera(); if(ok){ try { await setupHands(); } catch(e){} try { toast('Camera ready — you’re good to go', 'success'); } catch(e){} } }
+  });
+}
+
+/* ---- In-app browser warning sheet (blocking, before ranked) ---- */
+async function showInAppBrowserSheet(){
+  const ios = isIOS();
+  const v = await buildSheet({
+    warn: true, icon: icoSprite('i-globe'), title: 'Open in your browser',
+    body: `You're in an in-app browser, where the camera often won't start. Open ROSHCAM in ${ios ? 'Safari' : 'Chrome'} for the full experience.`,
+    steps: [
+      { n: icoSprite('i-share'), html: 'Tap the <b>•••</b> / share button.' },
+      { n: icoSprite('i-globe'), html: `Choose <b>Open in ${ios ? 'Safari' : 'Chrome'}</b>.` },
+    ],
+    actions: [{ label: 'Continue here anyway', kind: 'ghost', value: true }],
+    skip: 'Cancel', skipValue: false, dismissValue: false,
+  });
+  if(v === true) ssSet('rcm_inapp_ack', '1');
+  return v === true;
+}
+
+/* ---- Passive in-app-browser banner (once per session) ---- */
+function showInAppBanner(){
+  if(document.getElementById('rcmInAppBanner') || ssGet('rcm_inapp_ack')) return;
+  const ios = isIOS();
+  const b = document.createElement('div'); b.className = 'rcm-banner'; b.id = 'rcmInAppBanner';
+  b.innerHTML = `<span class="rcm-banner-ic">${icoSprite('i-globe')}</span><span class="rcm-banner-tx">Camera needs a real browser — open in <b>${ios ? 'Safari' : 'Chrome'}</b> via ••• → Open in browser.</span><button class="rcm-banner-x" aria-label="Dismiss">${icoSprite('i-close')}</button>`;
+  document.body.appendChild(b);
+  requestAnimationFrame(() => b.classList.add('show'));
+  const dismiss = () => { b.classList.remove('show'); ssSet('rcm_inapp_ack', '1'); setTimeout(() => b.remove(), 450); };
+  b.querySelector('.rcm-banner-x').addEventListener('click', dismiss);
+  setTimeout(() => { if(b.isConnected) b.classList.remove('show'); }, 14000);
+}
+
+/* ---- Add-to-home-screen coaching (once) ---- */
+<<<<<<< HEAD
+function showInstallCoaching(force){
+  if(isStandalone() || !isCoarse()) return;
+  if(!force && lsGet('rosham_install_coached') === '1') return;
+  const ios = isIOS();
+  if(!ios && !_deferredInstall) return;
+  if(!force) lsSet('rosham_install_coached', '1');
+=======
+function showInstallCoaching(){
+  if(isStandalone() || !isCoarse() || lsGet('rosham_install_coached') === '1') return;
+  const ios = isIOS();
+  if(!ios && !_deferredInstall) return;
+  lsSet('rosham_install_coached', '1');
+>>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
+  if(ios){
+    buildSheet({
+      icon: icoSprite('i-plus'), title: 'Add ROSHCAM to your Home Screen',
+      body: 'Launch full-screen with no browser bars — it plays like a real app.',
+      steps: [
+        { n: icoSprite('i-share'), html: 'Tap the <b>Share</b> button in Safari.' },
+        { n: icoSprite('i-plus'), html: 'Choose <b>Add to Home Screen</b>.' },
+      ],
+      actions: [{ label: 'Got it', kind: 'primary', value: true, html: icoSprite('i-check') }],
+      skip: 'Maybe later',
+    });
+  } else {
+    buildSheet({
+      icon: icoSprite('i-plus'), title: 'Install ROSHCAM',
+      body: 'Add it to your home screen for full-screen, app-like play.',
+      actions: [
+        { label: 'Install', kind: 'primary', value: 'install', html: icoSprite('i-plus') },
+        { label: 'Not now', kind: 'ghost', value: null },
+      ],
+    }).then(v => { if(v === 'install'){ try { triggerInstall(); } catch(e){} } });
+  }
+}
+
+<<<<<<< HEAD
+/* ---- Ranked pre-flight — informational only, NEVER blocks entering a match.
+   (A blocked/denied camera is still surfaced by setupCamera's own help sheet.) ---- */
+async function mobilePreflight(){
+  if(!isCoarse()) return true;
+  try {
+    const perm = await cameraPermissionState();
+    if(perm !== 'granted' && !state.cameraReady) await showCameraPriming();
+    if(!lsGet('rosham_phonehint_seen')) await showPhoneSetupHint();
+  } catch(e){ console.warn('[preflight]', e); }
+=======
+/* ---- Ranked pre-flight gate ---- */
+async function mobilePreflight(){
+  if(!isCoarse()) return true;
+  if(isInAppBrowser() && !ssGet('rcm_inapp_ack')){ if(!(await showInAppBrowserSheet())) return false; }
+  const perm = await cameraPermissionState();
+  if(perm === 'denied' && !state.cameraReady){ showCameraHelp(); return false; }
+  if(perm !== 'granted' && !state.cameraReady){ if(!(await showCameraPriming())) return false; }
+  if(!lsGet('rosham_phonehint_seen')){ await showPhoneSetupHint(); }
+>>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
+  return true;
+}
+
+/* ---- Lock-in confirmation (green frame pulse + haptic) ---- */
+function flashLockIn(){
+  try { haptic([14, 22, 40]); } catch(e){}
+  const wrap = document.querySelector('.duel-video.you'); if(!wrap) return;
+  if(!wrap.querySelector('.lockin-ring')){ const r = document.createElement('div'); r.className = 'lockin-ring'; wrap.appendChild(r); }
+  let f = wrap.querySelector('.lockin-flash');
+  if(!f){ f = document.createElement('div'); f.className = 'lockin-flash'; f.innerHTML = isCoarse() ? icoSprite('i-check') : (icoSprite('i-check') + '<span>LOCKED IN</span>'); wrap.appendChild(f); }
+  wrap.classList.remove('locked-in'); void wrap.offsetWidth; wrap.classList.add('locked-in');
+  clearTimeout(wrap._lockT); wrap._lockT = setTimeout(() => wrap.classList.remove('locked-in'), 900);
+}
+
+/* ---- Auto-zoom toward the detected hand (mobile · default mirror only) ---- */
+let _hz = { s: 1, x: 50, y: 50 };
+function updateHandZoom(landmarks){
+  const wrap = document.getElementById('yourVideoWrap'); if(!wrap) return;
+  if(!isCoarse() || state._camMirrored || state.screen !== 'game' || document.body.classList.contains('reduced-motion')){
+    if(wrap.classList.contains('hand-zoom')) wrap.classList.remove('hand-zoom');
+    return;
+  }
+  let ts = 1, ty = 50;
+  if(landmarks && landmarks.length){
+    let miny = 1, maxy = 0, minx = 1, maxx = 0;
+    for(const p of landmarks){ if(p.x < minx) minx = p.x; if(p.x > maxx) maxx = p.x; if(p.y < miny) miny = p.y; if(p.y > maxy) maxy = p.y; }
+    const cy = (miny + maxy) / 2;
+    const span = Math.max(maxx - minx, maxy - miny);
+    ts = Math.max(1, Math.min(1.22, 0.4 / Math.max(0.18, span)));   // smaller hand → gently more zoom
+    ty = Math.max(32, Math.min(68, cy * 100));                       // lean toward the hand, clamped
+  }
+  _hz.s += (ts - _hz.s) * 0.16; _hz.y += (ty - _hz.y) * 0.16;
+  wrap.classList.add('hand-zoom');
+  wrap.style.setProperty('--hz-s', _hz.s.toFixed(3));
+  wrap.style.setProperty('--hz-y', _hz.y.toFixed(1) + '%');
+}
+
+/* ---- After-send: scroll to newest + close the keyboard ---- */
+function afterChatSend(input, bodySel){
+  scrollChatBottom(bodySel);
+  setTimeout(() => scrollChatBottom(bodySel), 60);
+  if(isCoarse() && input){ try { input.blur(); } catch(e){} }
+}
+
+/* ---- Screen Wake Lock (matchmaking + match) ---- */
+let _wakeLock = null;
+async function _acquireWake(){
+  if(_wakeLock) return;
+  try { if('wakeLock' in navigator){ _wakeLock = await navigator.wakeLock.request('screen'); _wakeLock.addEventListener && _wakeLock.addEventListener('release', () => { _wakeLock = null; }); } } catch(e){ _wakeLock = null; }
+}
+async function _releaseWake(){ try { if(_wakeLock) await _wakeLock.release(); } catch(e){} _wakeLock = null; }
+function syncWakeLock(name){ if(name === 'matching' || name === 'game') _acquireWake(); else _releaseWake(); }
+document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && (state.screen === 'matching' || state.screen === 'game')) _acquireWake(); });
+
+/* ---- Web Push scaffolding (real delivery needs a backend with the VAPID key) ---- */
+const VAPID_PUBLIC_KEY = ''; // set to your VAPID public key to enable server push delivery
+function _urlB64ToUint8(base64){
+  const pad = '='.repeat((4 - base64.length % 4) % 4);
+  const b64 = (base64 + pad).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(b64); const out = new Uint8Array(raw.length);
+  for(let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+  return out;
+}
+async function ensurePushSubscription(){
+  try {
+    if(!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+    if(!('Notification' in window) || Notification.permission !== 'granted') return;
+    if(!VAPID_PUBLIC_KEY){ console.info('[push] in-tab notifications active; set VAPID_PUBLIC_KEY for background push'); return; }
+    const reg = await navigator.serviceWorker.ready;
+    let sub = await reg.pushManager.getSubscription();
+    if(!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: _urlB64ToUint8(VAPID_PUBLIC_KEY) });
+    if(sub && state.user && state.db){
+      try { await setDoc(doc(state.db, 'users', state.user.uid), { pushSub: JSON.stringify(sub), pushUpdatedAt: serverTimestamp() }, { merge: true }); } catch(e){}
+    }
+  } catch(e){ console.warn('[push] subscribe failed', e); }
+}
+try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('message', (e) => {
+  if(e.data && e.data.type === 'notification-click'){ const d = e.data.data || {}; try { if(d.page) showNavPage(d.page); } catch(_){} }
+}); } catch(e){}
+
+/* ---- visualViewport: keep chat composers above the keyboard ---- */
+(function(){
+  const vv = window.visualViewport; if(!vv) return;
+  let raf = 0;
+  const apply = () => {
+    raf = 0;
+    const inset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+    document.documentElement.style.setProperty('--kb', inset + 'px');
+    const open = inset > 90;
+    document.body.classList.toggle('kb-open', open);
+    if(open){ const f = document.activeElement; if(f && f.id === 'chatThreadInput') scrollChatBottom('#chatThreadBody'); else if(f && f.id === 'chatInput') scrollChatBottom('#chatMessages'); }
+  };
+  const onCh = () => { if(!raf) raf = requestAnimationFrame(apply); };
+  vv.addEventListener('resize', onCh); vv.addEventListener('scroll', onCh);
+})();
+
+/* ---- Better mobile keyboards: inputmode / enterkeyhint ---- */
+(function(){
+  const set = (sel, attrs) => { const el = document.querySelector(sel); if(!el) return; for(const k in attrs) el.setAttribute(k, attrs[k]); };
+  set('#chatInput', { enterkeyhint: 'send', inputmode: 'text', autocapitalize: 'sentences', autocomplete: 'off' });
+  set('#chatThreadInput', { enterkeyhint: 'send', inputmode: 'text', autocapitalize: 'sentences', autocomplete: 'off' });
+  set('#lbSearch', { type: 'search', enterkeyhint: 'search', inputmode: 'search', autocapitalize: 'none', autocorrect: 'off' });
+  set('#settingsSearch', { type: 'search', enterkeyhint: 'search', inputmode: 'search' });
+  set('#addFriendInput', { enterkeyhint: 'send', autocapitalize: 'none', autocomplete: 'off' });
+})();
+
+/* ---- Bottom nav: tuck on scroll-down, reveal on scroll-up ---- */
+(function(){
+  let last = 0, ticking = false;
+  window.addEventListener('scroll', () => {
+    if(ticking) return; ticking = true;
+    requestAnimationFrame(() => {
+      ticking = false;
+      const nav = document.getElementById('mobileNav'); if(!nav) return;
+      if(state.screen !== 'landing' || document.body.classList.contains('kb-open')){ nav.classList.remove('nav-tucked'); return; }
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      if(y < 60){ nav.classList.remove('nav-tucked'); last = y; return; }
+      const dy = y - last;
+      if(dy > 8) nav.classList.add('nav-tucked');
+      else if(dy < -8) nav.classList.remove('nav-tucked');
+      last = y;
+    });
+  }, { passive: true });
+})();
+
+<<<<<<< HEAD
+/* ---- Interactive finger-following pager (swipe between bottom-nav tabs) ----
+   The current page tracks your finger and releases into the next/previous tab,
+   with a rubber-band at the ends — proper native-app feel. */
+(function(){
+  const ORDER = ['home', 'rank', 'play', 'friends'];
+  const SKIP = 'input,textarea,button,a,.duel-video,.lp-stage,.ladder,.lb-table,.h-scroll,.scroll-x,.chips,.seg,.volume-slider,.swiper,[data-no-swipe]';
+  const host = document.querySelector('.screens') || document.body;
+  const blocked = () => document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
+  let sx = 0, sy = 0, mode = '', page = null, idx = -1, w = 1;
+  host.addEventListener('touchstart', (e) => {
+    mode = '';
+    if(e.touches.length !== 1 || state.screen !== 'landing' || blocked() || document.body.classList.contains('kb-open')) return;
+    if(e.target.closest && e.target.closest(SKIP)) return;
+    idx = ORDER.indexOf(currentNavPage()); if(idx < 0) return;
+    page = document.querySelector('.nav-page.active'); if(!page) return;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; w = window.innerWidth || 360; mode = 'pending';
+  }, { passive: true });
+  host.addEventListener('touchmove', (e) => {
+    if(mode === '' || mode === 'cancel' || !page) return;
+    const t = e.touches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+    if(mode === 'pending'){
+      if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
+      if(Math.abs(dx) < Math.abs(dy) * 1.3){ mode = 'cancel'; return; }   // vertical-ish → let it scroll
+      mode = 'drag'; page.style.transition = 'none'; page.style.willChange = 'transform';
+    }
+    if(mode !== 'drag') return;
+    if(e.cancelable) e.preventDefault();
+    let d = dx;
+    if((dx > 0 && idx === 0) || (dx < 0 && idx === ORDER.length - 1)) d = dx * 0.32;   // rubber-band at the ends
+    page.style.transform = `translateX(${d}px)`;
+  }, { passive: false });
+  function endDrag(e){
+    if(mode !== 'drag'){ mode = ''; return; }
+    const t = e.changedTouches && e.changedTouches[0];
+    const dx = t ? t.clientX - sx : 0;
+    const dir = dx < 0 ? 1 : -1, ni = idx + dir;
+    const commit = Math.abs(dx) > Math.min(120, w * 0.28) && ni >= 0 && ni < ORDER.length;
+    if(commit){
+      const old = page, target = ORDER[ni];
+      try { haptic(11); } catch(err){}
+      old.style.transition = 'transform .2s cubic-bezier(.3,.8,.3,1)';
+      old.style.transform = `translateX(${dir < 0 ? w : -w}px)`;
+      setTimeout(() => {
+        showNavPage(target);
+        if(old){ old.style.transition = ''; old.style.transform = ''; old.style.willChange = ''; }
+        const np = document.querySelector('.nav-page[data-page="' + target + '"]');
+        if(np && !document.body.classList.contains('reduced-motion')){ np.classList.remove('swipe-in-l', 'swipe-in-r'); void np.offsetWidth; np.classList.add(dir > 0 ? 'swipe-in-l' : 'swipe-in-r'); }
+      }, 165);
+    } else {
+      const p = page;
+      p.style.transition = 'transform .25s cubic-bezier(.2,.9,.3,1)';
+      p.style.transform = 'translateX(0)';
+      setTimeout(() => { if(p){ p.style.transition = ''; p.style.willChange = ''; } }, 260);
+    }
+    mode = '';
+  }
+  host.addEventListener('touchend', endDrag, { passive: true });
+  host.addEventListener('touchcancel', endDrag, { passive: true });
+=======
+/* ---- Swipe between bottom-nav tabs ---- */
+(function(){
+  const ORDER = ['home', 'rank', 'play', 'friends'];
+  const SKIP = 'input,textarea,button,a,.duel-video,.lp-stage,.ladder,.lb-table,.h-scroll,.scroll-x,.chips,.seg,.volume-slider,[data-no-swipe]';
+  let sx = 0, sy = 0, t0 = 0, active = false;
+  const blocked = () => document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
+  document.addEventListener('touchstart', (e) => {
+    if(e.touches.length !== 1 || state.screen !== 'landing' || blocked()){ active = false; return; }
+    if(e.target.closest && e.target.closest(SKIP)){ active = false; return; }
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = Date.now(); active = true;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    if(!active) return; active = false;
+    const t = e.changedTouches[0]; if(!t) return;
+    const dx = t.clientX - sx, dy = t.clientY - sy;
+    if(Date.now() - t0 > 600 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+    const idx = ORDER.indexOf(currentNavPage()); if(idx < 0) return;
+    const dir = dx < 0 ? 1 : -1, ni = idx + dir;
+    if(ni < 0 || ni >= ORDER.length) return;
+    try { haptic(10); } catch(err){}
+    showNavPage(ORDER[ni]);
+    const pg = document.querySelector('.nav-page[data-page="' + ORDER[ni] + '"]');
+    if(pg && !document.body.classList.contains('reduced-motion')){ pg.classList.remove('swipe-in-l', 'swipe-in-r'); void pg.offsetWidth; pg.classList.add(dir > 0 ? 'swipe-in-l' : 'swipe-in-r'); }
+  }, { passive: true });
+>>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
+})();
+
+/* ---- Pull-to-refresh on the landing pages ---- */
+(function(){
+  if(!isCoarse()) return;
+  let el = null, sy = 0, dist = 0, pulling = false;
+  const ind = () => { if(!el){ el = document.createElement('div'); el.className = 'rcm-ptr'; el.innerHTML = icoSprite('i-rotate'); document.body.appendChild(el); } return el; };
+  const reset = () => { const i = ind(); i.classList.remove('spin'); i.style.opacity = '0'; i.style.transform = 'translate(-50%,-60px) scale(.6)'; };
+  const blocked = () => document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
+  document.addEventListener('touchstart', (e) => {
+    pulling = false;
+    if(e.touches.length !== 1 || state.screen !== 'landing' || blocked()) return;
+    if((window.scrollY || document.documentElement.scrollTop || 0) > 0) return;
+    if(e.target.closest && e.target.closest('.lp-stage,.h-scroll,.scroll-x,input,textarea')) return;
+    sy = e.touches[0].clientY; pulling = true; dist = 0;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if(!pulling) return;
+    dist = e.touches[0].clientY - sy;
+    if(dist <= 0){ reset(); return; }
+    const i = ind(), p = Math.min(1, dist / 90);
+    i.style.opacity = p.toFixed(2);
+    i.style.transform = `translate(-50%, ${Math.min(dist * 0.5, 60) - 60}px) scale(${(0.6 + p * 0.4).toFixed(2)}) rotate(${(dist * 2).toFixed(0)}deg)`;
+  }, { passive: true });
+  document.addEventListener('touchend', () => {
+    if(!pulling) return; pulling = false;
+    const i = ind();
+    if(dist > 80){
+      i.style.transform = 'translate(-50%, 6px) scale(1)'; i.style.opacity = '1'; i.classList.add('spin');
+      try { haptic(14); } catch(e){}
+      try { showNavPage(currentNavPage()); } catch(e){}
+      try { toast('Refreshed', 'success', { duration: 1100 }); } catch(e){}
+      setTimeout(reset, 800);
+    } else { reset(); }
+    dist = 0;
+  }, { passive: true });
+})();
+
+<<<<<<< HEAD
+/* ---- First-run mobile nudges (gentle, once, never over another sheet) ---- */
+const _noSheetOpen = () => !document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
+if(isCoarse() && isInAppBrowser()) setTimeout(showInAppBanner, 1600);
+// iOS has no native install prompt, so a one-time A2HS tip is genuinely useful.
+// Android keeps the quiet Settings › Install row (+ Chrome's own prompt) instead.
+if(isCoarse() && isIOS() && !isStandalone()){
+  setTimeout(() => { if(state.screen === 'landing' && currentNavPage() === 'home' && _noSheetOpen()) showInstallCoaching(); }, 20000);
+  // iOS gets no beforeinstallprompt, so expose the Settings › Install row and let
+  // it re-open the Add-to-Home-Screen steps on demand.
+  const _ir = document.getElementById('setInstall');
+  if(_ir){ _ir.style.display = ''; _ir.addEventListener('click', () => showInstallCoaching(true)); }
+}
+=======
+/* ---- First-run mobile nudges ---- */
+if(isCoarse() && isInAppBrowser()) setTimeout(showInAppBanner, 1600);
+if(isCoarse() && isIOS() && !isStandalone()) setTimeout(() => { if(state.screen === 'landing') showInstallCoaching(); }, 16000);
+window.addEventListener('beforeinstallprompt', () => setTimeout(() => { if(state.screen === 'landing') showInstallCoaching(); }, 12000));
+>>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
+setTimeout(() => { try { if(notifyEnabled()) ensurePushSubscription(); } catch(e){} }, 4000);
+
 // ===== PWA INSTALL PROMPT =====
 let _deferredInstall = null;
 function triggerInstall(){
