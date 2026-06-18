@@ -14604,7 +14604,6 @@ body.reduced-motion .nav-page.swipe-in-l, body.reduced-motion .nav-page.swipe-in
     content:''; position:absolute; inset:-9px; border-radius:inherit; }
 }
 
-<<<<<<< HEAD
 /* --- Thumb-friendly add-friend + comfortable modal sheets on phones --- */
 @media (max-width: 600px){
   .add-friend-input{ gap:8px; }
@@ -14616,8 +14615,6 @@ body.reduced-motion .nav-page.swipe-in-l, body.reduced-motion .nav-page.swipe-in
   .profile-modal .modal-close{ z-index:5; background:rgba(8,7,13,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
 }
 
-=======
->>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
 </style>
 </head>
 <body>
@@ -31605,7 +31602,6 @@ async function showPhoneSetupHint(){
   lsSet('rosham_phonehint_seen', '1');
 }
 
-<<<<<<< HEAD
 /* ---- Camera-permission primer (before the OS prompt) — informational ---- */
 async function showCameraPriming(){
   await buildSheet({
@@ -31613,21 +31609,6 @@ async function showCameraPriming(){
     body: 'There are no buttons — ROSHCAM reads your real hand. Your video is peer-to-peer with your opponent only, and live only during a match.',
     actions: [{ label: 'Continue', kind: 'primary', value: true, html: icoSprite('i-camera') }],
   });
-=======
-/* ---- Camera-permission primer (before the OS prompt) ---- */
-async function showCameraPriming(){
-  const v = await buildSheet({
-    icon: icoSprite('i-camera'), title: 'Your camera is the controller',
-    body: 'There are no buttons — ROSHCAM reads your real hand. Your video is peer-to-peer with your opponent only.',
-    steps: [
-      { n: icoSprite('i-lock'), html: 'Live <b>only during a match</b> — never recorded or stored.' },
-      { n: icoSprite('i-eye'), html: 'Seen by your <b>current opponent</b> only, then it stops.' },
-    ],
-    actions: [{ label: 'Enable camera', kind: 'primary', value: true, html: icoSprite('i-camera') }],
-    skip: 'Not now', skipValue: false, dismissValue: false,
-  });
-  return v === true;
->>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
 }
 
 /* ---- Camera blocked → recovery help ---- */
@@ -31685,20 +31666,12 @@ function showInAppBanner(){
 }
 
 /* ---- Add-to-home-screen coaching (once) ---- */
-<<<<<<< HEAD
 function showInstallCoaching(force){
   if(isStandalone() || !isCoarse()) return;
   if(!force && lsGet('rosham_install_coached') === '1') return;
   const ios = isIOS();
   if(!ios && !_deferredInstall) return;
   if(!force) lsSet('rosham_install_coached', '1');
-=======
-function showInstallCoaching(){
-  if(isStandalone() || !isCoarse() || lsGet('rosham_install_coached') === '1') return;
-  const ios = isIOS();
-  if(!ios && !_deferredInstall) return;
-  lsSet('rosham_install_coached', '1');
->>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
   if(ios){
     buildSheet({
       icon: icoSprite('i-plus'), title: 'Add ROSHCAM to your Home Screen',
@@ -31722,7 +31695,6 @@ function showInstallCoaching(){
   }
 }
 
-<<<<<<< HEAD
 /* ---- Ranked pre-flight — informational only, NEVER blocks entering a match.
    (A blocked/denied camera is still surfaced by setupCamera's own help sheet.) ---- */
 async function mobilePreflight(){
@@ -31732,16 +31704,6 @@ async function mobilePreflight(){
     if(perm !== 'granted' && !state.cameraReady) await showCameraPriming();
     if(!lsGet('rosham_phonehint_seen')) await showPhoneSetupHint();
   } catch(e){ console.warn('[preflight]', e); }
-=======
-/* ---- Ranked pre-flight gate ---- */
-async function mobilePreflight(){
-  if(!isCoarse()) return true;
-  if(isInAppBrowser() && !ssGet('rcm_inapp_ack')){ if(!(await showInAppBrowserSheet())) return false; }
-  const perm = await cameraPermissionState();
-  if(perm === 'denied' && !state.cameraReady){ showCameraHelp(); return false; }
-  if(perm !== 'granted' && !state.cameraReady){ if(!(await showCameraPriming())) return false; }
-  if(!lsGet('rosham_phonehint_seen')){ await showPhoneSetupHint(); }
->>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
   return true;
 }
 
@@ -31867,7 +31829,6 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   }, { passive: true });
 })();
 
-<<<<<<< HEAD
 /* ---- Interactive finger-following pager (swipe between bottom-nav tabs) ----
    The current page tracks your finger and releases into the next/previous tab,
    with a rubber-band at the ends — proper native-app feel. */
@@ -31926,32 +31887,6 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   }
   host.addEventListener('touchend', endDrag, { passive: true });
   host.addEventListener('touchcancel', endDrag, { passive: true });
-=======
-/* ---- Swipe between bottom-nav tabs ---- */
-(function(){
-  const ORDER = ['home', 'rank', 'play', 'friends'];
-  const SKIP = 'input,textarea,button,a,.duel-video,.lp-stage,.ladder,.lb-table,.h-scroll,.scroll-x,.chips,.seg,.volume-slider,[data-no-swipe]';
-  let sx = 0, sy = 0, t0 = 0, active = false;
-  const blocked = () => document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
-  document.addEventListener('touchstart', (e) => {
-    if(e.touches.length !== 1 || state.screen !== 'landing' || blocked()){ active = false; return; }
-    if(e.target.closest && e.target.closest(SKIP)){ active = false; return; }
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; t0 = Date.now(); active = true;
-  }, { passive: true });
-  document.addEventListener('touchend', (e) => {
-    if(!active) return; active = false;
-    const t = e.changedTouches[0]; if(!t) return;
-    const dx = t.clientX - sx, dy = t.clientY - sy;
-    if(Date.now() - t0 > 600 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
-    const idx = ORDER.indexOf(currentNavPage()); if(idx < 0) return;
-    const dir = dx < 0 ? 1 : -1, ni = idx + dir;
-    if(ni < 0 || ni >= ORDER.length) return;
-    try { haptic(10); } catch(err){}
-    showNavPage(ORDER[ni]);
-    const pg = document.querySelector('.nav-page[data-page="' + ORDER[ni] + '"]');
-    if(pg && !document.body.classList.contains('reduced-motion')){ pg.classList.remove('swipe-in-l', 'swipe-in-r'); void pg.offsetWidth; pg.classList.add(dir > 0 ? 'swipe-in-l' : 'swipe-in-r'); }
-  }, { passive: true });
->>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
 })();
 
 /* ---- Pull-to-refresh on the landing pages ---- */
@@ -31990,7 +31925,6 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   }, { passive: true });
 })();
 
-<<<<<<< HEAD
 /* ---- First-run mobile nudges (gentle, once, never over another sheet) ---- */
 const _noSheetOpen = () => !document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
 if(isCoarse() && isInAppBrowser()) setTimeout(showInAppBanner, 1600);
@@ -32003,12 +31937,6 @@ if(isCoarse() && isIOS() && !isStandalone()){
   const _ir = document.getElementById('setInstall');
   if(_ir){ _ir.style.display = ''; _ir.addEventListener('click', () => showInstallCoaching(true)); }
 }
-=======
-/* ---- First-run mobile nudges ---- */
-if(isCoarse() && isInAppBrowser()) setTimeout(showInAppBanner, 1600);
-if(isCoarse() && isIOS() && !isStandalone()) setTimeout(() => { if(state.screen === 'landing') showInstallCoaching(); }, 16000);
-window.addEventListener('beforeinstallprompt', () => setTimeout(() => { if(state.screen === 'landing') showInstallCoaching(); }, 12000));
->>>>>>> 561d6c47e35d2e55aa32cee8fbe1ac9d8088c250
 setTimeout(() => { try { if(notifyEnabled()) ensurePushSubscription(); } catch(e){} }, 4000);
 
 // ===== PWA INSTALL PROMPT =====
