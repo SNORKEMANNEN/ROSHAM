@@ -12330,7 +12330,7 @@ body.reduced-motion .sk, body.low-power .sk{ animation: none; }
 @keyframes sheetDown{ from{ transform: translateY(0); } to{ transform: translateY(100%); } }
 .more-sheet-handle{ width: 44px; height: 5px; border-radius: 999px; background: var(--line-bright, rgba(255,255,255,.3)); margin: 8px auto 4px; flex: 0 0 auto; position: relative; }
 .more-sheet-handle::before{ content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:140px; height:32px; }
-.ms-scroll{ overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 8px 16px calc(18px + env(safe-area-inset-bottom,0px)); scrollbar-width: none; }
+.ms-scroll{ flex:1 1 auto; min-height:0; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; padding: 8px 16px calc(18px + env(safe-area-inset-bottom,0px)); scrollbar-width: none; }
 .ms-scroll::-webkit-scrollbar{ display: none; }
 /* profile card */
 .ms-profile{ display: flex; align-items: center; gap: 13px; padding: 13px; border-radius: 18px; cursor: pointer;
@@ -14613,6 +14613,188 @@ body.reduced-motion .nav-page.swipe-in-l, body.reduced-motion .nav-page.swipe-in
   .modal-bg .modal{ padding-bottom:calc(26px + env(safe-area-inset-bottom, 0px)); }
   /* the profile sheet's close button clears the rank banner cleanly */
   .profile-modal .modal-close{ z-index:5; background:rgba(8,7,13,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+}
+
+/* ===== v1.5 mobile polish — scroll-lock, tap feedback, smooth menus ===== */
+/* Keep scrolls inside their sheet, and lock the page behind an open sheet. */
+.modal, .rcm-sheet-card, .flyout-body, .chat-conv-list{ overscroll-behavior: contain; }
+.more-sheet{ touch-action: none; }
+.more-sheet-card{ touch-action: pan-y; }
+@supports selector(:has(*)){
+  html:has(.more-sheet.show, .modal-bg.show, .rcm-sheet.show, #chatPanel.show, #notifPanel.show){ overflow: hidden; }
+}
+
+/* Satisfying tap ripple at the finger (touch only; created in JS) */
+.tap-ripple{ position:fixed; z-index:99990; width:16px; height:16px; margin:-8px 0 0 -8px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(34,211,163,.5), rgba(34,211,163,0) 70%); will-change:transform,opacity;
+  animation:tapRipple .56s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes tapRipple{ from{ transform:scale(.35); opacity:.85; } to{ transform:scale(7); opacity:0; } }
+
+/* Ring burst on primary actions */
+.tap-ring{ position:fixed; z-index:99989; margin:0; border-radius:50%; pointer-events:none;
+  border:2px solid rgba(34,211,163,.6); will-change:transform,opacity; transform:translate(-50%,-50%) scale(.7);
+  animation:tapRing .5s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes tapRing{ from{ opacity:.7; transform:translate(-50%,-50%) scale(.7); } to{ opacity:0; transform:translate(-50%,-50%) scale(1.85); } }
+/* Spring-pop on button release */
+.tap-pop{ animation:tapPop .3s cubic-bezier(.2,.8,.3,1.2); }
+@keyframes tapPop{ 0%{ transform:scale(.96); } 55%{ transform:scale(1.035); } 100%{ transform:scale(1); } }
+/* Firmer press on small icon / send buttons (touch, motion-safe) */
+@media (hover:none) and (pointer:coarse){
+  body:not(.reduced-motion):not(.low-power) .icon-btn:active,
+  body:not(.reduced-motion):not(.low-power) .topbar-icon-btn:active,
+  body:not(.reduced-motion):not(.low-power) .gc-send:active,
+  body:not(.reduced-motion):not(.low-power) #chatThreadSend:active,
+  body:not(.reduced-motion):not(.low-power) #chatSendBtn:active{ transform:scale(.86); }
+}
+
+/* Tactile press feedback on touch (disabled in reduced-motion / low-power) */
+@media (hover:none) and (pointer:coarse){
+  body:not(.reduced-motion):not(.low-power) .btn,
+  body:not(.reduced-motion):not(.low-power) .btn-cta,
+  body:not(.reduced-motion):not(.low-power) .ms-row,
+  body:not(.reduced-motion):not(.low-power) .ms-tile,
+  body:not(.reduced-motion):not(.low-power) .ms-quick-btn,
+  body:not(.reduced-motion):not(.low-power) .ms-profile,
+  body:not(.reduced-motion):not(.low-power) .settings-row,
+  body:not(.reduced-motion):not(.low-power) .rcm-btn,
+  body:not(.reduced-motion):not(.low-power) .mode-card,
+  body:not(.reduced-motion):not(.low-power) .play-quick-btn,
+  body:not(.reduced-motion):not(.low-power) .friend-card,
+  body:not(.reduced-motion):not(.low-power) .lbg-row,
+  body:not(.reduced-motion):not(.low-power) .card.clickable,
+  body:not(.reduced-motion):not(.low-power) .opt-pill{
+    transition: transform .13s cubic-bezier(.2,.7,.3,1), filter .13s, box-shadow .13s;
+  }
+  body:not(.reduced-motion):not(.low-power) .btn:active,
+  body:not(.reduced-motion):not(.low-power) .btn-cta:active,
+  body:not(.reduced-motion):not(.low-power) .ms-row:active,
+  body:not(.reduced-motion):not(.low-power) .ms-tile:active,
+  body:not(.reduced-motion):not(.low-power) .ms-quick-btn:active,
+  body:not(.reduced-motion):not(.low-power) .ms-profile:active,
+  body:not(.reduced-motion):not(.low-power) .settings-row:active,
+  body:not(.reduced-motion):not(.low-power) .rcm-btn:active,
+  body:not(.reduced-motion):not(.low-power) .mode-card:active,
+  body:not(.reduced-motion):not(.low-power) .play-quick-btn:active,
+  body:not(.reduced-motion):not(.low-power) .friend-card:active,
+  body:not(.reduced-motion):not(.low-power) .lbg-row:active,
+  body:not(.reduced-motion):not(.low-power) .card.clickable:active,
+  body:not(.reduced-motion):not(.low-power) .opt-pill:active{
+    transform: scale(.965); filter: brightness(1.07);
+  }
+}
+
+/* Smooth staggered reveal of the More-sheet content */
+.more-sheet.show .ms-scroll > *{ animation: msItemIn .34s cubic-bezier(.2,.9,.3,1) both; }
+.more-sheet.show .ms-scroll > *:nth-child(1){ animation-delay:.02s; }
+.more-sheet.show .ms-scroll > *:nth-child(2){ animation-delay:.06s; }
+.more-sheet.show .ms-scroll > *:nth-child(3){ animation-delay:.10s; }
+.more-sheet.show .ms-scroll > *:nth-child(4){ animation-delay:.14s; }
+.more-sheet.show .ms-scroll > *:nth-child(5){ animation-delay:.18s; }
+.more-sheet.show .ms-scroll > *:nth-child(6){ animation-delay:.22s; }
+.more-sheet.show .ms-scroll > *:nth-child(n+7){ animation-delay:.26s; }
+@keyframes msItemIn{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
+body.reduced-motion .more-sheet .ms-scroll > *, body.low-power .more-sheet .ms-scroll > *{ animation:none !important; }
+
+/* Page content rises in on every navigation (mobile, motion-safe) */
+@keyframes pgRise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+@media (hover:none) and (pointer:coarse){
+  body:not(.reduced-motion):not(.low-power) .nav-page.page-enter > *{ animation: pgRise .42s cubic-bezier(.2,.85,.3,1) both; }
+  .nav-page.page-enter > *:nth-child(1){ animation-delay:.03s; }
+  .nav-page.page-enter > *:nth-child(2){ animation-delay:.07s; }
+  .nav-page.page-enter > *:nth-child(3){ animation-delay:.11s; }
+  .nav-page.page-enter > *:nth-child(4){ animation-delay:.15s; }
+  .nav-page.page-enter > *:nth-child(5){ animation-delay:.19s; }
+  .nav-page.page-enter > *:nth-child(6){ animation-delay:.23s; }
+  .nav-page.page-enter > *:nth-child(n+7){ animation-delay:.27s; }
+}
+
+/* Central Play button gently breathes — draws the eye, adds game feel */
+@keyframes playBreathe{ 0%,100%{ box-shadow:0 8px 22px -8px var(--mint-glow, rgba(34,211,163,.55)); } 50%{ box-shadow:0 10px 34px -6px var(--mint-glow, rgba(34,211,163,.95)); } }
+@media (hover:none) and (pointer:coarse){
+  body:not(.reduced-motion):not(.low-power) .mobile-nav-item.mni-play:not(.active) .mni-play-btn{ animation: playBreathe 3.2s ease-in-out infinite; }
+}
+
+/* Bottom-nav: a soft ring pulse when a tab becomes active */
+.mobile-nav-item .mni-icon{ position:relative; }
+@keyframes navPulse{ from{ opacity:.55; transform:scale(.7); } to{ opacity:0; transform:scale(1.55); } }
+@media (hover:none) and (pointer:coarse){
+  body:not(.reduced-motion):not(.low-power) .mobile-nav-item.active .mni-icon::after{
+    content:''; position:absolute; inset:-4px; border-radius:50%; border:2px solid var(--mint);
+    animation: navPulse .5s ease-out forwards; pointer-events:none;
+  }
+}
+
+/* ===== v1.6 mobile polish ===== */
+/* Snappier taps: no 300ms delay, no double-tap zoom on controls */
+@media (hover:none) and (pointer:coarse){
+  button, .btn, .btn-cta, .ms-row, .ms-tile, .ms-quick-btn, .settings-row, .rcm-btn,
+  .mode-card, .play-quick-btn, .mobile-nav-item, .icon-btn, .topbar-icon-btn, .opt-pill,
+  .friend-card, .lbg-row, .chip, .seg-btn, [data-act], [data-mnav], [data-nav]{ touch-action: manipulation; }
+  /* no long-press save menu on the arena video + avatars */
+  .duel-video, .duel-video video, .mf-avatar, .av-xl, .ms-av, .pl-logo{ -webkit-touch-callout: none; }
+}
+/* keep chat / message scrolls from chaining out to the page */
+#chatMessages, .dock-chat-history, .chat-thread-body, .chat-conv-list, .flyout-body{ overscroll-behavior: contain; }
+
+/* Brand-consistent native UI bits + no iOS text auto-zoom in landscape */
+html{ -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+::selection{ background: rgba(34,211,163,.32); color: #fff; }
+input, textarea{ caret-color: var(--mint); }
+input[type=checkbox], input[type=radio], input[type=range], progress{ accent-color: var(--mint); }
+
+/* ===== v1.7 — declutter Profile + Edit Profile on phones ===== */
+@media (max-width: 600px){
+  /* roomier, more scannable stat cells */
+  .profile-modal .pm-stats{ gap:9px; margin-bottom:9px; }
+  .profile-modal .pm-stat{ padding:15px 8px; border-radius:16px; }
+  .profile-modal .pm-stat .v{ font-size:23px; }
+  .profile-modal .pm-stat .l{ font-size:9.5px; letter-spacing:.05em; }
+  /* one consistent rhythm + calmer headers between the many sections */
+  .profile-modal .pm-status, .profile-modal .bio, .profile-modal .pm-showcase,
+  .profile-modal .pm-form-wrap, .profile-modal .pm-h2h, .profile-modal .pm-rankprog,
+  .profile-modal .pm-level-bar-wrap, .profile-modal .pm-badges-section,
+  .profile-modal .match-history, .profile-modal .pm-comments{ margin-top:20px; }
+  .profile-modal h4{ font-family:var(--font-mono); font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-faint); margin:0 0 11px; font-weight:700; }
+  /* thumb-friendly comment composer */
+  .profile-modal .pm-comment-compose{ gap:9px; }
+  .profile-modal .pm-comment-compose input{ min-height:48px; font-size:16px; border-radius:14px; padding:0 16px; }
+  .profile-modal .pm-comment-compose button{ width:48px; height:48px; flex:0 0 48px; }
+
+  /* sticky, prioritised action bar — Challenge/Edit lead, always reachable */
+  #profileModal .modal{ padding-bottom:0 !important; }
+  .profile-modal .modal-actions{
+    position:sticky; bottom:0; z-index:6;
+    margin:20px -18px 0; padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));
+    display:flex; flex-wrap:wrap; gap:9px;
+    background:linear-gradient(180deg, transparent, var(--surface) 34%);
+    border-top:1px solid var(--line); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  }
+  .profile-modal .modal-actions .btn{ flex:1 1 44%; justify-content:center; min-height:50px; border-radius:14px; font-size:15px; }
+  .profile-modal #pmChallengeBtn, .profile-modal #pmEditBtn{ order:-2; flex-basis:100%; }
+  .profile-modal #pmAddFriendBtn, .profile-modal #pmMessageBtn{ order:-1; }
+
+  /* --- Edit profile: roomier fields, clearer sections, sticky Save --- */
+  #editProfileModal form{ gap:18px !important; }
+  #editProfileModal .field input, #editProfileModal .field select, #editProfileModal .field textarea{ min-height:50px; padding:14px 16px; border-radius:13px; }
+  #editProfileModal .field textarea{ min-height:84px; }
+  #editProfileModal .ep-section{ margin-top:8px; padding-top:16px; border-top:1px solid var(--line-soft); }
+  #editProfileModal .ep-section:first-child{ border-top:none; padding-top:0; margin-top:0; }
+  #editProfileModal .color-pick{ gap:10px; }
+  #editProfileModal .color-pick button{ width:44px; height:44px; border-radius:12px; }
+  #editProfileModal .accent-pick{ gap:10px; }
+  #editProfileModal .accent-pick button{ width:46px; height:46px; border-radius:13px; }
+  #editProfileModal .banner-pick, #editProfileModal .title-pick, #editProfileModal .showcase-pick{ gap:10px; }
+  #editProfileModal .btn-upload{ min-height:48px; padding:0 16px; border-radius:13px; }
+  #editProfileModal .modal{ padding-bottom:0 !important; }
+  #editProfileModal .modal-actions{
+    position:sticky; bottom:0; z-index:6;
+    margin:18px -18px 0 !important; padding:12px 16px calc(14px + env(safe-area-inset-bottom,0px));
+    gap:10px; background:linear-gradient(180deg, transparent, var(--surface) 34%);
+    border-top:1px solid var(--line); -webkit-backdrop-filter:blur(12px); backdrop-filter:blur(12px);
+  }
+  #editProfileModal .modal-actions .btn{ min-height:50px; border-radius:13px; }
+  #editProfileModal .modal-actions .btn-primary{ flex:1; justify-content:center; font-size:16px; }
+  #editProfileModal #viewBlockedBtn{ flex:0 0 auto; }
 }
 
 </style>
@@ -19142,6 +19324,7 @@ function _ensureToastContainer(){
 }
 const TOAST_ICONS = { success:'i-check', error:'i-close', info:'i-zap', '':'i-zap' };
 function toast(text, kind='', opts={}){
+  try { if((kind === 'success' || kind === 'error') && isCoarse()) haptic(kind === 'error' ? [12, 30, 12] : 14); } catch(e){}
   try {
     const c = _ensureToastContainer();
     const el = document.createElement('div');
@@ -24801,6 +24984,7 @@ function cancelMatchmakingResources(){
 async function showMatchFound(){
   $('#matchSearchView').style.display = 'none';
   $('#matchFoundView').style.display = '';
+  try { haptic([40, 30, 70]); } catch(e){}
 
   // ===== YOU =====
   renderAvatar($('#mfYouAv'), state.profile);
@@ -28565,6 +28749,11 @@ function showNavPage(page){
   // scroll content to top
   const sc = document.querySelector('.screens'); if(sc) sc.scrollTop = 0;
   window.scrollTo({ top: 0 });
+  // Animated content entrance — content rises in on every navigation. Skipped
+  // during a swipe (the pager runs its own slide so we don't double-animate).
+  if(!window._swipeNav){
+    try { const ap = document.querySelector('.nav-page[data-page="' + page + '"]'); if(ap){ ap.classList.remove('page-enter'); void ap.offsetWidth; ap.classList.add('page-enter'); } } catch(e){}
+  }
 }
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -30300,6 +30489,15 @@ document.querySelectorAll('.mobile-nav-item').forEach(btn => {
       openMoreSheet();
       return;
     }
+    // Tapping the tab you're already on scrolls back to the top (app convention).
+    try {
+      if(state.screen === 'landing' && typeof currentNavPage === 'function' && currentNavPage() === target && (window.scrollY || 0) > 8){
+        try { haptic(8); } catch(e){}
+        window.scrollTo({ top: 0, behavior: document.body.classList.contains('reduced-motion') ? 'auto' : 'smooth' });
+        const m = document.getElementById('mobileNav'); if(m) m.classList.remove('nav-tucked');
+        return;
+      }
+    } catch(e){}
     showNavPage(target);
   });
 });
@@ -30334,6 +30532,7 @@ function openMoreSheet(){
   try { $('#moreSheetAdmin').style.display = isAdmin() ? '' : 'none'; } catch(e){}
   sheet.classList.remove('closing');
   sheet.classList.add('show');
+  try { if(isCoarse()) haptic(10); } catch(e){}
 }
 function closeMoreSheet(){
   const sheet = $('#moreSheet'); if(!sheet || !sheet.classList.contains('show')) return;
@@ -31829,64 +32028,194 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   }, { passive: true });
 })();
 
-/* ---- Interactive finger-following pager (swipe between bottom-nav tabs) ----
-   The current page tracks your finger and releases into the next/previous tab,
-   with a rubber-band at the ends — proper native-app feel. */
+/* ---- Rich button tap feedback: ripple at the finger, spring-pop on release,
+   and a ring burst on primary actions (touch only; off in reduced/low-power) ---- */
+(function(){
+  if(!isCoarse()) return;
+  const RIPPLE = 'button,.btn,.btn-cta,.ms-row,.ms-tile,.ms-quick-btn,.ms-profile,.settings-row,.rcm-btn,.mode-card,.play-quick-btn,.mobile-nav-item,.friend-card,.friend-row,.lbg-row,.opt-pill,.chip,.seg-btn,.rx-chip,[data-act],[data-mnav],[data-nav],.icon-btn,.topbar-icon-btn';
+  const POP = 'button,.btn,.btn-cta,.ms-row,.ms-tile,.ms-quick-btn,.settings-row,.rcm-btn,.icon-btn,.topbar-icon-btn,.opt-pill,.play-quick-btn,.mode-card';
+  const RING = '.btn-primary,.btn-cta,.mni-play-btn,#findBtn,#playPageFindBtn';
+  const off = () => document.body.classList.contains('reduced-motion') || document.body.classList.contains('low-power');
+  document.addEventListener('pointerdown', (e) => {
+    if(e.pointerType !== 'touch' || off()) return;
+    const t = e.target;
+    if(t.closest && t.closest(RIPPLE)){
+      const r = document.createElement('span'); r.className = 'tap-ripple';
+      r.style.left = e.clientX + 'px'; r.style.top = e.clientY + 'px';
+      document.body.appendChild(r);
+      r.addEventListener('animationend', () => r.remove(), { once: true });
+      setTimeout(() => { if(r.isConnected) r.remove(); }, 700);
+    }
+    const rb = t.closest && t.closest(RING);
+    if(rb){
+      const rect = rb.getBoundingClientRect(), sz = Math.min(Math.max(rect.width, rect.height) * 0.9, 150);
+      const ring = document.createElement('span'); ring.className = 'tap-ring';
+      ring.style.left = (rect.left + rect.width / 2) + 'px'; ring.style.top = (rect.top + rect.height / 2) + 'px';
+      ring.style.width = sz + 'px'; ring.style.height = sz + 'px';
+      document.body.appendChild(ring);
+      ring.addEventListener('animationend', () => ring.remove(), { once: true });
+      setTimeout(() => { if(ring.isConnected) ring.remove(); }, 700);
+    }
+  }, { passive: true });
+  document.addEventListener('pointerup', (e) => {
+    if(e.pointerType !== 'touch' || off()) return;
+    const el = e.target.closest && e.target.closest(POP);
+    if(!el) return;
+    el.classList.remove('tap-pop'); void el.offsetWidth; el.classList.add('tap-pop');
+    el.addEventListener('animationend', () => el.classList.remove('tap-pop'), { once: true });
+  }, { passive: true });
+})();
+
+/* ---- Seamless pager: the incoming page tracks your finger in (no empty gap) ----
+   The active page follows the finger; the neighbour is rendered and slid in as a
+   fixed overlay alongside it, releasing into the next/previous tab. Rubber-bands
+   at the ends; falls back to a plain slide in reduced-motion / low-power. */
 (function(){
   const ORDER = ['home', 'rank', 'play', 'friends'];
   const SKIP = 'input,textarea,button,a,.duel-video,.lp-stage,.ladder,.lb-table,.h-scroll,.scroll-x,.chips,.seg,.volume-slider,.swiper,[data-no-swipe]';
   const host = document.querySelector('.screens') || document.body;
   const blocked = () => document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
-  let sx = 0, sy = 0, mode = '', page = null, idx = -1, w = 1;
+  function renderFor(p){
+    try { const y = window.scrollY;
+      if(p === 'home') renderHomePage(); else if(p === 'rank') renderRankPage();
+      else if(p === 'play') renderPlayPage(); else if(p === 'friends') renderFriendsPage();
+      window.scrollTo(0, y);
+    } catch(e){}
+  }
+  function showNeighbour(nb, fromRight){
+    nb._savedStyle = nb.getAttribute('style') || '';
+    nb.style.display = 'block'; nb.style.position = 'fixed'; nb.style.inset = '0';
+    nb.style.zIndex = '60'; nb.style.overflow = 'hidden'; nb.style.transition = 'none';
+    nb.style.willChange = 'transform'; nb.style.transform = `translateX(${fromRight ? w : -w}px)`;
+  }
+  function restore(el){ if(el){ if(el._savedStyle != null) el.setAttribute('style', el._savedStyle); else el.removeAttribute('style'); el._savedStyle = null; } }
+  let sx = 0, sy = 0, mode = '', page = null, nb = null, idx = -1, ni = -1, w = 1, dirSign = 0, reduced = false;
   host.addEventListener('touchstart', (e) => {
-    mode = '';
+    if(mode === 'committing') return;                 // let the current transition finish
+    mode = ''; nb = null; page = null;
     if(e.touches.length !== 1 || state.screen !== 'landing' || blocked() || document.body.classList.contains('kb-open')) return;
     if(e.target.closest && e.target.closest(SKIP)) return;
     idx = ORDER.indexOf(currentNavPage()); if(idx < 0) return;
     page = document.querySelector('.nav-page.active'); if(!page) return;
-    sx = e.touches[0].clientX; sy = e.touches[0].clientY; w = window.innerWidth || 360; mode = 'pending';
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; w = window.innerWidth || 360;
+    reduced = document.body.classList.contains('reduced-motion') || document.body.classList.contains('low-power');
+    mode = 'pending';
   }, { passive: true });
   host.addEventListener('touchmove', (e) => {
-    if(mode === '' || mode === 'cancel' || !page) return;
+    if(mode === '' || mode === 'cancel' || mode === 'committing' || !page) return;
     const t = e.touches[0], dx = t.clientX - sx, dy = t.clientY - sy;
     if(mode === 'pending'){
       if(Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
       if(Math.abs(dx) < Math.abs(dy) * 1.3){ mode = 'cancel'; return; }   // vertical-ish → let it scroll
+      dirSign = dx < 0 ? 1 : -1; ni = idx + dirSign;
       mode = 'drag'; page.style.transition = 'none'; page.style.willChange = 'transform';
+      if(ni >= 0 && ni < ORDER.length && !reduced){
+        nb = document.querySelector('.nav-page[data-page="' + ORDER[ni] + '"]');
+        if(nb){ try { renderFor(ORDER[ni]); showNeighbour(nb, dirSign > 0); } catch(err){ nb = null; } }
+      }
     }
     if(mode !== 'drag') return;
     if(e.cancelable) e.preventDefault();
     let d = dx;
     if((dx > 0 && idx === 0) || (dx < 0 && idx === ORDER.length - 1)) d = dx * 0.32;   // rubber-band at the ends
     page.style.transform = `translateX(${d}px)`;
+    if(nb) nb.style.transform = `translateX(${(dirSign > 0 ? w : -w) + d}px)`;
   }, { passive: false });
   function endDrag(e){
-    if(mode !== 'drag'){ mode = ''; return; }
+    if(mode !== 'drag'){ if(mode !== 'committing') mode = ''; return; }
     const t = e.changedTouches && e.changedTouches[0];
     const dx = t ? t.clientX - sx : 0;
-    const dir = dx < 0 ? 1 : -1, ni = idx + dir;
     const commit = Math.abs(dx) > Math.min(120, w * 0.28) && ni >= 0 && ni < ORDER.length;
+    const oldPage = page, oldNb = nb, dir = dirSign, target = ORDER[ni];
+    mode = 'committing';
     if(commit){
-      const old = page, target = ORDER[ni];
       try { haptic(11); } catch(err){}
-      old.style.transition = 'transform .2s cubic-bezier(.3,.8,.3,1)';
-      old.style.transform = `translateX(${dir < 0 ? w : -w}px)`;
+      const tr = 'transform .2s cubic-bezier(.3,.8,.3,1)';
+      if(oldPage){ oldPage.style.transition = tr; oldPage.style.transform = `translateX(${dir < 0 ? w : -w}px)`; }
+      if(oldNb){ oldNb.style.transition = tr; oldNb.style.transform = 'translateX(0)'; }
       setTimeout(() => {
+        if(oldPage){ oldPage.style.transition = ''; oldPage.style.transform = ''; oldPage.style.willChange = ''; }
+        restore(oldNb);
+        window._swipeNav = true;
         showNavPage(target);
-        if(old){ old.style.transition = ''; old.style.transform = ''; old.style.willChange = ''; }
-        const np = document.querySelector('.nav-page[data-page="' + target + '"]');
-        if(np && !document.body.classList.contains('reduced-motion')){ np.classList.remove('swipe-in-l', 'swipe-in-r'); void np.offsetWidth; np.classList.add(dir > 0 ? 'swipe-in-l' : 'swipe-in-r'); }
-      }, 165);
+        window._swipeNav = false;
+        if(reduced){ /* no extra animation */ }
+        else { const np = document.querySelector('.nav-page[data-page="' + target + '"]'); if(np){ np.classList.remove('swipe-in-l', 'swipe-in-r', 'page-enter'); void np.offsetWidth; np.classList.add(dir > 0 ? 'swipe-in-l' : 'swipe-in-r'); } }
+        mode = '';
+      }, oldNb ? 190 : 150);
     } else {
-      const p = page;
-      p.style.transition = 'transform .25s cubic-bezier(.2,.9,.3,1)';
-      p.style.transform = 'translateX(0)';
-      setTimeout(() => { if(p){ p.style.transition = ''; p.style.willChange = ''; } }, 260);
+      const tr = 'transform .25s cubic-bezier(.2,.9,.3,1)';
+      if(oldPage){ oldPage.style.transition = tr; oldPage.style.transform = 'translateX(0)'; }
+      if(oldNb){ oldNb.style.transition = tr; oldNb.style.transform = `translateX(${dir > 0 ? w : -w}px)`; }
+      setTimeout(() => {
+        if(oldPage){ oldPage.style.transition = ''; oldPage.style.transform = ''; oldPage.style.willChange = ''; }
+        restore(oldNb);
+        mode = '';
+      }, 270);
     }
-    mode = '';
+    page = null; nb = null;
   }
   host.addEventListener('touchend', endDrag, { passive: true });
   host.addEventListener('touchcancel', endDrag, { passive: true });
+})();
+
+/* ---- Hardware / gesture "back" closes the open sheet, modal or flyout ----
+   (Android convention; also iOS PWA edge-swipe.) Pushes a trap history entry
+   while an overlay is open and pops it to dismiss, instead of leaving the app.
+   Degrades safely — overlays still close via backdrop tap / swipe-down. */
+(function(){
+  if(!history.pushState) return;
+  let trapped = false, inPop = false, lastHint = 0;
+  function overlayClose(){
+    const notif = document.getElementById('notifPanel'), chat = document.getElementById('chatPanel');
+    if((notif && notif.classList.contains('show')) || (chat && chat.classList.contains('show'))) return () => { try { closeAllFlyouts(); } catch(e){} };
+    const more = document.getElementById('moreSheet');
+    if(more && more.classList.contains('show') && !more.classList.contains('closing')) return () => { try { closeMoreSheet(); } catch(e){} };
+    const modal = document.querySelector('.modal-bg.show');
+    if(modal) return () => { modal.classList.remove('show'); if(modal.id === 'calibrationModal'){ try { calibStopStream(); } catch(e){} } };
+    return null;
+  }
+  const inGame = () => { try { return state.screen === 'game'; } catch(e){ return false; } };
+  const need = () => !!overlayClose() || inGame();
+  function pushTrap(){ try { history.pushState({ rcmOverlay: 1 }, ''); } catch(e){} }
+  function sync(){
+    if(inPop) return;
+    const n = need();
+    if(n && !trapped){ trapped = true; pushTrap(); }
+    else if(!n && trapped){ trapped = false; try { if(history.state && history.state.rcmOverlay) history.back(); } catch(e){} }
+  }
+  const obs = new MutationObserver(sync);
+  const watch = (el) => { if(el) obs.observe(el, { attributes: true, attributeFilter: ['class'] }); };
+  ['moreSheet', 'notifPanel', 'chatPanel', 'screen-game'].forEach(id => watch(document.getElementById(id)));
+  document.querySelectorAll('.modal-bg').forEach(watch);
+  window.addEventListener('popstate', () => {
+    inPop = true;
+    const close = overlayClose();
+    if(close){ close(); trapped = false; }
+    else if(inGame()){
+      // Never let a stray back-press silently drop you out of a live match.
+      trapped = true; pushTrap();
+      if(Date.now() - lastHint > 2500){ lastHint = Date.now(); try { toast('Tap Leave to exit the match', 'info', { duration: 2200 }); } catch(e){} try { haptic(12); } catch(e){} }
+    } else { trapped = false; }
+    inPop = false;
+  });
+})();
+
+/* ---- Battery-aware: auto-ease heavy effects on low battery (reversible,
+   never overrides a manual low-power setting) ---- */
+(function(){
+  if(!navigator.getBattery) return;
+  let added = false;
+  navigator.getBattery().then((b) => {
+    const apply = () => {
+      const low = b.level <= 0.15 && !b.charging;
+      if(low && !document.body.classList.contains('low-power')){ document.body.classList.add('low-power'); added = true; }
+      else if(!low && added){ document.body.classList.remove('low-power'); added = false; }
+    };
+    apply();
+    b.addEventListener('levelchange', apply);
+    b.addEventListener('chargingchange', apply);
+  }).catch(() => {});
 })();
 
 /* ---- Pull-to-refresh on the landing pages ---- */
@@ -31923,6 +32252,54 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
     } else { reset(); }
     dist = 0;
   }, { passive: true });
+})();
+
+/* ---- Deep-link from PWA shortcuts / share (?go=play|rank|friends|home) ---- */
+(function(){
+  let go = null;
+  try { go = new URLSearchParams(location.search).get('go'); } catch(e){}
+  if(!go || !['home', 'rank', 'play', 'friends'].includes(go)) return;
+  let tries = 0;
+  const t = setInterval(() => {
+    if(++tries > 40){ clearInterval(t); return; }
+    if(state.screen === 'landing' && document.querySelector('.app.logged-in')){
+      clearInterval(t);
+      try { showNavPage(go); } catch(e){}
+      try { history.replaceState(null, '', location.pathname); } catch(e){}
+    }
+  }, 250);
+})();
+
+/* ---- App-icon badge for unread (installed PWA) ---- */
+(function(){
+  if(!navigator.setAppBadge) return;
+  const read = (id) => { const el = document.getElementById(id); if(!el) return 0; const cs = getComputedStyle(el); if(cs.display === 'none' || cs.visibility === 'hidden') return 0; const n = parseInt((el.textContent || '').replace(/\D/g, ''), 10); return isNaN(n) ? 0 : n; };
+  function update(){
+    const total = read('mnavFriendsBadge') + read('chatBadge');
+    try { if(total > 0) navigator.setAppBadge(total); else navigator.clearAppBadge(); } catch(e){}
+  }
+  const obs = new MutationObserver(update);
+  ['mnavFriendsBadge', 'chatBadge'].forEach(id => { const el = document.getElementById(id); if(el) obs.observe(el, { attributes: true, childList: true, characterData: true, subtree: true }); });
+  setInterval(update, 6000);
+  window.addEventListener('focus', update);
+})();
+
+/* ---- "Update available" prompt when a new service worker is ready ---- */
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+  let nagged = false;
+  navigator.serviceWorker.ready.then((reg) => {
+    if(!reg) return;
+    reg.addEventListener('updatefound', () => {
+      const nw = reg.installing; if(!nw) return;
+      nw.addEventListener('statechange', () => {
+        if(nw.state === 'installed' && navigator.serviceWorker.controller && !nagged){
+          nagged = true;
+          try { toast('A new version is ready', 'info', { duration: 9000, action: { label: 'Refresh', onClick: () => location.reload() } }); } catch(e){}
+        }
+      });
+    });
+  }).catch(() => {});
 })();
 
 /* ---- First-run mobile nudges (gentle, once, never over another sheet) ---- */
