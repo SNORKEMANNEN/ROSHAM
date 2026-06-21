@@ -5062,8 +5062,8 @@ body.low-power .podium-crown{ animation: none; }
 .mm-blip.b2{ top:70%; left:22%; background:var(--violet); box-shadow:0 0 10px var(--violet); animation:mmBlip 2.4s ease-in-out 1.1s infinite; }
 .mm-blip.b3{ top:78%; left:68%; background:#5fc9ff; box-shadow:0 0 10px #5fc9ff; animation:mmBlip 2.4s ease-in-out 1.7s infinite; }
 @keyframes mmBlip{ 0%,100%{ opacity:0; transform:scale(.4);} 40%{ opacity:1; transform:scale(1);} }
-body.low-power .mm-sweep, body.low-power .mm-ring, body.low-power .mm-blip, body.low-power .mm-core-av{ animation:none !important; }
-body.low-power .mm-ring{ opacity:.25; }
+body.reduced-motion .mm-sweep, body.reduced-motion .mm-ring, body.reduced-motion .mm-blip, body.reduced-motion .mm-core-av{ animation:none !important; }
+body.reduced-motion .mm-ring{ opacity:.25; }
 .mm-head{ margin-top:6px; }
 .mm-title{ font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:clamp(26px,6vw,38px); letter-spacing:-.01em; }
 .mm-dots i{ display:inline-block; animation:mmDot 1.4s infinite; opacity:.3; } .mm-dots i:nth-child(2){ animation-delay:.2s; } .mm-dots i:nth-child(3){ animation-delay:.4s; }
@@ -5908,12 +5908,13 @@ h2.match-title{
   .mf-footer{ position: static; transform: none; width: min(420px, 100%); margin: 16px auto 0; }
 }
 /* ============================================================================
-   VERSUS SCREEN — bespoke PHONE redesign, built from scratch (≤600px only).
+   VERSUS SCREEN — bespoke PHONE/TABLET redesign (≤900px).
    A vertical cinematic face-off: YOU hero on top, a circular VS medallion +
    compact head-to-head band in the middle, OPPONENT hero on the bottom, with
    the connection bar pinned below. Each player is a full-width identity card.
+   Applies to ≤900px so it cleanly overrides the older tablet layout too.
    ========================================================================== */
-@media (max-width: 600px){
+@media (max-width: 900px){
   .match-found-v2{ padding:0; justify-content:stretch; overflow:hidden; }
   .mf-bg-grid{ opacity:.12; }
   /* mint glow up top, coral down low — echoes the vertical face-off */
@@ -5921,8 +5922,13 @@ h2.match-title{
   .mf-bg-glow.you{ left:50%; right:auto; top:-8%; transform:translateX(-50%); }
   .mf-bg-glow.opp{ left:50%; right:auto; top:auto; bottom:-8%; transform:translateX(-50%); }
 
-  /* MATCH FOUND banner floats at the very top */
-  .mf-banner{ position:absolute; top:max(18px, calc(env(safe-area-inset-top) + 10px)); left:50%; transform:translateX(-50%); z-index:6; margin:0; font-size:10px; padding:8px 18px; letter-spacing:.3em; }
+  /* MATCH FOUND banner floats at the very top.
+     NOTE: override the base mfBannerDrop animation — its `both` fill forced
+     transform:translateY(0), wiping our translateX(-50%) centering (banner drifted
+     to the top-right). This keeps the centring through the drop. */
+  .mf-banner{ position:absolute; top:max(18px, calc(env(safe-area-inset-top) + 10px)); left:50%; transform:translateX(-50%); z-index:6; margin:0; font-size:10px; padding:8px 18px; letter-spacing:.3em;
+    animation:mfBannerDropM .5s cubic-bezier(.2,1.6,.4,1) both; }
+  @keyframes mfBannerDropM{ from{ transform:translateX(-50%) translateY(-30px); opacity:0; } to{ transform:translateX(-50%) translateY(0); opacity:1; } }
 
   /* STAGE — clean vertical face-off: YOU card · VS medallion · OPP card */
   .mf-stage{
@@ -5975,11 +5981,18 @@ h2.match-title{
   .mf-h2h-title{ font-size:7.5px; } .mf-h2h-row{ font-size:17px; gap:9px; }
   .mf-h2h-score{ font-size:21px; } .mf-h2h-sep{ font-size:13px; } .mf-h2h-label{ font-size:7.5px; text-align:center; }
 
-  /* CONNECTION pinned to the bottom */
-  .mf-footer{ position:absolute; left:0; right:0; bottom:0; transform:none; width:100%; margin:0; z-index:5;
-    padding:14px 20px calc(16px + env(safe-area-inset-bottom)); background:linear-gradient(180deg, transparent, var(--bg) 55%); }
+  /* CONNECTION pinned to the bottom — full width.
+     NOTE: override the base mfFooterFadeIn (its `both` fill kept
+     transform:translateX(-50%), which shoved the full-width footer off-screen
+     left — that was the cut-off "…ING CONNECTION"). */
+  .mf-footer{ position:absolute; left:0; right:0; bottom:0; transform:none; width:auto; margin:0; z-index:5;
+    padding:14px 20px calc(16px + env(safe-area-inset-bottom)); background:linear-gradient(180deg, transparent, var(--bg) 55%);
+    animation:mfFooterInM .5s ease-out .7s both; }
+  @keyframes mfFooterInM{ from{ transform:translateY(16px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+  .mf-status{ justify-content:center; }
 
   body.reduced-motion .mf-player, body.low-power .mf-player, body.reduced-motion .mf-center, body.low-power .mf-center{ animation:none; }
+  body.reduced-motion .mf-banner{ animation:none; } body.reduced-motion .mf-footer{ animation:none; }
 }
 @media (max-width: 380px){
   .mf-player{ width: min(82%, 300px); }
@@ -14589,6 +14602,10 @@ body.reduced-motion #yourVideoWrap.hand-zoom #overlay-canvas{ transition:none; }
 @keyframes swipeInL{ from{ opacity:.4; transform:translateX(7%); } to{ opacity:1; transform:none; } }
 @keyframes swipeInR{ from{ opacity:.4; transform:translateX(-7%); } to{ opacity:1; transform:none; } }
 body.reduced-motion .nav-page.swipe-in-l, body.reduced-motion .nav-page.swipe-in-r{ animation:none; }
+/* Swipe navigation: kill the built-in page + child-stagger entrance so it isn't
+   replayed on top of the pager's own slide. */
+.nav-page.no-enter, .nav-page.no-enter.active{ animation:none !important; }
+.nav-page.no-enter > *, .nav-page.no-enter.active > *{ animation:none !important; }
 
 /* --- Keyboard-aware chat composers (driven by visualViewport → --kb) --- */
 @media (hover:none) and (pointer:coarse){
@@ -14795,6 +14812,30 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
   #editProfileModal .modal-actions .btn{ min-height:50px; border-radius:13px; }
   #editProfileModal .modal-actions .btn-primary{ flex:1; justify-content:center; font-size:16px; }
   #editProfileModal #viewBlockedBtn{ flex:0 0 auto; }
+}
+
+/* ===== v1.7 — Settings overhaul on phones ===== */
+@media (max-width: 600px){
+  /* one clean full-width column (no masonry quirks) */
+  .settings-grid{ columns: 1 !important; column-gap: 0; max-width: none; }
+  .settings-group{ padding: 4px 12px 6px; border-radius: 18px; margin-bottom: 14px; }
+  .settings-group .settings-section-title{ margin: 13px 4px 4px; }
+  /* iOS-style grouped list: hairline separators + big, comfy tap rows */
+  .settings-group .settings-list{ gap: 0; }
+  .settings-group .settings-row{ min-height: 58px; padding: 14px 10px; border-radius: 0; gap: 13px; }
+  .settings-group .settings-row:not(:last-child){ border-bottom: 1px solid var(--line-soft); }
+  .settings-group .settings-row:active{ background: rgba(255,255,255,.05); }
+  .settings-group .set-ico{ width: 40px; height: 40px; }
+  .set-title{ font-size: 15.5px; }
+  .set-sub{ font-size: 12.5px; margin-top: 3px; line-height: 1.35; }
+  .set-arrow{ width: 18px; height: 18px; flex: 0 0 auto; }
+  /* account card: cleaner, bigger Edit target */
+  .account-card{ padding: 16px; border-radius: 18px; gap: 13px; }
+  .acc-av{ width: 52px; height: 52px; }
+  .acc-edit-btn{ padding: 0 18px; min-height: 42px; font-size: 11px; border-radius: 12px; }
+  /* search: bigger, no iOS zoom */
+  .settings-search{ padding: 13px 15px; border-radius: 14px; margin: 14px 0 6px; }
+  .settings-search input{ font-size: 16px; min-height: 22px; }
 }
 
 </style>
@@ -28731,6 +28772,10 @@ function setActiveNav(nav){
 function showNavPage(page){
   // Make sure we're on the landing screen first
   if(state.screen !== 'landing') showScreen('landing');
+  // During a swipe the pager already slides the page in — suppress the app's
+  // built-in page/stagger entrance so it doesn't replay on top (the "PC" load anim).
+  const _tgt = document.querySelector('.nav-page[data-page="' + page + '"]');
+  if(window._swipeNav && _tgt){ _tgt.classList.add('no-enter'); setTimeout(() => _tgt.classList.remove('no-enter'), 500); }
   setActiveNav(page);
   document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
   try { syncMobileNav(page); } catch(e){}
@@ -32139,8 +32184,6 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
         window._swipeNav = true;
         showNavPage(target);
         window._swipeNav = false;
-        if(reduced){ /* no extra animation */ }
-        else { const np = document.querySelector('.nav-page[data-page="' + target + '"]'); if(np){ np.classList.remove('swipe-in-l', 'swipe-in-r', 'page-enter'); void np.offsetWidth; np.classList.add(dir > 0 ? 'swipe-in-l' : 'swipe-in-r'); } }
         mode = '';
       }, oldNb ? 190 : 150);
     } else {
