@@ -322,16 +322,78 @@ body.reduced-motion .rank-progress-fill, body.reduced-motion .pm-level-bar-fill{
 .age-gate{ position:fixed; inset:0; z-index:9999; display:flex; align-items:center; justify-content:center; padding:24px;
   background:radial-gradient(circle at 50% 30%, rgba(124,77,255,.18), transparent 60%), rgba(6,5,11,.97);
   -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px); }
-.age-gate-card{ max-width:440px; width:100%; background:linear-gradient(180deg,var(--surface),var(--bg-2)); border:1px solid var(--line); border-radius:24px; padding:30px 26px calc(26px + env(safe-area-inset-bottom,0px)); text-align:center; box-shadow:0 32px 80px -30px rgba(0,0,0,.8); animation:sheetUp .4s cubic-bezier(.2,1,.3,1); }
-.age-gate-logo{ display:inline-flex; align-items:center; gap:9px; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:20px; letter-spacing:.02em; margin-bottom:18px; }
-.age-gate-logo .tb-logo{ width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,var(--mint),#159f78); display:grid; place-items:center; color:#06120e; }
-.age-gate-title{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:24px; margin:0 0 12px; }
-.age-gate-text{ font-size:14px; line-height:1.6; color:var(--text-dim); margin:0 0 22px; }
+.age-gate-card{ position:relative; max-width:430px; width:100%; background:linear-gradient(180deg,var(--surface),var(--bg-2)); border:1px solid var(--line); border-radius:26px; padding:30px 26px calc(24px + env(safe-area-inset-bottom,0px)); text-align:center; box-shadow:0 32px 80px -30px rgba(0,0,0,.85); animation:ageGateRise .5s cubic-bezier(.2,1,.3,1); overflow:hidden; }
+@keyframes ageGateRise{ from{ opacity:0; transform:translateY(22px) scale(.97); } to{ opacity:1; transform:none; } }
+/* soft conic glow behind the card top */
+.age-gate-glow{ position:absolute; left:50%; top:-40%; width:160%; aspect-ratio:1; transform:translateX(-50%); pointer-events:none; opacity:.5;
+  background:radial-gradient(circle at 50% 50%, rgba(45,212,160,.22), transparent 55%); filter:blur(8px); }
+body.low-power .age-gate-glow, body.reduced-motion .age-gate-card{ animation:none; }
+.age-gate-logo{ position:relative; display:inline-flex; align-items:center; gap:9px; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:19px; letter-spacing:.02em; margin-bottom:6px; }
+.age-gate-logo .tb-logo{ width:30px; height:30px; border-radius:9px; background:linear-gradient(135deg,var(--mint),#159f78); display:grid; place-items:center; color:#06120e; overflow:hidden; }
+.age-gate-logo .tb-logo img{ width:100%; height:100%; object-fit:cover; }
+/* 18+ seal */
+.age-gate-seal{ position:relative; display:inline-flex; align-items:center; gap:7px; margin:8px 0 14px; padding:7px 15px 7px 12px; border-radius:999px;
+  background:linear-gradient(135deg, rgba(255,92,108,.16), rgba(124,77,255,.16)); border:1px solid rgba(255,92,108,.4);
+  font-family:var(--font-display); font-stretch:80%; font-weight:900; font-size:15px; letter-spacing:.02em; color:#fff; }
+.age-gate-seal svg{ color:var(--coral); }
+.age-gate-title{ position:relative; font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:25px; margin:0 0 10px; }
+.age-gate-text{ position:relative; font-size:13.5px; line-height:1.6; color:var(--text-dim); margin:0 0 20px; }
 .age-gate-text b{ color:var(--text); }
 .age-gate-link{ background:none; border:none; color:var(--mint); cursor:pointer; font:inherit; padding:0; text-decoration:underline; }
-.age-gate-actions{ display:flex; flex-direction:column; gap:10px; }
-.age-gate-actions .btn{ width:100%; justify-content:center; min-height:50px; }
-.age-gate-note{ font-size:11px; color:var(--text-faint); margin:16px 0 0; }
+.age-gate-actions{ position:relative; display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+.age-gate-actions .btn{ width:100%; justify-content:center; min-height:52px; gap:8px; }
+.age-gate-go{ transition:opacity .25s, transform .12s, box-shadow .3s; }
+.age-gate-go[disabled]{ opacity:.42; filter:saturate(.6); cursor:not-allowed; }
+.age-gate-go:not([disabled]){ box-shadow:0 10px 30px -10px var(--mint-glow, rgba(45,212,160,.6)); }
+.age-gate-go:not([disabled]):active{ transform:scale(.97); }
+.age-gate-note{ position:relative; font-size:11px; color:var(--text-faint); margin:14px 0 0; line-height:1.5; }
+/* trust row */
+.age-gate-trust{ position:relative; display:flex; flex-wrap:wrap; gap:8px 16px; justify-content:center; margin:14px 0 2px; }
+.agt-item{ display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:var(--text-faint); }
+.agt-item svg{ color:var(--mint); opacity:.85; }
+/* Date-of-birth entry */
+.age-gate-dob{ position:relative; display:flex; gap:10px; justify-content:center; margin:0 0 4px; }
+.agd-field{ display:flex; flex-direction:column; gap:6px; text-align:left; flex:0 0 84px; }
+.agd-field.agd-year{ flex:0 0 108px; }
+.agd-cap{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--text-faint); padding-left:2px; }
+.agd-in{ width:100%; min-height:56px; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; color:var(--text); font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:23px; text-align:center; -moz-appearance:textfield; transition:border-color .18s, box-shadow .18s, background .18s; }
+.agd-in::-webkit-outer-spin-button, .agd-in::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
+.agd-in::placeholder{ color:var(--text-faint); opacity:.5; font-weight:700; }
+.agd-in:focus{ outline:none; border-color:var(--mint); background:var(--surface); box-shadow:0 0 0 3px rgba(45,212,160,.18); }
+.agd-in.agd-ok{ border-color:rgba(45,212,160,.55); }
+.agd-in.agd-bad{ border-color:var(--coral); box-shadow:0 0 0 3px rgba(255,92,108,.16); animation:agShake .32s; }
+@keyframes agShake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-5px); } 75%{ transform:translateX(5px); } }
+/* live age read-out */
+.age-gate-live{ position:relative; min-height:20px; margin:12px 0 2px; font-size:13.5px; font-weight:700; letter-spacing:.01em; opacity:0; transform:translateY(4px); transition:opacity .25s, transform .25s; }
+.age-gate-live.show{ opacity:1; transform:none; }
+.age-gate-live.ok{ color:var(--mint); }
+.age-gate-live.bad{ color:var(--coral); }
+.age-gate-err{ position:relative; font-size:13px; font-weight:600; color:var(--coral); margin:8px 0 0; }
+
+/* ===== First-login intro trailer ===== */
+.intro-trailer{ position:fixed; inset:0; z-index:100000; background:#000; overflow:hidden; animation:introIn .4s ease; }
+@keyframes introIn{ from{ opacity:0; } to{ opacity:1; } }
+.intro-video-wrap{ position:absolute; inset:0; }
+/* cover the whole viewport with the 16:9 player (crop, never letterbox) */
+.intro-video-wrap iframe{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:100vw; height:56.25vw; min-height:100vh; min-width:177.78vh;
+  border:0; pointer-events:none;
+}
+.intro-skip{
+  position:absolute; z-index:2;
+  right:max(18px, env(safe-area-inset-right,0px)); bottom:max(24px, calc(18px + env(safe-area-inset-bottom,0px)));
+  display:inline-flex; align-items:center; gap:7px; padding:11px 20px; border-radius:999px;
+  background:rgba(0,0,0,.5); border:1px solid rgba(255,255,255,.28); color:#fff;
+  font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:14px; letter-spacing:.03em;
+  cursor:pointer; -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  opacity:0; animation:introSkipIn .5s ease 1.1s forwards; transition:background .2s, transform .12s;
+}
+@keyframes introSkipIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+.intro-skip:hover{ background:rgba(0,0,0,.82); }
+.intro-skip:active{ transform:scale(.95); }
+.intro-trailer.closing{ animation:introOut .45s ease forwards; }
+@keyframes introOut{ to{ opacity:0; } }
 
 /* ===== App footer ===== */
 .app-footer{ margin-top:32px; padding:24px 16px calc(20px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--line-soft); text-align:center; }
@@ -352,6 +414,14 @@ body.reduced-motion .rank-progress-fill, body.reduced-motion .pm-level-bar-fill{
 .legal-body li{ margin:0 0 6px; }
 .legal-body b{ color:var(--text); }
 .legal-foot{ margin-top:18px; padding-top:12px; border-top:1px solid var(--line-soft); font-size:12.5px; }
+.legal-body a{ color:var(--mint); font-weight:600; text-decoration:none; }
+.legal-body a:hover{ text-decoration:underline; }
+/* Safety center callout cards */
+.safety-call{ margin:14px 0; padding:13px 15px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); }
+.safety-call .sc-title{ display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:14px; color:var(--text); margin-bottom:6px; }
+.safety-call.safety-call-danger{ background:rgba(255,51,88,.07); border-color:rgba(255,51,88,.32); }
+.safety-call.safety-call-danger .sc-title{ color:var(--coral); }
+.safety-call p:last-child, .safety-call ul:last-child{ margin-bottom:0; }
 
 /* ===== Avatar safety net — any photo-backed avatar always covers cleanly =====
    (prevents stretched / tiled / mis-cropped profile pictures anywhere) */
@@ -655,6 +725,30 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .report-reason .rr-radio{ width:16px; height:16px; border-radius:50%; border:2px solid var(--text-faint); flex-shrink:0; position:relative; }
 .report-reason.selected .rr-radio{ border-color:var(--coral); }
 .report-reason.selected .rr-radio::after{ content:""; position:absolute; inset:3px; border-radius:50%; background:var(--coral); }
+/* Prioritized child-safety reason — visually set apart from the rest */
+.report-reason.priority{ background:rgba(255,51,88,.07); border-color:rgba(255,51,88,.35); font-weight:600; align-items:flex-start; }
+.report-reason.priority .rr-radio{ border-color:var(--coral); margin-top:1px; }
+.report-reason.priority.selected{ background:rgba(255,51,88,.14); border-color:var(--coral); }
+.report-reason.priority + .report-reason{ margin-top:4px; }
+/* NCMEC / child-safety notice block inside the report modal */
+.report-ncmec{ margin-top:12px; padding:12px 14px; border-radius:12px; background:rgba(255,51,88,.06); border:1px solid rgba(255,51,88,.3); font-size:12.5px; line-height:1.5; color:var(--text-dim); }
+.report-ncmec .rn-head{ display:flex; align-items:center; gap:7px; font-weight:800; color:var(--coral); margin-bottom:6px; font-size:13px; }
+.report-ncmec p{ margin:0 0 7px; }
+.report-ncmec ul{ margin:0; padding-left:18px; }
+.report-ncmec li{ margin:3px 0; }
+.report-ncmec a{ color:var(--mint); font-weight:600; }
+.report-ncmec b{ color:var(--text); }
+.report-ncmec .rn-more{ margin-top:8px; background:none; border:none; padding:0; color:var(--mint); font:inherit; font-weight:700; font-size:12.5px; cursor:pointer; text-decoration:underline; }
+/* Safety Center sits above the report modal when opened from its NCMEC notice */
+#safetyModal{ z-index:240; }
+/* On-device nudity-detection cut overlay (covers your own video tile) */
+.nsfw-cut{ position:absolute; inset:0; z-index:8; display:grid; place-items:center; padding:14px; text-align:center;
+  background:rgba(8,4,12,.94); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); border-radius:inherit; }
+.nsfw-cut-inner{ max-width:300px; }
+.nsfw-cut-inner svg{ color:var(--coral); }
+.nsfw-cut-title{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:18px; margin:8px 0 6px; color:var(--text); }
+.nsfw-cut-text{ font-size:12.5px; line-height:1.5; color:var(--text-dim); margin:0 0 14px; }
+.nsfw-cut .btn{ min-height:42px; }
 .report-evidence{ margin-top:12px; }
 .report-evidence-row{ display:flex; align-items:center; gap:9px; font-size:12.5px; color:var(--text-dim); cursor:pointer; }
 .report-evidence-row input{ width:16px; height:16px; accent-color:var(--coral); }
@@ -1892,6 +1986,19 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
   padding: 12px;
   border-top: 1px solid var(--line-soft);
 }
+/* Shown instead of the composer when the other person isn't a mutual friend */
+.chat-thread-gate{
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 13px 14px calc(13px + env(safe-area-inset-bottom,0px));
+  border-top: 1px solid var(--line-soft);
+  color: var(--text-faint);
+  font-size: 12.5px;
+  line-height: 1.45;
+  background: var(--surface-2);
+}
+.chat-thread-gate svg{ flex-shrink:0; margin-top:1px; color:var(--text-dim); }
 .chat-thread-input input{
   flex: 1;
   background: var(--surface-2);
@@ -9872,6 +9979,22 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
   20%, 60% { transform: translateX(-6px); }
   40%, 80% { transform: translateX(6px); }
 }
+/* Floating reward text (e.g. "+1") that pops and rises, then fades. */
+.fx-float{ position:fixed; z-index:101; pointer-events:none; font-family:var(--font-display); font-stretch:78%; font-weight:900; font-size:30px; letter-spacing:-.01em; text-shadow:0 2px 14px rgba(0,0,0,.65); will-change:transform,opacity; }
+.fx-float{ animation:fxFloatUp 1.05s cubic-bezier(.2,.8,.2,1) forwards; }
+@keyframes fxFloatUp{
+  0%{ opacity:0; transform:translate(-50%,-40%) scale(.5); }
+  20%{ opacity:1; transform:translate(-50%,-58%) scale(1.14); }
+  100%{ opacity:0; transform:translate(-50%,-150%) scale(1); }
+}
+/* On-demand opponent blur (safety/comfort toggle in the in-match options) */
+.duel-video.opp.opp-blurred video,
+.duel-video.opp.opp-blurred canvas{ filter:blur(26px) saturate(.85); transform:scale(1.06); transition:filter .25s; }
+.duel-video.opp.opp-blurred::after{
+  content:"camera blurred"; position:absolute; left:50%; bottom:10px; transform:translateX(-50%); z-index:6;
+  font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-dim);
+  background:rgba(0,0,0,.55); padding:4px 10px; border-radius:999px; pointer-events:none;
+}
 
 /* ============ RANK UP OVERLAY ============ */
 /* Registered so it can smoothly INTERPOLATE in CSS — the bg recolours from the
@@ -13237,12 +13360,26 @@ input:focus, select:focus, textarea:focus{
 .pr-dot{ width:7px; height:7px; border-radius:50%; background:var(--text-faint); flex-shrink:0; transition:background .25s, box-shadow .25s; }
 .pr-chip.ready{ color:var(--mint); border-color:rgba(34,211,163,.45); background:rgba(34,211,163,.08); }
 .pr-chip.ready .pr-dot{ background:var(--mint); box-shadow:0 0 8px var(--mint); }
-.pr-vs{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:12px; color:var(--text-faint); }
-.pr-ready-btn{ min-width:200px; justify-content:center; font-size:17px; padding:13px 30px; }
-.pr-wait{
-  font-family:var(--font-mono); font-size:11.5px; color:var(--mint); letter-spacing:.04em;
-  animation:soft 1.4s ease-in-out infinite;
+.pr-vs{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:12px; color:var(--text-faint); position:relative; }
+.pr-vs::after{ content:""; position:absolute; inset:-7px -10px; border-radius:999px; background:radial-gradient(circle, var(--coral-glow), transparent 70%); opacity:.5; z-index:-1; }
+.pr-ready-btn{ position:relative; min-width:210px; justify-content:center; font-size:17px; padding:14px 30px; letter-spacing:.02em;
+  animation:prReadyBreathe 2.1s ease-in-out infinite; }
+.pr-ready-btn:active{ transform:scale(.96); }
+/* a glowing halo that pulses outward to invite the tap */
+.pr-ready-btn::after{
+  content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
+  box-shadow:0 0 0 0 var(--coral-glow); animation:prReadyHalo 2.1s ease-out infinite;
 }
+@keyframes prReadyBreathe{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-2px); } }
+@keyframes prReadyHalo{ 0%{ box-shadow:0 0 0 0 rgba(255,92,108,.5); } 70%,100%{ box-shadow:0 0 0 16px rgba(255,92,108,0); } }
+body.reduced-motion .pr-ready-btn, body.reduced-motion .pr-ready-btn::after,
+body.low-power .pr-ready-btn, body.low-power .pr-ready-btn::after{ animation:none; }
+.pr-wait{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:11.5px; color:var(--mint); letter-spacing:.04em;
+}
+.pr-wait::before{ content:""; width:12px; height:12px; border-radius:50%; border:2px solid rgba(34,211,163,.3); border-top-color:var(--mint); animation:lucideSpin .8s linear infinite; }
+body.reduced-motion .pr-wait::before{ animation:none; }
 @media (max-width:640px){
   .pre-ready{ bottom:calc(120px + env(safe-area-inset-bottom, 0px)); width:92vw; }
   .pre-ready-card{ width:100%; }
@@ -14859,18 +14996,51 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
   </div>
 </div>
 
-<!-- ===== FIRST-VISIT AGE GATE ===== -->
+<!-- ===== FIRST-VISIT AGE GATE (date of birth · 18+) ===== -->
 <div class="age-gate" id="ageGate" style="display:none;">
   <div class="age-gate-card">
+    <div class="age-gate-glow" aria-hidden="true"></div>
     <div class="age-gate-logo"><span class="tb-logo"><img src="logo.png" alt="" /></span> ROSHCAM</div>
-    <h2 class="age-gate-title">Are you 13 or older?</h2>
-    <p class="age-gate-text">ROSHCAM connects you to <b>real strangers over live webcam</b>. You'll be visible and audible to other players. By entering you confirm you are at least <b>13 years old</b> (or the minimum age in your country) and that you accept our <button class="age-gate-link" data-open-legal="terms">Terms</button> and <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>.</p>
-    <div class="age-gate-actions">
-      <button class="btn btn-primary" id="ageGateYes">I'm 13 or older — Enter</button>
-      <button class="btn btn-ghost" id="ageGateNo">Leave</button>
+    <div class="age-gate-seal" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-shield"/></svg>
+      <span>18+</span>
     </div>
-    <p class="age-gate-note">Never share personal information on camera. Treat every match as public.</p>
+    <h2 class="age-gate-title">How old are you?</h2>
+    <p class="age-gate-text">ROSHCAM puts you on <b>live webcam with real strangers</b>, so it's strictly for adults. Enter your date of birth — we check it once and only ever store whether you're 18+.</p>
+    <div class="age-gate-dob" role="group" aria-label="Date of birth">
+      <label class="agd-field">
+        <span class="agd-cap">Day</span>
+        <input id="dobDay" class="agd-in" type="number" inputmode="numeric" min="1" max="31" placeholder="DD" autocomplete="bday-day" />
+      </label>
+      <label class="agd-field">
+        <span class="agd-cap">Month</span>
+        <input id="dobMonth" class="agd-in" type="number" inputmode="numeric" min="1" max="12" placeholder="MM" autocomplete="bday-month" />
+      </label>
+      <label class="agd-field agd-year">
+        <span class="agd-cap">Year</span>
+        <input id="dobYear" class="agd-in" type="number" inputmode="numeric" min="1900" max="2025" placeholder="YYYY" autocomplete="bday-year" />
+      </label>
+    </div>
+    <!-- Live age read-out: turns green at 18+, red below -->
+    <div class="age-gate-live" id="ageGateLive" aria-live="polite"></div>
+    <p class="age-gate-err" id="ageGateErr" style="display:none;"></p>
+    <div class="age-gate-actions">
+      <button class="btn btn-primary age-gate-go" id="ageGateYes" disabled>
+        <span>Confirm &amp; enter</span>
+        <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-arrow-right"/></svg>
+      </button>
+    </div>
+    <div class="age-gate-trust">
+      <span class="agt-item"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-lock"/></svg> Age check stays on your device</span>
+      <span class="agt-item"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-shield"/></svg> Report &amp; block anytime</span>
+    </div>
+    <p class="age-gate-note">By entering you confirm the date above is accurate and that you accept our <button class="age-gate-link" data-open-legal="terms">Terms</button> and <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>. Never share personal information on camera — treat every match as public.</p>
   </div>
+</div>
+<!-- ===== FIRST-LOGIN INTRO TRAILER (Fortnite-style new-season cinematic) ===== -->
+<div class="intro-trailer" id="introTrailer" style="display:none;">
+  <div class="intro-video-wrap"><div id="introPlayer"></div></div>
+  <button class="intro-skip" id="introSkipBtn" type="button">Skip intro <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-arrow-right"/></svg></button>
 </div>
 <div class="grain"></div>
 <div class="noise"></div>
@@ -15221,7 +15391,11 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
         <button class="crb-cancel" id="chatReplyCancel"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg></button>
       </div>
       <div class="chat-emoji-palette" id="chatEmojiPalette" style="display:none;"></div>
-      <div class="chat-thread-input">
+      <div class="chat-thread-gate" id="chatThreadGate" style="display:none;">
+        <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-lock"/></svg>
+        <span>You can only message people you're friends with. Send a friend request to chat.</span>
+      </div>
+      <div class="chat-thread-input" id="chatThreadComposer">
         <button id="chatEmojiBtn" class="chat-emoji-btn" type="button" title="Emoji">😊</button>
         <input type="text" id="chatThreadInput" placeholder="Type a message…" maxlength="300" />
         <button id="chatThreadSend"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-send"/></svg></button>
@@ -15375,7 +15549,7 @@ const FIREBASE_CONFIG = {
             <div class="auth-feat"><span class="af-ic" style="--mc:var(--violet);"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><div><b>Friends &amp; challenges</b><span>Add friends, message, and challenge them to private duels.</span></div></div>
             <div class="auth-feat"><span class="af-ic" style="--mc:#5fc9ff;"><svg viewBox="0 0 24 24"><use href="#i-eye-off"/></svg></span><div><b>Private by design</b><span>Video is peer-to-peer — we never record it. Streamer mode hides names.</span></div></div>
           </div>
-          <div class="auth-trust"><span class="live-dot"></span> <b id="authOnlineCount">—</b> playing now · free to play · 13+</div>
+          <div class="auth-trust"><span class="live-dot"></span> <b id="authOnlineCount">—</b> playing now · free to play · 18+</div>
         </div>
 
         <!-- RIGHT: sign in / sign up -->
@@ -15451,7 +15625,7 @@ const FIREBASE_CONFIG = {
           <div class="divider">or</div>
           <button class="btn" id="guestBtn" style="width:100%;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-globe"/></svg> Play as guest</button>
           <p class="auth-guest-note">No email, no commitment — try a match, make an account later to keep your rank.</p>
-          <p class="auth-legal-note">By continuing you agree to our <button class="age-gate-link" data-open-legal="terms">Terms</button> &amp; <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>. You must be 13+.</p>
+          <p class="auth-legal-note">By continuing you agree to our <button class="age-gate-link" data-open-legal="terms">Terms</button> &amp; <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>. You must be 18+.</p>
         </div>
       </div>
 
@@ -16371,6 +16545,11 @@ const FIREBASE_CONFIG = {
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-zap"/></svg></div>
             <div class="set-text"><div class="set-title">ROSHCAM</div><div class="set-sub" id="aboutVersion">Real-time webcam Rock Paper Scissors</div></div>
           </div>
+          <button class="settings-row" data-open-safety>
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-shield"/></svg></div>
+            <div class="set-text"><div class="set-title">Safety Center</div><div class="set-sub">How to report, what's banned, NCMEC &amp; hotlines</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
           <button class="settings-row" data-open-legal="terms">
             <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-help"/></svg></div>
             <div class="set-text"><div class="set-title">Terms of Service</div><div class="set-sub">The rules for using ROSHCAM</div></div>
@@ -16420,6 +16599,8 @@ const FIREBASE_CONFIG = {
         <footer class="app-footer">
           <div class="app-footer-brand"><img class="footer-logo" src="logo.png" alt="" /> ROSHCAM</div>
           <div class="app-footer-links">
+            <button data-open-safety>Safety</button>
+            <span class="app-footer-dot">·</span>
             <button data-open-legal="terms">Terms of Service</button>
             <span class="app-footer-dot">·</span>
             <button data-open-legal="privacy">Privacy Policy</button>
@@ -16653,6 +16834,11 @@ const FIREBASE_CONFIG = {
               <span class="igs-label">Mirror my camera</span>
               <span class="set-toggle off" id="igsFlip"></span>
             </button>
+            <button class="igs-row" id="igsBlurRow" type="button">
+              <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-eye-off"/></svg></span>
+              <span class="igs-label">Blur their camera</span>
+              <span class="set-toggle off" id="igsBlur"></span>
+            </button>
           </div>
           <button class="arena-ctrl-btn" id="reportBtn" title="Report player" aria-label="Report player">
             <svg viewBox="0 0 24 24"><use href="#i-flag"/></svg><span class="actl-label">Report</span>
@@ -16690,6 +16876,15 @@ const FIREBASE_CONFIG = {
             <span id="yourDetectedText">—</span>
           </div>
           <div class="duel-emote-flash" id="youEmoteFlash"></div>
+          <!-- Safety cut overlay: shown when on-device nudity detection pauses your camera -->
+          <div class="nsfw-cut" id="nsfwCut" style="display:none;">
+            <div class="nsfw-cut-inner">
+              <svg viewBox="0 0 24 24" width="30" height="30"><use href="#i-eye-off"/></svg>
+              <div class="nsfw-cut-title">Camera paused</div>
+              <p class="nsfw-cut-text">Our on-device check flagged possible nudity, so your camera was hidden from your opponent. ROSHCAM is 18+ and strictly no sexual content.</p>
+              <button class="btn btn-ghost" id="nsfwResumeBtn" type="button">Turn my camera back on</button>
+            </div>
+          </div>
         </div>
 
         <!-- VS DIVIDER -->
@@ -17279,7 +17474,7 @@ const FIREBASE_CONFIG = {
       <p>Welcome to ROSHCAM ("the Service"), a real-time webcam rock-paper-scissors game. By creating an account or playing, you agree to these Terms. If you do not agree, please do not use the Service.</p>
 
       <h4>1. Eligibility</h4>
-      <p>You must be at least 13 years old (or the minimum digital-consent age in your country) to use ROSHCAM. If you are under 18, you confirm a parent or guardian permits your use. The Service uses your camera — do not use it if you cannot legally consent to camera-based features.</p>
+      <p>You must be at least <b>18 years old</b> to use ROSHCAM. The Service streams live camera to strangers and is strictly for adults — there is no parental-consent exception. We verify your date of birth at entry and may suspend any account we believe belongs to a minor. Do not use the Service if you cannot legally consent to camera-based features.</p>
 
       <h4>2. Your account</h4>
       <p>You are responsible for your account, your username, and all activity that happens under it. Keep your login secure. Choose a username that is not offensive, impersonating, or infringing — we may reclaim or reset usernames that violate these Terms.</p>
@@ -17359,7 +17554,7 @@ const FIREBASE_CONFIG = {
       <p>You can edit or delete most profile fields in-app, export your data from Settings, block/report players, and stop using the Service at any time. To request deletion of your account and associated data, contact us at the email below. Depending on where you live, you may have rights to access, correct, or delete your personal data.</p>
 
       <h4>8. Children</h4>
-      <p>ROSHCAM is not directed to children under 13, and given it streams live camera to strangers we ask that minors only use it with a parent/guardian's knowledge and consent.</p>
+      <p>ROSHCAM is an <b>18+ adults-only</b> service and is not directed to anyone under 18. We do not knowingly collect data from minors. If you believe a minor is using ROSHCAM, report it in-app (Report → "Child safety") or email <b>safety@roshcam.com</b>; suspected child sexual exploitation is reported to the National Center for Missing &amp; Exploited Children (NCMEC) at <b>report.cybertip.org</b>.</p>
 
       <h4>9. Security</h4>
       <p>We use encryption in transit and reputable infrastructure, but no online service is 100% secure. Because video is peer-to-peer with strangers, please treat every match as public and never reveal sensitive personal information on camera.</p>
@@ -17368,6 +17563,67 @@ const FIREBASE_CONFIG = {
       <p>We may update this Policy; the "last updated" date will change. Significant changes may also be announced in-app.</p>
 
       <p class="legal-foot">Privacy questions or data requests: <b>privacy@roshcam.com</b>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SAFETY CENTER ===== -->
+<div class="modal-bg" id="safetyModal">
+  <div class="modal legal-modal safety-modal">
+    <button class="modal-close" data-close="safetyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3><svg viewBox="0 0 24 24" width="20" height="20" style="vertical-align:-4px; color:var(--mint);"><use href="#i-shield"/></svg> SAFETY CENTER</h3>
+    <div class="legal-meta">ROSHCAM is an 18+ service · last updated 26 Jun 2026</div>
+    <div class="legal-body">
+      <div class="safety-call safety-call-danger">
+        <div class="sc-title"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-flag"/></svg> A child is in immediate danger?</div>
+        <p>Contact your local emergency number right now (US/Canada <b>911</b>, UK <b>999</b>, EU <b>112</b>). Then report it below — don't wait for us.</p>
+      </div>
+
+      <h4>How to report someone</h4>
+      <ul>
+        <li><b>In a match:</b> tap the <b>Report</b> button in the match controls. Pick a reason — <b>"Child safety"</b> is the first option and is reviewed urgently. The player is blocked from matching with you immediately.</li>
+        <li><b>A snapshot</b> of the other player's camera can be attached automatically as evidence.</li>
+        <li><b>Anywhere else:</b> open a player's profile to block them, or email us at <b>safety@roshcam.com</b>.</li>
+      </ul>
+
+      <h4>What's banned</h4>
+      <p>These will get an account permanently removed, and serious cases are referred to authorities:</p>
+      <ul>
+        <li><b>Anyone under 18</b> using ROSHCAM, or any content involving a minor.</li>
+        <li>Nudity, sexual content, or sexual solicitation.</li>
+        <li>Harassment, threats, hate, or abuse.</li>
+        <li>Violence, self-harm content, or anything illegal.</li>
+        <li>Pressuring someone for personal info, money, or to move off-platform.</li>
+      </ul>
+
+      <div class="safety-call">
+        <div class="sc-title"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-flag"/></svg> Child sexual abuse material (CSAM)</div>
+        <p>Suspected child sexual exploitation can be reported directly to the <b>National Center for Missing &amp; Exploited Children (NCMEC)</b>, which works with law enforcement worldwide:</p>
+        <ul>
+          <li><b>CyberTipline</b> — <a href="https://report.cybertip.org" target="_blank" rel="noopener noreferrer">report.cybertip.org</a> · phone <b>1-800-843-5678</b></li>
+          <li><a href="https://www.missingkids.org" target="_blank" rel="noopener noreferrer">missingkids.org</a></li>
+        </ul>
+      </div>
+
+      <h4>Help &amp; hotlines</h4>
+      <ul>
+        <li><b>Childhelp</b> (abuse, US) — <a href="https://www.childhelphotline.org" target="_blank" rel="noopener noreferrer">childhelphotline.org</a> · call/text <b>1-800-422-4453</b></li>
+        <li><b>988 Suicide &amp; Crisis Lifeline</b> (US) — call or text <b>988</b></li>
+        <li><b>NSPCC</b> (UK) — <b>0808 800 5000</b> · <a href="https://www.nspcc.org.uk" target="_blank" rel="noopener noreferrer">nspcc.org.uk</a></li>
+        <li><b>Child Helpline International</b> (find a hotline in your country) — <a href="https://www.childhelplineinternational.org" target="_blank" rel="noopener noreferrer">childhelplineinternational.org</a></li>
+        <li><b>INHOPE</b> (report illegal content, global network) — <a href="https://www.inhope.org" target="_blank" rel="noopener noreferrer">inhope.org</a></li>
+      </ul>
+
+      <h4>Tips for staying safe</h4>
+      <ul>
+        <li>Treat every match as <b>public</b> — anyone could record it.</li>
+        <li>Never share your full name, address, school, workplace, or socials on camera.</li>
+        <li>Your opponent stays hidden until the throw, and you can mute your mic or blur their camera any time from in-match Options.</li>
+        <li>Trust your gut: <b>Leave</b> ends any match instantly, and <b>Report</b> + block stops them re-matching you.</li>
+        <li>Direct messages are limited to people you've both added as friends.</li>
+      </ul>
+
+      <p class="legal-foot">Safety concerns or to report a minor: <b>safety@roshcam.com</b>. We review every report.</p>
     </div>
   </div>
 </div>
@@ -18100,6 +18356,17 @@ const FIREBASE_CONFIG = {
     <h3 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:22px; margin:0 0 4px;"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px; color:var(--coral);"><use href="#i-flag"/></svg> Report player</h3>
     <p style="color:var(--text-dim); font-size:13px; margin:0 0 16px;">Why are you reporting <b id="reportTargetName">this player</b>? They'll also be blocked from matching with you.</p>
     <div class="report-reasons" id="reportReasons"></div>
+    <!-- Shown only when a child-safety reason is picked -->
+    <div class="report-ncmec" id="reportNcmec" style="display:none;">
+      <div class="rn-head"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-flag"/></svg> Child-safety reports are prioritized</div>
+      <p>This report is sent for <b>urgent</b> review and the player is blocked immediately. If a child is in immediate danger, contact your local emergency number first.</p>
+      <p>You can also report suspected child sexual exploitation directly to authorities:</p>
+      <ul>
+        <li><b>NCMEC CyberTipline</b> — <a href="https://report.cybertip.org" target="_blank" rel="noopener noreferrer">report.cybertip.org</a> (US, accepts global reports)</li>
+        <li><b>Missing &amp; exploited children</b> — <a href="https://www.missingkids.org" target="_blank" rel="noopener noreferrer">missingkids.org</a></li>
+      </ul>
+      <button type="button" class="rn-more" data-open-safety>More hotlines &amp; the Safety Center →</button>
+    </div>
     <textarea id="reportDetails" placeholder="Add details (optional)…" maxlength="300" style="width:100%; margin-top:12px; min-height:70px; resize:vertical; background:var(--surface-2); border:1px solid var(--line); border-radius:12px; padding:12px; color:var(--text); font-family:var(--font-body); font-size:13px;"></textarea>
     <div class="report-evidence" id="reportEvidence" style="display:none;">
       <label class="report-evidence-row">
@@ -18528,6 +18795,9 @@ function isOwner(){ return !!(state.user && state.user.uid === OWNER_UID); }
 function isMod(){ return !!(state.profile && state.profile.isMod); }
 function isAdmin(){ return isOwner() || isMod(); }
 const REPORT_REASONS = [
+  // Prioritized child-safety report — handled separately, flagged for urgent review.
+  { id:'child_safety', label:'Child safety — a minor or sexual content involving a minor', priority:true },
+  { id:'nudity', label:'Nudity or sexual content' },
   { id:'cheating', label:'Cheating / exploiting' },
   { id:'harassment', label:'Harassment or abuse' },
   { id:'inappropriate', label:'Inappropriate behaviour' },
@@ -19104,6 +19374,7 @@ const state = {
   _musicMuffled: false,     // is the menu music currently lowpass-muffled (matchmaking)?
   _wantMenuMusic: false,    // menu music was held back by a celebration overlay; resume when clear
   hapticsOff: false,
+  _micMuted: false,         // in-match mic mute (toggled from the in-match options)
   matchOver: false,
   myPrediction: null,       // what you predicted opp would throw
   _lastPredictionCorrect: false,
@@ -19177,12 +19448,30 @@ function showScreen(name){
     }
     // Toggle in-game flag (hides mobile bottom nav during a match)
     document.body.classList.toggle('in-game', name === 'game');
+    // On-device nudity detection runs only during a live match.
+    try { if(name === 'game') startNsfwGuard(); else stopNsfwGuard(); } catch(e){}
+    // One-time-ever kindness + safety reminder before the first match on a device.
+    if(name === 'game'){
+      let firstMatch = false;
+      try { firstMatch = localStorage.getItem('rosham_safety_seen') !== '1'; } catch(e){}
+      if(firstMatch){
+        try { localStorage.setItem('rosham_safety_seen', '1'); } catch(e){}
+        setTimeout(() => { try { toast('Be kind 💚 and stay safe — never share personal info, and Report anyone who makes you uncomfortable.', 'info', { duration: 6500 }); } catch(e){} }, 3200);
+      }
+    }
+    // First time the player reaches the lobby on this device: roll the intro
+    // trailer (Fortnite-style) before they see the menu.
+    if(name === 'landing'){
+      setTimeout(() => { try { maybePlayIntroTrailer(); } catch(e){} }, 300);
+    }
     // Main-menu music transitions:
     //  • landing  → clear the lowpass + play (resumes cleanly after a match)
     //  • matching → keep playing but muffled (clean lowpass sweep while searching)
     //  • game/etc → fade out
     try {
-      if(name === 'landing'){ setMusicMuffle(false, false); startMenuMusic(); }
+      // On the very first landing the intro trailer plays and owns the audio;
+      // it restarts the menu music itself when it ends.
+      if(name === 'landing'){ setMusicMuffle(false, false); if(introSeen()) startMenuMusic(); }
       else if(name === 'matching'){
         if(!state.muted){
           if(!sampleAudio.loopActive) startMenuMusic();
@@ -19417,6 +19706,7 @@ function fxPerf(){
   const lite = lowPower || reduced || smallScreen || fewCores || lowMem || touch;
   return { lite, reduced, mobile: smallScreen || touch, lowPower };
 }
+// Celebratory confetti shower (used on a match win) — a few staggered waves.
 // Celebratory confetti raining from the top (used on a match win).
 function launchConfetti(){
   /* Confetti has been removed site-wide — the 140-particle showers measurably
@@ -19424,6 +19714,20 @@ function launchConfetti(){
      animations instead. (Kept as a no-op so existing call sites stay safe.) */
 }
 let _pCanvasDirty = false;
+// Floating reward text — spawns at a screen point, pops, rises, fades.
+function floatText(x, y, text, color){
+  try {
+    if(document.body.classList.contains('reduced-motion')) return;
+    const el = document.createElement('div');
+    el.className = 'fx-float';
+    el.textContent = text;
+    if(color) el.style.color = color;
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1120);
+  } catch(e){}
+}
 function animateParticles(){
   // Idle skip: when there's nothing to draw, do zero canvas work per frame.
   if(particles.length === 0){
@@ -20413,8 +20717,9 @@ async function onAuthChanged(user){
       } else {
         const username = 'guest_' + user.uid.slice(0,6);
         const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
-        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, totalXp:0, prestige:0, prestigeXp:0, equippedTitle:'rookie', colorIdx, photoURL:'', bio:'', isAnon:true, friends:[], blocked:[] };
-        await setDoc(ref, { ...state.profile, createdAt: serverTimestamp(), lastSeen: serverTimestamp() });
+        const birthYear = getVerifiedBirthYear();
+        state.profile = { uid:user.uid, username, country:'XX', wins:0, losses:0, draws:0, games:0, rating:1000, bestStreak:0, currentStreak:0, totalXp:0, prestige:0, prestigeXp:0, equippedTitle:'rookie', colorIdx, photoURL:'', bio:'', isAnon:true, over18:true, friends:[], blocked:[], ...(birthYear ? { birthYear } : {}) };
+        await setDoc(ref, { ...state.profile, ageVerifiedAt: serverTimestamp(), createdAt: serverTimestamp(), lastSeen: serverTimestamp() });
       }
     } else {
       state.profile = snap.data();
@@ -20424,6 +20729,9 @@ async function onAuthChanged(user){
       // ensure XP fields exist for legacy profiles
       if(typeof state.profile.totalXp !== 'number') state.profile.totalXp = 0;
       if(!state.profile.equippedTitle) state.profile.equippedTitle = 'rookie';
+      // Backfill the adult flag for accounts created before the 18+ DOB gate, now
+      // that this session has verified the user's date of birth.
+      if(!state.profile.over18 && isAgeVerifiedAdult()){ try { markProfileAdult(); } catch(e){} }
       // ===== v1.0 PUBLIC LAUNCH RESET — wipe beta progress exactly once =====
       if(!state.profile.launchV1){
         const wiped = {
@@ -20908,6 +21216,7 @@ async function reserveUsername(username, uid, checkOnly=false){
 async function createProfile(uid, username, country, opts = {}){
   await reserveUsername(username, uid);
   const colorIdx = Math.floor(Math.random() * AVATAR_COLORS.length);
+  const birthYear = getVerifiedBirthYear();
   await setDoc(doc(state.db, 'users', uid), {
     uid, username, country,
     wins:0, losses:0, draws:0, games:0,
@@ -20917,6 +21226,10 @@ async function createProfile(uid, username, country, opts = {}){
     createdAt: serverTimestamp(),
     lastSeen: serverTimestamp(),
     friends: [], blocked: [],
+    // Age verification — the 18+ gate is passed before any account is created.
+    over18: true,
+    ageVerifiedAt: serverTimestamp(),
+    ...(birthYear ? { birthYear } : {}),
     // Social preferences chosen during signup (both default to allowing)
     blockFriendRequests: !!opts.blockFriendRequests,
     acceptChallenges: opts.acceptChallenges !== false,
@@ -21455,6 +21768,11 @@ async function openChatThread(uid, name, photoURL, colorIdx){
     if(photoURL){ av.style.backgroundImage = `url('${photoURL}')`; av.textContent=''; }
     else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[colorIdx||0]; av.textContent = initialOf(name||'?'); }
   }
+  // Reflect the mutual-friends-only rule in the composer.
+  const canDm = canDmUser(uid);
+  const gate = $('#chatThreadGate'), composer = $('#chatThreadComposer');
+  if(gate) gate.style.display = canDm ? 'none' : '';
+  if(composer) composer.style.display = canDm ? '' : 'none';
   const convId = convIdFor(state.user.uid, uid);
   state._activeChatConvId = convId;
   state._dmMessages = {}; state._dmOrder = []; state._otherReadAt = 0;
@@ -21497,6 +21815,10 @@ function openGlobalChatThread(){
   $('#chatConvList').style.display = 'none';
   $('#chatThread').style.display = 'flex';
   $('#chatThread').classList.add('is-global');
+  // Global room is open to everyone — make sure the composer is shown.
+  const gGate = $('#chatThreadGate'), gComposer = $('#chatThreadComposer');
+  if(gGate) gGate.style.display = 'none';
+  if(gComposer) gComposer.style.display = '';
   setText('#chatThreadName', 'Global Chat');
   const av = $('#chatThreadAv');
   if(av){
@@ -21514,6 +21836,13 @@ function openGlobalChatThread(){
   requestAnimationFrame(() => { if(body) body.scrollTop = body.scrollHeight; });
 }
 
+// DMs are mutual-friends-only (admins excepted, for moderation outreach).
+function canDmUser(uid){
+  if(!uid || !state.profile) return false;
+  try { if(typeof isAdmin === 'function' && isAdmin()) return true; } catch(e){}
+  if(state.profile.blocked?.includes(uid)) return false;
+  return !!state.profile.friends?.includes(uid);
+}
 async function sendChatMessage(){
   const input = $('#chatThreadInput');
   const text = (input.value || '').trim();
@@ -21527,10 +21856,18 @@ async function sendChatMessage(){
     return;
   }
   if(!state._activeChatUid || !state.user) return;
+  const uid = state._activeChatUid;
+  // SAFETY: direct messages are limited to mutual friends. This stops the social
+  // layer being used to re-contact or groom someone after a one-off match — a
+  // stranger can't DM you unless you've both accepted each other as friends.
+  // (Real enforcement also needs Firestore rules; this is the client-side gate.)
+  if(!canDmUser(uid)){
+    toast('You can only message people you’re friends with', 'error');
+    return;
+  }
   input.value = '';
   const pal = $('#chatEmojiPalette'); if(pal) pal.style.display = 'none';
   try { afterChatSend(input, '#chatThreadBody'); } catch(e){}
-  const uid = state._activeChatUid;
   const convId = convIdFor(state.user.uid, uid);
   const replyTo = state._replyTo ? { id: state._replyTo.id, name: state._replyTo.name, text: state._replyTo.text } : null;
   cancelDmReply();
@@ -22933,6 +23270,36 @@ async function renderRequests(){
   fill('#requestsBodyPage');
 }
 
+// Client-side friend-request rate limit. Stops the social layer being used to
+// spray requests at many strangers (a grooming/spam vector). Caps a burst to
+// one request per 4s and 8 in any rolling 10 minutes. NOTE: a determined actor
+// can clear localStorage — true enforcement needs a Firestore rule/Cloud
+// Function counting recent friendRequests per sender. This is the front line.
+const FRIEND_REQ_MIN_GAP_MS = 4000;
+const FRIEND_REQ_WINDOW_MS = 10 * 60 * 1000;
+const FRIEND_REQ_MAX_IN_WINDOW = 8;
+function _friendReqTimes(){
+  let arr = [];
+  try { arr = JSON.parse(localStorage.getItem('rosham_fr_times') || '[]'); } catch(e){ arr = []; }
+  const now = Date.now();
+  return arr.filter(t => typeof t === 'number' && now - t < FRIEND_REQ_WINDOW_MS);
+}
+function friendRequestRateOk(){
+  const arr = _friendReqTimes();
+  const now = Date.now();
+  if(arr.length && now - arr[arr.length - 1] < FRIEND_REQ_MIN_GAP_MS){
+    return { ok:false, msg:'Slow down a moment before sending another request' };
+  }
+  if(arr.length >= FRIEND_REQ_MAX_IN_WINDOW){
+    return { ok:false, msg:'You’ve sent a lot of friend requests — try again in a few minutes' };
+  }
+  return { ok:true };
+}
+function recordFriendRequest(){
+  const arr = _friendReqTimes();
+  arr.push(Date.now());
+  try { localStorage.setItem('rosham_fr_times', JSON.stringify(arr)); } catch(e){}
+}
 async function addFriendByUsername(username){
   username = username.trim().toLowerCase();
   if(!username) return;
@@ -22957,6 +23324,8 @@ async function addFriendByUsername(username){
       where('to', '==', targetUid),
     ));
     if(!existing.empty){ toast('Already requested', 'error'); return; }
+    const rate = friendRequestRateOk();
+    if(!rate.ok){ toast(rate.msg, 'error'); return; }
     await addDoc(collection(state.db, 'friendRequests'), {
       from: state.user.uid,
       to: targetUid,
@@ -22965,6 +23334,7 @@ async function addFriendByUsername(username){
       fromPhotoURL: state.profile.photoURL || '',
       createdAt: serverTimestamp(),
     });
+    recordFriendRequest();
     pushNotification(targetUid, {
       type: 'friend_request',
       text: `<b>@${escapeHTML(state.profile.username)}</b> sent you a friend request`,
@@ -24568,6 +24938,12 @@ const MM_TIPS = [
   'Keep your hand well-lit and centered for best detection.',
   'A clean 2–0 sweep rewards more ELO than a 2–1 win.',
   'Watch their eyes — players telegraph their throw.',
+  // Safety reminders mixed into the rotation.
+  'Stay safe: never share your name, school, or location on camera.',
+  'You can mute your mic any time from in-match Options.',
+  'Uncomfortable? Leave instantly, or Report + block the player.',
+  'Treat every match as public — anyone could be recording.',
+  'You can blur the opponent\'s camera any time from in-match Options.',
 ];
 function startMatchmakingTips(){
   stopMatchmakingTips();
@@ -26090,6 +26466,8 @@ function showOppVideo(){
   if(vid) vid.style.visibility = '';
   const ph = $('#oppPlaceholder');
   if(ph) ph.style.visibility = '';
+  // Keep the user's "blur opponent" choice applied when the cam is revealed.
+  try { applyOppBlur(); } catch(e){}
 }
 
 function showAnnouncer(text, ms=1800){
@@ -26430,6 +26808,8 @@ function showRoundResultUI(result, yourMove, oppMove, predictionCorrect){
     burst(window.innerWidth/2, window.innerHeight*0.4, '#5dffba', 80);
     burst(window.innerWidth/2, window.innerHeight*0.4, '#a48bff', 60);
     setTimeout(() => bigBurst('#5dffba'), 200);
+    // Floating "+1" reward pop above your score.
+    try { const r = $('#scoreYou')?.getBoundingClientRect(); if(r) floatText(r.left + r.width/2, r.top + r.height*0.3, '+1', '#5dffba'); } catch(e){}
     const wv = $('#winVignette');
     if(wv){ wv.classList.remove('fire'); void wv.offsetWidth; wv.classList.add('fire'); }
     if(resultDisplay){
@@ -28272,6 +28652,9 @@ let teardownMatch = async function(){
   clearTimeout(state._connWatchdog);
   $('#screen-game')?.classList.remove('prematch');
   $('#preReadyBar')?.classList.remove('show');
+  // Reset the per-match "blur opponent" choice for the next stranger.
+  state._blurOpp = false;
+  try { $('#oppVideoWrap')?.classList.remove('opp-blurred'); } catch(e){}
   // Clear in-match presence so friends see you as free again.
   try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: false }).catch(()=>{}); } catch(e){}
   // CRITICAL: set phase to 'ended' BEFORE closing pc/dc, so the close handlers
@@ -28631,6 +29014,8 @@ on('#matchEndRematchBtn', 'click', async () => {
 on('#matchEndAddFriend', 'click', async () => {
   if(!state.oppUid || state.isBotMatch){ toast("Can't add this player", 'error'); return; }
   if(state.profile.friends?.includes(state.oppUid)){ toast('Already friends', 'success'); return; }
+  const rate = friendRequestRateOk();
+  if(!rate.ok){ toast(rate.msg, 'error'); return; }
   try {
     await addDoc(collection(state.db, 'friendRequests'), {
       from: state.user.uid,
@@ -28640,6 +29025,7 @@ on('#matchEndAddFriend', 'click', async () => {
       createdAt: serverTimestamp(),
       status: 'pending',
     });
+    recordFriendRequest();
     toast(`Friend request sent to @${state.oppProfile?.username}`, 'success');
   } catch(e){
     console.error('[match-end-friend]', e);
@@ -30690,26 +31076,319 @@ document.querySelectorAll('[data-open-legal]').forEach(b => {
     $('#' + id)?.classList.add('show');
   });
 });
+// Safety Center — openable from Settings + footer + the report modal's NCMEC notice
+document.querySelectorAll('[data-open-safety]').forEach(b => {
+  b.addEventListener('click', () => { $('#safetyModal')?.classList.add('show'); });
+});
 on('#footerHelpBtn', 'click', () => $('#helpModal')?.classList.add('show'));
 
-// ===== First-visit age gate (13+) =====
+// ===== First-visit age gate (date of birth · 18+) =====
+// Compute full years between a birth date and a reference date.
+function ageFromDOB(y, m, d, ref){
+  let age = ref.getFullYear() - y;
+  const mo = ref.getMonth() + 1, da = ref.getDate();
+  if(mo < m || (mo === m && da < d)) age--;   // birthday hasn't happened yet this year
+  return age;
+}
+// Stored once the user has passed the gate, so we can write over18 to their
+// profile at sign-up. We persist only the year + the adult flag — never the
+// exact date — to keep the footprint minimal.
+function getVerifiedBirthYear(){
+  try { const y = parseInt(localStorage.getItem('rosham_birth_year') || '', 10); return Number.isFinite(y) ? y : null; } catch(e){ return null; }
+}
+function isAgeVerifiedAdult(){
+  // 'rosham_adult_v2' is the 18+ DOB pass. We intentionally do NOT honour the
+  // legacy 'rosham_age_ok' (the old one-tap 13+ confirm) so every returning
+  // visitor re-verifies their date of birth under the adults-only gate.
+  try { return localStorage.getItem('rosham_adult_v2') === '1'; } catch(e){ return false; }
+}
 (function initAgeGate(){
-  let ok = false;
-  try { ok = localStorage.getItem('rosham_age_ok') === '1'; } catch(e){}
-  if(ok) return;
+  if(isAgeVerifiedAdult()) return;
   const gate = $('#ageGate');
   if(!gate) return;
   gate.style.display = 'flex';
   try { hidePreloader(); } catch(e){}   // the gate IS the first interaction
-  on('#ageGateYes', 'click', () => {
-    try { localStorage.setItem('rosham_age_ok', '1'); } catch(e){}
+  const dEl = $('#dobDay'), mEl = $('#dobMonth'), yEl = $('#dobYear'), errEl = $('#ageGateErr');
+  // Auto-advance focus between fields for a smooth mobile entry.
+  const advance = (el, next, len) => el && el.addEventListener('input', () => {
+    el.classList.remove('agd-bad');
+    if(el.value.length >= len && next) next.focus();
+  });
+  advance(dEl, mEl, 2); advance(mEl, yEl, 2);
+  const liveEl = $('#ageGateLive'), goBtn = $('#ageGateYes');
+  // Live age read-out: enables the button + turns green at 18+, red below.
+  const validParts = () => {
+    const d = parseInt(dEl?.value, 10), m = parseInt(mEl?.value, 10), y = parseInt(yEl?.value, 10);
+    if(!(y >= 1900 && y <= new Date().getFullYear()) || !(m >= 1 && m <= 12) || !(d >= 1 && d <= 31)) return null;
+    const probe = new Date(y, m - 1, d);
+    if(probe.getFullYear() !== y || probe.getMonth() !== m - 1 || probe.getDate() !== d) return null;
+    return { d, m, y };
+  };
+  const refreshLive = () => {
+    [dEl, mEl, yEl].forEach(el => el && el.classList.remove('agd-ok'));
+    const parts = validParts();
+    const complete = (dEl?.value && mEl?.value && (yEl?.value || '').length >= 4);
+    if(!parts){
+      if(liveEl){ liveEl.className = 'age-gate-live'; liveEl.textContent = ''; }
+      if(goBtn) goBtn.disabled = true;
+      return;
+    }
+    const age = ageFromDOB(parts.y, parts.m, parts.d, new Date());
+    if(age >= 18){
+      [dEl, mEl, yEl].forEach(el => el && el.classList.add('agd-ok'));
+      if(liveEl){ liveEl.className = 'age-gate-live show ok'; liveEl.textContent = `You're ${age} — welcome in 👋`; }
+      if(goBtn) goBtn.disabled = false;
+    } else {
+      if(liveEl){ liveEl.className = 'age-gate-live show bad'; liveEl.textContent = complete ? 'Sorry — you must be 18 or older to use ROSHCAM.' : ''; }
+      if(goBtn) goBtn.disabled = true;
+    }
+  };
+  [dEl, mEl, yEl].forEach(el => el && el.addEventListener('input', refreshLive));
+  const showErr = (msg, bad) => {
+    if(errEl){ errEl.textContent = msg; errEl.style.display = ''; }
+    (bad || []).forEach(el => el && el.classList.add('agd-bad'));
+    try { haptic([20, 40, 20]); } catch(e){}
+  };
+  const submit = () => {
+    const d = parseInt(dEl?.value, 10), m = parseInt(mEl?.value, 10), y = parseInt(yEl?.value, 10);
+    const now = new Date();
+    const thisYear = now.getFullYear();
+    const bad = [];
+    if(!(y >= 1900 && y <= thisYear)) bad.push(yEl);
+    if(!(m >= 1 && m <= 12)) bad.push(mEl);
+    if(!(d >= 1 && d <= 31)) bad.push(dEl);
+    if(bad.length){ showErr('Enter a complete, valid date of birth.', bad); return; }
+    // Reject impossible calendar dates (e.g. 31 Feb) by round-tripping.
+    const probe = new Date(y, m - 1, d);
+    if(probe.getFullYear() !== y || probe.getMonth() !== m - 1 || probe.getDate() !== d){
+      showErr('That date doesn’t exist — check the day and month.', [dEl, mEl]); return;
+    }
+    const age = ageFromDOB(y, m, d, now);
+    if(age < 18){
+      // Hard block. Remember the refusal so we don't just re-prompt on reload.
+      try { localStorage.setItem('rosham_age_blocked', '1'); } catch(e){}
+      document.body.innerHTML = '<div style="display:grid;place-items:center;min-height:100vh;padding:30px;text-align:center;font-family:system-ui,sans-serif;color:#9aa0aa;background:#06050b;line-height:1.6;"><div style="max-width:360px"><div style="font-size:30px;margin-bottom:10px">🔞</div>You must be <b style="color:#e9ecf2">18 or older</b> to use ROSHCAM.<br><br><span style="font-size:13px;opacity:.8">ROSHCAM streams live camera to strangers and is for adults only. If you need someone to talk to, you can reach a free, confidential helpline at <b style="color:#e9ecf2">childhelp.org</b> or, in the US, by calling or texting <b style="color:#e9ecf2">988</b>.</span></div></div>';
+      return;
+    }
+    // Adult — record verification (year + flag only) and let them in.
+    try {
+      localStorage.setItem('rosham_adult_v2', '1');
+      localStorage.setItem('rosham_age_ok', '1');   // back-compat with older checks
+      localStorage.setItem('rosham_birth_year', String(y));
+      localStorage.removeItem('rosham_age_blocked');
+    } catch(e){}
+    if(errEl) errEl.style.display = 'none';
     gate.style.display = 'none';
     try { haptic(12); } catch(e){}
-  });
-  on('#ageGateNo', 'click', () => {
-    document.body.innerHTML = '<div style="display:grid;place-items:center;min-height:100vh;padding:30px;text-align:center;font-family:system-ui,sans-serif;color:#9aa0aa;background:#06050b;">You must be 13 or older to use ROSHCAM.</div>';
-  });
+    // If a profile already exists this session, backfill the adult flag.
+    try { markProfileAdult(); } catch(e){}
+  };
+  on('#ageGateYes', 'click', submit);
+  // Enter key on the year field submits.
+  yEl && yEl.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); submit(); } });
+  // A previously-blocked under-age visitor stays blocked on reload.
+  try {
+    if(localStorage.getItem('rosham_age_blocked') === '1'){
+      document.body.innerHTML = '<div style="display:grid;place-items:center;min-height:100vh;padding:30px;text-align:center;font-family:system-ui,sans-serif;color:#9aa0aa;background:#06050b;line-height:1.6;"><div style="max-width:360px"><div style="font-size:30px;margin-bottom:10px">🔞</div>You must be <b style="color:#e9ecf2">18 or older</b> to use ROSHCAM.</div></div>';
+    }
+  } catch(e){}
 })();
+// Backfill over18 on the signed-in profile once age is verified (best-effort).
+async function markProfileAdult(){
+  try {
+    if(!state.user || !state.db) return;
+    if(state.profile && state.profile.over18) return;
+    const patch = { over18: true, ageVerifiedAt: serverTimestamp() };
+    const by = getVerifiedBirthYear(); if(by) patch.birthYear = by;
+    await updateDoc(doc(state.db, 'users', state.user.uid), patch);
+    if(state.profile){ state.profile.over18 = true; if(by) state.profile.birthYear = by; }
+  } catch(e){ console.warn('[age] could not flag profile adult', e); }
+}
+
+// ===== First-login intro trailer (Fortnite-style new-season cinematic) =====
+// Plays a fullscreen, controls-free YouTube cinematic the first time someone
+// reaches the lobby on this device. Autoplays muted (so it always starts), then
+// tries to bring sound in; any tap also unmutes. A Skip button (and the video
+// ending) dismisses it. Everything is wrapped so a blocked embed / offline /
+// API failure simply skips straight into the app.
+const INTRO_VIDEO_ID = 'klZ088T_3YY';
+let _introPlayer = null, _introTried = false;
+function introSeen(){ try { return localStorage.getItem('rosham_intro_seen_v1') === '1'; } catch(e){ return false; } }
+function loadYouTubeIframeAPI(){
+  return new Promise((resolve) => {
+    if(window.YT && window.YT.Player){ resolve(); return; }
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { try { prev && prev(); } catch(e){} resolve(); };
+    if(!document.querySelector('script[data-yt-api]')){
+      const s = document.createElement('script');
+      s.src = 'https://www.youtube.com/iframe_api'; s.async = true; s.dataset.ytApi = '1';
+      s.onerror = () => resolve();   // caller has a fail-safe timeout
+      document.head.appendChild(s);
+    }
+  });
+}
+function endIntro(){
+  const overlay = $('#introTrailer');
+  if(!overlay || overlay.style.display === 'none') return;
+  overlay.classList.add('closing');
+  try { _introPlayer && _introPlayer.stopVideo && _introPlayer.stopVideo(); } catch(e){}
+  setTimeout(() => {
+    overlay.style.display = 'none';
+    overlay.classList.remove('closing');
+    try { _introPlayer && _introPlayer.destroy && _introPlayer.destroy(); } catch(e){}
+    _introPlayer = null;
+    // Bring the menu music back now that the cinematic is done.
+    try { if(state.screen === 'landing' && !state.muted) startMenuMusic(); } catch(e){}
+  }, 460);
+}
+function maybePlayIntroTrailer(){
+  if(_introTried || introSeen()) return;
+  const overlay = $('#introTrailer');
+  if(!overlay) return;
+  _introTried = true;
+  try { localStorage.setItem('rosham_intro_seen_v1', '1'); } catch(e){}   // once per device
+  overlay.style.display = 'block';
+  // Silence the menu music so it doesn't fight the trailer's audio.
+  try { stopMenuMusic(true); } catch(e){}
+  // Any tap (other than Skip) unmutes — no visible control needed on the video.
+  overlay.addEventListener('pointerdown', (ev) => {
+    if(ev.target.closest('#introSkipBtn')) return;
+    try { _introPlayer && _introPlayer.unMute(); _introPlayer && _introPlayer.setVolume(100); } catch(e){}
+  });
+  // Fail-safe: if the player never starts (embed disabled / offline), skip in.
+  let started = false;
+  const failSafe = setTimeout(() => { if(!started) endIntro(); }, 5500);
+  loadYouTubeIframeAPI().then(() => {
+    if(!window.YT || !window.YT.Player){ clearTimeout(failSafe); endIntro(); return; }
+    try {
+      _introPlayer = new YT.Player('introPlayer', {
+        videoId: INTRO_VIDEO_ID,
+        playerVars: {
+          autoplay: 1, controls: 0, mute: 1, rel: 0, modestbranding: 1,
+          playsinline: 1, fs: 0, disablekb: 1, iv_load_policy: 3,
+        },
+        events: {
+          onReady: (e) => {
+            started = true; clearTimeout(failSafe);
+            try { e.target.playVideo(); } catch(_){}
+            // Bring sound in where the browser allows it (recent login gesture).
+            try { e.target.unMute(); e.target.setVolume(100); } catch(_){}
+          },
+          onStateChange: (e) => { if(e.data === YT.PlayerState.ENDED) endIntro(); },
+          onError: () => { clearTimeout(failSafe); endIntro(); },
+        },
+      });
+    } catch(err){ clearTimeout(failSafe); endIntro(); }
+  });
+}
+on('#introSkipBtn', 'click', endIntro);
+
+// ===== On-device nudity detection (NSFW.js) =====
+// Privacy-preserving deterrent: classifies YOUR OWN outgoing camera locally
+// (frames never leave the device). If it detects nudity / sexual content it
+// hides your feed from the opponent and flags the account. Everything is wrapped
+// so a CDN / model / runtime failure can never break a match — if the model
+// can't load, the guard just does nothing. A power user can disable it with
+// localStorage 'rosham_nsfw_off' = '1' (e.g. for battery on a weak phone).
+const nsfwGuard = { status:'idle', model:null, timer:0, scratch:null, hits:0, cut:false, flaggedThisMatch:false };
+function _loadScriptOnce(src){
+  return new Promise((resolve, reject) => {
+    if(document.querySelector(`script[data-lib="${src}"]`)){ resolve(); return; }
+    const s = document.createElement('script');
+    s.src = src; s.async = true; s.dataset.lib = src;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error('load failed: ' + src));
+    document.head.appendChild(s);
+  });
+}
+async function ensureNsfwModel(){
+  if(nsfwGuard.status === 'ready' || nsfwGuard.status === 'running') return true;
+  if(nsfwGuard.status === 'failed' || nsfwGuard.status === 'loading') return false;
+  try { if(localStorage.getItem('rosham_nsfw_off') === '1'){ nsfwGuard.status = 'failed'; return false; } } catch(e){}
+  nsfwGuard.status = 'loading';
+  try {
+    await _loadScriptOnce('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
+    await _loadScriptOnce('https://cdn.jsdelivr.net/npm/nsfwjs@4.2.1/dist/nsfwjs.min.js');
+    if(!window.nsfwjs) throw new Error('nsfwjs global missing');
+    nsfwGuard.model = await window.nsfwjs.load();   // MobileNetV2 (small + quick)
+    nsfwGuard.status = 'ready';
+    return true;
+  } catch(e){
+    console.warn('[nsfw] model unavailable — guard disabled', e);
+    nsfwGuard.status = 'failed';
+    return false;
+  }
+}
+function startNsfwGuard(){
+  nsfwGuard.flaggedThisMatch = false;
+  if(nsfwGuard.timer) return;
+  ensureNsfwModel().then(ok => {
+    if(!ok || nsfwGuard.timer) return;
+    nsfwGuard.status = 'running';
+    nsfwGuard.timer = setInterval(nsfwScanTick, 3200);
+  });
+}
+function stopNsfwGuard(){
+  if(nsfwGuard.timer){ clearInterval(nsfwGuard.timer); nsfwGuard.timer = 0; }
+  if(nsfwGuard.status === 'running') nsfwGuard.status = 'ready';
+  nsfwGuard.hits = 0;
+  if(nsfwGuard.cut) restoreNsfwFeed(true);
+}
+async function nsfwScanTick(){
+  try {
+    if(state.screen !== 'game' || nsfwGuard.cut || !nsfwGuard.model) return;
+    const v = $('#yourVideo');
+    if(!v || v.readyState < 2 || !v.videoWidth) return;
+    if(!nsfwGuard.scratch){ const c = document.createElement('canvas'); c.width = 224; c.height = 224; nsfwGuard.scratch = c; }
+    const ctx = nsfwGuard.scratch.getContext('2d');
+    ctx.drawImage(v, 0, 0, 224, 224);
+    const preds = await nsfwGuard.model.classify(nsfwGuard.scratch);
+    const p = {}; preds.forEach(x => p[x.className] = x.probability);
+    const unsafe = (p.Porn || 0) > 0.62 || (p.Hentai || 0) > 0.62 || (p.Sexy || 0) > 0.88;
+    if(unsafe){
+      nsfwGuard.hits++;
+      if(nsfwGuard.hits >= 2) cutNsfwFeed(p);   // two consecutive hits → act (fewer false positives)
+    } else {
+      nsfwGuard.hits = 0;
+    }
+  } catch(e){ /* never let a bad frame throw */ }
+}
+function cutNsfwFeed(scores){
+  if(nsfwGuard.cut) return;
+  nsfwGuard.cut = true;
+  nsfwGuard.hits = 0;
+  try { state.localStream?.getVideoTracks().forEach(t => t.enabled = false); } catch(e){}
+  try { const o = $('#nsfwCut'); if(o) o.style.display = ''; } catch(e){}
+  try { haptic([30, 60, 30]); } catch(e){}
+  if(!nsfwGuard.flaggedThisMatch){ nsfwGuard.flaggedThisMatch = true; flagNsfwServerSide(scores); }
+}
+function restoreNsfwFeed(silent){
+  nsfwGuard.cut = false;
+  nsfwGuard.hits = 0;
+  try { if(state.screen === 'game') state.localStream?.getVideoTracks().forEach(t => t.enabled = true); } catch(e){}
+  try { const o = $('#nsfwCut'); if(o) o.style.display = 'none'; } catch(e){}
+  if(!silent){ try { toast('Camera back on — keep it appropriate', 'info'); } catch(e){} }
+}
+async function flagNsfwServerSide(scores){
+  try {
+    if(!state.user || !state.db) return;
+    try { await updateDoc(doc(state.db, 'users', state.user.uid), { nsfwFlags: increment(1), lastNsfwFlagAt: serverTimestamp() }); } catch(e){}
+    await addDoc(collection(state.db, 'reports'), {
+      reporter: 'system:nsfw',
+      reported: state.user.uid,
+      reportedUsername: state.profile?.username || '',
+      reason: 'nudity',
+      reasonLabel: 'Auto-detected nudity (on-device)',
+      category: 'sexual_content',
+      auto: true, priority: true,
+      scores: scores || null,
+      matchId: state.matchId || null,
+      status: 'open',
+      createdAt: serverTimestamp(),
+    });
+  } catch(e){ console.warn('[nsfw] flag failed', e); }
+}
+on('#nsfwResumeBtn', 'click', () => restoreNsfwFeed(false));
 
 // ===== HAPTICS: central helper that respects the Haptics setting =====
 function haptic(pattern){
@@ -31074,21 +31753,25 @@ function reportPlayer(){
   // If our fair-play check flagged this opponent, pre-select "cheating".
   const preselect = state._fairplayFlagged ? 'cheating' : null;
   const box = $('#reportReasons');
+  const ncmec = $('#reportNcmec');
+  const syncNcmec = () => { if(ncmec) ncmec.style.display = (_reportReason === 'child_safety') ? '' : 'none'; };
   if(box){
     box.innerHTML = '';
     REPORT_REASONS.forEach(r => {
       const el = document.createElement('div');
-      el.className = 'report-reason' + (r.id === preselect ? ' selected' : '');
+      el.className = 'report-reason' + (r.priority ? ' priority' : '') + (r.id === preselect ? ' selected' : '');
       if(r.id === preselect) _reportReason = r.id;
       el.innerHTML = `<span class="rr-radio"></span><span>${r.label}</span>`;
       el.addEventListener('click', () => {
         _reportReason = r.id;
         box.querySelectorAll('.report-reason').forEach(x => x.classList.remove('selected'));
         el.classList.add('selected');
+        syncNcmec();
       });
       box.appendChild(el);
     });
   }
+  syncNcmec();
   const det = $('#reportDetails');
   if(det) det.value = state._fairplayFlagged ? 'Auto-flagged: opponent throws arrived suspiciously late.' : '';
   $('#reportModal')?.classList.add('show');
@@ -31096,10 +31779,12 @@ function reportPlayer(){
 on('#reportSubmitBtn', 'click', async () => {
   if(!_reportReason){ toast('Pick a reason first', 'error'); return; }
   if(!state.user || !state.oppUid){ toast("Can't report this player", 'error'); return; }
-  const reasonLabel = (REPORT_REASONS.find(r => r.id === _reportReason) || {}).label || _reportReason;
+  const reasonMeta = REPORT_REASONS.find(r => r.id === _reportReason) || {};
+  const reasonLabel = reasonMeta.label || _reportReason;
   const details = $('#reportDetails')?.value?.trim() || '';
   const attachShot = $('#reportAttachShot')?.checked;
   const evidence = (attachShot && _reportEvidence) ? _reportEvidence : null;
+  const isChildSafety = _reportReason === 'child_safety';
   const btn = $('#reportSubmitBtn');
   if(btn) btn.disabled = true;
   try {
@@ -31116,6 +31801,11 @@ on('#reportSubmitBtn', 'click', async () => {
       status: 'open',
       createdAt: serverTimestamp(),
     };
+    // Child-safety (and nudity) reports are routed to a prioritized queue so
+    // moderators see them first. child_safety is the only NCMEC-reportable bucket.
+    if(reasonMeta.priority || isChildSafety){ reportDoc.priority = true; }
+    if(isChildSafety){ reportDoc.category = 'child_safety'; reportDoc.urgent = true; }
+    else if(_reportReason === 'nudity'){ reportDoc.category = 'sexual_content'; }
     if(evidence){ reportDoc.evidence = evidence; reportDoc.hasEvidence = true; }
     await addDoc(collection(state.db, 'reports'), reportDoc);
     // Blocking the player is best-effort — never let it fail the report.
@@ -31124,7 +31814,21 @@ on('#reportSubmitBtn', 'click', async () => {
       if(state.profile){ state.profile.blocked = [...(state.profile.blocked||[]), state.oppUid]; state.profile.friends = (state.profile.friends||[]).filter(x => x !== state.oppUid); }
     } catch(blockErr){ console.warn('[report] could not block player', blockErr); }
     $('#reportModal')?.classList.remove('show');
-    toast(`Reported @${state.oppProfile?.username || 'player'} — thanks, we'll review it`, 'success');
+    if(isChildSafety){
+      toast(`Child-safety report sent for urgent review — @${state.oppProfile?.username || 'player'} is blocked`, 'success');
+      // Pull the reporter straight out of the live match — no ELO penalty for
+      // doing the right thing (clean teardown, not a forfeit).
+      try {
+        if(state.screen === 'game'){
+          state.matchOver = true;
+          await teardownMatch();
+          cancelMatchmakingResources();
+          showScreen('landing');
+        }
+      } catch(e){ console.warn('[report] child-safety exit failed', e); }
+    } else {
+      toast(`Reported @${state.oppProfile?.username || 'player'} — thanks, we'll review it`, 'success');
+    }
   } catch(e){
     console.error('[report] submit failed', e);
     toast('Could not submit report — please try again', 'error');
@@ -31374,6 +32078,7 @@ on('#inMatchSettingsBtn', 'click', (e) => {
     // reflect current state on the toggles
     $('#igsMic')?.classList.toggle('off', !state._micMuted);
     $('#igsFlip')?.classList.toggle('off', !state._camMirrored);
+    $('#igsBlur')?.classList.toggle('off', !state._blurOpp);
   }
 });
 on('#igsMicRow', 'click', () => {
@@ -31389,6 +32094,17 @@ on('#igsFlipRow', 'click', () => {
   $('#igsFlip')?.classList.toggle('off', !state._camMirrored);
   haptic(9);
 });
+// Safety/comfort: blur the opponent's camera on demand (persists for the match).
+on('#igsBlurRow', 'click', () => {
+  state._blurOpp = !state._blurOpp;
+  applyOppBlur();
+  $('#igsBlur')?.classList.toggle('off', !state._blurOpp);
+  toast(state._blurOpp ? "Opponent's camera blurred" : 'Blur off', 'info');
+  haptic(9);
+});
+function applyOppBlur(){
+  try { $('#oppVideoWrap')?.classList.toggle('opp-blurred', !!state._blurOpp); } catch(e){}
+}
 // close the popover on outside click
 document.addEventListener('click', (e) => {
   const p = $('#inMatchSettings');
@@ -31490,6 +32206,8 @@ on('#addFriendInGameBtn', 'click', async () => {
     toast('Already friends', 'success');
     return;
   }
+  const rate = friendRequestRateOk();
+  if(!rate.ok){ toast(rate.msg, 'error'); return; }
   try {
     await addDoc(collection(state.db, 'friendRequests'), {
       from: state.user.uid,
@@ -31499,6 +32217,7 @@ on('#addFriendInGameBtn', 'click', async () => {
       createdAt: serverTimestamp(),
       status: 'pending',
     });
+    recordFriendRequest();
     toast(`Friend request sent to @${state.oppProfile?.username || 'player'}`, 'success');
   } catch(e){
     console.error('[add-friend]', e);
