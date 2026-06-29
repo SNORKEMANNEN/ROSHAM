@@ -4,7 +4,7 @@
      picked up immediately; cache is only the offline fallback
    - static assets (images / audio): stale-while-revalidate — served from
      cache instantly, refreshed in the background */
-const VERSION = 'rosham-v1.8.0';
+const VERSION = 'rosham-v1.8.1';
 const ASSET_CACHE = VERSION + '-assets';
 const PAGE_CACHE = VERSION + '-pages';
 

@@ -353,15 +353,22 @@ body.low-power .age-gate-glow, body.reduced-motion .age-gate-card{ animation:non
 .agt-item svg{ color:var(--mint); opacity:.85; }
 /* Date-of-birth entry */
 .age-gate-dob{ position:relative; display:flex; gap:10px; justify-content:center; margin:0 0 4px; }
-.agd-field{ display:flex; flex-direction:column; gap:6px; text-align:left; flex:0 0 84px; }
-.agd-field.agd-year{ flex:0 0 108px; }
+.agd-field{ display:flex; flex-direction:column; gap:6px; text-align:left; flex:0 0 92px; }
+.agd-field.agd-year{ flex:0 0 116px; }
 .agd-cap{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--text-faint); padding-left:2px; }
-.agd-in{ width:100%; min-height:56px; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; color:var(--text); font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:23px; text-align:center; -moz-appearance:textfield; transition:border-color .18s, box-shadow .18s, background .18s; }
+.agd-box{ position:relative; }
+.agd-in{ width:100%; min-height:56px; padding:0 28px; background:var(--surface-2); border:1px solid var(--line); border-radius:14px; color:var(--text); font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:23px; text-align:center; -moz-appearance:textfield; transition:border-color .18s, box-shadow .18s, background .18s; }
 .agd-in::-webkit-outer-spin-button, .agd-in::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0; }
 .agd-in::placeholder{ color:var(--text-faint); opacity:.5; font-weight:700; }
 .agd-in:focus{ outline:none; border-color:var(--mint); background:var(--surface); box-shadow:0 0 0 3px rgba(45,212,160,.18); }
 .agd-in.agd-ok{ border-color:rgba(45,212,160,.55); }
 .agd-in.agd-bad{ border-color:var(--coral); box-shadow:0 0 0 3px rgba(255,92,108,.16); animation:agShake .32s; }
+/* up/down steppers */
+.agd-step{ position:absolute; right:5px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:3px; }
+.agd-arrow{ width:20px; height:20px; display:grid; place-items:center; padding:0; border:none; border-radius:6px; background:rgba(255,255,255,.07); color:var(--text-dim); cursor:pointer; transition:background .14s, color .14s, transform .1s; }
+.agd-arrow:hover{ background:rgba(45,212,160,.18); color:var(--text); }
+.agd-arrow:active{ transform:scale(.86); }
+.agd-arrow.agd-up svg{ transform:rotate(180deg); }
 @keyframes agShake{ 0%,100%{ transform:translateX(0); } 25%{ transform:translateX(-5px); } 75%{ transform:translateX(5px); } }
 /* live age read-out */
 .age-gate-live{ position:relative; min-height:20px; margin:12px 0 2px; font-size:13.5px; font-weight:700; letter-spacing:.01em; opacity:0; transform:translateY(4px); transition:opacity .25s, transform .25s; }
@@ -369,6 +376,8 @@ body.low-power .age-gate-glow, body.reduced-motion .age-gate-card{ animation:non
 .age-gate-live.ok{ color:var(--mint); }
 .age-gate-live.bad{ color:var(--coral); }
 .age-gate-err{ position:relative; font-size:13px; font-weight:600; color:var(--coral); margin:8px 0 0; }
+/* Terms / Privacy must sit ABOVE the age gate when opened from it (gate is z 9999). */
+#termsModal, #privacyModal{ z-index:10000; }
 
 /* ===== First-login intro trailer ===== */
 .intro-trailer{ position:fixed; inset:0; z-index:100000; background:#000; overflow:hidden; animation:introIn .4s ease; }
@@ -13518,6 +13527,13 @@ body.reduced-motion .pr-wait::before{ animation:none; }
 .ul-tag.new{ color:var(--mint); background:rgba(34,211,163,.10); border:1px solid rgba(34,211,163,.3); }
 .ul-tag.improved{ color:var(--violet); background:rgba(155,123,255,.10); border:1px solid rgba(155,123,255,.3); }
 .ul-tag.fixed{ color:var(--amber, #ffd33d); background:rgba(255,211,61,.08); border:1px solid rgba(255,211,61,.3); }
+.ul-replay-intro{ display:inline-flex; align-items:center; gap:8px; margin-top:14px; padding:9px 16px; border-radius:11px;
+  background:linear-gradient(135deg, rgba(45,212,160,.14), rgba(124,77,255,.14)); border:1px solid rgba(45,212,160,.4);
+  color:var(--text); font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:13px; letter-spacing:.01em;
+  cursor:pointer; transition:background .18s, transform .1s, border-color .18s; }
+.ul-replay-intro svg{ color:var(--mint); }
+.ul-replay-intro:hover{ background:linear-gradient(135deg, rgba(45,212,160,.24), rgba(124,77,255,.24)); border-color:var(--mint); }
+.ul-replay-intro:active{ transform:scale(.97); }
 
 /* ---------- MOBILE OVERHAUL ---------- */
 @supports (min-height: 100dvh){ .app{ min-height:100dvh; } }
@@ -15010,15 +15026,33 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
     <div class="age-gate-dob" role="group" aria-label="Date of birth">
       <label class="agd-field">
         <span class="agd-cap">Day</span>
-        <input id="dobDay" class="agd-in" type="number" inputmode="numeric" min="1" max="31" placeholder="DD" autocomplete="bday-day" />
+        <div class="agd-box">
+          <input id="dobDay" class="agd-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="DD" autocomplete="bday-day" aria-label="Day" />
+          <span class="agd-step">
+            <button type="button" class="agd-arrow agd-up" data-step="dobDay" data-dir="1" tabindex="-1" aria-label="Day up"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-chevron-down"/></svg></button>
+            <button type="button" class="agd-arrow" data-step="dobDay" data-dir="-1" tabindex="-1" aria-label="Day down"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-chevron-down"/></svg></button>
+          </span>
+        </div>
       </label>
       <label class="agd-field">
         <span class="agd-cap">Month</span>
-        <input id="dobMonth" class="agd-in" type="number" inputmode="numeric" min="1" max="12" placeholder="MM" autocomplete="bday-month" />
+        <div class="agd-box">
+          <input id="dobMonth" class="agd-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="2" placeholder="MM" autocomplete="bday-month" aria-label="Month" />
+          <span class="agd-step">
+            <button type="button" class="agd-arrow agd-up" data-step="dobMonth" data-dir="1" tabindex="-1" aria-label="Month up"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-chevron-down"/></svg></button>
+            <button type="button" class="agd-arrow" data-step="dobMonth" data-dir="-1" tabindex="-1" aria-label="Month down"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-chevron-down"/></svg></button>
+          </span>
+        </div>
       </label>
       <label class="agd-field agd-year">
         <span class="agd-cap">Year</span>
-        <input id="dobYear" class="agd-in" type="number" inputmode="numeric" min="1900" max="2025" placeholder="YYYY" autocomplete="bday-year" />
+        <div class="agd-box">
+          <input id="dobYear" class="agd-in" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="4" placeholder="YYYY" autocomplete="bday-year" aria-label="Year" />
+          <span class="agd-step">
+            <button type="button" class="agd-arrow agd-up" data-step="dobYear" data-dir="1" tabindex="-1" aria-label="Year up"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-chevron-down"/></svg></button>
+            <button type="button" class="agd-arrow" data-step="dobYear" data-dir="-1" tabindex="-1" aria-label="Year down"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-chevron-down"/></svg></button>
+          </span>
+        </div>
       </label>
     </div>
     <!-- Live age read-out: turns green at 18+, red below -->
@@ -29979,7 +30013,7 @@ document.addEventListener('keydown', (e) => {
 // ===== UPDATE LOG =====
 const APP_VERSION = '1.0';
 const UPDATE_LOG = [
-  { v: '1.0', date: 'June 2026', title: 'ROSHCAM 1.0 — public launch 🚀', items: [
+  { v: '1.0', date: 'June 2026', title: 'ROSHCAM 1.0 — public launch 🚀', intro: true, items: [
     ['new', 'ROSHCAM is officially live: real rock·paper·scissors over webcam, ranked ELO from Bronze to Legend, friends, challenges and leaderboards'],
     ['new', 'Daily & weekly challenges with level-scaled XP and 2× XP token rewards — clear all three weeklies for a huge bonus'],
     ['new', 'Daily login rewards, 2× XP weekends and stackable 2× XP boost tokens'],
@@ -29998,7 +30032,14 @@ function renderUpdateLog(){
       <ul class="ul-items">
         ${rel.items.map(([kind, text]) => `<li><span class="ul-tag ${kind}">${kind.toUpperCase()}</span><span>${text}</span></li>`).join('')}
       </ul>
+      ${rel.intro ? `<button class="ul-replay-intro" id="replayIntroBtn" type="button"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-play"/></svg> Watch the intro again</button>` : ''}
     </div>`).join('');
+  // Wire the "watch the intro again" button (re-created on every render).
+  const rb = $('#replayIntroBtn');
+  if(rb) rb.addEventListener('click', () => {
+    $('#updateLogModal')?.classList.remove('show');
+    try { maybePlayIntroTrailer(true); } catch(e){}
+  });
 }
 function openUpdateLog(){
   renderUpdateLog();
@@ -31109,12 +31150,16 @@ function isAgeVerifiedAdult(){
   gate.style.display = 'flex';
   try { hidePreloader(); } catch(e){}   // the gate IS the first interaction
   const dEl = $('#dobDay'), mEl = $('#dobMonth'), yEl = $('#dobYear'), errEl = $('#ageGateErr');
-  // Auto-advance focus between fields for a smooth mobile entry.
-  const advance = (el, next, len) => el && el.addEventListener('input', () => {
-    el.classList.remove('agd-bad');
-    if(el.value.length >= len && next) next.focus();
-  });
-  advance(dEl, mEl, 2); advance(mEl, yEl, 2);
+  // Field bounds: [min, max, maxDigits]. Year max is the current year (no future).
+  const DOB_BOUNDS = { dobDay:[1,31,2], dobMonth:[1,12,2], dobYear:[1900, new Date().getFullYear(), 4] };
+  // Strip non-digits, cap length, and clamp the high end — so a month > 12, a
+  // day > 31, or a future year are impossible to type.
+  const clampType = (el) => {
+    const b = DOB_BOUNDS[el.id]; if(!b) return;
+    let s = (el.value || '').replace(/[^0-9]/g, '').slice(0, b[2]);
+    if(s !== '' && parseInt(s, 10) > b[1]) s = String(b[1]);
+    if(el.value !== s) el.value = s;
+  };
   const liveEl = $('#ageGateLive'), goBtn = $('#ageGateYes');
   // Live age read-out: enables the button + turns green at 18+, red below.
   const validParts = () => {
@@ -31136,14 +31181,36 @@ function isAgeVerifiedAdult(){
     const age = ageFromDOB(parts.y, parts.m, parts.d, new Date());
     if(age >= 18){
       [dEl, mEl, yEl].forEach(el => el && el.classList.add('agd-ok'));
-      if(liveEl){ liveEl.className = 'age-gate-live show ok'; liveEl.textContent = `You're ${age} — welcome in 👋`; }
+      if(liveEl){ liveEl.className = 'age-gate-live show ok'; liveEl.textContent = `You're 18+ — welcome in 👋`; }
       if(goBtn) goBtn.disabled = false;
     } else {
       if(liveEl){ liveEl.className = 'age-gate-live show bad'; liveEl.textContent = complete ? 'Sorry — you must be 18 or older to use ROSHCAM.' : ''; }
       if(goBtn) goBtn.disabled = true;
     }
   };
-  [dEl, mEl, yEl].forEach(el => el && el.addEventListener('input', refreshLive));
+  // Typed input: clamp to valid ranges, clear error styling, auto-advance, refresh.
+  [dEl, mEl, yEl].forEach(el => { if(!el) return; el.addEventListener('input', () => {
+    el.classList.remove('agd-bad');
+    clampType(el);
+    if(el === dEl && el.value.length >= 2) mEl && mEl.focus();
+    else if(el === mEl && el.value.length >= 2) yEl && yEl.focus();
+    refreshLive();
+  }); });
+  // Up/down stepper arrows (clamped to each field's bounds).
+  const stepDob = (id, dir) => {
+    const el = $('#' + id), b = DOB_BOUNDS[id]; if(!el || !b) return;
+    let v = parseInt(el.value, 10);
+    if(!Number.isFinite(v)) v = (dir > 0 ? b[0] - 1 : b[1] + 1);
+    v = Math.min(b[1], Math.max(b[0], v + dir));
+    el.value = String(v);
+    el.classList.remove('agd-bad');
+    refreshLive();
+  };
+  gate.querySelectorAll('.agd-arrow').forEach(btn => btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    stepDob(btn.dataset.step, parseInt(btn.dataset.dir, 10));
+    try { haptic(6); } catch(_){}
+  }));
   const showErr = (msg, bad) => {
     if(errEl){ errEl.textContent = msg; errEl.style.display = ''; }
     (bad || []).forEach(el => el && el.classList.add('agd-bad'));
@@ -31241,20 +31308,29 @@ function endIntro(){
     try { if(state.screen === 'landing' && !state.muted) startMenuMusic(); } catch(e){}
   }, 460);
 }
-function maybePlayIntroTrailer(){
-  if(_introTried || introSeen()) return;
+let _introTapBound = false;
+// force=true replays it on demand (from the update log) regardless of the
+// once-per-device flag.
+function maybePlayIntroTrailer(force){
+  if(!force && (_introTried || introSeen())) return;
   const overlay = $('#introTrailer');
   if(!overlay) return;
   _introTried = true;
-  try { localStorage.setItem('rosham_intro_seen_v1', '1'); } catch(e){}   // once per device
+  if(!force){ try { localStorage.setItem('rosham_intro_seen_v1', '1'); } catch(e){} }   // once per device
+  // Fresh mount point each time (a previous player destroy() removed the iframe).
+  const wrap = overlay.querySelector('.intro-video-wrap');
+  if(wrap) wrap.innerHTML = '<div id="introPlayer"></div>';
   overlay.style.display = 'block';
   // Silence the menu music so it doesn't fight the trailer's audio.
   try { stopMenuMusic(true); } catch(e){}
   // Any tap (other than Skip) unmutes — no visible control needed on the video.
-  overlay.addEventListener('pointerdown', (ev) => {
-    if(ev.target.closest('#introSkipBtn')) return;
-    try { _introPlayer && _introPlayer.unMute(); _introPlayer && _introPlayer.setVolume(100); } catch(e){}
-  });
+  if(!_introTapBound){
+    _introTapBound = true;
+    overlay.addEventListener('pointerdown', (ev) => {
+      if(ev.target.closest('#introSkipBtn')) return;
+      try { _introPlayer && _introPlayer.unMute(); _introPlayer && _introPlayer.setVolume(100); } catch(e){}
+    });
+  }
   // Fail-safe: if the player never starts (embed disabled / offline), skip in.
   let started = false;
   const failSafe = setTimeout(() => { if(!started) endIntro(); }, 5500);
