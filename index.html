@@ -1387,7 +1387,7 @@ body.reduced-motion .nav-page.active, body.low-power .nav-page.active{ animation
 .ach-ladder-btn:active{ transform: scale(.96); }
 .ach-ladder-btn .alb-chev{ opacity: .7; }
 @media (max-width: 560px){ .ach-ladder-btn{ width: 100%; justify-content: center; margin-top: 4px; } .ach-level-banner{ flex-wrap: wrap; } }
-/* ===== LEVEL & PRESTIGE PROGRESS — paginated, Overwatch-inspired (NOT a pass) ===== */
+/* ===== LEVEL & PRESTIGE PROGRESS — paginated, milestone-track (NOT a pass) ===== */
 .lp{ display: flex; flex-direction: column; gap: 16px; }
 .lp.flash .lp-card{ animation: lpFlash 1.2s ease; }
 @keyframes lpFlash{ 0%{ box-shadow: 0 0 0 0 rgba(255,211,61,0); } 30%{ box-shadow: 0 0 0 2px rgba(255,211,61,.5), 0 0 30px -6px rgba(255,211,61,.55); } }
@@ -10031,7 +10031,7 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
 body.reduced-motion .rankup-ambient, body.low-power .rankup-ambient{ animation:rankupAmbientIn .5s .2s ease forwards; }
 
 /* ===== LEGEND rank-up — “ASCENSION” (v1.0, built from scratch) =====
-   League-of-Legends gold ceremony × Fortnite impact: blackout → converging
+   A golden ascension ceremony: blackout → converging
    light streaks → white-hot impact with shockwaves & screen shake → the
    emblem enthroned in god-rays, orbiting sparks and rising embers. */
 .legend-rankup{
@@ -10340,7 +10340,7 @@ body.reduced-motion .rk-seal-label, body.low-power .rk-seal-label{ animation:non
 }
 
 /* STAGE — old rank → arrow → new rank */
-/* ============ FORTNITE-STYLE CENTER STAGE ============ */
+/* ============ CINEMATIC CENTER STAGE ============ */
 .rankup-center-stage{
   position: relative;
   width: 320px;
@@ -15372,9 +15372,9 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 
 /* ════════════════════════════════════════════════════════════════════
    V20 — ROSHCOINS, COSMETICS & THE ITEM SHOP + RESULT CEREMONY
-   Currency pill, Fortnite-style rotating shop, four cosmetic slots
+   Currency pill, daily rotating item shop, four cosmetic slots
    (name styles / player tags / avatar effects / profile frames) and a
-   Brawl-Stars-flavoured victory & defeat ceremony.
+   juiced-up victory & defeat ceremony.
    ════════════════════════════════════════════════════════════════════ */
 
 /* ---------- TOPBAR COIN PILL ---------- */
@@ -15473,7 +15473,7 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 .shop-section-label.featured svg{ color:var(--amber, #f5b431); }
 .ssl-count{ margin-left:4px; color:var(--text-faint); letter-spacing:.05em; }
 
-/* ---------- SHOP TILES (Fortnite-style rarity slabs) ---------- */
+/* ---------- SHOP TILES (saturated rarity slabs) ---------- */
 .shop-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(196px, 1fr)); gap:12px; }
 .shop-grid-featured{ grid-template-columns:repeat(auto-fit, minmax(270px, 1fr)); }
 .shop-tile{
@@ -15841,7 +15841,7 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
     radial-gradient(3px 3px at 102px 52px, rgba(34,211,163,.8) 45%, transparent 55%);
 }
 
-/* ---------- RESULT SCREEN — BRAWL-STYLE CEREMONY ---------- */
+/* ---------- RESULT SCREEN — RESULT CEREMONY ---------- */
 /* Full-screen ray wheel behind the card */
 .mr-rays{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; overflow:hidden; z-index:0; }
 .mrr{
@@ -15947,7 +15947,7 @@ body.reduced-motion .mr-stars, body.low-power .mr-stars{ display:none; }
 body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 
 /* ════════════════════════════════════════════════════════════════════
-   V21 — OG ITEM SHOP, PROFILE v4 (Discord/Steam-style) & FULL FRAMES
+   V21 — OG ITEM SHOP, PROFILE v4 & FULL FRAMES
    ════════════════════════════════════════════════════════════════════ */
 
 /* ---------- SHOP TOP BAR ---------- */
@@ -16043,7 +16043,7 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 }
 .locker-cta{ display:flex; justify-content:center; margin-top:14px; }
 
-/* ---------- PROFILE v4 — Discord/Steam-style card ---------- */
+/* ---------- PROFILE v4 — cover-and-card layout ---------- */
 .pm2 .pm-banner{ height:178px; }
 .pm2 .profile-head{ margin-top:-56px; align-items:flex-end; gap:16px; }
 .pm2 .pm-av-wrap{ transform:none; margin-bottom:0; }
@@ -16057,7 +16057,7 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 .pm2 .pm-name{ font-size:29px; line-height:1.05; }
 .pm2 .pm-name .cx-tag{ font-size:9px; top:-3px; }
 .pm2 .pm-title-row{ margin-top:7px; }
-/* Identity card — the Discord "inner card" */
+/* Identity card — the inner identity card */
 .pm2-id-card{
   position:relative; z-index:2; margin:14px 0 0; padding:14px 16px;
   border-radius:16px; background:rgba(255,255,255,.03); border:1px solid var(--line-soft);
@@ -16127,7 +16127,7 @@ body.reduced-motion .cxf-liquid .cx-frame-edge, body.low-power .cxf-liquid .cx-f
 body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid .cx-frame-corners b{ animation:none; }
 
 /* ════════════════════════════════════════════════════════════════════
-   V22 — PROFILE v5: ground-up Discord × Steam rebuild, fully responsive
+   V22 — PROFILE v5: ground-up rebuild, fully responsive
    ════════════════════════════════════════════════════════════════════ */
 .pm3{ max-width:660px; }
 .pm3 .pm-banner{ height:188px; }
@@ -16173,7 +16173,7 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
 .pm3 .pm-status{ align-self:flex-start; }
 .pm3-about .bio{ display:block; background:transparent; border:none; padding:0; }
 
-/* Tabs — sticky segmented control (Discord's About/Activity, our way) */
+/* Tabs — sticky segmented control */
 .pm3-tabs{
   display:flex; gap:6px; margin:14px 0 12px; padding:5px;
   border-radius:14px; background:rgba(12,10,20,.88); border:1px solid var(--line-soft);
@@ -16231,7 +16231,7 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
 }
 
 /* ════════════════════════════════════════════════════════════════════
-   V23 — FRAMES v3 (full-card coverage) + STEAM-STYLE EDIT PROFILE
+   V23 — FRAMES v3 (full-card coverage) + SECTIONED EDIT PROFILE
    ════════════════════════════════════════════════════════════════════ */
 
 /* ---------- FRAME CHROME: sticky top + bottom rails with corners ---------- */
@@ -16311,7 +16311,7 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
     linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
 }
 
-/* ---------- EDIT PROFILE — Steam layout ---------- */
+/* ---------- EDIT PROFILE — sectioned layout ---------- */
 .eps-modal{ max-width:790px; }
 .eps-header{
   display:flex; align-items:center; gap:13px;
@@ -16458,6 +16458,243 @@ body.reduced-motion :is(.btn, .modal-close, .topbar-icon-btn, .pm-stat, .stat-ti
 body.low-power :is(.btn, .modal-close, .topbar-icon-btn, .pm-stat, .stat-tile, .mh-row, .pm-badges > *){ transition:none; }
 body.reduced-motion .pm3, body.reduced-motion .eps-modal, body.reduced-motion .modal{ scroll-behavior:auto; }
 
+/* ════════════════════════════════════════════════════════════════════
+   V25 — GIFTING, AUTO-SAVE EDITOR, UPGRADED COSMETIC EFFECTS
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- GIFT BUTTON + PICKER (purchase modal) ---------- */
+.sbm-gift{ border-color:rgba(155,123,255,.5); color:#cabdff; }
+.sbm-gift:hover{ background:rgba(155,123,255,.12); }
+.sbm-gift-ic{ font-size:14px; }
+.sbm-gift-panel{ margin-top:12px; text-align:left; }
+.sbm-gift-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px; margin:0 2px 8px;
+  font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.18em; color:var(--text-dim);
+}
+.sbm-gift-cost{ letter-spacing:.04em; font-weight:700; color:var(--text-faint); }
+.sbm-gift-cost b{ color:#ffd45e; }
+.sbm-gift-list{ max-height:180px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; }
+.sbm-gift-row{
+  display:flex; align-items:center; gap:10px; width:100%; text-align:left; cursor:pointer;
+  padding:9px 11px; border-radius:12px; border:1px solid var(--line); background:rgba(255,255,255,.03);
+  color:var(--text); transition:border-color .18s, background .18s, transform .15s;
+}
+.sbm-gift-row:hover{ border-color:rgba(155,123,255,.5); background:rgba(155,123,255,.07); transform:translateX(3px); }
+.sbm-gift-row:active{ transform:scale(.98); }
+.sbm-gift-row.sending{ opacity:.6; }
+.sbm-gift-av{
+  width:30px; height:30px; border-radius:10px; flex:0 0 auto; display:grid; place-items:center;
+  font-family:var(--font-display); font-weight:800; font-size:13px; color:#fff;
+}
+.sbm-gift-name{ flex:1; min-width:0; font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:13.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.sbm-gift-send{ font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.08em; color:var(--violet); }
+
+/* ---------- DETAILED PROFILE PREVIEW (purchase modal) ---------- */
+.sbm-stage{ display:flex; flex-direction:column; align-items:stretch; gap:0; padding:16px 14px 14px; }
+.sbm-stage-item{ display:grid; place-items:center; min-height:90px; padding:6px 0 14px; }
+.sbm-profile-prev{
+  position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:8px;
+  padding:16px 12px 14px; border-radius:14px;
+  background:linear-gradient(180deg, var(--surface-2), var(--bg-2)); border:1px solid var(--line);
+}
+.spp-label{
+  position:absolute; top:8px; left:10px; z-index:2;
+  font-family:var(--font-mono); font-size:7.5px; font-weight:900; letter-spacing:.22em; color:var(--text-faint);
+}
+.sbm-profile-prev .cx-prev-av{ position:relative; z-index:2; }
+.spp-name{ position:relative; z-index:2; font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:19px; }
+
+/* ---------- GIFT RECEIVED — unboxing ceremony ---------- */
+.gift-overlay{
+  position:fixed; inset:0; z-index:520; display:none; align-items:center; justify-content:center;
+  background:radial-gradient(100% 80% at 50% 40%, rgba(18,14,30,.6), rgba(4,3,9,.96) 75%);
+  --gc:#ffb336;
+}
+.gift-overlay.show{ display:flex; animation:fadeIn .35s; }
+.gift-rays{
+  position:absolute; width:170vmax; height:170vmax; border-radius:50%; opacity:.13; pointer-events:none;
+  background:conic-gradient(from 0deg, transparent 0 14deg, var(--gc) 14deg 24deg, transparent 24deg 50deg,
+    var(--gc) 50deg 60deg, transparent 60deg 86deg, var(--gc) 86deg 96deg, transparent 96deg 122deg,
+    var(--gc) 122deg 132deg, transparent 132deg 158deg, var(--gc) 158deg 168deg, transparent 168deg 194deg,
+    var(--gc) 194deg 204deg, transparent 204deg 230deg, var(--gc) 230deg 240deg, transparent 240deg 266deg,
+    var(--gc) 266deg 276deg, transparent 276deg 302deg, var(--gc) 302deg 312deg, transparent 312deg 338deg,
+    var(--gc) 338deg 348deg, transparent 348deg);
+  -webkit-mask:radial-gradient(circle, #000 0%, transparent 62%);
+  mask:radial-gradient(circle, #000 0%, transparent 62%);
+  animation:rankupSpinRays 30s linear infinite;
+}
+.gift-sparkles{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.gift-sparkles i{
+  position:absolute; font-style:normal; color:var(--gc); opacity:0;
+  text-shadow:0 0 10px var(--gc);
+  animation:mrStarTwinkle 2.8s ease-in-out infinite;
+}
+.gift-card{
+  position:relative; z-index:2; width:min(400px, 92vw); text-align:center;
+  padding:26px 22px 20px; border-radius:24px;
+  background:linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid color-mix(in srgb, var(--gc) 40%, var(--line));
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.9), 0 0 50px -18px var(--gc);
+  animation:giftCardIn .55s cubic-bezier(.2,1.4,.35,1) both;
+}
+@keyframes giftCardIn{ from{ opacity:0; transform:scale(.8) translateY(30px); } to{ opacity:1; transform:none; } }
+.gift-eyebrow{ font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.34em; color:var(--gc); }
+.gift-from{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:22px; margin:8px 0 4px; }
+.gift-box-stage{ position:relative; display:grid; place-items:center; min-height:150px; margin:6px 0; }
+.gift-box{ font-size:86px; line-height:1; filter:drop-shadow(0 14px 26px rgba(0,0,0,.6)); animation:giftBob 2.2s ease-in-out infinite; }
+@keyframes giftBob{ 0%,100%{ transform:translateY(0) rotate(-2deg); } 50%{ transform:translateY(-9px) rotate(3deg); } }
+.gift-box.shaking{ animation:giftShake .95s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes giftShake{
+  0%{ transform:rotate(0) scale(1); } 15%{ transform:rotate(-9deg) scale(1.04); } 30%{ transform:rotate(8deg) scale(1.07); }
+  45%{ transform:rotate(-10deg) scale(1.1); } 60%{ transform:rotate(9deg) scale(1.13); }
+  75%{ transform:rotate(-7deg) scale(1.17); } 90%{ transform:rotate(5deg) scale(1.22); } 100%{ transform:rotate(0) scale(1.26); }
+}
+.gift-box.bursting{ animation:giftBurst .4s ease-in both; }
+@keyframes giftBurst{ to{ transform:scale(2.1); opacity:0; filter:blur(8px) brightness(2.4); } }
+.gift-flash{
+  position:absolute; inset:-20%; border-radius:50%; pointer-events:none; opacity:0;
+  background:radial-gradient(circle, #fff 0%, color-mix(in srgb, var(--gc) 65%, #fff) 30%, transparent 70%);
+}
+.gift-flash.go{ animation:giftFlash .7s ease-out both; }
+@keyframes giftFlash{ 0%{ opacity:0; transform:scale(.3); } 25%{ opacity:1; } 100%{ opacity:0; transform:scale(1.9); } }
+.gift-reveal{ animation:giftRevealIn .7s cubic-bezier(.2,1.5,.35,1) both; display:grid; place-items:center; }
+@keyframes giftRevealIn{ from{ opacity:0; transform:scale(.4) translateY(16px); filter:blur(6px); } to{ opacity:1; transform:none; filter:blur(0); } }
+.gift-item-meta{ animation:v10Rise .4s .1s both; }
+.gift-item-rarity{ font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.3em; }
+.gift-item-name{ font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:26px; text-transform:uppercase; margin:2px 0; }
+.gift-item-type{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.22em; color:var(--text-faint); }
+.gift-note{ color:var(--text-dim); font-size:12.5px; margin:10px 0 14px; }
+.gift-actions{ display:flex; gap:9px; }
+.gift-actions .btn{ flex:1; justify-content:center; min-height:46px; }
+.gift-open-btn{ animation:v10CtaPulse 2.4s ease-in-out infinite; }
+body.reduced-motion :is(.gift-box, .gift-rays, .gift-sparkles i, .gift-open-btn),
+body.low-power :is(.gift-box, .gift-rays, .gift-sparkles i, .gift-open-btn){ animation:none !important; }
+
+/* ---------- EDIT PROFILE: privacy rows + autosave chip + pane stagger ---------- */
+.ep-priv-row{
+  display:flex; align-items:center; gap:12px; width:100%; text-align:left; cursor:pointer;
+  padding:13px 14px; border-radius:14px; margin-bottom:8px;
+  border:1px solid var(--line); background:rgba(255,255,255,.03); color:var(--text);
+  transition:border-color .2s, background .2s, transform .15s;
+}
+.ep-priv-row:hover{ border-color:var(--line-bright, var(--line)); background:rgba(255,255,255,.05); transform:translateX(3px); }
+.ep-priv-row:active{ transform:scale(.985); }
+.ep-priv-ico{
+  width:36px; height:36px; border-radius:11px; flex:0 0 auto; display:grid; place-items:center;
+  background:rgba(245,180,49,.09); color:var(--amber, #f5b431);
+}
+.ep-priv-text{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.ep-priv-text b{ font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14.5px; }
+.ep-priv-text span{ font-size:11.5px; color:var(--text-faint); }
+.ep-priv-chev{ color:var(--text-faint); flex:0 0 auto; }
+.eps-save-chip{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:.05em; color:var(--text-faint);
+  padding:8px 13px; border-radius:999px; border:1px solid var(--line-soft); background:rgba(255,255,255,.03);
+  transition:color .25s, border-color .25s, background .25s;
+}
+.eps-save-chip.saving{ color:var(--amber, #f5b431); border-color:rgba(245,180,49,.4); }
+.eps-save-chip.saving::before{ content:''; width:10px; height:10px; border-radius:50%; border:2px solid rgba(245,180,49,.3); border-top-color:var(--amber, #f5b431); animation:lucideSpin .7s linear infinite; }
+.eps-save-chip.saved{ color:var(--mint); border-color:rgba(34,211,163,.4); background:rgba(34,211,163,.06); animation:coinPop .45s cubic-bezier(.2,1.8,.4,1); }
+.eps-save-chip.err{ color:var(--coral); border-color:rgba(255,51,88,.4); }
+/* Staggered entrance for pane content */
+.eps-pane.pane-in > *{ animation:epsItemIn .42s cubic-bezier(.25,1,.35,1) both; }
+.eps-pane.pane-in > *:nth-child(1){ animation-delay:.02s; }
+.eps-pane.pane-in > *:nth-child(2){ animation-delay:.06s; }
+.eps-pane.pane-in > *:nth-child(3){ animation-delay:.11s; }
+.eps-pane.pane-in > *:nth-child(4){ animation-delay:.16s; }
+.eps-pane.pane-in > *:nth-child(5){ animation-delay:.21s; }
+.eps-pane.pane-in > *:nth-child(6){ animation-delay:.26s; }
+.eps-pane.pane-in > *:nth-child(n+7){ animation-delay:.3s; }
+@keyframes epsItemIn{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
+/* Animated underline sweeps in under each pane title */
+.eps-pane-title{ position:relative; padding-bottom:8px; }
+.eps-pane-title::after{
+  content:''; position:absolute; left:0; bottom:0; height:3px; width:44px; border-radius:999px;
+  background:linear-gradient(90deg, var(--mint), var(--violet));
+  transform-origin:left center; transform:scaleX(0);
+  animation:epsUnderline .5s .15s cubic-bezier(.2,1,.3,1) forwards;
+}
+@keyframes epsUnderline{ to{ transform:scaleX(1); } }
+/* Picker chips pop when selected */
+#colorPick button, #accentPick button, .title-chip, .banner-pick button{
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s, border-color .2s;
+}
+#colorPick button:hover, #accentPick button:hover{ transform:translateY(-2px) scale(1.1); }
+#colorPick button.active, #accentPick button.active{ animation:chipPop .35s cubic-bezier(.2,1.8,.4,1); }
+.title-chip:hover:not(:disabled){ transform:translateY(-2px); }
+.title-chip.active{ animation:chipPop .35s cubic-bezier(.2,1.8,.4,1); }
+@keyframes chipPop{ 0%{ transform:scale(.92); } 55%{ transform:scale(1.08); } 100%{ transform:scale(1); } }
+.eps-header-av{ transition:transform .3s cubic-bezier(.3,1.3,.4,1); }
+.eps-header:hover .eps-header-av{ transform:scale(1.08) rotate(-3deg); }
+body.reduced-motion .eps-pane.pane-in > *, body.low-power .eps-pane.pane-in > *{ animation:none !important; }
+body.reduced-motion .eps-pane-title::after{ animation:none; transform:scaleX(1); }
+
+/* ---------- UPGRADED COSMETIC EFFECTS ---------- */
+/* Nebula frame v2 — layered gas clouds that slowly drift + breathe */
+.profile-modal.cxf-galaxy, .cx-prev-frame.cxf-galaxy, .locker-look.cxf-galaxy, .sbm-profile-prev.cxf-galaxy{
+  background:
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(2px 2px at 78% 9%, rgba(255,255,255,.7) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 42% 32%, rgba(255,255,255,.6) 45%, transparent 55%),
+    radial-gradient(2px 2px at 88% 56%, rgba(255,255,255,.55) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 22% 74%, rgba(255,255,255,.5) 45%, transparent 55%),
+    radial-gradient(60% 42% at 24% 16%, rgba(155,108,255,.34), transparent 68%),
+    radial-gradient(52% 38% at 78% 30%, rgba(255,94,200,.22), transparent 70%),
+    radial-gradient(64% 44% at 55% 78%, rgba(95,201,255,.16), transparent 70%),
+    radial-gradient(40% 30% at 40% 45%, rgba(255,170,90,.10), transparent 72%),
+    linear-gradient(180deg, #141127, #0c0a17) !important;
+  background-size:100% 100%;
+  animation:cxfNebulaBreathe 12s ease-in-out infinite alternate;
+}
+@keyframes cxfNebulaBreathe{
+  from{ filter:saturate(1) brightness(1); }
+  to{ filter:saturate(1.35) brightness(1.12); }
+}
+.cxf-galaxy .cx-frame-overlay{
+  background:
+    radial-gradient(2px 2px at 18% 34%, rgba(255,255,255,.95) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 66% 22%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(2px 2px at 84% 62%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 38% 74%, rgba(255,255,255,.8) 45%, transparent 55%),
+    radial-gradient(55% 60% at 30% 20%, rgba(155,108,255,.5), transparent 70%),
+    radial-gradient(45% 50% at 75% 55%, rgba(255,94,200,.34), transparent 72%),
+    radial-gradient(50% 55% at 55% 90%, rgba(95,201,255,.3), transparent 70%);
+  mix-blend-mode:screen;
+  animation:cxfNebulaDrift 16s ease-in-out infinite alternate;
+}
+@keyframes cxfNebulaDrift{
+  from{ transform:scale(1) translate(0, 0); opacity:.9; }
+  to{ transform:scale(1.15) translate(2%, -3%); opacity:1; }
+}
+/* Galaxy name — starlight shimmer on top of the flowing nebula gradient */
+.cxn-galaxy{ animation:cxnFlow 7s linear infinite, cxnGalaxyGlow 3.2s ease-in-out infinite; }
+@keyframes cxnGalaxyGlow{
+  0%,100%{ filter:drop-shadow(0 0 8px rgba(155,123,255,.4)); }
+  50%{ filter:drop-shadow(0 0 16px rgba(198,108,255,.75)) drop-shadow(0 0 30px rgba(95,201,255,.3)); }
+}
+/* Neon name — occasional sign-flicker */
+.cxn-neon{ animation:cxnNeonPulse 2.2s ease-in-out infinite, cxnNeonFlicker 7s steps(1) infinite; }
+@keyframes cxnNeonFlicker{
+  0%, 91%, 93.5%, 100%{ opacity:1; }
+  91.8%{ opacity:.45; } 92.6%{ opacity:.85; } 93.1%{ opacity:.5; }
+}
+/* Liquid chrome ring — faster morph + shifting hue */
+.cxa-liquid{ animation:cxaBlob 4.5s ease-in-out infinite, cxaFlowBg 3s linear infinite, cxaLiquidHue 8s linear infinite; }
+@keyframes cxaLiquidHue{ to{ filter:hue-rotate(360deg) drop-shadow(0 0 8px rgba(190,200,225,.6)); } }
+/* Void ring — slow collapse pulse */
+.cxa-void{ animation:cxaSpin 4.5s linear infinite, cxaVoidPulse 3.4s ease-in-out infinite; }
+@keyframes cxaVoidPulse{
+  0%,100%{ filter:drop-shadow(0 0 10px rgba(123,63,228,.8)); }
+  50%{ filter:drop-shadow(0 0 20px rgba(181,108,255,1)); }
+}
+body.reduced-motion :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .cx-frame-overlay),
+body.low-power :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .cx-frame-overlay){ animation:none !important; }
+/* Name cosmetics inline in lists/chat stay compact */
+.gc-name.cx-name{ font-weight:800; }
+.nm .cx-tag, .podium-name .cx-tag, .gc-meta .cx-tag{ font-size:7.5px; padding:2px 6px; }
+#youName .cx-tag, #oppName .cx-tag, .mf-name .cx-tag{ font-size:8px; padding:2px 7px; }
+
 </style>
 </head>
 <body>
@@ -16538,7 +16775,7 @@ body.reduced-motion .pm3, body.reduced-motion .eps-modal, body.reduced-motion .m
     <p class="age-gate-note">By entering you confirm the date above is accurate and that you accept our <button class="age-gate-link" data-open-legal="terms">Terms</button> and <button class="age-gate-link" data-open-legal="privacy">Privacy Policy</button>. Never share personal information on camera — treat every match as public.</p>
   </div>
 </div>
-<!-- ===== FIRST-LOGIN INTRO TRAILER (Fortnite-style new-season cinematic) ===== -->
+<!-- ===== FIRST-LOGIN INTRO TRAILER (cinematic new-season intro) ===== -->
 <div class="intro-trailer" id="introTrailer" style="display:none;">
   <div class="intro-video-wrap"><div id="introPlayer"></div></div>
   <button class="intro-skip" id="introSkipBtn" type="button">Skip intro <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-arrow-right"/></svg></button>
@@ -16703,7 +16940,7 @@ body.reduced-motion .pm3, body.reduced-motion .eps-modal, body.reduced-motion .m
       <text x="12" y="13.5" text-anchor="middle" font-family="'Bricolage Grotesque', system-ui, sans-serif" font-size="6" font-weight="800" font-style="italic" letter-spacing="-.2" fill="#04231a">ELO</text>
     </symbol>
     <!-- 2× XP TOKEN crest — gunmetal shield, gold top bar, "2XP" + twin stars
-         (CoD-style token art redrawn to fit the site's amber accent) -->
+         (token art drawn to fit the site's amber accent) -->
     <symbol id="i-xptoken" viewBox="0 0 24 24">
       <image href="xptoken.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/>
     </symbol>
@@ -16864,6 +17101,7 @@ body.reduced-motion .pm3, body.reduced-motion .eps-modal, body.reduced-motion .m
         <!-- Explore — destinations that AREN'T already on the bottom bar -->
         <div class="ms-section-label">Explore</div>
         <div class="ms-grid">
+          <button class="ms-tile" data-act="shop"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg></span><span>Shop</span></button>
           <button class="ms-tile" data-act="activity"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
           <button class="ms-tile" data-act="achievements"><span class="ms-tile-badge ms-prestige" id="msAchBadge" style="display:none;">✦</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
           <button class="ms-tile" data-act="chat"><span class="ms-tile-badge" id="msChatBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span>Messages</span></button>
@@ -18863,7 +19101,7 @@ const FIREBASE_CONFIG = {
 <div class="match-result-overlay" id="matchResultOverlay">
   <!-- Animated background -->
   <div class="mr-bg"></div>
-  <!-- BRAWL-STYLE CEREMONY LAYERS: spinning ray wheel + star field (JS-spawned) -->
+  <!-- CEREMONY LAYERS: spinning ray wheel + star field (JS-spawned) -->
   <div class="mr-rays" aria-hidden="true"><i class="mrr r1"></i><i class="mrr r2"></i></div>
   <div class="mr-stars" id="mrStars" aria-hidden="true"></div>
 
@@ -19576,16 +19814,56 @@ const FIREBASE_CONFIG = {
     <div class="sbm-balance" id="sbmBalance"></div>
     <div class="sbm-actions">
       <button class="btn btn-ghost" data-close="shopBuyModal">Not now</button>
+      <button class="btn sbm-gift" id="sbmGiftBtn" title="Gift this to a friend">
+        <span class="sbm-gift-ic">🎁</span> Gift
+      </button>
       <button class="btn btn-primary sbm-buy" id="sbmBuyBtn">
         <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-coin"/></svg>
         <span id="sbmBuyLabel">Buy · 4,500</span>
       </button>
     </div>
+    <!-- GIFT PICKER — slides open under the actions -->
+    <div class="sbm-gift-panel" id="sbmGiftPanel" style="display:none;">
+      <div class="sbm-gift-head">
+        <span>SEND TO A FRIEND</span>
+        <span class="sbm-gift-cost">costs <svg viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-coin"/></svg> <b id="sbmGiftCost">—</b> · refunded if declined</span>
+      </div>
+      <div class="sbm-gift-list" id="sbmGiftList"><div class="side-empty">Loading friends…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- GIFT RECEIVED — animated unboxing overlay -->
+<div class="gift-overlay" id="giftOverlay">
+  <div class="gift-rays" aria-hidden="true"></div>
+  <div class="gift-sparkles" id="giftSparkles" aria-hidden="true"></div>
+  <div class="gift-card" id="giftCard">
+    <div class="gift-eyebrow">GIFT INCOMING</div>
+    <div class="gift-from" id="giftFrom">@player sent you a gift!</div>
+    <div class="gift-box-stage" id="giftBoxStage">
+      <div class="gift-box" id="giftBox">🎁</div>
+      <div class="gift-flash" id="giftFlash"></div>
+      <div class="gift-reveal" id="giftReveal" style="display:none;"></div>
+    </div>
+    <div class="gift-item-meta" id="giftItemMeta" style="display:none;">
+      <div class="gift-item-rarity" id="giftItemRarity">LEGENDARY</div>
+      <div class="gift-item-name" id="giftItemName">Galaxy</div>
+      <div class="gift-item-type" id="giftItemType">NAME STYLE</div>
+    </div>
+    <p class="gift-note" id="giftNote">Open it, or decline to send the coins back.</p>
+    <div class="gift-actions" id="giftActions">
+      <button class="btn btn-ghost" id="giftDeclineBtn">Decline</button>
+      <button class="btn btn-primary gift-open-btn" id="giftAcceptBtn">🎁 Open gift</button>
+    </div>
+    <div class="gift-actions" id="giftDoneActions" style="display:none;">
+      <button class="btn btn-ghost" id="giftCloseBtn">Close</button>
+      <button class="btn btn-mint" id="giftEquipBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-star"/></svg> Equip now</button>
+    </div>
   </div>
 </div>
 
 <!-- VIEW PROFILE MODAL -->
-<!-- PROFILE v5 — built from scratch: Discord card × Steam profile hybrid.
+<!-- PROFILE v5 — built from scratch: cover-and-card profile layout.
      Cover banner → floating avatar with presence → identity card →
      Overview / Matches / Comments tabs. Fully responsive. -->
 <div class="modal-bg" id="profileModal">
@@ -19595,7 +19873,7 @@ const FIREBASE_CONFIG = {
     <!-- COVER — rank/accent tinted, frame-decorated -->
     <div class="pm-banner" id="pmBanner"><svg class="pm-banner-mark" id="pmBannerMark" viewBox="0 0 24 24"></svg></div>
 
-    <!-- FLOATING HEAD: avatar (presence + level pip) · Steam-style level ring · actions -->
+    <!-- FLOATING HEAD: avatar (presence + level pip) · level ring · actions -->
     <div class="pm3-head">
       <div class="pm-av-wrap">
         <div class="av-xl" id="pmAv">?</div>
@@ -19640,7 +19918,7 @@ const FIREBASE_CONFIG = {
         <h4>About</h4>
         <div class="bio" id="pmBio" style="display:none;">—</div>
       </div>
-      <!-- Showcase — up to 3 featured badges (Steam-style) -->
+      <!-- Showcase — up to 3 featured badges  -->
       <div class="pm-showcase" id="pmShowcase" style="display:none;"></div>
       <div class="pm-stats">
         <div class="pm-stat"><div class="v" id="pmWins">0</div><div class="l">wins</div></div>
@@ -19684,7 +19962,7 @@ const FIREBASE_CONFIG = {
 
     <!-- PANE: MATCHES -->
     <div class="pm3-pane" data-pmpane="matches" style="display:none;">
-      <!-- Recent form (sports-style form guide) -->
+      <!-- Recent form (form guide) -->
       <div class="pm-form-wrap pm3-card" id="pmFormWrap" style="display:none;">
         <span class="pm-form-label">RECENT FORM</span>
         <div class="pm-form" id="pmForm"></div>
@@ -19710,11 +19988,11 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
-<!-- EDIT PROFILE — Steam-style: section sidebar + content panes -->
+<!-- EDIT PROFILE — section sidebar + content panes -->
 <div class="modal-bg" id="editProfileModal">
   <div class="modal eps-modal">
     <button class="modal-close" data-close="editProfileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <!-- Steam-style header strip: avatar » Edit profile -->
+    <!-- Header strip: avatar » Edit profile -->
     <div class="eps-header">
       <div class="eps-header-av av-photo-host" id="epsHeaderAv">?</div>
       <div class="eps-header-name"><b id="epsHeaderName">—</b> <span class="eps-header-chev">»</span> <span class="eps-header-crumb">Edit profile</span></div>
@@ -19817,7 +20095,7 @@ const FIREBASE_CONFIG = {
 
         <section class="eps-pane" data-eps-pane="showcase">
           <h4 class="eps-pane-title">Showcase</h4>
-          <p class="eps-pane-desc">Feature up to 3 badges at the top of your profile, Steam-style.</p>
+          <p class="eps-pane-desc">Feature up to 3 badges at the top of your profile.</p>
           <div class="field">
             <div class="showcase-pick" id="showcasePick"></div>
           </div>
@@ -19825,7 +20103,7 @@ const FIREBASE_CONFIG = {
 
         <section class="eps-pane" data-eps-pane="privacy">
           <h4 class="eps-pane-title">Privacy &amp; safety</h4>
-          <p class="eps-pane-desc">Control who can reach you.</p>
+          <p class="eps-pane-desc">Control who can reach you and what others can see.</p>
           <div class="field">
             <label class="toggle-row">
               <input type="checkbox" name="acceptChallenges" id="editAcceptChallenges" checked />
@@ -19836,15 +20114,32 @@ const FIREBASE_CONFIG = {
               turn off to prevent challenge popups from strangers
             </div>
           </div>
+          <div class="field">
+            <button type="button" class="ep-priv-row" id="epRequestsRow">
+              <span class="ep-priv-ico"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-people"/></svg></span>
+              <span class="ep-priv-text"><b>Friend requests</b><span id="epRequestsSub">Allow others to send you requests</span></span>
+              <span class="set-toggle" id="epRequestsToggle"></span>
+            </button>
+            <button type="button" class="ep-priv-row" id="epStreamerRow">
+              <span class="ep-priv-ico"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-eye-off"/></svg></span>
+              <span class="ep-priv-text"><b>Streamer mode</b><span>Hides sensitive info (codes, emails, opponent names)</span></span>
+              <span class="set-toggle off" id="epStreamerToggle"></span>
+            </button>
+            <button type="button" class="ep-priv-row" id="epBlockedRow">
+              <span class="ep-priv-ico"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-block"/></svg></span>
+              <span class="ep-priv-text"><b>Blocked users</b><span>See and manage who you've blocked</span></span>
+              <svg viewBox="0 0 24 24" width="15" height="15" class="ep-priv-chev"><use href="#i-chevron-right"/></svg>
+            </button>
+          </div>
         </section>
       </div>
 
-      <!-- FOOT: error + actions span both columns -->
+      <!-- FOOT: autosave status + Done span both columns -->
       <div class="eps-foot">
         <div class="error-msg" id="editError"></div>
-        <div class="modal-actions" style="justify-content:space-between;">
-          <button type="button" class="btn btn-danger" id="viewBlockedBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Blocked users</button>
-          <button type="submit" class="btn btn-primary">Save changes</button>
+        <div class="modal-actions" style="justify-content:space-between; align-items:center;">
+          <span class="eps-save-chip" id="epsSaveChip">Changes save automatically</span>
+          <button type="submit" class="btn btn-primary">Done</button>
         </div>
       </div>
     </form>
@@ -21133,7 +21428,7 @@ function showScreen(name){
       }
     }
     // First time the player reaches the lobby on this device: roll the intro
-    // trailer (Fortnite-style) before they see the menu.
+    // trailer (cinematic) before they see the menu.
     if(name === 'landing'){
       setTimeout(() => { try { maybePlayIntroTrailer(); } catch(e){} }, 300);
     }
@@ -22454,6 +22749,7 @@ async function onAuthChanged(user){
   attachActivityListener();
   attachNotificationListener();
   attachChatListener();
+  try { attachGiftListeners(); } catch(e){ console.warn('[gift] attach', e); }
   updateSidebarProfile();
 
   // ===== MODERATION: enforce bans + surface warnings =====
@@ -23243,11 +23539,45 @@ function attachChatListener(){
           if(totalUnread > 0){ badge.style.display = ''; badge.textContent = totalUnread > 9 ? '9+' : totalUnread; }
           else badge.style.display = 'none';
         }
-        if($('#chatPanel').classList.contains('show') && $('#chatThread').style.display === 'none') renderChatConvList();
+        const panel = $('#chatPanel'), thread = $('#chatThread');
+        if(panel?.classList.contains('show') && thread && thread.style.display === 'none') renderChatConvList();
       },
       (err) => console.warn('[chat] index listener', err)
     );
   } catch(e){ console.warn('[chat] attach failed', e); }
+}
+
+// Belt-and-braces: DMs are friends-only, so if the live index listener came up
+// empty (rules, race, legacy docs), fetch the index doc for each friend
+// directly and merge. Runs once per session, only when the list looks empty.
+async function loadFriendConvsFallback(){
+  if(!state.user || !state.profile || state._convFallbackRan) return;
+  state._convFallbackRan = true;
+  const friends = (state.profile.friends || []).slice(0, 40);
+  if(!friends.length) return;
+  let found = 0;
+  await Promise.all(friends.map(async (fuid) => {
+    if(state._chatConvs[fuid]) return;
+    try {
+      const s = await getDoc(doc(state.db, 'dmIndex', convIdFor(state.user.uid, fuid)));
+      if(!s.exists()) return;
+      const data = s.data();
+      state._chatConvs[fuid] = {
+        convId: s.id,
+        lastMsg: data.lastMsg || '',
+        lastAt: data.lastAt,
+        unread: data['unread_' + state.user.uid] || 0,
+        name: data['name_' + fuid] || state._friendDocs?.[fuid]?.username || 'player',
+        photoURL: data['photo_' + fuid] || '',
+        colorIdx: data['color_' + fuid] || 0,
+      };
+      found++;
+    } catch(e){}
+  }));
+  if(found){
+    const panel = $('#chatPanel'), thread = $('#chatThread');
+    if(panel?.classList.contains('show') && thread && thread.style.display === 'none') renderChatConvList();
+  }
 }
 
 function renderChatConvList(){
@@ -23279,6 +23609,9 @@ function renderChatConvList(){
     empty.style.marginTop = '4px';
     empty.innerHTML = 'No private chats yet. Open a friend\'s profile to start one.';
     list.appendChild(empty);
+    // The live index may have missed existing threads — recover them from the
+    // friends list once (re-renders this list if anything turns up).
+    try { loadFriendConvsFallback(); } catch(e){}
     return;
   }
   convs.forEach(([uid, c]) => {
@@ -24652,7 +24985,7 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
 
-// ============= 2× XP TOKENS (CoD-style timed boosts) =============
+// ============= 2× XP TOKENS (stackable timed boosts) =============
 // Earned from weekly challenges, the quest-line finale and daily rewards.
 // Activated on the Play page; activating while one runs ADDS time (stacking).
 const XP_TOKEN_TYPES = {
@@ -24827,7 +25160,7 @@ setInterval(() => {
 // ROSHCOINS + COSMETICS + ITEM SHOP
 // Coins are earned by playing (matches, challenges, logins, level-ups)
 // and spent on cosmetics: name styles, player tags, avatar effects and
-// profile frames. The shop rotates daily, Fortnite-style.
+// profile frames. The shop rotates daily with featured picks.
 // ═══════════════════════════════════════════════════════════════════
 const fmtCoins = n => (n || 0).toLocaleString();
 function getCoins(){ return Math.max(0, Math.round(state.profile?.coins || 0)); }
@@ -24953,6 +25286,11 @@ function openCosmeticsEditor(){
 async function buyCosmetic(id){
   const item = COSMETIC_BY_ID[id];
   if(!item || !state.profile) return false;
+  // Guests can't own cosmetics — they'd lose them when the session ends.
+  if(isGuest()){
+    try { toast('Create a free account to buy cosmetics — guests can\'t keep items', 'info', { duration: 6000 }); } catch(e){}
+    return false;
+  }
   if(ownsCosmetic(id)) return false;
   if(getCoins() < item.price){
     try { toast(`Not enough RoshCoins — need ${fmtCoins(item.price - getCoins())} more. Win matches to earn coins!`, 'error'); } catch(e){}
@@ -24992,6 +25330,8 @@ function styledNameHTML(p, text, opts = {}){
   return html;
 }
 // Avatar effect ring — injected as a positioned child of the avatar's WRAPPER.
+// The ring adapts to the avatar's shape: circular photos get a circular ring,
+// rounded-square avatars get a matching rounded-square ring.
 function applyAvatarFx(wrapEl, p){
   if(!wrapEl) return;
   wrapEl.querySelectorAll(':scope > .cx-avfx').forEach(n => n.remove());
@@ -25001,6 +25341,16 @@ function applyAvatarFx(wrapEl, p){
   i.className = 'cx-avfx ' + fx.cls;
   i.setAttribute('aria-hidden', 'true');
   wrapEl.appendChild(i);
+  // Liquid morphs its own shape — leave it alone.
+  if(fx.cls === 'cxa-liquid') return;
+  try {
+    const av = wrapEl.querySelector('.av-xl, .mrc-av, .cx-prev-av-core, .av') || wrapEl.firstElementChild;
+    if(!av || av === i) return;
+    const br = getComputedStyle(av).borderRadius || '';
+    const first = parseFloat(br) || 0;
+    const isCircle = (/%/.test(br) && first >= 50) || (first > 0 && av.offsetWidth && first >= av.offsetWidth / 2);
+    i.style.borderRadius = isCircle ? '50%' : (first > 0 ? `calc(${first}px + 9px)` : '30%');
+  } catch(e){}
 }
 // Profile frame — covers the WHOLE modal: themed border + glow on the card,
 // a decorated banner overlay, corner ornaments pinned to the top, and a
@@ -25131,25 +25481,56 @@ document.addEventListener('click', (e) => {
   if(ownsCosmetic(item.id)){ openCosmeticsEditor(); return; }
   openShopBuyModal(item);
 });
+// Live "on your profile" preview — your current look with the previewed item
+// slotted in, so you see exactly what you're buying.
+function buildProfilePreviewHTML(item){
+  const p = state.profile || {};
+  const ov = {
+    name: cosmeticEquipped(p, 'name'), tag: cosmeticEquipped(p, 'tag'),
+    avatar: cosmeticEquipped(p, 'avatar'), frame: cosmeticEquipped(p, 'frame'),
+  };
+  ov[item.type] = item;
+  const init = escapeHTML(initialOf(p.username || 'R'));
+  const bg = AVATAR_COLORS[p.colorIdx || 0] || AVATAR_COLORS[0];
+  const nameHtml = `<span class="cx-name${ov.name ? ' ' + ov.name.cls : ''}">${escapeHTML(p.username || 'YourName')}</span>${ov.tag ? ` <span class="cx-tag ${ov.tag.cls}">${escapeHTML(ov.tag.text)}</span>` : ''}`;
+  return `<div class="sbm-profile-prev ${ov.frame ? ov.frame.cls : ''}">
+    <i class="cx-frame-overlay" aria-hidden="true"${ov.frame ? '' : ' style="display:none;"'}></i>
+    <span class="spp-label">ON YOUR PROFILE</span>
+    <span class="cx-prev-av"><span class="cx-prev-av-core" style="background:${bg};">${init}</span>${ov.avatar ? `<i class="cx-avfx ${ov.avatar.cls}" aria-hidden="true"></i>` : ''}</span>
+    <div class="spp-name">${nameHtml}</div>
+  </div>`;
+}
 function openShopBuyModal(item){
   state._shopBuyItem = item;
   const r = CX_RARITY[item.rarity];
   const stage = $('#sbmStage');
-  if(stage){ stage.innerHTML = buildCosmeticPreview(item, true); stage.className = 'sbm-stage rar-' + item.rarity; }
+  if(stage){
+    stage.innerHTML = `<span class="sbm-stage-item">${buildCosmeticPreview(item, true)}</span>` + buildProfilePreviewHTML(item);
+    stage.className = 'sbm-stage rar-' + item.rarity;
+  }
   const rarEl = $('#sbmRarity'); if(rarEl){ rarEl.textContent = r.label; rarEl.style.color = r.color; }
   setText('#sbmName', item.name);
   setText('#sbmType', CX_TYPE_LABEL[item.type]);
   setText('#sbmDesc', item.desc || '');
+  const guest = isGuest();
   const bal = getCoins(), after = bal - item.price;
   const balEl = $('#sbmBalance');
   if(balEl){
-    balEl.innerHTML = after >= 0
-      ? `Balance after: <b>${fmtCoins(after)}</b> <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg>`
-      : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — win matches &amp; clear challenges to earn them`;
+    balEl.innerHTML = guest
+      ? `<b class="sbm-short">Guests can't buy cosmetics</b> — create a free account to unlock the shop`
+      : (after >= 0
+        ? `Balance after: <b>${fmtCoins(after)}</b> <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg>`
+        : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — win matches &amp; clear challenges to earn them`);
   }
   const btn = $('#sbmBuyBtn');
-  if(btn){ btn.disabled = after < 0; }
+  if(btn){ btn.disabled = guest || after < 0; }
   setText('#sbmBuyLabel', `Buy · ${fmtCoins(item.price)}`);
+  // Gifting: hidden for guests; costs the same, refunded if declined.
+  const giftBtn = $('#sbmGiftBtn');
+  if(giftBtn) giftBtn.style.display = guest ? 'none' : '';
+  const gp = $('#sbmGiftPanel');
+  if(gp) gp.style.display = 'none';
+  setText('#sbmGiftCost', fmtCoins(item.price));
   const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal rar-' + item.rarity;
   $('#shopBuyModal')?.classList.add('show');
 }
@@ -25159,6 +25540,17 @@ on('#sbmBuyBtn', 'click', async () => {
   if(ok){
     $('#shopBuyModal')?.classList.remove('show');
     renderShopItems();
+  }
+});
+on('#sbmGiftBtn', 'click', () => {
+  const item = state._shopBuyItem; if(!item) return;
+  const gp = $('#sbmGiftPanel');
+  if(!gp) return;
+  const opening = gp.style.display === 'none';
+  gp.style.display = opening ? '' : 'none';
+  if(opening){
+    gp.classList.remove('pane-in'); void gp.offsetWidth; gp.classList.add('pane-in');
+    renderGiftPicker(item);
   }
 });
 
@@ -25216,7 +25608,222 @@ document.addEventListener('click', (e) => {
   try { showNavPage('shop'); } catch(err){}
 });
 
-// ---------- EDIT PROFILE (Steam-style) SECTION NAV ----------
+// ---------- COSMETIC GIFTING ----------
+// Gifts live at gifts/{id}: { from, fromName, to, itemId, price, status, createdAt }
+// status: pending → accepted | declined → refunded (sender's client refunds).
+async function ensureFriendDocs(){
+  state._friendDocs = state._friendDocs || {};
+  const uids = (state.profile?.friends || []).filter(u => !state._friendDocs[u]);
+  for(let i = 0; i < uids.length; i += 10){
+    try {
+      const snap = await getDocs(query(collection(state.db, 'users'), where(documentId(), 'in', uids.slice(i, i + 10))));
+      snap.forEach(d => { state._friendDocs[d.id] = d.data(); });
+    } catch(e){}
+  }
+}
+async function renderGiftPicker(item){
+  const list = $('#sbmGiftList');
+  if(!list) return;
+  const friends = state.profile?.friends || [];
+  if(!friends.length){
+    list.innerHTML = '<div class="side-empty">No friends yet — add some to send gifts!</div>';
+    return;
+  }
+  list.innerHTML = '<div class="side-empty">Loading friends…</div>';
+  await ensureFriendDocs();
+  const rows = friends.map(u => state._friendDocs?.[u] ? { uid: u, ...state._friendDocs[u] } : null).filter(Boolean);
+  if(!rows.length){ list.innerHTML = '<div class="side-empty">Could not load friends</div>'; return; }
+  list.innerHTML = rows.map(f => `
+    <button type="button" class="sbm-gift-row" data-gift-to="${escapeHTML(f.uid)}">
+      <span class="sbm-gift-av" style="background:${AVATAR_COLORS[f.colorIdx || 0]}">${escapeHTML(initialOf(f.username || '?'))}</span>
+      <span class="sbm-gift-name">@${escapeHTML(f.username || 'player')}</span>
+      <span class="sbm-gift-send">Send 🎁</span>
+    </button>`).join('');
+  list.querySelectorAll('[data-gift-to]').forEach(b => b.addEventListener('click', () => sendCosmeticGift(b.dataset.giftTo, item, b)));
+}
+async function sendCosmeticGift(toUid, item, rowEl){
+  if(!item || !toUid || !state.user || !state.profile) return;
+  if(isGuest()){
+    try { toast('Create a free account to send gifts', 'info'); } catch(e){}
+    return;
+  }
+  if(getCoins() < item.price){
+    try { toast(`Not enough RoshCoins — gifting ${item.name} costs ${fmtCoins(item.price)}`, 'error'); } catch(e){}
+    return;
+  }
+  if(rowEl){ rowEl.disabled = true; rowEl.classList.add('sending'); }
+  const toName = state._friendDocs?.[toUid]?.username || 'friend';
+  state.profile.coins = Math.max(0, (state.profile.coins || 0) - item.price);
+  updateCoinPill(true);
+  try { renderShopWallet(); } catch(e){}
+  try {
+    await updateDoc(doc(state.db, 'users', state.user.uid), { coins: increment(-item.price) });
+    await addDoc(collection(state.db, 'gifts'), {
+      from: state.user.uid,
+      fromName: state.profile.username || 'player',
+      to: toUid,
+      itemId: item.id,
+      price: item.price,
+      status: 'pending',
+      createdAt: serverTimestamp(),
+    });
+    try {
+      pushNotification(toUid, {
+        type: 'gift',
+        text: `🎁 <b>@${escapeHTML(state.profile.username)}</b> sent you a gift — <b>${escapeHTML(item.name)}</b>!`,
+        actionUid: state.user.uid,
+        actionName: state.profile.username,
+      });
+    } catch(e){}
+    $('#shopBuyModal')?.classList.remove('show');
+    try { haptic([12, 30, 20]); } catch(e){}
+    try { bigBurst(CX_RARITY[item.rarity].color, 70); } catch(e){}
+    try { toast(`🎁 Gift on its way to @${toName}! If they decline, your ${fmtCoins(item.price)} coins come back.`, 'success', { duration: 6000 }); } catch(e){}
+  } catch(e){
+    console.warn('[gift] send failed', e);
+    state.profile.coins = (state.profile.coins || 0) + item.price;   // roll back optimistic spend
+    updateCoinPill(true);
+    try { toast('Gift failed to send — coins not spent', 'error'); } catch(err){}
+  }
+}
+// Recipient + sender listeners (attached after login).
+function attachGiftListeners(){
+  if(!state.user) return;
+  state._giftSeen = state._giftSeen || new Set();
+  if(state._unsubGiftsIn) state._unsubGiftsIn();
+  try {
+    state._unsubGiftsIn = onSnapshot(
+      query(collection(state.db, 'gifts'), where('to', '==', state.user.uid), where('status', '==', 'pending')),
+      (snap) => {
+        snap.forEach(d => {
+          if(state._giftSeen.has(d.id)) return;
+          state._giftSeen.add(d.id);
+          const g = { id: d.id, ...d.data() };
+          try {
+            toast(`🎁 @${escapeHTML(g.fromName || 'someone')} sent you a gift!`, 'success', {
+              duration: 10000,
+              action: { label: 'Open', onClick: () => showGiftOverlay(g) },
+            });
+          } catch(e){}
+          try { haptic([10, 30, 14]); } catch(e){}
+        });
+      },
+      (err) => console.warn('[gift] inbox listener', err)
+    );
+  } catch(e){ console.warn('[gift] attach in', e); }
+  if(state._unsubGiftsOut) state._unsubGiftsOut();
+  try {
+    state._unsubGiftsOut = onSnapshot(
+      query(collection(state.db, 'gifts'), where('from', '==', state.user.uid), where('status', '==', 'declined')),
+      (snap) => {
+        snap.forEach(async (d) => {
+          const g = d.data();
+          try {
+            await updateDoc(doc(state.db, 'gifts', d.id), { status: 'refunded' });
+            await grantCoins(g.price || 0, 'Gift declined — refunded');
+            const item = COSMETIC_BY_ID[g.itemId];
+            try { toast(`Your gift${item ? ` (${item.name})` : ''} was declined — 🪙 ${fmtCoins(g.price || 0)} refunded`, 'info', { duration: 6000 }); } catch(e){}
+          } catch(e){ console.warn('[gift] refund', e); }
+        });
+      },
+      (err) => console.warn('[gift] refund listener', err)
+    );
+  } catch(e){ console.warn('[gift] attach out', e); }
+}
+// The unboxing ceremony.
+function showGiftOverlay(gift){
+  const item = COSMETIC_BY_ID[gift.itemId];
+  const ov = $('#giftOverlay');
+  if(!ov || !item || state._giftHandlingId === gift.id) return;
+  state._giftHandlingId = gift.id;
+  const r = CX_RARITY[item.rarity];
+  ov.style.setProperty('--gc', r.color);
+  setText('#giftFrom', `@${gift.fromName || 'someone'} sent you a gift!`);
+  const box = $('#giftBox'), flash = $('#giftFlash'), reveal = $('#giftReveal'), meta = $('#giftItemMeta');
+  box.style.display = ''; box.classList.remove('shaking', 'bursting');
+  if(flash) flash.classList.remove('go');
+  reveal.style.display = 'none'; reveal.innerHTML = '';
+  meta.style.display = 'none';
+  $('#giftActions').style.display = '';
+  $('#giftDoneActions').style.display = 'none';
+  const note = $('#giftNote');
+  const alreadyOwned = ownsCosmetic(item.id);
+  if(note) note.textContent = alreadyOwned
+    ? `You already own ${item.name} — declining sends the coins straight back to @${gift.fromName || 'them'}.`
+    : 'Open it, or decline to send the coins back.';
+  // sparkles
+  const sp = $('#giftSparkles');
+  if(sp){
+    sp.innerHTML = '';
+    for(let i = 0; i < 14; i++){
+      const s = document.createElement('i');
+      s.textContent = Math.random() < .4 ? '✦' : '✧';
+      s.style.left = (5 + Math.random() * 90) + '%';
+      s.style.top = (5 + Math.random() * 80) + '%';
+      s.style.fontSize = (9 + Math.random() * 16) + 'px';
+      s.style.animationDelay = (Math.random() * 2) + 's';
+      sp.appendChild(s);
+    }
+  }
+  ov.classList.add('show');
+  const close = () => { ov.classList.remove('show'); state._giftHandlingId = null; };
+  const decline = async () => {
+    try { await updateDoc(doc(state.db, 'gifts', gift.id), { status: 'declined' }); } catch(e){}
+    close();
+    try { toast(`Gift declined — @${gift.fromName || 'they'} got their coins back`, 'info'); } catch(e){}
+  };
+  $('#giftDeclineBtn').onclick = decline;
+  $('#giftCloseBtn').onclick = close;
+  $('#giftAcceptBtn').onclick = async () => {
+    // Guests can't keep cosmetics — decline so the sender is refunded.
+    if(isGuest()){
+      try { toast('Guests can\'t keep cosmetics — create an account first! Gift declined & refunded.', 'info', { duration: 6500 }); } catch(e){}
+      decline();
+      return;
+    }
+    // If it's a duplicate, accepting would waste it — decline & refund instead.
+    if(alreadyOwned){ decline(); return; }
+    // UNBOX: shake → flash → reveal
+    box.classList.add('shaking');
+    try { haptic([10, 40, 10, 40, 25]); } catch(e){}
+    setTimeout(() => {
+      box.classList.add('bursting');
+      if(flash){ flash.classList.remove('go'); void flash.offsetWidth; flash.classList.add('go'); }
+      try { bigBurst('#ffffff', 70); } catch(e){}
+      try { bigBurst(r.color, 90); } catch(e){}
+    }, 950);
+    setTimeout(async () => {
+      box.style.display = 'none';
+      reveal.innerHTML = buildCosmeticPreview(item, true);
+      reveal.style.display = '';
+      setText('#giftItemRarity', r.label);
+      const rar = $('#giftItemRarity'); if(rar) rar.style.color = r.color;
+      setText('#giftItemName', item.name);
+      setText('#giftItemType', CX_TYPE_LABEL[item.type]);
+      meta.style.display = '';
+      if(note) note.textContent = `From @${gift.fromName || 'a friend'} with love 💚`;
+      $('#giftActions').style.display = 'none';
+      $('#giftDoneActions').style.display = '';
+      try { launchConfetti(); } catch(e){}
+      try { haptic([15, 40, 30]); } catch(e){}
+      // Persist: item into my locker + gift marked accepted.
+      const c = getCosmetics();
+      if(!c.owned.includes(item.id)){
+        c.owned = [...c.owned, item.id];
+        await saveCosmetics(c);
+      }
+      try { await updateDoc(doc(state.db, 'gifts', gift.id), { status: 'accepted' }); } catch(e){}
+      try { renderShopItems(); } catch(e){}
+    }, 1400);
+    $('#giftEquipBtn').onclick = async () => {
+      await equipCosmetic(item.type, item.id);
+      close();
+      try { toast(`Equipped ${item.name}!`, 'success'); } catch(e){}
+    };
+  };
+}
+
+// ---------- EDIT PROFILE SECTION NAV ----------
 function epsSetPane(name){
   document.querySelectorAll('.eps-nav-item').forEach(b => b.classList.toggle('active', b.dataset.eps === name));
   document.querySelectorAll('.eps-pane').forEach(p => {
@@ -25882,7 +26489,7 @@ function renderLeaderboardInto(sel){
         <div class="podium-av" style="${avStyle}">${avInner}</div>
         <div class="podium-medal">${place}</div>
       </div>
-      <div class="podium-name">${escapeHTML(p.username)}</div>
+      <div class="podium-name">${styledNameHTML(p, p.username)}</div>
       <div class="podium-elo"><svg viewBox="0 0 24 24" class="${rank.cls}"><use href="#${rank.icon}"/></svg> ${p.rating||1000}</div>
       <div class="podium-pillar"><span>${place}</span></div>
     `;
@@ -25908,7 +26515,7 @@ function renderLeaderboardInto(sel){
         <div class="rank-num">${place}</div>
         <div class="av" style="${avStyle}">${avInner}</div>
         <div class="meta">
-          <div class="nm">${escapeHTML(p.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+          <div class="nm">${styledNameHTML(p, p.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
           <div class="sub">${flagOf(p.country)} · ${p.wins||0}W ${p.losses||0}L</div>
         </div>
         <div class="rating" style="color:${rank.color};"><svg viewBox="0 0 24 24" class="${rank.cls}"><use href="#${rank.icon}"/></svg> ${p.rating||1000}</div>
@@ -26077,7 +26684,7 @@ function renderGlobalChat(){
     row.innerHTML = `
       <div class="gc-av" data-uid="${escapeHTML(m.uid||'')}" style="${grouped ? 'visibility:hidden;' : avStyle}">${grouped ? '' : avInner}</div>
       <div class="gc-bubble-wrap">
-        ${grouped ? '' : `<div class="gc-meta"><span class="gc-name" data-uid="${escapeHTML(m.uid||'')}" data-username>${escapeHTML(m.username||'stranger')}</span><span class="gc-time">${m.createdAt ? timeAgo(m.createdAt) : 'now'}</span></div>`}
+        ${grouped ? '' : `<div class="gc-meta"><span class="gc-name${m.ns ? ' cx-name ' + escapeHTML(m.ns) : ''}" data-uid="${escapeHTML(m.uid||'')}" data-username>${escapeHTML(m.username||'stranger')}</span>${m.tg && m.tgc ? ` <span class="cx-tag ${escapeHTML(m.tgc)}">${escapeHTML(m.tg)}</span>` : ''}<span class="gc-time">${m.createdAt ? timeAgo(m.createdAt) : 'now'}</span></div>`}
         <div class="gc-bubble">${escapeHTML(m.text||'')}${canDelete ? `<button class="gc-del" data-del="${m.id}" title="Delete message" aria-label="Delete"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-trash"/></svg></button>` : ''}</div>
       </div>`;
     stream.appendChild(row);
@@ -26098,7 +26705,14 @@ function renderGlobalChat(){
 }
 // Back-compat: any old "open global chat" entry point now opens the
 // Messages flyout's pinned Global Chat thread.
-function renderChatPage(){ openGlobalChatThread(); }
+// The Messages page opens with YOUR conversations (global chat stays pinned
+// at the top of the list) — it used to force-open the global room, which hid
+// every private chat behind an unmarked back button.
+function renderChatPage(){
+  const p = $('#chatPanel');
+  if(p) p.classList.add('show');
+  renderChatConvList();
+}
 async function sendGlobalChat(text){
   text = (text || '').trim();
   if(!text) return;
@@ -26114,6 +26728,10 @@ async function sendGlobalChat(text){
       username: state.profile.username || 'player',
       colorIdx: state.profile.colorIdx || 0,
       photoURL: state.profile.photoURL || '',
+      // Name cosmetics ride along so the room sees your style + tag.
+      ns: cosmeticEquipped(state.profile, 'name')?.cls || '',
+      tg: cosmeticEquipped(state.profile, 'tag')?.text || '',
+      tgc: cosmeticEquipped(state.profile, 'tag')?.cls || '',
       text,
       createdAt: serverTimestamp(),
     });
@@ -26396,7 +27014,7 @@ async function openProfile(uid){
     const pmTitleColorEl = $('#pmLevelTitle');
     if(pmTitleColorEl) pmTitleColorEl.style.color = pTitle.color;
 
-    // Last seen + the Discord-style presence dot on the avatar
+    // Last seen + the presence dot on the avatar
     const lsEl = $('#pmLastSeen');
     {
       const now = Date.now();
@@ -26862,7 +27480,7 @@ function applyGuestProfileLock(){
 
 function openEditProfile(){
   const p = state.profile;
-  // Steam-style header strip + always land on the General section.
+  // Header strip + always land on the General section.
   try { renderAvatar($('#epsHeaderAv'), p); } catch(e){}
   try { setText('#epsHeaderName', p.username || '—'); } catch(e){}
   try { epsSetPane('general'); } catch(e){}
@@ -26942,6 +27560,13 @@ function openEditProfile(){
   updateEditPhotoPreview(p.photoURL || null);
   // Cosmetics editor (equips save instantly — not part of the form snapshot).
   try { renderCosmeticsEditor(); } catch(e){}
+  // Privacy rows mirror the Settings page state.
+  try {
+    $('#epStreamerToggle')?.classList.toggle('off', !state.streamerMode);
+    $('#epRequestsToggle')?.classList.toggle('off', !!p.blockFriendRequests);
+    setText('#epRequestsSub', p.blockFriendRequests ? 'Blocking all incoming requests' : 'Allow others to send you requests');
+  } catch(e){}
+  try { epsSaveState(''); } catch(e){}
   // Snapshot the pristine form so we can detect unsaved changes on close.
   state._editSnapshot = serializeEditForm();
   // Guests can't customize their profile — lock the form + prompt account creation.
@@ -26976,6 +27601,7 @@ on('#pickPhotoBtn', 'click', () => { const i = $('#photoInput'); if(i) i.click()
 on('#removePhotoBtn', 'click', () => {
   pendingPhotoDataURL = '';
   updateEditPhotoPreview(null);
+  try { scheduleProfileAutosave(); } catch(e){}
 });
 on('#photoInput', 'change', (e) => {
   const file = e.target.files[0];
@@ -26992,13 +27618,25 @@ on('#photoInput', 'change', (e) => {
   e.target.value = ''; // reset so same file can be picked again
 });
 
-on('#editProfileForm', 'submit', async (e) => {
-  e.preventDefault();
+// ---------- PROFILE SAVING: automatic (debounced) + Done button ----------
+function epsSaveState(s){
+  const chip = $('#epsSaveChip');
+  if(!chip) return;
+  chip.classList.remove('saving', 'saved', 'err');
+  if(s === 'saving'){ chip.classList.add('saving'); chip.textContent = 'Saving…'; }
+  else if(s === 'saved'){ chip.classList.add('saved'); chip.innerHTML = '✓ All changes saved'; }
+  else if(s === 'err'){ chip.classList.add('err'); chip.textContent = 'Couldn\'t save'; }
+  else { chip.textContent = 'Changes save automatically'; }
+}
+async function saveProfileEdits(opts = {}){
   // Guests can't save profile changes — they must create an account first.
-  if(isGuest()){ toast('Create a free account to customize your profile', 'info'); return; }
+  if(isGuest()){ if(!opts.auto) toast('Create a free account to customize your profile', 'info'); return false; }
+  if(!state.profile || !state.user) return false;
   showErr('#editError', '');
-  const fd = new FormData(e.target);
-  const newUsername = fd.get('username').trim();
+  const form = $('#editProfileForm');
+  if(!form) return false;
+  const fd = new FormData(form);
+  const newUsername = (fd.get('username') || '').trim();
   const newCountry = fd.get('country');
   const newBio = (fd.get('bio') || '').trim();
   const newStatus = (fd.get('status') || '').trim();
@@ -27006,12 +27644,15 @@ on('#editProfileForm', 'submit', async (e) => {
   const newColorIdx = activeColor ? parseInt(activeColor.dataset.idx) : (state.profile.colorIdx || 0);
   const activeAccent = document.querySelector('#accentPick button.active');
   const newAccent = activeAccent ? (activeAccent.dataset.accent || '') : (state.profile.accent || '');
-  const newAcceptChallenges = $('#editAcceptChallenges').checked;
+  const newAcceptChallenges = $('#editAcceptChallenges')?.checked !== false;
 
   if(!/^[a-zA-Z0-9_]{2,20}$/.test(newUsername)){
-    showErr('#editError', 'Username must be 2-20 chars (letters, numbers, underscore)');
-    return;
+    // While auto-saving, an in-progress username isn't an error — just wait.
+    if(!opts.auto) showErr('#editError', 'Username must be 2-20 chars (letters, numbers, underscore)');
+    epsSaveState('err');
+    return false;
   }
+  epsSaveState('saving');
   try {
     const usernameChanged = newUsername.toLowerCase() !== state.profile.username.toLowerCase();
     if(usernameChanged){
@@ -27032,21 +27673,65 @@ on('#editProfileForm', 'submit', async (e) => {
     }
     await updateDoc(doc(state.db, 'users', state.user.uid), updates);
     state.profile = { ...state.profile, username:newUsername, country:newCountry, bio:newBio, status:newStatus, colorIdx:newColorIdx, accent:newAccent, equippedTitle:newTitle, showcase:newShowcase, banner:newBanner, acceptChallenges:newAcceptChallenges };
-    if(pendingPhotoDataURL !== null) state.profile.photoURL = pendingPhotoDataURL;
+    if(pendingPhotoDataURL !== null){ state.profile.photoURL = pendingPhotoDataURL; pendingPhotoDataURL = null; }
     setText('#chipName', newUsername);
     renderAvatar($('#chipAv'), state.profile);
     refreshStatsUI();
-    toast('Profile updated', 'success');
-    $('#editProfileModal').classList.remove('show');
-    pendingPhotoDataURL = null;
-    state._editSnapshot = null; // saved — clear the unsaved-changes guard
+    state._editSnapshot = serializeEditForm();   // saved — snapshot is now current
+    epsSaveState('saved');
+    if(opts.close){
+      toast('Profile updated', 'success');
+      $('#editProfileModal').classList.remove('show');
+    }
+    return true;
   } catch(err){
     showErr('#editError', friendlyError(err));
+    epsSaveState('err');
+    return false;
   }
+}
+on('#editProfileForm', 'submit', (e) => { e.preventDefault(); saveProfileEdits({ close: true }); });
+// Debounced auto-save on any field change or picker click.
+let _epAutoTimer = null;
+function scheduleProfileAutosave(){
+  if(isGuest() || !$('#editProfileModal')?.classList.contains('show')) return;
+  epsSaveState('saving');
+  clearTimeout(_epAutoTimer);
+  _epAutoTimer = setTimeout(() => saveProfileEdits({ auto: true }), 900);
+}
+['input', 'change'].forEach(ev => on('#editProfileForm', ev, (e) => {
+  if(e.target && e.target.closest && e.target.closest('#cosmeticsEditor')) return;   // equips save themselves
+  scheduleProfileAutosave();
+}));
+on('#editProfileForm', 'click', (e) => {
+  const btn = e.target.closest && e.target.closest('button');
+  if(!btn) return;
+  // Only picker buttons trigger a save — not nav / cosmetics / photo / footer controls.
+  if(btn.closest('#cosmeticsEditor, .eps-nav, .eps-foot') || btn.id === 'pickPhotoBtn' || btn.id === 'removePhotoBtn' || btn.hasAttribute('data-goto-shop-page')) return;
+  if(btn.closest('.title-pick, #colorPick, #accentPick, .banner-pick, .showcase-pick')) scheduleProfileAutosave();
+});
+
+// ---------- EDIT PROFILE: privacy rows (mirror the Settings page) ----------
+on('#epStreamerRow', 'click', () => {
+  const on_ = !state.streamerMode;
+  applyStreamerMode(on_);
+  $('#epStreamerToggle')?.classList.toggle('off', !on_);
+  $('#setStreamerToggle')?.classList.toggle('off', !on_);
+  toast(on_ ? 'Streamer mode on — sensitive info hidden' : 'Streamer mode off', on_ ? 'success' : 'info');
+});
+on('#epRequestsRow', 'click', async () => {
+  const blocking = !state.profile?.blockFriendRequests;
+  if(state.profile) state.profile.blockFriendRequests = blocking;
+  $('#epRequestsToggle')?.classList.toggle('off', blocking);
+  $('#setBlockRequestsToggle')?.classList.toggle('off', blocking);
+  setText('#epRequestsSub', blocking ? 'Blocking all incoming requests' : 'Allow others to send you requests');
+  setText('#setBlockRequestsState', blocking ? 'Blocking all incoming requests' : 'Allow others to send you requests');
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { blockFriendRequests: blocking }); } catch(e){ console.warn('[privacy] could not save', e); }
+  toast(blocking ? 'Friend requests blocked' : 'Friend requests allowed', 'info');
 });
 
 // Blocked list
-on('#viewBlockedBtn', 'click', async () => {
+on('#epBlockedRow', 'click', async () => {
   $('#editProfileModal').classList.remove('show');
   const list = $('#blockedList');
   list.innerHTML = '';
@@ -27556,7 +28241,7 @@ async function showMatchFound(){
 
   // ===== YOU =====
   renderAvatar($('#mfYouAv'), state.profile);
-  setText('#mfYouName', '@' + (state.profile.username || 'you'));
+  { const el = $('#mfYouName'); if(el) el.innerHTML = styledNameHTML(state.profile, '@' + (state.profile.username || 'you')); }
   const myRank = rankFromRating(state.profile.rating || 1000);
   const youUnranked = inPlacements(state.profile);
   setRankIconEl($('#mfYouRankIcon'), youUnranked ? 'unranked' : myRank.id);
@@ -27594,7 +28279,7 @@ async function showMatchFound(){
     } catch(e){ /* ignore — fall back to color */ }
   }
   renderAvatar($('#mfOppAv'), o);
-  setText('#mfOppName', '@' + (o.username || 'stranger'));
+  { const el = $('#mfOppName'); if(el) el.innerHTML = styledNameHTML(o, '@' + (o.username || 'stranger')); }
   const oRank = rankFromRating(o.rating || 1000);
   const oppUnranked = inPlacements(o);
   setRankIconEl($('#mfOppRankIcon'), oppUnranked ? 'unranked' : oRank.id);
@@ -27709,7 +28394,7 @@ async function enterMatch(matchData){
   state._preReadyYou = false;
   state._preReadyOpp = false;
   setupOppPanel();
-  setText('#youName', state.profile.username);
+  { const el = $('#youName'); if(el) el.innerHTML = styledNameHTML(state.profile, state.profile.username); }
   const myRank = rankFromRating(state.profile.rating || 1000);
   const youMiniUnranked = inPlacements(state.profile);
   // Populate the (previously unset) "you" rank crest in the arena bar, mirroring
@@ -27898,7 +28583,7 @@ function showMatchIntro(){
 
 function setupOppPanel(){
   const op = state.oppProfile || {};
-  setText('#oppName', '@' + (op.username || 'stranger'));
+  { const el = $('#oppName'); if(el) el.innerHTML = styledNameHTML(op, '@' + (op.username || 'stranger')); }
   setText('#oppFlag', flagOf(op.country || 'XX'));
   const oppRank = rankFromRating(op.rating || 1000);
   const oppMiniUnranked = inPlacements(op);
@@ -29656,7 +30341,7 @@ function showMatchResultScreen(result){
   overlay.classList.remove('win','lose','draw');
   overlay.classList.add(result === 'win' ? 'win' : result === 'lose' ? 'lose' : 'draw');
 
-  // ===== BRAWL-STYLE CEREMONY: spawn the star field + prep the slam =====
+  // ===== CEREMONY: spawn the star field + prep the slam =====
   const perf2 = (typeof fxPerf === 'function') ? fxPerf() : { lite: false };
   const starsHost = $('#mrStars');
   if(starsHost) starsHost.innerHTML = '';
@@ -29718,7 +30403,7 @@ function showMatchResultScreen(result){
   }
   countUp('#matchResultYouScore', state.scoreYou, 600, 450);
   countUp('#matchResultOppScore', state.scoreOpp, 600, 450);
-  // Crown the winner's avatar with a ring-ping (brawl-style podium beat).
+  // Crown the winner's avatar with a ring-ping (podium beat).
   $('#mrPlayerYou')?.classList.toggle('winner', result === 'win');
   $('#mrPlayerOpp')?.classList.toggle('winner', result === 'lose');
 
@@ -31154,7 +31839,8 @@ function setupCropperEvents(){
     pendingPhotoDataURL = jpeg;
     updateEditPhotoPreview(pendingPhotoDataURL);
     $('#cropperModal').classList.remove('show');
-    toast('Photo ready · click Save to apply', 'success');
+    try { scheduleProfileAutosave(); } catch(e){}
+    toast('Photo ready — saving…', 'success');
   });
 }
 setupCropperEvents();
@@ -31776,7 +32462,7 @@ function renderAchievementsPage(){
 }
 
 // ===== LEVEL & PRESTIGE LADDER (achievements page) =====
-// ===== LEVEL & PRESTIGE PROGRESS — paginated, Overwatch-inspired (NOT a pass) =====
+// ===== LEVEL & PRESTIGE PROGRESS — paginated, milestone-track (NOT a pass) =====
 const LP_PER_PAGE = 10;
 function lpCap(t){ return t === 'prestige' ? 'Prestige' : 'Level'; }
 function renderLevelLadder(p, lvl, prestige){
@@ -32591,7 +33277,7 @@ function buildFriendCard(f){
       <span class="fc-status-dot ${pres.cls}" title="${escapeHTML(pres.label)}"></span>
     </div>
     <div class="fc-meta">
-      <div class="nm">${pinned ? '<svg viewBox="0 0 24 24" class="fc-pin-mark"><use href="#i-pin"/></svg>' : ''}${escapeHTML(f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
+      <div class="nm">${pinned ? '<svg viewBox="0 0 24 24" class="fc-pin-mark"><use href="#i-pin"/></svg>' : ''}${styledNameHTML(f, f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
       <div class="fc-status-line ${pres.cls}">${flagOf(f.country)} ${pres.label} · <b>${f.rating||1000}</b></div>
     </div>
     <div class="friend-actions">
@@ -33244,6 +33930,7 @@ on('#moreSheet', 'click', (e) => {
       case 'rank': showNavPage('rank'); break;
       case 'friends': showNavPage('friends'); break;
       case 'activity': showNavPage('activity'); break;
+      case 'shop': showNavPage('shop'); break;
       case 'chat': closeAllFlyouts(); $('#chatPanel')?.classList.add('show'); renderChatConvList(); break;
       case 'achievements': showNavPage('achievements'); break;
       case 'settings': showNavPage('settings'); break;
@@ -33489,7 +34176,7 @@ async function markProfileAdult(){
   } catch(e){ console.warn('[age] could not flag profile adult', e); }
 }
 
-// ===== First-login intro trailer (Fortnite-style new-season cinematic) =====
+// ===== First-login intro trailer (cinematic new-season intro) =====
 // Plays a fullscreen, controls-free YouTube cinematic the first time someone
 // reaches the lobby on this device. Autoplays muted (so it always starts), then
 // tries to bring sound in; any tap also unmutes. A Skip button (and the video
