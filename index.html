@@ -14991,6 +14991,1473 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
   .settings-search input{ font-size: 16px; min-height: 22px; }
 }
 
+/* ════════════════════════════════════════════════════════════════════
+   V19 — GAME LOBBY OVERHAUL
+   Play page declutter, XP booster console, daily-reward gift board,
+   pass-style level & prestige track, rank-up ceremony polish.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- PLAY PAGE: cleaner lobby rhythm ---------- */
+.play-hero{ padding:22px 26px 20px; }
+.play-hero .hx-tag{ max-width:520px; }
+.mode-card{ border-radius:20px; }
+.mode-card::after{
+  content:''; position:absolute; top:0; left:18px; right:18px; height:2px; pointer-events:none;
+  background:linear-gradient(90deg, transparent, color-mix(in srgb, var(--mc, var(--mint)) 65%, transparent), transparent);
+  opacity:.55; transition:opacity .25s;
+}
+.mode-card:not(.mode-locked):hover::after{ opacity:1; }
+.mode-card:not(.mode-locked):hover{
+  border-color:color-mix(in srgb, var(--mc, var(--mint)) 40%, var(--line));
+  box-shadow:0 22px 44px -22px rgba(0,0,0,.8), 0 0 36px -20px var(--mc, var(--mint));
+}
+.play-challenges{ margin-top:14px; }
+
+/* ---------- 2× XP BOOSTER CONSOLE (full-width strip) ---------- */
+.xpboost-panel{
+  margin-top:0; padding:0; border-radius:20px; aspect-ratio:auto; position:relative; overflow:hidden;
+  background:
+    radial-gradient(120% 200% at 0% 50%, rgba(245,180,49,.10), transparent 42%),
+    radial-gradient(120% 200% at 100% 50%, rgba(155,123,255,.07), transparent 46%),
+    linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid var(--line);
+  transition:border-color .4s, box-shadow .4s;
+}
+.xpboost-panel.is-active{ border-color:rgba(245,180,49,.45); box-shadow:0 0 34px -16px rgba(245,180,49,.8); animation:xpb2Live 2.4s ease-in-out infinite; }
+@keyframes xpb2Live{ 0%,100%{ box-shadow:0 0 26px -16px rgba(245,180,49,.7); } 50%{ box-shadow:0 0 40px -12px rgba(245,180,49,.95); } }
+.xpb2{ display:flex; align-items:center; gap:18px; padding:15px 18px; flex-wrap:wrap; }
+.xpb2-emblem{
+  position:relative; width:64px; height:64px; flex:0 0 auto; border-radius:19px; display:grid; place-items:center;
+  background:linear-gradient(145deg, #ffdf7e, var(--amber, #f5b431) 55%, #e08f1f);
+  box-shadow:0 10px 26px -10px rgba(245,180,49,.8), inset 0 1.5px 0 rgba(255,255,255,.55), inset 0 -3px 8px rgba(120,70,0,.35);
+  overflow:hidden; isolation:isolate;
+}
+.xpb2-rays{
+  position:absolute; inset:-45%; z-index:0; pointer-events:none; opacity:.5;
+  background:conic-gradient(from 0deg,
+    transparent 0 22deg, rgba(255,255,255,.5) 22deg 34deg,
+    transparent 34deg 82deg, rgba(255,255,255,.5) 82deg 94deg,
+    transparent 94deg 142deg, rgba(255,255,255,.5) 142deg 154deg,
+    transparent 154deg 202deg, rgba(255,255,255,.5) 202deg 214deg,
+    transparent 214deg 262deg, rgba(255,255,255,.5) 262deg 274deg,
+    transparent 274deg 322deg, rgba(255,255,255,.5) 322deg 334deg, transparent 334deg);
+  animation:xpb2Spin 14s linear infinite;
+}
+@keyframes xpb2Spin{ to{ transform:rotate(360deg); } }
+.xpb2-mult{
+  position:relative; z-index:1; font-family:var(--font-display); font-stretch:64%; font-weight:900;
+  font-size:30px; line-height:1; color:#221302; text-shadow:0 1px 0 rgba(255,255,255,.4);
+}
+.xpb2-mult em{ font-style:normal; font-size:20px; vertical-align:2px; }
+.xpb2-main{ flex:1 1 220px; min-width:0; }
+.xpb2-titlerow{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.xpb2-title{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:18px; letter-spacing:.02em; }
+.xpb2-chip{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.12em;
+  padding:4px 10px; border-radius:999px; border:1px solid var(--line); color:var(--text-faint);
+  background:rgba(255,255,255,.04);
+}
+.xpb2-chip.active{ color:var(--amber, #f5b431); border-color:rgba(245,180,49,.45); background:rgba(245,180,49,.10); box-shadow:0 0 16px -8px rgba(245,180,49,.8); }
+.xpb2-chip.weekend{ color:#1c1402; border-color:transparent; background:linear-gradient(135deg,#ffd95e,#ff9a3d); box-shadow:0 0 16px -6px rgba(255,180,60,.7); }
+.xpb2-sub{ margin:6px 0 0; font-size:12.5px; line-height:1.45; color:var(--text-dim); max-width:460px; }
+.xpb2-timer{
+  flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:5px;
+  min-width:128px; padding:10px 16px 9px; border-radius:15px;
+  background:linear-gradient(180deg, rgba(245,180,49,.12), rgba(255,154,61,.05));
+  border:1px solid rgba(245,180,49,.35);
+}
+.xpb2-timer-num{ font-family:var(--font-display); font-stretch:75%; font-weight:900; font-size:21px; line-height:1; color:var(--text); font-variant-numeric:tabular-nums; }
+.xpb2-timer-bar{ width:100%; height:5px; border-radius:999px; background:rgba(245,180,49,.16); overflow:hidden; }
+.xpb2-timer-bar i{
+  display:block; height:100%; width:calc(var(--boost-prog, 1) * 100%); border-radius:999px;
+  background:linear-gradient(90deg,#ffe27e,#ff9a3d); box-shadow:0 0 8px rgba(245,180,49,.7); transition:width 1s linear;
+}
+.xpb2-timer-lbl{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.22em; color:var(--amber, #f5b431); }
+.xpb2-tokens{ display:flex; gap:10px; flex:0 0 auto; margin-left:auto; }
+.xpb2-token{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:4px;
+  width:96px; padding:11px 8px 8px; border-radius:16px; text-align:center;
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1), border-color .22s, box-shadow .22s;
+}
+.xpb2-token:not(.empty){ border-color:rgba(245,180,49,.35); box-shadow:0 0 20px -14px rgba(245,180,49,.8); }
+.xpb2-token:not(.empty):hover{ transform:translateY(-3px); border-color:rgba(245,180,49,.6); }
+.xpb2-token.empty{ opacity:.5; }
+.xpb2-count{
+  position:absolute; top:-7px; right:-7px; z-index:2; min-width:22px; height:22px; padding:0 5px;
+  display:grid; place-items:center; border-radius:999px;
+  font-family:var(--font-mono); font-size:10px; font-weight:800; color:#221302;
+  background:linear-gradient(180deg,#ffdf7e,var(--amber,#f5b431)); border:1.5px solid rgba(0,0,0,.35);
+  box-shadow:0 3px 8px -2px rgba(0,0,0,.6);
+}
+.xpb2-count.zero{ background:var(--surface-3); color:var(--text-faint); border-color:var(--line); }
+.xpb2-token-ic{ display:grid; place-items:center; }
+.xpb2-token-ic svg{ width:27px; height:27px; }
+.xpb2-token:not(.empty) .xpb2-token-ic{ color:var(--amber, #f5b431); filter:drop-shadow(0 0 7px rgba(245,180,49,.55)); }
+.xpb2-token.empty .xpb2-token-ic{ color:var(--text-faint); }
+.xpb2-token-time{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.14em; color:var(--text-dim); }
+.xpb2-use{
+  width:100%; min-height:30px; margin-top:2px; border-radius:9px; border:none; cursor:pointer;
+  font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:11.5px; letter-spacing:.03em;
+  background:linear-gradient(180deg, #ffd95e, var(--amber, #f5b431)); color:#221302;
+  transition:filter .15s, transform .12s;
+}
+.xpb2-use:hover:not(:disabled){ filter:brightness(1.08); }
+.xpb2-use:active:not(:disabled){ transform:scale(.95); }
+.xpb2-use:disabled{ background:var(--surface-3); color:var(--text-faint); cursor:default; }
+@media (max-width:860px){
+  .xpb2{ gap:14px; }
+  .xpb2-timer{ flex:1 1 100%; order:3; flex-direction:row; justify-content:space-between; padding:9px 14px; }
+  .xpb2-timer-bar{ width:auto; flex:1; margin:0 12px; }
+  .xpb2-tokens{ flex:1 1 100%; order:4; margin-left:0; }
+  .xpb2-token{ flex:1; width:auto; }
+}
+body.reduced-motion .xpb2-rays, body.low-power .xpb2-rays{ animation:none; }
+body.reduced-motion .xpboost-panel.is-active, body.low-power .xpboost-panel.is-active{ animation:none; }
+
+/* ---------- DAILY REWARD — gift board ---------- */
+.dr2-glow{
+  position:absolute; left:50%; top:-70px; transform:translateX(-50%); width:340px; height:220px;
+  background:radial-gradient(closest-side, rgba(155,123,255,.28), transparent 70%);
+  pointer-events:none; z-index:0;
+}
+.dr2-ribbon{ position:relative; margin:-4px auto 12px; width:min(82%, 300px); z-index:2; }
+.dr2-ribbon-band{
+  position:relative; z-index:2; display:block; padding:11px 16px 10px;
+  font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:17px; letter-spacing:.16em;
+  color:#ffe9b0; text-shadow:0 1px 2px rgba(30,10,60,.8);
+  background:linear-gradient(180deg, #9b7bff, #6c4fd8 85%);
+  border-radius:11px;
+  box-shadow:0 10px 24px -10px rgba(124,77,255,.8), inset 0 1.5px 0 rgba(255,255,255,.35), inset 0 -3px 8px rgba(40,16,90,.5);
+}
+.dr2-ribbon-tail{ position:absolute; top:7px; bottom:-7px; width:36px; background:linear-gradient(180deg, #5a3fc0, #46309c); z-index:1; }
+.dr2-ribbon-tail.l{ left:-20px; clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 13px 50%); border-radius:6px 0 0 6px; }
+.dr2-ribbon-tail.r{ right:-20px; clip-path:polygon(0 0, 100% 0, calc(100% - 13px) 50%, 100% 100%, 0 100%); border-radius:0 6px 6px 0; }
+.dr2-tag{ margin:0 0 12px; font-size:12.5px; color:var(--text-dim); }
+.dr2-today{ position:relative; z-index:1; margin-bottom:12px; }
+.dr2-amount{
+  font-family:var(--font-display); font-stretch:65%; font-weight:900; font-size:40px; line-height:1;
+  background:linear-gradient(120deg, #ffd33d, #ff9a3d 50%, #ffd33d);
+  background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:v10GradFlow 4s ease-in-out infinite;
+}
+.dr2-streak{ margin-top:5px; font-family:var(--font-mono); font-size:11.5px; letter-spacing:.05em; color:var(--text-dim); }
+.dr2-comeback{ margin-bottom:12px; }
+.dr2-board{
+  position:relative; z-index:1;
+  display:grid; grid-template-columns:repeat(3, 1fr) 1.18fr; grid-template-rows:1fr 1fr; gap:8px;
+  padding:10px; border-radius:18px;
+  background:rgba(0,0,0,.22); border:1px solid var(--line-soft);
+  box-shadow:inset 0 2px 10px rgba(0,0,0,.35);
+}
+.dr2-day{
+  position:relative; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:5px;
+  padding:10px 3px 9px; border-radius:13px;
+  background:var(--surface-2); border:1px solid var(--line);
+  animation:dr2DayIn .45s cubic-bezier(.2,.9,.3,1) both;
+  animation-delay:calc(var(--dr-i, 0) * 55ms + 120ms);
+}
+@keyframes dr2DayIn{ from{ opacity:0; transform:translateY(10px) scale(.9); } to{ opacity:1; transform:none; } }
+.dr2-day-n{
+  font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.1em;
+  padding:2.5px 8px; border-radius:999px; background:rgba(255,255,255,.06); color:var(--text-dim);
+}
+.dr2-day-ic{ min-height:26px; display:grid; place-items:center; }
+.dr2-card-svg{ width:24px; height:24px; color:var(--text-dim); filter:drop-shadow(0 3px 6px rgba(0,0,0,.5)); }
+.dr2-day-x{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:10.5px; line-height:1.25; color:var(--text-dim); }
+.dr2-stamp{
+  position:absolute; top:-7px; right:-6px; z-index:2; width:20px; height:20px; border-radius:50%;
+  display:grid; place-items:center; color:#06251c;
+  background:linear-gradient(180deg, #4fe8bb, var(--mint)); border:1.5px solid rgba(0,0,0,.35);
+  box-shadow:0 3px 8px -2px rgba(0,0,0,.6);
+}
+.dr2-lock{
+  position:absolute; top:-7px; right:-6px; z-index:2; width:20px; height:20px; border-radius:50%;
+  display:grid; place-items:center; color:#cabdff;
+  background:#46309c; border:1.5px solid rgba(0,0,0,.35); box-shadow:0 3px 8px -2px rgba(0,0,0,.6);
+}
+.dr2-day.done{ background:rgba(34,211,163,.07); border-color:rgba(34,211,163,.32); }
+.dr2-day.done .dr2-day-n{ background:rgba(34,211,163,.12); color:var(--mint); }
+.dr2-day.done .dr2-card-svg, .dr2-day.done .dr2-day-x{ color:var(--mint); }
+.dr2-day.done .dr2-day-ic{ opacity:.85; }
+.dr2-day.today{
+  transform:scale(1.07); z-index:1; border-color:var(--amber, #f5b431);
+  background:linear-gradient(180deg, rgba(245,180,49,.16), rgba(245,180,49,.04));
+  box-shadow:0 0 20px -5px rgba(245,180,49,.75), 0 8px 18px -8px rgba(0,0,0,.6);
+  animation:dr2DayIn .45s cubic-bezier(.2,.9,.3,1) both, dr2TodayGlow 2.2s ease-in-out 1s infinite;
+}
+@keyframes dr2TodayGlow{ 0%,100%{ box-shadow:0 0 16px -6px rgba(245,180,49,.65), 0 8px 18px -8px rgba(0,0,0,.6); } 50%{ box-shadow:0 0 26px -3px rgba(245,180,49,.95), 0 8px 18px -8px rgba(0,0,0,.6); } }
+.dr2-day.today .dr2-day-n{ background:rgba(245,180,49,.18); color:var(--amber, #f5b431); }
+.dr2-day.today .dr2-card-svg{ color:var(--amber, #f5b431); filter:drop-shadow(0 0 8px rgba(245,180,49,.6)); }
+.dr2-day.today .dr2-day-x{ color:var(--text); }
+.dr2-day.future{ opacity:.55; }
+.dr2-day.jackpot{
+  grid-column:4; grid-row:1 / 3; justify-content:center; gap:8px; opacity:1;
+  background:
+    radial-gradient(130% 100% at 50% 0%, rgba(155,123,255,.22), transparent 62%),
+    linear-gradient(180deg, rgba(155,123,255,.06), rgba(255,255,255,.02));
+  border:1px solid rgba(155,123,255,.45);
+  box-shadow:0 0 28px -12px var(--violet-glow, rgba(155,123,255,.6)), inset 0 1px 0 rgba(255,255,255,.08);
+}
+.dr2-day.jackpot.future .dr2-gift{ filter:saturate(.8); }
+.dr2-gift{ font-size:42px; line-height:1; filter:drop-shadow(0 8px 14px rgba(0,0,0,.55)); animation:lrGift 2.4s ease-in-out infinite; }
+.dr2-day.jackpot .dr2-day-x{ font-size:12px; color:#cabdff; }
+.dr2-day.jackpot.today{ border-color:var(--amber, #f5b431); box-shadow:0 0 30px -6px rgba(245,180,49,.85); }
+.dr2-day.jackpot.today .dr2-day-x{ color:var(--text); }
+.dr2-jackpot-lbl{
+  font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.28em;
+  color:#ffd33d; text-shadow:0 0 12px rgba(255,211,61,.5);
+}
+.dr2-claim{ border-radius:14px; }
+@media (max-width:430px){
+  .dr2-board{ grid-template-columns:repeat(3, 1fr); grid-template-rows:none; }
+  .dr2-day.jackpot{ grid-column:1 / -1; grid-row:auto; flex-direction:row; padding:10px 14px; gap:12px; }
+  .dr2-day.jackpot .dr2-day-ic{ order:-1; }
+  .dr2-gift{ font-size:34px; }
+}
+body.reduced-motion .dr2-gift, body.low-power .dr2-gift,
+body.reduced-motion .dr2-day, body.low-power .dr2-day,
+body.reduced-motion .dr2-amount, body.low-power .dr2-amount{ animation:none; }
+
+/* ---------- LEVEL & PRESTIGE — pass-style reward track ---------- */
+.lp-track{ position:relative; overflow-x:auto; margin:0 -6px; padding:2px 6px 8px; scrollbar-width:thin; }
+.lp-stage{
+  display:flex; gap:9px; position:relative;
+  width:max-content; min-width:100%; padding-top:20px;
+}
+.lp-rail{
+  position:absolute; left:5%; right:5%; top:33px; height:4px; border-radius:999px;
+  background:rgba(255,255,255,.07); box-shadow:inset 0 1px 2px rgba(0,0,0,.5);
+}
+.lp-rail i{
+  display:block; height:100%; width:0; border-radius:999px; position:relative;
+  background:linear-gradient(90deg, var(--lp-accent), color-mix(in srgb, var(--lp-accent) 55%, #fff));
+  box-shadow:0 0 12px -2px var(--lp-accent);
+  transition:width .9s cubic-bezier(.2,.8,.2,1);
+}
+.lp-rail i::after{
+  content:''; position:absolute; right:-4px; top:50%; width:10px; height:10px; border-radius:50%;
+  transform:translateY(-50%); background:#fff;
+  box-shadow:0 0 10px 2px var(--lp-accent);
+}
+.lp-tier{
+  flex:1 0 92px; min-width:92px; position:relative;
+  display:flex; flex-direction:column; align-items:center; text-align:center; gap:0;
+  padding:0; background:transparent; border:none; box-shadow:none;
+  animation:lpTierIn .4s cubic-bezier(.2,1.4,.4,1) both; animation-delay:var(--d, 0s);
+}
+.lp-tier:hover{ transform:none; border-color:transparent; box-shadow:none; }
+/* Neutralise the old card treatment on the wrapper — the .lp-tile carries it now */
+.lp-tier.reached, .lp-tier.current, .lp-tier.locked, .lp-tier.minor{
+  background:transparent; border:none; box-shadow:none; opacity:1;
+}
+.lp-tier.current{ animation:lpTierIn .4s cubic-bezier(.2,1.4,.4,1) both; animation-delay:var(--d, 0s); }
+.lp-node{
+  position:relative; z-index:2; width:30px; height:30px; border-radius:50%; flex:0 0 auto;
+  display:grid; place-items:center; margin-bottom:11px;
+  background:var(--surface-2); border:2px solid var(--line);
+  font-family:var(--font-mono); font-size:10.5px; font-weight:800; color:var(--text-faint);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+  box-shadow:0 0 0 4px var(--surface);
+}
+.lp-node-n{ line-height:1; }
+.lp-tier.reached .lp-node{
+  background:linear-gradient(145deg, color-mix(in srgb, var(--tc) 75%, #fff), var(--tc));
+  border-color:transparent; color:#08070d; box-shadow:0 0 0 4px var(--surface), 0 0 14px -3px var(--tc);
+}
+.lp-tier.current .lp-node{
+  transform:scale(1.22); border-color:var(--tc); color:var(--tc); background:var(--surface);
+  box-shadow:0 0 0 4px var(--surface), 0 0 0 5.5px color-mix(in srgb, var(--tc) 35%, transparent), 0 0 18px -2px var(--tc);
+  animation:lpNodePulse 2s ease-in-out 1s infinite;
+}
+@keyframes lpNodePulse{
+  0%,100%{ box-shadow:0 0 0 4px var(--surface), 0 0 0 5.5px color-mix(in srgb, var(--tc) 35%, transparent), 0 0 14px -3px var(--tc); }
+  50%{ box-shadow:0 0 0 4px var(--surface), 0 0 0 7px color-mix(in srgb, var(--tc) 22%, transparent), 0 0 24px -1px var(--tc); }
+}
+.lp-here{
+  position:absolute; top:-17px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  padding:2px 8px; border-radius:999px; z-index:3;
+  background:var(--tc); color:#08070d;
+  font-family:var(--font-mono); font-size:7.5px; font-weight:900; letter-spacing:.1em;
+  box-shadow:0 3px 10px -3px var(--tc);
+}
+.lp-tile{
+  width:100%; flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:13px 6px 10px; border-radius:15px;
+  background:var(--surface-2); border:1px solid var(--line);
+  transition:transform .2s, border-color .2s, box-shadow .2s;
+}
+.lp-tier:hover .lp-tile{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--tc) 40%, var(--line)); box-shadow:0 14px 30px -16px rgba(0,0,0,.7); }
+.lp-tier.reached .lp-tile{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--tc) 10%, var(--surface-2)), var(--surface-2));
+  border-color:color-mix(in srgb, var(--tc) 30%, var(--line));
+}
+.lp-tier.current .lp-tile{
+  border-color:var(--tc);
+  background:linear-gradient(180deg, color-mix(in srgb, var(--tc) 14%, var(--surface-2)), var(--surface-2));
+  box-shadow:0 0 22px -10px var(--tc);
+}
+.lp-tier.locked .lp-tile{ opacity:.55; }
+.lp-tier.locked .lp-emblem{ filter:grayscale(.6); }
+.lp-tier.minor .lp-tile{ opacity:.92; }
+.lp-tier.minor.locked .lp-tile{ opacity:.5; }
+.lp-tier .lp-emblem{ width:44px; height:44px; }
+.lp-tier .lp-emblem svg{ width:22px; height:22px; }
+.lp-tier-state{ margin-top:auto; padding-top:3px; }
+.lp-page-label{ min-width:0; font-size:10px; letter-spacing:.12em; padding:0 4px; white-space:nowrap; }
+@media (max-width:520px){
+  .lp-tier{ flex-basis:82px; min-width:82px; }
+  .lp-tile{ padding:11px 5px 9px; border-radius:13px; }
+  .lp-tier .lp-emblem{ width:38px; height:38px; }
+  .lp-tier-name{ font-size:11.5px; }
+}
+body.reduced-motion .lp-node, body.low-power .lp-node,
+body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !important; transition:none; }
+
+/* ---------- RANK-UP CEREMONY — polish pass ---------- */
+.rankup-overlay{
+  background:
+    radial-gradient(120% 90% at 50% 38%, rgba(16,12,28,.5), rgba(4,3,9,.98) 74%),
+    #04030a;
+}
+.rankup-overlay.show .rankup-rays{ opacity:.16; }
+.rankup-overlay.show .rankup-rays.r2{ opacity:.09; }
+@keyframes rankupAmbientIn{ to{ opacity:.15; } }
+/* Softer transition flash — bright, not blinding */
+@keyframes rankupFlash{
+  0%{ opacity:0; transform:scale(.4); }
+  30%{ opacity:.8; transform:scale(1.15); }
+  100%{ opacity:0; transform:scale(2.2); }
+}
+.rankup-content{ gap:14px; }
+/* Eyebrow: quiet cinematic label with side rules instead of a boxed pill */
+.rankup-label{
+  display:inline-flex; align-items:center; gap:14px;
+  padding:0; border:none; border-radius:0; background:transparent; box-shadow:none;
+  font-size:11px; letter-spacing:.42em; text-indent:.42em;
+  text-shadow:0 0 20px color-mix(in srgb, var(--rank-color, #fff) 65%, transparent);
+}
+.rankup-label::before, .rankup-label::after{
+  content:''; width:46px; height:1px; flex:0 0 auto;
+  background:linear-gradient(90deg, transparent, color-mix(in srgb, var(--rank-color, #fff) 70%, transparent));
+}
+.rankup-label::after{ transform:scaleX(-1); }
+.rankup-old-tier{ color:color-mix(in srgb, var(--rank-color-old, #fff) 65%, var(--text-dim)); letter-spacing:.2em; }
+/* New tier reads as a clean chip under the emblem */
+.rankup-new-tier{
+  font-family:var(--font-mono); font-size:13px; font-weight:800; letter-spacing:.18em; text-indent:.18em;
+  padding:8px 18px; border-radius:999px; color:#fff; text-shadow:none;
+  border:1px solid color-mix(in srgb, var(--rank-color, var(--amber)) 45%, transparent);
+  background:color-mix(in srgb, var(--rank-color, var(--amber)) 12%, rgba(0,0,0,.4));
+  box-shadow:0 0 26px -10px var(--rank-color, var(--amber));
+}
+.rankup-overlay h2{ margin-top:0; }
+.rankup-sub{
+  font-size:12px; letter-spacing:.26em; text-indent:.26em;
+  color:color-mix(in srgb, var(--rank-color, var(--amber)) 55%, var(--text-dim));
+}
+.rankup-from{ letter-spacing:.18em; text-indent:.18em; }
+.rankup-continue-hint{
+  margin-top:22px; padding:0; border:none; background:transparent;
+  font-size:10px; letter-spacing:.32em; text-indent:.32em;
+}
+/* Tidier shockwave rings + calmer particles */
+.rankup-shockwave .ring{ border-width:1.5px !important; }
+.rankup-particles .particle{ opacity:.85; }
+@media (max-width:600px){
+  .rankup-label::before, .rankup-label::after{ width:26px; }
+  .rankup-overlay h2{ font-size:clamp(44px, 13vw, 72px); }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   V20 — ROSHCOINS, COSMETICS & THE ITEM SHOP + RESULT CEREMONY
+   Currency pill, Fortnite-style rotating shop, four cosmetic slots
+   (name styles / player tags / avatar effects / profile frames) and a
+   Brawl-Stars-flavoured victory & defeat ceremony.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- TOPBAR COIN PILL ---------- */
+.coin-pill{
+  display:inline-flex; align-items:center; gap:6px; flex:0 0 auto; cursor:pointer;
+  margin-right:8px; padding:5px 12px 5px 8px; border-radius:999px;
+  background:linear-gradient(180deg, rgba(245,180,49,.16), rgba(245,180,49,.05));
+  border:1px solid rgba(245,180,49,.45); color:var(--amber, #f5b431);
+  font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:13px;
+  transition:transform .15s, box-shadow .2s, border-color .2s;
+}
+.coin-pill:hover{ transform:translateY(-1px); border-color:rgba(245,180,49,.75); box-shadow:0 0 18px -6px rgba(245,180,49,.7); }
+.coin-pill-num{ font-variant-numeric:tabular-nums; color:var(--text); }
+.coin-pill-plus{
+  width:15px; height:15px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(245,180,49,.2); font-size:11px; font-weight:900; line-height:1;
+}
+.coin-pill.pop{ animation:coinPop .5s cubic-bezier(.2,1.8,.4,1); }
+@keyframes coinPop{ 0%{ transform:scale(1); } 35%{ transform:scale(1.14); box-shadow:0 0 22px -4px rgba(245,180,49,.95); } 100%{ transform:scale(1); } }
+.nav-badge.nav-shop-new{
+  flex:0 0 auto; padding:2px 7px; border-radius:999px; font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.08em;
+  background:linear-gradient(135deg, var(--violet), #6c4fd8); color:#fff; animation:navPrestigePulse 2s ease-in-out infinite;
+}
+@media (max-width:600px){ .coin-pill{ font-size:12px; padding:4px 10px 4px 7px; margin-right:5px; } }
+
+/* ---------- SHOP PAGE ---------- */
+.shop-hero{
+  position:relative; overflow:hidden; border-radius:22px; padding:24px 26px;
+  display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+  background:
+    radial-gradient(120% 170% at 0% 0%, rgba(155,123,255,.16), transparent 52%),
+    radial-gradient(120% 170% at 100% 100%, rgba(245,180,49,.10), transparent 52%),
+    linear-gradient(180deg, var(--surface), var(--bg-2));
+  border:1px solid var(--line);
+}
+.shop-hero-rays{
+  position:absolute; right:-120px; top:-160px; width:440px; height:440px; border-radius:50%; pointer-events:none; opacity:.5;
+  background:conic-gradient(from 0deg,
+    transparent 0 20deg, rgba(155,123,255,.08) 20deg 34deg,
+    transparent 34deg 78deg, rgba(245,180,49,.08) 78deg 92deg,
+    transparent 92deg 140deg, rgba(155,123,255,.08) 140deg 154deg,
+    transparent 154deg 360deg);
+  animation:lrRays 30s linear infinite;
+}
+.shop-hero-main{ flex:1 1 300px; min-width:0; position:relative; }
+.shop-hero-eyebrow{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.18em; color:var(--violet);
+  padding:5px 12px; border-radius:999px; background:rgba(155,123,255,.1); border:1px solid rgba(155,123,255,.35);
+}
+.shop-hero-title{
+  margin:12px 0 6px; font-family:var(--font-display); font-stretch:62%; font-weight:900;
+  font-size:clamp(34px, 5vw, 52px); line-height:.95; letter-spacing:-.02em;
+}
+.shop-hero-title span{
+  background:linear-gradient(120deg, #9b7bff, #ff5ec8 55%, #ffb336);
+  background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:v10GradFlow 5s ease-in-out infinite;
+}
+.shop-hero-sub{ margin:0; color:var(--text-dim); font-size:13.5px; max-width:480px; }
+.shop-hero-side{ display:flex; flex-direction:column; align-items:flex-end; gap:9px; position:relative; }
+.shop-wallet{
+  display:flex; align-items:center; gap:11px; padding:12px 18px; border-radius:16px;
+  background:linear-gradient(180deg, rgba(245,180,49,.14), rgba(245,180,49,.04));
+  border:1px solid rgba(245,180,49,.4); box-shadow:0 0 26px -14px rgba(245,180,49,.8);
+}
+.shop-wallet-info{ display:flex; flex-direction:column; }
+.shop-wallet-info b{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:22px; line-height:1; font-variant-numeric:tabular-nums; }
+.shop-wallet-info span{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.22em; color:var(--amber, #f5b431); margin-top:3px; }
+.shop-timer{
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:.1em; color:var(--text-dim);
+}
+.shop-timer b{ color:var(--text); }
+.shop-tabs{ display:flex; align-items:center; gap:8px; margin:16px 0 4px; }
+.shop-tab{
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  padding:10px 20px; border-radius:13px; border:1px solid var(--line);
+  background:var(--surface); color:var(--text-dim);
+  font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:14px;
+  transition:color .15s, border-color .15s, background .15s, transform .12s;
+}
+.shop-tab:active{ transform:scale(.96); }
+.shop-tab.active{
+  color:#fff; border-color:rgba(155,123,255,.55);
+  background:linear-gradient(180deg, rgba(155,123,255,.2), rgba(155,123,255,.07));
+  box-shadow:0 0 20px -10px var(--violet-glow, rgba(155,123,255,.7));
+}
+.shop-earn-hint{ margin-left:auto; font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.03em; }
+@media (max-width:640px){ .shop-earn-hint{ display:none; } }
+.shop-section-label{
+  display:flex; align-items:center; gap:8px; margin:20px 2px 10px;
+  font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.2em; color:var(--text-dim);
+}
+.shop-section-label svg{ color:var(--violet); }
+.shop-section-label.featured svg{ color:var(--amber, #f5b431); }
+.ssl-count{ margin-left:4px; color:var(--text-faint); letter-spacing:.05em; }
+
+/* ---------- SHOP TILES (Fortnite-style rarity slabs) ---------- */
+.shop-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(196px, 1fr)); gap:12px; }
+.shop-grid-featured{ grid-template-columns:repeat(auto-fit, minmax(270px, 1fr)); }
+.shop-tile{
+  --rc:#5fc9ff;
+  position:relative; display:flex; flex-direction:column; overflow:hidden; isolation:isolate;
+  min-height:216px; padding:0; border-radius:16px; cursor:pointer; text-align:center;
+  background:
+    radial-gradient(120% 90% at 50% 110%, color-mix(in srgb, var(--rc) 34%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--rc) 9%, #141220), color-mix(in srgb, var(--rc) 17%, #100e1a));
+  border:1px solid color-mix(in srgb, var(--rc) 40%, var(--line));
+  color:var(--text);   /* buttons default to UA black — previews inherit this */
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, border-color .25s;
+}
+.shop-tile:hover{
+  transform:translateY(-5px) scale(1.015);
+  border-color:color-mix(in srgb, var(--rc) 80%, #fff);
+  box-shadow:0 22px 44px -20px rgba(0,0,0,.85), 0 0 34px -12px var(--rc);
+  z-index:2;
+}
+.shop-tile.featured{ min-height:264px; }
+.shop-tile.rar-rare{ --rc:#5fc9ff; }
+.shop-tile.rar-epic{ --rc:#b56cff; }
+.shop-tile.rar-legendary{ --rc:#ffb336; }
+.shop-tile.rar-mythic{ --rc:#ff5ec8; }
+.st-sheen{
+  position:absolute; inset:0; z-index:3; pointer-events:none;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.16) 50%, transparent 60%);
+  transform:translateX(-130%);
+}
+.shop-tile:hover .st-sheen{ animation:stSheen .8s ease; }
+@keyframes stSheen{ to{ transform:translateX(130%); } }
+.st-rarity-tag{
+  position:absolute; top:9px; left:9px; z-index:2;
+  font-family:var(--font-mono); font-size:7.5px; font-weight:900; letter-spacing:.16em;
+  padding:3px 8px; border-radius:999px;
+  background:color-mix(in srgb, var(--rc) 24%, rgba(0,0,0,.5)); color:color-mix(in srgb, var(--rc) 75%, #fff);
+  border:1px solid color-mix(in srgb, var(--rc) 45%, transparent);
+}
+.st-preview{ flex:1; display:grid; place-items:center; padding:30px 12px 12px; min-height:0; overflow:hidden; }
+.st-info{ display:flex; flex-direction:column; gap:2px; padding:0 12px 10px; }
+.st-name{
+  font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:17px;
+  letter-spacing:.01em; text-transform:uppercase; color:#fff;
+}
+.shop-tile.featured .st-name{ font-size:21px; }
+.st-type{ font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:.2em; color:color-mix(in srgb, var(--rc) 70%, #fff); opacity:.9; }
+.st-foot{
+  display:flex; align-items:center; justify-content:center; gap:6px; min-height:38px;
+  background:rgba(0,0,0,.38); border-top:1px solid color-mix(in srgb, var(--rc) 25%, transparent);
+  font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:14px;
+}
+.st-price{ display:inline-flex; align-items:center; gap:6px; color:#ffd45e; font-variant-numeric:tabular-nums; }
+.st-owned{ color:var(--mint); font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.14em; }
+.shop-tile.owned{ opacity:.92; }
+@media (max-width:520px){
+  .shop-grid{ grid-template-columns:repeat(2, 1fr); gap:9px; }
+  .shop-grid-featured{ grid-template-columns:1fr; }
+  .shop-tile{ min-height:190px; }
+  .st-name{ font-size:15px; }
+}
+
+/* ---------- PURCHASE MODAL ---------- */
+.shop-buy-modal{ --rc:#5fc9ff; max-width:420px; text-align:center; }
+.shop-buy-modal.rar-rare{ --rc:#5fc9ff; } .shop-buy-modal.rar-epic{ --rc:#b56cff; }
+.shop-buy-modal.rar-legendary{ --rc:#ffb336; } .shop-buy-modal.rar-mythic{ --rc:#ff5ec8; }
+.sbm-stage{
+  display:grid; place-items:center; min-height:150px; margin:-6px -6px 14px; border-radius:18px; overflow:hidden;
+  background:
+    radial-gradient(100% 130% at 50% 115%, color-mix(in srgb, var(--rc) 36%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--rc) 8%, #131120), color-mix(in srgb, var(--rc) 15%, #0f0d19));
+  border:1px solid color-mix(in srgb, var(--rc) 40%, var(--line));
+}
+.sbm-stage.rar-rare{ --rc:#5fc9ff; } .sbm-stage.rar-epic{ --rc:#b56cff; }
+.sbm-stage.rar-legendary{ --rc:#ffb336; } .sbm-stage.rar-mythic{ --rc:#ff5ec8; }
+.sbm-rarity{ font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.3em; }
+.sbm-name{ font-family:var(--font-display); font-stretch:65%; font-weight:900; font-size:30px; margin:4px 0 2px; text-transform:uppercase; }
+.sbm-type{ font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:.22em; color:var(--text-faint); }
+.sbm-desc{ color:var(--text-dim); font-size:13px; line-height:1.5; margin:12px auto 6px; max-width:300px; }
+.sbm-balance{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin:6px 0 14px; }
+.sbm-balance b{ color:var(--text); } .sbm-short{ color:var(--coral) !important; }
+.sbm-actions{ display:flex; gap:9px; }
+.sbm-actions .btn{ flex:1; justify-content:center; min-height:46px; }
+.sbm-buy{
+  background:linear-gradient(180deg, #ffd95e, var(--amber, #f5b431)); border:none; color:#221302; font-weight:800;
+  box-shadow:0 10px 26px -10px rgba(245,180,49,.8);
+}
+.sbm-buy:disabled{ filter:grayscale(.7); opacity:.6; cursor:not-allowed; }
+
+/* ---------- LOCKER ---------- */
+.locker-look{
+  position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:12px;
+  padding:26px 18px 20px; border-radius:20px; text-align:center;
+  background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid var(--line);
+}
+.locker-look-name{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:24px; position:relative; z-index:2; }
+.locker-look-sub{ font-family:var(--font-mono); font-size:9px; letter-spacing:.18em; color:var(--text-faint); position:relative; z-index:2; }
+.locker-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px; }
+.locker-tile{
+  --rc:#5fc9ff;
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:7px; cursor:pointer;
+  padding:14px 10px 11px; border-radius:14px;
+  background:color-mix(in srgb, var(--rc) 7%, var(--surface)); border:1px solid color-mix(in srgb, var(--rc) 30%, var(--line));
+  color:var(--text);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1), border-color .2s, box-shadow .2s;
+}
+.locker-tile:hover{ transform:translateY(-3px); box-shadow:0 12px 26px -14px rgba(0,0,0,.8); }
+.locker-tile.rar-rare{ --rc:#5fc9ff; } .locker-tile.rar-epic{ --rc:#b56cff; }
+.locker-tile.rar-legendary{ --rc:#ffb336; } .locker-tile.rar-mythic{ --rc:#ff5ec8; }
+.locker-tile.equipped{ border-color:var(--mint); box-shadow:0 0 20px -10px var(--mint-glow, rgba(34,211,163,.7)); }
+.locker-tile .st-preview{ padding:6px 4px; min-height:64px; }
+.lt-name{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:13px; }
+.lt-state{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.16em; color:var(--text-faint); }
+.locker-tile.equipped .lt-state{ color:var(--mint); }
+.locker-empty{
+  padding:18px; border-radius:14px; border:1px dashed var(--line); text-align:center;
+  color:var(--text-faint); font-family:var(--font-mono); font-size:11px; letter-spacing:.04em;
+}
+
+/* ---------- COSMETIC PREVIEW PRIMITIVES ---------- */
+.cx-prev-name{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:21px; line-height:1.15; word-break:break-word; }
+.cx-prev-name.big{ font-size:31px; }
+.cx-prev-tagrow{ display:inline-flex; flex-direction:column; align-items:center; gap:7px; }
+.cx-prev-tagrow.big{ gap:9px; }
+.cx-prev-plainname{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:17px; }
+.cx-prev-av{ position:relative; width:64px; height:64px; display:inline-grid; place-items:center; }
+.cx-prev-av.big{ width:92px; height:92px; }
+.cx-prev-av-core{
+  position:relative; z-index:1; width:100%; height:100%; border-radius:26%;
+  display:grid; place-items:center; color:#fff;
+  font-family:var(--font-display); font-weight:800; font-size:26px;
+  box-shadow:0 8px 20px -8px rgba(0,0,0,.7);
+}
+.cx-prev-frame{
+  position:relative; width:170px; height:92px; border-radius:14px; overflow:hidden;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px;
+  background:linear-gradient(180deg, var(--surface-2), var(--bg-2)); border:1px solid var(--line);
+}
+.cx-prev-frame.big{ width:230px; height:122px; }
+.cx-prev-frame-av{ position:relative; z-index:2; width:30px; height:30px; border-radius:11px; background:linear-gradient(135deg, var(--coral), var(--violet)); }
+.cx-prev-frame-lines{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:4px; }
+.cx-prev-frame-lines i{ display:block; height:5px; border-radius:999px; background:rgba(255,255,255,.22); width:64px; }
+.cx-prev-frame-lines i:last-child{ width:40px; background:rgba(255,255,255,.12); }
+
+/* ---------- NAME STYLES ---------- */
+.cx-name{ font-weight:inherit; }
+/* !important: each style's `background:` shorthand would otherwise reset the clip */
+[class*="cxn-"]{ -webkit-background-clip:text !important; background-clip:text !important; }
+.cxn-galaxy{
+  background:
+    radial-gradient(1.5px 1.5px at 18% 30%, rgba(255,255,255,.95) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 62% 68%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(2px 2px at 84% 22%, rgba(255,255,255,.85) 45%, transparent 55%),
+    linear-gradient(115deg, #7b6cff, #c66cff 26%, #5fc9ff 52%, #ff6cd8 76%, #7b6cff);
+  background-size:200% 100%, 200% 100%, 200% 100%, 300% 100%;
+  color:transparent !important;
+  animation:cxnFlow 7s linear infinite;
+  filter:drop-shadow(0 0 10px rgba(155,123,255,.45));
+}
+.cxn-gold{
+  background:linear-gradient(105deg, #8a5a00, #ffd45e 22%, #fff3c4 38%, #ffb336 55%, #8a5a00 78%, #ffd45e);
+  background-size:250% 100%; color:transparent !important;
+  animation:cxnFlow 4.5s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(255,180,54,.5));
+}
+.cxn-prisma{
+  background:linear-gradient(100deg, #ff5e5e, #ffb336, #ffe95e, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e);
+  background-size:300% 100%; color:transparent !important;
+  animation:cxnFlow 3.5s linear infinite;
+  filter:drop-shadow(0 0 10px rgba(255,255,255,.28));
+}
+.cxn-neon{ color:#3dffc2 !important; text-shadow:0 0 7px rgba(61,255,194,.9), 0 0 22px rgba(61,255,194,.55); animation:cxnNeonPulse 2.2s ease-in-out infinite; }
+@keyframes cxnNeonPulse{ 0%,100%{ text-shadow:0 0 7px rgba(61,255,194,.9), 0 0 22px rgba(61,255,194,.5); } 50%{ text-shadow:0 0 10px rgba(61,255,194,1), 0 0 34px rgba(61,255,194,.85); } }
+.cxn-fire{
+  background:linear-gradient(0deg, #ff3d00 8%, #ff9a3d 42%, #ffe27e 82%);
+  background-size:100% 220%; color:transparent !important;
+  animation:cxnFireRise 1.6s ease-in-out infinite alternate;
+  filter:drop-shadow(0 0 10px rgba(255,120,40,.6));
+}
+@keyframes cxnFireRise{ from{ background-position:50% 100%; } to{ background-position:50% 40%; } }
+.cxn-void{
+  background:linear-gradient(115deg, #2d1b4e, #7b3fe4 45%, #1a1030 70%, #a06bff);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 6s linear infinite;
+  filter:drop-shadow(0 0 12px rgba(123,63,228,.65));
+}
+.cxn-ice{
+  background:linear-gradient(115deg, #bfeaff, #5fc9ff 40%, #e8f9ff 60%, #8fd8ff);
+  background-size:240% 100%; color:transparent !important;
+  animation:cxnFlow 6.5s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(95,201,255,.55));
+}
+.cxn-toxic{ color:#9dff3d !important; text-shadow:0 0 8px rgba(157,255,61,.8), 0 0 26px rgba(157,255,61,.45); }
+.cxn-chrome{
+  background:linear-gradient(105deg, #6a7180, #e8ecf4 30%, #9aa3b5 48%, #f7f9fd 62%, #6a7180 85%);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 5s linear infinite;
+}
+.cxn-blood{
+  background:linear-gradient(115deg, #5e0716, #ff3358 45%, #8a0e24 70%, #ff5c78);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 5.5s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(255,51,88,.55));
+}
+@keyframes cxnFlow{ to{ background-position:-200% 0, -200% 0, -200% 0, -300% 0; } }
+
+/* ---------- PLAYER TAGS ---------- */
+.cx-tag{
+  display:inline-flex; align-items:center; gap:4px; vertical-align:middle; white-space:nowrap;
+  font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.1em;
+  padding:3px 9px; border-radius:999px; line-height:1.2;
+  color:var(--text); -webkit-text-fill-color:initial; position:relative; top:-1px;
+}
+.cxt-goat{
+  border:1.5px solid transparent; color:#fff;
+  background:
+    linear-gradient(#17141f, #17141f) padding-box,
+    linear-gradient(100deg, #ff5e5e, #ffb336, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e) border-box;
+  background-size:auto, 300% 100%;
+  animation:cxtRainbow 3s linear infinite;
+}
+@keyframes cxtRainbow{ to{ background-position:0 0, 300% 0; } }
+.cxt-og{
+  background:linear-gradient(120deg, #ffd45e, #ffb336 55%, #ffd45e); background-size:200% 100%;
+  color:#221302; border:none; animation:cxnFlow 4s linear infinite; box-shadow:0 0 14px -5px rgba(255,180,54,.8);
+}
+.cxt-king{ background:rgba(255,180,54,.1); color:#ffd45e; border:1px solid rgba(255,180,54,.6); box-shadow:0 0 12px -4px rgba(255,180,54,.7); }
+.cxt-clutch{ background:rgba(255,51,88,.12); color:#ff7d92; border:1px solid rgba(255,51,88,.5); }
+.cxt-menace{ background:rgba(255,30,50,.14); color:#ff5c6a; border:1px solid rgba(255,30,50,.55); animation:cxtMenace 1.6s ease-in-out infinite; }
+@keyframes cxtMenace{ 0%,100%{ box-shadow:0 0 8px -4px rgba(255,30,50,.7); } 50%{ box-shadow:0 0 16px -2px rgba(255,30,50,.95); } }
+.cxt-lucky{ background:rgba(93,255,154,.1); color:#5dff9a; border:1px solid rgba(93,255,154,.45); }
+.cxt-sweat{ background:rgba(95,201,255,.1); color:#5fc9ff; border:1px solid rgba(95,201,255,.45); }
+.cxt-bot{ background:rgba(255,255,255,.06); color:var(--text-dim); border:1px solid var(--line-bright, var(--line)); animation:cxtGlitch 3.2s steps(1) infinite; }
+@keyframes cxtGlitch{ 0%,92%,100%{ transform:translate(0,-1px) skewX(0); } 94%{ transform:translate(1px,-1px) skewX(-8deg); } 96%{ transform:translate(-1px,0) skewX(6deg); } }
+
+/* ---------- AVATAR EFFECTS (donut rings around any avatar) ---------- */
+.cx-avfx{
+  position:absolute; inset:-12%; z-index:2; pointer-events:none;
+  border-radius:50%; border:4px solid transparent;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  mask-composite:exclude;
+}
+.pm-av-wrap{ position:relative; }
+.pm-av-wrap .av-xl{ position:relative; z-index:1; }
+.cxa-galaxy{
+  background:conic-gradient(#7b6cff, #c66cff, #5fc9ff, #ff6cd8, #2d1b4e, #7b6cff);
+  animation:cxaSpin 7s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(155,123,255,.75));
+}
+.cxa-galaxy::after{
+  content:''; position:absolute; left:50%; top:-2px; width:7px; height:7px; margin-left:-3.5px; border-radius:50%;
+  background:#fff; box-shadow:0 0 8px 2px rgba(255,255,255,.9);
+}
+.cxa-gold{
+  background:conic-gradient(#8a5a00, #ffd45e, #fff3c4, #ffb336, #8a5a00, #ffd45e, #8a5a00);
+  animation:cxaSpin 6s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(255,180,54,.8));
+}
+.cxa-liquid{
+  background:linear-gradient(120deg, #dfe4ee, #8f9bb3, #f5f7fa, #aab6d3, #dfe4ee);
+  background-size:300% 300%;
+  animation:cxaBlob 6s ease-in-out infinite, cxaFlowBg 4s linear infinite;
+  filter:drop-shadow(0 0 8px rgba(190,200,225,.6));
+}
+@keyframes cxaBlob{
+  0%,100%{ border-radius:52% 48% 55% 45% / 48% 55% 45% 52%; }
+  33%{ border-radius:45% 55% 48% 52% / 55% 45% 58% 42%; }
+  66%{ border-radius:58% 42% 45% 55% / 42% 58% 48% 52%; }
+}
+@keyframes cxaFlowBg{ to{ background-position:300% 300%; } }
+.cxa-void{
+  background:conic-gradient(#0a0614, #7b3fe4, #0a0614, #b56cff, #0a0614);
+  animation:cxaSpin 4.5s linear infinite;
+  filter:drop-shadow(0 0 12px rgba(123,63,228,.9));
+}
+.cxa-flame{
+  background:conic-gradient(#ff3d00, #ffb336, #ffe27e, #ff5c1a, #ff9a3d, #ff3d00);
+  animation:cxaSpin 3s linear infinite, cxaFlicker 1.1s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(255,110,30,.85));
+}
+@keyframes cxaFlicker{ 0%,100%{ filter:drop-shadow(0 0 8px rgba(255,110,30,.7)) brightness(1); } 50%{ filter:drop-shadow(0 0 15px rgba(255,140,40,1)) brightness(1.25); } }
+.cxa-electric{
+  background:repeating-conic-gradient(#5ff2ff 0 14deg, transparent 14deg 34deg);
+  animation:cxaSpin 1.1s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(95,242,255,.9));
+}
+.cxa-prism{
+  background:conic-gradient(#ff5e5e, #ffb336, #ffe95e, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e);
+  animation:cxaSpin 3.4s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(255,255,255,.45));
+}
+.cxa-ice{
+  background:conic-gradient(#bfeaff, #5fc9ff, #e8f9ff, #8fd8ff, #bfeaff);
+  animation:cxaSpin 9s linear infinite;
+  filter:drop-shadow(0 0 8px rgba(95,201,255,.7));
+}
+.cxa-rose{
+  background:conic-gradient(#f7c8c0, #e8927c, #ffe3dc, #d87a68, #f7c8c0);
+  animation:cxaSpin 8s linear infinite;
+  filter:drop-shadow(0 0 8px rgba(232,146,124,.65));
+}
+.cxa-mint{
+  background:conic-gradient(var(--mint), #18b88c, #7dffd8, var(--mint));
+  animation:cxaSpin 7s linear infinite, cxaMintPulse 2.4s ease-in-out infinite;
+}
+@keyframes cxaMintPulse{ 0%,100%{ filter:drop-shadow(0 0 6px rgba(34,211,163,.6)); } 50%{ filter:drop-shadow(0 0 14px rgba(34,211,163,.95)); } }
+@keyframes cxaSpin{ to{ transform:rotate(360deg); } }
+
+/* ---------- PROFILE FRAMES ---------- */
+.cx-frame-overlay{ position:absolute; inset:0; z-index:1; pointer-events:none; border-radius:inherit; }
+.pm-banner{ position:relative; overflow:hidden; }
+.locker-look .cx-frame-overlay{ border-radius:inherit; }
+/* Royal Gild */
+.cxf-gold{ border-color:rgba(255,180,54,.6) !important; box-shadow:0 0 40px -14px rgba(255,180,54,.5), inset 0 0 0 1px rgba(255,211,61,.18) !important; }
+.cxf-gold .cx-frame-overlay{
+  background:
+    linear-gradient(90deg, rgba(255,212,94,.9), transparent 18%, transparent 82%, rgba(255,212,94,.9)) top / 100% 3px no-repeat,
+    radial-gradient(80% 120% at 50% -30%, rgba(255,180,54,.3), transparent 60%);
+}
+/* Nebula Frame */
+.cxf-galaxy{ border-color:rgba(155,123,255,.55) !important; box-shadow:0 0 44px -14px rgba(155,123,255,.55) !important; }
+.cxf-galaxy .cx-frame-overlay{
+  background:
+    radial-gradient(2px 2px at 18% 34%, rgba(255,255,255,.95) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 66% 22%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(2px 2px at 84% 62%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 38% 74%, rgba(255,255,255,.8) 45%, transparent 55%),
+    linear-gradient(115deg, rgba(123,108,255,.42), rgba(198,108,255,.3) 40%, rgba(95,201,255,.28) 70%, rgba(255,108,216,.32));
+  background-size:210% 100%; animation:cxnFlow 9s linear infinite;
+  mix-blend-mode:screen;
+}
+/* Neon Grid */
+.cxf-neon{ border-color:rgba(95,201,255,.55) !important; box-shadow:0 0 40px -14px rgba(95,201,255,.55), 0 0 60px -30px rgba(255,94,200,.6) !important; }
+.cxf-neon .cx-frame-overlay{
+  background:
+    repeating-linear-gradient(90deg, rgba(95,201,255,.28) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(0deg, rgba(95,201,255,.22) 0 1px, transparent 1px 18px),
+    linear-gradient(180deg, rgba(255,94,200,.16), transparent 55%);
+  transform:perspective(190px) rotateX(38deg) scale(1.3); transform-origin:50% 100%;
+}
+/* Liquid Frame */
+.cxf-liquid{ border-color:transparent !important; animation:cxfLiquid 6s linear infinite; }
+@keyframes cxfLiquid{
+  0%{ box-shadow:0 0 0 1.5px #b56cff, 0 0 42px -12px #b56cff; }
+  33%{ box-shadow:0 0 0 1.5px #5fc9ff, 0 0 42px -12px #5fc9ff; }
+  66%{ box-shadow:0 0 0 1.5px #ff5ec8, 0 0 42px -12px #ff5ec8; }
+  100%{ box-shadow:0 0 0 1.5px #b56cff, 0 0 42px -12px #b56cff; }
+}
+.cxf-liquid .cx-frame-overlay{
+  background:linear-gradient(115deg, rgba(181,108,255,.4), rgba(95,201,255,.34) 34%, rgba(255,94,200,.34) 68%, rgba(181,108,255,.4));
+  background-size:280% 100%; animation:cxnFlow 5s linear infinite; mix-blend-mode:screen;
+}
+/* Crimson Court */
+.cxf-blood{ border-color:rgba(255,51,88,.55) !important; animation:cxfBloodPulse 2.6s ease-in-out infinite; }
+@keyframes cxfBloodPulse{ 0%,100%{ box-shadow:0 0 34px -14px rgba(255,51,88,.5); } 50%{ box-shadow:0 0 48px -10px rgba(255,51,88,.8); } }
+.cxf-blood .cx-frame-overlay{ background:radial-gradient(120% 150% at 50% -30%, rgba(255,51,88,.4), transparent 62%); }
+/* Circuit */
+.cxf-circuit{ border-color:rgba(34,211,163,.5) !important; box-shadow:0 0 34px -14px rgba(34,211,163,.5) !important; }
+.cxf-circuit .cx-frame-overlay{
+  background:
+    repeating-linear-gradient(90deg, rgba(34,211,163,.22) 0 1.5px, transparent 1.5px 34px),
+    repeating-linear-gradient(0deg, rgba(34,211,163,.16) 0 1.5px, transparent 1.5px 26px),
+    radial-gradient(3px 3px at 34px 26px, rgba(34,211,163,.9) 45%, transparent 55%),
+    radial-gradient(3px 3px at 102px 52px, rgba(34,211,163,.8) 45%, transparent 55%);
+}
+
+/* ---------- RESULT SCREEN — BRAWL-STYLE CEREMONY ---------- */
+/* Full-screen ray wheel behind the card */
+.mr-rays{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; overflow:hidden; z-index:0; }
+.mrr{
+  position:absolute; width:190vmax; height:190vmax; border-radius:50%; opacity:0;
+  -webkit-mask:radial-gradient(circle, #000 0%, rgba(0,0,0,.55) 34%, transparent 62%);
+  mask:radial-gradient(circle, #000 0%, rgba(0,0,0,.55) 34%, transparent 62%);
+  background:conic-gradient(from 0deg,
+    transparent 0 11deg, var(--mr-a, #fff) 11deg 21deg, transparent 21deg 43deg,
+    var(--mr-a, #fff) 43deg 53deg, transparent 53deg 75deg, var(--mr-a, #fff) 75deg 85deg,
+    transparent 85deg 107deg, var(--mr-a, #fff) 107deg 117deg, transparent 117deg 139deg,
+    var(--mr-a, #fff) 139deg 149deg, transparent 149deg 171deg, var(--mr-a, #fff) 171deg 181deg,
+    transparent 181deg 203deg, var(--mr-a, #fff) 203deg 213deg, transparent 213deg 235deg,
+    var(--mr-a, #fff) 235deg 245deg, transparent 245deg 267deg, var(--mr-a, #fff) 267deg 277deg,
+    transparent 277deg 299deg, var(--mr-a, #fff) 299deg 309deg, transparent 309deg 331deg,
+    var(--mr-a, #fff) 331deg 341deg, transparent 341deg 360deg);
+}
+.match-result-overlay.show.win .mrr.r1{ animation:mrRaysIn .9s .1s ease both, rankupSpinRays 26s .1s linear infinite; --mrr-o:.16; }
+.match-result-overlay.show.win .mrr.r2{ animation:mrRaysIn 1.1s .2s ease both, rankupSpinRays 38s .2s linear infinite reverse; --mrr-o:.08; width:150vmax; height:150vmax; }
+.match-result-overlay.show.draw .mrr.r1{ animation:mrRaysIn 1.2s .2s ease both, rankupSpinRays 44s .2s linear infinite; --mrr-o:.07; }
+.match-result-overlay.show.lose .mrr{ display:none; }
+@keyframes mrRaysIn{ from{ opacity:0; transform:scale(.6); } to{ opacity:var(--mrr-o, .14); transform:scale(1); } }
+/* Defeat vignette — heavy red edges breathing slowly */
+.match-result-overlay.lose::after{
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:radial-gradient(90% 80% at 50% 45%, transparent 55%, rgba(120,10,28,.5));
+  animation:mrLoseVign 3.2s ease-in-out infinite;
+}
+@keyframes mrLoseVign{ 0%,100%{ opacity:.7; } 50%{ opacity:1; } }
+/* Star field (win) */
+.mr-stars{ position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+.mr-star{
+  position:absolute; font-style:normal; color:#ffd45e; opacity:0;
+  text-shadow:0 0 10px rgba(255,212,94,.9), 0 0 26px rgba(255,180,54,.5);
+  animation:mrStarTwinkle 2.6s ease-in-out infinite;
+}
+@keyframes mrStarTwinkle{
+  0%, 100%{ opacity:0; transform:scale(.3) rotate(-12deg); }
+  35%{ opacity:1; transform:scale(1.15) rotate(6deg); }
+  60%{ opacity:.55; transform:scale(.85) rotate(-4deg); }
+}
+/* HEADLINE SLAM — drops in from scale 2.6 with blur, lands with an overshoot */
+.match-result-headline{
+  animation:mrSlam .5s cubic-bezier(.2,1.5,.35,1) .18s both, v10GradFlow 4.5s ease-in-out .8s infinite;
+}
+@keyframes mrSlam{
+  0%{ opacity:0; transform:scale(2.7) translateY(-14px); filter:blur(9px); }
+  62%{ opacity:1; transform:scale(.94) translateY(2px); filter:blur(0); }
+  82%{ transform:scale(1.04) translateY(0); }
+  100%{ opacity:1; transform:scale(1) translateY(0); }
+}
+.match-result-overlay.lose .match-result-headline{
+  animation:mrSlamDown .55s cubic-bezier(.3,1.2,.4,1) .18s both, v10GradFlow 4.5s ease-in-out .9s infinite;
+}
+@keyframes mrSlamDown{
+  0%{ opacity:0; transform:translateY(-90px) rotate(-3deg); filter:blur(6px); }
+  60%{ opacity:1; transform:translateY(6px) rotate(.8deg); filter:blur(0); }
+  80%{ transform:translateY(-3px) rotate(0); }
+  100%{ opacity:1; transform:translateY(0); }
+}
+.match-result-sub{ animation:mrSubIn .5s .55s both; }
+@keyframes mrSubIn{ from{ opacity:0; transform:translateY(8px); letter-spacing:.3em; } to{ opacity:1; transform:none; letter-spacing:.16em; } }
+/* Screen shake keyed to the slam */
+.match-result-overlay.shake-big .match-result-card-v2{ animation:mrShakeBig .55s cubic-bezier(.36,.07,.19,.97) both !important; }
+.match-result-overlay.shake-small .match-result-card-v2{ animation:mrShakeSmall .45s cubic-bezier(.36,.07,.19,.97) both !important; }
+@keyframes mrShakeBig{
+  0%{ transform:translate(0,0) rotate(0); } 12%{ transform:translate(-7px,4px) rotate(-.5deg); }
+  24%{ transform:translate(6px,-5px) rotate(.5deg); } 40%{ transform:translate(-5px,3px) rotate(-.3deg); }
+  56%{ transform:translate(4px,-2px); } 72%{ transform:translate(-2px,2px); } 100%{ transform:translate(0,0); }
+}
+@keyframes mrShakeSmall{
+  0%{ transform:translate(0,0); } 18%{ transform:translate(-4px,2px); } 38%{ transform:translate(3px,-3px); }
+  60%{ transform:translate(-2px,1px); } 100%{ transform:translate(0,0); }
+}
+/* Winner avatar — expanding ring ping + slight lift */
+.mrc-av-wrap{ position:relative; display:inline-grid; }
+.mrc-av-wrap .mrc-av{ position:relative; z-index:1; }
+.mrc-player.winner .mrc-av-wrap::after{
+  content:''; position:absolute; inset:-4px; border-radius:18px; pointer-events:none;
+  border:2px solid var(--mr-a, var(--mint)); opacity:0;
+  animation:mrWinPing 1.1s ease-out .7s 2;
+}
+@keyframes mrWinPing{ 0%{ opacity:.9; transform:scale(.9); } 100%{ opacity:0; transform:scale(1.5); } }
+.mrc-player.winner .mrc-av{ box-shadow:0 0 0 2px var(--mr-a, var(--mint)), 0 0 26px -6px var(--mr-a, var(--mint)), 0 8px 22px -10px rgba(0,0,0,.8); }
+/* Result-screen name cosmetics sizing */
+.mrc-pname .cx-tag{ font-size:7.5px; padding:2px 7px; }
+/* Coin chip in the XP breakdown */
+.mxp-chip.mxp-coin{
+  display:inline-flex; align-items:center; gap:5px;
+  background:linear-gradient(180deg, rgba(245,180,49,.2), rgba(245,180,49,.07)) !important;
+  border:1px solid rgba(245,180,49,.5) !important; color:#ffd45e !important;
+  box-shadow:0 0 14px -6px rgba(245,180,49,.7);
+  animation:coinPop .5s cubic-bezier(.2,1.8,.4,1) .9s both;
+}
+.mxp-chip.mxp-coin b{ color:#ffd45e; font-variant-numeric:tabular-nums; }
+
+/* ---------- REDUCED MOTION / LOW POWER ---------- */
+body.reduced-motion :is([class*="cxn-"], [class*="cxt-"], [class*="cxa-"], [class*="cxf-"], .cx-frame-overlay, .mrr, .mr-star, .shop-hero-rays),
+body.low-power :is([class*="cxn-"], [class*="cxt-"], [class*="cxa-"], [class*="cxf-"], .cx-frame-overlay, .mrr, .mr-star, .shop-hero-rays){
+  animation:none !important;
+}
+body.reduced-motion .match-result-headline, body.low-power .match-result-headline{ animation:mrSlam .3s ease both !important; filter:none; }
+body.reduced-motion .mr-stars, body.low-power .mr-stars{ display:none; }
+body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
+
+/* ════════════════════════════════════════════════════════════════════
+   V21 — OG ITEM SHOP, PROFILE v4 (Discord/Steam-style) & FULL FRAMES
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- SHOP TOP BAR ---------- */
+.shop-topbar{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:16px; }
+.shop-title-word{
+  margin:0; font-family:var(--font-display); font-stretch:62%; font-weight:900;
+  font-size:clamp(30px, 4.4vw, 44px); line-height:1; letter-spacing:-.02em; font-style:italic;
+}
+.shop-title-word span{
+  background:linear-gradient(120deg, #9b7bff, #ff5ec8 55%, #ffb336);
+  background-size:220% 100%; -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:v10GradFlow 5s ease-in-out infinite;
+}
+.shop-topbar-sub{ display:inline-flex; align-items:center; gap:7px; margin-top:6px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.06em; color:var(--text-dim); }
+.shop-topbar-side{ display:flex; align-items:center; gap:9px; }
+.shop-collect{
+  display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:12px;
+  background:rgba(155,123,255,.08); border:1px solid rgba(155,123,255,.35); color:var(--violet);
+  font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.06em;
+}
+.shop-wallet{
+  display:inline-flex; align-items:center; gap:9px; padding:9px 16px; border-radius:12px;
+  background:linear-gradient(180deg, rgba(245,180,49,.16), rgba(245,180,49,.05));
+  border:1px solid rgba(245,180,49,.45); box-shadow:0 0 22px -12px rgba(245,180,49,.8);
+}
+.shop-wallet b{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:19px; font-variant-numeric:tabular-nums; }
+
+/* ---------- OG TWO-PANEL LAYOUT ---------- */
+.shop-og{ display:grid; grid-template-columns:2fr 3fr; gap:18px; align-items:start; }
+@media (max-width:980px){ .shop-og{ grid-template-columns:1fr; } }
+.shop-slab{
+  position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px;
+  padding:11px 16px; margin-bottom:12px; border-radius:10px;
+  background:linear-gradient(180deg, #262340, #1a1830);
+  border:1px solid var(--line-bright, var(--line));
+  box-shadow:0 6px 18px -10px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.shop-slab::before{ content:''; position:absolute; left:0; top:8px; bottom:8px; width:4px; border-radius:999px; background:linear-gradient(180deg, #9b7bff, #ff5ec8); }
+.shop-panel-featured .shop-slab::before{ background:linear-gradient(180deg, #ffd45e, #ff9a3d); }
+.shop-slab-title{ font-family:var(--font-display); font-stretch:68%; font-weight:900; font-size:17px; letter-spacing:.04em; font-style:italic; }
+.shop-slab-timer{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.08em; color:var(--text-dim);
+}
+.shop-slab-timer b{ color:var(--text); font-variant-numeric:tabular-nums; }
+.shop-grid-featured{ grid-template-columns:repeat(2, 1fr); gap:12px; }
+.shop-grid-daily{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; }
+@media (max-width:560px){ .shop-grid-daily{ grid-template-columns:repeat(2, 1fr); } .shop-grid-featured{ grid-template-columns:repeat(2, 1fr); } }
+.shop-note{
+  margin:18px 2px 0; text-align:center; color:var(--text-faint); font-size:12px; font-family:var(--font-mono); letter-spacing:.02em;
+}
+.shop-note b{ color:var(--text-dim); }
+
+/* ---------- OG TILES: saturated rarity slabs + dark name band ---------- */
+.shop-tile{
+  min-height:0; border-radius:10px; border-width:2px;
+  border-color:color-mix(in srgb, var(--rc) 70%, #fff 6%);
+  background:
+    radial-gradient(130% 90% at 50% -10%, color-mix(in srgb, var(--rc) 30%, #fff 12%) 0%, transparent 55%),
+    linear-gradient(180deg, color-mix(in srgb, var(--rc) 58%, #221d3a), color-mix(in srgb, var(--rc) 26%, #131020) 82%);
+}
+.shop-tile:hover{
+  transform:translateY(-4px) scale(1.02);
+  border-color:#fff;
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.9), 0 0 30px -8px var(--rc);
+}
+.shop-tile .st-preview{ padding:30px 10px 14px; min-height:118px; transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.shop-tile:hover .st-preview{ transform:scale(1.07); }
+.shop-tile.featured .st-preview{ min-height:230px; }
+.st-band{
+  display:flex; flex-direction:column; gap:1px; padding:9px 10px 0;
+  background:rgba(9,8,18,.82); border-top:2px solid color-mix(in srgb, var(--rc) 55%, transparent);
+  text-align:center;
+}
+.st-band .st-name{ font-size:16px; font-style:italic; letter-spacing:.02em; }
+.shop-tile.featured .st-band .st-name{ font-size:20px; }
+.st-band .st-type{ color:color-mix(in srgb, var(--rc) 78%, #fff); }
+.st-band .st-foot{
+  margin:7px -10px 0; min-height:34px; background:rgba(0,0,0,.4);
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.st-owned{ display:inline-flex; align-items:center; gap:5px; }
+.st-rarity-tag{ top:8px; left:8px; background:rgba(0,0,0,.55); }
+
+/* ---------- COSMETICS EDITOR (Edit profile) ---------- */
+.cosmetics-editor{ display:flex; flex-direction:column; }
+.cosmetics-editor .shop-section-label{ margin:14px 2px 8px; }
+.cosmetics-editor .locker-grid{ grid-template-columns:repeat(auto-fill, minmax(132px, 1fr)); }
+.cosmetics-editor.cx-flash .locker-look{ animation:lpFlash 1.2s ease; }
+.locker-shop-link{
+  background:none; border:none; padding:0; cursor:pointer; color:var(--violet);
+  font:inherit; text-decoration:underline; text-underline-offset:2px;
+}
+.locker-cta{ display:flex; justify-content:center; margin-top:14px; }
+
+/* ---------- PROFILE v4 — Discord/Steam-style card ---------- */
+.pm2 .pm-banner{ height:178px; }
+.pm2 .profile-head{ margin-top:-56px; align-items:flex-end; gap:16px; }
+.pm2 .pm-av-wrap{ transform:none; margin-bottom:0; }
+.pm2 .av-xl{
+  width:106px; height:106px; border-radius:30px; font-size:42px;
+  box-shadow:0 0 0 6px var(--surface), 0 14px 34px -14px rgba(0,0,0,.8);
+}
+.pm2 .pm-av-ring{ inset:-3px; border-radius:33px; }
+.pm2 .pm-av-lvl{ bottom:-4px; right:-4px; }
+.pm2 .pm-head-info{ padding-bottom:8px; }
+.pm2 .pm-name{ font-size:29px; line-height:1.05; }
+.pm2 .pm-name .cx-tag{ font-size:9px; top:-3px; }
+.pm2 .pm-title-row{ margin-top:7px; }
+/* Identity card — the Discord "inner card" */
+.pm2-id-card{
+  position:relative; z-index:2; margin:14px 0 0; padding:14px 16px;
+  border-radius:16px; background:rgba(255,255,255,.03); border:1px solid var(--line-soft);
+  display:flex; flex-direction:column; gap:8px;
+}
+.pm2-id-card .pm-sub{ margin:0; }
+.pm2-id-card .pm-rating{
+  display:inline-flex; align-items:center; gap:8px; align-self:flex-start;
+  margin:0; padding:7px 13px; border-radius:999px;
+  background:rgba(255,255,255,.04); border:1px solid var(--line);
+  font-family:var(--font-mono); font-size:12px; font-weight:700;
+}
+.pm2-id-card .pm-status{ margin:0; align-self:flex-start; }
+.pm2-id-card .bio{ margin:0; }
+/* Section cards — every block reads as its own panel */
+.pm2 :is(.pm-showcase, .pm-form-wrap, .pm-h2h, .pm-rankprog, .pm-level-bar-wrap, .pm-badges-section, .match-history, .pm-comments){
+  background:rgba(255,255,255,.025); border:1px solid var(--line-soft);
+  border-radius:16px; padding:14px 16px; margin:12px 0 0;
+}
+.pm2 h4{
+  font-family:var(--font-mono); font-size:10.5px; font-weight:800; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text-dim); margin:0 0 11px;
+}
+.pm2 .pm-stats{ margin:12px 0 0; gap:9px; }
+.pm2 .pm-stats.pm-stats-2, .pm2 .pm-stats.pm-stats-3{ margin-top:9px; }
+.pm2 .pm-stat{ border-radius:14px; }
+.pm2 .pm-lastseen{ margin:12px 2px 0; font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); }
+.pm2 .modal-actions{ border-top:1px solid var(--line-soft); }
+@media (max-width:600px){
+  .pm2 .pm-banner{ height:148px; }
+  .pm2 .profile-head{ margin-top:-48px; flex-direction:column; align-items:center; text-align:center; }
+  .pm2 .pm-head-info{ padding-bottom:0; }
+  .pm2 .pm-name{ font-size:24px; justify-content:center; }
+  .pm2 .pm-title-row{ justify-content:center; }
+  .pm2 .av-xl{ width:96px; height:96px; }
+  .pm2-id-card{ align-items:center; text-align:center; }
+  .pm2-id-card .pm-rating, .pm2-id-card .pm-status{ align-self:center; }
+}
+
+/* ---------- FRAMES v2: cover the whole profile card ---------- */
+/* Corner ornaments pinned to the card's top corners */
+.cx-frame-corners{ position:absolute; inset:0; z-index:6; pointer-events:none; }
+.cx-frame-corners b{
+  position:absolute; top:10px; width:44px; height:44px; opacity:.95;
+  border:2.5px solid var(--fxc, #fff);
+  filter:drop-shadow(0 0 8px var(--fxc, #fff));
+}
+.cx-frame-corners .tl{ left:10px; border-right:none; border-bottom:none; border-radius:16px 0 0 0; }
+.cx-frame-corners .tr{ right:10px; border-left:none; border-bottom:none; border-radius:0 16px 0 0; }
+/* Sticky glowing edge that rides the bottom of the modal viewport */
+.cx-frame-edge{
+  position:sticky; bottom:6px; display:block; height:3px; z-index:7; pointer-events:none;
+  margin:16px 6px 0; border-radius:999px;
+  background:linear-gradient(90deg, transparent, var(--fxc, #fff), transparent);
+  box-shadow:0 0 16px var(--fxc, #fff); opacity:.9;
+}
+/* Per-frame theme colours (drive corners + edge + border) */
+.cxf-gold{ --fxc:#ffd45e; }
+.cxf-galaxy{ --fxc:#b56cff; }
+.cxf-neon{ --fxc:#5fc9ff; }
+.cxf-liquid{ --fxc:#ff5ec8; }
+.cxf-blood{ --fxc:#ff3358; }
+.cxf-circuit{ --fxc:#22d3a3; }
+.cxf-liquid .cx-frame-edge, .cxf-liquid .cx-frame-corners b{ animation:cxfHue 6s linear infinite; }
+@keyframes cxfHue{ to{ filter:hue-rotate(360deg) drop-shadow(0 0 8px var(--fxc, #fff)); } }
+body.reduced-motion .cxf-liquid .cx-frame-edge, body.low-power .cxf-liquid .cx-frame-edge,
+body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid .cx-frame-corners b{ animation:none; }
+
+/* ════════════════════════════════════════════════════════════════════
+   V22 — PROFILE v5: ground-up Discord × Steam rebuild, fully responsive
+   ════════════════════════════════════════════════════════════════════ */
+.pm3{ max-width:660px; }
+.pm3 .pm-banner{ height:188px; }
+
+/* Floating head row: avatar hangs off the banner, actions sit beside it */
+.pm3-head{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:12px;
+  margin-top:-54px; position:relative; z-index:3; flex-wrap:wrap;
+}
+.pm3 .pm-av-wrap{ transform:none; margin:0; }
+.pm3 .av-xl{
+  width:110px; height:110px; border-radius:32px; font-size:44px;
+  box-shadow:0 0 0 6px var(--surface), 0 16px 36px -14px rgba(0,0,0,.8);
+}
+.pm3 .pm-av-ring{ inset:-3px; border-radius:35px; }
+.pm3 .pm-av-lvl{ bottom:-5px; right:-5px; z-index:4; }
+.pm3-presence{
+  position:absolute; left:4px; bottom:-5px; z-index:4;
+  width:24px; height:24px; border-radius:50%;
+  background:var(--text-faint); border:5px solid var(--surface);
+  transition:background .2s, box-shadow .2s;
+}
+.pm3-presence.online{ background:var(--mint); box-shadow:0 0 12px var(--mint-glow, rgba(34,211,163,.8)); }
+.pm3-head-actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; padding-bottom:8px; }
+.pm3-head-actions .btn{ min-height:38px; padding:8px 14px; font-size:13px; border-radius:11px; }
+
+/* Cards */
+.pm3-card{ background:rgba(255,255,255,.028); border:1px solid var(--line-soft); border-radius:16px; padding:14px 16px; }
+.pm3-identity{ margin-top:14px; display:flex; flex-direction:column; gap:7px; position:relative; z-index:2; }
+.pm3 .pm-name{ font-size:30px; line-height:1.08; display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+.pm3 .pm-name .cx-tag{ font-size:9px; top:-2px; }
+.pm3 .pm-sub{ margin:0 !important; }
+.pm3 .pm-title-row{ margin:2px 0 0 !important; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.pm3 .pm-rating{
+  display:inline-flex; align-items:center; gap:7px; margin:0 !important;
+  padding:5px 12px; border-radius:999px;
+  background:rgba(255,255,255,.045); border:1px solid var(--line);
+  font-family:var(--font-mono); font-size:11.5px; font-weight:700;
+}
+.pm3 .pm-rating svg{ width:16px; height:16px; }
+.pm3 .pm-lastseen{ margin:0 !important; font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); }
+.pm3 :is(.pm-status, .bio, .pm-showcase, .pm-form-wrap, .pm-h2h, .pm-rankprog, .pm-level-bar-wrap, .pm-badges-section, .match-history, .pm-comments, .pm-stats){ margin:0 !important; }
+.pm3 .pm-status{ align-self:flex-start; }
+.pm3-about .bio{ display:block; background:transparent; border:none; padding:0; }
+
+/* Tabs — sticky segmented control (Discord's About/Activity, our way) */
+.pm3-tabs{
+  display:flex; gap:6px; margin:14px 0 12px; padding:5px;
+  border-radius:14px; background:rgba(12,10,20,.88); border:1px solid var(--line-soft);
+  position:sticky; top:8px; z-index:6;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+}
+.pm3-tab{
+  flex:1; display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  padding:10px 8px; border:none; border-radius:10px; cursor:pointer;
+  background:transparent; color:var(--text-dim);
+  font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:13.5px;
+  transition:background .15s, color .15s, transform .1s;
+}
+.pm3-tab:active{ transform:scale(.97); }
+.pm3-tab.active{
+  background:rgba(255,255,255,.08); color:#fff;
+  box-shadow:inset 0 0 0 1px var(--line-bright, var(--line)), 0 4px 14px -8px rgba(0,0,0,.8);
+}
+.pm3-tab svg{ opacity:.75; }
+
+/* Panes */
+.pm3-pane{ display:flex; flex-direction:column; gap:10px; animation:v10Rise .28s ease both; }
+.pm3 .pm-stats{ gap:9px; }
+.pm3 .pm-stat{ border-radius:14px; }
+.pm3-progress-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.pm3 h4{
+  display:flex; align-items:center; gap:8px;
+  font-family:var(--font-mono); font-size:10.5px; font-weight:800; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text-dim); margin:0 0 11px;
+}
+.pm3-empty{
+  padding:28px 16px; text-align:center; border:1px dashed var(--line); border-radius:14px;
+  color:var(--text-faint); font-family:var(--font-mono); font-size:11.5px; letter-spacing:.03em;
+}
+
+/* MOBILE — every aspect */
+@media (max-width:600px){
+  #profileModal .modal{ padding-bottom:18px !important; }
+  .pm3 .pm-banner{ height:150px; }
+  .pm3-head{ margin-top:-46px; }
+  .pm3 .av-xl{ width:96px; height:96px; border-radius:28px; font-size:38px; }
+  .pm3 .pm-av-ring{ border-radius:31px; }
+  .pm3-presence{ width:21px; height:21px; border-width:4px; }
+  .pm3-head-actions{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:8px; padding-bottom:0; margin-top:10px; }
+  .pm3-head-actions .btn{ justify-content:center; min-height:46px; font-size:14px; }
+  .pm3-head-actions #pmChallengeBtn, .pm3-head-actions #pmEditBtn{ grid-column:1 / -1; }
+  .pm3-identity{ margin-top:12px; }
+  .pm3 .pm-name{ font-size:24px; }
+  .pm3 .pm-title-row{ row-gap:6px; }
+  .pm3-tabs{ top:4px; margin:12px 0 10px; }
+  .pm3-tab{ font-size:12.5px; padding:11px 4px; gap:5px; }
+  .pm3-tab svg{ display:none; }
+  .pm3-progress-grid{ grid-template-columns:1fr; }
+  .pm3 .pm-comment-compose input{ min-height:48px; font-size:16px; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   V23 — FRAMES v3 (full-card coverage) + STEAM-STYLE EDIT PROFILE
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- FRAME CHROME: sticky top + bottom rails with corners ---------- */
+.cx-frame-top, .cx-frame-edge{
+  position:sticky; display:block; height:0; margin:0; z-index:8; pointer-events:none;
+  background:none; box-shadow:none; border-radius:0; opacity:1;
+}
+.cx-frame-top{ top:0; margin-top:-32px; }
+.cx-frame-edge{ bottom:0; }
+.cx-frame-top b, .cx-frame-edge b{
+  position:absolute; width:38px; height:38px; opacity:.95;
+  border:2.5px solid var(--fxc, #fff);
+  filter:drop-shadow(0 0 8px var(--fxc, #fff));
+}
+.cx-frame-top .tl{ left:-26px; top:6px; border-right:none; border-bottom:none; border-radius:16px 0 0 0; }
+.cx-frame-top .tr{ right:-26px; top:6px; border-left:none; border-bottom:none; border-radius:0 16px 0 0; }
+.cx-frame-edge .bl{ left:-26px; bottom:6px; border-right:none; border-top:none; border-radius:0 0 0 16px; }
+.cx-frame-edge .br{ right:-26px; bottom:6px; border-left:none; border-top:none; border-radius:0 0 16px 0; }
+.cx-frame-top .cxline{ position:absolute; left:26px; right:26px; top:8px; height:2px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, var(--fxc, #fff), transparent); opacity:.75; box-shadow:0 0 12px var(--fxc, #fff); }
+.cx-frame-edge .cxline{ position:absolute; left:26px; right:26px; bottom:8px; height:2px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, var(--fxc, #fff), transparent); opacity:.75; box-shadow:0 0 12px var(--fxc, #fff); }
+@media (max-width:600px){
+  .cx-frame-top{ margin-top:-20px; }
+  .cx-frame-top b, .cx-frame-edge b{ width:30px; height:30px; }
+  .cx-frame-top .tl, .cx-frame-edge .bl{ left:-14px; }
+  .cx-frame-top .tr, .cx-frame-edge .br{ right:-14px; }
+}
+/* Side borders — the frame hugs the whole card, always */
+.profile-modal[class*="cxf-"]{ border:1.5px solid color-mix(in srgb, var(--fxc, #fff) 55%, transparent) !important; }
+
+/* ---------- FULL-CARD WASHES: each frame paints the entire profile ---------- */
+.profile-modal.cxf-circuit{
+  background:
+    repeating-linear-gradient(90deg, rgba(34,211,163,.055) 0 1.5px, transparent 1.5px 42px),
+    repeating-linear-gradient(0deg, rgba(34,211,163,.045) 0 1.5px, transparent 1.5px 34px),
+    radial-gradient(120% 45% at 50% 0%, rgba(34,211,163,.14), transparent 62%),
+    radial-gradient(120% 40% at 50% 100%, rgba(34,211,163,.08), transparent 60%),
+    linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
+}
+.profile-modal.cxf-galaxy{
+  background:
+    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,.8) 45%, transparent 55%),
+    radial-gradient(2px 2px at 78% 9%, rgba(255,255,255,.7) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 42% 32%, rgba(255,255,255,.6) 45%, transparent 55%),
+    radial-gradient(2px 2px at 88% 56%, rgba(255,255,255,.55) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 22% 74%, rgba(255,255,255,.5) 45%, transparent 55%),
+    radial-gradient(2px 2px at 64% 88%, rgba(255,255,255,.55) 45%, transparent 55%),
+    radial-gradient(130% 50% at 50% 0%, rgba(155,123,255,.2), transparent 60%),
+    radial-gradient(100% 40% at 15% 100%, rgba(255,94,200,.1), transparent 60%),
+    linear-gradient(180deg, #17142a, #0e0c1a) !important;
+}
+.profile-modal.cxf-gold{
+  background:
+    radial-gradient(130% 45% at 50% 0%, rgba(255,180,54,.18), transparent 60%),
+    radial-gradient(100% 35% at 50% 100%, rgba(255,180,54,.1), transparent 60%),
+    linear-gradient(115deg, rgba(255,212,94,.05) 0%, transparent 30%, transparent 70%, rgba(255,212,94,.05) 100%),
+    linear-gradient(180deg, #1c1710, var(--bg-2)) !important;
+}
+.profile-modal.cxf-neon{
+  background:
+    repeating-linear-gradient(90deg, rgba(95,201,255,.05) 0 1px, transparent 1px 30px),
+    repeating-linear-gradient(0deg, rgba(255,94,200,.04) 0 1px, transparent 1px 30px),
+    radial-gradient(130% 45% at 50% 0%, rgba(95,201,255,.16), transparent 62%),
+    radial-gradient(110% 40% at 50% 100%, rgba(255,94,200,.12), transparent 62%),
+    linear-gradient(180deg, #131322, #0d0c16) !important;
+}
+.profile-modal.cxf-blood{
+  background:
+    radial-gradient(130% 50% at 50% 0%, rgba(255,51,88,.2), transparent 60%),
+    radial-gradient(140% 60% at 50% 115%, rgba(120,10,28,.5), transparent 65%),
+    linear-gradient(180deg, #1c1016, #120a0e) !important;
+}
+.profile-modal.cxf-liquid{
+  background:
+    linear-gradient(125deg, rgba(181,108,255,.13), rgba(95,201,255,.09) 34%, rgba(255,94,200,.1) 68%, rgba(181,108,255,.13)),
+    linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
+}
+
+/* ---------- EDIT PROFILE — Steam layout ---------- */
+.eps-modal{ max-width:790px; }
+.eps-header{
+  display:flex; align-items:center; gap:13px;
+  margin:-8px 0 16px; padding:0 0 14px; border-bottom:1px solid var(--line-soft);
+}
+.eps-header-av{
+  position:relative; overflow:hidden; width:48px; height:48px; border-radius:13px; flex:0 0 auto;
+  display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:20px; color:#fff;
+  background:var(--surface-3); box-shadow:0 6px 16px -8px rgba(0,0,0,.7);
+}
+.eps-header-name{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:21px; min-width:0; }
+.eps-header-chev{ color:var(--text-faint); font-weight:400; margin:0 2px; }
+.eps-header-crumb{ color:var(--text-dim); font-weight:700; font-size:16px; }
+.eps-body{ display:grid; grid-template-columns:176px minmax(0, 1fr); gap:0 22px; }
+.eps-nav{ display:flex; flex-direction:column; gap:3px; align-self:start; position:sticky; top:8px; }
+.eps-nav-item{
+  display:flex; align-items:center; gap:10px; text-align:left; cursor:pointer;
+  padding:11px 13px; border:none; border-radius:10px; background:transparent;
+  color:var(--text-dim); font-family:var(--font-display); font-stretch:80%; font-weight:700; font-size:13.5px;
+  transition:background .15s, color .15s, box-shadow .15s;
+}
+.eps-nav-item svg{ opacity:.7; flex:0 0 auto; }
+.eps-nav-item:hover{ background:rgba(255,255,255,.045); color:var(--text); }
+.eps-nav-item.active{
+  background:rgba(255,255,255,.07); color:#fff;
+  box-shadow:inset 3px 0 0 var(--mint), 0 4px 14px -10px rgba(0,0,0,.8);
+}
+.eps-content{ min-width:0; }
+.eps-pane{ display:none; flex-direction:column; gap:14px; }
+.eps-pane.active{ display:flex; animation:v10Rise .22s ease both; }
+.eps-pane-title{ margin:0; font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:24px; letter-spacing:-.01em; }
+.eps-pane-desc{ margin:-8px 0 2px; color:var(--text-dim); font-size:13px; line-height:1.55; max-width:440px; }
+.eps-foot{ grid-column:1 / -1; margin-top:18px; }
+.eps-foot .error-msg{ margin-bottom:8px; }
+.eps-pane .edit-banner-preview{ margin:0 0 4px; }
+@media (max-width:680px){
+  .eps-body{ grid-template-columns:1fr; gap:14px; }
+  .eps-nav{
+    position:static; flex-direction:row; gap:6px; overflow-x:auto; padding-bottom:6px;
+    margin:0 -6px; padding-left:6px; padding-right:6px; scrollbar-width:none;
+  }
+  .eps-nav::-webkit-scrollbar{ display:none; }
+  .eps-nav-item{ flex:0 0 auto; padding:9px 14px; border-radius:999px; background:rgba(255,255,255,.04); border:1px solid var(--line-soft); }
+  .eps-nav-item.active{ box-shadow:none; border-color:rgba(34,211,163,.5); background:rgba(34,211,163,.1); color:var(--mint); }
+  .eps-header-name{ font-size:18px; }
+  .eps-pane-title{ font-size:21px; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   V24 — SMOOTHNESS PASS
+   Stable panel sizes (no more jumping when switching tabs), a sliding
+   tab indicator, springy pane transitions, and micro-interactions on
+   everything you hover or press.
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- STABLE MODAL SIZES: tabs never resize the card ---------- */
+.pm3{ height:min(88vh, 840px); }
+.eps-modal{ height:min(88vh, 800px); }
+.pm3, .eps-modal, .modal{ scroll-behavior:smooth; }
+@media (max-width:600px){
+  .pm3, .eps-modal{ height:92vh; max-height:92vh; }
+}
+
+/* ---------- PANE TRANSITIONS: crossfade + rise, no reflow flash ---------- */
+.pm3-pane, .eps-pane.active{ animation:none; }
+.pane-in{ animation:paneIn .34s cubic-bezier(.25,1,.35,1) both; }
+@keyframes paneIn{
+  from{ opacity:0; transform:translateY(14px) scale(.995); filter:blur(5px); }
+  to{ opacity:1; transform:none; filter:blur(0); }
+}
+
+/* ---------- SLIDING TAB INDICATOR (profile tabs) ---------- */
+.pm3-tabs{ --ti:0; }
+.pm3-tabs::before{
+  content:''; position:absolute; top:5px; bottom:5px; left:5px;
+  width:calc((100% - 22px) / 3); border-radius:10px;
+  background:rgba(255,255,255,.08);
+  box-shadow:inset 0 0 0 1px var(--line-bright, var(--line)), 0 4px 14px -8px rgba(0,0,0,.8);
+  transform:translateX(calc(var(--ti, 0) * (100% + 6px)));
+  transition:transform .4s cubic-bezier(.3,1.35,.35,1);
+  pointer-events:none;
+}
+.pm3-tab{ position:relative; z-index:1; }
+.pm3-tab.active{ background:transparent; box-shadow:none; }
+.pm3-tab:hover:not(.active){ color:var(--text); }
+.pm3-tab:hover svg{ transform:translateY(-1px) scale(1.12); opacity:1; }
+.pm3-tab svg{ transition:transform .2s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
+
+/* ---------- BUTTONS: hover lift, press squish (everywhere) ---------- */
+.btn{ transition:transform .16s cubic-bezier(.34,1.56,.64,1), box-shadow .22s, background .2s, border-color .2s, color .2s, filter .2s; }
+.btn:hover:not(:disabled){ transform:translateY(-1px); }
+.btn:active:not(:disabled){ transform:translateY(0) scale(.96); }
+.modal-close{ transition:transform .25s cubic-bezier(.34,1.56,.64,1), background .2s, color .2s; }
+.modal-close:hover{ transform:rotate(90deg) scale(1.06); }
+.topbar-icon-btn{ transition:transform .18s cubic-bezier(.34,1.56,.64,1), background .2s, color .2s; }
+.topbar-icon-btn:hover{ transform:translateY(-1px) scale(1.06); }
+.topbar-icon-btn:active{ transform:scale(.9); }
+
+/* ---------- SIDEBAR + SECTION NAV micro-motion ---------- */
+.nav-item{ transition:background .18s, color .18s, transform .12s; }
+.nav-item:active{ transform:scale(.97); }
+.nav-item svg{ transition:transform .22s cubic-bezier(.34,1.56,.64,1); }
+.nav-item:hover svg{ transform:translateX(2px) scale(1.1); }
+.eps-nav-item svg{ transition:transform .22s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
+.eps-nav-item:hover svg{ transform:scale(1.15); opacity:1; }
+.eps-nav-item:active{ transform:scale(.97); }
+
+/* ---------- TILES, STATS, ROWS ---------- */
+.pm-stat, .stat-tile{
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1), border-color .2s, box-shadow .25s, background .2s;
+}
+.pm-stat:hover, .stat-tile:hover{
+  transform:translateY(-3px);
+  border-color:var(--line-bright, #3a3850);
+  box-shadow:0 12px 26px -16px rgba(0,0,0,.75);
+}
+.pm3-card{ transition:border-color .25s, box-shadow .3s; }
+.pm3-card:hover{ border-color:var(--line); }
+.mh-row{ transition:transform .18s ease, background .18s, border-color .18s; }
+.mh-row:hover{ transform:translateX(4px); background:rgba(255,255,255,.045); }
+.pm-badges > *{ transition:transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .25s; }
+.pm-badges > *:hover{ transform:translateY(-3px) scale(1.1); }
+.pm-showcase > * > *{ transition:transform .2s cubic-bezier(.34,1.56,.64,1); }
+.locker-tile:active, .title-chip:active:not(:disabled){ transform:scale(.95) !important; }
+.shop-tile:active{ transform:translateY(-1px) scale(.97) !important; }
+.pm-form-pip{ transition:transform .18s cubic-bezier(.34,1.56,.64,1); }
+.pm-form-pip:hover{ transform:scale(1.25); }
+
+/* ---------- INPUTS: focus glow ---------- */
+.field input, .field select, .field textarea{
+  transition:border-color .2s, box-shadow .25s, background .2s;
+}
+.field input:focus, .field select:focus, .field textarea:focus{
+  border-color:rgba(34,211,163,.55);
+  box-shadow:0 0 0 3px rgba(34,211,163,.12);
+}
+.pm-comment-compose input{ transition:border-color .2s, box-shadow .25s; }
+.pm-comment-compose input:focus{ border-color:rgba(34,211,163,.5); box-shadow:0 0 0 3px rgba(34,211,163,.1); }
+
+/* ---------- REDUCED MOTION / LOW POWER ---------- */
+body.reduced-motion .pane-in, body.low-power .pane-in{ animation:none !important; }
+body.reduced-motion .pm3-tabs::before, body.low-power .pm3-tabs::before{ transition:none; }
+body.reduced-motion :is(.btn, .modal-close, .topbar-icon-btn, .pm-stat, .stat-tile, .mh-row, .pm-badges > *),
+body.low-power :is(.btn, .modal-close, .topbar-icon-btn, .pm-stat, .stat-tile, .mh-row, .pm-badges > *){ transition:none; }
+body.reduced-motion .pm3, body.reduced-motion .eps-modal, body.reduced-motion .modal{ scroll-behavior:auto; }
+
 </style>
 </head>
 <body>
@@ -15240,6 +16707,25 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
     <symbol id="i-xptoken" viewBox="0 0 24 24">
       <image href="xptoken.png" x="0" y="0" width="24" height="24" preserveAspectRatio="xMidYMid meet"/>
     </symbol>
+    <!-- ROSHCOIN — the cosmetics currency. Gold coin with an inner ring + facet star. -->
+    <symbol id="i-coin" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="10" fill="url(#coinGradA)"/>
+      <circle cx="12" cy="12" r="9.2" fill="none" stroke="#8a5a00" stroke-opacity=".55" stroke-width=".8"/>
+      <circle cx="12" cy="12" r="6.6" fill="url(#coinGradB)" stroke="#8a5a00" stroke-opacity=".5" stroke-width=".7"/>
+      <path d="M12 7.6l1.25 2.9 3.15.28-2.38 2.08.7 3.08L12 14.3l-2.72 1.64.7-3.08L7.6 10.78l3.15-.28L12 7.6Z" fill="#7c4a00" opacity=".85"/>
+      <path d="M6.4 6.2c1-1.4 2.6-2.4 4.4-2.8" stroke="#fff" stroke-opacity=".75" stroke-width="1.1" stroke-linecap="round" fill="none"/>
+    </symbol>
+    <linearGradient id="coinGradA" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffe27e"/><stop offset=".55" stop-color="#ffb336"/><stop offset="1" stop-color="#e08f1f"/>
+    </linearGradient>
+    <linearGradient id="coinGradB" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd45e"/><stop offset="1" stop-color="#f5a52a"/>
+    </linearGradient>
+    <!-- Item shop bag -->
+    <symbol id="i-shop" viewBox="0 0 24 24">
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 8h12l-1.1 11a2 2 0 0 1-2 1.8H9.1a2 2 0 0 1-2-1.8L6 8Z"/>
+      <path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 10V6.5a3 3 0 0 1 6 0V10"/>
+    </symbol>
   </defs>
 </svg>
 
@@ -15255,6 +16741,7 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
     <nav class="sidebar-nav">
       <button class="nav-item active" data-nav="home"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></button>
       <button class="nav-item" data-nav="play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg><span>Play</span></button>
+      <button class="nav-item" data-nav="shop"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg><span>Shop</span><span class="nav-badge nav-shop-new" id="navShopBadge" style="display:none;">NEW</span></button>
       <button class="nav-item" data-nav="activity"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg><span>Activity</span></button>
       <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
@@ -15306,6 +16793,11 @@ input[type=checkbox], input[type=radio], input[type=range], progress{ accent-col
     </div>
     <button class="dxp-pill" id="dxpPill" style="display:none;" title="Double XP weekend"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-zap"/></svg> 2× XP</button>
     <button class="dxp-pill boost-pill" id="boostPill" style="display:none;" title="2× XP token active — tap to manage" data-goto-play><span class="bp-bolt"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-xptoken"/></svg></span><span class="bp-mult">2×</span><span id="boostPillTime" class="bp-time">0m</span><span class="bp-track"><i id="boostPillBar"></i></span></button>
+    <button class="coin-pill" id="coinPill" style="display:none;" title="RoshCoins — open the item shop">
+      <svg class="coin-pill-ic" viewBox="0 0 24 24" width="17" height="17"><use href="#i-coin"/></svg>
+      <span class="coin-pill-num" id="coinPillNum">0</span>
+      <span class="coin-pill-plus">+</span>
+    </button>
     <div class="topbar-spacer"></div>
     <div class="header-actions" id="headerActions">
       <button class="btn btn-ghost" id="helpBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-help"/></svg> How to play</button>
@@ -16129,11 +17621,10 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
-        <!-- LOWER ROW: compact 2× XP boost (left) · daily + weekly challenges (right) -->
-        <div class="play-lower-grid">
-          <div class="xpboost-panel" id="xpBoostPanel" style="display:none;"></div>
-          <div class="challenge-stack play-challenges" id="playChallengeSlot"></div>
-        </div>
+        <!-- BOOSTER CONSOLE — full-width 2× XP strip, then challenges side by side -->
+        <div class="psection"><h3>Boosts &amp; challenges</h3></div>
+        <div class="xpboost-panel" id="xpBoostPanel" style="display:none;"></div>
+        <div class="challenge-stack play-challenges" id="playChallengeSlot"></div>
 
         <!-- The throws -->
         <div class="psection"><h3>The throws</h3></div>
@@ -16152,6 +17643,47 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
       </div><!-- /page play -->
+
+      <!-- ============ PAGE: ITEM SHOP (OG two-panel layout) ============ -->
+      <div class="nav-page" data-page="shop">
+        <!-- SHOP TOP BAR — title left, wallet + collection right -->
+        <div class="shop-topbar">
+          <div class="shop-topbar-title">
+            <h1 class="shop-title-word">ITEM <span>SHOP</span></h1>
+            <span class="shop-topbar-sub"><span class="live-dot"></span> Rotates daily · earn RoshCoins by playing</span>
+          </div>
+          <div class="shop-topbar-side">
+            <div class="shop-collect" id="shopCollect" title="Cosmetics collected">
+              <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-star"/></svg>
+              <span id="shopCollectNum">0/34</span>
+            </div>
+            <div class="shop-wallet" id="shopWallet" title="Your RoshCoins — spend them here">
+              <svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-coin"/></svg>
+              <b id="shopWalletNum">0</b>
+            </div>
+          </div>
+        </div>
+
+        <!-- OG SHOP: FEATURED (left) · DAILY (right) -->
+        <div class="shop-og">
+          <section class="shop-panel shop-panel-featured">
+            <div class="shop-slab">
+              <span class="shop-slab-title">FEATURED ITEMS</span>
+              <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-clock"/></svg> <b class="js-shop-timer">—</b></span>
+            </div>
+            <div class="shop-grid shop-grid-featured" id="shopFeatured"></div>
+          </section>
+          <section class="shop-panel shop-panel-daily">
+            <div class="shop-slab">
+              <span class="shop-slab-title">DAILY ITEMS</span>
+              <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-clock"/></svg> <b class="js-shop-timer">—</b></span>
+            </div>
+            <div class="shop-grid shop-grid-daily" id="shopDaily"></div>
+          </section>
+        </div>
+
+        <p class="shop-note"><b>Note:</b> these items are cosmetic only and grant no competitive advantage. Equip what you own in <b>Edit profile → Cosmetics</b>.</p>
+      </div><!-- /page shop -->
 
       <!-- ============ PAGE: ACTIVITY ============ -->
       <div class="nav-page" data-page="activity">
@@ -17331,6 +18863,9 @@ const FIREBASE_CONFIG = {
 <div class="match-result-overlay" id="matchResultOverlay">
   <!-- Animated background -->
   <div class="mr-bg"></div>
+  <!-- BRAWL-STYLE CEREMONY LAYERS: spinning ray wheel + star field (JS-spawned) -->
+  <div class="mr-rays" aria-hidden="true"><i class="mrr r1"></i><i class="mrr r2"></i></div>
+  <div class="mr-stars" id="mrStars" aria-hidden="true"></div>
 
   <div class="match-result-card-v2" id="matchResultCard">
 
@@ -17344,8 +18879,8 @@ const FIREBASE_CONFIG = {
         </div>
       </div>
       <div class="mrc-scoreline">
-        <div class="mrc-player you">
-          <div class="mrc-av" id="mrYouAv">?</div>
+        <div class="mrc-player you" id="mrPlayerYou">
+          <span class="mrc-av-wrap" id="mrYouAvWrap"><div class="mrc-av" id="mrYouAv">?</div></span>
           <span class="mrc-pname" id="mrYouName">you</span>
         </div>
         <div class="mrc-score">
@@ -17353,8 +18888,8 @@ const FIREBASE_CONFIG = {
           <span class="dash">–</span>
           <span class="opp" id="matchResultOppScore">0</span>
         </div>
-        <div class="mrc-player opp">
-          <div class="mrc-av" id="mrOppAv">?</div>
+        <div class="mrc-player opp" id="mrPlayerOpp">
+          <span class="mrc-av-wrap" id="mrOppAvWrap"><div class="mrc-av" id="mrOppAv">?</div></span>
           <span class="mrc-pname" id="mrOppName">@stranger</span>
         </div>
       </div>
@@ -18029,185 +19564,288 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
-<!-- VIEW PROFILE MODAL -->
-<div class="modal-bg" id="profileModal">
-  <div class="modal profile-modal">
-    <button class="modal-close" data-close="profileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <!-- Rank-tinted cover banner -->
-    <div class="pm-banner" id="pmBanner"><svg class="pm-banner-mark" id="pmBannerMark" viewBox="0 0 24 24"></svg></div>
-    <div class="profile-head">
-      <div class="pm-av-wrap">
-        <div class="av-xl" id="pmAv">?</div>
-        <span class="pm-av-ring" id="pmAvRing"></span>
-        <span class="pm-av-lvl" id="pmAvLvl">1</span>
-      </div>
-      <div class="pm-head-info">
-        <div class="pm-name" id="pmName">— <svg class="rank-mini" id="pmRankMini"></svg></div>
-        <div class="pm-title-row" id="pmTitleRow">
-          <span class="pm-level-badge" id="pmLevelBadge">1</span>
-          <span class="pm-title" id="pmTitle">Rookie</span>
-          <span class="pm-prestige" id="pmPrestige" style="display:none;">✦ PRESTIGE 1</span>
-        </div>
-        <div class="pm-sub" id="pmSub">—</div>
-        <div class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></div>
-      </div>
-    </div>
-    <div class="pm-status" id="pmStatus" style="display:none;">—</div>
-    <div class="bio" id="pmBio" style="display:none;">—</div>
-    <!-- Showcase — up to 3 featured badges -->
-    <div class="pm-showcase" id="pmShowcase" style="display:none;"></div>
-    <!-- Recent form (last matches) -->
-    <div class="pm-form-wrap" id="pmFormWrap" style="display:none;">
-      <span class="pm-form-label">RECENT FORM</span>
-      <div class="pm-form" id="pmForm"></div>
-    </div>
-    <div class="pm-stats">
-      <div class="pm-stat"><div class="v" id="pmWins">0</div><div class="l">wins</div></div>
-      <div class="pm-stat"><div class="v" id="pmLosses">0</div><div class="l">losses</div></div>
-      <div class="pm-stat"><div class="v" id="pmGames">0</div><div class="l">games</div></div>
-      <div class="pm-stat"><div class="v" id="pmStreak">0</div><div class="l">best streak</div></div>
-    </div>
-    <div class="pm-stats pm-stats-2">
-      <div class="pm-stat"><div class="v" id="pmWinrate">0%</div><div class="l">win rate</div></div>
-      <div class="pm-stat"><div class="v" id="pmCurStreak">0</div><div class="l">current streak</div></div>
-      <div class="pm-stat"><div class="v" id="pmDraws">0</div><div class="l">draws</div></div>
-      <div class="pm-stat"><div class="v" id="pmLevelStat">1</div><div class="l">level</div></div>
-    </div>
-    <div class="pm-h2h" id="pmH2H" style="display:none;"></div>
-    <div class="pm-stats pm-stats-3" id="pmExtraStats"></div>
-    <!-- Rank progress to next tier -->
-    <div class="pm-rankprog" id="pmRankProg">
-      <div class="pm-rankprog-top">
-        <span class="pm-rankprog-cur" id="pmRankProgCur">Bronze I</span>
-        <span class="pm-rankprog-next" id="pmRankProgNext">Bronze II</span>
-      </div>
-      <div class="ui-bar"><div class="ui-bar-fill" id="pmRankProgFill" style="width:0%"></div></div>
-      <div class="pm-rankprog-label" id="pmRankProgLabel">—</div>
-    </div>
-    <!-- Level XP bar -->
-    <div class="pm-level-bar-wrap">
-      <div class="pm-level-bar-top">
-        <span id="pmLevelTitle">Rookie</span>
-        <span id="pmLevelXpText">0 / 200 XP</span>
-      </div>
-      <div class="pm-level-bar"><div class="pm-level-bar-fill" id="pmLevelBarFill" style="width:0%"></div></div>
-    </div>
-    <!-- Last seen -->
-    <div class="pm-lastseen" id="pmLastSeen"></div>
-    <div class="pm-badges-section" id="pmBadgesSection" style="display:none;">
-      <h4>BADGES <span class="pm-badges-count" id="pmBadgesCount"></span></h4>
-      <div class="pm-badges" id="pmBadges"></div>
-    </div>
-    <div class="match-history" id="pmHistorySection" style="display:none;">
-      <h4>RECENT MATCHES</h4>
-      <div class="mh-list" id="pmHistoryList"></div>
-    </div>
-    <div class="pm-comments" id="pmCommentsSection">
-      <h4>PROFILE COMMENTS</h4>
-      <div class="pm-comment-compose">
-        <input type="text" id="pmCommentInput" placeholder="Leave a comment…" maxlength="200" />
-        <button id="pmCommentSend" type="button"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-send"/></svg></button>
-      </div>
-      <div class="pm-comment-list" id="pmCommentList"></div>
-    </div>
-    <div class="modal-actions" id="pmActions">
-      <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block</button>
-      <button class="btn btn-primary" id="pmEditBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-edit"/></svg> Edit profile</button>
-      <button class="btn" id="pmShareBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-send"/></svg> Share</button>
-      <button class="btn" id="pmMessageBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Message</button>
-      <button class="btn" id="pmAddFriendBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-plus"/></svg> Add friend</button>
-      <button class="btn btn-mint" id="pmChallengeBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-sword"/></svg> Challenge</button>
+<!-- SHOP PURCHASE MODAL -->
+<div class="modal-bg" id="shopBuyModal">
+  <div class="modal shop-buy-modal" id="shopBuyCard">
+    <button class="modal-close" data-close="shopBuyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <div class="sbm-stage" id="sbmStage"></div>
+    <div class="sbm-rarity" id="sbmRarity">LEGENDARY</div>
+    <h3 class="sbm-name" id="sbmName">Galaxy</h3>
+    <div class="sbm-type" id="sbmType">NAME STYLE</div>
+    <p class="sbm-desc" id="sbmDesc">—</p>
+    <div class="sbm-balance" id="sbmBalance"></div>
+    <div class="sbm-actions">
+      <button class="btn btn-ghost" data-close="shopBuyModal">Not now</button>
+      <button class="btn btn-primary sbm-buy" id="sbmBuyBtn">
+        <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-coin"/></svg>
+        <span id="sbmBuyLabel">Buy · 4,500</span>
+      </button>
     </div>
   </div>
 </div>
 
-<!-- EDIT PROFILE MODAL -->
+<!-- VIEW PROFILE MODAL -->
+<!-- PROFILE v5 — built from scratch: Discord card × Steam profile hybrid.
+     Cover banner → floating avatar with presence → identity card →
+     Overview / Matches / Comments tabs. Fully responsive. -->
+<div class="modal-bg" id="profileModal">
+  <div class="modal profile-modal pm3">
+    <button class="modal-close" data-close="profileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+
+    <!-- COVER — rank/accent tinted, frame-decorated -->
+    <div class="pm-banner" id="pmBanner"><svg class="pm-banner-mark" id="pmBannerMark" viewBox="0 0 24 24"></svg></div>
+
+    <!-- FLOATING HEAD: avatar (presence + level pip) · Steam-style level ring · actions -->
+    <div class="pm3-head">
+      <div class="pm-av-wrap">
+        <div class="av-xl" id="pmAv">?</div>
+        <span class="pm-av-ring" id="pmAvRing"></span>
+        <span class="pm-av-lvl" id="pmAvLvl">1</span>
+        <span class="pm3-presence" id="pmPresence" title="offline"></span>
+      </div>
+      <div class="pm3-head-actions" id="pmActions">
+        <button class="btn btn-mint" id="pmChallengeBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-sword"/></svg> Challenge</button>
+        <button class="btn btn-primary" id="pmEditBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-edit"/></svg> Edit profile</button>
+        <button class="btn" id="pmAddFriendBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-plus"/></svg> Add friend</button>
+        <button class="btn" id="pmMessageBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Message</button>
+        <button class="btn" id="pmShareBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-send"/></svg> Share</button>
+        <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block</button>
+      </div>
+    </div>
+
+    <!-- IDENTITY CARD -->
+    <div class="pm3-card pm3-identity">
+      <div class="pm-name" id="pmName">— <svg class="rank-mini" id="pmRankMini"></svg></div>
+      <div class="pm-sub" id="pmSub">—</div>
+      <div class="pm-title-row" id="pmTitleRow">
+        <span class="pm-level-badge" id="pmLevelBadge">1</span>
+        <span class="pm-title" id="pmTitle">Rookie</span>
+        <span class="pm-prestige" id="pmPrestige" style="display:none;">✦ PRESTIGE 1</span>
+        <span class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></span>
+      </div>
+      <div class="pm-status" id="pmStatus" style="display:none;">—</div>
+      <div class="pm-lastseen" id="pmLastSeen"></div>
+    </div>
+
+    <!-- TABS -->
+    <div class="pm3-tabs" role="tablist">
+      <button class="pm3-tab active" data-pmtab="overview" role="tab"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-home"/></svg> Overview</button>
+      <button class="pm3-tab" data-pmtab="matches" role="tab"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-swords"/></svg> Matches</button>
+      <button class="pm3-tab" data-pmtab="comments" role="tab"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Comments</button>
+    </div>
+
+    <!-- PANE: OVERVIEW -->
+    <div class="pm3-pane" data-pmpane="overview">
+      <div class="pm3-card pm3-about" id="pmAboutCard" style="display:none;">
+        <h4>About</h4>
+        <div class="bio" id="pmBio" style="display:none;">—</div>
+      </div>
+      <!-- Showcase — up to 3 featured badges (Steam-style) -->
+      <div class="pm-showcase" id="pmShowcase" style="display:none;"></div>
+      <div class="pm-stats">
+        <div class="pm-stat"><div class="v" id="pmWins">0</div><div class="l">wins</div></div>
+        <div class="pm-stat"><div class="v" id="pmLosses">0</div><div class="l">losses</div></div>
+        <div class="pm-stat"><div class="v" id="pmGames">0</div><div class="l">games</div></div>
+        <div class="pm-stat"><div class="v" id="pmStreak">0</div><div class="l">best streak</div></div>
+      </div>
+      <div class="pm-stats pm-stats-2">
+        <div class="pm-stat"><div class="v" id="pmWinrate">0%</div><div class="l">win rate</div></div>
+        <div class="pm-stat"><div class="v" id="pmCurStreak">0</div><div class="l">current streak</div></div>
+        <div class="pm-stat"><div class="v" id="pmDraws">0</div><div class="l">draws</div></div>
+        <div class="pm-stat"><div class="v" id="pmLevelStat">1</div><div class="l">level</div></div>
+      </div>
+      <div class="pm-h2h" id="pmH2H" style="display:none;"></div>
+      <div class="pm-stats pm-stats-3" id="pmExtraStats"></div>
+      <!-- Progress: rank + level side by side on desktop -->
+      <div class="pm3-progress-grid">
+        <div class="pm-rankprog pm3-card" id="pmRankProg">
+          <h4>Rank progress</h4>
+          <div class="pm-rankprog-top">
+            <span class="pm-rankprog-cur" id="pmRankProgCur">Bronze I</span>
+            <span class="pm-rankprog-next" id="pmRankProgNext">Bronze II</span>
+          </div>
+          <div class="ui-bar"><div class="ui-bar-fill" id="pmRankProgFill" style="width:0%"></div></div>
+          <div class="pm-rankprog-label" id="pmRankProgLabel">—</div>
+        </div>
+        <div class="pm-level-bar-wrap pm3-card">
+          <h4>Level</h4>
+          <div class="pm-level-bar-top">
+            <span id="pmLevelTitle">Rookie</span>
+            <span id="pmLevelXpText">0 / 200 XP</span>
+          </div>
+          <div class="pm-level-bar"><div class="pm-level-bar-fill" id="pmLevelBarFill" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="pm-badges-section pm3-card" id="pmBadgesSection" style="display:none;">
+        <h4>Badges <span class="pm-badges-count" id="pmBadgesCount"></span></h4>
+        <div class="pm-badges" id="pmBadges"></div>
+      </div>
+    </div>
+
+    <!-- PANE: MATCHES -->
+    <div class="pm3-pane" data-pmpane="matches" style="display:none;">
+      <!-- Recent form (sports-style form guide) -->
+      <div class="pm-form-wrap pm3-card" id="pmFormWrap" style="display:none;">
+        <span class="pm-form-label">RECENT FORM</span>
+        <div class="pm-form" id="pmForm"></div>
+      </div>
+      <div class="match-history pm3-card" id="pmHistorySection" style="display:none;">
+        <h4>Recent matches</h4>
+        <div class="mh-list" id="pmHistoryList"></div>
+      </div>
+      <div class="pm3-empty" id="pmMatchesEmpty">No recent matches — challenge them to be the first!</div>
+    </div>
+
+    <!-- PANE: COMMENTS -->
+    <div class="pm3-pane" data-pmpane="comments" style="display:none;">
+      <div class="pm-comments pm3-card" id="pmCommentsSection">
+        <h4>Profile comments</h4>
+        <div class="pm-comment-compose">
+          <input type="text" id="pmCommentInput" placeholder="Leave a comment…" maxlength="200" />
+          <button id="pmCommentSend" type="button"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-send"/></svg></button>
+        </div>
+        <div class="pm-comment-list" id="pmCommentList"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT PROFILE — Steam-style: section sidebar + content panes -->
 <div class="modal-bg" id="editProfileModal">
-  <div class="modal">
+  <div class="modal eps-modal">
     <button class="modal-close" data-close="editProfileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <h3>EDIT PROFILE</h3>
-    <!-- Live banner preview — reflects accent / banner choices as you pick them -->
-    <div class="edit-banner-preview" id="editBannerPreview"><svg class="pm-banner-mark" id="editBannerMark" viewBox="0 0 24 24"></svg></div>
-    <form id="editProfileForm" style="display:flex; flex-direction:column; gap:14px;">
-      <div class="ep-section"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-edit"/></svg> IDENTITY</div>
-      <div class="field">
-        <label>Username</label>
-        <input type="text" name="username" minlength="2" maxlength="20" />
-      </div>
-      <div class="field">
-        <label>Country</label>
-        <select name="country" id="editCountry"></select>
-      </div>
-      <div class="field">
-        <label>Status (optional)</label>
-        <input type="text" name="status" maxlength="40" placeholder="e.g. 🔥 on a win streak" />
-      </div>
-      <div class="field">
-        <label>Title <span style="color:var(--text-faint); font-weight:400;">· unlocked by leveling up</span></label>
-        <div class="title-pick" id="titlePick"></div>
-      </div>
-      <div class="field">
-        <label>Bio (optional)</label>
-        <textarea name="bio" maxlength="140" placeholder="say something about yourself"></textarea>
-      </div>
-      <div class="ep-section"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-camera"/></svg> APPEARANCE</div>
-      <div class="field">
-        <label>Profile photo</label>
-        <div class="photo-section">
-          <div class="photo-preview">
-            <div class="av-show no-photo" id="editAvPreview">?</div>
-            <div class="photo-actions">
-              <div class="row">
-                <button type="button" class="btn-upload" id="pickPhotoBtn">
-                  <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
-                  Upload photo
-                </button>
-                <button type="button" class="btn-upload btn-upload-remove" id="removePhotoBtn" style="display:none;">
-                  <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trash"/></svg>
-                  Remove
-                </button>
+    <!-- Steam-style header strip: avatar » Edit profile -->
+    <div class="eps-header">
+      <div class="eps-header-av av-photo-host" id="epsHeaderAv">?</div>
+      <div class="eps-header-name"><b id="epsHeaderName">—</b> <span class="eps-header-chev">»</span> <span class="eps-header-crumb">Edit profile</span></div>
+    </div>
+    <form id="editProfileForm" class="eps-body">
+      <!-- SECTION SIDEBAR -->
+      <nav class="eps-nav" id="epsNav" aria-label="Profile settings sections">
+        <button type="button" class="eps-nav-item active" data-eps="general"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-edit"/></svg> General</button>
+        <button type="button" class="eps-nav-item" data-eps="avatar"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg> Avatar</button>
+        <button type="button" class="eps-nav-item" data-eps="banner"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-star"/></svg> Banner &amp; theme</button>
+        <button type="button" class="eps-nav-item" data-eps="title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-medal"/></svg> Title</button>
+        <button type="button" class="eps-nav-item" data-eps="cosmetics"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-shop"/></svg> Cosmetics</button>
+        <button type="button" class="eps-nav-item" data-eps="showcase"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg> Showcase</button>
+        <button type="button" class="eps-nav-item" data-eps="privacy"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-eye-off"/></svg> Privacy</button>
+      </nav>
+
+      <!-- CONTENT PANES -->
+      <div class="eps-content">
+        <section class="eps-pane active" data-eps-pane="general">
+          <h4 class="eps-pane-title">General</h4>
+          <p class="eps-pane-desc">Your name and the basics — how you appear to everyone on ROSHCAM.</p>
+          <div class="field">
+            <label>Username</label>
+            <input type="text" name="username" minlength="2" maxlength="20" />
+          </div>
+          <div class="field">
+            <label>Country</label>
+            <select name="country" id="editCountry"></select>
+          </div>
+          <div class="field">
+            <label>Status (optional)</label>
+            <input type="text" name="status" maxlength="40" placeholder="e.g. 🔥 on a win streak" />
+          </div>
+          <div class="field">
+            <label>Bio (optional)</label>
+            <textarea name="bio" maxlength="140" placeholder="say something about yourself"></textarea>
+          </div>
+        </section>
+
+        <section class="eps-pane" data-eps-pane="avatar">
+          <h4 class="eps-pane-title">Avatar</h4>
+          <p class="eps-pane-desc">Your profile photo, and the fallback colour shown when there isn't one.</p>
+          <div class="field">
+            <label>Profile photo</label>
+            <div class="photo-section">
+              <div class="photo-preview">
+                <div class="av-show no-photo" id="editAvPreview">?</div>
+                <div class="photo-actions">
+                  <div class="row">
+                    <button type="button" class="btn-upload" id="pickPhotoBtn">
+                      <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
+                      Upload photo
+                    </button>
+                    <button type="button" class="btn-upload btn-upload-remove" id="removePhotoBtn" style="display:none;">
+                      <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trash"/></svg>
+                      Remove
+                    </button>
+                  </div>
+                  <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.04em;">
+                    JPG or PNG · max 5MB · square crop
+                  </div>
+                </div>
               </div>
-              <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.04em;">
-                JPG or PNG · max 5MB · square crop
-              </div>
+              <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />
             </div>
           </div>
-          <input type="file" id="photoInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />
+          <div class="field">
+            <label>Fallback color (shown if no photo)</label>
+            <div class="color-pick" id="colorPick"></div>
+          </div>
+        </section>
+
+        <section class="eps-pane" data-eps-pane="banner">
+          <h4 class="eps-pane-title">Banner &amp; theme</h4>
+          <p class="eps-pane-desc">The cover at the top of your profile. Live preview below.</p>
+          <div class="edit-banner-preview" id="editBannerPreview"><svg class="pm-banner-mark" id="editBannerMark" viewBox="0 0 24 24"></svg></div>
+          <div class="field">
+            <label>Profile accent <span style="color:var(--text-faint); font-weight:400;">· your banner colour</span></label>
+            <div class="accent-pick" id="accentPick"></div>
+          </div>
+          <div class="field">
+            <label>Profile banner <span style="color:var(--text-faint); font-weight:400;">· accent colour, or a rank background you've unlocked</span></label>
+            <div class="banner-pick" id="bannerPick"></div>
+          </div>
+        </section>
+
+        <section class="eps-pane" data-eps-pane="title">
+          <h4 class="eps-pane-title">Title</h4>
+          <p class="eps-pane-desc">Shown under your name everywhere. Unlock more by leveling up and prestiging.</p>
+          <div class="field">
+            <div class="title-pick" id="titlePick"></div>
+          </div>
+        </section>
+
+        <section class="eps-pane" data-eps-pane="cosmetics">
+          <h4 class="eps-pane-title">Cosmetics</h4>
+          <p class="eps-pane-desc">Name styles, player tags, avatar effects and profile frames from the Item Shop. Equips save instantly.</p>
+          <div id="cosmeticsEditor" class="cosmetics-editor"></div>
+        </section>
+
+        <section class="eps-pane" data-eps-pane="showcase">
+          <h4 class="eps-pane-title">Showcase</h4>
+          <p class="eps-pane-desc">Feature up to 3 badges at the top of your profile, Steam-style.</p>
+          <div class="field">
+            <div class="showcase-pick" id="showcasePick"></div>
+          </div>
+        </section>
+
+        <section class="eps-pane" data-eps-pane="privacy">
+          <h4 class="eps-pane-title">Privacy &amp; safety</h4>
+          <p class="eps-pane-desc">Control who can reach you.</p>
+          <div class="field">
+            <label class="toggle-row">
+              <input type="checkbox" name="acceptChallenges" id="editAcceptChallenges" checked />
+              <span class="toggle-track"><span class="toggle-knob"></span></span>
+              <span class="toggle-label">Accept challenges from other players</span>
+            </label>
+            <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:4px; letter-spacing:.04em;">
+              turn off to prevent challenge popups from strangers
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- FOOT: error + actions span both columns -->
+      <div class="eps-foot">
+        <div class="error-msg" id="editError"></div>
+        <div class="modal-actions" style="justify-content:space-between;">
+          <button type="button" class="btn btn-danger" id="viewBlockedBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Blocked users</button>
+          <button type="submit" class="btn btn-primary">Save changes</button>
         </div>
-      </div>
-      <div class="field">
-        <label>Fallback color (shown if no photo)</label>
-        <div class="color-pick" id="colorPick"></div>
-      </div>
-      <div class="field">
-        <label>Profile accent <span style="color:var(--text-faint); font-weight:400;">· your banner colour</span></label>
-        <div class="accent-pick" id="accentPick"></div>
-      </div>
-      <div class="field">
-        <label>Profile banner <span style="color:var(--text-faint); font-weight:400;">· accent colour, or a rank background you've unlocked</span></label>
-        <div class="banner-pick" id="bannerPick"></div>
-      </div>
-      <div class="ep-section"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-medal"/></svg> SHOWCASE</div>
-      <div class="field">
-        <label>Showcase badges <span style="color:var(--text-faint); font-weight:400;">· pick up to 3 to feature on your profile</span></label>
-        <div class="showcase-pick" id="showcasePick"></div>
-      </div>
-      <div class="ep-section"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-eye-off"/></svg> PRIVACY &amp; SAFETY</div>
-      <div class="field">
-        <label>Privacy</label>
-        <label class="toggle-row">
-          <input type="checkbox" name="acceptChallenges" id="editAcceptChallenges" checked />
-          <span class="toggle-track"><span class="toggle-knob"></span></span>
-          <span class="toggle-label">Accept challenges from other players</span>
-        </label>
-        <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:4px; letter-spacing:.04em;">
-          turn off to prevent challenge popups from strangers
-        </div>
-      </div>
-      <div class="error-msg" id="editError"></div>
-      <div class="modal-actions" style="justify-content:space-between;">
-        <button type="button" class="btn btn-danger" id="viewBlockedBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Blocked users</button>
-        <button type="submit" class="btn btn-primary">Save changes</button>
       </div>
     </form>
   </div>
@@ -18432,20 +20070,21 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
-<!-- DAILY LOGIN REWARD -->
+<!-- DAILY LOGIN REWARD — gift-board redesign -->
 <div class="modal-bg" id="loginRewardModal">
-  <div class="modal login-reward-card lr-v2" style="max-width:400px; text-align:center;">
-    <div class="lr-hero">
-      <div class="lr-rays" aria-hidden="true"></div>
-      <div class="lr-gift">🎁</div>
-      <div class="lr-eyebrow">DAILY REWARD</div>
-      <div class="lr-amount" id="lrAmount">+100 XP</div>
-      <div class="lr-streak" id="lrStreak">Day 1 login streak 🔥</div>
+  <div class="modal login-reward-card dr2" style="max-width:460px; text-align:center;">
+    <div class="dr2-glow" aria-hidden="true"></div>
+    <div class="dr2-ribbon" aria-hidden="true"><i class="dr2-ribbon-tail l"></i><i class="dr2-ribbon-tail r"></i>
+      <span class="dr2-ribbon-band">DAILY REWARD</span>
     </div>
-    <div class="lr-comeback" id="lrComeback" style="display:none;"></div>
-    <div class="lr-cal-label"><span>YOUR 7-DAY CYCLE</span><span class="lr-cal-hint">day 7 = jackpot 🏆</span></div>
-    <div class="lr-calendar" id="lrCalendar"></div>
-    <button class="btn btn-primary lr-claim" id="lrClaimBtn" data-close="loginRewardModal" style="width:100%; margin-top:16px;">Claim reward</button>
+    <p class="dr2-tag">Play every day to keep the streak — day 7 is the jackpot</p>
+    <div class="dr2-today">
+      <div class="dr2-amount" id="lrAmount">+100 XP</div>
+      <div class="dr2-streak" id="lrStreak">Day 1 login streak 🔥</div>
+    </div>
+    <div class="lr-comeback dr2-comeback" id="lrComeback" style="display:none;"></div>
+    <div class="dr2-board" id="lrCalendar"></div>
+    <button class="btn btn-primary lr-claim dr2-claim" id="lrClaimBtn" data-close="loginRewardModal" style="width:100%; margin-top:16px;">Claim reward</button>
   </div>
 </div>
 
@@ -22865,7 +24504,8 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
     const xpGain = dailyReward(c);
     try { grantXp(xpGain, 'Daily challenge', { silent: true }); } catch(e){}
     try { grantXpTokens({ m15: 1 }, 'Daily challenge', { silent: true }); } catch(e){}
-    toast(`🎉 Daily complete: ${c.text} · +${fmtXp(xpGain)} XP + 15 min 2× XP token!`, 'success');
+    try { grantCoins(60, 'Daily challenge', { silent: true }); } catch(e){}
+    toast(`🎉 Daily complete: ${c.text} · +${fmtXp(xpGain)} XP + 🪙 60 + 15 min 2× XP token!`, 'success');
     try { celebrateChallenge('.js-daily-card'); } catch(e){}
     // increment streak
     const lastStreakDate = localStorage.getItem('rosham_daily_last') || '';
@@ -22964,6 +24604,7 @@ async function grantXp(amount, reason, opts={}){
   if(newL.level > oldL.level){
     let newTitles = [];
     try { const had = titlesUnlockedAt(oldL.level).map(t => t.id); newTitles = titlesUnlockedAt(newL.level).filter(t => !had.includes(t.id)); } catch(e){}
+    try { grantCoins(100 * (newL.level - oldL.level), 'Level up', { silent: true }); } catch(e){}
     try { showLevelUp({ from: oldL, to: newL, newTitles }); } catch(e){}
   }
   try { renderHomePage(); } catch(e){}
@@ -22993,6 +24634,7 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
       const curLvl = levelOf(state.profile).level;
       grantXp(xpForLevel(curLvl), 'Weekly challenge · +1 level');
       if(c.token){ try { grantXpTokens({ [c.token]: 1 }, 'Weekly challenge'); } catch(e){} }
+      try { grantCoins(150, 'Weekly challenge', { silent: true }); } catch(e){}
       try { celebrateChallenge('.js-weekly-card'); } catch(e){}
     }
   });
@@ -23004,7 +24646,8 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
     const curLvl = levelOf(state.profile).level;
     grantXp(xpForLevel(curLvl) + 1000, 'Weekly clear bonus', { silent: true });
     try { grantXpTokens({ m30: 2, m60: 1 }, 'Weekly clear bonus', { silent: true }); } catch(e){}
-    setTimeout(() => { try { toast('🏆 ALL weekly challenges cleared — +1 level, +1000 XP, 2× 30 min + 1× 1 hour 2× XP tokens!', 'success', { duration: 8000 }); } catch(e){} }, 600);
+    try { grantCoins(400, 'Weekly clear bonus', { silent: true }); } catch(e){}
+    setTimeout(() => { try { toast('🏆 ALL weekly challenges cleared — +1 level, +1000 XP, 🪙 400 coins, 2× 30 min + 1× 1 hour 2× XP tokens!', 'success', { duration: 8000 }); } catch(e){} }, 600);
   }
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
@@ -23076,42 +24719,58 @@ function renderXpBoostPanel(){
   const t = getXpTokens();
   const weekend = isDoubleXP();
   const active = xpBoostActive();
-  // Header right-side status: weekend live > token active > hint.
-  let headStatus;
+  const totalTokens = t.m15 + t.m30 + t.m60;
+  // Status chip: weekend live > token active > idle.
+  let statusChip;
   if(weekend){
-    headStatus = `<span class="xpb-weekend"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-zap"/></svg> 2× XP WEEKEND LIVE</span>`;
+    statusChip = `<span class="xpb2-chip weekend"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-zap"/></svg> WEEKEND LIVE</span>`;
   } else if(active){
-    headStatus = `<span class="xpb-active"><span class="live-dot"></span> ACTIVE</span>`;
+    statusChip = `<span class="xpb2-chip active"><span class="live-dot"></span> BOOST ACTIVE</span>`;
   } else {
-    headStatus = `<span class="xpb-sub">Earn tokens from weekly challenges &amp; daily rewards</span>`;
+    statusChip = `<span class="xpb2-chip idle">${totalTokens ? 'READY' : 'NO TOKENS'}</span>`;
   }
-  // A live, draining timer block (only while a token is running and it's not the
-  // weekend) — replaces the old inline "Xm left" text with a real countdown bar.
+  const subText = weekend
+    ? 'Every match is already double XP — your tokens are saved until the weekend ends.'
+    : (active
+        ? 'Every match pays double XP while the clock runs. Stack tokens to add time.'
+        : 'Activate a token to double all match XP. Earn more from challenges & daily rewards.');
+  // Live draining timer (token running, not during the weekend).
   const timerBlock = (active && !weekend)
-    ? `<div class="xpb-timer">
-         <div class="xpb-timer-top"><span class="xpb-timer-lbl">2× XP ACTIVE</span><b id="xpbCountdown" class="xpb-timer-num">${_fmtBoost(xpBoostUntil() - Date.now())}</b></div>
-         <div class="xpb-timer-bar"><i id="xpbTimerFill"></i></div>
+    ? `<div class="xpb2-timer">
+         <b id="xpbCountdown" class="xpb2-timer-num">${_fmtBoost(xpBoostUntil() - Date.now())}</b>
+         <div class="xpb2-timer-bar"><i id="xpbTimerFill"></i></div>
+         <span class="xpb2-timer-lbl">REMAINING</span>
        </div>`
     : '';
   // During the weekend, tokens are paused (they'd be wasted) — disable + explain.
-  const btnLabel = weekend ? 'Weekend live' : (active ? '+ Add time' : 'Activate');
+  const btnLabel = weekend ? 'Paused' : (active ? '+ Add' : 'Use');
+  host.classList.toggle('is-active', active && !weekend);
+  host.classList.toggle('is-weekend', weekend);
   host.innerHTML = `
-    <div class="xpb-head">
-      <div class="xpb-title"><svg class="xpb-ic-svg" viewBox="0 0 24 24"><use href="#i-xptoken"/></svg> 2× XP BOOST</div>
-      ${headStatus}
-    </div>
-    ${weekend ? `<div class="xpb-weekend-note"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-info"/></svg> Every match is already double XP — your tokens are saved until the weekend ends.</div>` : ''}
-    ${timerBlock}
-    <div class="xpb-grid">
-      ${['m15', 'm30', 'm60'].map(k => `
-        <div class="xpb-card${t[k] ? '' : ' empty'}">
-          <div class="xpb-card-ic"><svg viewBox="0 0 24 24" role="img" aria-label="${XP_TOKEN_TYPES[k].label} 2× XP token"><use href="#i-xptoken"/></svg></div>
-          <div class="xpb-card-time">${XP_TOKEN_TYPES[k].label}</div>
-          <div class="xpb-card-count">×${t[k]}</div>
-          <button class="btn xpb-use" data-token="${k}" ${(t[k] && !weekend) ? '' : 'disabled'} ${weekend ? 'title="Paused during the 2× XP weekend"' : ''}>${btnLabel}</button>
-        </div>`).join('')}
+    <div class="xpb2">
+      <div class="xpb2-emblem" aria-hidden="true">
+        <i class="xpb2-rays"></i>
+        <span class="xpb2-mult">2<em>×</em></span>
+      </div>
+      <div class="xpb2-main">
+        <div class="xpb2-titlerow">
+          <span class="xpb2-title">XP BOOST</span>
+          ${statusChip}
+        </div>
+        <p class="xpb2-sub">${subText}</p>
+      </div>
+      ${timerBlock}
+      <div class="xpb2-tokens" role="group" aria-label="2× XP tokens">
+        ${['m15', 'm30', 'm60'].map(k => `
+          <div class="xpb2-token${t[k] ? '' : ' empty'}" data-kind="${k}">
+            <span class="xpb2-count${t[k] ? '' : ' zero'}">×${t[k]}</span>
+            <span class="xpb2-token-ic"><svg viewBox="0 0 24 24" role="img" aria-label="${XP_TOKEN_TYPES[k].label} 2× XP token"><use href="#i-xptoken"/></svg></span>
+            <span class="xpb2-token-time">${XP_TOKEN_TYPES[k].label}</span>
+            <button class="xpb2-use" data-token="${k}" ${(t[k] && !weekend) ? '' : 'disabled'} ${weekend ? 'title="Paused during the 2× XP weekend"' : ''}>${btnLabel}</button>
+          </div>`).join('')}
+      </div>
     </div>`;
-  host.querySelectorAll('.xpb-use').forEach(b => b.addEventListener('click', () => activateXpToken(b.dataset.token)));
+  host.querySelectorAll('.xpb2-use').forEach(b => b.addEventListener('click', () => activateXpToken(b.dataset.token)));
   // Drive the draining timer bar.
   if(active && !weekend){
     const remain = xpBoostUntil() - Date.now();
@@ -23140,6 +24799,8 @@ function updateBoostPill(){
 setInterval(() => {
   const active = xpBoostActive();
   updateBoostPill();
+  try { updateCoinPill(); } catch(e){}
+  try { if(_shopPageActive()){ const t = fmtCountdown(msUntilMidnight()); document.querySelectorAll('.js-shop-timer').forEach(el => { el.textContent = t; }); } } catch(e){}
   // Re-render the panel when the weekend window flips so tokens enable/disable.
   const weekend = isDoubleXP();
   if(weekend !== state._wasWeekendXp){ state._wasWeekendXp = weekend; try { renderXpBoostPanel(); } catch(e){} }
@@ -23161,6 +24822,444 @@ setInterval(() => {
 
 // (Quest line removed — clearing all 3 weekly challenges now pays the big
 //  bonus instead. See updateWeeklyChallengeProgress.)
+
+// ═══════════════════════════════════════════════════════════════════
+// ROSHCOINS + COSMETICS + ITEM SHOP
+// Coins are earned by playing (matches, challenges, logins, level-ups)
+// and spent on cosmetics: name styles, player tags, avatar effects and
+// profile frames. The shop rotates daily, Fortnite-style.
+// ═══════════════════════════════════════════════════════════════════
+const fmtCoins = n => (n || 0).toLocaleString();
+function getCoins(){ return Math.max(0, Math.round(state.profile?.coins || 0)); }
+async function grantCoins(amount, reason, opts = {}){
+  if(!amount || !state.profile || !state.user) return;
+  state.profile.coins = Math.max(0, (state.profile.coins || 0) + amount);
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { coins: increment(amount) }); } catch(e){}
+  if(!opts.silent && amount > 0){
+    try { toast(`🪙 +${fmtCoins(amount)} RoshCoins · ${reason}`, 'success'); } catch(e){}
+  }
+  updateCoinPill(true);
+  try { if(_shopPageActive()) renderShopWallet(); } catch(e){}
+}
+function updateCoinPill(pop){
+  const pill = $('#coinPill');
+  if(!pill) return;
+  pill.style.display = state.profile ? '' : 'none';
+  if(!state.profile) return;
+  const numEl = $('#coinPillNum');
+  const val = getCoins();
+  if(numEl && numEl.textContent !== fmtCoins(val)){
+    numEl.textContent = fmtCoins(val);
+    if(pop){ pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop'); }
+  }
+}
+on('#coinPill', 'click', () => { try { showNavPage('shop'); } catch(e){} });
+
+// Coins for a ranked match — small drip, wins + streaks + level-ups pay more.
+function calcMatchCoins(result, streakAfter, levelsGained){
+  let c = result === 'win' ? 30 : result === 'draw' ? 15 : result === 'forfeit' ? 5 : 10;
+  if(result === 'win' && streakAfter >= 3) c += Math.min(20, streakAfter * 2);
+  c += (levelsGained || 0) * 100;
+  return c;
+}
+
+// ---------- RARITIES ----------
+const CX_RARITY = {
+  rare:      { label: 'RARE',      color: '#5fc9ff' },
+  epic:      { label: 'EPIC',      color: '#b56cff' },
+  legendary: { label: 'LEGENDARY', color: '#ffb336' },
+  mythic:    { label: 'MYTHIC',    color: '#ff5ec8' },
+};
+const CX_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000 };
+const CX_TYPE_LABEL = { name: 'NAME STYLE', tag: 'PLAYER TAG', avatar: 'AVATAR EFFECT', frame: 'PROFILE FRAME' };
+
+// ---------- CATALOG ----------
+// cls drives the CSS. Every item is purely cosmetic — no gameplay effect.
+const COSMETICS = [
+  // ── NAME STYLES ──
+  { id:'ns_galaxy',  type:'name', name:'Galaxy',       rarity:'legendary', cls:'cxn-galaxy',  desc:'Your name becomes a slow-drifting nebula, dusted with starlight.' },
+  { id:'ns_gold',    type:'name', name:'Liquid Gold',  rarity:'legendary', cls:'cxn-gold',    desc:'Molten gold flows through every letter.' },
+  { id:'ns_prisma',  type:'name', name:'Prisma',       rarity:'mythic',    cls:'cxn-prisma',  desc:'A living rainbow sweeps across your name, forever.' },
+  { id:'ns_neon',    type:'name', name:'Neon Pulse',   rarity:'epic',      cls:'cxn-neon',    desc:'Mint neon that breathes like an arcade sign.' },
+  { id:'ns_fire',    type:'name', name:'Wildfire',     rarity:'epic',      cls:'cxn-fire',    desc:'Embers rise off your name. Handle with care.' },
+  { id:'ns_void',    type:'name', name:'Voidheart',    rarity:'epic',      cls:'cxn-void',    desc:'Written in the dark between stars.' },
+  { id:'ns_ice',     type:'name', name:'Frostbite',    rarity:'rare',      cls:'cxn-ice',     desc:'Glacial blue with a cold inner glow.' },
+  { id:'ns_toxic',   type:'name', name:'Toxic',        rarity:'rare',      cls:'cxn-toxic',   desc:'Radioactive green. Probably safe.' },
+  { id:'ns_chrome',  type:'name', name:'Chrome',       rarity:'rare',      cls:'cxn-chrome',  desc:'Polished steel with a rolling shine.' },
+  { id:'ns_blood',   type:'name', name:'Crimson',      rarity:'rare',      cls:'cxn-blood',   desc:'Deep red, faintly beating.' },
+  // ── PLAYER TAGS ──
+  { id:'tg_goat',    type:'tag', name:'GOAT',          rarity:'mythic',    cls:'cxt-goat',   text:'GOAT 🐐',  desc:'The greatest of all time. Prove it every match.' },
+  { id:'tg_og',      type:'tag', name:'OG',            rarity:'legendary', cls:'cxt-og',     text:'OG',       desc:'Here before it was cool.' },
+  { id:'tg_king',    type:'tag', name:'King',          rarity:'legendary', cls:'cxt-king',   text:'KING 👑',  desc:'Heavy is the head.' },
+  { id:'tg_clutch',  type:'tag', name:'Clutch',        rarity:'epic',      cls:'cxt-clutch', text:'CLUTCH ⚡', desc:'Ice in the veins when it matters.' },
+  { id:'tg_menace',  type:'tag', name:'Menace',        rarity:'epic',      cls:'cxt-menace', text:'MENACE',   desc:'Opponents see this and worry.' },
+  { id:'tg_lucky',   type:'tag', name:'Lucky',         rarity:'rare',      cls:'cxt-lucky',  text:'LUCKY 🍀', desc:'It’s not luck, but let them think it is.' },
+  { id:'tg_sweat',   type:'tag', name:'Sweat',         rarity:'rare',      cls:'cxt-sweat',  text:'SWEAT 💧', desc:'You take rock-paper-scissors very seriously.' },
+  { id:'tg_bot',     type:'tag', name:'Certified Bot', rarity:'rare',      cls:'cxt-bot',    text:'CERTIFIED BOT', desc:'Beep boop. A flawless disguise.' },
+  // ── AVATAR EFFECTS ──
+  { id:'av_liquid',  type:'avatar', name:'Liquid Chrome', rarity:'mythic',    cls:'cxa-liquid',  desc:'A morphing ring of living chrome wraps your avatar.' },
+  { id:'av_void',    type:'avatar', name:'Void Rift',     rarity:'mythic',    cls:'cxa-void',    desc:'An event horizon with a violet accretion disk.' },
+  { id:'av_galaxy',  type:'avatar', name:'Galaxy Orbit',  rarity:'legendary', cls:'cxa-galaxy',  desc:'A spinning nebula ring with an orbiting star.' },
+  { id:'av_gold',    type:'avatar', name:'Golden Halo',   rarity:'legendary', cls:'cxa-gold',    desc:'A halo of molten gold with a rolling sheen.' },
+  { id:'av_flame',   type:'avatar', name:'Flame Aura',    rarity:'epic',      cls:'cxa-flame',   desc:'Your avatar smolders with live fire.' },
+  { id:'av_electric',type:'avatar', name:'Voltage',       rarity:'epic',      cls:'cxa-electric',desc:'Crackling cyan arcs orbit at high speed.' },
+  { id:'av_prism',   type:'avatar', name:'Prism Ring',    rarity:'epic',      cls:'cxa-prism',   desc:'A full spectrum wheel, always turning.' },
+  { id:'av_ice',     type:'avatar', name:'Permafrost',    rarity:'rare',      cls:'cxa-ice',     desc:'A frozen ring that never melts.' },
+  { id:'av_rose',    type:'avatar', name:'Rose Gold',     rarity:'rare',      cls:'cxa-rose',    desc:'Understated. Expensive-looking. Iconic.' },
+  { id:'av_mint',    type:'avatar', name:'Minted',        rarity:'rare',      cls:'cxa-mint',    desc:'The house colour, pulsing softly.' },
+  // ── PROFILE FRAMES ──
+  { id:'fr_liquid',  type:'frame', name:'Liquid Frame',  rarity:'mythic',    cls:'cxf-liquid',  desc:'Your whole profile flows inside an animated gradient border.' },
+  { id:'fr_galaxy',  type:'frame', name:'Nebula Frame',  rarity:'legendary', cls:'cxf-galaxy',  desc:'A deep-space banner with drifting stars.' },
+  { id:'fr_gold',    type:'frame', name:'Royal Gild',    rarity:'legendary', cls:'cxf-gold',    desc:'Ornate gold trim fit for a champion.' },
+  { id:'fr_neon',    type:'frame', name:'Neon Grid',     rarity:'epic',      cls:'cxf-neon',    desc:'A synthwave horizon behind your name.' },
+  { id:'fr_blood',   type:'frame', name:'Crimson Court', rarity:'epic',      cls:'cxf-blood',   desc:'Dark red velvet and a faint heartbeat glow.' },
+  { id:'fr_circuit', type:'frame', name:'Circuit',       rarity:'rare',      cls:'cxf-circuit', desc:'Teal traces route power around your profile.' },
+];
+COSMETICS.forEach(c => { c.price = CX_PRICE[c.rarity]; });
+const COSMETIC_BY_ID = {}; COSMETICS.forEach(c => { COSMETIC_BY_ID[c.id] = c; });
+const CX_SLOTS = ['name', 'tag', 'avatar', 'frame'];
+
+// ---------- OWNERSHIP + EQUIP STATE (profile.cosmetics) ----------
+function getCosmetics(p){
+  const c = (p || state.profile)?.cosmetics || {};
+  return { owned: Array.isArray(c.owned) ? c.owned : [], name: c.name || '', tag: c.tag || '', avatar: c.avatar || '', frame: c.frame || '' };
+}
+function ownsCosmetic(id){ return getCosmetics().owned.includes(id); }
+function cosmeticEquipped(p, slot){
+  const it = COSMETIC_BY_ID[getCosmetics(p)[slot]];
+  return (it && it.type === slot) ? it : null;
+}
+async function saveCosmetics(c){
+  if(!state.profile || !state.user) return;
+  state.profile.cosmetics = c;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { cosmetics: c }); } catch(e){}
+}
+async function equipCosmetic(slot, id){
+  const c = getCosmetics();
+  c[slot] = id || '';
+  await saveCosmetics(c);
+  try { haptic(12); } catch(e){}
+  try { renderCosmeticsEditor(); } catch(e){}
+  try { renderShopItems(); } catch(e){}
+}
+// Jump straight to the Cosmetics section of Edit Profile (post-purchase guide).
+function openCosmeticsEditor(){
+  try { openEditProfile(); } catch(e){ return; }
+  setTimeout(() => {
+    try { epsSetPane('cosmetics'); } catch(e){}
+    try { const s = $('#cosmeticsEditor'); if(s){ s.classList.remove('cx-flash'); void s.offsetWidth; s.classList.add('cx-flash'); } } catch(e){}
+  }, 220);
+}
+async function buyCosmetic(id){
+  const item = COSMETIC_BY_ID[id];
+  if(!item || !state.profile) return false;
+  if(ownsCosmetic(id)) return false;
+  if(getCoins() < item.price){
+    try { toast(`Not enough RoshCoins — need ${fmtCoins(item.price - getCoins())} more. Win matches to earn coins!`, 'error'); } catch(e){}
+    return false;
+  }
+  const c = getCosmetics();
+  c.owned = [...c.owned, id];
+  state.profile.coins = Math.max(0, (state.profile.coins || 0) - item.price);
+  state.profile.cosmetics = c;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { coins: increment(-item.price), cosmetics: c }); } catch(e){}
+  updateCoinPill(true);
+  try { renderShopWallet(); } catch(e){}
+  try { haptic([15, 40, 25]); } catch(e){}
+  try { launchConfetti(); } catch(e){}
+  try { bigBurst(CX_RARITY[item.rarity].color, 90); } catch(e){}
+  // Guide the player to where new cosmetics get equipped.
+  try {
+    toast(`✨ Unlocked: ${item.name}! Equip it in Edit profile → Cosmetics`, 'success', {
+      duration: 8000,
+      action: { label: 'Equip now', onClick: () => openCosmeticsEditor() },
+    });
+  } catch(e){}
+  return true;
+}
+
+// ---------- RENDER HELPERS (used everywhere cosmetics show) ----------
+const CXN_ALL = COSMETICS.filter(c => c.type === 'name').map(c => c.cls);
+const CXF_ALL = COSMETICS.filter(c => c.type === 'frame').map(c => c.cls);
+// Name + tag as one HTML string. opts.mid = HTML slotted between name and tag
+// (the profile modal puts its rank-mini crest there).
+function styledNameHTML(p, text, opts = {}){
+  const ns = cosmeticEquipped(p, 'name');
+  const tag = cosmeticEquipped(p, 'tag');
+  let html = `<span class="cx-name${ns ? ' ' + ns.cls : ''}">${escapeHTML(text)}</span>`;
+  if(opts.mid) html += ' ' + opts.mid;
+  if(tag) html += ` <span class="cx-tag ${tag.cls}">${escapeHTML(tag.text)}</span>`;
+  return html;
+}
+// Avatar effect ring — injected as a positioned child of the avatar's WRAPPER.
+function applyAvatarFx(wrapEl, p){
+  if(!wrapEl) return;
+  wrapEl.querySelectorAll(':scope > .cx-avfx').forEach(n => n.remove());
+  const fx = cosmeticEquipped(p, 'avatar');
+  if(!fx) return;
+  const i = document.createElement('i');
+  i.className = 'cx-avfx ' + fx.cls;
+  i.setAttribute('aria-hidden', 'true');
+  wrapEl.appendChild(i);
+}
+// Profile frame — covers the WHOLE modal: themed border + glow on the card,
+// a decorated banner overlay, corner ornaments pinned to the top, and a
+// sticky glowing edge that rides the bottom of the scrollport.
+function applyProfileFrame(modalEl, bannerEl, p){
+  if(!modalEl) return;
+  modalEl.classList.remove(...CXF_ALL);
+  modalEl.querySelectorAll(':scope > .cx-frame-edge, :scope > .cx-frame-corners, :scope > .cx-frame-top').forEach(n => n.remove());
+  bannerEl?.querySelectorAll(':scope > .cx-frame-overlay').forEach(n => n.remove());
+  const fr = cosmeticEquipped(p, 'frame');
+  if(!fr) return;
+  modalEl.classList.add(fr.cls);
+  if(bannerEl){
+    const o = document.createElement('i');
+    o.className = 'cx-frame-overlay';
+    o.setAttribute('aria-hidden', 'true');
+    bannerEl.appendChild(o);
+  }
+  // STICKY frame chrome — top + bottom rails with corner brackets that stay
+  // pinned to the card viewport while the profile scrolls, so the frame wraps
+  // the whole card at all times (paired with the full-card wash per frame).
+  const top = document.createElement('i');
+  top.className = 'cx-frame-top';
+  top.setAttribute('aria-hidden', 'true');
+  top.innerHTML = '<b class="tl"></b><b class="tr"></b><i class="cxline"></i>';
+  modalEl.prepend(top);
+  const edge = document.createElement('i');
+  edge.className = 'cx-frame-edge';
+  edge.setAttribute('aria-hidden', 'true');
+  edge.innerHTML = '<b class="bl"></b><b class="br"></b><i class="cxline"></i>';
+  modalEl.appendChild(edge);
+}
+// Live preview of any catalog item (shop tiles, buy modal, locker).
+function buildCosmeticPreview(item, big){
+  const me = escapeHTML(state.profile?.username || 'YourName');
+  if(item.type === 'name'){
+    return `<span class="cx-name ${item.cls} cx-prev-name${big ? ' big' : ''}">${me}</span>`;
+  }
+  if(item.type === 'tag'){
+    return `<span class="cx-prev-tagrow${big ? ' big' : ''}"><span class="cx-prev-plainname">${me}</span> <span class="cx-tag ${item.cls}">${escapeHTML(item.text)}</span></span>`;
+  }
+  if(item.type === 'avatar'){
+    const init = escapeHTML(initialOf(state.profile?.username || 'R'));
+    const bg = AVATAR_COLORS[state.profile?.colorIdx || 0] || AVATAR_COLORS[0];
+    return `<span class="cx-prev-av${big ? ' big' : ''}"><span class="cx-prev-av-core" style="background:${bg};">${init}</span><i class="cx-avfx ${item.cls}" aria-hidden="true"></i></span>`;
+  }
+  // frame — a miniature profile card wearing the frame
+  return `<span class="cx-prev-frame ${item.cls}${big ? ' big' : ''}"><i class="cx-frame-overlay" aria-hidden="true"></i><span class="cx-prev-frame-av"></span><span class="cx-prev-frame-lines"><i></i><i></i></span></span>`;
+}
+
+// ---------- DAILY SHOP ROTATION (seeded by the date) ----------
+function _mulberry(seed){
+  return function(){
+    seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+    let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+function shopRotation(){
+  const day = getTodayKey();
+  let seed = 7; for(const ch of day) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
+  const rnd = _mulberry(seed);
+  const shuffle = arr => { const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const heavy = shuffle(COSMETICS.filter(c => c.rarity === 'legendary' || c.rarity === 'mythic'));
+  const featured = heavy.slice(0, 2);
+  const rest = shuffle(COSMETICS.filter(c => !featured.includes(c)));
+  // Daily row: aim for a spread of types so the shop never feels samey.
+  const daily = [];
+  for(const t of CX_SLOTS){ const hit = rest.find(c => c.type === t && !daily.includes(c)); if(hit) daily.push(hit); }
+  for(const c of rest){ if(daily.length >= 6) break; if(!daily.includes(c)) daily.push(c); }
+  return { featured, daily };
+}
+
+// ---------- SHOP PAGE (OG two-panel layout) ----------
+function _shopPageActive(){ return !!document.querySelector('.nav-page[data-page="shop"].active'); }
+function renderShopWallet(){
+  setText('#shopWalletNum', fmtCoins(getCoins()));
+  const t = fmtCountdown(msUntilMidnight());
+  document.querySelectorAll('.js-shop-timer').forEach(el => { el.textContent = t; });
+  const owned = getCosmetics().owned.filter(id => COSMETIC_BY_ID[id]).length;
+  setText('#shopCollectNum', `${owned}/${COSMETICS.length}`);
+}
+function shopTileHTML(item, featured){
+  const owned = ownsCosmetic(item.id);
+  const equipped = cosmeticEquipped(state.profile, item.type)?.id === item.id;
+  const foot = owned
+    ? `<span class="st-owned">${equipped ? 'EQUIPPED' : 'OWNED'} <svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg></span>`
+    : `<span class="st-price"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-coin"/></svg> ${fmtCoins(item.price)}</span>`;
+  return `<button type="button" class="shop-tile rar-${item.rarity}${featured ? ' featured' : ''}${owned ? ' owned' : ''}" data-shop-item="${item.id}">
+    <i class="st-sheen" aria-hidden="true"></i>
+    <span class="st-rarity-tag">${CX_RARITY[item.rarity].label}</span>
+    <span class="st-preview">${buildCosmeticPreview(item, featured)}</span>
+    <span class="st-band">
+      <b class="st-name">${escapeHTML(item.name)}</b>
+      <span class="st-type">${CX_TYPE_LABEL[item.type]}</span>
+      <span class="st-foot">${foot}</span>
+    </span>
+  </button>`;
+}
+function renderShopItems(){
+  const feat = $('#shopFeatured'), daily = $('#shopDaily');
+  if(!feat || !daily) return;
+  const rot = shopRotation();
+  feat.innerHTML = rot.featured.map(i => shopTileHTML(i, true)).join('');
+  daily.innerHTML = rot.daily.map(i => shopTileHTML(i, false)).join('');
+}
+function renderShopPage(){
+  renderShopWallet();
+  renderShopItems();
+  try { localStorage.setItem('rosham_shop_seen', '1'); const b = $('#navShopBadge'); if(b) b.style.display = 'none'; } catch(e){}
+}
+// "NEW" nudge on the Shop nav entry until the first visit.
+try { if(!localStorage.getItem('rosham_shop_seen')){ const b = $('#navShopBadge'); if(b) b.style.display = ''; } } catch(e){}
+
+// Tile click → purchase modal; owned items jump to the cosmetics editor.
+document.addEventListener('click', (e) => {
+  const tile = e.target.closest && e.target.closest('[data-shop-item]');
+  if(!tile) return;
+  const item = COSMETIC_BY_ID[tile.dataset.shopItem];
+  if(!item) return;
+  // Inside the cosmetics editor, tiles equip/unequip directly.
+  if(tile.closest('#cosmeticsEditor')){
+    const cur = cosmeticEquipped(state.profile, item.type);
+    equipCosmetic(item.type, cur?.id === item.id ? '' : item.id);
+    return;
+  }
+  if(ownsCosmetic(item.id)){ openCosmeticsEditor(); return; }
+  openShopBuyModal(item);
+});
+function openShopBuyModal(item){
+  state._shopBuyItem = item;
+  const r = CX_RARITY[item.rarity];
+  const stage = $('#sbmStage');
+  if(stage){ stage.innerHTML = buildCosmeticPreview(item, true); stage.className = 'sbm-stage rar-' + item.rarity; }
+  const rarEl = $('#sbmRarity'); if(rarEl){ rarEl.textContent = r.label; rarEl.style.color = r.color; }
+  setText('#sbmName', item.name);
+  setText('#sbmType', CX_TYPE_LABEL[item.type]);
+  setText('#sbmDesc', item.desc || '');
+  const bal = getCoins(), after = bal - item.price;
+  const balEl = $('#sbmBalance');
+  if(balEl){
+    balEl.innerHTML = after >= 0
+      ? `Balance after: <b>${fmtCoins(after)}</b> <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg>`
+      : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — win matches &amp; clear challenges to earn them`;
+  }
+  const btn = $('#sbmBuyBtn');
+  if(btn){ btn.disabled = after < 0; }
+  setText('#sbmBuyLabel', `Buy · ${fmtCoins(item.price)}`);
+  const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal rar-' + item.rarity;
+  $('#shopBuyModal')?.classList.add('show');
+}
+on('#sbmBuyBtn', 'click', async () => {
+  const item = state._shopBuyItem; if(!item) return;
+  const ok = await buyCosmetic(item.id);
+  if(ok){
+    $('#shopBuyModal')?.classList.remove('show');
+    renderShopItems();
+  }
+});
+
+// ---------- COSMETICS EDITOR (lives inside Edit Profile) ----------
+function lockerTileHTML(item, equippedId){
+  const isEq = equippedId === item.id;
+  return `<button type="button" class="locker-tile rar-${item.rarity}${isEq ? ' equipped' : ''}" data-shop-item="${item.id}">
+    <span class="st-preview">${buildCosmeticPreview(item, false)}</span>
+    <b class="lt-name">${escapeHTML(item.name)}</b>
+    <span class="lt-state">${isEq ? '✓ EQUIPPED' : 'EQUIP'}</span>
+  </button>`;
+}
+function renderCosmeticsEditor(){
+  const host = $('#cosmeticsEditor');
+  if(!host) return;
+  const c = getCosmetics();
+  const me = state.profile || {};
+  // "Your look" header — everything equipped, in one place.
+  const lookName = styledNameHTML(me, me.username || 'YourName');
+  const fxItem = cosmeticEquipped(me, 'avatar');
+  const frItem = cosmeticEquipped(me, 'frame');
+  const init = escapeHTML(initialOf(me.username || 'R'));
+  const bg = AVATAR_COLORS[me.colorIdx || 0] || AVATAR_COLORS[0];
+  let html = `
+    <div class="locker-look ${frItem ? frItem.cls : ''}">
+      <i class="cx-frame-overlay" aria-hidden="true" style="${frItem ? '' : 'display:none;'}"></i>
+      <span class="cx-prev-av big"><span class="cx-prev-av-core" style="background:${bg};">${init}</span>${fxItem ? `<i class="cx-avfx ${fxItem.cls}" aria-hidden="true"></i>` : ''}</span>
+      <div class="locker-look-name">${lookName}</div>
+      <div class="locker-look-sub">YOUR LOOK · tap any owned item to equip / unequip</div>
+    </div>`;
+  const sections = [
+    ['name', 'NAME STYLES'], ['tag', 'PLAYER TAGS'], ['avatar', 'AVATAR EFFECTS'], ['frame', 'PROFILE FRAMES'],
+  ];
+  let ownedTotal = 0;
+  for(const [slot, label] of sections){
+    const owned = COSMETICS.filter(i => i.type === slot && c.owned.includes(i.id));
+    ownedTotal += owned.length;
+    html += `<div class="shop-section-label"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-star"/></svg> ${label} <span class="ssl-count">${owned.length}/${COSMETICS.filter(i => i.type === slot).length}</span></div>`;
+    if(!owned.length){
+      html += `<div class="locker-empty">Nothing here yet — check today's <button type="button" class="locker-shop-link" data-goto-shop-page>Item Shop</button>.</div>`;
+    } else {
+      html += `<div class="locker-grid">${owned.map(i => lockerTileHTML(i, c[slot])).join('')}</div>`;
+    }
+  }
+  if(!ownedTotal){
+    html += `<div class="locker-cta"><button type="button" class="btn btn-primary" data-goto-shop-page><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-shop"/></svg> Browse the Item Shop</button></div>`;
+  }
+  host.innerHTML = html;
+}
+// "Item Shop" links inside the editor close the modal and open the shop page.
+document.addEventListener('click', (e) => {
+  const go = e.target.closest && e.target.closest('[data-goto-shop-page]');
+  if(!go) return;
+  try { $('#editProfileModal')?.classList.remove('show'); } catch(err){}
+  try { showNavPage('shop'); } catch(err){}
+});
+
+// ---------- EDIT PROFILE (Steam-style) SECTION NAV ----------
+function epsSetPane(name){
+  document.querySelectorAll('.eps-nav-item').forEach(b => b.classList.toggle('active', b.dataset.eps === name));
+  document.querySelectorAll('.eps-pane').forEach(p => {
+    const on = p.dataset.epsPane === name;
+    if(on && !p.classList.contains('active')){
+      p.classList.add('active');
+      p.classList.remove('pane-in'); void p.offsetWidth; p.classList.add('pane-in');
+    } else if(!on){
+      p.classList.remove('active');
+    }
+  });
+  // Glide the content back to the top of the modal on section change.
+  try { const m = document.querySelector('#editProfileModal .modal'); if(m) m.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest && e.target.closest('.eps-nav-item');
+  if(b){ epsSetPane(b.dataset.eps); try { haptic(8); } catch(err){} }
+});
+
+// ---------- PROFILE v5 TABS (Overview / Matches / Comments) ----------
+function pmSetTab(t){
+  const tabs = [...document.querySelectorAll('.pm3-tab')];
+  const idx = Math.max(0, tabs.findIndex(b => b.dataset.pmtab === t));
+  tabs.forEach(b => b.classList.toggle('active', b.dataset.pmtab === t));
+  // Slide the pill indicator to the active tab (buttery, no layout shift).
+  const bar = document.querySelector('.pm3-tabs');
+  if(bar) bar.style.setProperty('--ti', idx);
+  document.querySelectorAll('.pm3-pane').forEach(p => {
+    const on = p.dataset.pmpane === t;
+    if(on && p.style.display === 'none'){
+      p.style.display = '';
+      p.classList.remove('pane-in'); void p.offsetWidth; p.classList.add('pane-in');
+    } else if(!on){
+      p.style.display = 'none';
+    }
+  });
+  // If the user was scrolled deep, glide back up so the new tab starts at the top.
+  try { const m = document.querySelector('#profileModal .modal'); if(m && m.scrollTop > 140) m.scrollTo({ top: 0, behavior: 'smooth' }); } catch(e){}
+}
+document.addEventListener('click', (e) => {
+  const t = e.target.closest && e.target.closest('[data-pmtab]');
+  if(t){ pmSetTab(t.dataset.pmtab); try { haptic(8); } catch(err){} }
+});
 
 // ============= RECENT PLAYERS =============
 function getRecentPlayers(){
@@ -24186,17 +26285,14 @@ async function openProfile(uid){
     const p = snap.data();
     const rating = p.rating || 1000;
     const rank = rankFromRating(rating);
-    setText('#pmName', p.username);
-    // need to re-set the rank-mini since textContent erased it
+    // Name with equipped cosmetics (name style + player tag) and the rank crest.
     const nameEl = $('#pmName');
-    nameEl.innerHTML = escapeHTML(p.username);
-    const miniSvg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-    miniSvg.classList.add('rank-mini'); miniSvg.classList.add(rank.cls);
-    const u = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-    u.setAttribute('href','#'+rank.icon);
-    miniSvg.appendChild(u);
-    nameEl.appendChild(document.createTextNode(' '));
-    nameEl.appendChild(miniSvg);
+    nameEl.innerHTML = styledNameHTML(p, p.username, {
+      mid: `<svg class="rank-mini ${rank.cls}" viewBox="0 0 24 24" aria-hidden="true"><use href="#${rank.icon}"/></svg>`,
+    });
+    // Avatar effect ring + profile frame (equipped cosmetics)
+    try { applyAvatarFx(document.querySelector('#profileModal .pm-av-wrap'), p); } catch(e){}
+    try { applyProfileFrame(document.querySelector('#profileModal .modal'), $('#pmBanner'), p); } catch(e){}
 
     setText('#pmSub', `${flagOf(p.country)} ${nameOfCountry(p.country)}`);
     setRankIconEl($('#pmRankIcon'), rank.id);
@@ -24249,6 +26345,10 @@ async function openProfile(uid){
     else $('#pmStatus').style.display = 'none';
     if(p.bio){ $('#pmBio').textContent = p.bio; $('#pmBio').style.display = ''; }
     else $('#pmBio').style.display = 'none';
+    // "About" card wraps the bio in the v5 layout — hide it when there's no bio.
+    { const ac = $('#pmAboutCard'); if(ac) ac.style.display = p.bio ? '' : 'none'; }
+    // Always land on the Overview tab when a profile opens.
+    try { pmSetTab('overview'); } catch(e){}
     // Share button shares this player's profile
     const shareBtn = $('#pmShareBtn');
     if(shareBtn) shareBtn.onclick = () => shareProfile(p.username, rating, rank.tierName);
@@ -24296,19 +26396,27 @@ async function openProfile(uid){
     const pmTitleColorEl = $('#pmLevelTitle');
     if(pmTitleColorEl) pmTitleColorEl.style.color = pTitle.color;
 
-    // Last seen
+    // Last seen + the Discord-style presence dot on the avatar
     const lsEl = $('#pmLastSeen');
-    if(lsEl){
+    {
       const now = Date.now();
       const ls = p.lastSeen?.toMillis ? p.lastSeen.toMillis() : 0;
-      if(ls && now - ls < 60000){
-        lsEl.innerHTML = '<span class="pm-online-dot"></span> Online now';
-        lsEl.className = 'pm-lastseen online';
-      } else if(ls){
-        lsEl.textContent = 'Last seen ' + timeAgo(ls);
-        lsEl.className = 'pm-lastseen';
-      } else {
-        lsEl.textContent = '';
+      const online = ls && now - ls < 60000;
+      if(lsEl){
+        if(online){
+          lsEl.innerHTML = '<span class="pm-online-dot"></span> Online now';
+          lsEl.className = 'pm-lastseen online';
+        } else if(ls){
+          lsEl.textContent = 'Last seen ' + timeAgo(ls);
+          lsEl.className = 'pm-lastseen';
+        } else {
+          lsEl.textContent = '';
+        }
+      }
+      const dot = $('#pmPresence');
+      if(dot){
+        dot.classList.toggle('online', !!online);
+        dot.title = online ? 'Online now' : (ls ? 'Last seen ' + timeAgo(ls) : 'Offline');
       }
     }
 
@@ -24505,12 +26613,15 @@ async function loadMatchHistory(uid){
       orderBy('createdAt','desc'),
       limit(10),
     ));
+    const emptyNote = $('#pmMatchesEmpty');
     if(snap.empty){
       section.style.display = 'none';
       if(formWrap) formWrap.style.display = 'none';
+      if(emptyNote) emptyNote.style.display = '';
       return;
     }
     section.style.display = '';
+    if(emptyNote) emptyNote.style.display = 'none';
     // Recent form — newest on the right, like a sports form guide
     const formDocs = [];
     snap.forEach(d => formDocs.push(d.data()));
@@ -24545,7 +26656,7 @@ async function loadMatchHistory(uid){
       }
       list.appendChild(row);
     });
-  } catch(e){ console.warn('history load fail', e); section.style.display = 'none'; }
+  } catch(e){ console.warn('history load fail', e); section.style.display = 'none'; const en = $('#pmMatchesEmpty'); if(en) en.style.display = ''; }
 }
 
 async function removeFriend(uid, username){
@@ -24751,6 +26862,10 @@ function applyGuestProfileLock(){
 
 function openEditProfile(){
   const p = state.profile;
+  // Steam-style header strip + always land on the General section.
+  try { renderAvatar($('#epsHeaderAv'), p); } catch(e){}
+  try { setText('#epsHeaderName', p.username || '—'); } catch(e){}
+  try { epsSetPane('general'); } catch(e){}
   setTimeout(() => { try { $('#editProfileForm input[name=username]')?.focus({ preventScroll: true }); } catch(e){} }, 120);
   $('#editProfileForm input[name=username]').value = p.username;
   $('#editCountry').value = p.country || 'XX';
@@ -24825,6 +26940,8 @@ function openEditProfile(){
   $('#editAcceptChallenges').checked = (p.acceptChallenges !== false);
   pendingPhotoDataURL = null;
   updateEditPhotoPreview(p.photoURL || null);
+  // Cosmetics editor (equips save instantly — not part of the form snapshot).
+  try { renderCosmeticsEditor(); } catch(e){}
   // Snapshot the pristine form so we can detect unsaved changes on close.
   state._editSnapshot = serializeEditForm();
   // Guests can't customize their profile — lock the form + prompt account creation.
@@ -26428,6 +28545,7 @@ function resetMatchUI(){
   state._matchRoundHistory = [];        // NEW — round-by-round log for result screen
   state._matchStartedAt = Date.now();   // NEW — for duration display
   state._lastXpAward = null;            // reset XP award for fresh match
+  state._lastCoinAward = 0;             // reset coin drip for fresh match
   state._pendingLevelUp = null;
   state._pendingPrestige = null;
   state.myPrediction = null;
@@ -27248,6 +29366,7 @@ let updateMatchStats = async function(matchResult){
     state._lastRatingBefore = state.profile.rating || 1000;
     state._lastRatingAfter = state.profile.rating || 1000;
     state._lastXpAward = { xp: 0, breakdown: [], oldLevel: levelOf(state.profile), newLevel: levelOf(state.profile), leveledUp: false };
+    state._lastCoinAward = 0;
     return;
   }
   if(state.isBotMatch){
@@ -27255,6 +29374,7 @@ let updateMatchStats = async function(matchResult){
     state._lastMatchDelta = 0;
     state._lastRatingBefore = state.profile.rating || 1000;
     state._lastRatingAfter = state.profile.rating || 1000;
+    state._lastCoinAward = 0;
     return;
   }
   const myRating = state.profile.rating || 1000;
@@ -27348,6 +29468,10 @@ let updateMatchStats = async function(matchResult){
   const justHitCap = oldLevelInfo.level < MAX_LEVEL && newLevelInfo.level >= MAX_LEVEL;
   updates.totalXp = increment(xpResult.xp);
   state._lastXpAward = { ...xpResult, oldLevel: oldLevelInfo, newLevel: newLevelInfo, leveledUp };
+  // ===== ROSHCOINS — cosmetic currency drip (never affects rank/XP) =====
+  const coinGain = calcMatchCoins(matchResult, streakAfter, Math.max(0, newLevelInfo.level - oldLevelInfo.level));
+  updates.coins = increment(coinGain);
+  state._lastCoinAward = coinGain;
   // Detect newly unlocked titles
   let newTitles = [];
   if(leveledUp){
@@ -27369,8 +29493,10 @@ let updateMatchStats = async function(matchResult){
     } else if(matchResult === 'lose'){
       state.profile.currentStreak = 0;
     }
-    // Apply XP locally
+    // Apply XP + coins locally
     state.profile.totalXp = newTotalXp;
+    state.profile.coins = (state.profile.coins || 0) + coinGain;
+    updateCoinPill(true);
     if(wasInPlacement) state.profile.placementsDone = placedBefore + 1;
     if(justFinishedPlacement){
       // Celebrate the rank reveal with the (placement-flavoured) rank-up overlay.
@@ -27489,10 +29615,19 @@ function populateMatchXpCard(){
     }, 600);
   }
 
-  // Breakdown chips
+  // Breakdown chips (+ the RoshCoin drip up front, counting up)
   const bd = $('#mxpBreakdown');
   if(bd){
     bd.innerHTML = '';
+    if(state._lastCoinAward > 0){
+      const coin = document.createElement('span');
+      coin.className = 'mxp-chip mxp-coin';
+      coin.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-coin"/></svg> <b id="mxpCoinNum">+0</b>`;
+      coin.title = 'RoshCoins — spend them in the Item Shop';
+      bd.appendChild(coin);
+      try { animateCount('#mxpCoinNum', 0, state._lastCoinAward, { prefix: '+', dur: 900 }); }
+      catch(e){ const n = $('#mxpCoinNum'); if(n) n.textContent = '+' + state._lastCoinAward; }
+    }
     (award.breakdown || []).forEach(b => {
       const chip = document.createElement('span');
       chip.className = 'mxp-chip';
@@ -27521,6 +29656,31 @@ function showMatchResultScreen(result){
   overlay.classList.remove('win','lose','draw');
   overlay.classList.add(result === 'win' ? 'win' : result === 'lose' ? 'lose' : 'draw');
 
+  // ===== BRAWL-STYLE CEREMONY: spawn the star field + prep the slam =====
+  const perf2 = (typeof fxPerf === 'function') ? fxPerf() : { lite: false };
+  const starsHost = $('#mrStars');
+  if(starsHost) starsHost.innerHTML = '';
+  const spawnStars = (n, cls) => {
+    if(!starsHost || perf2.lite) return;
+    for(let i = 0; i < n; i++){
+      const s = document.createElement('i');
+      s.className = 'mr-star ' + (cls || '');
+      s.textContent = Math.random() < .3 ? '✦' : '✧';
+      s.style.left = (8 + Math.random() * 84) + '%';
+      s.style.top = (6 + Math.random() * 70) + '%';
+      s.style.fontSize = (10 + Math.random() * 22) + 'px';
+      s.style.animationDelay = (Math.random() * 1.6) + 's';
+      s.style.animationDuration = (1.8 + Math.random() * 2.2) + 's';
+      starsHost.appendChild(s);
+    }
+  };
+  // Screen shake exactly when the headline slams down (~.42s after show).
+  const slamShake = (cls) => setTimeout(() => {
+    overlay.classList.add(cls);
+    try { haptic(cls === 'shake-big' ? [10, 20, 45] : 25); } catch(e){}
+    setTimeout(() => overlay.classList.remove(cls), 650);
+  }, 420);
+
   if(result === 'win'){
     headline.textContent = 'VICTORY';
     headline.classList.add('win');
@@ -27530,9 +29690,12 @@ function showMatchResultScreen(result){
     card.style.setProperty('--result-color', 'var(--mint)');
     sub.textContent = `Best of 3 · won ${state.scoreYou}–${state.scoreOpp}`;
     sfxWin();
-    setTimeout(() => bigBurst('#22d3a3'), 300);
-    setTimeout(() => bigBurst('#9b7bff'), 600);
-    setTimeout(() => launchConfetti(), 250);
+    spawnStars(perf2.lite ? 0 : 16, 'gold');
+    slamShake('shake-big');
+    setTimeout(() => bigBurst('#22d3a3'), 460);
+    setTimeout(() => bigBurst('#ffd33d'), 700);
+    setTimeout(() => bigBurst('#9b7bff'), 950);
+    setTimeout(() => launchConfetti(), 500);
   } else if(result === 'lose'){
     headline.textContent = 'DEFEAT';
     headline.classList.add('lose');
@@ -27542,6 +29705,7 @@ function showMatchResultScreen(result){
     card.style.setProperty('--result-color', 'var(--coral)');
     sub.textContent = `Best of 3 · lost ${state.scoreYou}–${state.scoreOpp}`;
     sfxLose();
+    slamShake('shake-small');
   } else {
     headline.textContent = 'DRAW';
     headline.classList.add('draw');
@@ -27554,6 +29718,9 @@ function showMatchResultScreen(result){
   }
   countUp('#matchResultYouScore', state.scoreYou, 600, 450);
   countUp('#matchResultOppScore', state.scoreOpp, 600, 450);
+  // Crown the winner's avatar with a ring-ping (brawl-style podium beat).
+  $('#mrPlayerYou')?.classList.toggle('winner', result === 'win');
+  $('#mrPlayerOpp')?.classList.toggle('winner', result === 'lose');
 
   // Best-of-N label (handles overtime)
   const target = state.matchRoundsToWin || 2;
@@ -27563,9 +29730,11 @@ function showMatchResultScreen(result){
     setText('#mrBestOf', 'BEST OF 3');
   }
 
-  // Player avatars + names
+  // Player avatars + names — both wear their equipped cosmetics.
   try { renderAvatar($('#mrYouAv'), state.profile); } catch(e){}
-  setText('#mrYouName', '@' + (state.profile?.username || 'you'));
+  try { applyAvatarFx($('#mrYouAvWrap'), state.profile); } catch(e){}
+  const youNameEl = $('#mrYouName');
+  if(youNameEl) youNameEl.innerHTML = styledNameHTML(state.profile, '@' + (state.profile?.username || 'you'));
   if(state.oppProfile){
     try { renderAvatar($('#mrOppAv'), state.oppProfile); } catch(e){}
   } else if(state.isBotMatch){
@@ -27575,7 +29744,11 @@ function showMatchResultScreen(result){
       oppAv.textContent = 'B';
     }
   }
-  setText('#mrOppName', state.isBotMatch ? '@roshcamBot' : ('@' + (state.oppProfile?.username || 'stranger')));
+  try { applyAvatarFx($('#mrOppAvWrap'), state.isBotMatch ? null : state.oppProfile); } catch(e){}
+  const oppNameEl = $('#mrOppName');
+  if(oppNameEl) oppNameEl.innerHTML = state.isBotMatch
+    ? '@roshcamBot'
+    : styledNameHTML(state.oppProfile, '@' + (state.oppProfile?.username || 'stranger'));
 
   // ROUND-BY-ROUND BREAKDOWN
   const list = $('#mrRoundsList');
@@ -28118,7 +30291,7 @@ function showRankUp(oldRank, newRank, opts){
     overlay.addEventListener('click', dismiss);
     document.addEventListener('keydown', keydismiss);
     if(hint) hint.classList.add('ready');
-  }, isLegend ? 6200 : 4400);
+  }, isLegend ? 6200 : 3900);
 
   // No auto-dismiss — the celebration stays up until the player taps continue
   // (click / tap / Space / Enter / Esc).
@@ -29204,6 +31377,7 @@ function showNavPage(page){
   try {
     if(page === 'home') renderHomePage();
     else if(page === 'play') renderPlayPage();
+    else if(page === 'shop') renderShopPage();
     else if(page === 'rank') renderRankPage();
     else if(page === 'achievements') renderAchievementsPage();
     else if(page === 'activity') renderActivityPage();
@@ -29633,6 +31807,11 @@ function renderLevelLadder(p, lvl, prestige){
     reached: prestige >= i + 1, current: prestige === i + 1 || (prestige === 0 && i === 0 && atCap),
   }));
   state._lpData = { level: levelTiers, prestige: prestigeTiers };
+  // Fractional progress INTO the current tier (drives the track rail fill).
+  state._lpProg = {
+    level: atCap ? 1 : Math.max(0, Math.min(1, lvl.progress)),
+    prestige: isPrestigeMaster(prestige) ? 1 : Math.max(0, Math.min(1, lvl.level / MAX_LEVEL)),
+  };
   // Default each track to the page that holds the current tier.
   state._lpPage = state._lpPage || {};
   state._lpPage.level = Math.floor(Math.max(0, lvl.level - 1) / LP_PER_PAGE);
@@ -29654,7 +31833,9 @@ function renderLevelLadder(p, lvl, prestige){
           <div class="lp-head-sub">${xpText}</div>
         </div>
       </div>
-      <div class="lp-stage" id="lpStageLevel"></div>
+      <div class="lp-track">
+        <div class="lp-stage" id="lpStageLevel"></div>
+      </div>
       <div class="lp-nav" id="lpNavLevel"></div>
     </div>
     <div class="lp-card prestige">
@@ -29666,7 +31847,9 @@ function renderLevelLadder(p, lvl, prestige){
           <div class="lp-head-sub">${prestige > 0 ? `${escapeHTML(prestigeName(prestige))} · ${isPrestigeMaster(prestige) ? 'the summit' : 'climbing'}` : 'Reach level ' + MAX_LEVEL + ' to start prestiging'}</div>
         </div>
       </div>
-      <div class="lp-stage" id="lpStagePrestige"></div>
+      <div class="lp-track">
+        <div class="lp-stage" id="lpStagePrestige"></div>
+      </div>
       <div class="lp-nav" id="lpNavPrestige"></div>
     </div>`;
 
@@ -29679,19 +31862,21 @@ function renderLevelLadder(p, lvl, prestige){
 }
 function lpTierCardHTML(tr, i){
   const reached = tr.reached, current = tr.current;
-  const checkSvg = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg>';
-  const lockSvg = '<svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-lock"/></svg>';
+  const checkSvg = '<svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-check"/></svg>';
+  const lockSvg = '<svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-lock"/></svg>';
   const emblem = tr.type === 'prestige'
     ? `<div class="lp-emblem pr" style="background:linear-gradient(135deg,${tr.a},${tr.b}); color:${tr.t}">${tr.master ? '★' : tr.n}</div>`
     : `<div class="lp-emblem"><svg viewBox="0 0 24 24"><use href="#${tr.icon}"/></svg></div>`;
-  const label = tr.type === 'prestige' ? ('PRESTIGE ' + tr.n) : ('LEVEL ' + tr.n);
+  // Node chip that sits ON the rail — the classic pass "tier number" marker.
+  const node = `<div class="lp-node">${current ? '<span class="lp-here">YOU</span>' : ''}<span class="lp-node-n">${tr.type === 'prestige' && tr.master ? '★' : tr.n}</span></div>`;
   return `<div class="lp-tier ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}${tr.milestone ? ' milestone' : ' minor'}" style="--tc:${tr.color}; --d:${(i * 0.035).toFixed(3)}s">
-    ${current ? '<span class="lp-here">YOU ARE HERE</span>' : ''}
-    <div class="lp-tier-label">${label}</div>
-    ${emblem}
-    <div class="lp-tier-name">${escapeHTML(tr.name)}</div>
-    <div class="lp-tier-sub">${escapeHTML(tr.sub)}</div>
-    <div class="lp-tier-state">${reached ? checkSvg : lockSvg}</div>
+    ${node}
+    <div class="lp-tile">
+      ${emblem}
+      <div class="lp-tier-name">${escapeHTML(tr.name)}</div>
+      <div class="lp-tier-sub">${escapeHTML(tr.sub)}</div>
+      <div class="lp-tier-state">${reached ? checkSvg : lockSvg}</div>
+    </div>
   </div>`;
 }
 function renderLpPage(type){
@@ -29704,21 +31889,45 @@ function renderLpPage(type){
   let page = Math.max(0, Math.min(pages - 1, state._lpPage[type] || 0));
   state._lpPage[type] = page;
   const slice = data.slice(page * LP_PER_PAGE, page * LP_PER_PAGE + LP_PER_PAGE);
-  stage.innerHTML = slice.map((tr, i) => lpTierCardHTML(tr, i)).join('');
+  // Rail fill for this page — runs through completed nodes and partway toward
+  // the next one (node centers sit at (i + .5) / n across the track).
+  const n = slice.length || 1;
+  const prog = (state._lpProg && state._lpProg[type]) || 0;
+  const curIdx = slice.findIndex(tr => tr.current);
+  let fill;
+  if(curIdx >= 0) fill = ((curIdx + 0.5 + prog * 0.9) / n) * 100;
+  else if(slice.length && slice.every(tr => tr.reached)) fill = 100;
+  else {
+    let last = -1; slice.forEach((tr, i) => { if(tr.reached) last = i; });
+    fill = last < 0 ? 0 : ((last + 1) / n) * 100;
+  }
+  fill = Math.max(0, Math.min(100, fill));
+  // The rail lives INSIDE the stage so it scrolls with the tiles on phones.
+  stage.innerHTML = `<div class="lp-rail" aria-hidden="true"><i style="width:0" data-w="${fill.toFixed(1)}"></i></div>`
+    + slice.map((tr, i) => lpTierCardHTML(tr, i)).join('');
+  requestAnimationFrame(() => {
+    const r = stage.querySelector('.lp-rail i'); if(r) r.style.width = r.dataset.w + '%';
+    // On phones the track scrolls — keep the current tier centered in view.
+    const track = stage.parentElement, cur = stage.querySelector('.lp-tier.current');
+    if(track && cur && track.scrollWidth > track.clientWidth){
+      track.scrollLeft = Math.max(0, cur.offsetLeft - track.clientWidth / 2 + cur.offsetWidth / 2);
+    }
+  });
   // replay the page-in animation
   stage.classList.remove('flip'); void stage.offsetWidth; stage.classList.add('flip');
   if(nav){
     if(pages <= 1){ nav.innerHTML = ''; nav.style.display = 'none'; }
     else {
+      const lo = page * LP_PER_PAGE + 1, hi = Math.min(data.length, (page + 1) * LP_PER_PAGE);
       nav.style.display = '';
       let dots = '';
       for(let pg = 0; pg < pages; pg++){
-        const lo = pg * LP_PER_PAGE + 1, hi = Math.min(data.length, (pg + 1) * LP_PER_PAGE);
-        dots += `<button class="lp-dot${pg === page ? ' on' : ''}" data-lp-go="${type}:${pg}" title="${lpCap(type)} ${lo}–${hi}" aria-label="Page ${pg + 1}"></button>`;
+        const dlo = pg * LP_PER_PAGE + 1, dhi = Math.min(data.length, (pg + 1) * LP_PER_PAGE);
+        dots += `<button class="lp-dot${pg === page ? ' on' : ''}" data-lp-go="${type}:${pg}" title="${lpCap(type)} ${dlo}–${dhi}" aria-label="Page ${pg + 1}"></button>`;
       }
       nav.innerHTML = `<button class="lp-arrow" data-lp-prev="${type}" ${page === 0 ? 'disabled' : ''} aria-label="Previous"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-arrow-left"/></svg></button>
         <div class="lp-dots">${dots}</div>
-        <span class="lp-page-label">${page + 1}<i>/${pages}</i></span>
+        <span class="lp-page-label">${lpCap(type).toUpperCase()}S ${lo}–${hi}</span>
         <button class="lp-arrow" data-lp-next="${type}" ${page === pages - 1 ? 'disabled' : ''} aria-label="Next"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-arrow-right"/></svg></button>`;
     }
   }
@@ -30260,9 +32469,13 @@ function claimDailyLoginReward(){
   let amount = reward.xp ? levelScaledXp(reward.xp / 500) : 0;
   let comebackBonus = 0;
   if(info.comeback){ comebackBonus = Math.min(levelScaledXp(.5), levelScaledXp(.1) + info.daysAway * 25); amount += comebackBonus; }
+  // RoshCoins ride along with every login — scale gently with the streak.
+  const loginCoins = 40 + Math.min(60, info.streak * 5);
+  state._lastLoginCoins = loginCoins;
   try { showLoginReward(reward, amount, info.streak, dayInWeek, comebackBonus); } catch(e){}
   if(amount > 0) grantXp(amount, comebackBonus ? 'Welcome back' : 'Daily login', { silent: true });
   if(reward.token){ try { grantXpTokens({ [reward.token]: 1 }, 'Daily reward', { silent: true }); } catch(e){} }
+  try { grantCoins(loginCoins, 'Daily login', { silent: true }); } catch(e){}
 }
 const XPT_SVG_MINI = '<svg class="lr-token-mini" viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-xptoken"/></svg>';
 const XP_SVG_MINI = '<svg class="lr-token-mini" viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-xp"/></svg>';
@@ -30276,6 +32489,7 @@ function showLoginReward(reward, amount, streak, dayInWeek, comebackBonus){
   const headBits = [];
   if(amount > 0) headBits.push(`+${amount} XP`);
   if(reward.token) headBits.push(`<svg viewBox="0 0 24 24" width="17" height="17" style="vertical-align:-3px;"><use href="#i-xptoken"/></svg> ${XP_TOKEN_TYPES[reward.token].label} 2× XP token`);
+  if(state._lastLoginCoins) headBits.push(`<svg viewBox="0 0 24 24" width="17" height="17" style="vertical-align:-3px;"><use href="#i-coin"/></svg> ${state._lastLoginCoins}`);
   const amtEl = $('#lrAmount'); if(amtEl) amtEl.innerHTML = headBits.join(' <span class="lr-amp">&</span> ') || 'Reward!';
   setText('#lrStreak', `Day ${streak} login streak 🔥`);
   const cal = $('#lrCalendar');
@@ -30283,16 +32497,19 @@ function showLoginReward(reward, amount, streak, dayInWeek, comebackBonus){
     cal.innerHTML = DAILY_REWARDS.map((r, i) => {
       const day = i + 1;
       const st = day < dayInWeek ? 'done' : day === dayInWeek ? 'today' : 'future';
-      const bigIc = day === 7 ? '🎁'
-        : r.token ? `<svg class="lr-token-svg" viewBox="0 0 24 24"><use href="#i-xptoken"/></svg>`
-        : `<svg class="lr-token-svg" viewBox="0 0 24 24"><use href="#i-xp"/></svg>`;
-      const icon = st === 'done'
-        ? '<svg viewBox="0 0 24 24" class="lr-day-check" width="15" height="15"><use href="#i-check"/></svg>'
-        : `<span class="lr-day-big">${bigIc}</span>`;
-      return `<div class="lr-day ${st}${day === 7 ? ' jackpot' : ''}" style="--lr-i:${i}">
-        <div class="lr-day-n">${st === 'today' ? 'TODAY' : 'DAY ' + day}</div>
-        <div class="lr-day-ic">${icon}</div>
-        <div class="lr-day-x">${_lrRewardText(r)}</div>
+      const jackpot = day === 7;
+      const bigIc = jackpot ? '<span class="dr2-gift">🎁</span>'
+        : r.token ? `<svg class="dr2-card-svg" viewBox="0 0 24 24"><use href="#i-xptoken"/></svg>`
+        : `<svg class="dr2-card-svg" viewBox="0 0 24 24"><use href="#i-xp"/></svg>`;
+      const stamp = st === 'done'
+        ? '<span class="dr2-stamp" aria-label="claimed"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg></span>'
+        : (jackpot && st === 'future' ? '<span class="dr2-lock"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-lock"/></svg></span>' : '');
+      return `<div class="dr2-day ${st}${jackpot ? ' jackpot' : ''}" style="--dr-i:${i}">
+        <div class="dr2-day-n">${st === 'today' ? 'TODAY' : 'DAY ' + day}</div>
+        <div class="dr2-day-ic">${bigIc}</div>
+        <div class="dr2-day-x">${_lrRewardText(r)}</div>
+        ${jackpot ? '<div class="dr2-jackpot-lbl">JACKPOT</div>' : ''}
+        ${stamp}
       </div>`;
     }).join('');
   }
