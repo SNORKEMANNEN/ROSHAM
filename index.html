@@ -16695,6 +16695,159 @@ body.low-power :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .
 .nm .cx-tag, .podium-name .cx-tag, .gc-meta .cx-tag{ font-size:7.5px; padding:2px 6px; }
 #youName .cx-tag, #oppName .cx-tag, .mf-name .cx-tag{ font-size:8px; padding:2px 7px; }
 
+/* ════════════════════════════════════════════════════════════════════
+   V26 — PAID ROSHCOINS: stacked shop sections, jump rail, coin packs
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ---------- STACKED SECTIONS ---------- */
+.shop-stack{ display:flex; flex-direction:column; gap:26px; padding-right:44px; }
+.shop-sec{ scroll-margin-top:76px; }
+.shop-wallet{ cursor:pointer; transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; }
+.shop-wallet:hover{ transform:translateY(-1px); box-shadow:0 0 26px -8px rgba(245,180,49,.9); }
+.shop-wallet-plus{
+  width:17px; height:17px; border-radius:50%; display:grid; place-items:center;
+  background:rgba(245,180,49,.22); color:var(--amber, #f5b431); font-weight:900; font-size:12px; line-height:1;
+}
+
+/* ---------- RIGHT JUMP RAIL ---------- */
+.shop-rail{
+  position:fixed; right:14px; top:50%; transform:translateY(-50%); z-index:40;
+  display:none; flex-direction:column; gap:8px; align-items:flex-end;
+}
+.nav-page[data-page="shop"].active .shop-rail{ display:flex; }
+.shop-rail-item{
+  display:flex; align-items:center; gap:9px; flex-direction:row-reverse; cursor:pointer;
+  padding:8px 9px; border-radius:999px; border:1px solid var(--line);
+  background:rgba(14,12,22,.88); color:var(--text-dim);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  transition:border-color .2s, background .2s, transform .15s;
+}
+.shop-rail-item:hover{ transform:translateX(-3px); border-color:var(--line-bright, var(--line)); }
+.sri-dot{ width:9px; height:9px; border-radius:50%; background:var(--text-faint); flex:0 0 auto; transition:background .2s, box-shadow .2s, transform .2s; }
+.shop-rail-item.active .sri-dot{ background:var(--mint); box-shadow:0 0 10px var(--mint); transform:scale(1.2); }
+.shop-rail-item.sri-coins .sri-dot{ background:rgba(245,180,49,.5); }
+.shop-rail-item.sri-coins.active .sri-dot{ background:var(--amber, #f5b431); box-shadow:0 0 10px rgba(245,180,49,.9); }
+.sri-label{
+  max-width:0; overflow:hidden; white-space:nowrap; opacity:0;
+  font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  transition:max-width .3s cubic-bezier(.25,1,.35,1), opacity .25s, margin .3s;
+}
+.shop-rail:hover .sri-label, .shop-rail-item:focus-visible .sri-label{ max-width:110px; opacity:1; }
+.shop-rail-item.active{ color:#fff; }
+
+/* ---------- FLOATING NEXT-SECTION BUTTON ---------- */
+.shop-next{
+  position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom, 0px)); transform:translateX(-50%);
+  z-index:40; display:none; align-items:center; gap:8px; cursor:pointer;
+  padding:11px 20px; border-radius:999px; border:1px solid var(--line-bright, var(--line));
+  background:rgba(14,12,22,.92); color:var(--text);
+  font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:13px;
+  backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 14px 34px -14px rgba(0,0,0,.9);
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), border-color .2s;
+  animation:shopNextBob 2.4s ease-in-out infinite;
+}
+.nav-page[data-page="shop"].active .shop-next{ display:inline-flex; }
+.shop-next:hover{ transform:translateX(-50%) translateY(-2px); border-color:var(--mint); }
+.shop-next svg{ color:var(--mint); }
+@keyframes shopNextBob{ 0%,100%{ box-shadow:0 14px 34px -14px rgba(0,0,0,.9); } 50%{ box-shadow:0 14px 34px -14px rgba(0,0,0,.9), 0 0 20px -8px var(--mint-glow, rgba(34,211,163,.7)); } }
+@media (hover:none) and (pointer:coarse){
+  .shop-next{ bottom:calc(96px + env(safe-area-inset-bottom, 0px)); }
+}
+@media (max-width:760px){
+  .shop-stack{ padding-right:0; }
+  .shop-rail{ right:6px; }
+  .sri-label{ display:none; }
+}
+
+/* ---------- ROSHCOIN PACKS (store cards) ---------- */
+.shop-sec-coins .shop-slab::before{ background:linear-gradient(180deg, #ffd45e, #ff9a3d); }
+.shop-coins-sub{ margin:-2px 2px 12px; color:var(--text-dim); font-size:13px; max-width:560px; }
+.shop-coins-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:12px; }
+@media (max-width:900px){ .shop-coins-grid{ grid-template-columns:repeat(2, 1fr); } }
+.coin-pack{
+  --pa:#ffd45e; --pb:#e08f1f;
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;
+  padding:34px 12px 12px; border-radius:16px; overflow:hidden; isolation:isolate;
+  color:#fff; text-align:center; border:2px solid color-mix(in srgb, var(--pa) 75%, #fff 8%);
+  background:
+    radial-gradient(120% 70% at 50% 0%, color-mix(in srgb, var(--pa) 45%, #fff 10%) 0%, transparent 58%),
+    linear-gradient(180deg, color-mix(in srgb, var(--pa) 66%, #17141f), color-mix(in srgb, var(--pb) 55%, #100e18) 88%);
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, border-color .25s;
+  animation:v10Rise .45s cubic-bezier(.2,.9,.3,1) both; animation-delay:calc(var(--pi, 0) * 70ms);
+}
+.coin-pack:hover{ transform:translateY(-5px) scale(1.02); border-color:#fff; box-shadow:0 22px 44px -18px rgba(0,0,0,.85), 0 0 34px -10px var(--pa); z-index:2; }
+.coin-pack:active{ transform:translateY(-1px) scale(.97); }
+.coin-pack.pk-gold{ --pa:#ffd45e; --pb:#e08f1f; }
+.coin-pack.pk-blue{ --pa:#5fc9ff; --pb:#2673d8; }
+.coin-pack.pk-violet{ --pa:#b56cff; --pb:#6c35c8; }
+.coin-pack.pk-orange{ --pa:#ff9a3d; --pb:#e0501f; }
+.cp-bonus{
+  position:absolute; top:10px; left:50%; transform:translateX(-50%); white-space:nowrap;
+  font-family:var(--font-mono); font-size:8.5px; font-weight:900; letter-spacing:.14em;
+  padding:4px 11px; border-radius:999px; background:rgba(6,5,12,.72); color:#fff;
+  border:1px solid rgba(255,255,255,.25);
+}
+.cp-bonus-ghost{ opacity:.55; }
+.cp-art{ display:grid; place-items:center; min-height:84px; margin:8px 0 2px; }
+.cp-pile{ position:relative; display:block; width:96px; height:76px; filter:drop-shadow(0 10px 16px rgba(0,0,0,.5)); }
+.cp-coin{ position:absolute; width:34px; height:34px; }
+.cp-coin.c0{ left:8px;  bottom:4px; }
+.cp-coin.c1{ left:32px; bottom:0; width:38px; height:38px; }
+.cp-coin.c2{ left:56px; bottom:6px; }
+.cp-coin.c3{ left:20px; bottom:24px; width:32px; height:32px; }
+.cp-coin.c4{ left:46px; bottom:26px; width:30px; height:30px; }
+.cp-coin.c5{ left:12px; bottom:44px; width:27px; height:27px; }
+.cp-coin.c6{ left:40px; bottom:48px; width:29px; height:29px; }
+.coin-pack:hover .cp-pile{ animation:cpPileBounce .5s cubic-bezier(.2,1.6,.4,1); }
+@keyframes cpPileBounce{ 0%{ transform:scale(1); } 45%{ transform:scale(1.09) rotate(-2deg); } 100%{ transform:scale(1); } }
+.cp-amount{ font-family:var(--font-display); font-stretch:64%; font-weight:900; font-size:27px; line-height:1; text-shadow:0 2px 8px rgba(0,0,0,.5); }
+.cp-lbl{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.26em; opacity:.85; }
+.cp-price{
+  width:100%; margin-top:10px; padding:10px 8px; border-radius:11px;
+  background:linear-gradient(180deg, #ffe27e, var(--amber, #f5b431)); color:#221302;
+  font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:16px;
+  box-shadow:0 6px 16px -8px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.5);
+  transition:filter .15s;
+}
+.coin-pack:hover .cp-price{ filter:brightness(1.07); }
+
+/* ---------- COIN CHECKOUT MODAL ---------- */
+.coin-checkout{
+  --pa:#ffd45e; --pb:#e08f1f; max-width:380px; text-align:center;
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--pa) 26%, transparent), transparent 60%),
+    linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
+  border-color:color-mix(in srgb, var(--pa) 55%, var(--line)) !important;
+}
+.coin-checkout.pk-gold{ --pa:#ffd45e; --pb:#e08f1f; }
+.coin-checkout.pk-blue{ --pa:#5fc9ff; --pb:#2673d8; }
+.coin-checkout.pk-violet{ --pa:#b56cff; --pb:#6c35c8; }
+.coin-checkout.pk-orange{ --pa:#ff9a3d; --pb:#e0501f; }
+.cck-pile{ display:grid; place-items:center; margin:4px 0 6px; }
+.cck-pile .cp-pile{ transform:scale(1.15); }
+.cck-amount{ font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:40px; line-height:1; margin-top:10px; }
+.cck-label{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.3em; color:var(--text-dim); margin-top:4px; }
+.cck-bonus{
+  display:inline-block; margin-top:10px; padding:5px 13px; border-radius:999px;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:900; letter-spacing:.14em;
+  background:color-mix(in srgb, var(--pa) 22%, transparent); color:color-mix(in srgb, var(--pa) 80%, #fff);
+  border:1px solid color-mix(in srgb, var(--pa) 50%, transparent);
+}
+.cck-rows{ margin:16px 0 14px; border:1px solid var(--line-soft); border-radius:14px; overflow:hidden; }
+.cck-row{
+  display:flex; align-items:center; justify-content:space-between; padding:11px 14px;
+  font-size:13px; color:var(--text-dim);
+}
+.cck-row + .cck-row{ border-top:1px solid var(--line-soft); }
+.cck-row b{ color:var(--text); font-variant-numeric:tabular-nums; }
+.cck-row.cck-total{ background:rgba(255,255,255,.03); }
+.cck-row.cck-total b{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:17px; }
+.cck-pay{ width:100%; min-height:48px; justify-content:center; font-size:15px; }
+.cck-note{ margin:10px 0 0; font-family:var(--font-mono); font-size:10px; letter-spacing:.04em; color:var(--text-faint); }
+body.reduced-motion .coin-pack, body.low-power .coin-pack,
+body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !important; }
+
 </style>
 </head>
 <body>
@@ -17888,40 +18041,86 @@ const FIREBASE_CONFIG = {
         <div class="shop-topbar">
           <div class="shop-topbar-title">
             <h1 class="shop-title-word">ITEM <span>SHOP</span></h1>
-            <span class="shop-topbar-sub"><span class="live-dot"></span> Rotates daily · earn RoshCoins by playing</span>
+            <span class="shop-topbar-sub"><span class="live-dot"></span> Rotates daily · top up RoshCoins below</span>
           </div>
           <div class="shop-topbar-side">
             <div class="shop-collect" id="shopCollect" title="Cosmetics collected">
               <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-star"/></svg>
               <span id="shopCollectNum">0/34</span>
             </div>
-            <div class="shop-wallet" id="shopWallet" title="Your RoshCoins — spend them here">
+            <button type="button" class="shop-wallet" id="shopWallet" title="Your RoshCoins — tap to get more">
               <svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-coin"/></svg>
               <b id="shopWalletNum">0</b>
-            </div>
+              <span class="shop-wallet-plus">+</span>
+            </button>
           </div>
         </div>
 
-        <!-- OG SHOP: FEATURED (left) · DAILY (right) -->
-        <div class="shop-og">
-          <section class="shop-panel shop-panel-featured">
+        <!-- STACKED SHOP SECTIONS + right-side jump rail + next-section button -->
+        <div class="shop-stack" id="shopStack">
+
+          <section class="shop-sec" id="shopSecFeatured" data-sec="featured" data-sec-label="Featured">
             <div class="shop-slab">
-              <span class="shop-slab-title">FEATURED ITEMS</span>
+              <span class="shop-slab-title">FEATURED</span>
               <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-clock"/></svg> <b class="js-shop-timer">—</b></span>
             </div>
             <div class="shop-grid shop-grid-featured" id="shopFeatured"></div>
           </section>
-          <section class="shop-panel shop-panel-daily">
+
+          <section class="shop-sec" id="shopSecDaily" data-sec="daily" data-sec-label="Daily items">
             <div class="shop-slab">
               <span class="shop-slab-title">DAILY ITEMS</span>
               <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-clock"/></svg> <b class="js-shop-timer">—</b></span>
             </div>
             <div class="shop-grid shop-grid-daily" id="shopDaily"></div>
           </section>
+
+          <section class="shop-sec shop-sec-coins" id="shopSecCoins" data-sec="coins" data-sec-label="RoshCoins">
+            <div class="shop-slab">
+              <span class="shop-slab-title">ROSHCOINS</span>
+              <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-coin"/></svg> <b id="shopCoinsBal">0</b> IN WALLET</span>
+            </div>
+            <p class="shop-coins-sub">RoshCoins are the shop currency — grab a pack, get cosmetics, gift friends. Bigger packs pay bonus coins.</p>
+            <div class="shop-coins-grid" id="shopCoinPacks"></div>
+          </section>
+
+          <p class="shop-note"><b>Note:</b> these items are cosmetic only and grant no competitive advantage. Equip what you own in <b>Edit profile → Cosmetics</b>.</p>
         </div>
 
-        <p class="shop-note"><b>Note:</b> these items are cosmetic only and grant no competitive advantage. Equip what you own in <b>Edit profile → Cosmetics</b>.</p>
+        <!-- RIGHT JUMP RAIL — hover to expand, click to glide to a section -->
+        <nav class="shop-rail" id="shopRail" aria-label="Shop sections">
+          <button type="button" class="shop-rail-item active" data-rail="featured"><i class="sri-dot"></i><span class="sri-label">Featured</span></button>
+          <button type="button" class="shop-rail-item" data-rail="daily"><i class="sri-dot"></i><span class="sri-label">Daily items</span></button>
+          <button type="button" class="shop-rail-item sri-coins" data-rail="coins"><i class="sri-dot"></i><span class="sri-label">RoshCoins</span></button>
+        </nav>
+
+        <!-- NEXT-SECTION button — floats bottom-center while browsing the shop -->
+        <button type="button" class="shop-next" id="shopNextBtn">
+          <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-chevron-down"/></svg>
+          <span id="shopNextLabel">Daily items</span>
+        </button>
       </div><!-- /page shop -->
+
+      <!-- ROSHCOIN CHECKOUT -->
+      <div class="modal-bg" id="coinCheckoutModal">
+        <div class="modal coin-checkout" id="coinCheckoutCard">
+          <button class="modal-close" data-close="coinCheckoutModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+          <div class="cck-pile" id="cckPile" aria-hidden="true"></div>
+          <div class="cck-amount" id="cckAmount">1,000</div>
+          <div class="cck-label">ROSHCOINS</div>
+          <div class="cck-bonus" id="cckBonus" style="display:none;">+13% EXTRA</div>
+          <div class="cck-rows">
+            <div class="cck-row"><span>Pack</span><b id="cckPack">Starter</b></div>
+            <div class="cck-row"><span>Wallet after</span><b id="cckAfter">—</b></div>
+            <div class="cck-row cck-total"><span>Total</span><b id="cckPrice">$1.99</b></div>
+          </div>
+          <button class="btn btn-primary cck-pay" id="cckPayBtn">
+            <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-coin"/></svg>
+            <span id="cckPayLabel">Checkout · $1.99</span>
+          </button>
+          <p class="cck-note">Secure checkout is on its way — payments aren't live quite yet.</p>
+        </div>
+      </div>
 
       <!-- ============ PAGE: ACTIVITY ============ -->
       <div class="nav-page" data-page="activity">
@@ -24837,8 +25036,7 @@ function updateDailyChallengeProgress(matchResult, roundDetails){
     const xpGain = dailyReward(c);
     try { grantXp(xpGain, 'Daily challenge', { silent: true }); } catch(e){}
     try { grantXpTokens({ m15: 1 }, 'Daily challenge', { silent: true }); } catch(e){}
-    try { grantCoins(60, 'Daily challenge', { silent: true }); } catch(e){}
-    toast(`🎉 Daily complete: ${c.text} · +${fmtXp(xpGain)} XP + 🪙 60 + 15 min 2× XP token!`, 'success');
+    toast(`🎉 Daily complete: ${c.text} · +${fmtXp(xpGain)} XP + 15 min 2× XP token!`, 'success');
     try { celebrateChallenge('.js-daily-card'); } catch(e){}
     // increment streak
     const lastStreakDate = localStorage.getItem('rosham_daily_last') || '';
@@ -24937,7 +25135,6 @@ async function grantXp(amount, reason, opts={}){
   if(newL.level > oldL.level){
     let newTitles = [];
     try { const had = titlesUnlockedAt(oldL.level).map(t => t.id); newTitles = titlesUnlockedAt(newL.level).filter(t => !had.includes(t.id)); } catch(e){}
-    try { grantCoins(100 * (newL.level - oldL.level), 'Level up', { silent: true }); } catch(e){}
     try { showLevelUp({ from: oldL, to: newL, newTitles }); } catch(e){}
   }
   try { renderHomePage(); } catch(e){}
@@ -24967,7 +25164,6 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
       const curLvl = levelOf(state.profile).level;
       grantXp(xpForLevel(curLvl), 'Weekly challenge · +1 level');
       if(c.token){ try { grantXpTokens({ [c.token]: 1 }, 'Weekly challenge'); } catch(e){} }
-      try { grantCoins(150, 'Weekly challenge', { silent: true }); } catch(e){}
       try { celebrateChallenge('.js-weekly-card'); } catch(e){}
     }
   });
@@ -24979,8 +25175,7 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
     const curLvl = levelOf(state.profile).level;
     grantXp(xpForLevel(curLvl) + 1000, 'Weekly clear bonus', { silent: true });
     try { grantXpTokens({ m30: 2, m60: 1 }, 'Weekly clear bonus', { silent: true }); } catch(e){}
-    try { grantCoins(400, 'Weekly clear bonus', { silent: true }); } catch(e){}
-    setTimeout(() => { try { toast('🏆 ALL weekly challenges cleared — +1 level, +1000 XP, 🪙 400 coins, 2× 30 min + 1× 1 hour 2× XP tokens!', 'success', { duration: 8000 }); } catch(e){} }, 600);
+    setTimeout(() => { try { toast('🏆 ALL weekly challenges cleared — +1 level, +1000 XP, 2× 30 min + 1× 1 hour 2× XP tokens!', 'success', { duration: 8000 }); } catch(e){} }, 600);
   }
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
@@ -25188,14 +25383,6 @@ function updateCoinPill(pop){
 }
 on('#coinPill', 'click', () => { try { showNavPage('shop'); } catch(e){} });
 
-// Coins for a ranked match — small drip, wins + streaks + level-ups pay more.
-function calcMatchCoins(result, streakAfter, levelsGained){
-  let c = result === 'win' ? 30 : result === 'draw' ? 15 : result === 'forfeit' ? 5 : 10;
-  if(result === 'win' && streakAfter >= 3) c += Math.min(20, streakAfter * 2);
-  c += (levelsGained || 0) * 100;
-  return c;
-}
-
 // ---------- RARITIES ----------
 const CX_RARITY = {
   rare:      { label: 'RARE',      color: '#5fc9ff' },
@@ -25293,7 +25480,7 @@ async function buyCosmetic(id){
   }
   if(ownsCosmetic(id)) return false;
   if(getCoins() < item.price){
-    try { toast(`Not enough RoshCoins — need ${fmtCoins(item.price - getCoins())} more. Win matches to earn coins!`, 'error'); } catch(e){}
+    try { toast(`Not enough RoshCoins — need ${fmtCoins(item.price - getCoins())} more. Grab a pack in the shop!`, 'error', { action: { label: 'Get coins', onClick: () => { try { showNavPage('shop'); setTimeout(() => $('#shopSecCoins')?.scrollIntoView({ behavior: 'smooth' }), 300); } catch(e){} } } }); } catch(e){}
     return false;
   }
   const c = getCosmetics();
@@ -25433,6 +25620,7 @@ function renderShopWallet(){
   document.querySelectorAll('.js-shop-timer').forEach(el => { el.textContent = t; });
   const owned = getCosmetics().owned.filter(id => COSMETIC_BY_ID[id]).length;
   setText('#shopCollectNum', `${owned}/${COSMETICS.length}`);
+  setText('#shopCoinsBal', fmtCoins(getCoins()));
 }
 function shopTileHTML(item, featured){
   const owned = ownsCosmetic(item.id);
@@ -25458,9 +25646,99 @@ function renderShopItems(){
   feat.innerHTML = rot.featured.map(i => shopTileHTML(i, true)).join('');
   daily.innerHTML = rot.daily.map(i => shopTileHTML(i, false)).join('');
 }
+// ---------- ROSHCOIN PACKS (bought with real money) ----------
+const COIN_PACKS = [
+  { id: 'p1000',  coins: 1000,  price: 1.99,  bonus: 0,  name: 'Starter', cls: 'pk-gold' },
+  { id: 'p2800',  coins: 2800,  price: 4.99,  bonus: 13, name: 'Plus',    cls: 'pk-blue' },
+  { id: 'p5000',  coins: 5000,  price: 7.99,  bonus: 28, name: 'Pro',     cls: 'pk-violet' },
+  { id: 'p13500', coins: 13500, price: 19.99, bonus: 38, name: 'Whale',   cls: 'pk-orange' },
+];
+const fmtUSD = n => '$' + n.toFixed(2);
+function coinPileHTML(n){
+  // A little stacked-coin illustration — more coins for bigger packs.
+  const count = n >= 10000 ? 7 : n >= 4000 ? 5 : n >= 2500 ? 4 : 3;
+  let h = '';
+  for(let i = 0; i < count; i++) h += `<svg viewBox="0 0 24 24" class="cp-coin c${i}"><use href="#i-coin"/></svg>`;
+  return `<span class="cp-pile n${count}">${h}</span>`;
+}
+function renderCoinPacks(){
+  const host = $('#shopCoinPacks');
+  if(!host) return;
+  host.innerHTML = COIN_PACKS.map((p, i) => `
+    <button type="button" class="coin-pack ${p.cls}" data-pack="${p.id}" style="--pi:${i}">
+      ${p.bonus ? `<span class="cp-bonus">+${p.bonus}% EXTRA</span>` : '<span class="cp-bonus cp-bonus-ghost">BASE PACK</span>'}
+      <span class="cp-art">${coinPileHTML(p.coins)}</span>
+      <span class="cp-amount">${p.coins.toLocaleString()}</span>
+      <span class="cp-lbl">ROSHCOINS</span>
+      <span class="cp-price">${fmtUSD(p.price)}</span>
+    </button>`).join('');
+  host.querySelectorAll('[data-pack]').forEach(b => b.addEventListener('click', () => openCoinCheckout(b.dataset.pack)));
+  setText('#shopCoinsBal', fmtCoins(getCoins()));
+}
+function openCoinCheckout(packId){
+  const p = COIN_PACKS.find(x => x.id === packId);
+  if(!p) return;
+  if(isGuest()){
+    try { toast('Create a free account first — guests can\'t hold RoshCoins', 'info', { duration: 6000 }); } catch(e){}
+    return;
+  }
+  state._coinPack = p;
+  const card = $('#coinCheckoutCard'); if(card) card.className = 'modal coin-checkout ' + p.cls;
+  const pile = $('#cckPile'); if(pile) pile.innerHTML = coinPileHTML(p.coins);
+  setText('#cckAmount', p.coins.toLocaleString());
+  const bo = $('#cckBonus');
+  if(bo){ bo.style.display = p.bonus ? '' : 'none'; bo.textContent = `+${p.bonus}% EXTRA`; }
+  setText('#cckPack', p.name);
+  setText('#cckAfter', fmtCoins(getCoins() + p.coins));
+  setText('#cckPrice', fmtUSD(p.price));
+  setText('#cckPayLabel', `Checkout · ${fmtUSD(p.price)}`);
+  $('#coinCheckoutModal')?.classList.add('show');
+}
+on('#cckPayBtn', 'click', () => {
+  // Payment rails aren't wired up yet — this is where the processor plugs in.
+  try { haptic(10); } catch(e){}
+  try { toast('💳 Payments aren\'t live yet — RoshCoin packs are coming very soon!', 'info', { duration: 6000 }); } catch(e){}
+});
+on('#shopWallet', 'click', () => { $('#shopSecCoins')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+
+// ---------- SECTION RAIL + NEXT BUTTON (scroll-spy) ----------
+function shopSections(){ return [...document.querySelectorAll('.shop-sec')]; }
+function shopSpyInit(){
+  if(state._shopSpy || !('IntersectionObserver' in window)) return;
+  state._shopSpy = new IntersectionObserver((ents) => {
+    ents.forEach(en => { if(en.isIntersecting) shopSetActiveSec(en.target.dataset.sec); });
+  }, { rootMargin: '-30% 0px -55% 0px' });
+  shopSections().forEach(sec => state._shopSpy.observe(sec));
+}
+function shopSetActiveSec(sec){
+  state._shopActiveSec = sec;
+  document.querySelectorAll('.shop-rail-item').forEach(b => b.classList.toggle('active', b.dataset.rail === sec));
+  // The floating button always points at the NEXT section; hides at the end.
+  const secs = shopSections();
+  const idx = secs.findIndex(s => s.dataset.sec === sec);
+  const next = secs[idx + 1];
+  const btn = $('#shopNextBtn');
+  if(btn){
+    if(next){ btn.style.display = ''; setText('#shopNextLabel', next.dataset.secLabel || 'Next'); btn.dataset.target = next.id; }
+    else btn.style.display = 'none';
+  }
+}
+document.querySelectorAll('.shop-rail-item').forEach(b => b.addEventListener('click', () => {
+  document.querySelector(`.shop-sec[data-sec="${b.dataset.rail}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  try { haptic(8); } catch(e){}
+}));
+on('#shopNextBtn', 'click', () => {
+  const t = $('#shopNextBtn')?.dataset.target;
+  if(t) document.getElementById(t)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  try { haptic(8); } catch(e){}
+});
+
 function renderShopPage(){
   renderShopWallet();
   renderShopItems();
+  renderCoinPacks();
+  shopSpyInit();
+  shopSetActiveSec(state._shopActiveSec || 'featured');
   try { localStorage.setItem('rosham_shop_seen', '1'); const b = $('#navShopBadge'); if(b) b.style.display = 'none'; } catch(e){}
 }
 // "NEW" nudge on the Shop nav entry until the first visit.
@@ -25520,7 +25798,7 @@ function openShopBuyModal(item){
       ? `<b class="sbm-short">Guests can't buy cosmetics</b> — create a free account to unlock the shop`
       : (after >= 0
         ? `Balance after: <b>${fmtCoins(after)}</b> <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg>`
-        : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — win matches &amp; clear challenges to earn them`);
+        : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — grab a RoshCoin pack at the bottom of the shop`);
   }
   const btn = $('#sbmBuyBtn');
   if(btn){ btn.disabled = guest || after < 0; }
@@ -30153,10 +30431,7 @@ let updateMatchStats = async function(matchResult){
   const justHitCap = oldLevelInfo.level < MAX_LEVEL && newLevelInfo.level >= MAX_LEVEL;
   updates.totalXp = increment(xpResult.xp);
   state._lastXpAward = { ...xpResult, oldLevel: oldLevelInfo, newLevel: newLevelInfo, leveledUp };
-  // ===== ROSHCOINS — cosmetic currency drip (never affects rank/XP) =====
-  const coinGain = calcMatchCoins(matchResult, streakAfter, Math.max(0, newLevelInfo.level - oldLevelInfo.level));
-  updates.coins = increment(coinGain);
-  state._lastCoinAward = coinGain;
+  state._lastCoinAward = 0;   // RoshCoins are bought, not earned
   // Detect newly unlocked titles
   let newTitles = [];
   if(leveledUp){
@@ -30178,10 +30453,8 @@ let updateMatchStats = async function(matchResult){
     } else if(matchResult === 'lose'){
       state.profile.currentStreak = 0;
     }
-    // Apply XP + coins locally
+    // Apply XP locally
     state.profile.totalXp = newTotalXp;
-    state.profile.coins = (state.profile.coins || 0) + coinGain;
-    updateCoinPill(true);
     if(wasInPlacement) state.profile.placementsDone = placedBefore + 1;
     if(justFinishedPlacement){
       // Celebrate the rank reveal with the (placement-flavoured) rank-up overlay.
@@ -30304,15 +30577,6 @@ function populateMatchXpCard(){
   const bd = $('#mxpBreakdown');
   if(bd){
     bd.innerHTML = '';
-    if(state._lastCoinAward > 0){
-      const coin = document.createElement('span');
-      coin.className = 'mxp-chip mxp-coin';
-      coin.innerHTML = `<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-coin"/></svg> <b id="mxpCoinNum">+0</b>`;
-      coin.title = 'RoshCoins — spend them in the Item Shop';
-      bd.appendChild(coin);
-      try { animateCount('#mxpCoinNum', 0, state._lastCoinAward, { prefix: '+', dur: 900 }); }
-      catch(e){ const n = $('#mxpCoinNum'); if(n) n.textContent = '+' + state._lastCoinAward; }
-    }
     (award.breakdown || []).forEach(b => {
       const chip = document.createElement('span');
       chip.className = 'mxp-chip';
@@ -33155,13 +33419,10 @@ function claimDailyLoginReward(){
   let amount = reward.xp ? levelScaledXp(reward.xp / 500) : 0;
   let comebackBonus = 0;
   if(info.comeback){ comebackBonus = Math.min(levelScaledXp(.5), levelScaledXp(.1) + info.daysAway * 25); amount += comebackBonus; }
-  // RoshCoins ride along with every login — scale gently with the streak.
-  const loginCoins = 40 + Math.min(60, info.streak * 5);
-  state._lastLoginCoins = loginCoins;
+  state._lastLoginCoins = 0;   // RoshCoins are bought, not earned
   try { showLoginReward(reward, amount, info.streak, dayInWeek, comebackBonus); } catch(e){}
   if(amount > 0) grantXp(amount, comebackBonus ? 'Welcome back' : 'Daily login', { silent: true });
   if(reward.token){ try { grantXpTokens({ [reward.token]: 1 }, 'Daily reward', { silent: true }); } catch(e){} }
-  try { grantCoins(loginCoins, 'Daily login', { silent: true }); } catch(e){}
 }
 const XPT_SVG_MINI = '<svg class="lr-token-mini" viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-xptoken"/></svg>';
 const XP_SVG_MINI = '<svg class="lr-token-mini" viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-xp"/></svg>';
@@ -33175,7 +33436,6 @@ function showLoginReward(reward, amount, streak, dayInWeek, comebackBonus){
   const headBits = [];
   if(amount > 0) headBits.push(`+${amount} XP`);
   if(reward.token) headBits.push(`<svg viewBox="0 0 24 24" width="17" height="17" style="vertical-align:-3px;"><use href="#i-xptoken"/></svg> ${XP_TOKEN_TYPES[reward.token].label} 2× XP token`);
-  if(state._lastLoginCoins) headBits.push(`<svg viewBox="0 0 24 24" width="17" height="17" style="vertical-align:-3px;"><use href="#i-coin"/></svg> ${state._lastLoginCoins}`);
   const amtEl = $('#lrAmount'); if(amtEl) amtEl.innerHTML = headBits.join(' <span class="lr-amp">&</span> ') || 'Reward!';
   setText('#lrStreak', `Day ${streak} login streak 🔥`);
   const cal = $('#lrCalendar');
@@ -36079,4 +36339,3 @@ setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
-// ===== please work =====
