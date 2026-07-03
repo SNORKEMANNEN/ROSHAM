@@ -16246,19 +16246,19 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
   border:2.5px solid var(--fxc, #fff);
   filter:drop-shadow(0 0 8px var(--fxc, #fff));
 }
-.cx-frame-top .tl{ left:-26px; top:6px; border-right:none; border-bottom:none; border-radius:16px 0 0 0; }
-.cx-frame-top .tr{ right:-26px; top:6px; border-left:none; border-bottom:none; border-radius:0 16px 0 0; }
-.cx-frame-edge .bl{ left:-26px; bottom:6px; border-right:none; border-top:none; border-radius:0 0 0 16px; }
-.cx-frame-edge .br{ right:-26px; bottom:6px; border-left:none; border-top:none; border-radius:0 0 16px 0; }
-.cx-frame-top .cxline{ position:absolute; left:26px; right:26px; top:8px; height:2px; border-radius:999px;
+.cx-frame-top .tl{ left:6px; top:6px; border-right:none; border-bottom:none; border-radius:16px 0 0 0; }
+.cx-frame-top .tr{ right:6px; top:6px; border-left:none; border-bottom:none; border-radius:0 16px 0 0; }
+.cx-frame-edge .bl{ left:6px; bottom:6px; border-right:none; border-top:none; border-radius:0 0 0 16px; }
+.cx-frame-edge .br{ right:6px; bottom:6px; border-left:none; border-top:none; border-radius:0 0 16px 0; }
+.cx-frame-top .cxline{ position:absolute; left:48px; right:48px; top:8px; height:2px; border-radius:999px;
   background:linear-gradient(90deg, transparent, var(--fxc, #fff), transparent); opacity:.75; box-shadow:0 0 12px var(--fxc, #fff); }
-.cx-frame-edge .cxline{ position:absolute; left:26px; right:26px; bottom:8px; height:2px; border-radius:999px;
+.cx-frame-edge .cxline{ position:absolute; left:48px; right:48px; bottom:8px; height:2px; border-radius:999px;
   background:linear-gradient(90deg, transparent, var(--fxc, #fff), transparent); opacity:.75; box-shadow:0 0 12px var(--fxc, #fff); }
 @media (max-width:600px){
   .cx-frame-top{ margin-top:-20px; }
   .cx-frame-top b, .cx-frame-edge b{ width:30px; height:30px; }
-  .cx-frame-top .tl, .cx-frame-edge .bl{ left:-14px; }
-  .cx-frame-top .tr, .cx-frame-edge .br{ right:-14px; }
+  .cx-frame-top .tl, .cx-frame-edge .bl{ left:4px; }
+  .cx-frame-top .tr, .cx-frame-edge .br{ right:4px; }
 }
 /* Side borders — the frame hugs the whole card, always */
 .profile-modal[class*="cxf-"]{ border:1.5px solid color-mix(in srgb, var(--fxc, #fff) 55%, transparent) !important; }
@@ -16847,6 +16847,331 @@ body.low-power :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .
 .cck-note{ margin:10px 0 0; font-family:var(--font-mono); font-size:10px; letter-spacing:.04em; color:var(--text-faint); }
 body.reduced-motion .coin-pack, body.low-power .coin-pack,
 body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   CASES / LOOT BOXES — CS:GO-inspired case opening system
+   ════════════════════════════════════════════════════════════════════ */
+
+/* ── ASCENDED RARITY — the rarest, most exclusive tier ── */
+.rar-ascended{ --rc:#ff2d6b; }
+.shop-tile.rar-ascended{ border-color:rgba(255,45,107,.5); }
+.shop-tile.rar-ascended .st-rarity-tag{ background:linear-gradient(135deg, #ff2d6b, #ff6b3d); box-shadow:0 0 16px rgba(255,45,107,.5); }
+.shop-buy-modal.rar-ascended{ --rc:#ff2d6b; }
+.sbm-stage.rar-ascended{ --rc:#ff2d6b; }
+
+/* ── Case-exclusive cosmetic CSS effects ── */
+
+/* Singularity name — black hole distortion (the ULTIMATE cosmetic) */
+.cxn-singularity{
+  background:linear-gradient(90deg, #ff2d6b, #ff6b3d, #ffd33d, #ff2d6b);
+  background-size:300% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  animation:cxSingularity 3s ease infinite;
+  filter:drop-shadow(0 0 12px rgba(255,45,107,.7)) drop-shadow(0 0 28px rgba(255,107,61,.4));
+  font-weight:900; letter-spacing:-.03em;
+  position:relative;
+}
+@keyframes cxSingularity{
+  0%,100%{ background-position:0% 50%; }
+  50%{ background-position:100% 50%; }
+}
+
+/* Phantom name — ghostly phasing */
+.cxn-phantom{
+  background:linear-gradient(90deg, rgba(181,108,255,.9), rgba(255,255,255,.5), rgba(181,108,255,.9));
+  background-size:200% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  animation:cxPhantom 2.5s ease infinite;
+  filter:drop-shadow(0 0 8px rgba(181,108,255,.5));
+}
+@keyframes cxPhantom{
+  0%,100%{ opacity:1; background-position:0% 50%; }
+  50%{ opacity:.5; background-position:100% 50%; }
+}
+
+/* Matrix name — digital cascade */
+.cxn-matrix{
+  background:linear-gradient(180deg, #0f0, #0a0);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 6px rgba(0,255,0,.6));
+  text-shadow:none;
+  animation:cxMatrix 1.5s steps(3) infinite;
+}
+@keyframes cxMatrix{ 0%,100%{ filter:drop-shadow(0 0 6px rgba(0,255,0,.6)); } 50%{ filter:drop-shadow(0 0 12px rgba(0,255,0,.8)) drop-shadow(0 2px 4px rgba(0,255,0,.3)); } }
+
+/* Ocean name — wave flow */
+.cxn-ocean{
+  background:linear-gradient(90deg, #0077b6, #48cae4, #0077b6);
+  background-size:200% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  animation:cxOcean 3s ease infinite;
+  filter:drop-shadow(0 0 6px rgba(72,202,228,.5));
+}
+@keyframes cxOcean{ 0%,100%{ background-position:0% 50%; } 50%{ background-position:100% 50%; } }
+
+/* Tags */
+.cxt-apex{ background:linear-gradient(135deg, #ffb336, #ff6b3d); padding:2px 8px; border-radius:6px; font-weight:900; color:#fff !important; text-shadow:0 1px 3px rgba(0,0,0,.4); }
+.cxt-sigma{ background:linear-gradient(135deg, #b56cff, #5fc9ff); padding:2px 8px; border-radius:6px; font-weight:900; color:#fff !important; }
+.cxt-ghost{ background:rgba(181,108,255,.15); border:1px solid rgba(181,108,255,.3); padding:2px 8px; border-radius:6px; animation:cxGhostTag 2s ease infinite; }
+@keyframes cxGhostTag{ 0%,100%{ opacity:1; } 50%{ opacity:.45; } }
+
+/* Avatar effects */
+.cxa-quantum::after{
+  content:''; position:absolute; inset:-12px; border-radius:50%;
+  background:conic-gradient(from 0deg, rgba(255,45,107,.35), rgba(181,108,255,.35), rgba(95,201,255,.35), rgba(255,45,107,.35));
+  animation:cxaSpin 4s linear infinite;
+  opacity:.8;
+}
+.cxa-supernova::after{
+  content:''; position:absolute; inset:-14px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,179,54,.6) 20%, rgba(255,94,61,.3) 50%, transparent 70%);
+  animation:cxaSupernova 2s ease-in-out infinite;
+}
+@keyframes cxaSupernova{ 0%,100%{ opacity:.7; } 50%{ opacity:1; } }
+.cxa-storm::after{
+  content:''; position:absolute; inset:-10px; border-radius:50%;
+  border:2px solid rgba(95,201,255,.6);
+  box-shadow:0 0 12px rgba(95,201,255,.5), inset 0 0 12px rgba(95,201,255,.2);
+  animation:cxaStorm 1.5s ease infinite;
+}
+@keyframes cxaStorm{ 0%,100%{ opacity:.6; } 50%{ opacity:1; } }
+.cxa-cherry::after{
+  content:''; position:absolute; inset:-10px; border-radius:50%;
+  border:2px solid rgba(255,182,193,.5);
+  box-shadow:0 0 10px rgba(255,182,193,.3);
+  animation:cxaSpin 6s linear infinite;
+}
+
+/* Frame washes */
+.profile-modal.cxf-aurora, .cx-prev-frame.cxf-aurora, .locker-look.cxf-aurora, .sbm-profile-prev.cxf-aurora{
+  --fxc:#22d3a3;
+  background:
+    linear-gradient(125deg, rgba(34,211,163,.12), rgba(95,201,255,.1) 30%, rgba(181,108,255,.1) 60%, rgba(34,211,163,.12)),
+    linear-gradient(180deg, #0e1a16, #0c0e18) !important;
+  animation:cxfAurora 6s ease infinite;
+}
+@keyframes cxfAurora{
+  0%{ --fxc:#22d3a3; } 33%{ --fxc:#5fc9ff; } 66%{ --fxc:#b56cff; } 100%{ --fxc:#22d3a3; }
+}
+.profile-modal.cxf-hologram, .cx-prev-frame.cxf-hologram, .locker-look.cxf-hologram, .sbm-profile-prev.cxf-hologram{
+  --fxc:#b56cff;
+  background:
+    linear-gradient(135deg, rgba(181,108,255,.08), rgba(95,201,255,.06) 50%, rgba(255,94,200,.08)),
+    linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
+}
+.profile-modal.cxf-carbon, .cx-prev-frame.cxf-carbon, .locker-look.cxf-carbon, .sbm-profile-prev.cxf-carbon{
+  --fxc:#888;
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 6px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.02) 0 2px, transparent 2px 6px),
+    linear-gradient(180deg, #1a1a1e, #111114) !important;
+}
+
+/* ── CASE INVENTORY (shop section) ── */
+.shop-sec-cases .shop-slab::before{ background:linear-gradient(180deg, #ff2d6b, #b56cff); }
+.case-inv-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:14px; }
+.case-card{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;
+  padding:22px 14px 14px; border-radius:16px; overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% 0%, rgba(181,108,255,.12), transparent 55%),
+    linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.01));
+  border:1.5px solid var(--line);
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1), box-shadow .25s, border-color .25s;
+}
+.case-card:hover{ transform:translateY(-4px) scale(1.02); border-color:rgba(181,108,255,.5); box-shadow:0 18px 40px -15px rgba(0,0,0,.7), 0 0 30px -8px rgba(181,108,255,.3); }
+.case-card:active{ transform:translateY(-1px) scale(.97); }
+.case-card-glow{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:120px; height:120px; border-radius:50%;
+  background:radial-gradient(circle, rgba(181,108,255,.25), transparent 70%);
+  pointer-events:none; animation:casePulse 3s ease infinite;
+}
+@keyframes casePulse{ 0%,100%{ opacity:.5; } 50%{ opacity:.8; } }
+.case-card-icon{ font-size:48px; position:relative; z-index:1; filter:drop-shadow(0 4px 12px rgba(0,0,0,.5)); }
+.case-card-name{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:14px; color:#fff; position:relative; z-index:1; text-align:center; }
+.case-card-count{
+  display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:999px;
+  background:rgba(255,255,255,.08); border:1px solid var(--line);
+  font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-dim); position:relative; z-index:1;
+}
+.case-card-count b{ color:var(--mint); }
+.case-empty-msg{
+  grid-column:1 / -1; text-align:center; padding:24px;
+  color:var(--text-faint); font-family:var(--font-mono); font-size:12px; letter-spacing:.05em;
+}
+
+/* ── CASE DETAILS MODAL ── */
+.case-detail-modal{ max-width:460px; text-align:center; }
+.case-detail-icon{ font-size:80px; margin:8px 0 4px; filter:drop-shadow(0 8px 20px rgba(0,0,0,.5)); }
+.case-detail-name{ font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:28px; letter-spacing:-.01em; }
+.case-detail-desc{ color:var(--text-dim); font-size:13px; margin:4px 0 14px; }
+.case-detail-stats{ display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:0 0 16px; }
+.case-detail-stat{ padding:10px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid var(--line-soft); }
+.case-detail-stat .v{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:18px; }
+.case-detail-stat .l{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.15em; color:var(--text-faint); margin-top:2px; }
+.case-odds{ margin:0 0 16px; }
+.case-odds-title{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:13px; letter-spacing:.08em; color:var(--text-dim); margin-bottom:8px; }
+.case-odds-row{ display:flex; align-items:center; gap:8px; padding:6px 0; border-bottom:1px solid var(--line-soft); }
+.case-odds-row:last-child{ border-bottom:none; }
+.case-odds-dot{ width:10px; height:10px; border-radius:50%; flex:0 0 auto; }
+.case-odds-label{ flex:1; text-align:left; font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:13px; }
+.case-odds-pct{ font-family:var(--font-mono); font-size:12px; font-weight:700; }
+.case-odds-bar{ flex:2; height:6px; border-radius:999px; background:rgba(255,255,255,.06); overflow:hidden; }
+.case-odds-bar i{ display:block; height:100%; border-radius:999px; }
+.case-open-btn{
+  width:100%; min-height:52px; justify-content:center; font-size:16px; gap:8px;
+  background:linear-gradient(135deg, #b56cff, #ff5ec8) !important; border:none !important; color:#fff !important;
+  box-shadow:0 8px 24px -8px rgba(181,108,255,.5);
+}
+.case-open-btn:hover{ box-shadow:0 12px 32px -8px rgba(181,108,255,.7); }
+.case-contents-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(100px, 1fr)); gap:8px; margin:12px 0; }
+.case-content-item{
+  padding:8px 6px; border-radius:10px; text-align:center; font-size:11px;
+  background:rgba(255,255,255,.03); border:1px solid var(--line-soft);
+  transition:transform .15s;
+}
+.case-content-item:hover{ transform:scale(1.05); }
+.case-content-item .cci-name{ font-weight:700; margin-top:4px; }
+.case-content-item .cci-rarity{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.1em; margin-top:2px; }
+
+/* ── CASE OPENING OVERLAY — CS:GO-inspired spinning reel ── */
+.case-opening-overlay{
+  position:fixed; inset:0; z-index:600;
+  background:rgba(4,2,8,.97);
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  animation:fadeIn .3s ease;
+}
+.case-opening-overlay.show{ display:flex; }
+.case-opening-header{
+  font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:28px;
+  letter-spacing:.04em; margin-bottom:24px; text-align:center; color:var(--text-dim);
+}
+.case-opening-header b{ color:#fff; }
+.case-reel-viewport{
+  position:relative; width:min(90vw, 680px); height:140px;
+  overflow:hidden; border-radius:18px;
+  background:rgba(255,255,255,.02);
+  border:2px solid var(--line);
+  box-shadow:0 0 60px -10px rgba(181,108,255,.2), inset 0 0 40px rgba(0,0,0,.5);
+}
+.case-reel-pointer{
+  position:absolute; top:0; left:50%; transform:translateX(-50%); z-index:10;
+  width:3px; height:100%;
+  background:linear-gradient(180deg, #ff2d6b, #ff5ec8);
+  box-shadow:0 0 20px rgba(255,45,107,.7), 0 0 40px rgba(255,45,107,.3);
+}
+.case-reel-pointer::before{
+  content:''; position:absolute; top:-8px; left:50%; transform:translateX(-50%);
+  width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent;
+  border-top:10px solid #ff2d6b; filter:drop-shadow(0 2px 6px rgba(255,45,107,.7));
+}
+.case-reel-pointer::after{
+  content:''; position:absolute; bottom:-8px; left:50%; transform:translateX(-50%);
+  width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent;
+  border-bottom:10px solid #ff2d6b; filter:drop-shadow(0 -2px 6px rgba(255,45,107,.7));
+}
+.case-reel-strip{
+  display:flex; gap:0; height:100%;
+  will-change:transform;
+}
+.case-reel-item{
+  flex:0 0 130px; height:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  border-right:1px solid rgba(255,255,255,.06);
+  padding:8px;
+  transition:none;
+}
+.case-reel-item .cri-preview{ font-size:28px; }
+.case-reel-item .cri-name{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:11px; text-align:center; line-height:1.2; }
+.case-reel-item .cri-rarity{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.1em; }
+.case-reel-item.rar-rare .cri-rarity{ color:#5fc9ff; }
+.case-reel-item.rar-epic .cri-rarity{ color:#b56cff; }
+.case-reel-item.rar-legendary .cri-rarity{ color:#ffb336; }
+.case-reel-item.rar-mythic .cri-rarity{ color:#ff5ec8; }
+.case-reel-item.rar-ascended .cri-rarity{ color:#ff2d6b; }
+.case-reel-item.rar-ascended{ background:linear-gradient(180deg, rgba(255,45,107,.08), rgba(255,107,61,.05)); }
+.case-reel-item.rar-mythic{ background:rgba(255,94,200,.04); }
+.case-reel-item.rar-legendary{ background:rgba(255,179,54,.04); }
+
+/* Reel left/right gradient fade */
+.case-reel-viewport::before, .case-reel-viewport::after{
+  content:''; position:absolute; top:0; bottom:0; width:80px; z-index:5; pointer-events:none;
+}
+.case-reel-viewport::before{ left:0; background:linear-gradient(90deg, rgba(4,2,8,.95), transparent); }
+.case-reel-viewport::after{ right:0; background:linear-gradient(-90deg, rgba(4,2,8,.95), transparent); }
+
+/* ── REVEAL PHASE ── */
+.case-reveal{
+  display:none; flex-direction:column; align-items:center; gap:16px;
+  animation:caseRevealIn .5s cubic-bezier(.2,1.2,.3,1) both;
+}
+.case-reveal.show{ display:flex; }
+@keyframes caseRevealIn{ from{ opacity:0; transform:scale(.8) translateY(20px); } to{ opacity:1; transform:none; } }
+.case-reveal-glow{
+  width:180px; height:180px; border-radius:50%;
+  display:grid; place-items:center;
+  position:relative;
+}
+.case-reveal-glow::before{
+  content:''; position:absolute; inset:-20px; border-radius:50%;
+  animation:caseGlowPulse 2s ease infinite;
+}
+@keyframes caseGlowPulse{ 0%,100%{ transform:scale(1); opacity:.5; } 50%{ transform:scale(1.15); opacity:.9; } }
+.case-reveal-icon{ font-size:64px; position:relative; z-index:1; }
+.case-reveal-rarity{
+  font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:14px; letter-spacing:.2em;
+}
+.case-reveal-name{
+  font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:36px; letter-spacing:-.01em; line-height:1.1;
+}
+.case-reveal-desc{ color:var(--text-dim); font-size:13px; max-width:360px; }
+.case-reveal-tag{
+  display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.05em;
+  background:rgba(255,255,255,.06); border:1px solid var(--line);
+}
+.case-reveal-actions{ display:flex; gap:10px; margin-top:8px; }
+.case-reveal-actions .btn{ min-height:44px; padding:0 20px; }
+
+/* Ascended reveal — extra celebration */
+.case-reveal.is-ascended .case-reveal-glow::before{
+  background:radial-gradient(circle, rgba(255,45,107,.5), rgba(255,107,61,.3), transparent 70%);
+  animation:caseGlowPulse 1.2s ease infinite;
+}
+.case-reveal.is-ascended .case-reveal-name{
+  background:linear-gradient(90deg, #ff2d6b, #ff6b3d, #ffd33d);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  filter:drop-shadow(0 0 12px rgba(255,45,107,.5));
+}
+.case-reveal-particles{ position:absolute; inset:0; pointer-events:none; overflow:hidden; }
+.case-reveal-particles .cr-particle{
+  position:absolute; width:4px; height:4px; border-radius:50%;
+  animation:crParticle 2s ease-out forwards;
+}
+@keyframes crParticle{
+  0%{ transform:translate(0,0) scale(1); opacity:1; }
+  100%{ transform:translate(var(--dx), var(--dy)) scale(0); opacity:0; }
+}
+
+/* ── Case history log ── */
+.case-history{ margin:12px 0; max-height:200px; overflow-y:auto; }
+.case-history-row{
+  display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:10px;
+  font-size:12px; transition:background .15s;
+}
+.case-history-row:hover{ background:rgba(255,255,255,.03); }
+.case-history-row .chr-dot{ width:8px; height:8px; border-radius:50%; flex:0 0 auto; }
+.case-history-row .chr-name{ flex:1; font-weight:700; }
+.case-history-row .chr-time{ color:var(--text-faint); font-family:var(--font-mono); font-size:10px; }
+
+@media (max-width:560px){
+  .case-inv-grid{ grid-template-columns:repeat(2, 1fr); }
+  .case-reel-viewport{ height:120px; }
+  .case-reel-item{ flex:0 0 110px; }
+  .case-reveal-name{ font-size:28px; }
+  .case-detail-stats{ grid-template-columns:1fr; }
+}
 
 </style>
 </head>
@@ -18130,11 +18455,21 @@ const FIREBASE_CONFIG = {
           <p class="shop-note"><b>Note:</b> these items are cosmetic only and grant no competitive advantage. Equip what you own in <b>Edit profile → Cosmetics</b>.</p>
         </div>
 
+          <section class="shop-sec shop-sec-cases" id="shopSecCases" data-sec="cases" data-sec-label="Cases">
+            <div class="shop-slab">
+              <span class="shop-slab-title">CASES</span>
+              <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-star"/></svg> <b id="shopCaseCount">0</b> IN INVENTORY</span>
+            </div>
+            <p class="shop-coins-sub">Earn cases every 7th level. Each case contains exclusive cosmetics you can't buy in the shop — including the legendary <b style="color:#ff2d6b">Singularity</b>.</p>
+            <div class="case-inv-grid" id="caseInventoryGrid"></div>
+          </section>
+
         <!-- RIGHT JUMP RAIL — hover to expand, click to glide to a section -->
         <nav class="shop-rail" id="shopRail" aria-label="Shop sections">
           <button type="button" class="shop-rail-item active" data-rail="featured"><i class="sri-dot"></i><span class="sri-label">Featured</span></button>
           <button type="button" class="shop-rail-item" data-rail="daily"><i class="sri-dot"></i><span class="sri-label">Daily items</span></button>
           <button type="button" class="shop-rail-item sri-coins" data-rail="coins"><i class="sri-dot"></i><span class="sri-label">RoshCoins</span></button>
+          <button type="button" class="shop-rail-item" data-rail="cases"><i class="sri-dot"></i><span class="sri-label">Cases</span></button>
         </nav>
 
         <!-- NEXT-SECTION button — floats bottom-center while browsing the shop -->
@@ -20071,6 +20406,54 @@ const FIREBASE_CONFIG = {
         <span class="sbm-gift-cost">costs <svg viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-coin"/></svg> <b id="sbmGiftCost">—</b> · refunded if declined</span>
       </div>
       <div class="sbm-gift-list" id="sbmGiftList"><div class="side-empty">Loading friends…</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CASE DETAIL MODAL -->
+<div class="modal-bg" id="caseDetailModal">
+  <div class="modal case-detail-modal">
+    <button class="modal-close" data-close="caseDetailModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <div class="case-detail-icon" id="caseDetailIcon">📦</div>
+    <h3 class="case-detail-name" id="caseDetailName">—</h3>
+    <p class="case-detail-desc" id="caseDetailDesc">—</p>
+    <div class="case-detail-stats" id="caseDetailStats"></div>
+    <div class="case-odds" id="caseOdds">
+      <div class="case-odds-title">DROP RATES</div>
+    </div>
+    <h4 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:13px; letter-spacing:.08em; color:var(--text-dim); margin:0 0 4px;">POSSIBLE DROPS</h4>
+    <div class="case-contents-grid" id="caseContentsGrid"></div>
+    <div class="case-history" id="caseHistory" style="display:none;">
+      <div class="case-odds-title" style="margin-top:10px;">YOUR RECENT DROPS</div>
+      <div id="caseHistoryList"></div>
+    </div>
+    <button class="btn btn-primary case-open-btn" id="caseOpenBtn">
+      <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-star"/></svg>
+      Open Case
+    </button>
+    <div style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:8px; letter-spacing:.04em;" id="caseOwnedCount">You own 0 of this case</div>
+  </div>
+</div>
+
+<!-- CASE OPENING OVERLAY — CS:GO-inspired animated reel -->
+<div class="case-opening-overlay" id="caseOpeningOverlay">
+  <div class="case-reveal-particles" id="caseRevealParticles"></div>
+  <div class="case-opening-header">OPENING <b id="caseOpeningName">—</b></div>
+  <div class="case-reel-viewport" id="caseReelViewport">
+    <div class="case-reel-pointer"></div>
+    <div class="case-reel-strip" id="caseReelStrip"></div>
+  </div>
+  <div class="case-reveal" id="caseReveal">
+    <div class="case-reveal-glow" id="caseRevealGlow">
+      <span class="case-reveal-icon" id="caseRevealIcon">✦</span>
+    </div>
+    <div class="case-reveal-rarity" id="caseRevealRarity">LEGENDARY</div>
+    <div class="case-reveal-name" id="caseRevealName">—</div>
+    <div class="case-reveal-desc" id="caseRevealDesc">—</div>
+    <div class="case-reveal-tag" id="caseRevealTag"></div>
+    <div class="case-reveal-actions">
+      <button class="btn btn-ghost" id="caseRevealClose">Close</button>
+      <button class="btn btn-primary" id="caseRevealEquip" style="display:none;"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-star"/></svg> Equip now</button>
     </div>
   </div>
 </div>
@@ -23020,6 +23403,7 @@ async function onAuthChanged(user){
   try { if(isAdmin()){ const el = $('#navAdmin'); if(el) el.style.display = ''; } } catch(e){}
 
   showScreen('landing');
+  try { updateShopBadge(); } catch(e){}
 
   // Check for pending forfeit notice (set by beforeunload during a previous session)
   checkForfeitNotice();
@@ -23027,6 +23411,25 @@ async function onAuthChanged(user){
   // Self-heal the current season's title from the player's standing rating, in
   // case a match-end award was ever interrupted (silent — no toast on login).
   try { syncSeasonTitle(); } catch(e){}
+
+  // Retroactive case grant — existing players get all cases they should have
+  // earned from levels they already passed (runs once per account).
+  try {
+    if(state.profile && !state.profile.casesRetroGranted){
+      const base = state.profile.prestigeXp || 0;
+      const lvl = levelFromXp((state.profile.totalXp || 0) - base).level;
+      const owed = Math.floor(lvl / 7);
+      const already = Object.values(state.profile.cases || {}).reduce((s, n) => s + Math.max(0, n), 0);
+      const stats = JSON.parse(localStorage.getItem('rosham_case_stats') || '{}');
+      const opened = stats.total || 0;
+      const net = owed - already - opened;
+      state.profile.casesRetroGranted = true;
+      updateDoc(doc(state.db, 'users', state.user.uid), { casesRetroGranted: true }).catch(()=>{});
+      if(net > 0){
+        setTimeout(() => grantCase('case_roshcam', net, `Retroactive reward for level ${lvl}`), 2000);
+      }
+    }
+  } catch(e){ console.warn('[cases] retro grant', e); }
 
   // First-time camera calibration — auto-opens once on the first landing.
   try {
@@ -25374,7 +25777,7 @@ setInterval(() => {
   const active = xpBoostActive();
   updateBoostPill();
   try { updateCoinPill(); } catch(e){}
-  try { if(_shopPageActive()){ const t = fmtCountdown(msUntilMidnight()); document.querySelectorAll('.js-shop-timer').forEach(el => { el.textContent = t; }); } } catch(e){}
+  try { if(_shopPageActive()){ const today = getTodayKey(); if(state._shopRenderedDay && state._shopRenderedDay !== today){ state._shopRenderedDay = today; renderShopItems(); } const t = fmtCountdown(msUntilMidnight()); document.querySelectorAll('.js-shop-timer').forEach(el => { el.textContent = t; }); } } catch(e){}
   // Re-render the panel when the weekend window flips so tokens enable/disable.
   const weekend = isDoubleXP();
   if(weekend !== state._wasWeekendXp){ state._wasWeekendXp = weekend; try { renderXpBoostPanel(); } catch(e){} }
@@ -25435,8 +25838,9 @@ const CX_RARITY = {
   epic:      { label: 'EPIC',      color: '#b56cff' },
   legendary: { label: 'LEGENDARY', color: '#ffb336' },
   mythic:    { label: 'MYTHIC',    color: '#ff5ec8' },
+  ascended:  { label: 'ASCENDED',  color: '#ff2d6b' },
 };
-const CX_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000 };
+const CX_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000, ascended: 0 };
 const CX_TYPE_LABEL = { name: 'NAME STYLE', tag: 'PLAYER TAG', avatar: 'AVATAR EFFECT', frame: 'PROFILE FRAME' };
 
 // ---------- CATALOG ----------
@@ -25481,7 +25885,26 @@ const COSMETICS = [
   { id:'fr_blood',   type:'frame', name:'Crimson Court', rarity:'epic',      cls:'cxf-blood',   desc:'Dark red velvet and a faint heartbeat glow.' },
   { id:'fr_circuit', type:'frame', name:'Circuit',       rarity:'rare',      cls:'cxf-circuit', desc:'Teal traces route power around your profile.' },
 ];
-COSMETICS.forEach(c => { c.price = CX_PRICE[c.rarity]; });
+// ── CASE-EXCLUSIVE COSMETICS (can only be obtained from cases) ──
+const CASE_COSMETICS = [
+  { id:'ns_singularity', type:'name',   name:'Singularity',       rarity:'ascended',  cls:'cxn-singularity', desc:'Reality bends around your name — a black hole distortion with an event horizon glow. The rarest cosmetic in ROSHCAM.', caseOnly:true },
+  { id:'av_quantum',     type:'avatar', name:'Quantum Flux',      rarity:'mythic',    cls:'cxa-quantum',     desc:'A shimmering particle cloud that phases between dimensions around your avatar.', caseOnly:true },
+  { id:'fr_aurora',      type:'frame',  name:'Aurora Borealis',   rarity:'mythic',    cls:'cxf-aurora',      desc:'Northern lights dance across your entire profile in mesmerizing waves.', caseOnly:true },
+  { id:'ns_phantom',     type:'name',   name:'Phantom',           rarity:'legendary', cls:'cxn-phantom',     desc:'Your name phases in and out like a ghost between realities.', caseOnly:true },
+  { id:'tg_apex',        type:'tag',    name:'Apex Predator',     rarity:'legendary', cls:'cxt-apex',   text:'APEX 🦅', desc:'Top of the food chain. Undisputed.', caseOnly:true },
+  { id:'av_supernova',   type:'avatar', name:'Supernova',         rarity:'legendary', cls:'cxa-supernova',   desc:'A collapsing star explodes outward from your avatar in slow motion.', caseOnly:true },
+  { id:'ns_matrix',      type:'name',   name:'Matrix',            rarity:'epic',      cls:'cxn-matrix',      desc:'Digital rain cascades down through your name.', caseOnly:true },
+  { id:'tg_sigma',       type:'tag',    name:'Sigma',             rarity:'epic',      cls:'cxt-sigma',  text:'SIGMA Σ', desc:'On your own frequency.', caseOnly:true },
+  { id:'av_storm',       type:'avatar', name:'Thunderstorm',      rarity:'epic',      cls:'cxa-storm',       desc:'Lightning arcs crackle around your avatar.', caseOnly:true },
+  { id:'fr_hologram',    type:'frame',  name:'Holographic',       rarity:'epic',      cls:'cxf-hologram',    desc:'A shifting holographic sheen across your entire profile.', caseOnly:true },
+  { id:'ns_ocean',       type:'name',   name:'Deep Ocean',        rarity:'rare',      cls:'cxn-ocean',       desc:'Gentle waves roll through your name in deep blue.', caseOnly:true },
+  { id:'tg_ghost',       type:'tag',    name:'Ghost',             rarity:'rare',      cls:'cxt-ghost',  text:'GHOST 👻', desc:'Now you see me, now you don\'t.', caseOnly:true },
+  { id:'av_cherry',      type:'avatar', name:'Cherry Blossom',    rarity:'rare',      cls:'cxa-cherry',      desc:'Soft pink petals drift around your avatar.', caseOnly:true },
+  { id:'fr_carbon',      type:'frame',  name:'Carbon Fiber',      rarity:'rare',      cls:'cxf-carbon',      desc:'Premium carbon weave wraps your profile.', caseOnly:true },
+];
+CASE_COSMETICS.forEach(c => { c.price = 0; });
+COSMETICS.push(...CASE_COSMETICS);
+COSMETICS.forEach(c => { if(!c.price) c.price = CX_PRICE[c.rarity] || 0; });
 const COSMETIC_BY_ID = {}; COSMETICS.forEach(c => { COSMETIC_BY_ID[c.id] = c; });
 const CX_SLOTS = ['name', 'tag', 'avatar', 'frame'];
 
@@ -25695,9 +26118,10 @@ function shopRotation(){
   let seed = 7; for(const ch of day) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
   const rnd = _mulberry(seed);
   const shuffle = arr => { const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const heavy = shuffle(COSMETICS.filter(c => c.rarity === 'legendary' || c.rarity === 'mythic'));
+  const shopPool = COSMETICS.filter(c => !c.caseOnly);
+  const heavy = shuffle(shopPool.filter(c => c.rarity === 'legendary' || c.rarity === 'mythic'));
   const featured = heavy.slice(0, 2);
-  const rest = shuffle(COSMETICS.filter(c => !featured.includes(c)));
+  const rest = shuffle(shopPool.filter(c => !featured.includes(c)));
   // Daily row: aim for a spread of types so the shop never feels samey.
   const daily = [];
   for(const t of CX_SLOTS){ const hit = rest.find(c => c.type === t && !daily.includes(c)); if(hit) daily.push(hit); }
@@ -25836,16 +26260,34 @@ on('#shopNextBtn', 'click', () => {
   try { haptic(8); } catch(e){}
 });
 
+function updateShopBadge(){
+  try {
+    const b = $('#navShopBadge');
+    if(!b) return;
+    const cases = totalCaseCount();
+    if(cases > 0){
+      b.textContent = `${cases} 📦`;
+      b.style.display = '';
+    } else if(!localStorage.getItem('rosham_shop_seen')){
+      b.textContent = 'NEW';
+      b.style.display = '';
+    } else {
+      b.style.display = 'none';
+    }
+  } catch(e){}
+}
 function renderShopPage(){
+  state._shopRenderedDay = getTodayKey();
   renderShopWallet();
   renderShopItems();
   renderCoinPacks();
+  try { renderCaseInventory(); } catch(e){}
   shopSpyInit();
   shopSetActiveSec(state._shopActiveSec || 'featured');
-  try { localStorage.setItem('rosham_shop_seen', '1'); const b = $('#navShopBadge'); if(b) b.style.display = 'none'; } catch(e){}
+  try { localStorage.setItem('rosham_shop_seen', '1'); updateShopBadge(); } catch(e){}
 }
 // "NEW" nudge on the Shop nav entry until the first visit.
-try { if(!localStorage.getItem('rosham_shop_seen')){ const b = $('#navShopBadge'); if(b) b.style.display = ''; } } catch(e){}
+try { updateShopBadge(); } catch(e){}
 
 // Tile click → purchase modal; owned items jump to the cosmetics editor.
 document.addEventListener('click', (e) => {
@@ -25934,6 +26376,372 @@ on('#sbmGiftBtn', 'click', () => {
     renderGiftPicker(item);
   }
 });
+
+// ═══════════════════════════════════════════════════════════════════
+// CASES / LOOT BOXES — CS:GO-inspired case opening with exclusive drops
+// Earned every 7th level. Each case contains exclusive cosmetics with
+// tiered drop rates: Rare 60%, Epic 25%, Legendary 10%, Mythic 4%,
+// Ascended 1%.
+// ═══════════════════════════════════════════════════════════════════
+
+const CASE_DROP_RATES = [
+  { rarity:'ascended',  weight:1,  label:'Ascended',  color:'#ff2d6b' },
+  { rarity:'mythic',    weight:4,  label:'Mythic',    color:'#ff5ec8' },
+  { rarity:'legendary', weight:10, label:'Legendary', color:'#ffb336' },
+  { rarity:'epic',      weight:25, label:'Epic',      color:'#b56cff' },
+  { rarity:'rare',      weight:60, label:'Rare',      color:'#5fc9ff' },
+];
+
+const CASE_TYPES = [
+  {
+    id:'case_roshcam',
+    name:'ROSHCAM Case',
+    icon:'📦',
+    desc:'The standard ROSHCAM case. Contains 14 exclusive cosmetics across all rarities — including the ultra-rare Singularity.',
+    pool: CASE_COSMETICS.map(c => c.id),
+  },
+];
+
+const CASE_BY_ID = {};
+CASE_TYPES.forEach(c => { CASE_BY_ID[c.id] = c; });
+const CASE_COSMETIC_BY_ID = {};
+CASE_COSMETICS.forEach(c => { CASE_COSMETIC_BY_ID[c.id] = c; });
+
+function getCaseInventory(){
+  const inv = state.profile?.cases || {};
+  return { ...inv };
+}
+function getCaseCount(caseId){
+  return Math.max(0, (getCaseInventory()[caseId] || 0));
+}
+function totalCaseCount(){
+  const inv = getCaseInventory();
+  return Object.values(inv).reduce((s, n) => s + Math.max(0, n), 0);
+}
+function getCaseHistory(){
+  try { return JSON.parse(localStorage.getItem('rosham_case_history') || '[]'); }
+  catch(e){ return []; }
+}
+function addCaseHistory(entry){
+  const hist = getCaseHistory();
+  hist.unshift({ ...entry, ts: Date.now() });
+  if(hist.length > 30) hist.length = 30;
+  try { localStorage.setItem('rosham_case_history', JSON.stringify(hist)); } catch(e){}
+}
+function getCaseStats(){
+  try { return JSON.parse(localStorage.getItem('rosham_case_stats') || '{}'); }
+  catch(e){ return {}; }
+}
+function updateCaseStats(rarity){
+  const s = getCaseStats();
+  s.total = (s.total || 0) + 1;
+  s[rarity] = (s[rarity] || 0) + 1;
+  try { localStorage.setItem('rosham_case_stats', JSON.stringify(s)); } catch(e){}
+  return s;
+}
+
+function rollCaseDrop(caseType){
+  const pool = caseType.pool.map(id => COSMETIC_BY_ID[id]).filter(Boolean);
+  const roll = Math.random() * 100;
+  let cum = 0;
+  let targetRarity = 'rare';
+  for(const tier of CASE_DROP_RATES){
+    cum += tier.weight;
+    if(roll < cum){ targetRarity = tier.rarity; break; }
+  }
+  const candidates = pool.filter(c => c.rarity === targetRarity);
+  if(candidates.length === 0){
+    const fallback = pool.filter(c => c.rarity === 'rare');
+    return fallback[Math.floor(Math.random() * fallback.length)] || pool[0];
+  }
+  return candidates[Math.floor(Math.random() * candidates.length)];
+}
+
+function renderCaseInventory(){
+  const grid = $('#caseInventoryGrid');
+  if(!grid) return;
+  const total = totalCaseCount();
+  setText('#shopCaseCount', total);
+  if(total === 0){
+    grid.innerHTML = `<div class="case-empty-msg">No cases yet — earn your first one at level 7! Cases drop every 7th level.</div>`;
+    return;
+  }
+  let html = '';
+  CASE_TYPES.forEach(ct => {
+    const count = getCaseCount(ct.id);
+    if(count <= 0) return;
+    html += `<button type="button" class="case-card" data-case-id="${ct.id}">
+      <span class="case-card-glow" aria-hidden="true"></span>
+      <span class="case-card-icon">${ct.icon}</span>
+      <span class="case-card-name">${escapeHTML(ct.name)}</span>
+      <span class="case-card-count"><b>×${count}</b></span>
+    </button>`;
+  });
+  grid.innerHTML = html;
+}
+
+on('#caseInventoryGrid', 'click', (e) => {
+  const card = e.target.closest('[data-case-id]');
+  if(!card) return;
+  openCaseDetail(card.dataset.caseId);
+  try { haptic(8); } catch(e2){}
+});
+
+function openCaseDetail(caseId){
+  const ct = CASE_BY_ID[caseId];
+  if(!ct) return;
+  const count = getCaseCount(ct.id);
+  setText('#caseDetailIcon', ct.icon);
+  setText('#caseDetailName', ct.name);
+  setText('#caseDetailDesc', ct.desc);
+  const stats = getCaseStats();
+  const owned = getCosmetics().owned.filter(id => CASE_COSMETIC_BY_ID[id]).length;
+  const statsEl = $('#caseDetailStats');
+  if(statsEl) statsEl.innerHTML = `
+    <div class="case-detail-stat"><div class="v">${count}</div><div class="l">IN INVENTORY</div></div>
+    <div class="case-detail-stat"><div class="v">${stats.total || 0}</div><div class="l">TOTAL OPENED</div></div>
+    <div class="case-detail-stat"><div class="v">${owned}/${CASE_COSMETICS.length}</div><div class="l">EXCLUSIVES OWNED</div></div>
+    <div class="case-detail-stat"><div class="v">${stats.ascended || 0}</div><div class="l">ASCENDED DROPS</div></div>`;
+  const oddsEl = $('#caseOdds');
+  if(oddsEl){
+    let oddsHTML = '<div class="case-odds-title">DROP RATES</div>';
+    CASE_DROP_RATES.forEach(tier => {
+      oddsHTML += `<div class="case-odds-row">
+        <span class="case-odds-dot" style="background:${tier.color};box-shadow:0 0 6px ${tier.color};"></span>
+        <span class="case-odds-label" style="color:${tier.color}">${tier.label}</span>
+        <span class="case-odds-bar"><i style="width:${tier.weight}%;background:${tier.color};box-shadow:0 0 8px ${tier.color};"></i></span>
+        <span class="case-odds-pct" style="color:${tier.color}">${tier.weight}%</span>
+      </div>`;
+    });
+    oddsEl.innerHTML = oddsHTML;
+  }
+  const contentsEl = $('#caseContentsGrid');
+  if(contentsEl){
+    contentsEl.innerHTML = ct.pool.map(id => {
+      const item = COSMETIC_BY_ID[id];
+      if(!item) return '';
+      const owned = ownsCosmetic(id);
+      const r = CX_RARITY[item.rarity];
+      return `<div class="case-content-item" style="border-color:${r.color}22;">
+        <div class="cci-rarity" style="color:${r.color}">${r.label}</div>
+        <div class="cci-name" style="color:${r.color}">${escapeHTML(item.name)}</div>
+        ${owned ? '<div style="font-size:9px;color:var(--mint);margin-top:2px;">OWNED</div>' : ''}
+      </div>`;
+    }).join('');
+  }
+  const histSection = $('#caseHistory');
+  const histList = $('#caseHistoryList');
+  if(histSection && histList){
+    const hist = getCaseHistory().filter(h => h.caseId === caseId).slice(0, 10);
+    if(hist.length > 0){
+      histSection.style.display = '';
+      histList.innerHTML = hist.map(h => {
+        const item = COSMETIC_BY_ID[h.itemId];
+        const r = CX_RARITY[item?.rarity || 'rare'];
+        return `<div class="case-history-row">
+          <span class="chr-dot" style="background:${r.color};box-shadow:0 0 4px ${r.color};"></span>
+          <span class="chr-name" style="color:${r.color}">${escapeHTML(item?.name || '?')}</span>
+          <span class="chr-time">${timeAgo({toMillis:()=>h.ts})}</span>
+        </div>`;
+      }).join('');
+    } else { histSection.style.display = 'none'; }
+  }
+  const openBtn = $('#caseOpenBtn');
+  if(openBtn){
+    openBtn.disabled = count <= 0;
+    openBtn.textContent = count > 0 ? `Open Case (${count} remaining)` : 'No cases to open';
+  }
+  setText('#caseOwnedCount', `You own ${count} of this case`);
+  state._activeCaseId = caseId;
+  $('#caseDetailModal')?.classList.add('show');
+}
+
+on('#caseOpenBtn', 'click', async () => {
+  const caseId = state._activeCaseId;
+  const ct = CASE_BY_ID[caseId];
+  if(!ct) return;
+  if(isGuest()){ toast('Create a free account to open cases', 'info'); return; }
+  const count = getCaseCount(ct.id);
+  if(count <= 0){ toast('No cases to open!', 'error'); return; }
+  $('#caseDetailModal')?.classList.remove('show');
+  startCaseOpening(ct);
+});
+
+async function startCaseOpening(ct){
+  const overlay = $('#caseOpeningOverlay');
+  const strip = $('#caseReelStrip');
+  const reveal = $('#caseReveal');
+  const viewport = $('#caseReelViewport');
+  if(!overlay || !strip || !reveal || !viewport) return;
+  reveal.classList.remove('show');
+  reveal.classList.remove('is-ascended');
+  viewport.style.display = '';
+  strip.style.transition = 'none';
+  strip.style.transform = 'translateX(0)';
+  setText('#caseOpeningName', ct.name);
+  const wonItem = rollCaseDrop(ct);
+  const pool = ct.pool.map(id => COSMETIC_BY_ID[id]).filter(Boolean);
+  const REEL_SIZE = 60;
+  const WIN_POS = 45;
+  const reelItems = [];
+  for(let i = 0; i < REEL_SIZE; i++){
+    if(i === WIN_POS){
+      reelItems.push(wonItem);
+    } else {
+      const weighted = [];
+      CASE_DROP_RATES.forEach(tier => {
+        const items = pool.filter(c => c.rarity === tier.rarity);
+        for(let w = 0; w < tier.weight; w++) items.forEach(it => weighted.push(it));
+      });
+      reelItems.push(weighted[Math.floor(Math.random() * weighted.length)] || pool[0]);
+    }
+  }
+  strip.innerHTML = reelItems.map(item => {
+    const r = CX_RARITY[item.rarity];
+    const typeIcons = { name:'Aa', tag:'#', avatar:'◉', frame:'▣' };
+    return `<div class="case-reel-item rar-${item.rarity}">
+      <span class="cri-preview">${typeIcons[item.type] || '✦'}</span>
+      <span class="cri-name">${escapeHTML(item.name)}</span>
+      <span class="cri-rarity">${r.label}</span>
+    </div>`;
+  }).join('');
+  overlay.classList.add('show');
+  try { haptic(10); } catch(e){}
+  await new Promise(r => setTimeout(r, 300));
+  const itemWidth = 130;
+  const vpWidth = viewport.offsetWidth;
+  const targetX = (WIN_POS * itemWidth) - (vpWidth / 2) + (itemWidth / 2);
+  const overshoot = (Math.random() - 0.5) * (itemWidth * 0.6);
+  const finalX = targetX + overshoot;
+  strip.style.transition = 'transform 5.5s cubic-bezier(0.15, 0.85, 0.25, 1)';
+  strip.style.transform = `translateX(-${finalX}px)`;
+  let tickCount = 0;
+  const tickInterval = setInterval(() => {
+    tickCount++;
+    if(tickCount > 50){ clearInterval(tickInterval); return; }
+    try { haptic(3); } catch(e){}
+  }, 100);
+  await new Promise(r => setTimeout(r, 6000));
+  clearInterval(tickInterval);
+  try { haptic([20, 60, 30]); } catch(e){}
+  viewport.style.display = 'none';
+  const r = CX_RARITY[wonItem.rarity];
+  const isAscended = wonItem.rarity === 'ascended';
+  reveal.classList.toggle('is-ascended', isAscended);
+  const glowEl = $('#caseRevealGlow');
+  if(glowEl){
+    glowEl.style.background = `radial-gradient(circle, ${r.color}22, transparent 70%)`;
+    glowEl.querySelector('::before')?.style?.setProperty('background', `radial-gradient(circle, ${r.color}44, transparent 70%)`);
+  }
+  setText('#caseRevealRarity', r.label);
+  const rarEl = $('#caseRevealRarity');
+  if(rarEl) rarEl.style.color = r.color;
+  setText('#caseRevealName', wonItem.name);
+  const nameEl = $('#caseRevealName');
+  if(nameEl && !isAscended) nameEl.style.color = r.color;
+  setText('#caseRevealDesc', wonItem.desc || '');
+  const isDupe = ownsCosmetic(wonItem.id);
+  const tagEl = $('#caseRevealTag');
+  if(tagEl){
+    if(isDupe){
+      tagEl.innerHTML = `<span style="color:var(--amber)">DUPLICATE</span> — you already own this`;
+      tagEl.style.display = '';
+    } else {
+      tagEl.innerHTML = `<span style="color:var(--mint)">NEW!</span> Case-exclusive ${CX_TYPE_LABEL[wonItem.type]}`;
+      tagEl.style.display = '';
+    }
+  }
+  const equipBtn = $('#caseRevealEquip');
+  if(equipBtn){
+    equipBtn.style.display = isDupe ? 'none' : '';
+    equipBtn.onclick = async () => {
+      await equipCosmetic(wonItem.type, wonItem.id);
+      overlay.classList.remove('show');
+    };
+  }
+  if(isAscended) spawnRevealParticles(r.color);
+  reveal.classList.add('show');
+  if(isAscended){
+    try { sfxLegend?.(); } catch(e){}
+    try { launchConfetti?.(); } catch(e){}
+    try { bigBurst?.(r.color, 120); } catch(e){}
+  } else if(wonItem.rarity === 'mythic' || wonItem.rarity === 'legendary'){
+    try { sfxRankUp?.(); } catch(e){}
+    try { bigBurst?.(r.color, 60); } catch(e){}
+  }
+  if(!isDupe){
+    const c = getCosmetics();
+    c.owned = [...c.owned, wonItem.id];
+    await saveCosmetics(c);
+  }
+  const inv = getCaseInventory();
+  inv[state._activeCaseId] = Math.max(0, (inv[state._activeCaseId] || 0) - 1);
+  state.profile.cases = inv;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { cases: inv }); } catch(e){}
+  updateCaseStats(wonItem.rarity);
+  addCaseHistory({ caseId: state._activeCaseId, itemId: wonItem.id, rarity: wonItem.rarity });
+  try { renderCaseInventory(); } catch(e){}
+  try { updateShopBadge(); } catch(e){}
+}
+
+function spawnRevealParticles(color){
+  const container = $('#caseRevealParticles');
+  if(!container) return;
+  container.innerHTML = '';
+  const SPECTRUM = [color, '#ff5ec8', '#5fc9ff', '#ffd33d', '#b56cff', '#22d3a3'];
+  for(let i = 0; i < 40; i++){
+    const p = document.createElement('div');
+    p.className = 'cr-particle';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 80 + Math.random() * 200;
+    p.style.setProperty('--dx', (Math.cos(angle) * dist) + 'px');
+    p.style.setProperty('--dy', (Math.sin(angle) * dist) + 'px');
+    p.style.left = '50%';
+    p.style.top = '50%';
+    p.style.background = SPECTRUM[Math.floor(Math.random() * SPECTRUM.length)];
+    p.style.animationDelay = (Math.random() * 0.5) + 's';
+    p.style.animationDuration = (1.5 + Math.random()) + 's';
+    p.style.width = (3 + Math.random() * 4) + 'px';
+    p.style.height = p.style.width;
+    container.appendChild(p);
+  }
+}
+
+on('#caseRevealClose', 'click', () => {
+  $('#caseOpeningOverlay')?.classList.remove('show');
+});
+
+async function grantCase(caseId, count, reason){
+  if(!state.profile || !state.user) return;
+  const inv = getCaseInventory();
+  inv[caseId] = (inv[caseId] || 0) + count;
+  state.profile.cases = inv;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { cases: inv }); } catch(e){}
+  try { toast(`📦 +${count} ${CASE_BY_ID[caseId]?.name || 'Case'}! ${reason}`, 'success', { duration: 5000 }); } catch(e){}
+  try { haptic(15); } catch(e){}
+  try { renderCaseInventory(); } catch(e){}
+  try { updateShopBadge(); } catch(e){}
+}
+
+// Hook into the level-up system to grant cases every 7th level.
+const _origGrantXp = grantXp;
+grantXp = async function(amount, reason, opts){
+  if(!state.profile) return _origGrantXp(amount, reason, opts);
+  const before = state.profile.totalXp || 0;
+  const base = state.profile.prestigeXp || 0;
+  const oldL = levelFromXp(before - base);
+  await _origGrantXp(amount, reason, opts);
+  const after = state.profile.totalXp || 0;
+  const newL = levelFromXp(after - base);
+  if(newL.level > oldL.level){
+    const oldCaseLevel = Math.floor(oldL.level / 7);
+    const newCaseLevel = Math.floor(newL.level / 7);
+    const casesEarned = newCaseLevel - oldCaseLevel;
+    if(casesEarned > 0){
+      setTimeout(() => grantCase('case_roshcam', casesEarned, `Level ${newL.level} reward`), 1500);
+    }
+  }
+};
 
 // ---------- COSMETICS EDITOR (lives inside Edit Profile) ----------
 function lockerTileHTML(item, equippedId){
@@ -27589,12 +28397,21 @@ async function loadMatchHistory(uid){
   list.innerHTML = '';
   if(form) form.innerHTML = '';
   try {
-    const snap = await getDocs(query(
-      collection(state.db, 'matchHistory'),
-      where('uid', '==', uid),
-      orderBy('createdAt','desc'),
-      limit(10),
-    ));
+    let snap;
+    try {
+      snap = await getDocs(query(
+        collection(state.db, 'matchHistory'),
+        where('uid', '==', uid),
+        orderBy('createdAt','desc'),
+        limit(10),
+      ));
+    } catch(indexErr) {
+      snap = await getDocs(query(
+        collection(state.db, 'matchHistory'),
+        where('uid', '==', uid),
+        limit(20),
+      ));
+    }
     const emptyNote = $('#pmMatchesEmpty');
     if(snap.empty){
       section.style.display = 'none';
@@ -27607,8 +28424,14 @@ async function loadMatchHistory(uid){
     // Recent form — newest on the right, like a sports form guide
     const formDocs = [];
     snap.forEach(d => formDocs.push(d.data()));
+    formDocs.sort((a, b) => {
+      const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return tb - ta;
+    });
+    const displayDocs = formDocs.slice(0, 10);
     if(form){
-      formDocs.slice().reverse().forEach(h => {
+      displayDocs.slice().reverse().forEach(h => {
         const cls = h.result === 'win' ? 'win' : (h.result === 'lose' || h.result === 'forfeit') ? 'lose' : 'draw';
         const ch = h.result === 'win' ? 'W' : (h.result === 'lose' || h.result === 'forfeit') ? 'L' : 'D';
         const pip = document.createElement('span');
@@ -27619,8 +28442,7 @@ async function loadMatchHistory(uid){
       });
       if(formWrap) formWrap.style.display = '';
     }
-    snap.forEach(d => {
-      const h = d.data();
+    displayDocs.forEach(h => {
       const cls = h.result === 'win' ? 'win' : h.result === 'lose' ? 'lose' : 'draw';
       const deltaCls = (h.delta||0) > 0 ? 'up' : (h.delta||0) < 0 ? 'down' : 'same';
       const deltaStr = h.delta == null ? '' : (h.delta > 0 ? '+' + h.delta : '' + h.delta);
@@ -27844,15 +28666,17 @@ function applyGuestProfileLock(){
 
 function openEditProfile(){
   const p = state.profile;
+  if(!p){ toast('Profile still loading — try again in a moment', 'info'); return; }
   // Header strip + always land on the General section.
   try { renderAvatar($('#epsHeaderAv'), p); } catch(e){}
   try { setText('#epsHeaderName', p.username || '—'); } catch(e){}
   try { epsSetPane('general'); } catch(e){}
   setTimeout(() => { try { $('#editProfileForm input[name=username]')?.focus({ preventScroll: true }); } catch(e){} }, 120);
-  $('#editProfileForm input[name=username]').value = p.username;
-  $('#editCountry').value = p.country || 'XX';
+  const unameInput = $('#editProfileForm input[name=username]');
+  if(unameInput) unameInput.value = p.username || '';
+  try { $('#editCountry').value = p.country || 'XX'; } catch(e){}
   const statusInput = $('#editProfileForm input[name=status]'); if(statusInput) statusInput.value = p.status || '';
-  $('#editProfileForm textarea[name=bio]').value = p.bio || '';
+  try { const bioEl = $('#editProfileForm textarea[name=bio]'); if(bioEl) bioEl.value = p.bio || ''; } catch(e){}
   // Title picker — show unlocked titles + locked previews
   const tp = $('#titlePick');
   if(tp){
@@ -30548,6 +31372,9 @@ let updateMatchStats = async function(matchResult){
     }
     if(leveledUp){
       state._pendingLevelUp = { from: oldLevelInfo, to: newLevelInfo, newTitles, hitCap: justHitCap };
+      const oldCL = Math.floor(oldLevelInfo.level / 7);
+      const newCL = Math.floor(newLevelInfo.level / 7);
+      if(newCL > oldCL) setTimeout(() => { try { grantCase('case_roshcam', newCL - oldCL, `Level ${newLevelInfo.level} reward`); } catch(e){} }, 2500);
     }
     // Diff achievements now that wins/rating/streak/games/XP are all applied — the
     // result flow will pop a celebratory card for anything newly unlocked.
@@ -36425,4 +37252,3 @@ setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
-// ===== please work =====
