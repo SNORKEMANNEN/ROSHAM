@@ -1415,6 +1415,15 @@ body.reduced-motion .nav-page.active, body.low-power .nav-page.active{ animation
 .lp-bar i::after{ content:''; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); transform: translateX(-130%); animation: lpSheen 2.6s ease-in-out 1s infinite; }
 @keyframes lpSheen{ 0%{ transform: translateX(-130%); } 55%,100%{ transform: translateX(160%); } }
 .lp-head-sub{ font-family: var(--font-mono); font-size: 10px; color: var(--text-faint); letter-spacing: .02em; }
+/* case-reward hint under the level bar */
+.lp-reward{
+  display:flex; align-items:center; gap:8px; margin:-6px 0 16px; padding:9px 13px; border-radius:12px;
+  font-size:12px; font-weight:600; color:var(--text-dim);
+  background:linear-gradient(90deg, rgba(181,108,255,.14), rgba(255,45,107,.08));
+  border:1px solid rgba(181,108,255,.3);
+}
+.lp-reward b{ color:#fff; }
+.lp-reward-ic{ font-size:15px; line-height:1; filter:drop-shadow(0 2px 4px rgba(0,0,0,.4)); }
 /* the page of tier cards */
 .lp-stage{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
 .lp-stage.flip{ animation: lpStageIn .34s ease; }
@@ -11236,6 +11245,8 @@ body.low-power .prestige-rays.r2, body.reduced-motion .prestige-rays.r2{ animati
   padding:24px;
 }
 .modal-bg.show{display:flex; animation: fadeIn .3s;}
+/* the cosmetic preview can open on top of the case modal — keep it above */
+#shopBuyModal{ z-index:210; }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{
   background:
@@ -17352,6 +17363,7 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 .case-contents-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(114px, 1fr)); gap:10px; margin:12px 0 4px; }
 .case-content-item{
   position:relative; padding:13px 6px 13px; border-radius:11px; text-align:center; overflow:hidden;
+  width:100%; font:inherit; color:inherit; cursor:pointer; -webkit-appearance:none; appearance:none;
   background:
     linear-gradient(180deg, transparent 52%, color-mix(in srgb, var(--cci,#5fc9ff) 20%, transparent)),
     linear-gradient(180deg, rgba(22,19,32,.92), rgba(9,8,15,.96));
@@ -17366,7 +17378,13 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 .case-content-item .cci-preview{ height:60px; display:grid; place-items:center; overflow:hidden; margin-bottom:8px; }
 .case-content-item .cci-preview .cx-prev-name{ font-size:16px; }
 .case-content-item .cci-preview .cx-prev-av{ width:48px; height:48px; }
-.case-content-item .cci-preview .cx-prev-frame{ transform:scale(.54); }
+/* Explicit small size (not transform:scale) so the 170px frame box doesn't
+   overflow the tile and render off-centre. */
+.case-content-item .cci-preview .cx-prev-frame{ width:96px; height:52px; gap:4px; border-radius:9px; }
+.case-content-item .cci-preview .cx-prev-frame-av{ width:18px; height:18px; border-radius:7px; }
+.case-content-item .cci-preview .cx-prev-frame-lines{ gap:3px; }
+.case-content-item .cci-preview .cx-prev-frame-lines i{ width:38px; height:3px; }
+.case-content-item .cci-preview .cx-prev-frame-lines i:last-child{ width:24px; }
 .case-content-item .cci-preview .cx-prev-tagrow{ transform:scale(.84); gap:3px; }
 .case-content-item .cci-preview .cx-prev-plainname{ font-size:11px; }
 .case-content-item .cci-name{ font-weight:800; font-size:11px; color:#fff; line-height:1.2; }
@@ -17454,29 +17472,61 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 }
 .case-reel-viewport::before{ left:0; background:linear-gradient(90deg, rgba(6,3,12,.98), transparent); }
 .case-reel-viewport::after{ right:0; background:linear-gradient(-90deg, rgba(6,3,12,.98), transparent); }
+/* lock-in flash across the winning slot when the reel stops */
+.case-reel-flash{
+  position:absolute; top:0; bottom:0; left:50%; width:150px; transform:translateX(-50%); z-index:8;
+  pointer-events:none; opacity:0; border-radius:16px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent);
+  mix-blend-mode:screen;
+}
+.case-reel-flash.go{ animation:caseReelFlash .5s ease-out; }
+@keyframes caseReelFlash{ 0%{ opacity:0; } 22%{ opacity:1; } 100%{ opacity:0; } }
+/* the reel lifts, blurs and fades as the reveal takes over — no hard cut */
+.case-reel-viewport{ transition:opacity .3s ease, transform .3s ease, filter .3s ease; }
+.case-reel-viewport.reel-out{ opacity:0; transform:scale(.92) translateY(-18px); filter:blur(6px); }
+.case-opening-overlay:has(.case-reveal.show) .case-opening-header{ opacity:0; transition:opacity .4s ease; }
 
-/* ── REVEAL PHASE ── */
+/* ── REVEAL PHASE — a staged, springy bloom ── */
 .case-reveal{
-  display:none; flex-direction:column; align-items:center; gap:14px; text-align:center; --rc:#5fc9ff;
-  animation:caseRevealIn .55s cubic-bezier(.2,1.2,.3,1) both;
+  display:none; flex-direction:column; align-items:center; gap:13px; text-align:center; --rc:#5fc9ff;
 }
 .case-reveal.show{ display:flex; }
-@keyframes caseRevealIn{ from{ opacity:0; transform:scale(.82) translateY(24px); } to{ opacity:1; transform:none; } }
+/* every direct child rises + fades in, staggered, once .show lands */
+.case-reveal.show > *{ opacity:0; animation:caseRise .5s cubic-bezier(.2,.8,.25,1) both; }
+.case-reveal.show > *:nth-child(1){ animation:caseIconIn .62s cubic-bezier(.2,1.5,.35,1) both; }   /* glow/icon */
+.case-reveal.show > *:nth-child(2){ animation-delay:.30s; }   /* rarity */
+.case-reveal.show > *:nth-child(3){ animation-delay:.40s; }   /* name */
+.case-reveal.show > *:nth-child(4){ animation-delay:.52s; }   /* desc */
+.case-reveal.show > *:nth-child(5){ animation-delay:.60s; }   /* tag */
+.case-reveal.show > *:nth-child(6){ animation-delay:.70s; }   /* actions */
+@keyframes caseRise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
+@keyframes caseIconIn{ 0%{ opacity:0; transform:scale(.35); } 62%{ opacity:1; transform:scale(1.09); } 100%{ opacity:1; transform:scale(1); } }
 .case-reveal-glow{
-  width:220px; height:200px; border-radius:24px; position:relative;
+  width:230px; height:206px; border-radius:24px; position:relative;
   display:grid; place-items:center;
 }
 .case-reveal-glow::before{ /* radiating rays */
-  content:''; position:absolute; inset:-60px; z-index:-1; border-radius:50%; pointer-events:none;
-  background:conic-gradient(from 0deg, transparent 0deg, color-mix(in srgb, var(--rc) 55%, transparent) 8deg, transparent 16deg);
-  opacity:.5; animation:cxaSpin 14s linear infinite;
+  content:''; position:absolute; inset:-70px; z-index:-1; border-radius:50%; pointer-events:none;
+  background:repeating-conic-gradient(from 0deg,
+    color-mix(in srgb, var(--rc) 60%, transparent) 0deg 2deg, transparent 2deg 13deg);
+  -webkit-mask:radial-gradient(closest-side, transparent 28%, #000 42%, #000 78%, transparent 100%);
+  mask:radial-gradient(closest-side, transparent 28%, #000 42%, #000 78%, transparent 100%);
+  opacity:.55; animation:cxaSpin 16s linear infinite;
 }
 .case-reveal-glow::after{ /* soft aura */
-  content:''; position:absolute; inset:-10px; z-index:-1; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, color-mix(in srgb, var(--rc) 45%, transparent), transparent 68%);
+  content:''; position:absolute; inset:-12px; z-index:-1; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, color-mix(in srgb, var(--rc) 48%, transparent), transparent 68%);
   animation:caseGlowPulse 2.4s ease-in-out infinite;
 }
-@keyframes caseGlowPulse{ 0%,100%{ transform:scale(1); opacity:.6; } 50%{ transform:scale(1.14); opacity:1; } }
+@keyframes caseGlowPulse{ 0%,100%{ transform:scale(1); opacity:.6; } 50%{ transform:scale(1.16); opacity:1; } }
+/* the expanding shockwave ring at the instant of reveal */
+.case-reveal-shock{
+  position:absolute; top:50%; left:50%; width:60px; height:60px; margin:-30px 0 0 -30px; border-radius:50%;
+  border:2.5px solid var(--rc); pointer-events:none; opacity:0; z-index:0;
+  box-shadow:0 0 24px color-mix(in srgb, var(--rc) 60%, transparent);
+}
+.case-reveal.show .case-reveal-shock{ animation:caseShock .85s cubic-bezier(.2,.7,.3,1) .22s; }
+@keyframes caseShock{ 0%{ opacity:.95; transform:scale(.2); } 70%{ opacity:.35; } 100%{ opacity:0; transform:scale(6.2); } }
 .case-reveal-icon{ position:relative; z-index:1; display:grid; place-items:center; min-height:96px; }
 .case-reveal-icon .cx-prev-frame{ box-shadow:0 16px 40px -16px rgba(0,0,0,.8); transform:scale(.92); }
 .case-reveal-icon .cx-prev-name{ font-size:34px; }
@@ -17484,10 +17534,12 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 .case-reveal-rarity{
   font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:14px; letter-spacing:.24em;
   color:var(--rc); text-shadow:0 0 18px color-mix(in srgb, var(--rc) 70%, transparent);
+  padding:4px 14px; border-radius:999px; border:1px solid color-mix(in srgb, var(--rc) 40%, transparent);
+  background:color-mix(in srgb, var(--rc) 12%, transparent);
 }
 .case-reveal-name{
-  font-family:var(--font-display); font-stretch:60%; font-weight:900; font-size:40px; letter-spacing:-.015em; line-height:1.05; color:#fff;
-  text-shadow:0 0 24px color-mix(in srgb, var(--rc) 55%, transparent);
+  font-family:var(--font-display); font-stretch:60%; font-weight:900; font-size:42px; letter-spacing:-.015em; line-height:1.05; color:#fff;
+  text-shadow:0 0 26px color-mix(in srgb, var(--rc) 55%, transparent);
 }
 .case-reveal-desc{ color:var(--text-dim); font-size:13px; max-width:380px; line-height:1.55; }
 .case-reveal-tag{
@@ -17497,6 +17549,10 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 }
 .case-reveal-actions{ display:flex; gap:10px; margin-top:10px; }
 .case-reveal-actions .btn{ min-height:46px; padding:0 22px; }
+/* reduced-motion: skip the flourishes, show the win instantly */
+body.reduced-motion .case-reveal.show > *, body.low-power .case-reveal.show > *{ animation:none !important; opacity:1 !important; transform:none !important; }
+body.reduced-motion :is(.case-reveal-shock, .case-reel-flash), body.low-power :is(.case-reveal-shock, .case-reel-flash){ display:none !important; }
+body.reduced-motion .case-reel-viewport, body.low-power .case-reel-viewport{ transition:none !important; }
 
 /* Ascended reveal — extra celebration */
 .case-reveal.is-ascended{ --rc:#ff2d6b; }
@@ -17505,8 +17561,9 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
   background:linear-gradient(96deg, #ff2d6b, #ff6b3d 34%, #ffd33d 50%, #b56cff 70%, #5fc9ff);
   background-size:200% 100%;
   -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
-  animation:cxSweep 3.5s linear infinite; text-shadow:none;
-  filter:drop-shadow(0 0 18px rgba(255,45,107,.6));
+  text-shadow:none; filter:drop-shadow(0 0 18px rgba(255,45,107,.6));
+  /* keep the staggered rise-in AND run the rainbow sweep */
+  animation:caseRise .5s cubic-bezier(.2,.8,.25,1) .4s both, cxSweep 3.5s linear infinite;
 }
 .case-reveal-particles{ position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:1; }
 .case-reveal-particles .cr-particle{
@@ -20820,9 +20877,11 @@ const FIREBASE_CONFIG = {
   <div class="case-reel-viewport" id="caseReelViewport">
     <div class="case-reel-pointer"></div>
     <div class="case-reel-strip" id="caseReelStrip"></div>
+    <div class="case-reel-flash" id="caseReelFlash" aria-hidden="true"></div>
   </div>
   <div class="case-reveal" id="caseReveal">
     <div class="case-reveal-glow" id="caseRevealGlow">
+      <span class="case-reveal-shock" aria-hidden="true"></span>
       <span class="case-reveal-icon" id="caseRevealIcon">✦</span>
     </div>
     <div class="case-reveal-rarity" id="caseRevealRarity">LEGENDARY</div>
@@ -21664,6 +21723,8 @@ const FIREBASE_CONFIG = {
 /*MATCHFOUND_DATA_START*/const MATCH_FOUND_SFX_DATA = "sfxmatchfound.mp3";
 /*COUNTDOWN_DATA_START*/const COUNTDOWN_SFX_DATA = "sfxcountdown.mp3";
 /*LEGEND_DATA_START*/const LEGEND_SFX_DATA = "sfxlegend.mp3";
+/*PRESTIGE_DATA_START*/const PRESTIGE_SFX_DATA = "prestige.mp3";/*PRESTIGE_DATA_END*/
+/*CASETICK_DATA_START*/const CASETICK_SFX_DATA = "casetick.mp3";/*CASETICK_DATA_END*/
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
 import {
@@ -22826,6 +22887,8 @@ async function initSampleAudio(){
       ['matchFoundBuf', typeof MATCH_FOUND_SFX_DATA !== 'undefined' ? MATCH_FOUND_SFX_DATA : ''],
       ['countdownBuf',  typeof COUNTDOWN_SFX_DATA   !== 'undefined' ? COUNTDOWN_SFX_DATA   : ''],
       ['legendBuf',     typeof LEGEND_SFX_DATA      !== 'undefined' ? LEGEND_SFX_DATA      : ''],
+      ['prestigeBuf',   typeof PRESTIGE_SFX_DATA    !== 'undefined' ? PRESTIGE_SFX_DATA    : ''],
+      ['caseTickBuf',   typeof CASETICK_SFX_DATA    !== 'undefined' ? CASETICK_SFX_DATA    : ''],
     ];
     await Promise.all(jobs.map(async ([key, src]) => {
       if(sampleAudio[key] || !src) return;
@@ -22889,6 +22952,37 @@ function playLegendSound(){
 function stopLegendSound(){
   try { if(sampleAudio.legendSrc){ sampleAudio.legendSrc.stop(); } } catch(e){}
   sampleAudio.legendSrc = null;
+}
+// Prestige-up celebration sample (prestige.mp3). Returns true when the custom
+// sample is handling playback so the synth fallback is skipped.
+function playPrestigeSample(){
+  if(typeof PRESTIGE_SFX_DATA === 'undefined' || !PRESTIGE_SFX_DATA) return false;
+  if(state.muted) return false;
+  if(!sampleAudio.ready){ initSampleAudio().then(() => { if(sampleAudio.prestigeBuf) playPrestigeSample(); }); return true; }
+  if(!sampleAudio.prestigeBuf) return false;
+  try {
+    ensureAudio();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    sampleAudio.rankupGain.gain.setValueAtTime(Math.max(0.0001, _rankVol()), audioCtx.currentTime);
+    const src = audioCtx.createBufferSource();
+    src.buffer = sampleAudio.prestigeBuf;
+    src.connect(sampleAudio.rankupGain);
+    src.start();
+    return true;
+  } catch(e){ return false; }
+}
+// CS2-style reel tick — plays casetick.mp3 if provided, else a crisp synth
+// click. Fired every time an item crosses the marker while the case rolls.
+function caseTick(){
+  try {
+    if(state.muted) return;
+    if(typeof CASETICK_SFX_DATA !== 'undefined' && CASETICK_SFX_DATA && sampleAudio.caseTickBuf){
+      _playSfxSample(sampleAudio.caseTickBuf); return;
+    }
+    // Fallback: a short mechanical "clack" (two quick, fast-decaying blips).
+    tone(1750, 0.016, 'square', 0.05);
+    tone(540, 0.02, 'square', 0.035);
+  } catch(e){}
 }
 // Play a one-shot sample buffer through the shared SFX gain (scaled by the SFX channel).
 function _playSfxSample(buf){
@@ -23153,6 +23247,8 @@ const sfxAchievement=()=>{
 // Prestige fanfare — a grand rising arpeggio with a sustained chord, for the
 // pinnacle moment (distinct from rank-up and level-up).
 const sfxPrestige=()=>{
+  // Prefer the custom prestige.mp3; fall back to the synth fanfare if absent.
+  try { if(playPrestigeSample()) return; } catch(e){}
   const notes = [523, 659, 784, 1047, 1319];
   notes.forEach((n, i) => setTimeout(() => tone(n, 0.16, 'triangle', 0.12), i * 95));
   setTimeout(() => { tone(1047, 0.55, 'triangle', 0.13); tone(1568, 0.55, 'sine', 0.09); tone(2093, 0.5, 'sine', 0.06); }, 540);
@@ -26701,9 +26797,12 @@ function buildProfilePreviewHTML(item){
     <div class="spp-name">${nameHtml}</div>
   </div>`;
 }
-function openShopBuyModal(item){
+function openShopBuyModal(item, opts={}){
   state._shopBuyItem = item;
   const r = CX_RARITY[item.rarity];
+  // Case-exclusive items (or an explicit preview) show the same big preview,
+  // but they can't be bought or gifted — you win them from cases.
+  const previewOnly = !!opts.preview || !!item.caseOnly;
   const stage = $('#sbmStage');
   if(stage){
     stage.innerHTML = `<span class="sbm-stage-item">${buildCosmeticPreview(item, true)}</span>` + buildProfilePreviewHTML(item);
@@ -26714,24 +26813,34 @@ function openShopBuyModal(item){
   setText('#sbmType', CX_TYPE_LABEL[item.type]);
   setText('#sbmDesc', item.desc || '');
   const guest = isGuest();
-  const bal = getCoins(), after = bal - item.price;
-  const balEl = $('#sbmBalance');
-  if(balEl){
-    balEl.innerHTML = guest
-      ? `<b class="sbm-short">Guests can't buy cosmetics</b> — create a free account to unlock the shop`
-      : (after >= 0
-        ? `Balance after: <b>${fmtCoins(after)}</b> <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg>`
-        : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — grab a RoshCoin pack at the bottom of the shop`);
-  }
   const btn = $('#sbmBuyBtn');
-  if(btn){ btn.disabled = guest || after < 0; }
-  setText('#sbmBuyLabel', `Buy · ${fmtCoins(item.price)}`);
-  // Gifting: hidden for guests; costs the same, refunded if declined.
   const giftBtn = $('#sbmGiftBtn');
-  if(giftBtn) giftBtn.style.display = guest ? 'none' : '';
   const gp = $('#sbmGiftPanel');
+  const balEl = $('#sbmBalance');
   if(gp) gp.style.display = 'none';
-  setText('#sbmGiftCost', fmtCoins(item.price));
+  if(previewOnly){
+    const owned = ownsCosmetic(item.id);
+    if(balEl){
+      balEl.innerHTML = owned
+        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b> — equip it in Edit profile → Cosmetics`
+        : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a ROSHCAM Case`;
+    }
+    if(btn) btn.style.display = 'none';
+    if(giftBtn) giftBtn.style.display = 'none';
+  } else {
+    const bal = getCoins(), after = bal - item.price;
+    if(balEl){
+      balEl.innerHTML = guest
+        ? `<b class="sbm-short">Guests can't buy cosmetics</b> — create a free account to unlock the shop`
+        : (after >= 0
+          ? `Balance after: <b>${fmtCoins(after)}</b> <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg>`
+          : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — grab a RoshCoin pack at the bottom of the shop`);
+    }
+    if(btn){ btn.style.display = ''; btn.disabled = guest || after < 0; }
+    setText('#sbmBuyLabel', `Buy · ${fmtCoins(item.price)}`);
+    if(giftBtn) giftBtn.style.display = guest ? 'none' : '';
+    setText('#sbmGiftCost', fmtCoins(item.price));
+  }
   const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal rar-' + item.rarity;
   $('#shopBuyModal')?.classList.add('show');
 }
@@ -26874,6 +26983,13 @@ on('#caseInventoryGrid', 'click', (e) => {
   openCaseDetail(card.dataset.caseId);
   try { haptic(8); } catch(e2){}
 });
+// Click a possible drop to inspect it full-size (preview only — can't be bought).
+on('#caseContentsGrid', 'click', (e) => {
+  const el = e.target.closest('[data-cx-preview]');
+  if(!el) return;
+  const item = COSMETIC_BY_ID[el.dataset.cxPreview];
+  if(item){ openShopBuyModal(item, { preview: true }); try { haptic(6); } catch(e2){} }
+});
 
 function openCaseDetail(caseId){
   const ct = CASE_BY_ID[caseId];
@@ -26910,12 +27026,12 @@ function openCaseDetail(caseId){
     contentsEl.innerHTML = sorted.map(item => {
       const owned = ownsCosmetic(item.id);
       const r = CX_RARITY[item.rarity];
-      return `<div class="case-content-item" style="--cci:${r.color};">
+      return `<button type="button" class="case-content-item" data-cx-preview="${item.id}" style="--cci:${r.color};">
         <div class="cci-preview">${buildCosmeticPreview(item, false)}</div>
         <div class="cci-name">${escapeHTML(item.name)}</div>
         <div class="cci-rarity">${r.label}</div>
         ${owned ? '<div class="cci-owned">✓ OWNED</div>' : ''}
-      </div>`;
+      </button>`;
     }).join('');
   }
   const histSection = $('#caseHistory');
@@ -26993,27 +27109,46 @@ async function startCaseOpening(ct){
       <span class="cri-rarity">${r.label}</span>
     </div>`;
   }).join('');
+  const flash = $('#caseReelFlash');
+  viewport.classList.remove('reel-out');
+  if(flash) flash.classList.remove('go');
   overlay.classList.add('show');
   try { haptic(10); } catch(e){}
-  await new Promise(r => setTimeout(r, 300));
-  // Measure the real rendered item width so the reel lands dead-centre on the winner.
-  const itemWidth = strip.querySelector('.case-reel-item')?.offsetWidth || 152;
+  // Wait for layout + a beat before the roll begins.
+  await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+  await new Promise(r => setTimeout(r, 240));
+  // Measure the real rendered item pitch so the reel lands centred on the winner.
+  const itemWidth = strip.querySelector('.case-reel-item')?.offsetWidth || 150;
   const vpWidth = viewport.offsetWidth;
   const targetX = (WIN_POS * itemWidth) - (vpWidth / 2) + (itemWidth / 2);
-  const overshoot = (Math.random() - 0.5) * (itemWidth * 0.6);
-  const finalX = targetX + overshoot;
-  strip.style.transition = 'transform 5.5s cubic-bezier(0.15, 0.85, 0.25, 1)';
-  strip.style.transform = `translateX(-${finalX}px)`;
-  let tickCount = 0;
-  const tickInterval = setInterval(() => {
-    tickCount++;
-    if(tickCount > 50){ clearInterval(tickInterval); return; }
-    try { haptic(3); } catch(e){}
-  }, 100);
-  await new Promise(r => setTimeout(r, 6000));
-  clearInterval(tickInterval);
-  try { haptic([20, 60, 30]); } catch(e){}
+  const overshoot = (Math.random() - 0.5) * (itemWidth * 0.42);
+  const finalX = Math.max(0, targetX + overshoot);
+  // Hand-drive the reel so the ticks stay perfectly synced to the deceleration
+  // — like CS2, the clicks naturally slow as the reel eases to a stop.
+  const DUR = 5600;
+  const t0 = performance.now();
+  let lastIdx = -1;
+  await new Promise(resolve => {
+    function frame(now){
+      const t = Math.min(1, (now - t0) / DUR);
+      const e = 1 - Math.pow(1 - t, 5);             // easeOutQuint
+      const x = finalX * e;
+      strip.style.transform = `translate3d(${-x}px,0,0)`;
+      const idx = Math.floor((x + vpWidth / 2) / itemWidth);
+      if(idx !== lastIdx && t < 0.999){ lastIdx = idx; caseTick(); try { haptic(2); } catch(_){} }
+      if(t < 1) requestAnimationFrame(frame); else resolve();
+    }
+    requestAnimationFrame(frame);
+  });
+  // Lock-in: a bright flash across the winning slot, then a short settle.
+  try { haptic([18, 50, 24]); } catch(e){}
+  if(flash) flash.classList.add('go');
+  await new Promise(r => setTimeout(r, 540));
+  // Seamless hand-off: the reel lifts + blurs away as the reveal blooms in.
+  viewport.classList.add('reel-out');
+  await new Promise(r => setTimeout(r, 300));
   viewport.style.display = 'none';
+  viewport.classList.remove('reel-out');
   const r = CX_RARITY[wonItem.rarity];
   const isAscended = wonItem.rarity === 'ascended';
   reveal.classList.toggle('is-ascended', isAscended);
@@ -27043,15 +27178,19 @@ async function startCaseOpening(ct){
       overlay.classList.remove('show');
     };
   }
-  if(isAscended) spawnRevealParticles(r.color);
+  const rarRank = ({ rare:0, epic:1, legendary:2, mythic:3, ascended:4 })[wonItem.rarity] ?? 0;
+  spawnRevealParticles(r.color, 22 + rarRank * 14);
   reveal.classList.add('show');
   if(isAscended){
     try { sfxLegend?.(); } catch(e){}
     try { launchConfetti?.(); } catch(e){}
-    try { bigBurst?.(r.color, 120); } catch(e){}
-  } else if(wonItem.rarity === 'mythic' || wonItem.rarity === 'legendary'){
+    try { bigBurst?.(r.color, 130); } catch(e){}
+  } else if(rarRank >= 2){
     try { sfxRankUp?.(); } catch(e){}
-    try { bigBurst?.(r.color, 60); } catch(e){}
+    try { bigBurst?.(r.color, 40 + rarRank * 22); } catch(e){}
+  } else {
+    try { caseTick(); } catch(e){}
+    try { bigBurst?.(r.color, 26); } catch(e){}
   }
   if(!isDupe){
     const c = getCosmetics();
@@ -27068,12 +27207,13 @@ async function startCaseOpening(ct){
   try { updateShopBadge(); } catch(e){}
 }
 
-function spawnRevealParticles(color){
+function spawnRevealParticles(color, count){
   const container = $('#caseRevealParticles');
   if(!container) return;
   container.innerHTML = '';
-  const SPECTRUM = [color, '#ff5ec8', '#5fc9ff', '#ffd33d', '#b56cff', '#22d3a3'];
-  for(let i = 0; i < 40; i++){
+  const SPECTRUM = [color, color, '#ff5ec8', '#5fc9ff', '#ffd33d', '#b56cff', '#22d3a3'];
+  const N = count || 40;
+  for(let i = 0; i < N; i++){
     const p = document.createElement('div');
     p.className = 'cr-particle';
     const angle = Math.random() * Math.PI * 2;
@@ -34070,6 +34210,11 @@ function renderLevelLadder(p, lvl, prestige){
   const xpPct = atCap ? 100 : Math.round(lvl.progress * 100);
   const prPct = Math.round(Math.min(prestige, MAX_PRESTIGE) / MAX_PRESTIGE * 100);
 
+  const nextCaseLvl = (Math.floor(lvl.level / 7) + 1) * 7;
+  const caseHint = atCap
+    ? `<span class="lp-reward-ic">📦</span> Every case milestone earned — max level reached`
+    : `<span class="lp-reward-ic">📦</span> Earn a <b>ROSHCAM Case</b> every 7 levels · next at <b>level ${nextCaseLvl}</b>`;
+
   host.innerHTML = `
     <div class="lp-card">
       <div class="lp-head">
@@ -34080,6 +34225,7 @@ function renderLevelLadder(p, lvl, prestige){
           <div class="lp-head-sub">${xpText}</div>
         </div>
       </div>
+      <div class="lp-reward">${caseHint}</div>
       <div class="lp-track">
         <div class="lp-stage" id="lpStageLevel"></div>
       </div>
@@ -37636,4 +37782,3 @@ setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
-// ===== please work =====
