@@ -8468,77 +8468,53 @@ body.reduced-motion .dock-predict.attract .dock-predict-btn, body.low-power .doc
   to{ transform: scale(1) translateY(0); opacity: 1; }
 }
 
-/* COMPACT HEADER STRIP */
+/* HEADER — a big standalone result wordmark (just text), then the scoreline */
 .mr-headline-strip{
   position: relative;
-  padding: 18px 22px 16px;
-  background: var(--result-color-gradient, linear-gradient(135deg, #17a079, #0e7556));
-  color: #fff;
-  overflow: hidden;
+  padding: 32px 22px 16px;
+  text-align: center;
+  overflow: visible;
   flex-shrink: 0;
 }
-.mr-headline-strip.win{ --result-color-gradient: linear-gradient(135deg, #17a079 0%, #0e7556 100%); }
-.mr-headline-strip.lose{ --result-color-gradient: linear-gradient(135deg, #c41f44 0%, #8c1530 100%); }
-.mr-headline-strip.draw{ --result-color-gradient: linear-gradient(135deg, #7a5cd8 0%, #5840a0 100%); }
-/* Animated shine sweep across the result header */
-.mr-headline-strip::after{ content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
-  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.22) 48%, transparent 66%);
-  transform:translateX(-120%); animation:mrShine 3.2s ease-in-out .5s infinite; }
-@keyframes mrShine{ 0%{ transform:translateX(-120%); } 55%,100%{ transform:translateX(120%); } }
-body.reduced-motion .mr-headline-strip::after, body.low-power .mr-headline-strip::after{ animation:none; opacity:0; }
+.mr-headline-strip.win{ --mr-a:#22d3a3; --mr-b:#6ff0cf; }
+.mr-headline-strip.lose{ --mr-a:#ff4d68; --mr-b:#ff9a5c; }
+.mr-headline-strip.draw{ --mr-a:#9b7bff; --mr-b:#5fc9ff; }
+/* soft radial bloom behind the wordmark in the result colour */
+.mr-headline-strip::before{
+  content:''; position:absolute; left:50%; top:26%; width:min(80%,360px); height:150px;
+  transform:translate(-50%,-50%); z-index:0; pointer-events:none; border-radius:50%;
+  background:radial-gradient(ellipse at center, color-mix(in srgb, var(--mr-a,#22d3a3) 32%, transparent), transparent 70%);
+  animation:mrHeadGlow 3s ease-in-out infinite;
+}
+@keyframes mrHeadGlow{ 0%,100%{ opacity:.65; } 50%{ opacity:1; } }
 .mrc-top{
-  position: relative;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 14px;
+  position: relative; z-index: 2; display: block; margin-bottom: 16px;
 }
-.mr-headline-icon{
-  flex-shrink: 0;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,.3));
-  animation: mrHeadlineIconIn .8s cubic-bezier(.2,1.8,.4,1) .2s both;
-}
-@keyframes mrHeadlineIconIn{
-  from{ transform: scale(.3) rotate(-30deg); opacity: 0; }
-  to{ transform: scale(1) rotate(0); opacity: 1; }
-}
-.mr-headline-text{ flex: 1; min-width: 0; }
+.mr-headline-icon{ display:none; }         /* just the text, per the new design */
+.mr-headline-text{ min-width: 0; }
 .match-result-card-v2 .match-result-headline{
   font-family: var(--font-display);
-  font-stretch: 65%;
-  font-weight: 800;
-  font-size: 30px;
-  letter-spacing: -.03em;
-  line-height: 1;
+  font-stretch: 60%;
+  font-weight: 900;
+  font-size: clamp(50px, 13.5vw, 84px);
+  letter-spacing: -.035em;
+  line-height: .9;
   text-transform: uppercase;
-  color: #fff !important;
-  background: none !important;
-  -webkit-text-fill-color: #fff !important;
-  text-shadow: 0 2px 10px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.8);
+  background: linear-gradient(180deg, #ffffff 6%, var(--mr-a,#22d3a3) 62%, var(--mr-b,#6ff0cf) 104%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important;
+  filter: drop-shadow(0 8px 26px color-mix(in srgb, var(--mr-a,#22d3a3) 55%, transparent));
+  text-shadow: none;
 }
 .match-result-card-v2 .match-result-sub{
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: .12em;
+  font-size: 10.5px;
+  letter-spacing: .2em;
   text-transform: uppercase;
-  color: rgba(255,255,255,.9);
-  margin-top: 4px;
+  color: var(--text-dim);
+  margin-top: 12px;
   font-weight: 700;
-  text-shadow: 0 1px 4px rgba(0,0,0,.4);
-}
-.mr-headline-burst{
-  position: absolute;
-  top: 50%; right: -50px;
-  width: 200px; height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255,255,255,.22), transparent 70%);
-  transform: translateY(-50%);
-  animation: mrBurstSlide 8s ease-in-out infinite;
-}
-@keyframes mrBurstSlide{
-  0%, 100%{ transform: translateY(-50%) translateX(0); }
-  50%{ transform: translateY(-50%) translateX(-30px); }
+  text-shadow: none;
 }
 
 /* Scoreline within header — avatars + score inline */
@@ -9032,19 +9008,20 @@ body.low-power .match-result-card-v2::after{ display:none; }
 
 /* Body sections fade-rise in a gentle stagger (skip the collapsible details,
    which is toggled open later and must not be left in an animated state) */
-.mrc-body > *:not(#mrcDetails){ animation: mrRise .5s ease-out both; }
-.mrc-body > *:nth-child(1){ animation-delay:.5s; }
-.mrc-body > *:nth-child(2){ animation-delay:.6s; }
-.mrc-body > *:nth-child(3){ animation-delay:.7s; }
-.mrc-body > *:nth-child(4){ animation-delay:.8s; }
+/* reward "popups" spring up one after another for game-feel juice */
+.mrc-body > *:not(#mrcDetails){ animation: mrRise .52s cubic-bezier(.2,1.35,.35,1) both; }
+.mrc-body > *:nth-child(1){ animation-delay:.42s; }
+.mrc-body > *:nth-child(2){ animation-delay:.54s; }
+.mrc-body > *:nth-child(3){ animation-delay:.66s; }
+.mrc-body > *:nth-child(4){ animation-delay:.78s; }
 .mrc-body > *:nth-child(n+5){ animation-delay:.9s; }
-@keyframes mrRise{ from{ transform:translateY(14px); opacity:0; } to{ transform:translateY(0); opacity:1; } }
+@keyframes mrRise{ from{ transform:translateY(22px) scale(.95); opacity:0; } to{ transform:translateY(0) scale(1); opacity:1; } }
 
 /* (Rank/level bar shimmer is handled by the global bar redesign block.) */
 
 /* Action buttons rise in last */
-.match-result-actions{ animation: mrRise .5s ease-out 1s both; }
-.match-result-extra{ animation: mrRise .5s ease-out 1.1s both; }
+.match-result-actions{ animation: mrRise .5s cubic-bezier(.2,1.2,.35,1) .96s both; }
+.match-result-extra{ animation: mrRise .5s cubic-bezier(.2,1.2,.35,1) 1.06s both; }
 
 /* Respect reduced motion — keep it readable, drop the motion */
 body.reduced-motion .match-result-card-v2,
@@ -9250,6 +9227,14 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
   letter-spacing: .02em;
 }
 .mxp-chip b{ color: #ffb347; font-weight: 700; }
+/* each XP chip pops in individually for extra juice */
+.mxp-breakdown .mxp-chip:not(.mxp-coin){ animation:mrChipPop .4s cubic-bezier(.2,1.7,.4,1) both; }
+.mxp-breakdown .mxp-chip:nth-child(1){ animation-delay:.8s; }
+.mxp-breakdown .mxp-chip:nth-child(2){ animation-delay:.88s; }
+.mxp-breakdown .mxp-chip:nth-child(3){ animation-delay:.96s; }
+.mxp-breakdown .mxp-chip:nth-child(4){ animation-delay:1.04s; }
+.mxp-breakdown .mxp-chip:nth-child(n+5){ animation-delay:1.12s; }
+@keyframes mrChipPop{ from{ opacity:0; transform:scale(.55) translateY(6px); } to{ opacity:1; transform:none; } }
 
 .rank-card-head{
   display:flex; align-items:center; gap:14px;
@@ -11000,8 +10985,20 @@ body.reduced-motion .rankup-orbit, body.low-power .rankup-orbit{ display: none; 
 @keyframes prBloom{ 0%{opacity:0; transform:translate(-50%,-50%) scale(.5);} 55%{opacity:.45;} 100%{opacity:.28; transform:translate(-50%,-50%) scale(1);} }
 .prestige-particles{ position:absolute; inset:0; z-index:1; pointer-events:none; }
 .prestige-particles .particle{ position:absolute; width:5px; height:5px; border-radius:50%; opacity:0; animation: rankupParticle 3s ease-out infinite; }
-.prestige-emblem{ position:relative; width:200px; height:200px; display:grid; place-items:center; margin:8px 0 12px; animation: prEmblemIn 1s .15s cubic-bezier(.15,1.4,.4,1) both; }
-@keyframes prEmblemIn{ 0%{opacity:0; transform:scale(.3) rotate(-160deg); filter:blur(10px);} 60%{opacity:1; filter:blur(0);} 100%{opacity:1; transform:scale(1) rotate(0);} }
+.prestige-emblem{ position:relative; width:200px; height:200px; display:grid; place-items:center; margin:8px 0 12px; animation: prEmblemIn .85s .1s cubic-bezier(.16,1.5,.3,1) both; }
+@keyframes prEmblemIn{
+  0%{ opacity:0; transform:scale(.18) rotate(-240deg); filter:blur(14px) brightness(2.6); }
+  45%{ opacity:1; filter:blur(0) brightness(1.7); }
+  68%{ transform:scale(1.13) rotate(7deg); filter:brightness(1.25); }
+  100%{ opacity:1; transform:scale(1) rotate(0); filter:brightness(1); }
+}
+/* a shockwave ring bursts outward as the emblem warps in */
+.prestige-emblem::after{
+  content:''; position:absolute; inset:0; margin:auto; width:124px; height:124px; border-radius:50%;
+  border:3px solid var(--pr-glow); box-shadow:0 0 34px var(--pr-glow); opacity:0; pointer-events:none;
+  animation: prShock .85s .3s cubic-bezier(.2,.7,.3,1) forwards;
+}
+@keyframes prShock{ 0%{ opacity:.95; transform:scale(.5); } 70%{ opacity:.4; } 100%{ opacity:0; transform:scale(3.4); } }
 .prestige-ring{ position:absolute; inset:0; border-radius:50%; border:2px solid var(--pr-glow); opacity:.5; animation: prSpin 9s linear infinite; }
 .prestige-ring.r2{ inset:-18px; border-style:dashed; opacity:.32; animation: prSpin 13s linear infinite reverse; }
 @keyframes prSpin{ to{ transform:rotate(360deg); } }
@@ -15294,11 +15291,26 @@ body.reduced-motion .dr2-amount, body.low-power .dr2-amount{ animation:none; }
   box-shadow:0 3px 10px -3px var(--tc);
 }
 .lp-tile{
+  position:relative;
   width:100%; flex:1; display:flex; flex-direction:column; align-items:center; gap:5px;
   padding:13px 6px 10px; border-radius:15px;
   background:var(--surface-2); border:1px solid var(--line);
   transition:transform .2s, border-color .2s, box-shadow .2s;
 }
+/* every 7th level: a case-reward tile gets a violet tint + a floating case badge */
+.lp-tier.case-reward .lp-tile{ border-color:color-mix(in srgb, #b56cff 42%, var(--line)); }
+.lp-tier.case-reward.reached .lp-tile{ box-shadow:0 0 20px -12px #b56cff; }
+.lp-case-badge{
+  position:absolute; top:-9px; right:-7px; z-index:3;
+  width:24px; height:24px; border-radius:8px; display:grid; place-items:center; font-size:13px; line-height:1;
+  background:linear-gradient(150deg, #7b5cff, #b56cff 55%, #ff5ec8);
+  border:1.5px solid rgba(255,255,255,.25);
+  box-shadow:0 4px 12px -4px rgba(181,108,255,.8), 0 0 14px -4px rgba(255,94,200,.6);
+  animation:lpCaseFloat 2.6s ease-in-out infinite;
+}
+@keyframes lpCaseFloat{ 0%,100%{ transform:translateY(0) rotate(-4deg); } 50%{ transform:translateY(-3px) rotate(4deg); } }
+.lp-tier.locked .lp-case-badge{ filter:grayscale(.35) brightness(.85); }
+body.reduced-motion .lp-case-badge, body.low-power .lp-case-badge{ animation:none; }
 .lp-tier:hover .lp-tile{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--tc) 40%, var(--line)); box-shadow:0 14px 30px -16px rgba(0,0,0,.7); }
 .lp-tier.reached .lp-tile{
   background:linear-gradient(180deg, color-mix(in srgb, var(--tc) 10%, var(--surface-2)), var(--surface-2));
@@ -15734,25 +15746,73 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 }
 .pm-av-wrap{ position:relative; }
 .pm-av-wrap .av-xl{ position:relative; z-index:1; }
+/* ═══ Premium avatar rings — a THICK, glossy ring (own radial mask, not the
+   thin 4px border) with a counter-rotating light sweep shimmering through it.
+   Shared by most effects; each sets its own colour, glow and pulse. ═══ */
+.cxa-galaxy, .cxa-gold, .cxa-void, .cxa-prism, .cxa-ice, .cxa-rose, .cxa-mint{
+  border:0 !important;
+  -webkit-mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
+  mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
+  -webkit-mask-composite:source-over !important; mask-composite:add !important;
+}
+.cxa-galaxy::before, .cxa-gold::before, .cxa-void::before, .cxa-prism::before, .cxa-ice::before, .cxa-rose::before, .cxa-mint::before{
+  content:''; position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:conic-gradient(from 90deg, transparent, rgba(255,255,255,.6) 7%, transparent 22%, rgba(255,255,255,.32) 52%, transparent 66%);
+  mix-blend-mode:screen; animation:cxaSpinRev 3s linear infinite;
+}
+@keyframes cxaSpinRev{ to{ transform:rotate(-360deg); } }
+
 .cxa-galaxy{
   background:conic-gradient(#7b6cff, #c66cff, #5fc9ff, #ff6cd8, #2d1b4e, #7b6cff);
   animation:cxaSpin 7s linear infinite;
-  filter:drop-shadow(0 0 9px rgba(155,123,255,.75));
+  filter:drop-shadow(0 0 11px rgba(155,123,255,.82));
 }
-.cxa-galaxy::after{
-  content:''; position:absolute; left:50%; top:-2px; width:7px; height:7px; margin-left:-3.5px; border-radius:50%;
-  background:#fff; box-shadow:0 0 8px 2px rgba(255,255,255,.9);
+.cxa-galaxy::after{ /* a bright star riding the galaxy ring */
+  content:''; position:absolute; left:50%; top:7%; width:6px; height:6px; margin-left:-3px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fff 30%, rgba(185,205,255,.85) 60%, transparent 76%);
+  box-shadow:0 0 9px 2px #fff, 0 0 17px 4px rgba(155,123,255,.7);
 }
 .cxa-gold{
   background:conic-gradient(#8a5a00, #ffd45e, #fff3c4, #ffb336, #8a5a00, #ffd45e, #8a5a00);
-  animation:cxaSpin 6s linear infinite;
-  filter:drop-shadow(0 0 9px rgba(255,180,54,.8));
+  animation:cxaSpin 6s linear infinite, cxaGoldPulse 2.6s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(255,180,54,.85));
 }
+@keyframes cxaGoldPulse{ 0%,100%{ filter:drop-shadow(0 0 9px rgba(255,180,54,.75)) brightness(1); } 50%{ filter:drop-shadow(0 0 18px rgba(255,205,90,1)) brightness(1.14); } }
+.cxa-void{ /* a black hole: dark vortex with a violet event-horizon glow */
+  background:conic-gradient(#0a0614, #7b3fe4, #05030c, #b56cff, #0a0614);
+  animation:cxaSpin 4.5s linear infinite, cxaVoidPulse 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 13px rgba(123,63,228,.95));
+}
+@keyframes cxaVoidPulse{ 0%,100%{ filter:drop-shadow(0 0 12px rgba(123,63,228,.9)); } 50%{ filter:drop-shadow(0 0 22px rgba(181,108,255,1)) drop-shadow(0 0 36px rgba(123,63,228,.6)); } }
+.cxa-prism{ /* full-spectrum refraction cycling through every hue */
+  background:conic-gradient(#ff5e5e, #ffb336, #ffe95e, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e);
+  animation:cxaSpin 3.4s linear infinite, cxaPrismHue 5s linear infinite;
+  filter:drop-shadow(0 0 11px rgba(255,255,255,.55)) hue-rotate(0deg);
+}
+@keyframes cxaPrismHue{ from{ filter:drop-shadow(0 0 11px rgba(255,255,255,.55)) hue-rotate(0deg); } to{ filter:drop-shadow(0 0 11px rgba(255,255,255,.55)) hue-rotate(360deg); } }
+.cxa-ice{
+  background:conic-gradient(#bfeaff, #5fc9ff, #e8f9ff, #8fd8ff, #bfeaff);
+  animation:cxaSpin 9s linear infinite, cxaIcePulse 3.2s ease-in-out infinite;
+  filter:drop-shadow(0 0 9px rgba(95,201,255,.75));
+}
+@keyframes cxaIcePulse{ 0%,100%{ filter:drop-shadow(0 0 8px rgba(95,201,255,.7)) brightness(1); } 50%{ filter:drop-shadow(0 0 16px rgba(205,242,255,.95)) brightness(1.16); } }
+.cxa-rose{
+  background:conic-gradient(#f7c8c0, #e8927c, #ffe3dc, #d87a68, #f7c8c0);
+  animation:cxaSpin 8s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(232,146,124,.72));
+}
+.cxa-mint{
+  background:conic-gradient(var(--mint), #18b88c, #7dffd8, var(--mint));
+  animation:cxaSpin 7s linear infinite, cxaMintPulse 2.4s ease-in-out infinite;
+}
+@keyframes cxaMintPulse{ 0%,100%{ filter:drop-shadow(0 0 7px rgba(34,211,163,.65)); } 50%{ filter:drop-shadow(0 0 16px rgba(34,211,163,1)); } }
+
+/* ═══ LIQUID METAL — a morphing chrome blob flowing through the spectrum ═══ */
 .cxa-liquid{
-  background:linear-gradient(120deg, #dfe4ee, #8f9bb3, #f5f7fa, #aab6d3, #dfe4ee);
+  background:linear-gradient(120deg, #e6ebf5, #8f9bb3, #ffffff, #aab6d3, #e6ebf5);
   background-size:300% 300%;
-  animation:cxaBlob 6s ease-in-out infinite, cxaFlowBg 4s linear infinite;
-  filter:drop-shadow(0 0 8px rgba(190,200,225,.6));
+  animation:cxaBlob 6s ease-in-out infinite, cxaFlowBg 4s linear infinite, cxaLiquidHue 7s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(190,200,225,.7));
 }
 @keyframes cxaBlob{
   0%,100%{ border-radius:52% 48% 55% 45% / 48% 55% 45% 52%; }
@@ -15760,101 +15820,115 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   66%{ border-radius:58% 42% 45% 55% / 42% 58% 48% 52%; }
 }
 @keyframes cxaFlowBg{ to{ background-position:300% 300%; } }
-.cxa-void{
-  background:conic-gradient(#0a0614, #7b3fe4, #0a0614, #b56cff, #0a0614);
-  animation:cxaSpin 4.5s linear infinite;
-  filter:drop-shadow(0 0 12px rgba(123,63,228,.9));
-}
+@keyframes cxaLiquidHue{ to{ filter:drop-shadow(0 0 9px rgba(190,200,225,.7)) hue-rotate(360deg); } }
+
+/* ═══ FLAME — real licking fire, warped by animated turbulence ═══ */
 .cxa-flame{
-  background:conic-gradient(#ff3d00, #ffb336, #ffe27e, #ff5c1a, #ff9a3d, #ff3d00);
-  animation:cxaSpin 3s linear infinite, cxaFlicker 1.1s ease-in-out infinite;
-  filter:drop-shadow(0 0 10px rgba(255,110,30,.85));
+  -webkit-mask:none !important; mask:none !important; border:0 !important;
+  background:radial-gradient(closest-side, transparent 66%, rgba(255,90,0,.5) 74%, rgba(255,180,60,.98) 82%, rgba(255,235,130,.8) 87%, rgba(255,70,0,.4) 92%, transparent 99%);
+  filter:url(#flameFilter) drop-shadow(0 0 9px rgba(255,110,30,.9)) drop-shadow(0 0 18px rgba(255,60,0,.5));
+  animation:cxaSpin 7s linear infinite, cxaFlameFlick .12s steps(2,end) infinite;
 }
-@keyframes cxaFlicker{ 0%,100%{ filter:drop-shadow(0 0 8px rgba(255,110,30,.7)) brightness(1); } 50%{ filter:drop-shadow(0 0 15px rgba(255,140,40,1)) brightness(1.25); } }
+@keyframes cxaFlameFlick{ 0%{ opacity:1; } 50%{ opacity:.8; } 100%{ opacity:.93; } }
+
+/* ═══ ELECTRIC — crackling cyan lightning, warped by turbulence ═══ */
 .cxa-electric{
-  background:repeating-conic-gradient(#5ff2ff 0 14deg, transparent 14deg 34deg);
-  animation:cxaSpin 1.1s linear infinite;
-  filter:drop-shadow(0 0 9px rgba(95,242,255,.9));
+  -webkit-mask:none !important; mask:none !important; border:0 !important;
+  background:radial-gradient(closest-side, transparent 68%, rgba(95,242,255,.32) 76%, rgba(180,252,255,.98) 83%, rgba(95,201,255,.85) 89%, rgba(95,242,255,.3) 93%, transparent 100%);
+  filter:url(#stormFilter) drop-shadow(0 0 7px rgba(95,242,255,.95)) drop-shadow(0 0 15px rgba(95,201,255,.6));
+  animation:cxaSpin 8s linear infinite, cxaStormFlicker .11s steps(2,end) infinite;
 }
-.cxa-prism{
-  background:conic-gradient(#ff5e5e, #ffb336, #ffe95e, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e);
-  animation:cxaSpin 3.4s linear infinite;
-  filter:drop-shadow(0 0 9px rgba(255,255,255,.45));
-}
-.cxa-ice{
-  background:conic-gradient(#bfeaff, #5fc9ff, #e8f9ff, #8fd8ff, #bfeaff);
-  animation:cxaSpin 9s linear infinite;
-  filter:drop-shadow(0 0 8px rgba(95,201,255,.7));
-}
-.cxa-rose{
-  background:conic-gradient(#f7c8c0, #e8927c, #ffe3dc, #d87a68, #f7c8c0);
-  animation:cxaSpin 8s linear infinite;
-  filter:drop-shadow(0 0 8px rgba(232,146,124,.65));
-}
-.cxa-mint{
-  background:conic-gradient(var(--mint), #18b88c, #7dffd8, var(--mint));
-  animation:cxaSpin 7s linear infinite, cxaMintPulse 2.4s ease-in-out infinite;
-}
-@keyframes cxaMintPulse{ 0%,100%{ filter:drop-shadow(0 0 6px rgba(34,211,163,.6)); } 50%{ filter:drop-shadow(0 0 14px rgba(34,211,163,.95)); } }
 @keyframes cxaSpin{ to{ transform:rotate(360deg); } }
+body.reduced-motion :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-prism::before,.cxa-ice::before,.cxa-rose::before,.cxa-mint::before,.cxa-galaxy::after),
+body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-prism::before,.cxa-ice::before,.cxa-rose::before,.cxa-mint::before,.cxa-galaxy::after){ animation:none !important; }
 
 /* ---------- PROFILE FRAMES ---------- */
 .cx-frame-overlay{ position:absolute; inset:0; z-index:1; pointer-events:none; border-radius:inherit; }
 .pm-banner{ position:relative; overflow:hidden; }
 .locker-look .cx-frame-overlay{ border-radius:inherit; }
-/* Royal Gild */
-.cxf-gold{ border-color:rgba(255,180,54,.6) !important; box-shadow:0 0 40px -14px rgba(255,180,54,.5), inset 0 0 0 1px rgba(255,211,61,.18) !important; }
+@keyframes cxfDrift{ to{ background-position:-200% 0; } }
+/* ═══ ROYAL GILD — molten liquid gold that flows, with drifting gold dust ═══ */
+.cxf-gold{ border-color:rgba(255,190,70,.7) !important; box-shadow:0 0 48px -12px rgba(255,190,70,.65), inset 0 0 0 1px rgba(255,215,110,.28) !important; animation:cxfGoldGlow 3.4s ease-in-out infinite; }
+@keyframes cxfGoldGlow{ 0%,100%{ box-shadow:0 0 42px -14px rgba(255,190,70,.55), inset 0 0 0 1px rgba(255,215,110,.22); } 50%{ box-shadow:0 0 64px -10px rgba(255,205,90,.85), inset 0 0 0 1px rgba(255,235,140,.4); } }
 .cxf-gold .cx-frame-overlay{
   background:
-    linear-gradient(90deg, rgba(255,212,94,.9), transparent 18%, transparent 82%, rgba(255,212,94,.9)) top / 100% 3px no-repeat,
-    radial-gradient(80% 120% at 50% -30%, rgba(255,180,54,.3), transparent 60%);
+    radial-gradient(1.4px 1.4px at 18% 32%, rgba(255,244,200,.95) 45%, transparent 55%),
+    radial-gradient(1.1px 1.1px at 66% 24%, rgba(255,236,175,.9) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 86% 64%, rgba(255,246,205,.85) 45%, transparent 55%),
+    radial-gradient(1.1px 1.1px at 40% 78%, rgba(255,236,175,.8) 45%, transparent 55%),
+    linear-gradient(100deg, rgba(150,100,15,.22), rgba(255,214,110,.5) 26%, rgba(255,248,214,.7) 50%, rgba(255,200,70,.5) 74%, rgba(150,100,15,.22));
+  background-size:200% 100%;
+  animation:cxfDrift 4.6s linear infinite; mix-blend-mode:screen;
 }
-/* Nebula Frame */
-.cxf-galaxy{ border-color:rgba(155,123,255,.55) !important; box-shadow:0 0 44px -14px rgba(155,123,255,.55) !important; }
+/* ═══ NEBULA — deep-space clouds drifting behind a twinkling star field ═══ */
+.cxf-galaxy{ border-color:rgba(155,123,255,.6) !important; box-shadow:0 0 50px -12px rgba(155,123,255,.68) !important; }
 .cxf-galaxy .cx-frame-overlay{
   background:
-    radial-gradient(2px 2px at 18% 34%, rgba(255,255,255,.95) 45%, transparent 55%),
-    radial-gradient(1.5px 1.5px at 66% 22%, rgba(255,255,255,.85) 45%, transparent 55%),
-    radial-gradient(2px 2px at 84% 62%, rgba(255,255,255,.9) 45%, transparent 55%),
-    radial-gradient(1.5px 1.5px at 38% 74%, rgba(255,255,255,.8) 45%, transparent 55%),
-    linear-gradient(115deg, rgba(123,108,255,.42), rgba(198,108,255,.3) 40%, rgba(95,201,255,.28) 70%, rgba(255,108,216,.32));
-  background-size:210% 100%; animation:cxnFlow 9s linear infinite;
-  mix-blend-mode:screen;
+    radial-gradient(1.8px 1.8px at 18% 34%, #fff 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 66% 22%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(1.8px 1.8px at 84% 62%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 38% 76%, rgba(255,255,255,.8) 45%, transparent 55%),
+    radial-gradient(60% 130% at 26% 42%, rgba(255,94,200,.42), transparent 60%),
+    radial-gradient(60% 130% at 74% 56%, rgba(95,201,255,.4), transparent 60%),
+    linear-gradient(115deg, rgba(123,108,255,.4), rgba(198,108,255,.32) 40%, rgba(95,201,255,.3) 70%, rgba(255,108,216,.34));
+  background-size:200% 200%;
+  animation:cxfDrift 11s linear infinite, cxfTwinkle 4s ease-in-out infinite; mix-blend-mode:screen;
 }
-/* Neon Grid */
-.cxf-neon{ border-color:rgba(95,201,255,.55) !important; box-shadow:0 0 40px -14px rgba(95,201,255,.55), 0 0 60px -30px rgba(255,94,200,.6) !important; }
+@keyframes cxfTwinkle{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.3); } }
+/* ═══ NEON GRID — a synthwave grid that scrolls toward you under a horizon ═══ */
+.cxf-neon{ border-color:rgba(95,201,255,.6) !important; box-shadow:0 0 44px -12px rgba(95,201,255,.6), 0 0 64px -28px rgba(255,94,200,.65) !important; }
 .cxf-neon .cx-frame-overlay{
   background:
-    repeating-linear-gradient(90deg, rgba(95,201,255,.28) 0 1px, transparent 1px 26px),
-    repeating-linear-gradient(0deg, rgba(95,201,255,.22) 0 1px, transparent 1px 18px),
-    linear-gradient(180deg, rgba(255,94,200,.16), transparent 55%);
-  transform:perspective(190px) rotateX(38deg) scale(1.3); transform-origin:50% 100%;
+    repeating-linear-gradient(90deg, rgba(95,201,255,.32) 0 1px, transparent 1px 26px),
+    repeating-linear-gradient(0deg, rgba(120,220,255,.3) 0 1px, transparent 1px 18px),
+    linear-gradient(180deg, rgba(255,94,200,.24), transparent 55%);
+  transform:perspective(190px) rotateX(40deg) scale(1.35); transform-origin:50% 100%;
+  animation:cxfNeonScroll 1.5s linear infinite;
 }
-/* Liquid Frame */
-.cxf-liquid{ border-color:transparent !important; animation:cxfLiquid 6s linear infinite; }
+@keyframes cxfNeonScroll{ from{ background-position:0 0, 0 0, 0 0; } to{ background-position:0 0, 0 18px, 0 0; } }
+/* ═══ LIQUID CHROME — iridescent liquid metal flowing through every hue ═══ */
+.cxf-liquid{ border-color:transparent !important; animation:cxfLiquid 5s linear infinite; }
 @keyframes cxfLiquid{
-  0%{ box-shadow:0 0 0 1.5px #b56cff, 0 0 42px -12px #b56cff; }
-  33%{ box-shadow:0 0 0 1.5px #5fc9ff, 0 0 42px -12px #5fc9ff; }
-  66%{ box-shadow:0 0 0 1.5px #ff5ec8, 0 0 42px -12px #ff5ec8; }
-  100%{ box-shadow:0 0 0 1.5px #b56cff, 0 0 42px -12px #b56cff; }
+  0%{ box-shadow:0 0 0 1.5px #b56cff, 0 0 46px -12px #b56cff; }
+  33%{ box-shadow:0 0 0 1.5px #5fc9ff, 0 0 46px -12px #5fc9ff; }
+  66%{ box-shadow:0 0 0 1.5px #ff5ec8, 0 0 46px -12px #ff5ec8; }
+  100%{ box-shadow:0 0 0 1.5px #b56cff, 0 0 46px -12px #b56cff; }
 }
 .cxf-liquid .cx-frame-overlay{
-  background:linear-gradient(115deg, rgba(181,108,255,.4), rgba(95,201,255,.34) 34%, rgba(255,94,200,.34) 68%, rgba(181,108,255,.4));
-  background-size:280% 100%; animation:cxnFlow 5s linear infinite; mix-blend-mode:screen;
+  background:linear-gradient(115deg, rgba(181,108,255,.46), rgba(95,201,255,.4) 30%, rgba(94,255,186,.36) 55%, rgba(255,94,200,.42) 78%, rgba(181,108,255,.46));
+  background-size:200% 100%; animation:cxfDrift 4s linear infinite, cxfLiquidHue 8s linear infinite; mix-blend-mode:screen;
 }
-/* Crimson Court */
-.cxf-blood{ border-color:rgba(255,51,88,.55) !important; animation:cxfBloodPulse 2.6s ease-in-out infinite; }
-@keyframes cxfBloodPulse{ 0%,100%{ box-shadow:0 0 34px -14px rgba(255,51,88,.5); } 50%{ box-shadow:0 0 48px -10px rgba(255,51,88,.8); } }
-.cxf-blood .cx-frame-overlay{ background:radial-gradient(120% 150% at 50% -30%, rgba(255,51,88,.4), transparent 62%); }
-/* Circuit */
-.cxf-circuit{ border-color:rgba(34,211,163,.5) !important; box-shadow:0 0 34px -14px rgba(34,211,163,.5) !important; }
+@keyframes cxfLiquidHue{ to{ filter:hue-rotate(360deg); } }
+/* ═══ CRIMSON COURT — dark royal velvet with a living heartbeat glow ═══ */
+.cxf-blood{ border-color:rgba(255,51,88,.6) !important; animation:cxfBloodBeat 1.5s ease-in-out infinite; }
+@keyframes cxfBloodBeat{
+  0%,52%,100%{ box-shadow:0 0 34px -14px rgba(255,51,88,.5); }
+  10%{ box-shadow:0 0 56px -8px rgba(255,51,88,.92); }
+  24%{ box-shadow:0 0 34px -14px rgba(255,51,88,.5); }
+  36%{ box-shadow:0 0 48px -10px rgba(255,51,88,.8); }
+}
+.cxf-blood .cx-frame-overlay{
+  background:
+    repeating-linear-gradient(45deg, rgba(255,255,255,.03) 0 1px, transparent 1px 11px),
+    radial-gradient(120% 150% at 50% -30%, rgba(255,51,88,.46), transparent 62%);
+  animation:cxfBloodPulseO 1.5s ease-in-out infinite;
+}
+@keyframes cxfBloodPulseO{ 0%,52%,100%{ opacity:.82; } 10%{ opacity:1; } }
+/* ═══ CIRCUIT — a live circuit board with energy pulsing along the traces ═══ */
+.cxf-circuit{ border-color:rgba(34,211,163,.55) !important; box-shadow:0 0 38px -12px rgba(34,211,163,.55) !important; }
 .cxf-circuit .cx-frame-overlay{
   background:
-    repeating-linear-gradient(90deg, rgba(34,211,163,.22) 0 1.5px, transparent 1.5px 34px),
-    repeating-linear-gradient(0deg, rgba(34,211,163,.16) 0 1.5px, transparent 1.5px 26px),
-    radial-gradient(3px 3px at 34px 26px, rgba(34,211,163,.9) 45%, transparent 55%),
-    radial-gradient(3px 3px at 102px 52px, rgba(34,211,163,.8) 45%, transparent 55%);
+    repeating-linear-gradient(90deg, rgba(34,211,163,.26) 0 1.5px, transparent 1.5px 34px),
+    repeating-linear-gradient(0deg, rgba(34,211,163,.2) 0 1.5px, transparent 1.5px 26px),
+    linear-gradient(90deg, transparent, rgba(120,255,220,.6) 50%, transparent),
+    radial-gradient(3px 3px at 34px 26px, rgba(120,255,220,.95) 45%, transparent 55%),
+    radial-gradient(3px 3px at 102px 52px, rgba(120,255,220,.85) 45%, transparent 55%),
+    radial-gradient(3px 3px at 68px 78px, rgba(120,255,220,.8) 45%, transparent 55%);
+  background-size:auto, auto, 42% 100%, auto, auto, auto;
+  animation:cxfCircuitPulse 2.4s linear infinite, cxfCircuitBlink 1.4s ease-in-out infinite; mix-blend-mode:screen;
 }
+@keyframes cxfCircuitPulse{ 0%{ background-position:0 0, 0 0, -60% 0, 0 0, 0 0, 0 0; } 100%{ background-position:0 0, 0 0, 170% 0, 0 0, 0 0, 0 0; } }
+@keyframes cxfCircuitBlink{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.4); } }
 
 /* ---------- RESULT SCREEN — RESULT CEREMONY ---------- */
 /* Full-screen ray wheel behind the card */
@@ -15898,26 +15972,16 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   60%{ opacity:.55; transform:scale(.85) rotate(-4deg); }
 }
 /* HEADLINE SLAM — drops in from scale 2.6 with blur, lands with an overshoot */
-.match-result-headline{
-  animation:mrSlam .5s cubic-bezier(.2,1.5,.35,1) .18s both, v10GradFlow 4.5s ease-in-out .8s infinite;
+/* clean "punch-in": scales down from big with a quick blur→sharp, no shake */
+.match-result-headline{ animation:mrHeadIn .62s cubic-bezier(.2,1.25,.35,1) .08s both; }
+@keyframes mrHeadIn{
+  0%{ opacity:0; transform:scale(1.55); filter:blur(8px); }
+  55%{ opacity:1; filter:blur(0); }
+  72%{ transform:scale(.98); }
+  100%{ opacity:1; transform:scale(1); filter:blur(0); }
 }
-@keyframes mrSlam{
-  0%{ opacity:0; transform:scale(2.7) translateY(-14px); filter:blur(9px); }
-  62%{ opacity:1; transform:scale(.94) translateY(2px); filter:blur(0); }
-  82%{ transform:scale(1.04) translateY(0); }
-  100%{ opacity:1; transform:scale(1) translateY(0); }
-}
-.match-result-overlay.lose .match-result-headline{
-  animation:mrSlamDown .55s cubic-bezier(.3,1.2,.4,1) .18s both, v10GradFlow 4.5s ease-in-out .9s infinite;
-}
-@keyframes mrSlamDown{
-  0%{ opacity:0; transform:translateY(-90px) rotate(-3deg); filter:blur(6px); }
-  60%{ opacity:1; transform:translateY(6px) rotate(.8deg); filter:blur(0); }
-  80%{ transform:translateY(-3px) rotate(0); }
-  100%{ opacity:1; transform:translateY(0); }
-}
-.match-result-sub{ animation:mrSubIn .5s .55s both; }
-@keyframes mrSubIn{ from{ opacity:0; transform:translateY(8px); letter-spacing:.3em; } to{ opacity:1; transform:none; letter-spacing:.16em; } }
+.match-result-sub{ animation:mrSubIn .5s .5s both; }
+@keyframes mrSubIn{ from{ opacity:0; transform:translateY(8px); letter-spacing:.34em; } to{ opacity:1; transform:none; letter-spacing:.2em; } }
 /* Screen shake keyed to the slam */
 .match-result-overlay.shake-big .match-result-card-v2{ animation:mrShakeBig .55s cubic-bezier(.36,.07,.19,.97) both !important; }
 .match-result-overlay.shake-small .match-result-card-v2{ animation:mrShakeSmall .45s cubic-bezier(.36,.07,.19,.97) both !important; }
@@ -15957,7 +16021,8 @@ body.reduced-motion :is([class*="cxn-"], [class*="cxt-"], [class*="cxa-"], [clas
 body.low-power :is([class*="cxn-"], [class*="cxt-"], [class*="cxa-"], [class*="cxf-"], .cx-frame-overlay, .mrr, .mr-star, .shop-hero-rays){
   animation:none !important;
 }
-body.reduced-motion .match-result-headline, body.low-power .match-result-headline{ animation:mrSlam .3s ease both !important; filter:none; }
+body.reduced-motion .match-result-headline, body.low-power .match-result-headline{ animation:none !important; }
+body.reduced-motion .mr-headline-strip::before, body.low-power .mr-headline-strip::before{ animation:none !important; }
 body.reduced-motion .mr-stars, body.low-power .mr-stars{ display:none; }
 body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 
@@ -16016,36 +16081,63 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 }
 .shop-note b{ color:var(--text-dim); }
 
-/* ---------- OG TILES: saturated rarity slabs + dark name band ---------- */
+/* ---------- FORTNITE-STYLE TILES: rarity glow from the base, rotating
+   shine behind the item, glowing rarity bar, and a bright rarity pill ------ */
 .shop-tile{
-  min-height:0; border-radius:10px; border-width:2px;
-  border-color:color-mix(in srgb, var(--rc) 70%, #fff 6%);
+  min-height:0; border-radius:12px; border-width:1.5px;
+  border-color:color-mix(in srgb, var(--rc) 46%, rgba(255,255,255,.06));
   background:
-    radial-gradient(130% 90% at 50% -10%, color-mix(in srgb, var(--rc) 30%, #fff 12%) 0%, transparent 55%),
-    linear-gradient(180deg, color-mix(in srgb, var(--rc) 58%, #221d3a), color-mix(in srgb, var(--rc) 26%, #131020) 82%);
+    radial-gradient(125% 88% at 50% 124%, color-mix(in srgb, var(--rc) 64%, transparent) 0%, transparent 62%),
+    linear-gradient(180deg, #15121f 0%, #110e1b 56%, color-mix(in srgb, var(--rc) 24%, #0e0b16) 100%);
+}
+/* slow rotating rarity shine sitting behind the cosmetic preview */
+.shop-tile::before{
+  content:''; position:absolute; left:50%; top:40%; width:155%; aspect-ratio:1; z-index:0; pointer-events:none;
+  transform:translate(-50%,-50%);
+  background:conic-gradient(from 0deg,
+    transparent 0deg, color-mix(in srgb, var(--rc) 46%, transparent) 24deg, transparent 62deg,
+    color-mix(in srgb, var(--rc) 30%, transparent) 150deg, transparent 202deg,
+    color-mix(in srgb, var(--rc) 42%, transparent) 300deg, transparent 340deg);
+  -webkit-mask:radial-gradient(closest-side, #000 22%, transparent 72%); mask:radial-gradient(closest-side, #000 22%, transparent 72%);
+  opacity:.4; animation:shopTileShine 9s linear infinite;
+}
+@keyframes shopTileShine{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
+/* glowing rarity bar along the bottom edge */
+.shop-tile::after{
+  content:''; position:absolute; left:0; right:0; bottom:0; height:4px; z-index:4; pointer-events:none;
+  background:var(--rc); box-shadow:0 0 12px var(--rc), 0 0 24px color-mix(in srgb, var(--rc) 55%, transparent);
 }
 .shop-tile:hover{
-  transform:translateY(-4px) scale(1.02);
-  border-color:#fff;
-  box-shadow:0 18px 40px -18px rgba(0,0,0,.9), 0 0 30px -8px var(--rc);
+  transform:translateY(-6px) scale(1.025);
+  border-color:color-mix(in srgb, var(--rc) 85%, #fff);
+  box-shadow:0 24px 50px -18px rgba(0,0,0,.9), 0 0 46px -6px var(--rc);
 }
-.shop-tile .st-preview{ padding:30px 10px 14px; min-height:118px; transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
-.shop-tile:hover .st-preview{ transform:scale(1.07); }
+.shop-tile:hover::before{ opacity:.72; }
+.shop-tile .st-preview{ position:relative; z-index:1; padding:30px 10px 14px; min-height:118px; transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
+.shop-tile:hover .st-preview{ transform:scale(1.08); }
 .shop-tile.featured .st-preview{ min-height:230px; }
 .st-band{
+  position:relative; z-index:2;
   display:flex; flex-direction:column; gap:1px; padding:9px 10px 0;
-  background:rgba(9,8,18,.82); border-top:2px solid color-mix(in srgb, var(--rc) 55%, transparent);
+  background:linear-gradient(180deg, rgba(9,8,18,.55), rgba(9,8,18,.9));
+  border-top:1px solid color-mix(in srgb, var(--rc) 42%, transparent);
   text-align:center;
 }
 .st-band .st-name{ font-size:16px; font-style:italic; letter-spacing:.02em; }
 .shop-tile.featured .st-band .st-name{ font-size:20px; }
-.st-band .st-type{ color:color-mix(in srgb, var(--rc) 78%, #fff); }
+.st-band .st-type{ color:color-mix(in srgb, var(--rc) 80%, #fff); }
 .st-band .st-foot{
-  margin:7px -10px 0; min-height:34px; background:rgba(0,0,0,.4);
+  margin:7px -10px 4px; min-height:34px; background:rgba(0,0,0,.4);
   border-top:1px solid rgba(255,255,255,.06);
 }
 .st-owned{ display:inline-flex; align-items:center; gap:5px; }
-.st-rarity-tag{ top:8px; left:8px; background:rgba(0,0,0,.55); }
+/* bright rarity pill, like a Fortnite rarity label */
+.st-rarity-tag{
+  top:8px; left:8px; z-index:3; border:none; color:#0c0a14; font-weight:900;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--rc) 92%, #fff), var(--rc));
+  box-shadow:0 2px 10px -2px var(--rc);
+}
+body.reduced-motion .shop-tile::before, body.low-power .shop-tile::before{ animation:none; }
 
 /* ---------- COSMETICS EDITOR (Edit profile) ---------- */
 .cosmetics-editor{ display:flex; flex-direction:column; }
@@ -16281,50 +16373,59 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
 /* ---------- FULL-CARD WASHES: each frame paints the entire profile ---------- */
 .profile-modal.cxf-circuit{
   background:
-    repeating-linear-gradient(90deg, rgba(34,211,163,.055) 0 1.5px, transparent 1.5px 42px),
-    repeating-linear-gradient(0deg, rgba(34,211,163,.045) 0 1.5px, transparent 1.5px 34px),
-    radial-gradient(120% 45% at 50% 0%, rgba(34,211,163,.14), transparent 62%),
-    radial-gradient(120% 40% at 50% 100%, rgba(34,211,163,.08), transparent 60%),
-    linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
+    repeating-linear-gradient(90deg, rgba(34,211,163,.07) 0 1.5px, transparent 1.5px 42px),
+    repeating-linear-gradient(0deg, rgba(34,211,163,.055) 0 1.5px, transparent 1.5px 34px),
+    radial-gradient(3px 3px at 42px 34px, rgba(34,211,163,.5) 45%, transparent 55%),
+    radial-gradient(3px 3px at 126px 68px, rgba(34,211,163,.42) 45%, transparent 55%),
+    radial-gradient(120% 46% at 50% 0%, rgba(34,211,163,.18), transparent 62%),
+    radial-gradient(120% 42% at 50% 100%, rgba(34,211,163,.11), transparent 60%),
+    linear-gradient(180deg, #0b1512, #0a0f0d) !important;
 }
 .profile-modal.cxf-galaxy{
   background:
-    radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,.8) 45%, transparent 55%),
-    radial-gradient(2px 2px at 78% 9%, rgba(255,255,255,.7) 45%, transparent 55%),
-    radial-gradient(1.5px 1.5px at 42% 32%, rgba(255,255,255,.6) 45%, transparent 55%),
-    radial-gradient(2px 2px at 88% 56%, rgba(255,255,255,.55) 45%, transparent 55%),
-    radial-gradient(1.5px 1.5px at 22% 74%, rgba(255,255,255,.5) 45%, transparent 55%),
-    radial-gradient(2px 2px at 64% 88%, rgba(255,255,255,.55) 45%, transparent 55%),
-    radial-gradient(130% 50% at 50% 0%, rgba(155,123,255,.2), transparent 60%),
-    radial-gradient(100% 40% at 15% 100%, rgba(255,94,200,.1), transparent 60%),
-    linear-gradient(180deg, #17142a, #0e0c1a) !important;
+    radial-gradient(1.6px 1.6px at 12% 18%, #fff 45%, transparent 55%),
+    radial-gradient(2px 2px at 78% 9%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 42% 32%, rgba(255,255,255,.7) 45%, transparent 55%),
+    radial-gradient(2px 2px at 88% 56%, rgba(255,255,255,.65) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 22% 74%, rgba(255,255,255,.6) 45%, transparent 55%),
+    radial-gradient(2px 2px at 64% 88%, rgba(255,255,255,.6) 45%, transparent 55%),
+    radial-gradient(120% 60% at 20% 0%, rgba(155,123,255,.28), transparent 60%),
+    radial-gradient(120% 55% at 80% 10%, rgba(95,201,255,.2), transparent 60%),
+    radial-gradient(110% 50% at 50% 105%, rgba(255,94,200,.16), transparent 62%),
+    linear-gradient(180deg, #16122b, #0c0a18) !important;
 }
 .profile-modal.cxf-gold{
   background:
-    radial-gradient(130% 45% at 50% 0%, rgba(255,180,54,.18), transparent 60%),
-    radial-gradient(100% 35% at 50% 100%, rgba(255,180,54,.1), transparent 60%),
-    linear-gradient(115deg, rgba(255,212,94,.05) 0%, transparent 30%, transparent 70%, rgba(255,212,94,.05) 100%),
-    linear-gradient(180deg, #1c1710, var(--bg-2)) !important;
+    radial-gradient(1.2px 1.2px at 22% 14%, rgba(255,240,190,.7) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 74% 20%, rgba(255,236,175,.6) 45%, transparent 55%),
+    radial-gradient(130% 48% at 50% 0%, rgba(255,190,70,.24), transparent 60%),
+    radial-gradient(100% 40% at 50% 100%, rgba(255,190,70,.13), transparent 60%),
+    linear-gradient(115deg, rgba(255,222,120,.08) 0%, transparent 32%, transparent 68%, rgba(255,222,120,.08) 100%),
+    linear-gradient(180deg, #1e1810, #0f0b06) !important;
 }
 .profile-modal.cxf-neon{
   background:
-    repeating-linear-gradient(90deg, rgba(95,201,255,.05) 0 1px, transparent 1px 30px),
-    repeating-linear-gradient(0deg, rgba(255,94,200,.04) 0 1px, transparent 1px 30px),
-    radial-gradient(130% 45% at 50% 0%, rgba(95,201,255,.16), transparent 62%),
-    radial-gradient(110% 40% at 50% 100%, rgba(255,94,200,.12), transparent 62%),
-    linear-gradient(180deg, #131322, #0d0c16) !important;
+    repeating-linear-gradient(90deg, rgba(95,201,255,.07) 0 1px, transparent 1px 30px),
+    repeating-linear-gradient(0deg, rgba(255,94,200,.055) 0 1px, transparent 1px 30px),
+    radial-gradient(140% 50% at 50% 0%, rgba(95,201,255,.2), transparent 62%),
+    radial-gradient(120% 44% at 50% 100%, rgba(255,94,200,.16), transparent 62%),
+    linear-gradient(180deg, #121224, #0b0a15) !important;
 }
 .profile-modal.cxf-blood{
   background:
-    radial-gradient(130% 50% at 50% 0%, rgba(255,51,88,.2), transparent 60%),
-    radial-gradient(140% 60% at 50% 115%, rgba(120,10,28,.5), transparent 65%),
-    linear-gradient(180deg, #1c1016, #120a0e) !important;
+    repeating-linear-gradient(45deg, rgba(255,255,255,.014) 0 1px, transparent 1px 12px),
+    radial-gradient(130% 52% at 50% 0%, rgba(255,51,88,.24), transparent 60%),
+    radial-gradient(150% 65% at 50% 118%, rgba(120,10,28,.6), transparent 66%),
+    linear-gradient(180deg, #1e0f16, #10080c) !important;
 }
 .profile-modal.cxf-liquid{
+  --fxc:#b56cff; animation:cxfLiquidHueVar 6s linear infinite;
   background:
-    linear-gradient(125deg, rgba(181,108,255,.13), rgba(95,201,255,.09) 34%, rgba(255,94,200,.1) 68%, rgba(181,108,255,.13)),
-    linear-gradient(180deg, var(--surface), var(--bg-2)) !important;
+    linear-gradient(125deg, rgba(181,108,255,.16), rgba(95,201,255,.12) 30%, rgba(94,255,186,.1) 55%, rgba(255,94,200,.13) 78%, rgba(181,108,255,.16)),
+    radial-gradient(120% 55% at 50% 0%, rgba(181,108,255,.16), transparent 62%),
+    linear-gradient(180deg, #141021, #0b0913) !important;
 }
+@keyframes cxfLiquidHueVar{ 0%{ --fxc:#b56cff; } 33%{ --fxc:#5fc9ff; } 66%{ --fxc:#ff5ec8; } 100%{ --fxc:#b56cff; } }
 
 /* ---------- EDIT PROFILE — sectioned layout ---------- */
 .eps-modal{ max-width:790px; }
@@ -16694,15 +16795,7 @@ body.reduced-motion .eps-pane-title::after{ animation:none; transform:scaleX(1);
   0%, 91%, 93.5%, 100%{ opacity:1; }
   91.8%{ opacity:.45; } 92.6%{ opacity:.85; } 93.1%{ opacity:.5; }
 }
-/* Liquid chrome ring — faster morph + shifting hue */
-.cxa-liquid{ animation:cxaBlob 4.5s ease-in-out infinite, cxaFlowBg 3s linear infinite, cxaLiquidHue 8s linear infinite; }
-@keyframes cxaLiquidHue{ to{ filter:hue-rotate(360deg) drop-shadow(0 0 8px rgba(190,200,225,.6)); } }
-/* Void ring — slow collapse pulse */
-.cxa-void{ animation:cxaSpin 4.5s linear infinite, cxaVoidPulse 3.4s ease-in-out infinite; }
-@keyframes cxaVoidPulse{
-  0%,100%{ filter:drop-shadow(0 0 10px rgba(123,63,228,.8)); }
-  50%{ filter:drop-shadow(0 0 20px rgba(181,108,255,1)); }
-}
+/* (Liquid & Void ring effects are defined in the premium avatar-ring block.) */
 body.reduced-motion :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .cx-frame-overlay),
 body.low-power :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .cx-frame-overlay){ animation:none !important; }
 /* Name cosmetics inline in lists/chat stay compact */
@@ -17359,6 +17452,57 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 .case-open-btn:active{ transform:translateY(0); }
 .case-open-btn:disabled{ filter:grayscale(.6) brightness(.6); animation:none; box-shadow:none; transform:none; }
 .case-owned-line{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:9px; letter-spacing:.05em; }
+/* bulk-open chips under the main Open button */
+.case-bulk-row{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:10px; }
+.case-bulk-row:empty{ display:none; }
+.case-bulk-chip{
+  display:inline-flex; align-items:center; gap:5px; cursor:pointer;
+  padding:9px 15px; border-radius:11px; font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:13px; color:#fff;
+  background:linear-gradient(180deg, rgba(181,108,255,.16), rgba(181,108,255,.06));
+  border:1px solid rgba(181,108,255,.4); transition:transform .14s, box-shadow .2s, border-color .2s;
+}
+.case-bulk-chip:hover{ transform:translateY(-2px); border-color:rgba(181,108,255,.8); box-shadow:0 8px 20px -10px rgba(181,108,255,.7); }
+.case-bulk-chip:active{ transform:translateY(0); }
+/* skip hint during the roll */
+.case-skip-hint{
+  margin-top:18px; font-family:var(--font-mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--text-faint); opacity:0; animation:caseSkipHintIn .5s ease 1.4s forwards;
+}
+.case-skip-hint kbd{
+  font-family:var(--font-mono); font-size:10px; font-weight:800; color:#fff;
+  padding:2px 7px; border-radius:6px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.2); box-shadow:0 2px 0 rgba(0,0,0,.4);
+}
+@keyframes caseSkipHintIn{ to{ opacity:.75; } }
+.case-opening-overlay:has(.case-reveal.show) .case-skip-hint,
+.case-opening-overlay:has(.case-bulk-results.show) .case-skip-hint{ display:none; }
+/* BULK RESULTS grid */
+.case-bulk-results{ display:none; flex-direction:column; align-items:center; gap:16px; width:min(94vw,760px); }
+.case-bulk-results.show{ display:flex; }
+.case-bulk-head{ display:flex; flex-direction:column; align-items:center; gap:4px; text-align:center; }
+.case-bulk-head span:first-child{ font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:clamp(26px,6vw,40px); background:linear-gradient(100deg,#fff,#d9c4ff 50%,#ffc4e6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.case-bulk-sub{ font-family:var(--font-mono); font-size:11px; letter-spacing:.1em; color:var(--text-dim); }
+.case-bulk-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(116px,1fr)); gap:11px; width:100%; max-height:60vh; overflow-y:auto; padding:4px; }
+.case-bulk-card{
+  position:relative; padding:13px 6px; border-radius:11px; text-align:center; overflow:hidden;
+  background:linear-gradient(180deg, transparent 50%, color-mix(in srgb, var(--cci,#5fc9ff) 22%, transparent)), linear-gradient(180deg, rgba(22,19,32,.92), rgba(9,8,15,.96));
+  border:1px solid rgba(255,255,255,.06); border-bottom:none;
+  opacity:0; animation:caseBulkPop .42s cubic-bezier(.2,1.5,.4,1) both;
+}
+.case-bulk-card::after{ content:''; position:absolute; left:0; right:0; bottom:0; height:4px; background:var(--cci,#5fc9ff); box-shadow:0 0 10px var(--cci,#5fc9ff), 0 0 20px color-mix(in srgb, var(--cci,#5fc9ff) 60%, transparent); }
+@keyframes caseBulkPop{ from{ opacity:0; transform:scale(.5) translateY(10px); } to{ opacity:1; transform:none; } }
+.case-bulk-card .cbc-preview{ height:52px; display:grid; place-items:center; overflow:hidden; margin-bottom:6px; }
+.case-bulk-card .cbc-preview .cx-prev-name{ font-size:14px; }
+.case-bulk-card .cbc-preview .cx-prev-av{ width:42px; height:42px; }
+.case-bulk-card .cbc-preview .cx-prev-frame{ width:88px; height:48px; gap:3px; }
+.case-bulk-card .cbc-preview .cx-prev-frame-av{ width:16px; height:16px; }
+.case-bulk-card .cbc-preview .cx-prev-frame-lines i{ width:34px; height:3px; }
+.case-bulk-card .cbc-preview .cx-prev-frame-lines i:last-child{ width:22px; }
+.case-bulk-card .cbc-name{ font-weight:800; font-size:10.5px; color:#fff; line-height:1.2; }
+.case-bulk-card .cbc-rarity{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.1em; margin-top:2px; color:var(--cci,#5fc9ff); }
+.case-bulk-card .cbc-badge{ position:absolute; top:5px; right:5px; font-size:7.5px; font-weight:900; letter-spacing:.05em; padding:1px 5px; border-radius:5px; }
+.case-bulk-card .cbc-badge.new{ color:#04120b; background:var(--mint); }
+.case-bulk-card .cbc-badge.dupe{ color:#1a0f04; background:var(--amber); }
+body.reduced-motion .case-bulk-card, body.low-power .case-bulk-card{ animation-duration:.01s !important; }
 /* — contents: CS2 loot cards with glowing rarity bar — */
 .case-contents-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(114px, 1fr)); gap:10px; margin:12px 0 4px; }
 .case-content-item{
@@ -17502,8 +17646,8 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 @keyframes caseRise{ from{ opacity:0; transform:translateY(16px); } to{ opacity:1; transform:none; } }
 @keyframes caseIconIn{ 0%{ opacity:0; transform:scale(.35); } 62%{ opacity:1; transform:scale(1.09); } 100%{ opacity:1; transform:scale(1); } }
 .case-reveal-glow{
-  width:230px; height:206px; border-radius:24px; position:relative;
-  display:grid; place-items:center;
+  width:min(80vw, 260px); min-height:212px; border-radius:24px; position:relative;
+  display:grid; place-items:center; padding:6px;
 }
 .case-reveal-glow::before{ /* radiating rays */
   content:''; position:absolute; inset:-70px; z-index:-1; border-radius:50%; pointer-events:none;
@@ -17528,9 +17672,17 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 .case-reveal.show .case-reveal-shock{ animation:caseShock .85s cubic-bezier(.2,.7,.3,1) .22s; }
 @keyframes caseShock{ 0%{ opacity:.95; transform:scale(.2); } 70%{ opacity:.35; } 100%{ opacity:0; transform:scale(6.2); } }
 .case-reveal-icon{ position:relative; z-index:1; display:grid; place-items:center; min-height:96px; }
-.case-reveal-icon .cx-prev-frame{ box-shadow:0 16px 40px -16px rgba(0,0,0,.8); transform:scale(.92); }
-.case-reveal-icon .cx-prev-name{ font-size:34px; }
-.case-reveal-icon .cx-prev-av{ width:104px; height:104px; }
+/* the "on your profile" preview card, dressed up for the reveal */
+.case-reveal-icon .sbm-profile-prev{
+  width:min(78vw, 240px); padding:20px 16px 18px; gap:11px; border-radius:18px;
+  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  border:1px solid color-mix(in srgb, var(--rc) 34%, var(--line));
+  box-shadow:0 20px 46px -18px rgba(0,0,0,.85), 0 0 34px -14px color-mix(in srgb, var(--rc) 60%, transparent);
+}
+.case-reveal-icon .sbm-profile-prev .cx-prev-av{ width:82px; height:82px; }
+.case-reveal-icon .sbm-profile-prev .cx-prev-av-core{ font-size:32px; border-radius:24px; }
+.case-reveal-icon .spp-name{ font-size:24px; }
+.case-reveal-icon .spp-label{ font-size:8px; letter-spacing:.2em; }
 .case-reveal-rarity{
   font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:14px; letter-spacing:.24em;
   color:var(--rc); text-shadow:0 0 18px color-mix(in srgb, var(--rc) 70%, transparent);
@@ -17729,6 +17881,15 @@ body.low-power :is(.case-card, .case-card::before, .case-card-glow, .case-detail
         <animate attributeName="seed" values="2;7;3;9;5;1;8;4;6;2" dur="0.7s" calcMode="discrete" repeatCount="indefinite"/>
       </feTurbulence>
       <feDisplacementMap in="SourceGraphic" in2="n" scale="11" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- Flame licking for the Flame avatar ring: bigger, warmer turbulence
+         with a breathing baseFrequency so the fire looks like it's licking. -->
+    <filter id="flameFilter" x="-55%" y="-55%" width="210%" height="210%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.055" numOctaves="2" seed="3" result="n">
+        <animate attributeName="baseFrequency" values="0.02 0.055;0.028 0.085;0.02 0.055" dur="1.4s" repeatCount="indefinite"/>
+        <animate attributeName="seed" values="3;6;9;4;7;3" dur="0.85s" calcMode="discrete" repeatCount="indefinite"/>
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="15" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
     <!-- Gesture icons now reference your own PNGs (rock.png / paper.png / scissors.png
          placed next to index.html). They render anywhere these symbols are <use>d. -->
@@ -20110,11 +20271,8 @@ const FIREBASE_CONFIG = {
 
 <!-- MATCH RESULT (best-of-3 end) — REDESIGNED v9 -->
 <div class="match-result-overlay" id="matchResultOverlay">
-  <!-- Animated background -->
+  <!-- Ambient result glow -->
   <div class="mr-bg"></div>
-  <!-- CEREMONY LAYERS: spinning ray wheel + star field (JS-spawned) -->
-  <div class="mr-rays" aria-hidden="true"><i class="mrr r1"></i><i class="mrr r2"></i></div>
-  <div class="mr-stars" id="mrStars" aria-hidden="true"></div>
 
   <div class="match-result-card-v2" id="matchResultCard">
 
@@ -20142,7 +20300,6 @@ const FIREBASE_CONFIG = {
           <span class="mrc-pname" id="mrOppName">@stranger</span>
         </div>
       </div>
-      <div class="mr-headline-burst"></div>
     </div>
 
     <!-- BODY: scrollable content -->
@@ -20866,6 +21023,7 @@ const FIREBASE_CONFIG = {
       <svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-star"/></svg>
       Open Case
     </button>
+    <div class="case-bulk-row" id="caseBulkRow"></div>
     <div class="case-owned-line" id="caseOwnedCount">You own 0 of this case</div>
   </div>
 </div>
@@ -20878,6 +21036,13 @@ const FIREBASE_CONFIG = {
     <div class="case-reel-pointer"></div>
     <div class="case-reel-strip" id="caseReelStrip"></div>
     <div class="case-reel-flash" id="caseReelFlash" aria-hidden="true"></div>
+  </div>
+  <div class="case-skip-hint" id="caseSkipHint">Press <kbd>SPACE</kbd> or tap to skip</div>
+  <!-- BULK RESULTS — grid of everything unboxed when opening many at once -->
+  <div class="case-bulk-results" id="caseBulkResults" style="display:none;">
+    <div class="case-bulk-head"><span id="caseBulkTitle">You unboxed 10 items</span><span class="case-bulk-sub" id="caseBulkSub"></span></div>
+    <div class="case-bulk-grid" id="caseBulkGrid"></div>
+    <div class="case-reveal-actions"><button class="btn btn-primary" id="caseBulkClose">Continue</button></div>
   </div>
   <div class="case-reveal" id="caseReveal">
     <div class="case-reveal-glow" id="caseRevealGlow">
@@ -27056,10 +27221,29 @@ function openCaseDetail(caseId){
     openBtn.disabled = count <= 0;
     openBtn.textContent = count > 0 ? `Open Case (${count} remaining)` : 'No cases to open';
   }
+  // Bulk-open chips — only the quantities you can actually afford, plus "All".
+  const bulkRow = $('#caseBulkRow');
+  if(bulkRow){
+    const opts = [5, 10, 25, 50].filter(nn => nn <= count);
+    let chips = opts.map(nn => `<button type="button" class="case-bulk-chip" data-open-n="${nn}">Open ×${nn}</button>`).join('');
+    if(count > 1 && !opts.includes(count)) chips += `<button type="button" class="case-bulk-chip" data-open-n="${count}">Open All (${count})</button>`;
+    bulkRow.innerHTML = chips;
+  }
   setText('#caseOwnedCount', `You own ${count} of this case`);
   state._activeCaseId = caseId;
   $('#caseDetailModal')?.classList.add('show');
 }
+on('#caseBulkRow', 'click', (e) => {
+  const chip = e.target.closest('[data-open-n]');
+  if(!chip) return;
+  const ct = CASE_BY_ID[state._activeCaseId];
+  if(!ct) return;
+  if(isGuest()){ toast('Create a free account to open cases', 'info'); return; }
+  const n = Math.min(parseInt(chip.dataset.openN, 10) || 1, getCaseCount(ct.id));
+  if(n <= 0){ toast('No cases to open!', 'error'); return; }
+  $('#caseDetailModal')?.classList.remove('show');
+  startBulkOpen(ct, n);
+});
 
 on('#caseOpenBtn', 'click', async () => {
   const caseId = state._activeCaseId;
@@ -27080,6 +27264,7 @@ async function startCaseOpening(ct){
   if(!overlay || !strip || !reveal || !viewport) return;
   reveal.classList.remove('show');
   reveal.classList.remove('is-ascended');
+  const bulkEl = $('#caseBulkResults'); if(bulkEl){ bulkEl.classList.remove('show'); bulkEl.style.display = 'none'; }
   viewport.style.display = '';
   strip.style.transition = 'none';
   strip.style.transform = 'translateX(0)';
@@ -27114,15 +27299,31 @@ async function startCaseOpening(ct){
   if(flash) flash.classList.remove('go');
   overlay.classList.add('show');
   try { haptic(10); } catch(e){}
+  // CS2-style quick-open: SPACE / ENTER / tap instantly skips to the result.
+  let skipped = false;
+  const skipHandler = (ev) => {
+    if(ev.type === 'keydown'){ if(ev.code !== 'Space' && ev.code !== 'Enter') return; ev.preventDefault(); }
+    skipped = true;
+  };
+  document.addEventListener('keydown', skipHandler);
+  viewport.addEventListener('click', skipHandler);
+  const skipHintEl = $('#caseSkipHint'); if(skipHintEl) skipHintEl.style.display = '';
   // Wait for layout + a beat before the roll begins.
   await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
   await new Promise(r => setTimeout(r, 240));
-  // Measure the real rendered item pitch so the reel lands centred on the winner.
-  const itemWidth = strip.querySelector('.case-reel-item')?.offsetWidth || 150;
+  // Measure the TRUE item pitch from two items' positions (robust to box-sizing,
+  // borders and gaps) so the reel lands EXACTLY on the winner under the pointer.
+  const reelItemEls = strip.querySelectorAll('.case-reel-item');
+  let itemWidth = reelItemEls[0]?.offsetWidth || 150;
+  if(reelItemEls.length >= 2){
+    const pitch = reelItemEls[1].offsetLeft - reelItemEls[0].offsetLeft;
+    if(pitch > 20) itemWidth = pitch;
+  }
   const vpWidth = viewport.offsetWidth;
-  const targetX = (WIN_POS * itemWidth) - (vpWidth / 2) + (itemWidth / 2);
-  const overshoot = (Math.random() - 0.5) * (itemWidth * 0.42);
-  const finalX = Math.max(0, targetX + overshoot);
+  // Winner sits dead-centre under the pointer, with only a tiny jitter for feel
+  // (well within the winning card, so the pin always lands on what you get).
+  const jitter = (Math.random() - 0.5) * (itemWidth * 0.12);
+  const finalX = Math.max(0, (WIN_POS * itemWidth) + (itemWidth / 2) - (vpWidth / 2) + jitter);
   // Hand-drive the reel so the ticks stay perfectly synced to the deceleration
   // — like CS2, the clicks naturally slow as the reel eases to a stop.
   const DUR = 5600;
@@ -27130,6 +27331,7 @@ async function startCaseOpening(ct){
   let lastIdx = -1;
   await new Promise(resolve => {
     function frame(now){
+      if(skipped){ strip.style.transform = `translate3d(${-finalX}px,0,0)`; resolve(); return; }
       const t = Math.min(1, (now - t0) / DUR);
       const e = 1 - Math.pow(1 - t, 5);             // easeOutQuint
       const x = finalX * e;
@@ -27140,22 +27342,26 @@ async function startCaseOpening(ct){
     }
     requestAnimationFrame(frame);
   });
+  document.removeEventListener('keydown', skipHandler);
+  viewport.removeEventListener('click', skipHandler);
+  if(skipHintEl) skipHintEl.style.display = 'none';
   // Lock-in: a bright flash across the winning slot, then a short settle.
   try { haptic([18, 50, 24]); } catch(e){}
   if(flash) flash.classList.add('go');
-  await new Promise(r => setTimeout(r, 540));
+  await new Promise(r => setTimeout(r, skipped ? 120 : 540));
   // Seamless hand-off: the reel lifts + blurs away as the reveal blooms in.
   viewport.classList.add('reel-out');
-  await new Promise(r => setTimeout(r, 300));
+  await new Promise(r => setTimeout(r, skipped ? 120 : 300));
   viewport.style.display = 'none';
   viewport.classList.remove('reel-out');
   const r = CX_RARITY[wonItem.rarity];
   const isAscended = wonItem.rarity === 'ascended';
   reveal.classList.toggle('is-ascended', isAscended);
   reveal.style.setProperty('--rc', r.color);
-  // Show the ACTUAL cosmetic you won, at full size — the payoff moment.
+  // Show how the item actually looks on YOUR profile — clearer than an
+  // isolated swatch (your avatar + name with the new cosmetic slotted in).
   const iconEl = $('#caseRevealIcon');
-  if(iconEl){ try { iconEl.innerHTML = buildCosmeticPreview(wonItem, true); } catch(e){ iconEl.textContent = '✦'; } }
+  if(iconEl){ try { iconEl.innerHTML = buildProfilePreviewHTML(wonItem); } catch(e){ iconEl.textContent = '✦'; } }
   setText('#caseRevealRarity', r.label);
   setText('#caseRevealName', wonItem.name);
   setText('#caseRevealDesc', wonItem.desc || '');
@@ -27206,6 +27412,75 @@ async function startCaseOpening(ct){
   try { renderCaseInventory(); } catch(e){}
   try { updateShopBadge(); } catch(e){}
 }
+
+// ── BULK OPEN — unbox N cases at once and show every drop in a grid ──
+const _rarRank = (rar) => ({ rare:0, epic:1, legendary:2, mythic:3, ascended:4 })[rar] ?? 0;
+async function startBulkOpen(ct, n){
+  const overlay = $('#caseOpeningOverlay');
+  const viewport = $('#caseReelViewport');
+  const reveal = $('#caseReveal');
+  const bulk = $('#caseBulkResults');
+  const grid = $('#caseBulkGrid');
+  if(!overlay || !bulk || !grid) return;
+  n = Math.max(1, Math.min(n, getCaseCount(ct.id)));
+  // Roll every drop up front.
+  const results = [];
+  for(let i = 0; i < n; i++) results.push(rollCaseDrop(ct));
+  const prevOwned = new Set(getCosmetics().owned);
+  // Grant all new cosmetics; log history + stats; track best pull.
+  const c = getCosmetics();
+  const ownedSet = new Set(c.owned);
+  let bestRank = 0, bestColor = '#5fc9ff';
+  results.forEach(item => {
+    const rr = _rarRank(item.rarity);
+    if(rr >= bestRank){ bestRank = rr; bestColor = CX_RARITY[item.rarity].color; }
+    ownedSet.add(item.id);
+    try { updateCaseStats(item.rarity); } catch(e){}
+    try { addCaseHistory({ caseId: ct.id, itemId: item.id, rarity: item.rarity }); } catch(e){}
+  });
+  c.owned = [...ownedSet];
+  try { await saveCosmetics(c); } catch(e){}
+  const inv = getCaseInventory();
+  inv[ct.id] = Math.max(0, (inv[ct.id] || 0) - n);
+  state.profile.cases = inv;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { cases: inv }); } catch(e){}
+  // Build the results grid — rarest first, popping in staggered.
+  const sorted = results.slice().sort((a, b) => _rarRank(b.rarity) - _rarRank(a.rarity));
+  const shownNew = new Set();
+  grid.innerHTML = sorted.map((item, i) => {
+    const r = CX_RARITY[item.rarity];
+    const isNew = !prevOwned.has(item.id) && !shownNew.has(item.id);
+    if(isNew) shownNew.add(item.id);
+    const badge = isNew ? '<div class="cbc-badge new">NEW</div>' : '<div class="cbc-badge dupe">DUPE</div>';
+    return `<div class="case-bulk-card rar-${item.rarity}" style="--cci:${r.color}; animation-delay:${Math.min(i * 0.045, 1.4).toFixed(2)}s;">
+      <div class="cbc-preview">${buildCosmeticPreview(item, false)}</div>
+      <div class="cbc-name">${escapeHTML(item.name)}</div>
+      <div class="cbc-rarity">${r.label}</div>
+      ${badge}
+    </div>`;
+  }).join('');
+  const newCount = shownNew.size, dupeCount = n - newCount;
+  setText('#caseBulkTitle', `You unboxed ${n} item${n > 1 ? 's' : ''}`);
+  setText('#caseBulkSub', `${newCount} new${dupeCount > 0 ? ` · ${dupeCount} duplicate${dupeCount > 1 ? 's' : ''}` : ''}`);
+  // Present the results view.
+  if(viewport){ viewport.classList.remove('reel-out'); viewport.style.display = 'none'; }
+  if(reveal) reveal.classList.remove('show');
+  const skipHintEl = $('#caseSkipHint'); if(skipHintEl) skipHintEl.style.display = 'none';
+  bulk.style.display = 'flex';
+  overlay.classList.add('show');
+  requestAnimationFrame(() => bulk.classList.add('show'));
+  // Celebration keyed to the best pull.
+  try { haptic(bestRank >= 3 ? [30, 40, 80] : 30); } catch(e){}
+  try { if(bestRank >= 4){ sfxLegend?.(); } else if(bestRank >= 2){ sfxRankUp?.(); } } catch(e){}
+  setTimeout(() => { try { bigBurst?.(bestColor, 40 + bestRank * 24); } catch(e){} }, 320);
+  if(bestRank >= 3){ setTimeout(() => { try { launchConfetti?.(); } catch(e){} }, 480); }
+  try { renderCaseInventory(); } catch(e){}
+  try { updateShopBadge(); } catch(e){}
+}
+on('#caseBulkClose', 'click', () => {
+  const bulk = $('#caseBulkResults'); if(bulk){ bulk.classList.remove('show'); bulk.style.display = 'none'; }
+  $('#caseOpeningOverlay')?.classList.remove('show');
+});
 
 function spawnRevealParticles(color, count){
   const container = $('#caseRevealParticles');
@@ -32042,62 +32317,39 @@ function showMatchResultScreen(result){
   overlay.classList.remove('win','lose','draw');
   overlay.classList.add(result === 'win' ? 'win' : result === 'lose' ? 'lose' : 'draw');
 
-  // ===== CEREMONY: spawn the star field + prep the slam =====
   const perf2 = (typeof fxPerf === 'function') ? fxPerf() : { lite: false };
   const starsHost = $('#mrStars');
   if(starsHost) starsHost.innerHTML = '';
-  const spawnStars = (n, cls) => {
-    if(!starsHost || perf2.lite) return;
-    for(let i = 0; i < n; i++){
-      const s = document.createElement('i');
-      s.className = 'mr-star ' + (cls || '');
-      s.textContent = Math.random() < .3 ? '✦' : '✧';
-      s.style.left = (8 + Math.random() * 84) + '%';
-      s.style.top = (6 + Math.random() * 70) + '%';
-      s.style.fontSize = (10 + Math.random() * 22) + 'px';
-      s.style.animationDelay = (Math.random() * 1.6) + 's';
-      s.style.animationDuration = (1.8 + Math.random() * 2.2) + 's';
-      starsHost.appendChild(s);
-    }
-  };
-  // Screen shake exactly when the headline slams down (~.42s after show).
-  const slamShake = (cls) => setTimeout(() => {
-    overlay.classList.add(cls);
-    try { haptic(cls === 'shake-big' ? [10, 20, 45] : 25); } catch(e){}
-    setTimeout(() => overlay.classList.remove(cls), 650);
-  }, 420);
 
   if(result === 'win'){
     headline.textContent = 'VICTORY';
     headline.classList.add('win');
     if(strip) strip.classList.add('win');
     if(iconEl) iconEl.querySelector('use')?.setAttribute('href', '#i-trophy');
-    overlay.style.setProperty('--result-color-glow', 'rgba(34,211,163,.18)');
+    overlay.style.setProperty('--result-color-glow', 'rgba(34,211,163,.16)');
     card.style.setProperty('--result-color', 'var(--mint)');
     sub.textContent = `Best of 3 · won ${state.scoreYou}–${state.scoreOpp}`;
     sfxWin();
-    spawnStars(perf2.lite ? 0 : 16, 'gold');
-    slamShake('shake-big');
-    setTimeout(() => bigBurst('#22d3a3'), 460);
-    setTimeout(() => bigBurst('#ffd33d'), 700);
-    setTimeout(() => bigBurst('#9b7bff'), 950);
-    setTimeout(() => launchConfetti(), 500);
+    try { haptic([30, 40, 80]); } catch(e){}
+    setTimeout(() => bigBurst('#22d3a3'), 360);
+    setTimeout(() => bigBurst('#ffd33d'), 600);
+    setTimeout(() => bigBurst('#9b7bff'), 860);
+    setTimeout(() => launchConfetti(), 400);
   } else if(result === 'lose'){
     headline.textContent = 'DEFEAT';
     headline.classList.add('lose');
     if(strip) strip.classList.add('lose');
     if(iconEl) iconEl.querySelector('use')?.setAttribute('href', '#i-shield');
-    overlay.style.setProperty('--result-color-glow', 'rgba(255,51,88,.18)');
+    overlay.style.setProperty('--result-color-glow', 'rgba(255,51,88,.14)');
     card.style.setProperty('--result-color', 'var(--coral)');
     sub.textContent = `Best of 3 · lost ${state.scoreYou}–${state.scoreOpp}`;
     sfxLose();
-    slamShake('shake-small');
   } else {
     headline.textContent = 'DRAW';
     headline.classList.add('draw');
     if(strip) strip.classList.add('draw');
     if(iconEl) iconEl.querySelector('use')?.setAttribute('href', '#i-handshake');
-    overlay.style.setProperty('--result-color-glow', 'rgba(155,123,255,.18)');
+    overlay.style.setProperty('--result-color-glow', 'rgba(155,123,255,.14)');
     card.style.setProperty('--result-color', 'var(--violet)');
     sub.textContent = `Best of 3 · tied ${state.scoreYou}–${state.scoreOpp}`;
     sfxDraw();
@@ -32877,15 +33129,16 @@ function showPrestigeUp(info){
   const burstN = perf.mobile ? 40 : (perf.lite ? 70 : 160);
   try { sfxPrestige(); } catch(e){}
   try { haptic(isMaster ? 60 : 40); } catch(e){}
-  setTimeout(() => { try { bigBurst(tier.glow, burstN); } catch(e){} }, 850);
-  setTimeout(() => { try { bigBurst(tier.b, burstN); bigBurst('#ffffff', Math.round(burstN * 0.6)); } catch(e){} }, 1150);
+  // Punchy ~3s beat: shockwave burst, a follow-up, then it settles.
+  setTimeout(() => { try { bigBurst(tier.glow, burstN); bigBurst('#ffffff', Math.round(burstN * 0.5)); } catch(e){} }, 430);
+  setTimeout(() => { try { bigBurst(tier.b, burstN); } catch(e){} }, 780);
   if(isMaster && !perf.lite){
-    // Sustained rainbow barrage for the apex moment.
-    [1500, 2100, 2700, 3300, 3900].forEach((t, vi) => setTimeout(() => { try { bigBurst(SPECTRUM[vi % SPECTRUM.length], burstN); bigBurst(SPECTRUM[(vi + 3) % SPECTRUM.length], burstN); } catch(e){} }, t));
+    // A tight rainbow barrage for the apex moment (all wrapped up inside ~3s).
+    [1150, 1650, 2200].forEach((t, vi) => setTimeout(() => { try { bigBurst(SPECTRUM[vi % SPECTRUM.length], burstN); bigBurst(SPECTRUM[(vi + 3) % SPECTRUM.length], burstN); } catch(e){} }, t));
   }
   if(!perf.lite){
-    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 1100);
-    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 1900);
+    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 560);
+    setTimeout(() => { try { launchConfetti(); } catch(e){} }, 1500);
   }
   // Dismiss controls
   let dismissed = false;
@@ -32902,7 +33155,7 @@ function showPrestigeUp(info){
     overlay.addEventListener('click', dismiss);
     document.addEventListener('keydown', keyd);
     if(hint) hint.classList.add('ready');
-  }, 2600);
+  }, 2500);
 }
 // Fire the next queued match-end celebration: prestige overlay (blocking) first,
 // then the level-up stack card. Called after the result settles and after each
@@ -34178,11 +34431,12 @@ function renderLevelLadder(p, lvl, prestige){
   const levelTiers = [];
   for(let L = 1; L <= MAX_LEVEL; L++){
     const cap = L === MAX_LEVEL, title = titleAt[L];
+    const caseReward = L % 7 === 0;
     levelTiers.push({
-      n: L, type: 'level', cap, milestone: !!title || cap,
+      n: L, type: 'level', cap, milestone: !!title || cap || caseReward, caseReward,
       name: cap ? 'Prestige' : (title ? title.name : 'Level ' + L),
-      sub: cap ? 'Summit unlocked' : (title ? (titleRarity(title).label + ' title') : '+ XP'),
-      color: cap ? '#ffd33d' : (title ? title.color : 'var(--mint)'),
+      sub: cap ? 'Summit unlocked' : (title ? (titleRarity(title).label + ' title') : (caseReward ? 'ROSHCAM Case' : '+ XP')),
+      color: cap ? '#ffd33d' : (title ? title.color : (caseReward ? '#b56cff' : 'var(--mint)')),
       icon: cap ? 'i-star' : (title ? 'i-medal' : 'i-zap'),
       reached: lvl.level >= L, current: lvl.level === L,
     });
@@ -34262,9 +34516,12 @@ function lpTierCardHTML(tr, i){
     : `<div class="lp-emblem"><svg viewBox="0 0 24 24"><use href="#${tr.icon}"/></svg></div>`;
   // Node chip that sits ON the rail — the classic pass "tier number" marker.
   const node = `<div class="lp-node">${current ? '<span class="lp-here">YOU</span>' : ''}<span class="lp-node-n">${tr.type === 'prestige' && tr.master ? '★' : tr.n}</span></div>`;
-  return `<div class="lp-tier ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}${tr.milestone ? ' milestone' : ' minor'}" style="--tc:${tr.color}; --d:${(i * 0.035).toFixed(3)}s">
+  // Case-reward badge on every 7th level so it's clear you earn a case there.
+  const caseBadge = tr.caseReward ? `<div class="lp-case-badge" title="Earn a ROSHCAM Case at level ${tr.n}">📦</div>` : '';
+  return `<div class="lp-tier ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}${tr.milestone ? ' milestone' : ' minor'}${tr.caseReward ? ' case-reward' : ''}" style="--tc:${tr.color}; --d:${(i * 0.035).toFixed(3)}s">
     ${node}
     <div class="lp-tile">
+      ${caseBadge}
       ${emblem}
       <div class="lp-tier-name">${escapeHTML(tr.name)}</div>
       <div class="lp-tier-sub">${escapeHTML(tr.sub)}</div>
