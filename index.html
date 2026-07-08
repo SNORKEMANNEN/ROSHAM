@@ -14351,6 +14351,14 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
 .ch2.ch2-daily{ --cha: var(--coral); }
 .ch2.ch2-weekly{ --cha: var(--violet); }
 .ch2.ch2-quest{ --cha: var(--mint); }
+/* THE GAUNTLET — the case-bearing meta-challenge, dressed in vault gold */
+.ch2.ch2-gauntlet{ --cha:#ffb336; }
+.ch2-reward.gc-case{
+  color:#ffd45e; background:rgba(255,180,54,.12); border-color:rgba(255,180,54,.4);
+  padding-left:8px; box-shadow:0 0 12px -6px rgba(255,180,54,.8);
+}
+.js-gauntlet-card.gauntlet-done .gc-case{ color:var(--mint); background:rgba(34,211,163,.10); border-color:rgba(34,211,163,.30); box-shadow:none; }
+.js-gauntlet-card.gauntlet-done{ border-color:rgba(34,211,163,.35); }
 .ch2-head{
   display:flex; align-items:center; justify-content:space-between; gap:10px;
   padding:12px 16px 11px;
@@ -15739,6 +15747,34 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   background-size:260% 100%; color:transparent !important;
   animation:cxnFlow 5s linear infinite; filter:drop-shadow(0 0 9px rgba(56,230,160,.5));
 }
+/* ── TRIUMPH VAULT NAME STYLES ── */
+.cxn-ascendant{ /* ascended: pure light climbing forever upward */
+  background:linear-gradient(0deg, #b47aff 0%, #ffd45e 30%, #fff3c4 58%, #ffffff 86%);
+  background-size:100% 260%; color:transparent !important;
+  animation:cxnAscRise 2.4s ease-in-out infinite alternate, cxnAscGlow 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 12px rgba(255,220,130,.8));
+}
+@keyframes cxnAscRise{ from{ background-position:50% 100%; } to{ background-position:50% 0%; } }
+@keyframes cxnAscGlow{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(255,220,130,.7)); } 50%{ filter:drop-shadow(0 0 20px rgba(255,240,190,1)) drop-shadow(0 -6px 26px rgba(255,255,255,.5)); } }
+.cxn-dragonfire{
+  background:linear-gradient(105deg, #7a1600, #ff5a1e 26%, #ffc25e 46%, #ff7a2e 62%, #7a1600 84%, #ff5a1e);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 4s linear infinite;
+  filter:drop-shadow(0 0 11px rgba(255,110,30,.7));
+}
+.cxn-venom{
+  background:linear-gradient(115deg, #0f2a10, #6dff3d 38%, #143216 58%, #9dff5a 78%, #0f2a10);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 5.5s linear infinite;
+  filter:drop-shadow(0 0 10px rgba(120,255,70,.55));
+}
+.cxn-shadow{
+  background:linear-gradient(115deg, #23202e, #8a83a8 36%, #3a3550 56%, #b3abd0 76%, #23202e);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 6.5s linear infinite, cxnShadowFade 4s ease-in-out infinite;
+  filter:drop-shadow(0 0 8px rgba(130,120,170,.5));
+}
+@keyframes cxnShadowFade{ 0%,100%{ opacity:1; } 50%{ opacity:.62; } }
 
 /* ---------- PLAYER TAGS ---------- */
 .cx-tag{
@@ -15782,6 +15818,17 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 .cxt-boss{ background:rgba(181,108,255,.14); color:#c9a6ff; border:1px solid rgba(181,108,255,.5); box-shadow:0 0 12px -5px rgba(181,108,255,.7); }
 .cxt-pro{ background:rgba(95,201,255,.13); color:#8fd6ff; border:1px solid rgba(95,201,255,.5); box-shadow:0 0 12px -5px rgba(95,201,255,.65); }
 .cxt-vibe{ background:rgba(125,255,208,.12); color:#8ffbdb; border:1px solid rgba(125,255,208,.45); box-shadow:0 0 12px -5px rgba(125,255,208,.6); }
+/* ── TRIUMPH VAULT TAGS ── */
+.cxt-unstoppable{
+  border:1.5px solid transparent; color:#ffd9a0;
+  background:
+    linear-gradient(#1f1408, #1f1408) padding-box,
+    linear-gradient(100deg, #ff5a1e, #ffd45e, #fff3c4, #ff8c2e, #ff5a1e) border-box;
+  background-size:auto, 300% 100%;
+  animation:cxtRainbow 2.6s linear infinite;
+  box-shadow:0 0 16px -4px rgba(255,140,40,.85);
+}
+.cxt-grinder{ background:rgba(170,178,196,.10); color:#c3cbdd; border:1px solid rgba(170,178,196,.4); box-shadow:0 0 10px -5px rgba(170,178,196,.6); }
 
 /* ---------- AVATAR EFFECTS (donut rings around any avatar) ---------- */
 .cx-avfx{
@@ -15798,14 +15845,16 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
    thin 4px border) with a counter-rotating light sweep shimmering through it.
    Shared by most effects; each sets its own colour, glow and pulse. ═══ */
 .cxa-galaxy, .cxa-gold, .cxa-void, .cxa-prism, .cxa-ice, .cxa-rose, .cxa-mint,
-.cxa-nebula, .cxa-sunfire, .cxa-crimson, .cxa-emerald, .cxa-aqua{
+.cxa-nebula, .cxa-sunfire, .cxa-crimson, .cxa-emerald, .cxa-aqua,
+.cxa-solarcrown, .cxa-meteor, .cxa-frostfire, .cxa-comet{
   border:0 !important;
   -webkit-mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
   mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
   -webkit-mask-composite:source-over !important; mask-composite:add !important;
 }
 .cxa-galaxy::before, .cxa-gold::before, .cxa-void::before, .cxa-prism::before, .cxa-ice::before, .cxa-rose::before, .cxa-mint::before,
-.cxa-nebula::before, .cxa-sunfire::before, .cxa-crimson::before, .cxa-emerald::before, .cxa-aqua::before{
+.cxa-nebula::before, .cxa-sunfire::before, .cxa-crimson::before, .cxa-emerald::before, .cxa-aqua::before,
+.cxa-solarcrown::before, .cxa-meteor::before, .cxa-frostfire::before, .cxa-comet::before{
   content:''; position:absolute; inset:0; border-radius:50%; pointer-events:none;
   background:conic-gradient(from 90deg, transparent, rgba(255,255,255,.6) 7%, transparent 22%, rgba(255,255,255,.32) 52%, transparent 66%);
   mix-blend-mode:screen; animation:cxaSpinRev 3s linear infinite;
@@ -15880,6 +15929,37 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   background:conic-gradient(#0aa9c0, #5ff2ff, #d6ffff, #29c9e0, #0aa9c0);
   animation:cxaSpin 8.5s linear infinite, cxaIcePulse 3.2s ease-in-out infinite;
   filter:drop-shadow(0 0 9px rgba(95,242,255,.7));
+}
+/* ── TRIUMPH VAULT AVATAR RINGS ── */
+.cxa-solarcrown{ /* mythic: a blazing white-gold corona */
+  background:conic-gradient(#ffce4a, #fff7dd, #ffb020, #fff3c4, #ff9a1e, #ffce4a);
+  animation:cxaSpin 4.2s linear infinite, cxaSolarPulse 2s ease-in-out infinite;
+  filter:drop-shadow(0 0 12px rgba(255,200,70,.95));
+}
+@keyframes cxaSolarPulse{ 0%,100%{ filter:drop-shadow(0 0 11px rgba(255,200,70,.85)) brightness(1); } 50%{ filter:drop-shadow(0 0 24px rgba(255,235,160,1)) brightness(1.22); } }
+.cxa-meteor{
+  background:conic-gradient(#3a1c08, #ff7a2e, #2c1406, #ffb35e, #3a1c08);
+  animation:cxaSpin 3.6s linear infinite;
+  filter:drop-shadow(0 0 11px rgba(255,130,45,.85));
+}
+.cxa-meteor::after{ /* the burning meteor riding the ring */
+  content:''; position:absolute; left:50%; top:6%; width:8px; height:8px; margin-left:-4px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fff8e0 25%, #ffb35e 55%, transparent 78%);
+  box-shadow:0 0 10px 3px rgba(255,190,90,.95), 0 0 20px 6px rgba(255,110,30,.6);
+}
+.cxa-frostfire{ /* epic: half glacier, half inferno */
+  background:conic-gradient(from -90deg, #5fc9ff, #d9f4ff 22%, #8fd8ff 46%, #ff9a3d 54%, #ff3d00 78%, #ffc25e 96%, #5fc9ff);
+  animation:cxaSpin 6.5s linear infinite, cxaFrostfireGlow 2.8s ease-in-out infinite;
+  filter:drop-shadow(0 0 9px rgba(95,201,255,.7)) drop-shadow(0 0 14px rgba(255,110,40,.5));
+}
+@keyframes cxaFrostfireGlow{
+  0%,100%{ filter:drop-shadow(0 0 12px rgba(95,201,255,.9)) drop-shadow(0 0 8px rgba(255,110,40,.4)); }
+  50%{ filter:drop-shadow(0 0 8px rgba(95,201,255,.4)) drop-shadow(0 0 14px rgba(255,110,40,.9)); }
+}
+.cxa-comet{
+  background:conic-gradient(#0e2233, #7fd8ff 18%, #eafaff 30%, #9fe2ff 42%, #0e2233 60%, #0e2233);
+  animation:cxaSpin 5s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(140,220,255,.75));
 }
 
 /* ═══ LIQUID METAL — a morphing chrome blob flowing through the spectrum ═══ */
@@ -16023,6 +16103,34 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
     linear-gradient(115deg, rgba(31,189,130,.36), rgba(56,230,160,.32) 45%, rgba(15,107,74,.34));
   background-size:200% 200%; animation:cxfDrift 8s linear infinite, cxfTwinkle 4s ease-in-out infinite; mix-blend-mode:screen;
 }
+/* ═══ TOTAL ECLIPSE — a burning ring of eclipsed light over deep shadow ═══ */
+.cxf-eclipse{ border-color:rgba(255,170,90,.55) !important; animation:cxfEclipseBreath 4s ease-in-out infinite; }
+@keyframes cxfEclipseBreath{
+  0%,100%{ box-shadow:0 0 44px -12px rgba(255,150,60,.55), 0 0 80px -30px rgba(255,90,30,.4); }
+  50%{ box-shadow:0 0 66px -10px rgba(255,180,90,.85), 0 0 110px -26px rgba(255,110,40,.6); }
+}
+.cxf-eclipse .cx-frame-overlay{
+  background:
+    radial-gradient(46% 78% at 50% 34%, transparent 44%, rgba(255,150,60,.55) 50%, rgba(255,220,150,.75) 53%, rgba(255,120,40,.4) 58%, transparent 66%),
+    radial-gradient(40% 68% at 50% 34%, rgba(6,4,10,.92) 0%, rgba(6,4,10,.55) 48%, transparent 62%),
+    radial-gradient(1.4px 1.4px at 18% 22%, rgba(255,230,190,.8) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 80% 30%, rgba(255,210,160,.7) 45%, transparent 55%);
+  animation:cxfEclipseGlow 4s ease-in-out infinite;
+}
+@keyframes cxfEclipseGlow{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.28); } }
+/* ═══ STORMFRONT — driving rain and distant lightning ═══ */
+.cxf-stormfront{ border-color:rgba(127,182,255,.5) !important; box-shadow:0 0 40px -12px rgba(127,182,255,.55) !important; }
+.cxf-stormfront .cx-frame-overlay{
+  background:
+    repeating-linear-gradient(105deg, transparent 0 7px, rgba(160,205,255,.22) 7px 8.5px, transparent 8.5px 17px),
+    repeating-linear-gradient(105deg, transparent 0 13px, rgba(120,170,230,.15) 13px 14px, transparent 14px 26px),
+    radial-gradient(120% 60% at 30% 0%, rgba(127,182,255,.28), transparent 60%),
+    linear-gradient(180deg, rgba(40,60,95,.4), rgba(15,22,38,.3));
+  background-size:140px 100%, 190px 100%, auto, auto;
+  animation:cxfRainFall .5s linear infinite, cxfStormFlash 5s steps(1) infinite;
+}
+@keyframes cxfRainFall{ from{ background-position:0 0, 0 0, 0 0, 0 0; } to{ background-position:-37px 140px, -51px 190px, 0 0, 0 0; } }
+@keyframes cxfStormFlash{ 0%,88%,92%,100%{ filter:brightness(1); } 89%,91%{ filter:brightness(1.7); } 90%{ filter:brightness(2.4); } }
 
 /* ---------- RESULT SCREEN — RESULT CEREMONY ---------- */
 /* Full-screen ray wheel behind the card */
@@ -16330,6 +16438,8 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 .cxf-circuit{ --fxc:#22d3a3; }
 .cxf-sunset{ --fxc:#ff8a5e; }
 .cxf-emerald{ --fxc:#2ee6a6; }
+.cxf-eclipse{ --fxc:#ffaa5a; }
+.cxf-stormfront{ --fxc:#7fb6ff; }
 .cxf-liquid .cx-frame-edge, .cxf-liquid .cx-frame-corners b{ animation:cxfHue 6s linear infinite; }
 @keyframes cxfHue{ to{ filter:hue-rotate(360deg) drop-shadow(0 0 8px var(--fxc, #fff)); } }
 body.reduced-motion .cxf-liquid .cx-frame-edge, body.low-power .cxf-liquid .cx-frame-edge,
@@ -16542,6 +16652,21 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
     radial-gradient(130% 50% at 50% 0%, rgba(46,230,166,.2), transparent 62%),
     radial-gradient(120% 46% at 50% 100%, rgba(46,230,166,.12), transparent 60%),
     linear-gradient(180deg, #0b1712, #0a0f0d) !important;
+}
+.profile-modal.cxf-eclipse{
+  background:
+    radial-gradient(70% 34% at 50% 0%, transparent 52%, rgba(255,150,60,.34) 60%, rgba(255,210,140,.4) 63%, rgba(255,110,40,.22) 68%, transparent 76%),
+    radial-gradient(1.4px 1.4px at 16% 20%, rgba(255,230,190,.6) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 82% 12%, rgba(255,210,160,.55) 45%, transparent 55%),
+    radial-gradient(130% 55% at 50% 0%, rgba(255,120,40,.14), transparent 62%),
+    linear-gradient(180deg, #140905, #0a0505) !important;
+}
+.profile-modal.cxf-stormfront{
+  background:
+    repeating-linear-gradient(105deg, transparent 0 9px, rgba(160,205,255,.05) 9px 10px, transparent 10px 21px),
+    radial-gradient(130% 55% at 30% 0%, rgba(127,182,255,.2), transparent 60%),
+    radial-gradient(120% 48% at 50% 100%, rgba(60,90,140,.22), transparent 62%),
+    linear-gradient(180deg, #101827, #0a0e17) !important;
 }
 
 /* ---------- EDIT PROFILE — sectioned layout ---------- */
@@ -16918,6 +17043,9 @@ body.low-power :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .
 /* wave-2 cosmetics — kill motion for reduced-motion / low-power */
 body.reduced-motion :is(.cxn-royal,.cxn-starlight,.cxn-sunset,.cxn-cyber,.cxn-amethyst,.cxn-sakura,.cxn-emerald,.cxt-legend,.cxt-beast,.cxf-sunset,.cxf-sunset .cx-frame-overlay,.cxf-emerald .cx-frame-overlay),
 body.low-power :is(.cxn-royal,.cxn-starlight,.cxn-sunset,.cxn-cyber,.cxn-amethyst,.cxn-sakura,.cxn-emerald,.cxt-legend,.cxt-beast,.cxf-sunset,.cxf-sunset .cx-frame-overlay,.cxf-emerald .cx-frame-overlay){ animation:none !important; }
+/* Triumph Vault cosmetics — kill motion for reduced-motion / low-power */
+body.reduced-motion :is(.cxn-ascendant,.cxn-dragonfire,.cxn-venom,.cxn-shadow,.cxt-unstoppable,.cxa-solarcrown,.cxa-meteor,.cxa-frostfire,.cxa-comet,.cxa-meteor::after,.cxf-eclipse,.cxf-eclipse .cx-frame-overlay,.cxf-stormfront .cx-frame-overlay),
+body.low-power :is(.cxn-ascendant,.cxn-dragonfire,.cxn-venom,.cxn-shadow,.cxt-unstoppable,.cxa-solarcrown,.cxa-meteor,.cxa-frostfire,.cxa-comet,.cxa-meteor::after,.cxf-eclipse,.cxf-eclipse .cx-frame-overlay,.cxf-stormfront .cx-frame-overlay){ animation:none !important; }
 /* Name cosmetics inline in lists/chat stay compact */
 .gc-name.cx-name{ font-weight:800; }
 .nm .cx-tag, .podium-name .cx-tag, .gc-meta .cx-tag{ font-size:7.5px; padding:2px 6px; }
@@ -17587,6 +17715,22 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 .roshcase.sm .roshcase-plate{ font-size:6px; padding:1px 6px; letter-spacing:.14em; bottom:7%; }
 /* a gentle idle float for the hero case */
 .roshcase.float{ animation:caseFloat 4.5s ease-in-out infinite; }
+/* ── TRIUMPH VAULT variant — burnished gold body, laurel-gold emblem ── */
+.roshcase.vault .roshcase-body{
+  background:linear-gradient(180deg, #5c4a2a 0%, #3e3220 32%, #2c2314 66%, #1e1810 100%);
+  border-color:rgba(255,214,110,.28);
+  box-shadow:inset 0 2px 0 rgba(255,232,160,.28), inset 0 -14px 30px rgba(0,0,0,.55), inset 0 0 0 1px rgba(80,55,10,.5);
+}
+.roshcase.vault .roshcase-latch{
+  background:linear-gradient(180deg, #fff6d8 0%, #ffd45e 45%, #b8860b 100%);
+  box-shadow:0 3px 6px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.85);
+}
+.roshcase.vault .roshcase-logo::before{
+  background:repeating-conic-gradient(from 180deg at 50% 4%,
+    #fff3c4 0deg 11deg, #ffce4a 11deg 22deg, #c8921a 22deg 33deg, #ffd45e 33deg 44deg);
+  filter:drop-shadow(0 0 12px rgba(255,200,80,.9));
+}
+.roshcase.vault .roshcase-plate{ color:#ffe7a0; border-color:rgba(255,214,110,.35); letter-spacing:.28em; }
 
 /* ── CASE INVENTORY (shop section) ── */
 .shop-sec-cases .shop-slab::before{ background:linear-gradient(180deg, #ff2d6b, #b56cff); }
@@ -17618,6 +17762,20 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 .case-card:hover::after{ animation:caseShine .85s ease; }
 @keyframes caseShine{ 0%{ left:-70%; opacity:1; } 100%{ left:130%; opacity:1; } }
 .case-card:active{ transform:translateY(-2px) scale(.97); }
+/* gold dressing for the Triumph Vault card */
+.case-card.vault{
+  border-color:rgba(255,190,70,.38);
+  background:
+    radial-gradient(135% 85% at 50% -12%, rgba(255,190,70,.24), transparent 62%),
+    linear-gradient(180deg, rgba(255,255,255,.055), rgba(255,255,255,.015));
+}
+.case-card.vault::before{
+  background:conic-gradient(from 0deg, transparent, rgba(255,200,80,.6), transparent 30%, rgba(255,140,40,.45), transparent 62%, rgba(255,232,160,.45), transparent 92%);
+}
+.case-card.vault:hover{ border-color:rgba(255,200,80,.75); box-shadow:0 28px 58px -22px rgba(0,0,0,.9), 0 0 46px -8px rgba(255,190,70,.55); }
+.case-card.vault .case-card-glow{
+  background:radial-gradient(circle, rgba(255,200,80,.42), rgba(255,120,40,.16) 45%, transparent 72%);
+}
 .case-card-glow{
   position:absolute; top:44px; left:50%; transform:translate(-50%,-50%);
   width:118px; height:118px; border-radius:50%;
@@ -17976,6 +18134,11 @@ body.reduced-motion .case-bulk-card, body.low-power .case-bulk-card{ animation-d
 }
 .case-dupe-coin svg{ filter:drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
 @keyframes dupeCoinIn{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.2) rotate(-14deg); } 70%{ opacity:1; transform:translate(-50%,-50%) scale(1.12) rotate(3deg); } 100%{ opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0); } }
+/* the card re-labels itself as the coin payout — name/desc/rarity pop over in gold */
+.case-reveal.dupe-convert .case-reveal-name{ color:#ffd45e; animation:dupeTextPop .45s cubic-bezier(.2,1.5,.4,1); }
+.case-reveal.dupe-convert .case-reveal-rarity{ color:#ffd45e !important; animation:dupeTextPop .45s cubic-bezier(.2,1.5,.4,1); }
+.case-reveal.dupe-convert .case-reveal-desc{ animation:dupeTextPop .55s cubic-bezier(.2,1.5,.4,1); }
+@keyframes dupeTextPop{ 0%{ opacity:0; transform:scale(.7); } 100%{ opacity:1; transform:scale(1); } }
 body.reduced-motion :is(.case-reveal.dupe-convert .case-reveal-icon, .case-dupe-coin),
 body.low-power :is(.case-reveal.dupe-convert .case-reveal-icon, .case-dupe-coin){ animation-duration:.01s !important; }
 
@@ -19321,7 +19484,7 @@ const FIREBASE_CONFIG = {
               <span class="shop-slab-title">CASES</span>
               <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-star"/></svg> <b id="shopCaseCount">0</b> IN INVENTORY</span>
             </div>
-            <p class="shop-coins-sub">Earn cases every 7th level. Each case contains exclusive cosmetics you can't buy in the shop — including the ultra-rare <b style="color:#ff2d6b">Singularity</b>.</p>
+            <p class="shop-coins-sub">Earn a ROSHCAM Case every 7th level, and win the <b style="color:#ffb336">Triumph Vault</b> by sweeping all 3 weekly challenges. Cases contain exclusive cosmetics you can't buy — including the ultra-rare <b style="color:#ff2d6b">Singularity</b> and <b style="color:#ff2d6b">Ascendant</b>.</p>
             <div class="case-inv-grid" id="caseInventoryGrid"></div>
           </section>
 
@@ -26306,6 +26469,25 @@ function challengeCardsHTML(){
       </div>
       <div class="ch2-foot"><span class="ch2-reset dc-reset">Resets in 24h</span></div>
     </div>
+    <div class="card challenge-card ch2 ch2-gauntlet js-gauntlet-card">
+      <div class="ch2-head">
+        <span class="ch2-head-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> The Gauntlet</span>
+        <span class="ch2-chip gc-badge">0/3</span>
+      </div>
+      <div class="ch2-rows">
+        <div class="ch2-row gc-row">
+          <div class="ch2-row-top">
+            <span class="ch2-title">Complete all 3 weekly challenges</span>
+            <span class="ch2-row-side"><span class="ch2-reward gc-case">📦 TRIUMPH VAULT</span></span>
+          </div>
+          <div class="ch2-progress">
+            <div class="ch2-bar"><span class="ch2-fill gc-fill" style="width:0%"></span></div>
+            <span class="ch2-count gc-count">0 / 3</span>
+          </div>
+        </div>
+      </div>
+      <div class="ch2-foot"><span class="ch2-foot-note gc-foot">Sweep the week to crack the vault</span><span class="ch2-reset gc-reset">Resets in 7d</span></div>
+    </div>
     <div class="card challenge-card ch2 ch2-weekly js-weekly-card">
       <div class="ch2-head">
         <span class="ch2-head-title"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg> Weekly Challenges</span>
@@ -26489,6 +26671,23 @@ function refreshWeeklyChallenges(){
   document.querySelectorAll('.wc-badge').forEach(b => { b.textContent = `${done}/3`; b.classList.toggle('all-done', done === 3); });
   document.querySelectorAll('.wc-foot').forEach(f => { f.innerHTML = footHTML; });
   document.querySelectorAll('.wc-reset').forEach(r => { r.textContent = resetTxt; });
+  // THE GAUNTLET — the meta-challenge card: sweep all 3 weeklies → Triumph Vault.
+  const swept = done === 3;
+  const gcFoot = swept
+    ? (data.bonusClaimed ? '<b style="color:var(--mint)">✓ Vault cracked — it\'s in your case inventory! 🏆</b>' : 'All 3 cleared — cracking the vault…')
+    : `Sweep the week to crack the vault · <b>${3 - done} to go</b>`;
+  document.querySelectorAll('.js-gauntlet-card').forEach(card => {
+    const set = (s, t) => { const el = card.querySelector(s); if(el) el.textContent = t; };
+    set('.gc-badge', `${done}/3`);
+    set('.gc-count', `${done} / 3`);
+    set('.gc-reset', resetTxt);
+    const badge = card.querySelector('.gc-badge'); if(badge) badge.classList.toggle('all-done', swept);
+    const fill = card.querySelector('.gc-fill');
+    if(fill){ fill.style.width = ((done / 3) * 100) + '%'; fill.classList.toggle('complete', swept); }
+    const foot = card.querySelector('.gc-foot'); if(foot) foot.innerHTML = gcFoot;
+    card.querySelector('.gc-row')?.classList.toggle('done', swept);
+    card.classList.toggle('gauntlet-done', swept);
+  });
 }
 // Award XP (used by weekly challenges) — also handles the level-up toast.
 async function grantXp(amount, reason, opts={}){
@@ -26543,7 +26742,14 @@ function updateWeeklyChallengeProgress(matchResult, roundDetails){
     const curLvl = levelOf(state.profile).level;
     grantXp(xpForLevel(curLvl) + 1000, 'Weekly clear bonus', { silent: true });
     try { grantXpTokens({ m30: 2, m60: 1 }, 'Weekly clear bonus', { silent: true }); } catch(e){}
-    setTimeout(() => { try { toast('🏆 ALL weekly challenges cleared — +1 level, +1000 XP, 2× 30 min + 1× 1 hour 2× XP tokens!', 'success', { duration: 8000 }); } catch(e){} }, 600);
+    setTimeout(() => { try { toast('🏆 THE GAUNTLET CLEARED — +1 level, +1000 XP, a stack of 2× XP tokens… and the TRIUMPH VAULT is yours!', 'success', { duration: 8000 }); } catch(e){} }, 600);
+    // The headline reward: the Triumph Vault case, packed with Gauntlet exclusives.
+    setTimeout(() => {
+      try { grantCase('case_triumph', 1, 'The Gauntlet swept'); } catch(e){}
+      try { showCaseUnlockPop(1, 'Triumph Vault earned'); } catch(e){}
+      try { sfxCaseUnlock(); } catch(e){}
+    }, 1600);
+    try { celebrateChallenge('.js-gauntlet-card'); } catch(e){}
   }
   if(changed){ try { localStorage.setItem('rosham_weekly', JSON.stringify(data)); } catch(e){} refreshWeeklyChallenges(); }
 }
@@ -26846,6 +27052,24 @@ const CASE_COSMETICS = [
 ];
 CASE_COSMETICS.forEach(c => { c.price = 0; });
 COSMETICS.push(...CASE_COSMETICS);
+// ── TRIUMPH VAULT EXCLUSIVES — only drop from the Triumph Vault case, which is
+// earned by sweeping all 3 weekly challenges (The Gauntlet). ──
+const VAULT_COSMETICS = [
+  { id:'ns_ascendant',   type:'name',   name:'Ascendant',      rarity:'ascended',  cls:'cxn-ascendant',   desc:'Pure light rises through your name toward something higher. The Gauntlet\'s ultimate prize.', caseOnly:true },
+  { id:'av_solarcrown',  type:'avatar', name:'Solar Crown',    rarity:'mythic',    cls:'cxa-solarcrown',  desc:'A blazing corona of white-gold fire crowns your avatar.', caseOnly:true },
+  { id:'fr_eclipse',     type:'frame',  name:'Total Eclipse',  rarity:'mythic',    cls:'cxf-eclipse',     desc:'Your profile falls into shadow behind a burning ring of eclipsed light.', caseOnly:true },
+  { id:'ns_dragonfire',  type:'name',   name:'Dragonfire',     rarity:'legendary', cls:'cxn-dragonfire',  desc:'Molten dragon breath rolls through every letter.', caseOnly:true },
+  { id:'av_meteor',      type:'avatar', name:'Meteor',         rarity:'legendary', cls:'cxa-meteor',      desc:'A burning meteor streaks endless orbits around your avatar.', caseOnly:true },
+  { id:'tg_unstoppable', type:'tag',    name:'Unstoppable',    rarity:'legendary', cls:'cxt-unstoppable', text:'UNSTOPPABLE 🔱', desc:'Three weekly challenges. One week. Zero mercy.', caseOnly:true },
+  { id:'ns_venom',       type:'name',   name:'Venom',          rarity:'epic',      cls:'cxn-venom',       desc:'Toxic green seeps through the dark of your name.', caseOnly:true },
+  { id:'av_frostfire',   type:'avatar', name:'Frostfire',      rarity:'epic',      cls:'cxa-frostfire',   desc:'Half glacier, half inferno — a ring split between elements.', caseOnly:true },
+  { id:'fr_stormfront',  type:'frame',  name:'Stormfront',     rarity:'epic',      cls:'cxf-stormfront',  desc:'Driving rain and distant lightning sweep across your profile.', caseOnly:true },
+  { id:'ns_shadow',      type:'name',   name:'Shadowstep',     rarity:'rare',      cls:'cxn-shadow',      desc:'Your name half-vanishes into curling smoke.', caseOnly:true },
+  { id:'tg_grinder',     type:'tag',    name:'Grinder',        rarity:'rare',      cls:'cxt-grinder',     text:'GRINDER ⚙️', desc:'Every challenge. Every week. No days off.', caseOnly:true },
+  { id:'av_comet',       type:'avatar', name:'Comet Trail',    rarity:'rare',      cls:'cxa-comet',       desc:'An icy comet tail glitters in a ring around your avatar.', caseOnly:true },
+];
+VAULT_COSMETICS.forEach(c => { c.price = 0; });
+COSMETICS.push(...VAULT_COSMETICS);
 // ── RANK-EXCLUSIVE COSMETICS — earned by reaching each rank (Gold and up).
 // Can't be bought or unboxed; the only way to get them is to climb.
 const RANK_COSMETICS = [
@@ -27400,6 +27624,13 @@ const CASE_TYPES = [
     desc:'The standard ROSHCAM case. Contains 14 exclusive cosmetics across all rarities — including the ultra-rare Singularity.',
     pool: CASE_COSMETICS.map(c => c.id),
   },
+  {
+    id:'case_triumph',
+    name:'Triumph Vault',
+    icon:'🏆',
+    desc:'Sweep all 3 weekly challenges in The Gauntlet to earn this vault. Contains 12 exclusive cosmetics you can\'t get anywhere else — including the ultra-rare Ascendant.',
+    pool: VAULT_COSMETICS.map(c => c.id),
+  },
 ];
 
 const CASE_BY_ID = {};
@@ -27457,13 +27688,15 @@ function rollCaseDrop(caseType){
   return candidates[Math.floor(Math.random() * candidates.length)];
 }
 
-// The CS2-style container, built in pure CSS. `sm` renders the compact card size.
-function caseGraphicHTML(sm){
-  return `<div class="roshcase${sm ? ' sm' : ' float'}" aria-hidden="true">
+// The CS2-style container, built in pure CSS. `sm` renders the compact card
+// size; `caseId` picks the visual variant (gold vault vs. standard case).
+function caseGraphicHTML(sm, caseId){
+  const vault = caseId === 'case_triumph';
+  return `<div class="roshcase${vault ? ' vault' : ''}${sm ? ' sm' : ' float'}" aria-hidden="true">
     <span class="roshcase-body"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i></span>
     <span class="roshcase-latch l"></span><span class="roshcase-latch r"></span>
     <span class="roshcase-logo"></span>
-    <span class="roshcase-plate">ROSHCAM</span>
+    <span class="roshcase-plate">${vault ? 'TRIUMPH' : 'ROSHCAM'}</span>
   </div>`;
 }
 
@@ -27473,16 +27706,16 @@ function renderCaseInventory(){
   const total = totalCaseCount();
   setText('#shopCaseCount', total);
   if(total === 0){
-    grid.innerHTML = `<div class="case-empty-msg">No cases yet — earn your first one at level 7! Cases drop every 7th level.</div>`;
+    grid.innerHTML = `<div class="case-empty-msg">No cases yet — earn a ROSHCAM Case every 7th level, or sweep all 3 weekly challenges in The Gauntlet to win the Triumph Vault.</div>`;
     return;
   }
   let html = '';
   CASE_TYPES.forEach(ct => {
     const count = getCaseCount(ct.id);
     if(count <= 0) return;
-    html += `<button type="button" class="case-card" data-case-id="${ct.id}">
+    html += `<button type="button" class="case-card${ct.id === 'case_triumph' ? ' vault' : ''}" data-case-id="${ct.id}">
       <span class="case-card-glow" aria-hidden="true"></span>
-      <span class="case-card-icon">${caseGraphicHTML(true)}</span>
+      <span class="case-card-icon">${caseGraphicHTML(true, ct.id)}</span>
       <span class="case-card-name">${escapeHTML(ct.name)}</span>
       <span class="case-card-count"><b>×${count}</b></span>
     </button>`;
@@ -27508,16 +27741,16 @@ function openCaseDetail(caseId){
   const ct = CASE_BY_ID[caseId];
   if(!ct) return;
   const count = getCaseCount(ct.id);
-  const iconEl = $('#caseDetailIcon'); if(iconEl) iconEl.innerHTML = caseGraphicHTML(false);
+  const iconEl = $('#caseDetailIcon'); if(iconEl) iconEl.innerHTML = caseGraphicHTML(false, ct.id);
   setText('#caseDetailName', ct.name);
   setText('#caseDetailDesc', ct.desc);
   const stats = getCaseStats();
-  const owned = getCosmetics().owned.filter(id => CASE_COSMETIC_BY_ID[id]).length;
+  const owned = getCosmetics().owned.filter(id => ct.pool.includes(id)).length;
   const statsEl = $('#caseDetailStats');
   if(statsEl) statsEl.innerHTML = `
     <div class="case-detail-stat"><div class="v">${count}</div><div class="l">IN INVENTORY</div></div>
     <div class="case-detail-stat"><div class="v">${stats.total || 0}</div><div class="l">TOTAL OPENED</div></div>
-    <div class="case-detail-stat"><div class="v">${owned}/${CASE_COSMETICS.length}</div><div class="l">EXCLUSIVES OWNED</div></div>
+    <div class="case-detail-stat"><div class="v">${owned}/${ct.pool.length}</div><div class="l">EXCLUSIVES OWNED</div></div>
     <div class="case-detail-stat"><div class="v">${stats.ascended || 0}</div><div class="l">ASCENDED DROPS</div></div>`;
   const oddsEl = $('#caseOdds');
   if(oddsEl){
@@ -27668,8 +27901,13 @@ async function startCaseOpening(ct){
     if(pitch > 20) itemWidth = pitch;
   }
   const vpWidth = viewport.offsetWidth;
-  // Winner lands dead-centre under the pointer — zero jitter.
-  const finalX = Math.max(0, (WIN_POS * itemWidth) + (itemWidth / 2) - (vpWidth / 2));
+  // Winner lands dead-centre under the pointer — zero jitter. Use the winning
+  // card's MEASURED position (offsetLeft handles strip padding, borders and
+  // gaps exactly) rather than assuming slot i sits at i × width.
+  const winEl = reelItemEls[WIN_POS];
+  const finalX = Math.max(0, winEl
+    ? (winEl.offsetLeft + winEl.offsetWidth / 2 - vpWidth / 2)
+    : ((WIN_POS * itemWidth) + (itemWidth / 2) - (vpWidth / 2)));
   // Hand-drive the reel so the ticks stay perfectly synced to the deceleration
   // — like CS2, the clicks naturally slow as the reel eases to a stop.
   const DUR = 5600;
@@ -27696,13 +27934,21 @@ async function startCaseOpening(ct){
   if(flash) flash.classList.add('go');
   await new Promise(r => setTimeout(r, skipped ? 120 : 540));
   // ═══ GRANT WHAT'S UNDER THE PIN ═══
-  // Instead of trusting the pre-picked index to line up visually, read which
-  // reel slot actually sits under the pointer at the final position and grant
-  // THAT item. By construction, the pin and the prize can never disagree.
+  // Don't compute where the pin "should" be — MEASURE it. getBoundingClientRect
+  // reflects the strip's final transform, so hit-testing the pointer's actual
+  // on-screen X against each card finds the exact card the player is looking
+  // at. The pin and the prize physically cannot disagree.
   // (Fillers are drawn from the same weighted odds, so fairness is unchanged.)
-  let landedIdx = Math.round((finalX + vpWidth / 2 - itemWidth / 2) / itemWidth);
-  landedIdx = Math.max(0, Math.min(REEL_SIZE - 1, landedIdx));
-  const prize = reelItems[landedIdx] || wonItem;
+  let prize = null;
+  try {
+    const vpRect = viewport.getBoundingClientRect();
+    const pinX = vpRect.left + vpRect.width / 2;
+    for(let i = 0; i < reelItemEls.length; i++){
+      const rct = reelItemEls[i].getBoundingClientRect();
+      if(pinX >= rct.left && pinX < rct.right){ prize = reelItems[i]; break; }
+    }
+  } catch(e){}
+  if(!prize) prize = reelItems[WIN_POS] || wonItem;
   // Seamless hand-off: the reel lifts + blurs away as the reveal blooms in.
   viewport.classList.add('reel-out');
   await new Promise(r => setTimeout(r, skipped ? 120 : 300));
@@ -27759,7 +28005,8 @@ async function startCaseOpening(ct){
     c.owned = [...c.owned, prize.id];
     await saveCosmetics(c);
   } else {
-    // DUPLICATE → 50 ROSHCOINS: the item preview pops into a coin chip.
+    // DUPLICATE → 50 ROSHCOINS: the item preview pops into a coin chip, and the
+    // whole card re-labels itself as the coin payout (name, desc, rarity, glow).
     setTimeout(() => {
       try {
         reveal.classList.add('dupe-convert');
@@ -27770,6 +28017,11 @@ async function startCaseOpening(ct){
           coin.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-coin"/></svg> +50`;
           glowEl.appendChild(coin);
         }
+        reveal.style.setProperty('--rc', '#ffd45e');
+        reveal.classList.remove('is-ascended');
+        setText('#caseRevealRarity', 'DUPLICATE');
+        setText('#caseRevealName', '+50 RoshCoins');
+        setText('#caseRevealDesc', `You already own ${prize.name} — the duplicate was melted down into RoshCoins.`);
         if(tagEl) tagEl.innerHTML = `<span style="color:#ffd45e">DUPLICATE</span> — converted to <b style="color:#ffd45e">+50 RoshCoins</b>`;
         try { tone(1320, 0.06, 'square', 0.06); setTimeout(() => tone(1760, 0.09, 'square', 0.05), 70); } catch(e){}
         try { haptic([8, 30, 12]); } catch(e){}
