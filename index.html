@@ -15703,6 +15703,42 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   filter:drop-shadow(0 0 9px rgba(255,51,88,.55));
 }
 @keyframes cxnFlow{ to{ background-position:-200% 0, -200% 0, -200% 0, -300% 0; } }
+/* ── NAME STYLES (wave 2) ── */
+.cxn-royal{
+  background:linear-gradient(105deg, #7b3fe4, #b98bff 26%, #ffd45e 46%, #a06bff 66%, #7b3fe4);
+  background-size:250% 100%; color:transparent !important;
+  animation:cxnFlow 5s linear infinite; filter:drop-shadow(0 0 11px rgba(160,107,255,.6));
+}
+.cxn-starlight{
+  background:linear-gradient(105deg, #8fa0c0, #ffffff 30%, #dfe8ff 50%, #aebde0 70%, #ffffff);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 4.4s linear infinite; filter:drop-shadow(0 0 10px rgba(220,232,255,.6));
+}
+.cxn-sunset{
+  background:linear-gradient(105deg, #ffb347, #ff7a5e 30%, #ff5e9c 55%, #b56cff 82%, #ffb347);
+  background-size:250% 100%; color:transparent !important;
+  animation:cxnFlow 5.5s linear infinite; filter:drop-shadow(0 0 10px rgba(255,120,110,.5));
+}
+.cxn-cyber{
+  background:linear-gradient(100deg, #00e5ff, #7df9ff 24%, #ff36c8 52%, #b56cff 74%, #00e5ff);
+  background-size:280% 100%; color:transparent !important;
+  animation:cxnFlow 3.8s linear infinite; filter:drop-shadow(0 0 9px rgba(0,229,255,.55)) drop-shadow(0 0 14px rgba(255,54,200,.4));
+}
+.cxn-amethyst{
+  background:linear-gradient(115deg, #a05bff, #d7b3ff 42%, #7b3fe4 62%, #c88fff);
+  background-size:240% 100%; color:transparent !important;
+  animation:cxnFlow 6s linear infinite; filter:drop-shadow(0 0 9px rgba(168,108,255,.55));
+}
+.cxn-sakura{
+  background:linear-gradient(115deg, #ffc2dd, #ff8fc0 42%, #ffe0ee 62%, #ffa6cf);
+  background-size:240% 100%; color:transparent !important;
+  animation:cxnFlow 6.5s linear infinite; filter:drop-shadow(0 0 9px rgba(255,160,200,.55));
+}
+.cxn-emerald{
+  background:linear-gradient(105deg, #0f6b4a, #38e6a0 30%, #d6fff0 48%, #1fbd82 66%, #0f6b4a);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 5s linear infinite; filter:drop-shadow(0 0 9px rgba(56,230,160,.5));
+}
 
 /* ---------- PLAYER TAGS ---------- */
 .cx-tag{
@@ -15734,6 +15770,18 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 .cxt-sweat{ background:rgba(95,201,255,.12); color:#8ad8ff; border:1px solid rgba(95,201,255,.45); box-shadow:0 0 12px -5px rgba(95,201,255,.6); }
 .cxt-bot{ background:rgba(255,255,255,.06); color:var(--text-dim); border:1px solid var(--line-bright, var(--line)); animation:cxtGlitch 3.2s steps(1) infinite; }
 @keyframes cxtGlitch{ 0%,92%,100%{ transform:translate(0,-1px) skewX(0); } 94%{ transform:translate(1px,-1px) skewX(-8deg); } 96%{ transform:translate(-1px,0) skewX(6deg); } }
+/* ── PLAYER TAGS (wave 2) ── */
+.cxt-legend{
+  background:linear-gradient(120deg, #ffe7a0, #ffd45e 50%, #ffe7a0); background-size:200% 100%;
+  color:#241a02; border:none; animation:cxnFlow 3.6s linear infinite; box-shadow:0 0 16px -4px rgba(255,200,90,.9);
+}
+.cxt-beast{
+  background:linear-gradient(120deg, rgba(255,90,30,.16), rgba(255,140,40,.24), rgba(255,90,30,.16)); background-size:220% 100%;
+  color:#ffb98a; border:1px solid rgba(255,110,40,.55); animation:cxSweep 3s linear infinite; box-shadow:0 0 13px -4px rgba(255,110,40,.8);
+}
+.cxt-boss{ background:rgba(181,108,255,.14); color:#c9a6ff; border:1px solid rgba(181,108,255,.5); box-shadow:0 0 12px -5px rgba(181,108,255,.7); }
+.cxt-pro{ background:rgba(95,201,255,.13); color:#8fd6ff; border:1px solid rgba(95,201,255,.5); box-shadow:0 0 12px -5px rgba(95,201,255,.65); }
+.cxt-vibe{ background:rgba(125,255,208,.12); color:#8ffbdb; border:1px solid rgba(125,255,208,.45); box-shadow:0 0 12px -5px rgba(125,255,208,.6); }
 
 /* ---------- AVATAR EFFECTS (donut rings around any avatar) ---------- */
 .cx-avfx{
@@ -15749,13 +15797,15 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 /* ═══ Premium avatar rings — a THICK, glossy ring (own radial mask, not the
    thin 4px border) with a counter-rotating light sweep shimmering through it.
    Shared by most effects; each sets its own colour, glow and pulse. ═══ */
-.cxa-galaxy, .cxa-gold, .cxa-void, .cxa-prism, .cxa-ice, .cxa-rose, .cxa-mint{
+.cxa-galaxy, .cxa-gold, .cxa-void, .cxa-prism, .cxa-ice, .cxa-rose, .cxa-mint,
+.cxa-nebula, .cxa-sunfire, .cxa-crimson, .cxa-emerald, .cxa-aqua{
   border:0 !important;
   -webkit-mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
   mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
   -webkit-mask-composite:source-over !important; mask-composite:add !important;
 }
-.cxa-galaxy::before, .cxa-gold::before, .cxa-void::before, .cxa-prism::before, .cxa-ice::before, .cxa-rose::before, .cxa-mint::before{
+.cxa-galaxy::before, .cxa-gold::before, .cxa-void::before, .cxa-prism::before, .cxa-ice::before, .cxa-rose::before, .cxa-mint::before,
+.cxa-nebula::before, .cxa-sunfire::before, .cxa-crimson::before, .cxa-emerald::before, .cxa-aqua::before{
   content:''; position:absolute; inset:0; border-radius:50%; pointer-events:none;
   background:conic-gradient(from 90deg, transparent, rgba(255,255,255,.6) 7%, transparent 22%, rgba(255,255,255,.32) 52%, transparent 66%);
   mix-blend-mode:screen; animation:cxaSpinRev 3s linear infinite;
@@ -15806,6 +15856,31 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   animation:cxaSpin 7s linear infinite, cxaMintPulse 2.4s ease-in-out infinite;
 }
 @keyframes cxaMintPulse{ 0%,100%{ filter:drop-shadow(0 0 7px rgba(34,211,163,.65)); } 50%{ filter:drop-shadow(0 0 16px rgba(34,211,163,1)); } }
+/* ── AVATAR RINGS (wave 2) ── */
+.cxa-nebula{
+  background:conic-gradient(#3a2b6b, #7b6cff, #5fc9ff, #c66cff, #2d1b4e, #3a2b6b);
+  animation:cxaSpin 7.5s linear infinite; filter:drop-shadow(0 0 11px rgba(140,120,255,.82));
+}
+.cxa-sunfire{
+  background:conic-gradient(#ff6a00, #ffb347, #fff0c4, #ff8c2e, #ff6a00);
+  animation:cxaSpin 6.5s linear infinite, cxaGoldPulse 2.6s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(255,140,40,.85));
+}
+.cxa-crimson{
+  background:conic-gradient(#5e0716, #ff3358, #ff8aa0, #b0101f, #5e0716);
+  animation:cxaSpin 6s linear infinite, cxaCrimsonPulse 2.4s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(255,51,88,.8));
+}
+@keyframes cxaCrimsonPulse{ 0%,100%{ filter:drop-shadow(0 0 9px rgba(255,51,88,.7)); } 50%{ filter:drop-shadow(0 0 18px rgba(255,90,120,1)); } }
+.cxa-emerald{
+  background:conic-gradient(#0f6b4a, #38e6a0, #d6fff0, #1fbd82, #0f6b4a);
+  animation:cxaSpin 8s linear infinite; filter:drop-shadow(0 0 9px rgba(56,230,160,.72));
+}
+.cxa-aqua{
+  background:conic-gradient(#0aa9c0, #5ff2ff, #d6ffff, #29c9e0, #0aa9c0);
+  animation:cxaSpin 8.5s linear infinite, cxaIcePulse 3.2s ease-in-out infinite;
+  filter:drop-shadow(0 0 9px rgba(95,242,255,.7));
+}
 
 /* ═══ LIQUID METAL — a morphing chrome blob flowing through the spectrum ═══ */
 .cxa-liquid{
@@ -15839,8 +15914,8 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   animation:cxaSpin 8s linear infinite, cxaStormFlicker .11s steps(2,end) infinite;
 }
 @keyframes cxaSpin{ to{ transform:rotate(360deg); } }
-body.reduced-motion :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-prism::before,.cxa-ice::before,.cxa-rose::before,.cxa-mint::before,.cxa-galaxy::after),
-body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-prism::before,.cxa-ice::before,.cxa-rose::before,.cxa-mint::before,.cxa-galaxy::after){ animation:none !important; }
+body.reduced-motion :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-prism::before,.cxa-ice::before,.cxa-rose::before,.cxa-mint::before,.cxa-galaxy::after,.cxa-nebula,.cxa-sunfire,.cxa-crimson,.cxa-emerald,.cxa-aqua,.cxa-nebula::before,.cxa-sunfire::before,.cxa-crimson::before,.cxa-emerald::before,.cxa-aqua::before),
+body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-prism::before,.cxa-ice::before,.cxa-rose::before,.cxa-mint::before,.cxa-galaxy::after,.cxa-nebula,.cxa-sunfire,.cxa-crimson,.cxa-emerald,.cxa-aqua,.cxa-nebula::before,.cxa-sunfire::before,.cxa-crimson::before,.cxa-emerald::before,.cxa-aqua::before){ animation:none !important; }
 
 /* ---------- PROFILE FRAMES ---------- */
 .cx-frame-overlay{ position:absolute; inset:0; z-index:1; pointer-events:none; border-radius:inherit; }
@@ -15929,6 +16004,25 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
 }
 @keyframes cxfCircuitPulse{ 0%{ background-position:0 0, 0 0, -60% 0, 0 0, 0 0, 0 0; } 100%{ background-position:0 0, 0 0, 170% 0, 0 0, 0 0, 0 0; } }
 @keyframes cxfCircuitBlink{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.4); } }
+/* ═══ GOLDEN HOUR — warm dusk light washing the whole profile ═══ */
+.cxf-sunset{ border-color:rgba(255,138,94,.62) !important; box-shadow:0 0 48px -12px rgba(255,138,94,.6), 0 0 70px -28px rgba(255,94,156,.5) !important; animation:cxfGoldGlow 3.6s ease-in-out infinite; }
+.cxf-sunset .cx-frame-overlay{
+  background:
+    radial-gradient(1.4px 1.4px at 20% 30%, rgba(255,236,200,.9) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 70% 22%, rgba(255,220,180,.8) 45%, transparent 55%),
+    linear-gradient(115deg, rgba(255,179,71,.42), rgba(255,122,94,.4) 40%, rgba(255,94,156,.4) 70%, rgba(181,108,255,.36));
+  background-size:200% 100%; animation:cxfDrift 5s linear infinite; mix-blend-mode:screen;
+}
+/* ═══ JADE COURT — deep emerald light with drifting motes ═══ */
+.cxf-emerald{ border-color:rgba(46,230,166,.55) !important; box-shadow:0 0 42px -12px rgba(46,230,166,.6) !important; }
+.cxf-emerald .cx-frame-overlay{
+  background:
+    radial-gradient(1.6px 1.6px at 22% 34%, rgba(214,255,240,.9) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 68% 24%, rgba(170,255,220,.8) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 84% 64%, rgba(150,255,210,.7) 45%, transparent 55%),
+    linear-gradient(115deg, rgba(31,189,130,.36), rgba(56,230,160,.32) 45%, rgba(15,107,74,.34));
+  background-size:200% 200%; animation:cxfDrift 8s linear infinite, cxfTwinkle 4s ease-in-out infinite; mix-blend-mode:screen;
+}
 
 /* ---------- RESULT SCREEN — RESULT CEREMONY ---------- */
 /* Full-screen ray wheel behind the card */
@@ -16081,63 +16175,69 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 }
 .shop-note b{ color:var(--text-dim); }
 
-/* ---------- FORTNITE-STYLE TILES: rarity glow from the base, rotating
-   shine behind the item, glowing rarity bar, and a bright rarity pill ------ */
+/* ---------- PREMIUM SHOP TILES: a floating showcase stage the cosmetic sits
+   on (readable for both light AND dark styles), a soft rarity glow rising from
+   the base, a clean rarity bar, and a bright rarity pill ------------------- */
 .shop-tile{
-  min-height:0; border-radius:12px; border-width:1.5px;
-  border-color:color-mix(in srgb, var(--rc) 46%, rgba(255,255,255,.06));
-  background:
-    radial-gradient(125% 88% at 50% 124%, color-mix(in srgb, var(--rc) 64%, transparent) 0%, transparent 62%),
-    linear-gradient(180deg, #15121f 0%, #110e1b 56%, color-mix(in srgb, var(--rc) 24%, #0e0b16) 100%);
+  min-height:0; border-radius:15px; border-width:1.5px; gap:0;
+  border-color:color-mix(in srgb, var(--rc) 38%, rgba(255,255,255,.05));
+  background:linear-gradient(180deg, #17141f 0%, #131019 58%, color-mix(in srgb, var(--rc) 15%, #100d16) 100%);
 }
-/* slow rotating rarity shine sitting behind the cosmetic preview */
+/* static rarity glow rising from the base — clean, no spinning smear */
 .shop-tile::before{
-  content:''; position:absolute; left:50%; top:40%; width:155%; aspect-ratio:1; z-index:0; pointer-events:none;
-  transform:translate(-50%,-50%);
-  background:conic-gradient(from 0deg,
-    transparent 0deg, color-mix(in srgb, var(--rc) 46%, transparent) 24deg, transparent 62deg,
-    color-mix(in srgb, var(--rc) 30%, transparent) 150deg, transparent 202deg,
-    color-mix(in srgb, var(--rc) 42%, transparent) 300deg, transparent 340deg);
-  -webkit-mask:radial-gradient(closest-side, #000 22%, transparent 72%); mask:radial-gradient(closest-side, #000 22%, transparent 72%);
-  opacity:.4; animation:shopTileShine 9s linear infinite;
+  content:''; position:absolute; left:50%; bottom:-26%; width:150%; height:78%; z-index:0; pointer-events:none;
+  transform:translateX(-50%);
+  background:radial-gradient(58% 100% at 50% 100%, color-mix(in srgb, var(--rc) 40%, transparent), transparent 72%);
+  opacity:.7; transition:opacity .25s;
 }
-@keyframes shopTileShine{ to{ transform:translate(-50%,-50%) rotate(360deg); } }
-/* glowing rarity bar along the bottom edge */
+/* crisp rarity bar hugging the bottom edge */
 .shop-tile::after{
-  content:''; position:absolute; left:0; right:0; bottom:0; height:4px; z-index:4; pointer-events:none;
-  background:var(--rc); box-shadow:0 0 12px var(--rc), 0 0 24px color-mix(in srgb, var(--rc) 55%, transparent);
+  content:''; position:absolute; left:14px; right:14px; bottom:0; height:3px; z-index:4; pointer-events:none;
+  border-radius:3px 3px 0 0; background:var(--rc);
+  box-shadow:0 0 14px var(--rc), 0 0 26px color-mix(in srgb, var(--rc) 50%, transparent);
 }
 .shop-tile:hover{
-  transform:translateY(-6px) scale(1.025);
-  border-color:color-mix(in srgb, var(--rc) 85%, #fff);
-  box-shadow:0 24px 50px -18px rgba(0,0,0,.9), 0 0 46px -6px var(--rc);
+  transform:translateY(-6px) scale(1.02);
+  border-color:color-mix(in srgb, var(--rc) 80%, #fff);
+  box-shadow:0 26px 52px -20px rgba(0,0,0,.9), 0 0 44px -8px var(--rc);
 }
-.shop-tile:hover::before{ opacity:.72; }
-.shop-tile .st-preview{ position:relative; z-index:1; padding:30px 10px 14px; min-height:118px; transition:transform .25s cubic-bezier(.34,1.56,.64,1); }
-.shop-tile:hover .st-preview{ transform:scale(1.08); }
-.shop-tile.featured .st-preview{ min-height:230px; }
+.shop-tile:hover::before{ opacity:1; }
+/* the readable "showcase" stage the cosmetic is displayed on */
+.shop-tile .st-preview{
+  position:relative; z-index:1; margin:12px 12px 10px; padding:22px 12px; min-height:104px;
+  display:grid; place-items:center; border-radius:12px; overflow:hidden;
+  background:
+    radial-gradient(78% 60% at 50% 34%, rgba(255,255,255,.15), rgba(255,255,255,.03) 60%, transparent 78%),
+    linear-gradient(180deg, color-mix(in srgb, var(--rc) 13%, #262233), color-mix(in srgb, var(--rc) 8%, #1a1723));
+  border:1px solid color-mix(in srgb, var(--rc) 22%, rgba(255,255,255,.07));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -24px 34px -22px rgba(0,0,0,.7);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1);
+}
+.shop-tile:hover .st-preview{ transform:scale(1.035); }
+.shop-tile.featured .st-preview{ min-height:196px; margin:14px 14px 10px; }
+/* keep dark name styles legible on the stage */
+.st-preview .cx-prev-name{ text-shadow:0 1px 3px rgba(0,0,0,.5); }
 .st-band{
   position:relative; z-index:2;
-  display:flex; flex-direction:column; gap:1px; padding:9px 10px 0;
-  background:linear-gradient(180deg, rgba(9,8,18,.55), rgba(9,8,18,.9));
-  border-top:1px solid color-mix(in srgb, var(--rc) 42%, transparent);
+  display:flex; flex-direction:column; gap:1px; padding:2px 12px 0;
   text-align:center;
 }
 .st-band .st-name{ font-size:16px; font-style:italic; letter-spacing:.02em; }
-.shop-tile.featured .st-band .st-name{ font-size:20px; }
-.st-band .st-type{ color:color-mix(in srgb, var(--rc) 80%, #fff); }
+.shop-tile.featured .st-band .st-name{ font-size:21px; }
+.st-band .st-type{ color:color-mix(in srgb, var(--rc) 78%, #fff); }
 .st-band .st-foot{
-  margin:7px -10px 4px; min-height:34px; background:rgba(0,0,0,.4);
-  border-top:1px solid rgba(255,255,255,.06);
+  margin:8px -12px 0; min-height:36px;
+  background:linear-gradient(180deg, rgba(0,0,0,.14), rgba(0,0,0,.42));
+  border-top:1px solid color-mix(in srgb, var(--rc) 20%, rgba(255,255,255,.05));
+  border-radius:0 0 13px 13px;
 }
 .st-owned{ display:inline-flex; align-items:center; gap:5px; }
 /* bright rarity pill, like a Fortnite rarity label */
 .st-rarity-tag{
-  top:8px; left:8px; z-index:3; border:none; color:#0c0a14; font-weight:900;
+  top:9px; left:9px; z-index:3; border:none; color:#0c0a14; font-weight:900;
   background:linear-gradient(135deg, color-mix(in srgb, var(--rc) 92%, #fff), var(--rc));
   box-shadow:0 2px 10px -2px var(--rc);
 }
-body.reduced-motion .shop-tile::before, body.low-power .shop-tile::before{ animation:none; }
 
 /* ---------- COSMETICS EDITOR (Edit profile) ---------- */
 .cosmetics-editor{ display:flex; flex-direction:column; }
@@ -16228,6 +16328,8 @@ body.reduced-motion .shop-tile::before, body.low-power .shop-tile::before{ anima
 .cxf-liquid{ --fxc:#ff5ec8; }
 .cxf-blood{ --fxc:#ff3358; }
 .cxf-circuit{ --fxc:#22d3a3; }
+.cxf-sunset{ --fxc:#ff8a5e; }
+.cxf-emerald{ --fxc:#2ee6a6; }
 .cxf-liquid .cx-frame-edge, .cxf-liquid .cx-frame-corners b{ animation:cxfHue 6s linear infinite; }
 @keyframes cxfHue{ to{ filter:hue-rotate(360deg) drop-shadow(0 0 8px var(--fxc, #fff)); } }
 body.reduced-motion .cxf-liquid .cx-frame-edge, body.low-power .cxf-liquid .cx-frame-edge,
@@ -16426,6 +16528,21 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
     linear-gradient(180deg, #141021, #0b0913) !important;
 }
 @keyframes cxfLiquidHueVar{ 0%{ --fxc:#b56cff; } 33%{ --fxc:#5fc9ff; } 66%{ --fxc:#ff5ec8; } 100%{ --fxc:#b56cff; } }
+.profile-modal.cxf-sunset{
+  background:
+    radial-gradient(130% 54% at 50% 0%, rgba(255,150,80,.26), transparent 60%),
+    radial-gradient(120% 60% at 80% 12%, rgba(255,94,156,.18), transparent 60%),
+    radial-gradient(150% 65% at 50% 116%, rgba(90,30,60,.5), transparent 66%),
+    linear-gradient(180deg, #1e1310, #100a0b) !important;
+}
+.profile-modal.cxf-emerald{
+  background:
+    radial-gradient(2px 2px at 40px 34px, rgba(56,230,160,.4) 45%, transparent 55%),
+    radial-gradient(2px 2px at 130px 70px, rgba(56,230,160,.34) 45%, transparent 55%),
+    radial-gradient(130% 50% at 50% 0%, rgba(46,230,166,.2), transparent 62%),
+    radial-gradient(120% 46% at 50% 100%, rgba(46,230,166,.12), transparent 60%),
+    linear-gradient(180deg, #0b1712, #0a0f0d) !important;
+}
 
 /* ---------- EDIT PROFILE — sectioned layout ---------- */
 .eps-modal{ max-width:790px; }
@@ -16798,6 +16915,9 @@ body.reduced-motion .eps-pane-title::after{ animation:none; transform:scaleX(1);
 /* (Liquid & Void ring effects are defined in the premium avatar-ring block.) */
 body.reduced-motion :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .cx-frame-overlay),
 body.low-power :is(.cxn-galaxy, .cxn-neon, .cxa-liquid, .cxa-void, .cxf-galaxy .cx-frame-overlay){ animation:none !important; }
+/* wave-2 cosmetics — kill motion for reduced-motion / low-power */
+body.reduced-motion :is(.cxn-royal,.cxn-starlight,.cxn-sunset,.cxn-cyber,.cxn-amethyst,.cxn-sakura,.cxn-emerald,.cxt-legend,.cxt-beast,.cxf-sunset,.cxf-sunset .cx-frame-overlay,.cxf-emerald .cx-frame-overlay),
+body.low-power :is(.cxn-royal,.cxn-starlight,.cxn-sunset,.cxn-cyber,.cxn-amethyst,.cxn-sakura,.cxn-emerald,.cxt-legend,.cxt-beast,.cxf-sunset,.cxf-sunset .cx-frame-overlay,.cxf-emerald .cx-frame-overlay){ animation:none !important; }
 /* Name cosmetics inline in lists/chat stay compact */
 .gc-name.cx-name{ font-weight:800; }
 .nm .cx-tag, .podium-name .cx-tag, .gc-meta .cx-tag{ font-size:7.5px; padding:2px 6px; }
@@ -17193,44 +17313,40 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
    deep space. The curtains slowly undulate and the corner glow cycles hue. */
 .cxf-aurora{ --fxc:#22d3a3; }
 @keyframes cxfAuroraHue{ 0%{ --fxc:#22d3a3; } 33%{ --fxc:#5fc9ff; } 66%{ --fxc:#b56cff; } 100%{ --fxc:#22d3a3; } }
+/* The whole-card wash carries the flowing curtains now, so the banner overlay
+   is just a subtle extra glow at the very top (where aurora is brightest). */
 .cxf-aurora .cx-frame-overlay{
-  background:
-    linear-gradient(96deg, transparent 4%, rgba(60,240,190,.62) 12%, transparent 22%, transparent 40%, rgba(130,240,205,.48) 48%, transparent 58%, transparent 72%, rgba(60,240,190,.56) 80%, transparent 90%),
-    linear-gradient(84deg, transparent 0%, rgba(165,110,255,.52) 9%, transparent 20%, transparent 54%, rgba(255,120,215,.44) 63%, transparent 74%, transparent 92%, rgba(120,185,255,.4) 98%);
-  background-size:200% 100%, 200% 100%;
-  -webkit-mask:linear-gradient(180deg, #000 0%, #000 48%, transparent 94%);
-  mask:linear-gradient(180deg, #000 0%, #000 48%, transparent 94%);
-  animation:cxfAuroraFlow 7s linear infinite, cxfAuroraShimmer 3.4s ease-in-out infinite; mix-blend-mode:screen;
+  background:radial-gradient(120% 95% at 50% 0%, rgba(90,240,200,.24), rgba(150,110,255,.13) 45%, transparent 72%);
+  mix-blend-mode:screen;
 }
-/* two curtain layers drift in opposite directions (seamless full-tile loop) */
-@keyframes cxfAuroraFlow{ to{ background-position:-200% 0, 200% 0; } }
-@keyframes cxfAuroraShimmer{ 0%,100%{ opacity:.82; } 50%{ opacity:1; } }
+/* NORTHERN LIGHTS over the ENTIRE profile: two aurora curtains flow (opposite
+   directions, seamless) across the whole card, over a static starfield, ambient
+   glow pools and deep space — all screen-blended so they glow. */
 .profile-modal.cxf-aurora, .cx-prev-frame.cxf-aurora, .locker-look.cxf-aurora, .sbm-profile-prev.cxf-aurora{
   background:
+    /* flowing aurora curtains */
+    linear-gradient(96deg, transparent 3%, rgba(60,240,190,.5) 11%, transparent 21%, transparent 39%, rgba(130,240,205,.4) 47%, transparent 57%, transparent 71%, rgba(60,240,190,.46) 79%, transparent 89%),
+    linear-gradient(84deg, transparent 0%, rgba(165,110,255,.46) 9%, transparent 19%, transparent 53%, rgba(255,120,215,.4) 62%, transparent 73%, transparent 91%, rgba(120,185,255,.36) 98%),
     /* starfield */
     radial-gradient(1.3px 1.3px at 12% 11%, rgba(255,255,255,.9), transparent 60%),
-    radial-gradient(1px 1px at 28% 20%, rgba(255,255,255,.7), transparent 60%),
-    radial-gradient(1.4px 1.4px at 44% 8%, rgba(255,255,255,.85), transparent 60%),
-    radial-gradient(1px 1px at 60% 17%, rgba(255,255,255,.6), transparent 60%),
-    radial-gradient(1.3px 1.3px at 76% 10%, rgba(255,255,255,.8), transparent 60%),
-    radial-gradient(1px 1px at 90% 22%, rgba(255,255,255,.62), transparent 60%),
-    radial-gradient(1px 1px at 34% 30%, rgba(255,255,255,.5), transparent 60%),
-    /* aurora glow pools across the top of the sky */
-    radial-gradient(90% 72% at 22% -16%, rgba(52,235,180,.5), transparent 62%),
-    radial-gradient(85% 66% at 55% -12%, rgba(150,100,255,.44), transparent 62%),
-    radial-gradient(82% 66% at 86% -18%, rgba(255,110,210,.36), transparent 62%),
+    radial-gradient(1.3px 1.3px at 44% 8%, rgba(255,255,255,.85), transparent 60%),
+    radial-gradient(1.3px 1.3px at 76% 14%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(1px 1px at 30% 34%, rgba(255,255,255,.55), transparent 60%),
+    radial-gradient(1px 1px at 88% 42%, rgba(255,255,255,.5), transparent 60%),
+    /* ambient glow pools */
+    radial-gradient(120% 85% at 22% -6%, rgba(52,235,180,.34), transparent 62%),
+    radial-gradient(120% 85% at 82% 10%, rgba(150,100,255,.3), transparent 62%),
     /* deep space */
     linear-gradient(180deg, #06122c 0%, #0b1638 45%, #0a0e24 100%) !important;
-  background-size:
-    auto, auto, auto, auto, auto, auto, auto,
-    175% 135%, 180% 135%, 175% 135%,
-    100% 100% !important;
-  background-repeat:no-repeat !important;
-  animation:cxfAuroraSky 15s ease-in-out infinite alternate, cxfAuroraHue 9s linear infinite;
+  background-size:200% 100%, 200% 100%, auto, auto, auto, auto, auto, auto, auto, 100% 100% !important;
+  background-repeat:repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat !important;
+  background-blend-mode:screen, screen, screen, screen, screen, screen, screen, screen, screen, normal !important;
+  animation:cxfAuroraCard 8s linear infinite, cxfAuroraHue 9s linear infinite;
 }
-@keyframes cxfAuroraSky{
-  0%{ background-position: 0 0,0 0,0 0,0 0,0 0,0 0,0 0, 16% 0%, 48% 0%, 80% 0%, 0 0; }
-  100%{ background-position: 0 0,0 0,0 0,0 0,0 0,0 0,0 0, 32% 8%, 60% -5%, 64% 8%, 0 0; }
+/* curtain 1 flows left, curtain 2 flows right; everything else holds still */
+@keyframes cxfAuroraCard{
+  from{ background-position: 0% 0, 0% 0, 0 0,0 0,0 0,0 0,0 0, 0 0,0 0, 0 0; }
+  to{   background-position: -200% 0, 200% 0, 0 0,0 0,0 0,0 0,0 0, 0 0,0 0, 0 0; }
 }
 
 /* Holographic (epic) — an iridescent foil sheen sweeping across the card. */
@@ -17261,6 +17377,150 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
     repeating-linear-gradient(-45deg, rgba(255,255,255,.022) 0 2px, transparent 2px 6px),
     linear-gradient(180deg, #191b20, #101116) !important;
 }
+
+/* ═══════════ RANK-EXCLUSIVE COSMETICS — earned by climbing (Gold+) ═══════════ */
+/* GOLD — Gold Rush: molten gold flow with sparkling dust */
+.cxn-goldrush{
+  background:
+    radial-gradient(1.3px 1.3px at 16% 30%, #fff8dd 45%, transparent 55%),
+    radial-gradient(1.1px 1.1px at 62% 68%, #ffedb0 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 86% 26%, #fff3c9 45%, transparent 55%),
+    linear-gradient(102deg, #8a5a00, #ffd45e 24%, #fff3c4 42%, #ffb336 58%, #8a5a00 78%, #ffd45e);
+  background-size:200% 100%, 200% 100%, 200% 100%, 250% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent !important;
+  animation:cxnFlow 4s linear infinite;
+  filter:drop-shadow(0 0 10px rgba(255,190,70,.65)) drop-shadow(0 0 22px rgba(255,180,54,.3));
+}
+/* PLATINUM — Platinum Pulse: glossy platinum-mint ring with a heartbeat */
+.cxa-platinum{
+  border:0 !important;
+  -webkit-mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
+  mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
+  background:conic-gradient(#5dffba, #eafff6, #3edd95, #ffffff, #7dffd8, #5dffba);
+  animation:cxaSpin 5.5s linear infinite, cxaPlatinumBeat 1.6s ease-in-out infinite;
+}
+.cxa-platinum::before{
+  content:''; position:absolute; inset:0; border-radius:50%; pointer-events:none;
+  background:conic-gradient(from 90deg, transparent, rgba(255,255,255,.65) 7%, transparent 22%, rgba(255,255,255,.3) 55%, transparent 68%);
+  mix-blend-mode:screen; animation:cxaSpinRev 2.7s linear infinite;
+}
+@keyframes cxaPlatinumBeat{
+  0%,54%,100%{ filter:drop-shadow(0 0 8px rgba(93,255,186,.7)); }
+  12%{ filter:drop-shadow(0 0 18px rgba(160,255,220,1)); }
+  30%{ filter:drop-shadow(0 0 8px rgba(93,255,186,.7)); }
+  42%{ filter:drop-shadow(0 0 14px rgba(120,255,200,.9)); }
+}
+/* DIAMOND — Diamond Cut: faceted ice-white glints */
+.cxn-diamondcut{
+  background:
+    radial-gradient(1.5px 1.5px at 14% 28%, #ffffff 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 48% 70%, #e9f8ff 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 82% 30%, #ffffff 45%, transparent 55%),
+    linear-gradient(104deg, #9fdcff, #ffffff 22%, #5fc9ff 40%, #eaf9ff 57%, #8fd8ff 74%, #ffffff 90%, #9fdcff);
+  background-size:200% 100%, 200% 100%, 200% 100%, 240% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent !important;
+  animation:cxnFlow 3.6s linear infinite, cxnDiamondGlint 2.4s ease-in-out infinite;
+}
+@keyframes cxnDiamondGlint{
+  0%,100%{ filter:drop-shadow(0 0 8px rgba(120,205,255,.6)); }
+  50%{ filter:drop-shadow(0 0 15px rgba(220,245,255,.95)) drop-shadow(0 0 30px rgba(95,201,255,.45)); }
+}
+/* MASTER — Master's Orbit: violet gravity ring + orbiting star */
+.cxa-master{
+  border:0 !important;
+  -webkit-mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
+  mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
+  background:conic-gradient(#4a2f8f, #a48bff, #d9ccff, #7a5fdc, #a48bff, #4a2f8f);
+  animation:cxaSpin 5s linear infinite, cxaMasterPulse 2.8s ease-in-out infinite;
+}
+.cxa-master::after{
+  content:''; position:absolute; left:50%; top:6%; width:6px; height:6px; margin-left:-3px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fff 30%, rgba(196,180,255,.9) 60%, transparent 78%);
+  box-shadow:0 0 9px 2px #fff, 0 0 18px 5px rgba(164,139,255,.8);
+}
+@keyframes cxaMasterPulse{ 0%,100%{ filter:drop-shadow(0 0 9px rgba(164,139,255,.75)); } 50%{ filter:drop-shadow(0 0 19px rgba(190,170,255,1)); } }
+/* GRANDMASTER — Ruthless: bleeding crimson edge with red/white aberration */
+.cxn-ruthless{
+  background:linear-gradient(100deg, #7e0f24, #ff3d68 26%, #ffe1e8 46%, #ff3d68 62%, #7e0f24 84%, #ff5c7e);
+  background-size:250% 100%;
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent !important;
+  animation:cxnFlow 3.8s linear infinite, cxnRuthlessCut 2.2s ease-in-out infinite;
+}
+@keyframes cxnRuthlessCut{
+  0%,100%{ text-shadow:1.5px 0 rgba(255,61,104,.65), -1.5px 0 rgba(255,255,255,.35), 0 0 14px rgba(255,61,104,.6); }
+  50%{ text-shadow:-2px 0 rgba(255,61,104,.75), 2px 0 rgba(255,255,255,.45), 0 0 26px rgba(255,61,104,.85), 0 0 44px rgba(255,61,104,.4); }
+}
+/* CHAMPION — Champion's Blaze: rising embers wrap the whole profile */
+.cxf-champion{ --fxc:#ff8c42; border-color:rgba(255,140,66,.6) !important; animation:cxfChampGlow 2.8s ease-in-out infinite; }
+@keyframes cxfChampGlow{ 0%,100%{ box-shadow:0 0 38px -12px rgba(255,140,66,.55); } 50%{ box-shadow:0 0 58px -8px rgba(255,140,66,.9); } }
+.cxf-champion .cx-frame-overlay{
+  background:
+    radial-gradient(2px 2.6px at 18% 84%, rgba(255,190,120,.95) 45%, transparent 55%),
+    radial-gradient(1.6px 2.2px at 42% 92%, rgba(255,150,70,.9) 45%, transparent 55%),
+    radial-gradient(2px 2.6px at 66% 88%, rgba(255,210,150,.85) 45%, transparent 55%),
+    radial-gradient(1.6px 2.2px at 88% 94%, rgba(255,150,70,.85) 45%, transparent 55%),
+    radial-gradient(120% 90% at 50% 118%, rgba(255,110,30,.5), transparent 62%);
+  background-size:100% 200%, 100% 200%, 100% 200%, 100% 200%, 100% 100%;
+  animation:cxfEmberRise 3.2s linear infinite; mix-blend-mode:screen;
+}
+@keyframes cxfEmberRise{ from{ background-position:0 120%, 0 160%, 0 140%, 0 180%, 0 0; } to{ background-position:0 -80%, 0 -40%, 0 -60%, 0 -20%, 0 0; } }
+.profile-modal.cxf-champion, .cx-prev-frame.cxf-champion, .locker-look.cxf-champion, .sbm-profile-prev.cxf-champion{
+  background:
+    radial-gradient(130% 55% at 50% 116%, rgba(255,110,30,.3), transparent 64%),
+    radial-gradient(120% 45% at 50% 0%, rgba(255,140,66,.16), transparent 60%),
+    linear-gradient(180deg, #1e1208, #120a05) !important;
+}
+/* LEGEND — Legend's Halo: iridescent halo sweep under a starlit magenta sky */
+.cxf-legend{ --fxc:#ff61c3; border-color:rgba(255,97,195,.65) !important; animation:cxfLegendGlow 3.4s ease-in-out infinite; }
+@keyframes cxfLegendGlow{ 0%,100%{ box-shadow:0 0 44px -12px rgba(255,97,195,.6); } 50%{ box-shadow:0 0 66px -8px rgba(255,97,195,.95), 0 0 90px -30px rgba(164,139,255,.7); } }
+.cxf-legend .cx-frame-overlay{
+  background:
+    radial-gradient(1.6px 1.6px at 16% 26%, #fff 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 58% 18%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 84% 40%, rgba(255,255,255,.85) 45%, transparent 55%),
+    linear-gradient(100deg, rgba(255,97,195,.5), rgba(164,139,255,.4) 30%, rgba(95,201,255,.36) 52%, rgba(255,211,61,.32) 72%, rgba(255,97,195,.5));
+  background-size:200% 100%, 200% 100%, 200% 100%, 200% 100%;
+  animation:cxfDrift 5s linear infinite, cxfTwinkle 3.4s ease-in-out infinite; mix-blend-mode:screen;
+}
+.profile-modal.cxf-legend, .cx-prev-frame.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend{
+  background:
+    radial-gradient(1.4px 1.4px at 14% 14%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 74% 10%, rgba(255,255,255,.7) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 44% 26%, rgba(255,255,255,.6) 45%, transparent 55%),
+    radial-gradient(120% 55% at 24% 0%, rgba(255,97,195,.26), transparent 62%),
+    radial-gradient(120% 50% at 80% 8%, rgba(164,139,255,.22), transparent 62%),
+    linear-gradient(180deg, #221026, #120a16) !important;
+}
+body.reduced-motion :is(.cxn-goldrush, .cxa-platinum, .cxa-platinum::before, .cxn-diamondcut, .cxa-master, .cxn-ruthless, .cxf-champion, .cxf-champion .cx-frame-overlay, .cxf-legend, .cxf-legend .cx-frame-overlay),
+body.low-power :is(.cxn-goldrush, .cxa-platinum, .cxa-platinum::before, .cxn-diamondcut, .cxa-master, .cxn-ruthless, .cxf-champion, .cxf-champion .cx-frame-overlay, .cxf-legend, .cxf-legend .cx-frame-overlay){ animation:none !important; }
+
+/* ═══ CASE UNLOCKED banner — pops under the toast, tap to open ═══ */
+.case-unlock-pop{
+  position:fixed; left:50%; bottom:96px; transform:translateX(-50%) translateY(30px) scale(.85); z-index:460;
+  display:flex; align-items:center; gap:12px; padding:13px 20px 13px 15px; border-radius:16px; cursor:pointer;
+  opacity:0; overflow:hidden; text-align:left; color:#fff; border:1.5px solid rgba(181,108,255,.65);
+  background:
+    radial-gradient(120% 130% at 12% 0%, rgba(255,45,107,.28), transparent 55%),
+    linear-gradient(135deg, #2a1745, #1a0f2e);
+  box-shadow:0 18px 44px -14px rgba(0,0,0,.85), 0 0 40px -8px rgba(181,108,255,.65);
+  transition:opacity .35s ease, transform .4s cubic-bezier(.2,1.4,.4,1);
+}
+.case-unlock-pop.show{ opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+.case-unlock-pop .cup-icon{ font-size:30px; line-height:1; filter:drop-shadow(0 4px 10px rgba(0,0,0,.5)); animation:lpCaseFloat 2.2s ease-in-out infinite; }
+.case-unlock-pop .cup-text{ display:flex; flex-direction:column; gap:2px; }
+.case-unlock-pop .cup-text b{
+  font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:17px; letter-spacing:.03em;
+  background:linear-gradient(100deg, #fff, #d9c4ff 55%, #ffc4e6); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.case-unlock-pop .cup-text i{ font-style:normal; font-family:var(--font-mono); font-size:10px; letter-spacing:.08em; color:var(--text-dim); }
+.case-unlock-pop .cup-glow{
+  position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 48%, transparent 64%);
+  transform:translateX(-130%); animation:caseShine 2.4s ease-in-out .4s infinite;
+}
+@media (max-width:600px){ .case-unlock-pop{ bottom:112px; width:min(92vw, 360px); } }
+body.reduced-motion .case-unlock-pop .cup-icon, body.low-power .case-unlock-pop .cup-icon,
+body.reduced-motion .case-unlock-pop .cup-glow, body.low-power .case-unlock-pop .cup-glow{ animation:none; }
 
 /* Respect reduced-motion / low-power for the new case cosmetics */
 body.reduced-motion :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt-apex, .cxt-sigma, .cxt-ghost, .cxa-quantum, .cxa-supernova, .cxa-storm, .cxa-cherry, .cxf-aurora, .cxf-aurora .cx-frame-overlay, .cxf-hologram .cx-frame-overlay),
@@ -17701,6 +17961,24 @@ body.reduced-motion .case-bulk-card, body.low-power .case-bulk-card{ animation-d
 }
 .case-reveal-actions{ display:flex; gap:10px; margin-top:10px; }
 .case-reveal-actions .btn{ min-height:46px; padding:0 22px; }
+/* DUPLICATE → COINS: the item preview shrinks away as a gold coin chip
+   springs in over it — a clean pop-into-coins conversion. */
+.case-reveal.dupe-convert .case-reveal-icon{ animation:dupeShrink .5s cubic-bezier(.5,-.3,.7,1) forwards; }
+@keyframes dupeShrink{ 0%{ opacity:1; transform:scale(1); filter:none; } 100%{ opacity:.14; transform:scale(.62); filter:grayscale(.8) blur(1px); } }
+.case-dupe-coin{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(.2); z-index:3; opacity:0;
+  display:inline-flex; align-items:center; gap:7px; padding:12px 22px; border-radius:999px;
+  font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:24px; color:#2a1a02;
+  background:linear-gradient(160deg, #ffe9a8, #ffd45e 45%, #f5b431);
+  border:1.5px solid rgba(255,255,255,.55);
+  box-shadow:0 12px 30px -10px rgba(245,180,49,.9), 0 0 40px -8px rgba(255,212,94,.8), inset 0 1px 0 rgba(255,255,255,.7);
+  animation:dupeCoinIn .55s cubic-bezier(.2,1.6,.4,1) .18s forwards;
+}
+.case-dupe-coin svg{ filter:drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
+@keyframes dupeCoinIn{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.2) rotate(-14deg); } 70%{ opacity:1; transform:translate(-50%,-50%) scale(1.12) rotate(3deg); } 100%{ opacity:1; transform:translate(-50%,-50%) scale(1) rotate(0); } }
+body.reduced-motion :is(.case-reveal.dupe-convert .case-reveal-icon, .case-dupe-coin),
+body.low-power :is(.case-reveal.dupe-convert .case-reveal-icon, .case-dupe-coin){ animation-duration:.01s !important; }
+
 /* reduced-motion: skip the flourishes, show the win instantly */
 body.reduced-motion .case-reveal.show > *, body.low-power .case-reveal.show > *{ animation:none !important; opacity:1 !important; transform:none !important; }
 body.reduced-motion :is(.case-reveal-shock, .case-reel-flash), body.low-power :is(.case-reveal-shock, .case-reel-flash){ display:none !important; }
@@ -24069,6 +24347,8 @@ async function onAuthChanged(user){
       }
     }
   } catch(e){ console.warn('[cases] retro grant', e); }
+  // Rank-exclusive cosmetics — retroactive for the rank you already hold.
+  try { setTimeout(() => syncRankCosmetics(), 3000); } catch(e){}
 
   // First-time camera calibration — auto-opens once on the first landing.
   try {
@@ -26523,6 +26803,29 @@ const COSMETICS = [
   { id:'fr_neon',    type:'frame', name:'Neon Grid',     rarity:'epic',      cls:'cxf-neon',    desc:'A synthwave horizon behind your name.' },
   { id:'fr_blood',   type:'frame', name:'Crimson Court', rarity:'epic',      cls:'cxf-blood',   desc:'Dark red velvet and a faint heartbeat glow.' },
   { id:'fr_circuit', type:'frame', name:'Circuit',       rarity:'rare',      cls:'cxf-circuit', desc:'Teal traces route power around your profile.' },
+  // ── NAME STYLES (wave 2) ──
+  { id:'ns_royal',    type:'name', name:'Royalty',    rarity:'legendary', cls:'cxn-royal',     desc:'Regal violet threaded with veins of molten gold. Bow.' },
+  { id:'ns_starlight',type:'name', name:'Starlight',  rarity:'legendary', cls:'cxn-starlight', desc:'Pale silver light shimmers along every letter like a night sky.' },
+  { id:'ns_sunset',   type:'name', name:'Sunset',     rarity:'epic',      cls:'cxn-sunset',    desc:'Dusk colours bleed across your name — amber to rose to violet.' },
+  { id:'ns_cyber',    type:'name', name:'Cyberpunk',  rarity:'epic',      cls:'cxn-cyber',     desc:'Neon cyan and magenta glitch through a chrome city night.' },
+  { id:'ns_amethyst', type:'name', name:'Amethyst',   rarity:'rare',      cls:'cxn-amethyst',  desc:'A polished purple gemstone with an inner glow.' },
+  { id:'ns_sakura',   type:'name', name:'Sakura',     rarity:'rare',      cls:'cxn-sakura',    desc:'Soft cherry-blossom pinks on a spring breeze.' },
+  { id:'ns_emerald',  type:'name', name:'Emerald',    rarity:'rare',      cls:'cxn-emerald',   desc:'Deep jade with a bright metallic shine.' },
+  // ── PLAYER TAGS (wave 2) ──
+  { id:'tg_legend',   type:'tag', name:'Legend',      rarity:'legendary', cls:'cxt-legend', text:'LEGEND ⭐', desc:'They\'ll tell stories about you.' },
+  { id:'tg_beast',    type:'tag', name:'Beast',       rarity:'epic',      cls:'cxt-beast',  text:'BEAST 🔥', desc:'Unleashed every single match.' },
+  { id:'tg_boss',     type:'tag', name:'Boss',        rarity:'epic',      cls:'cxt-boss',   text:'BOSS',     desc:'You run the lobby.' },
+  { id:'tg_pro',      type:'tag', name:'Pro',         rarity:'rare',      cls:'cxt-pro',    text:'PRO',      desc:'Certified. No notes.' },
+  { id:'tg_vibe',     type:'tag', name:'Vibes',       rarity:'rare',      cls:'cxt-vibe',   text:'VIBES ✨', desc:'Immaculate energy only.' },
+  // ── AVATAR EFFECTS (wave 2) ──
+  { id:'av_nebula',   type:'avatar', name:'Nebula Ring',  rarity:'legendary', cls:'cxa-nebula',  desc:'A slow-turning cloud of violet and blue starbirth.' },
+  { id:'av_sunfire',  type:'avatar', name:'Sunfire',      rarity:'epic',      cls:'cxa-sunfire', desc:'A ring of solar orange, always burning bright.' },
+  { id:'av_crimson',  type:'avatar', name:'Crimson Ring', rarity:'epic',      cls:'cxa-crimson', desc:'A blood-red halo with a molten pulse.' },
+  { id:'av_emerald',  type:'avatar', name:'Emerald Ring', rarity:'rare',      cls:'cxa-emerald', desc:'A polished jade ring with a soft glow.' },
+  { id:'av_aqua',     type:'avatar', name:'Aqua Ring',    rarity:'rare',      cls:'cxa-aqua',    desc:'Cool teal water-light circling your avatar.' },
+  // ── PROFILE FRAMES (wave 2) ──
+  { id:'fr_sunset',   type:'frame', name:'Golden Hour', rarity:'legendary', cls:'cxf-sunset',  desc:'Your whole profile bathes in warm dusk light.' },
+  { id:'fr_emerald',  type:'frame', name:'Jade Court',  rarity:'epic',      cls:'cxf-emerald', desc:'Deep emerald light with drifting motes around your profile.' },
 ];
 // ── CASE-EXCLUSIVE COSMETICS (can only be obtained from cases) ──
 const CASE_COSMETICS = [
@@ -26543,6 +26846,19 @@ const CASE_COSMETICS = [
 ];
 CASE_COSMETICS.forEach(c => { c.price = 0; });
 COSMETICS.push(...CASE_COSMETICS);
+// ── RANK-EXCLUSIVE COSMETICS — earned by reaching each rank (Gold and up).
+// Can't be bought or unboxed; the only way to get them is to climb.
+const RANK_COSMETICS = [
+  { id:'ns_goldrush',   type:'name',   name:'Gold Rush',        rarity:'epic',      cls:'cxn-goldrush',   rankOnly:'gold',        desc:'Molten gold pours through your name. Awarded for reaching Gold.' },
+  { id:'av_platinum',   type:'avatar', name:'Platinum Pulse',   rarity:'epic',      cls:'cxa-platinum',   rankOnly:'platinum',    desc:'A polished platinum ring with a living mint heartbeat. Awarded for reaching Platinum.' },
+  { id:'ns_diamondcut', type:'name',   name:'Diamond Cut',      rarity:'legendary', cls:'cxn-diamondcut', rankOnly:'diamond',     desc:'Ice-white facets glint through your name like a cut gem. Awarded for reaching Diamond.' },
+  { id:'av_master',     type:'avatar', name:"Master's Orbit",   rarity:'legendary', cls:'cxa-master',     rankOnly:'master',      desc:'A violet gravity ring with a star locked in orbit. Awarded for reaching Master.' },
+  { id:'ns_ruthless',   type:'name',   name:'Ruthless',         rarity:'mythic',    cls:'cxn-ruthless',   rankOnly:'grandmaster', desc:'A crimson edge that never stops bleeding light. Awarded for reaching Grandmaster.' },
+  { id:'fr_champion',   type:'frame',  name:"Champion's Blaze", rarity:'mythic',    cls:'cxf-champion',   rankOnly:'champion',    desc:'Embers rise around your entire profile. Awarded for reaching Champion.' },
+  { id:'fr_legend',     type:'frame',  name:"Legend's Halo",    rarity:'ascended',  cls:'cxf-legend',     rankOnly:'legend',      desc:'The apex: an iridescent halo sweeps your profile under a starlit sky. Awarded for reaching Legend.' },
+];
+RANK_COSMETICS.forEach(c => { c.price = 0; });
+COSMETICS.push(...RANK_COSMETICS);
 COSMETICS.forEach(c => { if(!c.price) c.price = CX_PRICE[c.rarity] || 0; });
 const COSMETIC_BY_ID = {}; COSMETICS.forEach(c => { COSMETIC_BY_ID[c.id] = c; });
 const CX_SLOTS = ['name', 'tag', 'avatar', 'frame'];
@@ -26752,20 +27068,49 @@ function _mulberry(seed){
     return ((t ^ t >>> 14) >>> 0) / 4294967296;
   };
 }
+// A stable, ever-increasing day index (days since the Unix epoch, UTC).
+function _dayIndex(key){
+  return Math.floor(new Date(key + 'T00:00:00Z').getTime() / 86400000);
+}
+// Deterministic fixed-seed shuffle — gives any list a stable global order.
+function _seededOrder(arr, seed){
+  const rnd = _mulberry(seed >>> 0);
+  const a = arr.slice();
+  for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+// The rotation is a PURE function of the date. Items are dealt from rolling
+// "decks" that advance one step per day, so a cosmetic can't reappear until its
+// deck cycles — no item ever lingers from one day into the next.
 function shopRotation(){
-  const day = getTodayKey();
-  let seed = 7; for(const ch of day) seed = (seed * 31 + ch.charCodeAt(0)) >>> 0;
-  const rnd = _mulberry(seed);
-  const shuffle = arr => { const a = arr.slice(); for(let i = a.length - 1; i > 0; i--){ const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const shopPool = COSMETICS.filter(c => !c.caseOnly);
-  const heavy = shuffle(shopPool.filter(c => c.rarity === 'legendary' || c.rarity === 'mythic'));
-  const featured = heavy.slice(0, 2);
-  const rest = shuffle(shopPool.filter(c => !featured.includes(c)));
-  // Daily row: aim for a spread of types so the shop never feels samey.
+  const d = _dayIndex(getTodayKey());
+  const pool = COSMETICS.filter(c => !c.caseOnly && !c.rankOnly);
+  const isHeavy = c => c.rarity === 'legendary' || c.rarity === 'mythic';
+  // FEATURED: a rolling deck of premium (legendary/mythic) items — two fresh
+  // ones every day. The deck order is fixed, so a featured item can't return
+  // until the whole deck cycles.
+  const heavy = _seededOrder(pool.filter(isHeavy), 1337);
+  const featured = [];
+  for(let k = 0; k < 2 && heavy.length; k++){
+    const item = heavy[(d * 2 + k) % heavy.length];
+    if(item && !featured.includes(item)) featured.push(item);
+  }
+  // DAILY: six stable lanes drawn ONLY from the affordable (rare/epic) pool —
+  // disjoint from the featured deck, so nothing leaks between the two rows. Each
+  // item lives in exactly one lane and each lane advances one step per day, so
+  // nothing repeats until its lane cycles and never two days in a row.
+  const dailyPool = _seededOrder(pool.filter(c => !isHeavy(c)), 9001);
+  const LANES = 6;
+  const lanes = Array.from({ length: LANES }, () => []);
+  dailyPool.forEach((c, i) => lanes[i % LANES].push(c));
   const daily = [];
-  for(const t of CX_SLOTS){ const hit = rest.find(c => c.type === t && !daily.includes(c)); if(hit) daily.push(hit); }
-  for(const c of rest){ if(daily.length >= 6) break; if(!daily.includes(c)) daily.push(c); }
-  return { featured, daily };
+  for(let i = 0; i < LANES; i++){
+    const lane = lanes[i];
+    if(lane.length) daily.push(lane[d % lane.length]);
+  }
+  // Safety top-ups for tiny pools / empty lanes only.
+  for(const c of dailyPool){ if(daily.length >= 6) break; if(!daily.includes(c)) daily.push(c); }
+  return { featured, daily: daily.slice(0, 6) };
 }
 
 // ---------- SHOP PAGE (OG two-panel layout) ----------
@@ -26965,9 +27310,9 @@ function buildProfilePreviewHTML(item){
 function openShopBuyModal(item, opts={}){
   state._shopBuyItem = item;
   const r = CX_RARITY[item.rarity];
-  // Case-exclusive items (or an explicit preview) show the same big preview,
-  // but they can't be bought or gifted — you win them from cases.
-  const previewOnly = !!opts.preview || !!item.caseOnly;
+  // Case/rank-exclusive items (or an explicit preview) show the same big
+  // preview, but they can't be bought or gifted — you earn them.
+  const previewOnly = !!opts.preview || !!item.caseOnly || !!item.rankOnly;
   const stage = $('#sbmStage');
   if(stage){
     stage.innerHTML = `<span class="sbm-stage-item">${buildCosmeticPreview(item, true)}</span>` + buildProfilePreviewHTML(item);
@@ -26986,9 +27331,12 @@ function openShopBuyModal(item, opts={}){
   if(previewOnly){
     const owned = ownsCosmetic(item.id);
     if(balEl){
+      const rankName = item.rankOnly ? (RANKS.find(rk => rk.id === item.rankOnly)?.name || item.rankOnly) : '';
       balEl.innerHTML = owned
         ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b> — equip it in Edit profile → Cosmetics`
-        : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a ROSHCAM Case`;
+        : (item.rankOnly
+          ? `<b class="sbm-short" style="color:#ffd45e">Rank-exclusive</b> — reach <b>${escapeHTML(rankName)}</b> to earn it`
+          : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a ROSHCAM Case`);
     }
     if(btn) btn.style.display = 'none';
     if(giftBtn) giftBtn.style.display = 'none';
@@ -27320,10 +27668,8 @@ async function startCaseOpening(ct){
     if(pitch > 20) itemWidth = pitch;
   }
   const vpWidth = viewport.offsetWidth;
-  // Winner sits dead-centre under the pointer, with only a tiny jitter for feel
-  // (well within the winning card, so the pin always lands on what you get).
-  const jitter = (Math.random() - 0.5) * (itemWidth * 0.12);
-  const finalX = Math.max(0, (WIN_POS * itemWidth) + (itemWidth / 2) - (vpWidth / 2) + jitter);
+  // Winner lands dead-centre under the pointer — zero jitter.
+  const finalX = Math.max(0, (WIN_POS * itemWidth) + (itemWidth / 2) - (vpWidth / 2));
   // Hand-drive the reel so the ticks stay perfectly synced to the deceleration
   // — like CS2, the clicks naturally slow as the reel eases to a stop.
   const DUR = 5600;
@@ -27349,30 +27695,40 @@ async function startCaseOpening(ct){
   try { haptic([18, 50, 24]); } catch(e){}
   if(flash) flash.classList.add('go');
   await new Promise(r => setTimeout(r, skipped ? 120 : 540));
+  // ═══ GRANT WHAT'S UNDER THE PIN ═══
+  // Instead of trusting the pre-picked index to line up visually, read which
+  // reel slot actually sits under the pointer at the final position and grant
+  // THAT item. By construction, the pin and the prize can never disagree.
+  // (Fillers are drawn from the same weighted odds, so fairness is unchanged.)
+  let landedIdx = Math.round((finalX + vpWidth / 2 - itemWidth / 2) / itemWidth);
+  landedIdx = Math.max(0, Math.min(REEL_SIZE - 1, landedIdx));
+  const prize = reelItems[landedIdx] || wonItem;
   // Seamless hand-off: the reel lifts + blurs away as the reveal blooms in.
   viewport.classList.add('reel-out');
   await new Promise(r => setTimeout(r, skipped ? 120 : 300));
   viewport.style.display = 'none';
   viewport.classList.remove('reel-out');
-  const r = CX_RARITY[wonItem.rarity];
-  const isAscended = wonItem.rarity === 'ascended';
+  const r = CX_RARITY[prize.rarity];
+  const isAscended = prize.rarity === 'ascended';
   reveal.classList.toggle('is-ascended', isAscended);
+  reveal.classList.remove('dupe-convert');
+  reveal.querySelectorAll('.case-dupe-coin').forEach(n => n.remove());
   reveal.style.setProperty('--rc', r.color);
   // Show how the item actually looks on YOUR profile — clearer than an
   // isolated swatch (your avatar + name with the new cosmetic slotted in).
   const iconEl = $('#caseRevealIcon');
-  if(iconEl){ try { iconEl.innerHTML = buildProfilePreviewHTML(wonItem); } catch(e){ iconEl.textContent = '✦'; } }
+  if(iconEl){ try { iconEl.innerHTML = buildProfilePreviewHTML(prize); } catch(e){ iconEl.textContent = '✦'; } }
   setText('#caseRevealRarity', r.label);
-  setText('#caseRevealName', wonItem.name);
-  setText('#caseRevealDesc', wonItem.desc || '');
-  const isDupe = ownsCosmetic(wonItem.id);
+  setText('#caseRevealName', prize.name);
+  setText('#caseRevealDesc', prize.desc || '');
+  const isDupe = ownsCosmetic(prize.id);
   const tagEl = $('#caseRevealTag');
   if(tagEl){
     if(isDupe){
-      tagEl.innerHTML = `<span style="color:var(--amber)">DUPLICATE</span> — you already own this`;
+      tagEl.innerHTML = `<span style="color:var(--amber)">DUPLICATE</span> — converting to RoshCoins…`;
       tagEl.style.display = '';
     } else {
-      tagEl.innerHTML = `<span style="color:var(--mint)">NEW!</span> Case-exclusive ${CX_TYPE_LABEL[wonItem.type]}`;
+      tagEl.innerHTML = `<span style="color:var(--mint)">NEW!</span> Case-exclusive ${CX_TYPE_LABEL[prize.type]}`;
       tagEl.style.display = '';
     }
   }
@@ -27380,11 +27736,11 @@ async function startCaseOpening(ct){
   if(equipBtn){
     equipBtn.style.display = isDupe ? 'none' : '';
     equipBtn.onclick = async () => {
-      await equipCosmetic(wonItem.type, wonItem.id);
+      await equipCosmetic(prize.type, prize.id);
       overlay.classList.remove('show');
     };
   }
-  const rarRank = ({ rare:0, epic:1, legendary:2, mythic:3, ascended:4 })[wonItem.rarity] ?? 0;
+  const rarRank = ({ rare:0, epic:1, legendary:2, mythic:3, ascended:4 })[prize.rarity] ?? 0;
   spawnRevealParticles(r.color, 22 + rarRank * 14);
   reveal.classList.add('show');
   if(isAscended){
@@ -27400,15 +27756,36 @@ async function startCaseOpening(ct){
   }
   if(!isDupe){
     const c = getCosmetics();
-    c.owned = [...c.owned, wonItem.id];
+    c.owned = [...c.owned, prize.id];
     await saveCosmetics(c);
+  } else {
+    // DUPLICATE → 50 ROSHCOINS: the item preview pops into a coin chip.
+    setTimeout(() => {
+      try {
+        reveal.classList.add('dupe-convert');
+        const glowEl = $('#caseRevealGlow');
+        if(glowEl){
+          const coin = document.createElement('div');
+          coin.className = 'case-dupe-coin';
+          coin.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-coin"/></svg> +50`;
+          glowEl.appendChild(coin);
+        }
+        if(tagEl) tagEl.innerHTML = `<span style="color:#ffd45e">DUPLICATE</span> — converted to <b style="color:#ffd45e">+50 RoshCoins</b>`;
+        try { tone(1320, 0.06, 'square', 0.06); setTimeout(() => tone(1760, 0.09, 'square', 0.05), 70); } catch(e){}
+        try { haptic([8, 30, 12]); } catch(e){}
+        try { updateCoinPill(); } catch(e){}
+        try { bigBurst?.('#ffd45e', 26); } catch(e){}
+      } catch(e){}
+    }, 1150);
+    state.profile.coins = (state.profile.coins || 0) + 50;
+    try { await updateDoc(doc(state.db, 'users', state.user.uid), { coins: increment(50) }); } catch(e){}
   }
   const inv = getCaseInventory();
   inv[state._activeCaseId] = Math.max(0, (inv[state._activeCaseId] || 0) - 1);
   state.profile.cases = inv;
   try { await updateDoc(doc(state.db, 'users', state.user.uid), { cases: inv }); } catch(e){}
-  updateCaseStats(wonItem.rarity);
-  addCaseHistory({ caseId: state._activeCaseId, itemId: wonItem.id, rarity: wonItem.rarity });
+  updateCaseStats(prize.rarity);
+  addCaseHistory({ caseId: state._activeCaseId, itemId: prize.id, rarity: prize.rarity });
   try { renderCaseInventory(); } catch(e){}
   try { updateShopBadge(); } catch(e){}
 }
@@ -27427,14 +27804,14 @@ async function startBulkOpen(ct, n){
   const results = [];
   for(let i = 0; i < n; i++) results.push(rollCaseDrop(ct));
   const prevOwned = new Set(getCosmetics().owned);
-  // Grant all new cosmetics; log history + stats; track best pull.
+  // Grant all new cosmetics; duplicates convert to 50 RoshCoins each.
   const c = getCosmetics();
   const ownedSet = new Set(c.owned);
-  let bestRank = 0, bestColor = '#5fc9ff';
+  let bestRank = 0, bestColor = '#5fc9ff', dupeCoins = 0;
   results.forEach(item => {
     const rr = _rarRank(item.rarity);
     if(rr >= bestRank){ bestRank = rr; bestColor = CX_RARITY[item.rarity].color; }
-    ownedSet.add(item.id);
+    if(ownedSet.has(item.id)) dupeCoins += 50; else ownedSet.add(item.id);
     try { updateCaseStats(item.rarity); } catch(e){}
     try { addCaseHistory({ caseId: ct.id, itemId: item.id, rarity: item.rarity }); } catch(e){}
   });
@@ -27444,6 +27821,11 @@ async function startBulkOpen(ct, n){
   inv[ct.id] = Math.max(0, (inv[ct.id] || 0) - n);
   state.profile.cases = inv;
   try { await updateDoc(doc(state.db, 'users', state.user.uid), { cases: inv }); } catch(e){}
+  if(dupeCoins > 0){
+    state.profile.coins = (state.profile.coins || 0) + dupeCoins;
+    try { await updateDoc(doc(state.db, 'users', state.user.uid), { coins: increment(dupeCoins) }); } catch(e){}
+    try { updateCoinPill(); } catch(e){}
+  }
   // Build the results grid — rarest first, popping in staggered.
   const sorted = results.slice().sort((a, b) => _rarRank(b.rarity) - _rarRank(a.rarity));
   const shownNew = new Set();
@@ -27451,7 +27833,7 @@ async function startBulkOpen(ct, n){
     const r = CX_RARITY[item.rarity];
     const isNew = !prevOwned.has(item.id) && !shownNew.has(item.id);
     if(isNew) shownNew.add(item.id);
-    const badge = isNew ? '<div class="cbc-badge new">NEW</div>' : '<div class="cbc-badge dupe">DUPE</div>';
+    const badge = isNew ? '<div class="cbc-badge new">NEW</div>' : '<div class="cbc-badge dupe">+50 🪙</div>';
     return `<div class="case-bulk-card rar-${item.rarity}" style="--cci:${r.color}; animation-delay:${Math.min(i * 0.045, 1.4).toFixed(2)}s;">
       <div class="cbc-preview">${buildCosmeticPreview(item, false)}</div>
       <div class="cbc-name">${escapeHTML(item.name)}</div>
@@ -27461,7 +27843,7 @@ async function startBulkOpen(ct, n){
   }).join('');
   const newCount = shownNew.size, dupeCount = n - newCount;
   setText('#caseBulkTitle', `You unboxed ${n} item${n > 1 ? 's' : ''}`);
-  setText('#caseBulkSub', `${newCount} new${dupeCount > 0 ? ` · ${dupeCount} duplicate${dupeCount > 1 ? 's' : ''}` : ''}`);
+  setText('#caseBulkSub', `${newCount} new${dupeCoins > 0 ? ` · ${dupeCount} duplicate${dupeCount > 1 ? 's' : ''} → +${dupeCoins} RoshCoins` : ''}`);
   // Present the results view.
   if(viewport){ viewport.classList.remove('reel-out'); viewport.style.display = 'none'; }
   if(reveal) reveal.classList.remove('show');
@@ -27510,6 +27892,39 @@ on('#caseRevealClose', 'click', () => {
   $('#caseOpeningOverlay')?.classList.remove('show');
 });
 
+// Bright, distinct "you got a case!" chime — separate from the level-up sfx.
+function sfxCaseUnlock(){
+  try {
+    tone(784, 0.09, 'triangle', 0.1);
+    setTimeout(() => tone(1046.5, 0.09, 'triangle', 0.1), 95);
+    setTimeout(() => tone(1318.5, 0.1, 'triangle', 0.1), 190);
+    setTimeout(() => { tone(1568, 0.34, 'triangle', 0.11); tone(2093, 0.3, 'sine', 0.06); }, 300);
+  } catch(e){}
+}
+// A big unmissable banner (with its own sound) that pops under the toast
+// whenever a case is earned — tap it to jump straight to your cases.
+function showCaseUnlockPop(count, reason){
+  try {
+    document.querySelectorAll('.case-unlock-pop').forEach(n => n.remove());
+    const pop = document.createElement('button');
+    pop.type = 'button';
+    pop.className = 'case-unlock-pop';
+    pop.innerHTML = `
+      <span class="cup-icon">📦</span>
+      <span class="cup-text">
+        <b>CASE UNLOCKED${count > 1 ? ' ×' + count : ''}!</b>
+        <i>${escapeHTML(reason || 'ROSHCAM Case earned')} · tap to open</i>
+      </span>
+      <span class="cup-glow" aria-hidden="true"></span>`;
+    pop.addEventListener('click', () => {
+      pop.remove();
+      try { showNavPage('shop'); setTimeout(() => $('#shopSecCases')?.scrollIntoView({ behavior:'smooth', block:'start' }), 350); } catch(e){}
+    });
+    document.body.appendChild(pop);
+    requestAnimationFrame(() => pop.classList.add('show'));
+    setTimeout(() => { pop.classList.remove('show'); setTimeout(() => pop.remove(), 400); }, 6500);
+  } catch(e){}
+}
 async function grantCase(caseId, count, reason){
   if(!state.profile || !state.user) return;
   const inv = getCaseInventory();
@@ -27517,9 +27932,37 @@ async function grantCase(caseId, count, reason){
   state.profile.cases = inv;
   try { await updateDoc(doc(state.db, 'users', state.user.uid), { cases: inv }); } catch(e){}
   try { toast(`📦 +${count} ${CASE_BY_ID[caseId]?.name || 'Case'}! ${reason}`, 'success', { duration: 5000 }); } catch(e){}
-  try { haptic(15); } catch(e){}
+  try { showCaseUnlockPop(count, reason); } catch(e){}
+  try { sfxCaseUnlock(); } catch(e){}
+  try { haptic([20, 40, 20, 40, 60]); } catch(e){}
   try { renderCaseInventory(); } catch(e){}
   try { updateShopBadge(); } catch(e){}
+}
+
+// ── RANK-EXCLUSIVE COSMETIC GRANTS — based on your PEAK rating, so a demotion
+// never takes a reward back. Idempotent: safe to call on every rank-up/login.
+function syncRankCosmetics(){
+  try {
+    if(!state.profile || !state.user) return;
+    if(inPlacements(state.profile)) return;
+    const peak = Math.max(state.profile.peakRating || 0, state.profile.rating || 0);
+    const curIdx = RANKS.findIndex(rk => rk.id === rankFromRating(peak).id);
+    if(curIdx < 0) return;
+    const c = getCosmetics();
+    const have = new Set(c.owned);
+    const newly = [];
+    RANK_COSMETICS.forEach(rc => {
+      const need = RANKS.findIndex(rk => rk.id === rc.rankOnly);
+      if(need >= 0 && curIdx >= need && !have.has(rc.id)){ have.add(rc.id); newly.push(rc); }
+    });
+    if(!newly.length) return;
+    c.owned = [...have];
+    saveCosmetics(c);
+    newly.forEach((rc, i) => setTimeout(() => {
+      try { toast(`🏆 ${RANKS.find(rk => rk.id === rc.rankOnly)?.name || 'Rank'} reward unlocked: ${rc.name}!`, 'success', { duration: 6500 }); } catch(e){}
+      try { sfxCaseUnlock(); } catch(e){}
+    }, 900 + i * 1100));
+  } catch(e){ console.warn('[rank-cosmetics]', e); }
 }
 
 // Hook into the level-up system to grant cases every 7th level.
@@ -32184,6 +32627,8 @@ let updateMatchStats = async function(matchResult){
     // SEASONAL TITLE: if this match pushed you into a higher season tier, record
     // & celebrate it (e.g. "Genesis Diamond"). Now aligned to real rank tiers.
     try { syncSeasonTitle({ celebrate: true }); } catch(e){ console.warn('[season-title]', e); }
+    // Rank-exclusive cosmetics (Gold+) — idempotent, keyed to peak rating.
+    try { syncRankCosmetics(); } catch(e){}
     refreshStatsUI();
     updateChipRating();
 
@@ -38039,5 +38484,4 @@ setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
-/* ---- Battery-aware: auto-ease heavy effects on low battery (reversible,
-   never overrides a manual low-power setting) ---- */
+// ===== please work =====
