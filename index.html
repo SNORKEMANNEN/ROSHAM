@@ -1343,6 +1343,24 @@ body.reduced-motion .nav-page.active, body.low-power .nav-page.active{ animation
 .ladder-row .lr-side{ flex-shrink: 0; display: grid; place-items: center; width: 24px; position: relative; z-index: 1; }
 .ladder-row .lr-check{ width: 18px; height: 18px; color: var(--lr-accent, var(--mint)); }
 .ladder-row .lr-lock{ width: 14px; height: 14px; color: var(--text-faint); }
+/* Rank-exclusive reward chip — tap to open the cosmetic preview */
+.lr-reward{
+  display:inline-flex; align-items:center; gap:6px; margin-top:7px; cursor:pointer;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.05em;
+  color:var(--text); padding:4px 10px 4px 8px; border-radius:999px;
+  background:color-mix(in srgb, var(--lr-accent, #fff) 10%, var(--surface-2));
+  border:1px solid color-mix(in srgb, var(--lr-accent, #fff) 38%, transparent);
+  transition:transform .16s ease, box-shadow .2s, border-color .2s;
+}
+.lr-reward:hover{ transform:translateY(-1px); border-color:var(--lr-accent, #fff); box-shadow:0 4px 14px -6px var(--lr-accent, rgba(255,255,255,.5)); }
+.lr-reward:active{ transform:scale(.96); }
+.lr-reward .lr-reward-rar{ font-size:8px; letter-spacing:.12em; opacity:.95; }
+.lr-reward.owned{ border-color:rgba(34,211,163,.5); }
+.lr-reward.owned .lr-reward-ic{ color:var(--mint); }
+.ladder-row.locked .lr-reward{ opacity:1; filter:none; } /* keep the goal visible even on locked rows */
+/* section heading with a right-side hint */
+.psection-row{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.psection-hint{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.08em; color:var(--text-faint); }
 
 /* FRIENDS PAGE */
 .friends-page-card{ max-width: 640px; }
@@ -15319,6 +15337,15 @@ body.reduced-motion .dr2-amount, body.low-power .dr2-amount{ animation:none; }
 @keyframes lpCaseFloat{ 0%,100%{ transform:translateY(0) rotate(-4deg); } 50%{ transform:translateY(-3px) rotate(4deg); } }
 .lp-tier.locked .lp-case-badge{ filter:grayscale(.35) brightness(.85); }
 body.reduced-motion .lp-case-badge, body.low-power .lp-case-badge{ animation:none; }
+/* prestige tiers carry an exclusive cosmetic — gem badge + clickable tile */
+.lp-cx-badge{ background:linear-gradient(150deg, #ffd45e, #ff9a3d 55%, #ff5ec8); box-shadow:0 4px 12px -4px rgba(255,180,60,.8), 0 0 14px -4px rgba(255,94,200,.5); }
+.lp-tier.has-reward .lp-tile{ cursor:pointer; }
+.lp-tier.has-reward .lp-tile:hover{ transform:translateY(-4px); border-color:var(--tc); box-shadow:0 16px 34px -16px rgba(0,0,0,.75), 0 0 24px -10px var(--tc); }
+.lp-tier.has-reward .lp-tile:active{ transform:scale(.97); }
+.lp-tier-inspect{
+  font-family:var(--font-mono); font-size:6.5px; font-weight:800; letter-spacing:.16em;
+  color:color-mix(in srgb, var(--tc) 80%, #fff); opacity:.75; margin-top:1px;
+}
 .lp-tier:hover .lp-tile{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--tc) 40%, var(--line)); box-shadow:0 14px 30px -16px rgba(0,0,0,.7); }
 .lp-tier.reached .lp-tile{
   background:linear-gradient(180deg, color-mix(in srgb, var(--tc) 10%, var(--surface-2)), var(--surface-2));
@@ -15650,102 +15677,203 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 
 /* ---------- NAME STYLES ---------- */
 .cx-name{ font-weight:inherit; }
-/* !important: each style's `background:` shorthand would otherwise reset the clip */
-[class*="cxn-"]{ -webkit-background-clip:text !important; background-clip:text !important; }
-.cxn-galaxy{
+/* !important: each style's `background:` shorthand would otherwise reset the clip.
+   The soft dark text-shadow grounds every gradient name on ANY background —
+   bright banner washes included — so styled names never disappear. */
+[class*="cxn-"]{ -webkit-background-clip:text !important; background-clip:text !important; text-shadow:0 2px 10px rgba(0,0,0,.5); }
+/* Premium layered motion: sparkle layers drift at three parallax speeds while
+   a bright glint band (400% layer) sweeps across — one shared keyframe drives
+   any style with up to 6 background layers. */
+@keyframes cxnPremium{ to{ background-position:-200% 0, -210% 0, -220% 0, -400% 0, -260% 0, -280% 0; } }
+.cxn-galaxy{ /* a living nebula: parallax star field + sweeping starlight glint */
   background:
     radial-gradient(1.5px 1.5px at 18% 30%, rgba(255,255,255,.95) 45%, transparent 55%),
     radial-gradient(1.5px 1.5px at 62% 68%, rgba(255,255,255,.9) 45%, transparent 55%),
     radial-gradient(2px 2px at 84% 22%, rgba(255,255,255,.85) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 43%, rgba(255,255,255,.5) 50%, transparent 57%),
     linear-gradient(115deg, #7b6cff, #c66cff 26%, #5fc9ff 52%, #ff6cd8 76%, #7b6cff);
-  background-size:200% 100%, 200% 100%, 200% 100%, 300% 100%;
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 260% 100%;
   color:transparent !important;
-  animation:cxnFlow 7s linear infinite;
-  filter:drop-shadow(0 0 10px rgba(155,123,255,.45));
+  animation:cxnPremium 6.5s linear infinite;
+  filter:drop-shadow(0 0 12px rgba(155,123,255,.6));
 }
-.cxn-gold{
-  background:linear-gradient(105deg, #8a5a00, #ffd45e 22%, #fff3c4 38%, #ffb336 55%, #8a5a00 78%, #ffd45e);
-  background-size:250% 100%; color:transparent !important;
-  animation:cxnFlow 4.5s linear infinite;
-  filter:drop-shadow(0 0 9px rgba(255,180,54,.5));
+.cxn-gold{ /* molten gold with drifting gold dust and a hard jeweller's glint */
+  background:
+    radial-gradient(1.3px 1.3px at 24% 32%, rgba(255,248,214,.95) 45%, transparent 55%),
+    radial-gradient(1.1px 1.1px at 66% 66%, rgba(255,240,190,.85) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 84% 28%, rgba(255,252,230,.9) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(255,255,255,.75) 50%, transparent 56%),
+    linear-gradient(105deg, #8a5a00, #ffd45e 22%, #fff3c4 38%, #ffb336 55%, #8a5a00 78%, #ffd45e);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnPremium 4.2s linear infinite, cxnGoldRich 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 11px rgba(255,190,60,.65));
 }
-.cxn-prisma{
-  background:linear-gradient(100deg, #ff5e5e, #ffb336, #ffe95e, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e);
-  background-size:300% 100%; color:transparent !important;
-  animation:cxnFlow 3.5s linear infinite;
-  filter:drop-shadow(0 0 10px rgba(255,255,255,.28));
+@keyframes cxnGoldRich{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(255,190,60,.55)); } 50%{ filter:drop-shadow(0 0 18px rgba(255,215,100,.95)); } }
+.cxn-prisma{ /* the full spectrum, refracting light as it turns */
+  background:
+    radial-gradient(1.4px 1.4px at 30% 30%, rgba(255,255,255,.95) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 70% 64%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 50% 20%, rgba(255,255,255,.9) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 43%, rgba(255,255,255,.7) 50%, transparent 57%),
+    linear-gradient(100deg, #ff5e5e, #ffb336, #ffe95e, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 280% 100%;
+  color:transparent !important;
+  animation:cxnPremium 3.4s linear infinite, cxnPrismaGlow 4s ease-in-out infinite;
+  filter:drop-shadow(0 0 11px rgba(255,255,255,.4));
 }
-.cxn-neon{ color:#3dffc2 !important; text-shadow:0 0 7px rgba(61,255,194,.9), 0 0 22px rgba(61,255,194,.55); animation:cxnNeonPulse 2.2s ease-in-out infinite; }
-@keyframes cxnNeonPulse{ 0%,100%{ text-shadow:0 0 7px rgba(61,255,194,.9), 0 0 22px rgba(61,255,194,.5); } 50%{ text-shadow:0 0 10px rgba(61,255,194,1), 0 0 34px rgba(61,255,194,.85); } }
-.cxn-fire{
-  background:linear-gradient(0deg, #ff3d00 8%, #ff9a3d 42%, #ffe27e 82%);
-  background-size:100% 220%; color:transparent !important;
-  animation:cxnFireRise 1.6s ease-in-out infinite alternate;
-  filter:drop-shadow(0 0 10px rgba(255,120,40,.6));
+@keyframes cxnPrismaGlow{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(255,255,255,.35)) saturate(1); } 50%{ filter:drop-shadow(0 0 16px rgba(255,255,255,.6)) saturate(1.35); } }
+.cxn-neon{ /* live neon tubing: breathing glow + arcade sign flicker */
+  color:#3dffc2 !important;
+  text-shadow:0 0 6px rgba(61,255,194,1), 0 0 18px rgba(61,255,194,.8), 0 0 40px rgba(61,255,194,.45);
+  animation:cxnNeonPulse 2.2s ease-in-out infinite;
 }
-@keyframes cxnFireRise{ from{ background-position:50% 100%; } to{ background-position:50% 40%; } }
-.cxn-void{
-  background:linear-gradient(115deg, #2d1b4e, #7b3fe4 45%, #1a1030 70%, #a06bff);
-  background-size:260% 100%; color:transparent !important;
-  animation:cxnFlow 6s linear infinite;
-  filter:drop-shadow(0 0 12px rgba(123,63,228,.65));
+@keyframes cxnNeonPulse{ 0%,100%{ text-shadow:0 0 6px rgba(61,255,194,1), 0 0 18px rgba(61,255,194,.75), 0 0 38px rgba(61,255,194,.4); } 50%{ text-shadow:0 0 9px rgba(61,255,194,1), 0 0 30px rgba(61,255,194,1), 0 0 60px rgba(61,255,194,.75); } }
+.cxn-fire{ /* real rising fire with a heat-shimmer flicker */
+  background:
+    radial-gradient(1.6px 1.6px at 28% 24%, rgba(255,240,180,.9) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 68% 34%, rgba(255,220,140,.8) 45%, transparent 55%),
+    linear-gradient(0deg, #ff3d00 8%, #ff9a3d 42%, #ffe27e 82%);
+  background-size:180% 100%, 200% 100%, 100% 220%;
+  color:transparent !important;
+  animation:cxnFireRise 1.4s ease-in-out infinite alternate, cxnFireFlick 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 12px rgba(255,120,40,.75));
 }
-.cxn-ice{
-  background:linear-gradient(115deg, #bfeaff, #5fc9ff 40%, #e8f9ff 60%, #8fd8ff);
-  background-size:240% 100%; color:transparent !important;
-  animation:cxnFlow 6.5s linear infinite;
-  filter:drop-shadow(0 0 9px rgba(95,201,255,.55));
+@keyframes cxnFireRise{ from{ background-position:0 0, 0 0, 50% 100%; } to{ background-position:-90% 0, -110% 0, 50% 36%; } }
+@keyframes cxnFireFlick{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(255,120,40,.65)); } 30%{ filter:drop-shadow(0 0 16px rgba(255,150,60,.95)); } 60%{ filter:drop-shadow(0 0 12px rgba(255,90,20,.8)); } }
+.cxn-void{ /* the dark between stars — violet event-horizon light bleeding through */
+  background:
+    radial-gradient(1.4px 1.4px at 22% 34%, rgba(200,160,255,.85) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 72% 62%, rgba(170,120,255,.7) 45%, transparent 55%),
+    radial-gradient(1.5px 1.5px at 52% 22%, rgba(220,190,255,.75) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(190,140,255,.6) 50%, transparent 56%),
+    linear-gradient(115deg, #2d1b4e, #7b3fe4 45%, #1a1030 70%, #a06bff);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnPremium 5.5s linear infinite, cxnVoidPulse 3.2s ease-in-out infinite;
+  filter:drop-shadow(0 0 13px rgba(123,63,228,.75));
 }
-.cxn-toxic{ color:#9dff3d !important; text-shadow:0 0 8px rgba(157,255,61,.85), 0 0 26px rgba(157,255,61,.5); animation:cxnToxicPulse 2s ease-in-out infinite; }
-@keyframes cxnToxicPulse{ 0%,100%{ text-shadow:0 0 8px rgba(157,255,61,.85), 0 0 24px rgba(157,255,61,.45); } 50%{ text-shadow:0 0 12px rgba(180,255,90,1), 0 0 38px rgba(157,255,61,.8); } }
-.cxn-chrome{
-  background:linear-gradient(105deg, #5a6170, #ffffff 28%, #9aa3b5 46%, #f7f9fd 60%, #7c8496 78%, #eef2f8);
-  background-size:280% 100%; color:transparent !important;
-  animation:cxnFlow 4.2s linear infinite;
-  filter:drop-shadow(0 0 8px rgba(230,236,244,.4));
+@keyframes cxnVoidPulse{ 0%,100%{ filter:drop-shadow(0 0 11px rgba(123,63,228,.65)); } 50%{ filter:drop-shadow(0 0 20px rgba(160,107,255,1)); } }
+.cxn-ice{ /* glacial ice with drifting frost crystals and a cold glint */
+  background:
+    radial-gradient(1.4px 1.4px at 26% 30%, rgba(255,255,255,.95) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 64% 64%, rgba(230,250,255,.85) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 82% 26%, rgba(255,255,255,.8) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(255,255,255,.65) 50%, transparent 56%),
+    linear-gradient(115deg, #bfeaff, #5fc9ff 40%, #e8f9ff 60%, #8fd8ff);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 250% 100%;
+  color:transparent !important;
+  animation:cxnPremium 6s linear infinite, cxaIcePulse 3.2s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(95,201,255,.65));
 }
-.cxn-blood{
-  background:linear-gradient(115deg, #5e0716, #ff3358 45%, #8a0e24 70%, #ff5c78);
-  background-size:260% 100%; color:transparent !important;
-  animation:cxnFlow 5.5s linear infinite;
-  filter:drop-shadow(0 0 9px rgba(255,51,88,.55));
+.cxn-toxic{ /* radioactive: pulsing hazard glow with a caustic shimmer */
+  color:#9dff3d !important;
+  text-shadow:0 0 7px rgba(157,255,61,1), 0 0 22px rgba(157,255,61,.7), 0 0 46px rgba(157,255,61,.35);
+  animation:cxnToxicPulse 2s ease-in-out infinite;
 }
+@keyframes cxnToxicPulse{ 0%,100%{ text-shadow:0 0 7px rgba(157,255,61,.95), 0 0 20px rgba(157,255,61,.6), 0 0 42px rgba(157,255,61,.3); } 50%{ text-shadow:0 0 11px rgba(180,255,90,1), 0 0 34px rgba(157,255,61,.95), 0 0 64px rgba(157,255,61,.6); } }
+.cxn-chrome{ /* polished mirror steel — twin racing glints */
+  background:
+    linear-gradient(105deg, transparent 44%, rgba(255,255,255,.9) 50%, transparent 56%),
+    linear-gradient(105deg, transparent 30%, rgba(255,255,255,.35) 36%, transparent 42%),
+    linear-gradient(105deg, #5a6170, #ffffff 28%, #9aa3b5 46%, #f7f9fd 60%, #7c8496 78%, #eef2f8);
+  background-size:340% 100%, 300% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnChromeRace 3.6s linear infinite;
+  filter:drop-shadow(0 0 9px rgba(230,236,244,.5));
+}
+@keyframes cxnChromeRace{ to{ background-position:-340% 0, -300% 0, -260% 0; } }
+.cxn-blood{ /* deep crimson with a heartbeat that pushes light through it */
+  background:
+    linear-gradient(105deg, transparent 44%, rgba(255,120,150,.55) 50%, transparent 56%),
+    linear-gradient(115deg, #5e0716, #ff3358 45%, #8a0e24 70%, #ff5c78);
+  background-size:380% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnBloodFlow 5s linear infinite, cxnBloodBeat 1.5s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(255,51,88,.6));
+}
+@keyframes cxnBloodFlow{ to{ background-position:-380% 0, -260% 0; } }
+@keyframes cxnBloodBeat{ 0%,52%,100%{ filter:drop-shadow(0 0 9px rgba(255,51,88,.5)); } 10%{ filter:drop-shadow(0 0 18px rgba(255,80,110,1)); } 24%{ filter:drop-shadow(0 0 9px rgba(255,51,88,.5)); } 36%{ filter:drop-shadow(0 0 14px rgba(255,70,100,.85)); } }
 @keyframes cxnFlow{ to{ background-position:-200% 0, -200% 0, -200% 0, -300% 0; } }
-/* ── NAME STYLES (wave 2) ── */
-.cxn-royal{
-  background:linear-gradient(105deg, #7b3fe4, #b98bff 26%, #ffd45e 46%, #a06bff 66%, #7b3fe4);
-  background-size:250% 100%; color:transparent !important;
-  animation:cxnFlow 5s linear infinite; filter:drop-shadow(0 0 11px rgba(160,107,255,.6));
+/* ── NAME STYLES (wave 2) — premium layered motion ── */
+.cxn-royal{ /* violet royalty threaded with gold — crown-jewel glint */
+  background:
+    radial-gradient(1.3px 1.3px at 26% 30%, rgba(255,230,160,.9) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 68% 62%, rgba(230,200,255,.8) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 48% 22%, rgba(255,244,200,.85) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(255,230,160,.65) 50%, transparent 56%),
+    linear-gradient(105deg, #7b3fe4, #b98bff 26%, #ffd45e 46%, #a06bff 66%, #7b3fe4);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnPremium 4.8s linear infinite; filter:drop-shadow(0 0 12px rgba(160,107,255,.7));
 }
-.cxn-starlight{
-  background:linear-gradient(105deg, #8fa0c0, #ffffff 30%, #dfe8ff 50%, #aebde0 70%, #ffffff);
-  background-size:260% 100%; color:transparent !important;
-  animation:cxnFlow 4.4s linear infinite; filter:drop-shadow(0 0 10px rgba(220,232,255,.6));
+.cxn-starlight{ /* pale silver night-sky light with true twinkling stars */
+  background:
+    radial-gradient(1.5px 1.5px at 20% 28%, #fff 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 58% 66%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 82% 24%, rgba(255,255,255,.95) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(255,255,255,.8) 50%, transparent 56%),
+    linear-gradient(105deg, #8fa0c0, #ffffff 30%, #dfe8ff 50%, #aebde0 70%, #ffffff);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnPremium 4.4s linear infinite, cxfTwinkle 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 11px rgba(220,232,255,.7));
 }
-.cxn-sunset{
-  background:linear-gradient(105deg, #ffb347, #ff7a5e 30%, #ff5e9c 55%, #b56cff 82%, #ffb347);
-  background-size:250% 100%; color:transparent !important;
-  animation:cxnFlow 5.5s linear infinite; filter:drop-shadow(0 0 10px rgba(255,120,110,.5));
+.cxn-sunset{ /* dusk bleeding through — warm haze particles drift past */
+  background:
+    radial-gradient(1.4px 1.4px at 30% 30%, rgba(255,220,170,.85) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 70% 60%, rgba(255,190,200,.75) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 50% 24%, rgba(255,230,190,.8) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(255,235,200,.55) 50%, transparent 56%),
+    linear-gradient(105deg, #ffb347, #ff7a5e 30%, #ff5e9c 55%, #b56cff 82%, #ffb347);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnPremium 5.2s linear infinite; filter:drop-shadow(0 0 11px rgba(255,130,120,.6));
 }
-.cxn-cyber{
-  background:linear-gradient(100deg, #00e5ff, #7df9ff 24%, #ff36c8 52%, #b56cff 74%, #00e5ff);
-  background-size:280% 100%; color:transparent !important;
-  animation:cxnFlow 3.8s linear infinite; filter:drop-shadow(0 0 9px rgba(0,229,255,.55)) drop-shadow(0 0 14px rgba(255,54,200,.4));
+.cxn-cyber{ /* neon city chrome with a glitch that skips the whole name */
+  background:
+    linear-gradient(105deg, transparent 44%, rgba(125,249,255,.7) 50%, transparent 56%),
+    linear-gradient(105deg, transparent 28%, rgba(255,54,200,.5) 34%, transparent 40%),
+    linear-gradient(100deg, #00e5ff, #7df9ff 24%, #ff36c8 52%, #b56cff 74%, #00e5ff);
+  background-size:380% 100%, 320% 100%, 280% 100%;
+  color:transparent !important;
+  animation:cxnCyberRace 3.4s linear infinite, cxnCyberGlitch 4.2s steps(1) infinite;
+  filter:drop-shadow(0 0 10px rgba(0,229,255,.65)) drop-shadow(0 0 16px rgba(255,54,200,.45));
 }
-.cxn-amethyst{
-  background:linear-gradient(115deg, #a05bff, #d7b3ff 42%, #7b3fe4 62%, #c88fff);
-  background-size:240% 100%; color:transparent !important;
-  animation:cxnFlow 6s linear infinite; filter:drop-shadow(0 0 9px rgba(168,108,255,.55));
+@keyframes cxnCyberRace{ to{ background-position:-380% 0, -320% 0, -280% 0; } }
+@keyframes cxnCyberGlitch{ 0%,93%,100%{ transform:translate(0,0) skewX(0); } 94%{ transform:translate(1.5px,-1px) skewX(-6deg); } 96%{ transform:translate(-1.5px,.5px) skewX(4deg); } 98%{ transform:translate(.5px,0) skewX(0); } }
+.cxn-amethyst{ /* a cut gemstone — inner facets catch a passing light */
+  background:
+    radial-gradient(1.4px 1.4px at 28% 28%, rgba(240,220,255,.9) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 66% 64%, rgba(220,190,255,.8) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 82% 30%, rgba(245,230,255,.85) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(240,220,255,.6) 50%, transparent 56%),
+    linear-gradient(115deg, #a05bff, #d7b3ff 42%, #7b3fe4 62%, #c88fff);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 250% 100%;
+  color:transparent !important;
+  animation:cxnPremium 5.6s linear infinite; filter:drop-shadow(0 0 10px rgba(168,108,255,.65));
 }
-.cxn-sakura{
-  background:linear-gradient(115deg, #ffc2dd, #ff8fc0 42%, #ffe0ee 62%, #ffa6cf);
-  background-size:240% 100%; color:transparent !important;
-  animation:cxnFlow 6.5s linear infinite; filter:drop-shadow(0 0 9px rgba(255,160,200,.55));
+.cxn-sakura{ /* cherry blossom — petal flecks drift on a spring breeze */
+  background:
+    radial-gradient(1.6px 1.6px at 24% 26%, rgba(255,235,244,.95) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 62% 64%, rgba(255,210,230,.85) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 84% 32%, rgba(255,240,248,.9) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(255,240,248,.6) 50%, transparent 56%),
+    linear-gradient(115deg, #ffc2dd, #ff8fc0 42%, #ffe0ee 62%, #ffa6cf);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 250% 100%;
+  color:transparent !important;
+  animation:cxnPremium 6s linear infinite; filter:drop-shadow(0 0 10px rgba(255,160,200,.65));
 }
-.cxn-emerald{
-  background:linear-gradient(105deg, #0f6b4a, #38e6a0 30%, #d6fff0 48%, #1fbd82 66%, #0f6b4a);
-  background-size:260% 100%; color:transparent !important;
-  animation:cxnFlow 5s linear infinite; filter:drop-shadow(0 0 9px rgba(56,230,160,.5));
+.cxn-emerald{ /* deep jade with a bright metallic edge-light */
+  background:
+    radial-gradient(1.3px 1.3px at 26% 30%, rgba(220,255,240,.9) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 70% 62%, rgba(190,255,225,.8) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 50% 22%, rgba(235,255,248,.85) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(230,255,245,.6) 50%, transparent 56%),
+    linear-gradient(105deg, #0f6b4a, #38e6a0 30%, #d6fff0 48%, #1fbd82 66%, #0f6b4a);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 260% 100%;
+  color:transparent !important;
+  animation:cxnPremium 4.8s linear infinite; filter:drop-shadow(0 0 10px rgba(56,230,160,.6));
 }
 /* ── TRIUMPH VAULT NAME STYLES ── */
 .cxn-ascendant{ /* ascended: pure light climbing forever upward */
@@ -15775,6 +15903,33 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   filter:drop-shadow(0 0 8px rgba(130,120,170,.5));
 }
 @keyframes cxnShadowFade{ 0%,100%{ opacity:1; } 50%{ opacity:.62; } }
+/* ── PRESTIGE NAME STYLES ── */
+.cxn-goldstandard{ /* P1: ceremonial gold with a prestige-star glint */
+  background:linear-gradient(105deg, #6b4a00, #ffd700 24%, #fff8d8 42%, #ffce4a 58%, #6b4a00 82%, #ffd700);
+  background-size:240% 100%; color:transparent !important;
+  animation:cxnFlow 4.2s linear infinite, cxnGoldStarGlint 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(255,215,0,.6));
+}
+@keyframes cxnGoldStarGlint{ 0%,86%,100%{ filter:drop-shadow(0 0 10px rgba(255,215,0,.55)); } 92%{ filter:drop-shadow(0 0 18px rgba(255,240,170,1)) brightness(1.25); } }
+.cxn-sovereign{ /* P3: royal amethyst with a patrolling light */
+  background:linear-gradient(105deg, #3a2470, #a48bff 30%, #ead9ff 48%, #7a5fdc 66%, #3a2470);
+  background-size:250% 100%; color:transparent !important;
+  animation:cxnFlow 5s linear infinite;
+  filter:drop-shadow(0 0 11px rgba(164,139,255,.65));
+}
+.cxn-viridian{ /* P6: emerald light refraction */
+  background:linear-gradient(105deg, #04382a, #22d3a3 26%, #eafff7 46%, #18b88c 62%, #04382a 84%, #22d3a3);
+  background-size:260% 100%; color:transparent !important;
+  animation:cxnFlow 4.6s linear infinite;
+  filter:drop-shadow(0 0 10px rgba(34,211,163,.6));
+}
+.cxn-obsidian{ /* P8: black glass with a razor edge of silver light */
+  background:linear-gradient(105deg, #0b0d12, #2a3340 34%, #dfe9f5 47%, #444f5e 54%, #0b0d12 76%, #9fb4c9 94%);
+  background-size:280% 100%; color:transparent !important;
+  animation:cxnFlow 5.5s linear infinite, cxnObsidianEdge 3.4s ease-in-out infinite;
+  filter:drop-shadow(0 0 9px rgba(159,180,201,.55));
+}
+@keyframes cxnObsidianEdge{ 0%,100%{ filter:drop-shadow(0 0 8px rgba(159,180,201,.45)); } 50%{ filter:drop-shadow(0 0 16px rgba(223,233,245,.9)); } }
 
 /* ---------- PLAYER TAGS ---------- */
 .cx-tag{
@@ -15789,8 +15944,10 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
     linear-gradient(#17141f, #17141f) padding-box,
     linear-gradient(100deg, #ff5e5e, #ffb336, #5dff9a, #5fc9ff, #b56cff, #ff5ec8, #ff5e5e) border-box;
   background-size:auto, 300% 100%;
-  animation:cxtRainbow 3s linear infinite;
+  animation:cxtRainbow 3s linear infinite, cxtGoatGlow 2.4s ease-in-out infinite;
+  text-shadow:0 0 8px rgba(255,255,255,.5);
 }
+@keyframes cxtGoatGlow{ 0%,100%{ box-shadow:0 0 10px -4px rgba(255,255,255,.5); } 50%{ box-shadow:0 0 20px -2px rgba(255,255,255,.85); } }
 @keyframes cxtRainbow{ to{ background-position:0 0, 300% 0; } }
 .cxt-og{
   background:linear-gradient(120deg, #ffd45e, #ffb336 55%, #ffd45e); background-size:200% 100%;
@@ -15799,11 +15956,28 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 .cxt-king{ color:#ffe18a; border:1px solid rgba(255,180,54,.6);
   background:linear-gradient(120deg, rgba(255,180,54,.14), rgba(255,220,120,.22), rgba(255,180,54,.14)); background-size:220% 100%;
   animation:cxSweep 3.6s linear infinite; box-shadow:0 0 14px -4px rgba(255,180,54,.8); }
-.cxt-clutch{ background:rgba(255,51,88,.14); color:#ff8a9c; border:1px solid rgba(255,51,88,.5); box-shadow:0 0 12px -5px rgba(255,51,88,.7); }
-.cxt-menace{ background:rgba(255,30,50,.14); color:#ff5c6a; border:1px solid rgba(255,30,50,.55); animation:cxtMenace 1.6s ease-in-out infinite; }
-@keyframes cxtMenace{ 0%,100%{ box-shadow:0 0 8px -4px rgba(255,30,50,.7); } 50%{ box-shadow:0 0 18px -2px rgba(255,30,50,1); } }
-.cxt-lucky{ background:rgba(93,255,154,.12); color:#7dffb0; border:1px solid rgba(93,255,154,.45); box-shadow:0 0 12px -5px rgba(93,255,154,.65); }
-.cxt-sweat{ background:rgba(95,201,255,.12); color:#8ad8ff; border:1px solid rgba(95,201,255,.45); box-shadow:0 0 12px -5px rgba(95,201,255,.6); }
+.cxt-clutch{
+  background:linear-gradient(110deg, rgba(255,51,88,.12), rgba(255,120,150,.3) 50%, rgba(255,51,88,.12)); background-size:220% 100%;
+  color:#ff8a9c; border:1px solid rgba(255,51,88,.55);
+  animation:cxSweep 2.6s linear infinite, cxtClutchSpark 3.4s ease-in-out infinite;
+}
+@keyframes cxtClutchSpark{ 0%,88%,100%{ box-shadow:0 0 10px -5px rgba(255,51,88,.7); } 93%{ box-shadow:0 0 20px -2px rgba(255,90,120,1); } }
+.cxt-menace{
+  background:linear-gradient(110deg, rgba(255,30,50,.12), rgba(255,70,90,.28) 50%, rgba(255,30,50,.12)); background-size:220% 100%;
+  color:#ff5c6a; border:1px solid rgba(255,30,50,.6);
+  animation:cxSweep 3s linear infinite, cxtMenace 1.6s ease-in-out infinite;
+}
+@keyframes cxtMenace{ 0%,100%{ box-shadow:0 0 8px -4px rgba(255,30,50,.7); } 50%{ box-shadow:0 0 20px -2px rgba(255,30,50,1); } }
+.cxt-lucky{
+  background:linear-gradient(110deg, rgba(93,255,154,.1), rgba(150,255,195,.28) 50%, rgba(93,255,154,.1)); background-size:220% 100%;
+  color:#7dffb0; border:1px solid rgba(93,255,154,.5);
+  animation:cxSweep 3.4s linear infinite; box-shadow:0 0 12px -5px rgba(93,255,154,.7);
+}
+.cxt-sweat{
+  background:linear-gradient(110deg, rgba(95,201,255,.1), rgba(150,225,255,.26) 50%, rgba(95,201,255,.1)); background-size:220% 100%;
+  color:#8ad8ff; border:1px solid rgba(95,201,255,.5);
+  animation:cxSweep 3.8s linear infinite; box-shadow:0 0 12px -5px rgba(95,201,255,.65);
+}
 .cxt-bot{ background:rgba(255,255,255,.06); color:var(--text-dim); border:1px solid var(--line-bright, var(--line)); animation:cxtGlitch 3.2s steps(1) infinite; }
 @keyframes cxtGlitch{ 0%,92%,100%{ transform:translate(0,-1px) skewX(0); } 94%{ transform:translate(1px,-1px) skewX(-8deg); } 96%{ transform:translate(-1px,0) skewX(6deg); } }
 /* ── PLAYER TAGS (wave 2) ── */
@@ -15815,9 +15989,21 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   background:linear-gradient(120deg, rgba(255,90,30,.16), rgba(255,140,40,.24), rgba(255,90,30,.16)); background-size:220% 100%;
   color:#ffb98a; border:1px solid rgba(255,110,40,.55); animation:cxSweep 3s linear infinite; box-shadow:0 0 13px -4px rgba(255,110,40,.8);
 }
-.cxt-boss{ background:rgba(181,108,255,.14); color:#c9a6ff; border:1px solid rgba(181,108,255,.5); box-shadow:0 0 12px -5px rgba(181,108,255,.7); }
-.cxt-pro{ background:rgba(95,201,255,.13); color:#8fd6ff; border:1px solid rgba(95,201,255,.5); box-shadow:0 0 12px -5px rgba(95,201,255,.65); }
-.cxt-vibe{ background:rgba(125,255,208,.12); color:#8ffbdb; border:1px solid rgba(125,255,208,.45); box-shadow:0 0 12px -5px rgba(125,255,208,.6); }
+.cxt-boss{
+  background:linear-gradient(110deg, rgba(181,108,255,.12), rgba(210,165,255,.3) 50%, rgba(181,108,255,.12)); background-size:220% 100%;
+  color:#c9a6ff; border:1px solid rgba(181,108,255,.55);
+  animation:cxSweep 3.2s linear infinite; box-shadow:0 0 12px -5px rgba(181,108,255,.75);
+}
+.cxt-pro{
+  background:linear-gradient(110deg, rgba(95,201,255,.11), rgba(150,220,255,.26) 50%, rgba(95,201,255,.11)); background-size:220% 100%;
+  color:#8fd6ff; border:1px solid rgba(95,201,255,.55);
+  animation:cxSweep 3.6s linear infinite; box-shadow:0 0 12px -5px rgba(95,201,255,.7);
+}
+.cxt-vibe{
+  background:linear-gradient(110deg, rgba(125,255,208,.1), rgba(175,255,228,.26) 50%, rgba(125,255,208,.1)); background-size:220% 100%;
+  color:#8ffbdb; border:1px solid rgba(125,255,208,.5);
+  animation:cxSweep 3s linear infinite; box-shadow:0 0 12px -5px rgba(125,255,208,.65);
+}
 /* ── TRIUMPH VAULT TAGS ── */
 .cxt-unstoppable{
   border:1.5px solid transparent; color:#ffd9a0;
@@ -15829,6 +16015,16 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   box-shadow:0 0 16px -4px rgba(255,140,40,.85);
 }
 .cxt-grinder{ background:rgba(170,178,196,.10); color:#c3cbdd; border:1px solid rgba(170,178,196,.4); box-shadow:0 0 10px -5px rgba(170,178,196,.6); }
+/* ── PRESTIGE TAG ── */
+.cxt-rose{
+  border:1.5px solid transparent; color:#ffd3ec;
+  background:
+    linear-gradient(#1e0d18, #1e0d18) padding-box,
+    linear-gradient(100deg, #ff61c3, #ffc7ea, #fff, #ff8fd3, #ff61c3) border-box;
+  background-size:auto, 280% 100%;
+  animation:cxtRainbow 3.2s linear infinite;
+  box-shadow:0 0 16px -4px rgba(255,97,195,.85);
+}
 
 /* ---------- AVATAR EFFECTS (donut rings around any avatar) ---------- */
 .cx-avfx{
@@ -15846,7 +16042,9 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
    Shared by most effects; each sets its own colour, glow and pulse. ═══ */
 .cxa-galaxy, .cxa-gold, .cxa-void, .cxa-prism, .cxa-ice, .cxa-rose, .cxa-mint,
 .cxa-nebula, .cxa-sunfire, .cxa-crimson, .cxa-emerald, .cxa-aqua,
-.cxa-solarcrown, .cxa-meteor, .cxa-frostfire, .cxa-comet{
+.cxa-solarcrown, .cxa-meteor, .cxa-frostfire, .cxa-comet,
+.cxa-diamondcore, .cxa-emberwake, .cxa-celestial,
+.cxa-wyrmfire, .cxa-hologrid, .cxa-eventhorizon{
   border:0 !important;
   -webkit-mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
   mask:radial-gradient(closest-side, transparent 68%, #000 79%, #000 90%, transparent 99%) !important;
@@ -15854,18 +16052,24 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 }
 .cxa-galaxy::before, .cxa-gold::before, .cxa-void::before, .cxa-prism::before, .cxa-ice::before, .cxa-rose::before, .cxa-mint::before,
 .cxa-nebula::before, .cxa-sunfire::before, .cxa-crimson::before, .cxa-emerald::before, .cxa-aqua::before,
-.cxa-solarcrown::before, .cxa-meteor::before, .cxa-frostfire::before, .cxa-comet::before{
+.cxa-solarcrown::before, .cxa-meteor::before, .cxa-frostfire::before, .cxa-comet::before,
+.cxa-diamondcore::before, .cxa-emberwake::before, .cxa-celestial::before,
+.cxa-wyrmfire::before, .cxa-hologrid::before, .cxa-eventhorizon::before{
   content:''; position:absolute; inset:0; border-radius:50%; pointer-events:none;
-  background:conic-gradient(from 90deg, transparent, rgba(255,255,255,.6) 7%, transparent 22%, rgba(255,255,255,.32) 52%, transparent 66%);
-  mix-blend-mode:screen; animation:cxaSpinRev 3s linear infinite;
+  background:conic-gradient(from 90deg,
+    transparent, rgba(255,255,255,.85) 6%, rgba(255,255,255,.25) 12%, transparent 22%,
+    rgba(255,255,255,.4) 48%, transparent 60%,
+    rgba(255,255,255,.2) 78%, transparent 88%);
+  mix-blend-mode:screen; animation:cxaSpinRev 2.6s linear infinite;
 }
 @keyframes cxaSpinRev{ to{ transform:rotate(-360deg); } }
 
 .cxa-galaxy{
   background:conic-gradient(#7b6cff, #c66cff, #5fc9ff, #ff6cd8, #2d1b4e, #7b6cff);
-  animation:cxaSpin 7s linear infinite;
+  animation:cxaSpin 7s linear infinite, cxaGalaxyBreathe 3.4s ease-in-out infinite;
   filter:drop-shadow(0 0 11px rgba(155,123,255,.82));
 }
+@keyframes cxaGalaxyBreathe{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(155,123,255,.75)); } 50%{ filter:drop-shadow(0 0 19px rgba(185,155,255,1)); } }
 .cxa-galaxy::after{ /* a bright star riding the galaxy ring */
   content:''; position:absolute; left:50%; top:7%; width:6px; height:6px; margin-left:-3px; border-radius:50%; z-index:2;
   background:radial-gradient(circle, #fff 30%, rgba(185,205,255,.85) 60%, transparent 76%);
@@ -15875,6 +16079,11 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   background:conic-gradient(#8a5a00, #ffd45e, #fff3c4, #ffb336, #8a5a00, #ffd45e, #8a5a00);
   animation:cxaSpin 6s linear infinite, cxaGoldPulse 2.6s ease-in-out infinite;
   filter:drop-shadow(0 0 10px rgba(255,180,54,.85));
+}
+.cxa-gold::after{ /* a sun-glint riding the halo */
+  content:''; position:absolute; left:50%; top:6%; width:7px; height:7px; margin-left:-3.5px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fffbe8 30%, rgba(255,214,110,.9) 60%, transparent 78%);
+  box-shadow:0 0 10px 3px rgba(255,235,160,.95), 0 0 20px 6px rgba(255,190,60,.6);
 }
 @keyframes cxaGoldPulse{ 0%,100%{ filter:drop-shadow(0 0 9px rgba(255,180,54,.75)) brightness(1); } 50%{ filter:drop-shadow(0 0 18px rgba(255,205,90,1)) brightness(1.14); } }
 .cxa-void{ /* a black hole: dark vortex with a violet event-horizon glow */
@@ -15897,9 +16106,10 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 @keyframes cxaIcePulse{ 0%,100%{ filter:drop-shadow(0 0 8px rgba(95,201,255,.7)) brightness(1); } 50%{ filter:drop-shadow(0 0 16px rgba(205,242,255,.95)) brightness(1.16); } }
 .cxa-rose{
   background:conic-gradient(#f7c8c0, #e8927c, #ffe3dc, #d87a68, #f7c8c0);
-  animation:cxaSpin 8s linear infinite;
+  animation:cxaSpin 8s linear infinite, cxaRoseBreathe 3.8s ease-in-out infinite;
   filter:drop-shadow(0 0 9px rgba(232,146,124,.72));
 }
+@keyframes cxaRoseBreathe{ 0%,100%{ filter:drop-shadow(0 0 8px rgba(232,146,124,.65)); } 50%{ filter:drop-shadow(0 0 15px rgba(255,190,170,.95)); } }
 .cxa-mint{
   background:conic-gradient(var(--mint), #18b88c, #7dffd8, var(--mint));
   animation:cxaSpin 7s linear infinite, cxaMintPulse 2.4s ease-in-out infinite;
@@ -15908,7 +16118,13 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 /* ── AVATAR RINGS (wave 2) ── */
 .cxa-nebula{
   background:conic-gradient(#3a2b6b, #7b6cff, #5fc9ff, #c66cff, #2d1b4e, #3a2b6b);
-  animation:cxaSpin 7.5s linear infinite; filter:drop-shadow(0 0 11px rgba(140,120,255,.82));
+  animation:cxaSpin 7.5s linear infinite, cxaGalaxyBreathe 4s ease-in-out infinite;
+  filter:drop-shadow(0 0 11px rgba(140,120,255,.82));
+}
+.cxa-nebula::after{ /* a newborn star riding the cloud */
+  content:''; position:absolute; left:50%; top:7%; width:5px; height:5px; margin-left:-2.5px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fff 30%, rgba(170,190,255,.85) 60%, transparent 78%);
+  box-shadow:0 0 8px 2px #fff, 0 0 16px 4px rgba(140,120,255,.7);
 }
 .cxa-sunfire{
   background:conic-gradient(#ff6a00, #ffb347, #fff0c4, #ff8c2e, #ff6a00);
@@ -15923,7 +16139,8 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 @keyframes cxaCrimsonPulse{ 0%,100%{ filter:drop-shadow(0 0 9px rgba(255,51,88,.7)); } 50%{ filter:drop-shadow(0 0 18px rgba(255,90,120,1)); } }
 .cxa-emerald{
   background:conic-gradient(#0f6b4a, #38e6a0, #d6fff0, #1fbd82, #0f6b4a);
-  animation:cxaSpin 8s linear infinite; filter:drop-shadow(0 0 9px rgba(56,230,160,.72));
+  animation:cxaSpin 8s linear infinite, cxaMintPulse 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 9px rgba(56,230,160,.72));
 }
 .cxa-aqua{
   background:conic-gradient(#0aa9c0, #5ff2ff, #d6ffff, #29c9e0, #0aa9c0);
@@ -15960,6 +16177,35 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
   background:conic-gradient(#0e2233, #7fd8ff 18%, #eafaff 30%, #9fe2ff 42%, #0e2233 60%, #0e2233);
   animation:cxaSpin 5s linear infinite;
   filter:drop-shadow(0 0 9px rgba(140,220,255,.75));
+}
+/* ── PRESTIGE AVATAR RINGS ── */
+.cxa-diamondcore{ /* P2: faceted ice-light that glints as it turns */
+  background:conic-gradient(#bfe9ff 0deg, #ffffff 24deg, #5fc9ff 60deg, #eafaff 100deg, #8fd8ff 150deg, #ffffff 196deg, #5fc9ff 250deg, #eafaff 300deg, #bfe9ff 360deg);
+  animation:cxaSpin 5.5s linear infinite, cxaDiamondGlint 2.4s ease-in-out infinite;
+  filter:drop-shadow(0 0 11px rgba(150,220,255,.85));
+}
+@keyframes cxaDiamondGlint{ 0%,84%,100%{ filter:drop-shadow(0 0 10px rgba(150,220,255,.8)) brightness(1); } 92%{ filter:drop-shadow(0 0 22px rgba(235,250,255,1)) brightness(1.35); } }
+.cxa-emberwake{ /* P5: smoldering ring trailing a live ember */
+  background:conic-gradient(#38160a, #ff7a3d 20%, #ffc79a 32%, #ff5a1e 46%, #38160a 68%, #ff7a3d 88%, #38160a);
+  animation:cxaSpin 4.4s linear infinite, cxaEmberSmolder 2.2s ease-in-out infinite;
+  filter:drop-shadow(0 0 11px rgba(255,122,61,.85));
+}
+@keyframes cxaEmberSmolder{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(255,122,61,.75)); } 50%{ filter:drop-shadow(0 0 18px rgba(255,170,100,1)); } }
+.cxa-emberwake::after{ /* the trailing ember */
+  content:''; position:absolute; left:50%; top:7%; width:7px; height:7px; margin-left:-3.5px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fff2d8 25%, #ff9a4d 55%, transparent 78%);
+  box-shadow:0 0 9px 3px rgba(255,150,70,.95), 0 0 18px 5px rgba(255,90,30,.55);
+}
+.cxa-celestial{ /* P9: starlit sky ring with an orbiting comet */
+  background:conic-gradient(#141a3a, #6f7bff 22%, #a8f0ff 38%, #3a4a9a 55%, #7aa7ff 74%, #141a3a);
+  animation:cxaSpin 6.5s linear infinite, cxaCelestialShine 3.4s ease-in-out infinite;
+  filter:drop-shadow(0 0 12px rgba(122,167,255,.85));
+}
+@keyframes cxaCelestialShine{ 0%,100%{ filter:drop-shadow(0 0 11px rgba(122,167,255,.75)); } 50%{ filter:drop-shadow(0 0 20px rgba(168,240,255,1)); } }
+.cxa-celestial::after{ /* the comet */
+  content:''; position:absolute; left:50%; top:6%; width:6px; height:6px; margin-left:-3px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fff 30%, rgba(168,240,255,.9) 60%, transparent 78%);
+  box-shadow:0 0 9px 2px #fff, 0 0 18px 5px rgba(122,167,255,.7);
 }
 
 /* ═══ LIQUID METAL — a morphing chrome blob flowing through the spectrum ═══ */
@@ -16013,7 +16259,7 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
     radial-gradient(1.1px 1.1px at 40% 78%, rgba(255,236,175,.8) 45%, transparent 55%),
     linear-gradient(100deg, rgba(150,100,15,.22), rgba(255,214,110,.5) 26%, rgba(255,248,214,.7) 50%, rgba(255,200,70,.5) 74%, rgba(150,100,15,.22));
   background-size:200% 100%;
-  animation:cxfDrift 4.6s linear infinite; mix-blend-mode:screen;
+  animation:cxfDrift 4.6s linear infinite, cxfTwinkle 3.4s ease-in-out infinite; mix-blend-mode:screen;
 }
 /* ═══ NEBULA — deep-space clouds drifting behind a twinkling star field ═══ */
 .cxf-galaxy{ border-color:rgba(155,123,255,.6) !important; box-shadow:0 0 50px -12px rgba(155,123,255,.68) !important; }
@@ -16030,6 +16276,14 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
   animation:cxfDrift 11s linear infinite, cxfTwinkle 4s ease-in-out infinite; mix-blend-mode:screen;
 }
 @keyframes cxfTwinkle{ 0%,100%{ filter:brightness(1); } 50%{ filter:brightness(1.3); } }
+.cxf-galaxy .cx-frame-overlay::after{ /* a shooting star every few seconds */
+  content:''; position:absolute; top:16%; left:-14%; width:72px; height:1.5px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, #fff 60%, transparent);
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.95));
+  transform:rotate(-13deg); opacity:0;
+  animation:cxfShootingStar 7.5s ease-in 1.8s infinite;
+}
+@keyframes cxfShootingStar{ 0%,86%,100%{ opacity:0; left:-14%; top:16%; } 87.5%{ opacity:1; } 93%{ opacity:0; left:104%; top:40%; } }
 /* ═══ NEON GRID — a synthwave grid that scrolls toward you under a horizon ═══ */
 .cxf-neon{ border-color:rgba(95,201,255,.6) !important; box-shadow:0 0 44px -12px rgba(95,201,255,.6), 0 0 64px -28px rgba(255,94,200,.65) !important; }
 .cxf-neon .cx-frame-overlay{
@@ -16041,6 +16295,13 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
   animation:cxfNeonScroll 1.5s linear infinite;
 }
 @keyframes cxfNeonScroll{ from{ background-position:0 0, 0 0, 0 0; } to{ background-position:0 0, 0 18px, 0 0; } }
+.cxf-neon .cx-frame-overlay::after{ /* the synthwave horizon line, pulsing */
+  content:''; position:absolute; left:8%; right:8%; top:38%; height:2px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, #ff5ec8 30%, #7df9ff 50%, #ff5ec8 70%, transparent);
+  filter:blur(.5px) drop-shadow(0 0 8px rgba(255,94,200,.9));
+  animation:cxfNeonHorizon 2.4s ease-in-out infinite;
+}
+@keyframes cxfNeonHorizon{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
 /* ═══ LIQUID CHROME — iridescent liquid metal flowing through every hue ═══ */
 .cxf-liquid{ border-color:transparent !important; animation:cxfLiquid 5s linear infinite; }
 @keyframes cxfLiquid{
@@ -16131,6 +16392,40 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
 }
 @keyframes cxfRainFall{ from{ background-position:0 0, 0 0, 0 0, 0 0; } to{ background-position:-37px 140px, -51px 190px, 0 0, 0 0; } }
 @keyframes cxfStormFlash{ 0%,88%,92%,100%{ filter:brightness(1); } 89%,91%{ filter:brightness(1.7); } 90%{ filter:brightness(2.4); } }
+/* ═══ CRIMSON REGALIA (Prestige 7) — dark royal silk under a pulsing glow ═══ */
+.cxf-regalia{ border-color:rgba(255,51,88,.62) !important; animation:cxfRegaliaPulse 2.8s ease-in-out infinite; }
+@keyframes cxfRegaliaPulse{
+  0%,100%{ box-shadow:0 0 42px -12px rgba(255,51,88,.55), inset 0 0 0 1px rgba(255,90,138,.22); }
+  50%{ box-shadow:0 0 68px -10px rgba(255,90,138,.9), inset 0 0 0 1px rgba(255,140,170,.4); }
+}
+.cxf-regalia .cx-frame-overlay{
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.035) 0 1.5px, transparent 1.5px 13px),
+    radial-gradient(1.3px 1.3px at 24% 30%, rgba(255,200,215,.8) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 74% 22%, rgba(255,180,200,.7) 45%, transparent 55%),
+    linear-gradient(100deg, rgba(120,8,32,.4), rgba(255,51,88,.42) 40%, rgba(255,140,170,.34) 55%, rgba(255,51,88,.4) 70%, rgba(120,8,32,.4));
+  background-size:auto, auto, auto, 200% 100%;
+  animation:cxfDrift 5.5s linear infinite; mix-blend-mode:screen;
+}
+/* ═══ MASTER'S DOMINION (Prestige 10) — the iridescent aurora crown ═══ */
+.cxf-dominion{ border-color:transparent !important; animation:cxfDominionAura 6s linear infinite; }
+@keyframes cxfDominionAura{
+  0%{ box-shadow:0 0 0 1.5px #ffd36e, 0 0 54px -10px #ffd36e; }
+  25%{ box-shadow:0 0 0 1.5px #ff7ad9, 0 0 54px -10px #ff7ad9; }
+  50%{ box-shadow:0 0 0 1.5px #a48bff, 0 0 54px -10px #a48bff; }
+  75%{ box-shadow:0 0 0 1.5px #5fc9ff, 0 0 54px -10px #5fc9ff; }
+  100%{ box-shadow:0 0 0 1.5px #ffd36e, 0 0 54px -10px #ffd36e; }
+}
+.cxf-dominion .cx-frame-overlay{
+  background:
+    radial-gradient(1.6px 1.6px at 16% 26%, #fff 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 70% 18%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 86% 58%, rgba(255,255,255,.75) 45%, transparent 55%),
+    linear-gradient(110deg, rgba(255,211,110,.42), rgba(255,122,217,.4) 26%, rgba(164,139,255,.4) 50%, rgba(95,201,255,.38) 74%, rgba(255,211,110,.42));
+  background-size:auto, auto, auto, 220% 100%;
+  animation:cxfDrift 4.5s linear infinite, cxfDominionHue 8s linear infinite; mix-blend-mode:screen;
+}
+@keyframes cxfDominionHue{ to{ filter:hue-rotate(360deg); } }
 
 /* ---------- RESULT SCREEN — RESULT CEREMONY ---------- */
 /* Full-screen ray wheel behind the card */
@@ -16440,6 +16735,11 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 .cxf-emerald{ --fxc:#2ee6a6; }
 .cxf-eclipse{ --fxc:#ffaa5a; }
 .cxf-stormfront{ --fxc:#7fb6ff; }
+.cxf-regalia{ --fxc:#ff5a8a; }
+.cxf-dominion{ --fxc:#ffd36e; }
+.cxf-dominion .cx-frame-edge, .cxf-dominion .cx-frame-corners b{ animation:cxfHue 7s linear infinite; }
+body.reduced-motion .cxf-dominion .cx-frame-edge, body.low-power .cxf-dominion .cx-frame-edge,
+body.reduced-motion .cxf-dominion .cx-frame-corners b, body.low-power .cxf-dominion .cx-frame-corners b{ animation:none; }
 .cxf-liquid .cx-frame-edge, .cxf-liquid .cx-frame-corners b{ animation:cxfHue 6s linear infinite; }
 @keyframes cxfHue{ to{ filter:hue-rotate(360deg) drop-shadow(0 0 8px var(--fxc, #fff)); } }
 body.reduced-motion .cxf-liquid .cx-frame-edge, body.low-power .cxf-liquid .cx-frame-edge,
@@ -16668,6 +16968,79 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
     radial-gradient(120% 48% at 50% 100%, rgba(60,90,140,.22), transparent 62%),
     linear-gradient(180deg, #101827, #0a0e17) !important;
 }
+.profile-modal.cxf-regalia{
+  background:
+    repeating-linear-gradient(135deg, rgba(255,255,255,.016) 0 1.5px, transparent 1.5px 14px),
+    radial-gradient(130% 54% at 50% 0%, rgba(255,51,88,.26), transparent 60%),
+    radial-gradient(150% 65% at 50% 118%, rgba(90,6,26,.6), transparent 66%),
+    linear-gradient(180deg, #1c0b12, #0f060a) !important;
+}
+.profile-modal.cxf-dominion{
+  --fxc:#ffd36e; animation:cxfDominionHueVar 8s linear infinite;
+  background:
+    radial-gradient(1.6px 1.6px at 14% 16%, #fff 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 76% 10%, rgba(255,255,255,.8) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 46% 30%, rgba(255,255,255,.65) 45%, transparent 55%),
+    linear-gradient(120deg, rgba(255,211,110,.14), rgba(255,122,217,.12) 30%, rgba(164,139,255,.12) 55%, rgba(95,201,255,.1) 80%, rgba(255,211,110,.14)),
+    radial-gradient(120% 55% at 50% 0%, rgba(255,180,120,.14), transparent 62%),
+    linear-gradient(180deg, #171024, #0c0813) !important;
+}
+@keyframes cxfDominionHueVar{ 0%{ --fxc:#ffd36e; } 25%{ --fxc:#ff7ad9; } 50%{ --fxc:#a48bff; } 75%{ --fxc:#5fc9ff; } 100%{ --fxc:#ffd36e; } }
+
+/* ════════════════════════════════════════════════════════════════════
+   ADAPTIVE COSMETIC UI — when a profile frame is equipped, the profile's
+   own UI re-themes itself around it: every content surface becomes tinted
+   dark glass (so no wash can ever drown the text), accents inherit the
+   frame colour, and the banner melts into the card instead of banding.
+   Cosmetics and UI read as ONE designed look, not layers fighting.
+   ════════════════════════════════════════════════════════════════════ */
+/* Content surfaces → frame-tinted dark glass. Readability is guaranteed:
+   whatever the wash behind, text always sits on a dark pane. */
+.profile-modal[class*="cxf-"] .pm3-card,
+.profile-modal[class*="cxf-"] .pm-stat,
+.profile-modal[class*="cxf-"] .pm-showcase,
+.profile-modal[class*="cxf-"] .pm-h2h{
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--fxc,#fff) 6%, rgba(13,12,20,.78)), rgba(11,10,17,.82)) !important;
+  -webkit-backdrop-filter:blur(12px) saturate(1.15); backdrop-filter:blur(12px) saturate(1.15);
+  border-color:color-mix(in srgb, var(--fxc,#fff) 26%, rgba(255,255,255,.07)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.profile-modal[class*="cxf-"] .pm3-card:hover{ border-color:color-mix(in srgb, var(--fxc,#fff) 45%, rgba(255,255,255,.1)) !important; }
+/* Identity card gets the strongest pane — the name must ALWAYS read. */
+.profile-modal[class*="cxf-"] .pm3-identity{
+  background:linear-gradient(180deg, color-mix(in srgb, var(--fxc,#fff) 8%, rgba(12,11,19,.86)), rgba(10,9,16,.9)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 10px 30px -18px rgba(0,0,0,.8);
+}
+/* Tab bar joins the theme */
+.profile-modal[class*="cxf-"] .pm3-tabs{
+  background:rgba(11,10,17,.72);
+  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
+  border:1px solid color-mix(in srgb, var(--fxc,#fff) 20%, rgba(255,255,255,.06));
+}
+.profile-modal[class*="cxf-"] .pm3-tab.active{ color:color-mix(in srgb, var(--fxc,#fff) 70%, #fff); }
+/* Frame-coloured cohesion: section labels, stat values and bars pick up
+   the frame's colour so everything feels designed together. */
+.profile-modal[class*="cxf-"] .pm3-card h4{ color:color-mix(in srgb, var(--fxc,#fff) 62%, #fff); }
+.profile-modal[class*="cxf-"] .pm-stat .v{ text-shadow:0 0 18px color-mix(in srgb, var(--fxc,#fff) 30%, transparent); }
+.profile-modal[class*="cxf-"] .pm-stat .l{ color:color-mix(in srgb, var(--fxc,#fff) 34%, var(--text-dim)); }
+.profile-modal[class*="cxf-"] .ui-bar-fill{ box-shadow:0 0 12px -3px var(--fxc,#fff); }
+/* The banner melts into the glass instead of ending in a hard band */
+.profile-modal[class*="cxf-"] .pm-banner::before{
+  height:78%;
+  background:linear-gradient(180deg, transparent, rgba(10,9,16,.55) 62%, rgba(10,9,16,.92) 96%);
+}
+/* Action buttons float on glass chips so they never sink into the wash */
+.profile-modal[class*="cxf-"] .pm3-head-actions .btn{
+  background:rgba(12,11,19,.66);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border-color:color-mix(in srgb, var(--fxc,#fff) 24%, rgba(255,255,255,.1));
+}
+.profile-modal[class*="cxf-"] .pm3-head-actions .btn-mint{ background:var(--mint); border-color:transparent; }
+.profile-modal[class*="cxf-"] .pm3-head-actions .btn-primary{ -webkit-backdrop-filter:none; backdrop-filter:none; }
+/* Secondary text stays legible over any wash */
+.profile-modal[class*="cxf-"] .pm-sub,
+.profile-modal[class*="cxf-"] .pm-lastseen{ color:color-mix(in srgb, var(--fxc,#fff) 18%, var(--text-dim)); text-shadow:0 1px 2px rgba(0,0,0,.5); }
 
 /* ---------- EDIT PROFILE — sectioned layout ---------- */
 .eps-modal{ max-width:790px; }
@@ -17026,7 +17399,7 @@ body.reduced-motion .eps-pane-title::after{ animation:none; transform:scaleX(1);
   to{ transform:scale(1.15) translate(2%, -3%); opacity:1; }
 }
 /* Galaxy name — starlight shimmer on top of the flowing nebula gradient */
-.cxn-galaxy{ animation:cxnFlow 7s linear infinite, cxnGalaxyGlow 3.2s ease-in-out infinite; }
+.cxn-galaxy{ animation:cxnPremium 6.5s linear infinite, cxnGalaxyGlow 3.2s ease-in-out infinite; }
 @keyframes cxnGalaxyGlow{
   0%,100%{ filter:drop-shadow(0 0 8px rgba(155,123,255,.4)); }
   50%{ filter:drop-shadow(0 0 16px rgba(198,108,255,.75)) drop-shadow(0 0 30px rgba(95,201,255,.3)); }
@@ -17046,6 +17419,347 @@ body.low-power :is(.cxn-royal,.cxn-starlight,.cxn-sunset,.cxn-cyber,.cxn-amethys
 /* Triumph Vault cosmetics — kill motion for reduced-motion / low-power */
 body.reduced-motion :is(.cxn-ascendant,.cxn-dragonfire,.cxn-venom,.cxn-shadow,.cxt-unstoppable,.cxa-solarcrown,.cxa-meteor,.cxa-frostfire,.cxa-comet,.cxa-meteor::after,.cxf-eclipse,.cxf-eclipse .cx-frame-overlay,.cxf-stormfront .cx-frame-overlay),
 body.low-power :is(.cxn-ascendant,.cxn-dragonfire,.cxn-venom,.cxn-shadow,.cxt-unstoppable,.cxa-solarcrown,.cxa-meteor,.cxa-frostfire,.cxa-comet,.cxa-meteor::after,.cxf-eclipse,.cxf-eclipse .cx-frame-overlay,.cxf-stormfront .cx-frame-overlay){ animation:none !important; }
+/* Prestige cosmetics — kill motion for reduced-motion / low-power */
+body.reduced-motion :is(.cxn-goldstandard,.cxn-sovereign,.cxn-viridian,.cxn-obsidian,.cxt-rose,.cxa-diamondcore,.cxa-emberwake,.cxa-celestial,.cxa-emberwake::after,.cxa-celestial::after,.cxf-regalia,.cxf-regalia .cx-frame-overlay,.cxf-dominion,.cxf-dominion .cx-frame-overlay,.profile-modal.cxf-dominion),
+body.low-power :is(.cxn-goldstandard,.cxn-sovereign,.cxn-viridian,.cxn-obsidian,.cxt-rose,.cxa-diamondcore,.cxa-emberwake,.cxa-celestial,.cxa-emberwake::after,.cxa-celestial::after,.cxf-regalia,.cxf-regalia .cx-frame-overlay,.cxf-dominion,.cxf-dominion .cx-frame-overlay,.profile-modal.cxf-dominion){ animation:none !important; }
+/* ════════════════════════════════════════════════════════════════════
+   BUNDLE-EXCLUSIVE COSMETICS — the three real-money sets. These are the
+   most extravagant effects in the game: complete looks, worn together.
+   ════════════════════════════════════════════════════════════════════ */
+/* ═══ DRAGON'S HOARD ═══ */
+.cxn-dragonlord{ /* molten scales with climbing embers and a forge-glint */
+  background:
+    radial-gradient(1.6px 1.6px at 24% 70%, rgba(255,220,140,.95) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 58% 40%, rgba(255,180,90,.85) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 82% 62%, rgba(255,240,180,.9) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 44%, rgba(255,220,140,.75) 50%, transparent 56%),
+    linear-gradient(100deg, #5a1400, #ff6a1e 22%, #ffd27e 40%, #ff8c2e 55%, #7a2400 74%, #ffb35e 90%, #5a1400);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 270% 100%;
+  color:transparent !important;
+  animation:cxnPremium 4.4s linear infinite, cxnDragonBreath 2.6s ease-in-out infinite;
+  filter:drop-shadow(0 0 12px rgba(255,120,40,.8));
+}
+@keyframes cxnDragonBreath{ 0%,100%{ filter:drop-shadow(0 0 10px rgba(255,120,40,.7)); } 50%{ filter:drop-shadow(0 0 22px rgba(255,170,80,1)) brightness(1.12); } }
+.cxt-dragon{
+  border:1.5px solid transparent; color:#ffdcae;
+  background:
+    linear-gradient(#211006, #211006) padding-box,
+    linear-gradient(100deg, #ff5a1e, #ffd27e, #ff8c2e, #b32d00, #ff5a1e) border-box;
+  background-size:auto, 300% 100%;
+  animation:cxtRainbow 2.4s linear infinite, cxnDragonBreath 2.6s ease-in-out infinite;
+  text-shadow:0 0 8px rgba(255,140,60,.7);
+}
+.cxa-wyrmfire{ /* dragon-breath ring with twin embers chasing each other */
+  background:conic-gradient(#3a0e00, #ff6a1e 18%, #ffd27e 30%, #ff8c2e 44%, #3a0e00 60%, #ff6a1e 78%, #ffb35e 90%, #3a0e00);
+  animation:cxaSpin 3.8s linear infinite, cxaEmberSmolder 2.2s ease-in-out infinite;
+  filter:drop-shadow(0 0 12px rgba(255,120,40,.9));
+}
+.cxa-wyrmfire::after{
+  content:''; position:absolute; inset:0; border-radius:50%; z-index:2; pointer-events:none;
+  background:
+    radial-gradient(7px 7px at 50% 4%, #fff2d8 22%, rgba(255,150,60,.95) 52%, transparent 76%),
+    radial-gradient(5px 5px at 50% 96%, #ffd9a8 22%, rgba(255,110,30,.9) 52%, transparent 76%);
+  animation:cxaSpin 2s linear infinite;
+  filter:drop-shadow(0 0 7px rgba(255,140,50,.95));
+}
+.cxf-hoard{ border-color:rgba(255,170,70,.6) !important; animation:cxfGoldGlow 3s ease-in-out infinite; }
+.cxf-hoard .cx-frame-overlay{
+  background:
+    radial-gradient(1.6px 1.6px at 16% 82%, rgba(255,236,170,.95) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 42% 88%, rgba(255,220,140,.85) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 74% 84%, rgba(255,244,200,.9) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 60% 30%, rgba(255,190,90,.8) 45%, transparent 55%),
+    radial-gradient(130% 90% at 50% 118%, rgba(255,170,60,.5), transparent 62%),
+    linear-gradient(100deg, rgba(120,50,0,.3), rgba(255,170,60,.4) 45%, rgba(255,220,140,.34) 60%, rgba(120,50,0,.3));
+  background-size:auto, auto, auto, auto, auto, 200% 100%;
+  animation:cxfDrift 5s linear infinite, cxfTwinkle 2.8s ease-in-out infinite; mix-blend-mode:screen;
+}
+/* ═══ NIGHT CITY ═══ */
+.cxn-netrunner{ /* chrome signal glitching between cyan and magenta */
+  background:
+    linear-gradient(105deg, transparent 44%, rgba(125,249,255,.85) 50%, transparent 56%),
+    linear-gradient(105deg, transparent 26%, rgba(255,54,200,.6) 32%, transparent 38%),
+    linear-gradient(100deg, #00e5ff, #dff9ff 22%, #ff36c8 46%, #7df9ff 64%, #b56cff 82%, #00e5ff);
+  background-size:380% 100%, 320% 100%, 280% 100%;
+  color:transparent !important;
+  animation:cxnCyberRace 3s linear infinite, cxnCyberGlitch 3.6s steps(1) infinite, cxnNetGlow 2.4s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(0,229,255,.75)) drop-shadow(0 0 18px rgba(255,54,200,.5));
+}
+@keyframes cxnNetGlow{ 0%,100%{ filter:drop-shadow(0 0 9px rgba(0,229,255,.65)) drop-shadow(0 0 14px rgba(255,54,200,.4)); } 50%{ filter:drop-shadow(0 0 14px rgba(0,229,255,1)) drop-shadow(0 0 24px rgba(255,54,200,.7)); } }
+.cxt-syndicate{
+  border:1.5px solid transparent; color:#a8f4ff;
+  background:
+    linear-gradient(#0a1418, #0a1418) padding-box,
+    linear-gradient(100deg, #00e5ff, #ff36c8, #7df9ff, #ff36c8, #00e5ff) border-box;
+  background-size:auto, 300% 100%;
+  animation:cxtRainbow 2.2s linear infinite, cxtSynFlicker 5s steps(1) infinite;
+  text-shadow:0 0 8px rgba(0,229,255,.8);
+}
+@keyframes cxtSynFlicker{ 0%,91%,95%,100%{ opacity:1; } 92%,94%{ opacity:.55; } 93%{ opacity:.85; } }
+.cxa-hologrid{ /* holographic ring phasing between frequencies */
+  background:conic-gradient(#012a33, #00e5ff 20%, #dff9ff 32%, #ff36c8 52%, #7df9ff 70%, #b56cff 86%, #012a33);
+  animation:cxaSpin 4.2s linear infinite, cxaHoloPhase 3s ease-in-out infinite;
+  filter:drop-shadow(0 0 10px rgba(0,229,255,.85)) drop-shadow(0 0 18px rgba(255,54,200,.45));
+}
+@keyframes cxaHoloPhase{
+  0%,100%{ filter:drop-shadow(0 0 10px rgba(0,229,255,.85)) drop-shadow(0 0 16px rgba(255,54,200,.4)); }
+  50%{ filter:drop-shadow(0 0 9px rgba(255,54,200,.85)) drop-shadow(0 0 16px rgba(0,229,255,.5)); }
+}
+.cxf-nightcity{ border-color:rgba(0,229,255,.55) !important; box-shadow:0 0 44px -12px rgba(0,229,255,.55), 0 0 70px -26px rgba(255,54,200,.5) !important; }
+.cxf-nightcity .cx-frame-overlay{
+  background:
+    repeating-linear-gradient(100deg, transparent 0 8px, rgba(150,240,255,.2) 8px 9.5px, transparent 9.5px 19px),
+    repeating-linear-gradient(90deg, rgba(0,229,255,.2) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(0deg, rgba(255,54,200,.16) 0 1px, transparent 1px 18px),
+    radial-gradient(120% 60% at 50% 110%, rgba(255,54,200,.3), transparent 60%),
+    linear-gradient(180deg, rgba(0,40,55,.4), rgba(10,6,20,.3));
+  background-size:150px 100%, auto, auto, auto, auto;
+  animation:cxfCityRain .55s linear infinite, cxfStormFlash 6s steps(1) infinite;
+}
+@keyframes cxfCityRain{ from{ background-position:0 0, 0 0, 0 0, 0 0, 0 0; } to{ background-position:-26px 150px, 0 0, 0 0, 0 0, 0 0; } }
+/* ═══ THE STARFORGE ═══ */
+.cxn-starforged{ /* ascended: aurora metal + live forge sparks + colour cycle */
+  background:
+    radial-gradient(1.7px 1.7px at 22% 30%, #fff 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 60% 66%, rgba(255,240,200,.95) 45%, transparent 55%),
+    radial-gradient(1.7px 1.7px at 84% 26%, rgba(255,255,255,.95) 45%, transparent 55%),
+    linear-gradient(105deg, transparent 43%, rgba(255,255,255,.85) 50%, transparent 57%),
+    linear-gradient(105deg, #ffd36e, #ff7ad9 26%, #a48bff 48%, #5fc9ff 68%, #5dffba 84%, #ffd36e);
+  background-size:200% 100%, 210% 100%, 220% 100%, 400% 100%, 280% 100%;
+  color:transparent !important;
+  animation:cxnPremium 4s linear infinite, cxnForgeHue 9s linear infinite;
+  filter:drop-shadow(0 0 13px rgba(255,211,110,.7));
+}
+@keyframes cxnForgeHue{ to{ filter:drop-shadow(0 0 13px rgba(255,211,110,.7)) hue-rotate(360deg); } }
+.cxt-cosmic{
+  border:1.5px solid transparent; color:#fff;
+  background:
+    linear-gradient(#171024, #171024) padding-box,
+    linear-gradient(100deg, #ffd36e, #ff7ad9, #a48bff, #5fc9ff, #5dffba, #ffd36e) border-box;
+  background-size:auto, 300% 100%;
+  animation:cxtRainbow 2.8s linear infinite, cxtCosmicAura 3.4s ease-in-out infinite;
+  text-shadow:0 0 9px rgba(255,255,255,.6);
+}
+@keyframes cxtCosmicAura{ 0%,100%{ box-shadow:0 0 12px -4px rgba(255,211,110,.7); } 33%{ box-shadow:0 0 16px -3px rgba(255,122,217,.8); } 66%{ box-shadow:0 0 16px -3px rgba(95,201,255,.8); } }
+.cxa-eventhorizon{ /* ascended: collapsed star — bent light, captured sun */
+  background:conic-gradient(#060410, #ffd36e 12%, #ff7ad9 24%, #060410 40%, #a48bff 58%, #5fc9ff 70%, #060410 86%, #ffd36e 96%, #060410);
+  animation:cxaSpin 3.2s linear infinite, cxaHorizonHue 8s linear infinite;
+  filter:drop-shadow(0 0 13px rgba(255,211,110,.85));
+}
+@keyframes cxaHorizonHue{ to{ filter:drop-shadow(0 0 13px rgba(255,211,110,.85)) hue-rotate(360deg); } }
+.cxa-eventhorizon::after{ /* the captured sun */
+  content:''; position:absolute; left:50%; top:5%; width:8px; height:8px; margin-left:-4px; border-radius:50%; z-index:2;
+  background:radial-gradient(circle, #fff 28%, rgba(255,220,140,.95) 58%, transparent 78%);
+  box-shadow:0 0 11px 3px #fff, 0 0 22px 7px rgba(255,211,110,.75);
+}
+.cxf-starforge{ border-color:transparent !important; animation:cxfDominionAura 5s linear infinite; }
+.cxf-starforge .cx-frame-overlay{
+  background:
+    radial-gradient(1.8px 1.8px at 14% 24%, #fff 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 38% 70%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(1.8px 1.8px at 66% 20%, rgba(255,255,255,.95) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 88% 58%, rgba(255,255,255,.85) 45%, transparent 55%),
+    linear-gradient(110deg, rgba(255,211,110,.44), rgba(255,122,217,.4) 26%, rgba(164,139,255,.42) 50%, rgba(95,201,255,.4) 72%, rgba(93,255,186,.36) 88%, rgba(255,211,110,.44));
+  background-size:auto, auto, auto, auto, 220% 100%;
+  animation:cxfDrift 4s linear infinite, cxfDominionHue 7s linear infinite, cxfTwinkle 3s ease-in-out infinite; mix-blend-mode:screen;
+}
+.cxf-starforge .cx-frame-overlay::after{ /* shooting stars in the forge */
+  content:''; position:absolute; top:20%; left:-14%; width:80px; height:1.5px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, #fff 60%, transparent);
+  filter:drop-shadow(0 0 7px rgba(255,255,255,1));
+  transform:rotate(-12deg); opacity:0;
+  animation:cxfShootingStar 5.5s ease-in .8s infinite;
+}
+/* frame theme colours + full-card washes */
+.cxf-hoard{ --fxc:#ffb040; }
+.cxf-nightcity{ --fxc:#00e5ff; }
+.cxf-starforge{ --fxc:#ffd36e; }
+.cxf-starforge .cx-frame-edge, .cxf-starforge .cx-frame-corners b{ animation:cxfHue 6s linear infinite; }
+.profile-modal.cxf-hoard{
+  background:
+    radial-gradient(1.4px 1.4px at 20% 86%, rgba(255,236,170,.7) 45%, transparent 55%),
+    radial-gradient(1.2px 1.2px at 64% 90%, rgba(255,220,140,.6) 45%, transparent 55%),
+    radial-gradient(140% 70% at 50% 120%, rgba(255,170,60,.3), transparent 64%),
+    radial-gradient(130% 50% at 50% 0%, rgba(255,140,50,.16), transparent 60%),
+    linear-gradient(180deg, #1c1208, #0f0905) !important;
+}
+.profile-modal.cxf-nightcity{
+  background:
+    repeating-linear-gradient(100deg, transparent 0 9px, rgba(150,240,255,.045) 9px 10px, transparent 10px 20px),
+    repeating-linear-gradient(90deg, rgba(0,229,255,.05) 0 1px, transparent 1px 30px),
+    radial-gradient(130% 55% at 50% 0%, rgba(0,229,255,.16), transparent 62%),
+    radial-gradient(120% 50% at 50% 108%, rgba(255,54,200,.18), transparent 62%),
+    linear-gradient(180deg, #0a1218, #080a12) !important;
+}
+.profile-modal.cxf-starforge{
+  --fxc:#ffd36e; animation:cxfDominionHueVar 7s linear infinite;
+  background:
+    radial-gradient(1.7px 1.7px at 12% 14%, #fff 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 72% 8%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.7px 1.7px at 44% 28%, rgba(255,255,255,.7) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 90% 44%, rgba(255,255,255,.65) 45%, transparent 55%),
+    linear-gradient(120deg, rgba(255,211,110,.15), rgba(255,122,217,.13) 28%, rgba(164,139,255,.13) 52%, rgba(95,201,255,.12) 74%, rgba(93,255,186,.1) 90%, rgba(255,211,110,.15)),
+    linear-gradient(180deg, #151022, #0b0813) !important;
+}
+/* ── BUNDLE CARDS — hero showcases in the shop ── */
+.bundle-grid{ display:flex; flex-direction:column; gap:18px; }
+.bundle-card{
+  position:relative; overflow:hidden; isolation:isolate;
+  padding:22px 22px 20px; border-radius:22px;
+  background:linear-gradient(180deg, #17131f, #100d17);
+  border:1.5px solid color-mix(in srgb, var(--bda,#fff) 38%, rgba(255,255,255,.06));
+  box-shadow:0 18px 44px -24px rgba(0,0,0,.9), 0 0 50px -22px var(--bda,#fff);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1), box-shadow .3s, border-color .3s;
+}
+.bundle-card:hover{ transform:translateY(-4px); border-color:color-mix(in srgb, var(--bda,#fff) 70%, #fff); box-shadow:0 26px 56px -24px rgba(0,0,0,.95), 0 0 64px -18px var(--bda,#fff); }
+.bundle-card .bd-fx{ position:absolute; inset:0; z-index:0; pointer-events:none; opacity:.9; }
+/* per-theme living backgrounds */
+.bd-dragon .bd-fx{
+  background:
+    radial-gradient(1.6px 1.6px at 18% 88%, rgba(255,236,170,.9) 45%, transparent 55%),
+    radial-gradient(1.3px 1.3px at 52% 92%, rgba(255,200,110,.8) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 80% 86%, rgba(255,240,180,.85) 45%, transparent 55%),
+    radial-gradient(140% 80% at 50% 125%, rgba(255,140,40,.36), transparent 64%),
+    radial-gradient(120% 50% at 50% -10%, rgba(255,90,30,.14), transparent 60%);
+  background-size:200% 100%, 220% 100%, 240% 100%, auto, auto;
+  animation:bdEmberDrift 8s linear infinite, cxfTwinkle 2.6s ease-in-out infinite;
+}
+@keyframes bdEmberDrift{ to{ background-position:-200% 0, -220% 0, -240% 0, 0 0, 0 0; } }
+.bd-nightcity .bd-fx{
+  background:
+    repeating-linear-gradient(100deg, transparent 0 9px, rgba(150,240,255,.13) 9px 10.5px, transparent 10.5px 20px),
+    repeating-linear-gradient(90deg, rgba(0,229,255,.1) 0 1px, transparent 1px 26px),
+    radial-gradient(120% 55% at 50% 115%, rgba(255,54,200,.26), transparent 62%),
+    radial-gradient(120% 45% at 50% -8%, rgba(0,229,255,.14), transparent 60%);
+  background-size:150px 100%, auto, auto, auto;
+  animation:cxfCityRain .6s linear infinite;
+}
+.bd-starforge .bd-fx{
+  background:
+    radial-gradient(1.8px 1.8px at 12% 22%, #fff 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 40% 74%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.8px 1.8px at 70% 18%, rgba(255,255,255,.9) 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 90% 60%, rgba(255,255,255,.8) 45%, transparent 55%),
+    linear-gradient(115deg, rgba(255,211,110,.16), rgba(255,122,217,.15) 28%, rgba(164,139,255,.16) 52%, rgba(95,201,255,.14) 74%, rgba(255,211,110,.16));
+  background-size:auto, auto, auto, auto, 220% 100%;
+  animation:cxfDrift 6s linear infinite, cxfDominionHue 9s linear infinite, cxfTwinkle 3.2s ease-in-out infinite;
+}
+.bundle-card.flagship{ border-width:2px; }
+.bundle-card.flagship::before{
+  content:''; position:absolute; inset:-40%; z-index:-1; pointer-events:none;
+  background:conic-gradient(from 0deg, transparent, rgba(255,211,110,.5), transparent 28%, rgba(255,122,217,.4), transparent 58%, rgba(95,201,255,.4), transparent 88%);
+  filter:blur(24px); opacity:.5; animation:cxaSpin 8s linear infinite;
+}
+.bd-head{ position:relative; z-index:1; display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.bd-badge{
+  font-family:var(--font-mono); font-size:8.5px; font-weight:900; letter-spacing:.2em;
+  padding:4px 10px; border-radius:999px; color:#100a02;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--bda,#fff) 90%, #fff), var(--bda,#fff));
+  box-shadow:0 2px 12px -3px var(--bda,#fff);
+}
+.bd-count{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.12em; color:var(--text-dim); }
+.bd-title{
+  position:relative; z-index:1; margin-top:12px;
+  font-family:var(--font-display); font-stretch:64%; font-style:italic; font-weight:900; font-size:clamp(26px, 5vw, 38px);
+  letter-spacing:.01em; text-transform:uppercase; line-height:1;
+  color:#fff; text-shadow:0 0 24px color-mix(in srgb, var(--bda,#fff) 55%, transparent);
+}
+.bd-tagline{ position:relative; z-index:1; margin-top:4px; font-family:var(--font-mono); font-size:10.5px; letter-spacing:.14em; color:color-mix(in srgb, var(--bda,#fff) 72%, #fff); text-transform:uppercase; }
+.bd-pieces{ position:relative; z-index:1; display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; margin:16px 0 14px; }
+.bd-piece{
+  position:relative; display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer;
+  padding:14px 8px 10px; border-radius:14px; text-align:center; overflow:hidden;
+  background:rgba(10,9,16,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+  border:1px solid color-mix(in srgb, var(--bda,#fff) 26%, rgba(255,255,255,.06));
+  color:var(--text);
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1), border-color .2s, box-shadow .25s;
+}
+.bd-piece:hover{ transform:translateY(-3px); border-color:var(--bda,#fff); box-shadow:0 10px 26px -14px var(--bda,#fff); }
+.bd-piece:active{ transform:scale(.96); }
+.bd-piece-prev{ min-height:58px; display:grid; place-items:center; }
+.bd-piece-prev .cx-prev-name{ font-size:15px; }
+.bd-piece-prev .cx-prev-av{ width:46px; height:46px; }
+.bd-piece-prev .cx-prev-frame{ transform:scale(.55); margin:-14px 0; }
+.bd-piece-prev .cx-prev-tagrow{ transform:scale(.8); }
+.bd-piece-name{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:11.5px; line-height:1.15; }
+.bd-piece-type{ font-family:var(--font-mono); font-size:7px; font-weight:800; letter-spacing:.14em; color:color-mix(in srgb, var(--bda,#fff) 70%, #fff); }
+.bd-piece-owned{
+  position:absolute; top:6px; right:6px; width:16px; height:16px; border-radius:50%;
+  display:grid; place-items:center; font-size:9px; color:#04140f; background:var(--mint);
+}
+.bd-piece.owned{ border-color:rgba(34,211,163,.45); }
+.bd-buy{
+  position:relative; z-index:1; width:100%; justify-content:center; min-height:48px; border:none;
+  font-family:var(--font-display); font-stretch:72%; font-style:italic; font-weight:900; font-size:15px; letter-spacing:.05em;
+  color:#100a02; border-radius:14px;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--bda,#fff) 85%, #fff), var(--bda,#fff));
+  box-shadow:0 10px 28px -10px var(--bda,#fff);
+  animation:bdBuyPulse 2.6s ease-in-out infinite;
+}
+@keyframes bdBuyPulse{ 0%,100%{ box-shadow:0 10px 24px -10px var(--bda,#fff); } 50%{ box-shadow:0 12px 34px -8px var(--bda,#fff); } }
+.bd-buy:hover{ filter:brightness(1.08); }
+.bd-buy.owned{ background:rgba(34,211,163,.14); color:var(--mint); box-shadow:none; animation:none; border:1px solid rgba(34,211,163,.4); cursor:default; }
+@media (max-width:560px){
+  .bd-pieces{ grid-template-columns:repeat(2, 1fr); }
+  .bundle-card{ padding:18px 16px 16px; }
+}
+/* ── BUNDLE CHECKOUT MODAL ── */
+.bundle-checkout{ --bda:#ffd36e; max-width:470px; text-align:center; }
+.bck-stage{
+  position:relative; height:74px; margin:-6px -6px 12px; border-radius:16px; overflow:hidden;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--bda,#fff) 16%, #16121f), #100d17);
+  border:1px solid color-mix(in srgb, var(--bda,#fff) 36%, transparent);
+}
+.bck-stage-fx{ position:absolute; inset:0; }
+.bundle-checkout.bd-dragon .bck-stage-fx{ background:radial-gradient(120% 90% at 50% 120%, rgba(255,140,40,.5), transparent 64%); animation:cxfTwinkle 2.4s ease-in-out infinite; }
+.bundle-checkout.bd-nightcity .bck-stage-fx{
+  background:
+    repeating-linear-gradient(100deg, transparent 0 8px, rgba(150,240,255,.16) 8px 9.5px, transparent 9.5px 19px),
+    radial-gradient(120% 80% at 50% 115%, rgba(255,54,200,.35), transparent 62%);
+  background-size:140px 100%, auto;
+  animation:cxfCityRain .6s linear infinite;
+}
+.bundle-checkout.bd-starforge .bck-stage-fx{
+  background:
+    radial-gradient(1.6px 1.6px at 20% 30%, #fff 45%, transparent 55%),
+    radial-gradient(1.4px 1.4px at 62% 62%, rgba(255,255,255,.85) 45%, transparent 55%),
+    radial-gradient(1.6px 1.6px at 84% 26%, rgba(255,255,255,.9) 45%, transparent 55%),
+    linear-gradient(115deg, rgba(255,211,110,.3), rgba(255,122,217,.26) 30%, rgba(164,139,255,.28) 55%, rgba(95,201,255,.26) 78%, rgba(255,211,110,.3));
+  background-size:auto, auto, auto, 220% 100%;
+  animation:cxfDrift 5s linear infinite, cxfDominionHue 8s linear infinite;
+}
+.bck-eyebrow{ font-family:var(--font-mono); font-size:8.5px; font-weight:900; letter-spacing:.26em; color:color-mix(in srgb, var(--bda,#fff) 75%, #fff); }
+.bck-name{ font-family:var(--font-display); font-stretch:64%; font-style:italic; font-weight:900; font-size:30px; text-transform:uppercase; margin:3px 0 1px; text-shadow:0 0 22px color-mix(in srgb, var(--bda,#fff) 55%, transparent); }
+.bck-tagline{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-dim); margin-bottom:12px; }
+.bck-items{ display:flex; flex-direction:column; gap:7px; margin-bottom:12px; }
+.bck-item{
+  display:flex; align-items:center; gap:12px; text-align:left; cursor:pointer;
+  padding:8px 12px; border-radius:12px;
+  background:rgba(255,255,255,.03); border:1px solid color-mix(in srgb, var(--bda,#fff) 20%, rgba(255,255,255,.06));
+  color:var(--text); transition:border-color .2s, transform .18s;
+}
+.bck-item:hover{ border-color:var(--bda,#fff); transform:translateX(3px); }
+.bck-item-prev{ flex:0 0 84px; display:grid; place-items:center; min-height:44px; }
+.bck-item-prev .cx-prev-name{ font-size:13px; }
+.bck-item-prev .cx-prev-av{ width:38px; height:38px; }
+.bck-item-prev .cx-prev-frame{ transform:scale(.42); margin:-18px 0; }
+.bck-item-prev .cx-prev-tagrow{ transform:scale(.72); }
+.bck-item-meta{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+.bck-item-meta b{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:13.5px; }
+.bck-item-meta i{ font-style:normal; font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.12em; color:color-mix(in srgb, var(--bda,#fff) 70%, #fff); }
+.bundle-checkout .cck-pay{
+  border:none; color:#100a02;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--bda,#fff) 85%, #fff), var(--bda,#fff));
+  box-shadow:0 10px 26px -10px var(--bda,#fff);
+}
+/* reduced-motion / low-power: bundle motion off (names/tags via catch-all) */
+body.reduced-motion :is(.cxa-wyrmfire,.cxa-wyrmfire::after,.cxa-hologrid,.cxa-eventhorizon,.cxf-hoard,.cxf-hoard .cx-frame-overlay,.cxf-nightcity .cx-frame-overlay,.cxf-starforge,.cxf-starforge .cx-frame-overlay,.cxf-starforge .cx-frame-overlay::after,.profile-modal.cxf-starforge,.bd-fx,.bundle-card.flagship::before,.bd-buy,.bck-stage-fx),
+body.low-power :is(.cxa-wyrmfire,.cxa-wyrmfire::after,.cxa-hologrid,.cxa-eventhorizon,.cxf-hoard,.cxf-hoard .cx-frame-overlay,.cxf-nightcity .cx-frame-overlay,.cxf-starforge,.cxf-starforge .cx-frame-overlay,.cxf-starforge .cx-frame-overlay::after,.profile-modal.cxf-starforge,.bd-fx,.bundle-card.flagship::before,.bd-buy,.bck-stage-fx){ animation:none !important; }
+
+/* Catch-all: every name-style and tag animation dies under reduced-motion /
+   low-power — covers the premium layered upgrades without listing each one. */
+body.reduced-motion :is([class*="cxn-"], [class*="cxt-"], .cxf-galaxy .cx-frame-overlay::after, .cxf-neon .cx-frame-overlay::after),
+body.low-power :is([class*="cxn-"], [class*="cxt-"], .cxf-galaxy .cx-frame-overlay::after, .cxf-neon .cx-frame-overlay::after){ animation:none !important; }
 /* Name cosmetics inline in lists/chat stay compact */
 .gc-name.cx-name{ font-weight:800; }
 .nm .cx-tag, .podium-name .cx-tag, .gc-meta .cx-tag{ font-size:7.5px; padding:2px 6px; }
@@ -17734,6 +18448,7 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 
 /* ── CASE INVENTORY (shop section) ── */
 .shop-sec-cases .shop-slab::before{ background:linear-gradient(180deg, #ff2d6b, #b56cff); }
+.shop-sec-bundles .shop-slab::before{ background:linear-gradient(180deg, #ffd36e, #ff7ad9); }
 .case-inv-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(172px, 1fr)); gap:16px; }
 .case-card{
   position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; gap:11px; cursor:pointer;
@@ -19488,6 +20203,15 @@ const FIREBASE_CONFIG = {
             <div class="case-inv-grid" id="caseInventoryGrid"></div>
           </section>
 
+          <section class="shop-sec shop-sec-bundles" id="shopSecBundles" data-sec="bundles" data-sec-label="Bundles">
+            <div class="shop-slab">
+              <span class="shop-slab-title">BUNDLES</span>
+              <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-gem"/></svg> COMPLETE LOOKS</span>
+            </div>
+            <p class="shop-coins-sub">Full matching sets — name, tag, avatar ring and profile frame designed to be worn together. Every piece is <b style="color:#ffd45e">bundle-exclusive</b>: it can never appear in the shop or drop from a case. Tap any piece to preview it.</p>
+            <div class="bundle-grid" id="shopBundles"></div>
+          </section>
+
           <section class="shop-sec shop-sec-coins" id="shopSecCoins" data-sec="coins" data-sec-label="RoshCoins">
             <div class="shop-slab">
               <span class="shop-slab-title">ROSHCOINS</span>
@@ -19505,6 +20229,7 @@ const FIREBASE_CONFIG = {
           <button type="button" class="shop-rail-item active" data-rail="featured"><i class="sri-dot"></i><span class="sri-label">Featured</span></button>
           <button type="button" class="shop-rail-item" data-rail="daily"><i class="sri-dot"></i><span class="sri-label">Daily items</span></button>
           <button type="button" class="shop-rail-item" data-rail="cases"><i class="sri-dot"></i><span class="sri-label">Cases</span></button>
+          <button type="button" class="shop-rail-item" data-rail="bundles"><i class="sri-dot"></i><span class="sri-label">Bundles</span></button>
           <button type="button" class="shop-rail-item sri-coins" data-rail="coins"><i class="sri-dot"></i><span class="sri-label">RoshCoins</span></button>
         </nav>
 
@@ -19533,6 +20258,28 @@ const FIREBASE_CONFIG = {
             <span id="cckPayLabel">Checkout · $1.99</span>
           </button>
           <p class="cck-note">Secure card checkout powered by Stripe — you'll be redirected to pay.</p>
+        </div>
+      </div>
+
+      <!-- BUNDLE CHECKOUT -->
+      <div class="modal-bg" id="bundleCheckoutModal">
+        <div class="modal bundle-checkout" id="bundleCheckoutCard">
+          <button class="modal-close" data-close="bundleCheckoutModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+          <div class="bck-stage" id="bckStage" aria-hidden="true"><span class="bck-stage-fx"></span></div>
+          <div class="bck-eyebrow">COMPLETE LOOK · 4 EXCLUSIVES</div>
+          <div class="bck-name" id="bckName">—</div>
+          <div class="bck-tagline" id="bckTagline">—</div>
+          <div class="bck-items" id="bckItems"></div>
+          <div class="cck-rows">
+            <div class="cck-row"><span>Bundle</span><b id="bckBundle">—</b></div>
+            <div class="cck-row"><span>Contents</span><b>Name style · Tag · Avatar ring · Frame</b></div>
+            <div class="cck-row cck-total"><span>Total</span><b id="bckPrice">—</b></div>
+          </div>
+          <button class="btn btn-primary cck-pay" id="bckPayBtn">
+            <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-gem"/></svg>
+            <span id="bckPayLabel">Checkout</span>
+          </button>
+          <p class="cck-note">Secure card checkout powered by Stripe — you'll be redirected to pay. All four pieces land in your locker instantly after payment.</p>
         </div>
       </div>
 
@@ -19635,7 +20382,7 @@ const FIREBASE_CONFIG = {
           <div class="stat-tile"><div class="stat-tile-v" id="rpsWR">0%</div><div class="stat-tile-l">Win rate</div></div>
           <div class="stat-tile"><div class="stat-tile-v gold" id="rpsStreak">0</div><div class="stat-tile-l">Best streak</div></div>
         </div>
-        <div class="psection"><h3>Rank ladder</h3></div>
+        <div class="psection psection-row"><h3>Rank ladder</h3><span class="psection-hint">🎁 rank rewards — tap any to preview</span></div>
         <div class="rank-ladder" id="rankLadder"></div>
 
         <div class="psection" style="margin-top:18px;"><h3>Global leaderboard</h3></div>
@@ -24512,6 +25259,7 @@ async function onAuthChanged(user){
   } catch(e){ console.warn('[cases] retro grant', e); }
   // Rank-exclusive cosmetics — retroactive for the rank you already hold.
   try { setTimeout(() => syncRankCosmetics(), 3000); } catch(e){}
+  try { setTimeout(() => syncPrestigeCosmetics(), 3600); } catch(e){}
 
   // First-time camera calibration — auto-opens once on the first landing.
   try {
@@ -27083,6 +27831,54 @@ const RANK_COSMETICS = [
 ];
 RANK_COSMETICS.forEach(c => { c.price = 0; });
 COSMETICS.push(...RANK_COSMETICS);
+// ── PRESTIGE-EXCLUSIVE COSMETICS — one per prestige tier. Can't be bought or
+// unboxed; the only way to wear them is to prestige that many times. ──
+const PRESTIGE_COSMETICS = [
+  { id:'ns_goldstandard', type:'name',   name:'Gold Standard',     rarity:'epic',      cls:'cxn-goldstandard', prestigeOnly:1,  desc:'Proof you finished the climb once — gold that never stops pouring, crowned with prestige stars. Awarded at Prestige 1 · Gold.' },
+  { id:'av_diamondcore',  type:'avatar', name:'Diamond Core',      rarity:'epic',      cls:'cxa-diamondcore',  prestigeOnly:2,  desc:'A faceted ring of pure ice-light that glints as it turns. Awarded at Prestige 2 · Diamond.' },
+  { id:'ns_sovereign',    type:'name',   name:'Violet Sovereign',  rarity:'epic',      cls:'cxn-sovereign',    prestigeOnly:3,  desc:'Deep amethyst royalty with a living light that patrols your name. Awarded at Prestige 3 · Amethyst.' },
+  { id:'tg_rose',         type:'tag',    name:'Rose Prestige',     rarity:'legendary', cls:'cxt-rose',         prestigeOnly:4,  text:'ROSE ✦', desc:'Four full climbs. Petal-pink and impossible to miss. Awarded at Prestige 4 · Rose.' },
+  { id:'av_emberwake',    type:'avatar', name:'Ember Wake',        rarity:'legendary', cls:'cxa-emberwake',    prestigeOnly:5,  desc:'A smoldering ring that trails live embers behind its orbit. Awarded at Prestige 5 · Ember.' },
+  { id:'ns_viridian',     type:'name',   name:'Viridian',          rarity:'legendary', cls:'cxn-viridian',     prestigeOnly:6,  desc:'Six climbs deep — emerald light refracted through your name. Awarded at Prestige 6 · Emerald.' },
+  { id:'fr_regalia',      type:'frame',  name:'Crimson Regalia',   rarity:'mythic',    cls:'cxf-regalia',      prestigeOnly:7,  desc:'Your whole profile drapes in dark crimson silk under a pulsing royal glow. Awarded at Prestige 7 · Crimson.' },
+  { id:'ns_obsidian',     type:'name',   name:'Obsidian',          rarity:'mythic',    cls:'cxn-obsidian',     prestigeOnly:8,  desc:'Black volcanic glass with a razor edge of silver light. Awarded at Prestige 8 · Obsidian.' },
+  { id:'av_celestial',    type:'avatar', name:'Celestial Ring',    rarity:'mythic',    cls:'cxa-celestial',    prestigeOnly:9,  desc:'A ring of starlit sky with a comet locked in eternal orbit. Awarded at Prestige 9 · Celestial.' },
+  { id:'fr_dominion',     type:'frame',  name:"Master's Dominion", rarity:'ascended',  cls:'cxf-dominion',     prestigeOnly:10, desc:'The summit made visible: an iridescent aurora crown that cycles every colour, reserved for Prestige Masters.' },
+];
+PRESTIGE_COSMETICS.forEach(c => { c.price = 0; });
+COSMETICS.push(...PRESTIGE_COSMETICS);
+// ── BUNDLE-EXCLUSIVE COSMETICS — full matching sets sold only as real-money
+// bundles. Each bundle is a complete themed look: name + tag + avatar + frame,
+// designed to be worn together. ──
+const BUNDLE_COSMETICS = [
+  // DRAGON'S HOARD — molten scale, ember light, treasure gold.
+  { id:'ns_dragonlord',  type:'name',   name:'Dragon Sovereign', rarity:'mythic',   cls:'cxn-dragonlord',  bundleOnly:'bd_dragon', desc:'Molten scales roll through your name while embers climb off the letters. Part of the Dragon\'s Hoard bundle.' },
+  { id:'tg_dragon',      type:'tag',    name:'Dragon',           rarity:'mythic',   cls:'cxt-dragon',      bundleOnly:'bd_dragon', text:'DRAGON 🐉', desc:'A smoldering seal in living dragonfire. Part of the Dragon\'s Hoard bundle.' },
+  { id:'av_wyrmfire',    type:'avatar', name:'Wyrmfire Orbit',   rarity:'mythic',   cls:'cxa-wyrmfire',    bundleOnly:'bd_dragon', desc:'A ring of dragon breath with twin embers chasing each other around it. Part of the Dragon\'s Hoard bundle.' },
+  { id:'fr_hoard',       type:'frame',  name:'The Hoard',        rarity:'mythic',   cls:'cxf-hoard',       bundleOnly:'bd_dragon', desc:'Your profile sits atop the treasure pile — gold dust rains and embers rise. Part of the Dragon\'s Hoard bundle.' },
+  // NIGHT CITY — chrome, neon, rain.
+  { id:'ns_netrunner',   type:'name',   name:'Netrunner',        rarity:'mythic',   cls:'cxn-netrunner',   bundleOnly:'bd_nightcity', desc:'Cyan chrome and magenta signal bleed, glitching between frequencies. Part of the Night City bundle.' },
+  { id:'tg_syndicate',   type:'tag',    name:'Syndicate',        rarity:'mythic',   cls:'cxt-syndicate',   bundleOnly:'bd_nightcity', text:'SYNDICATE ⌁', desc:'The mark of the city\'s most wanted crew. Part of the Night City bundle.' },
+  { id:'av_hologrid',    type:'avatar', name:'Holo Grid',        rarity:'mythic',   cls:'cxa-hologrid',    bundleOnly:'bd_nightcity', desc:'A holographic ring flickering between cyan and magenta with a racing signal pulse. Part of the Night City bundle.' },
+  { id:'fr_nightcity',   type:'frame',  name:'Night City',       rarity:'mythic',   cls:'cxf-nightcity',   bundleOnly:'bd_nightcity', desc:'Neon rain over a scrolling grid skyline — the whole profile goes cyberpunk. Part of the Night City bundle.' },
+  // THE STARFORGE — where stars are made. The flagship set.
+  { id:'ns_starforged',  type:'name',   name:'Starforged',       rarity:'ascended', cls:'cxn-starforged',  bundleOnly:'bd_starforge', desc:'Hammered from starlight — aurora metal with live forge sparks. Part of the Starforge bundle.' },
+  { id:'tg_cosmic',      type:'tag',    name:'Cosmic',           rarity:'ascended', cls:'cxt-cosmic',      bundleOnly:'bd_starforge', text:'COSMIC ☄', desc:'An iridescent seal that cycles through every colour in the universe. Part of the Starforge bundle.' },
+  { id:'av_eventhorizon',type:'avatar', name:'Event Horizon',    rarity:'ascended', cls:'cxa-eventhorizon',bundleOnly:'bd_starforge', desc:'A collapsed star\'s accretion ring — light bends, a captured sun orbits forever. Part of the Starforge bundle.' },
+  { id:'fr_starforge',   type:'frame',  name:'The Starforge',    rarity:'ascended', cls:'cxf-starforge',   bundleOnly:'bd_starforge', desc:'A living forge of stars: aurora fire, drifting starfields and shooting stars across your entire profile. Part of the Starforge bundle.' },
+];
+BUNDLE_COSMETICS.forEach(c => { c.price = 0; });
+COSMETICS.push(...BUNDLE_COSMETICS);
+// The three bundles — complete looks, bought with real money.
+const BUNDLES = [
+  { id:'bd_dragon',    name:"Dragon's Hoard", tagline:'Wear the fire. Keep the gold.',            price:12.99, cls:'bd-dragon',    accent:'#ff7a2e',
+    items:['ns_dragonlord','tg_dragon','av_wyrmfire','fr_hoard'] },
+  { id:'bd_nightcity', name:'Night City',     tagline:'Neon-soaked. Chrome-plated. Untouchable.', price:12.99, cls:'bd-nightcity', accent:'#00e5ff',
+    items:['ns_netrunner','tg_syndicate','av_hologrid','fr_nightcity'] },
+  { id:'bd_starforge', name:'The Starforge',  tagline:'Forged where stars are born.',             price:19.99, cls:'bd-starforge', accent:'#ffd36e', flagship:true,
+    items:['ns_starforged','tg_cosmic','av_eventhorizon','fr_starforge'] },
+];
+const BUNDLE_BY_ID = {}; BUNDLES.forEach(b => { BUNDLE_BY_ID[b.id] = b; });
 COSMETICS.forEach(c => { if(!c.price) c.price = CX_PRICE[c.rarity] || 0; });
 const COSMETIC_BY_ID = {}; COSMETICS.forEach(c => { COSMETIC_BY_ID[c.id] = c; });
 const CX_SLOTS = ['name', 'tag', 'avatar', 'frame'];
@@ -27143,6 +27939,7 @@ async function refreshWallet(){
       if(d.cosmetics) state.profile.cosmetics = d.cosmetics;
       updateCoinPill(true);
       try { renderShopWallet(); } catch(e){}
+      try { renderBundles(); } catch(e){}
     }
   } catch(e){}
 }
@@ -27308,7 +28105,7 @@ function _seededOrder(arr, seed){
 // deck cycles — no item ever lingers from one day into the next.
 function shopRotation(){
   const d = _dayIndex(getTodayKey());
-  const pool = COSMETICS.filter(c => !c.caseOnly && !c.rankOnly);
+  const pool = COSMETICS.filter(c => !c.caseOnly && !c.rankOnly && !c.prestigeOnly && !c.bundleOnly);
   const isHeavy = c => c.rarity === 'legendary' || c.rarity === 'mythic';
   // FEATURED: a rolling deck of premium (legendary/mythic) items — two fresh
   // ones every day. The deck order is fixed, so a featured item can't return
@@ -27436,6 +28233,87 @@ on('#cckPayBtn', 'click', async () => {
 });
 on('#shopWallet', 'click', () => { $('#shopSecCoins')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 
+// ---------- BUNDLES (real-money complete looks) ----------
+function bundleOwnedCount(b){
+  const owned = getCosmetics().owned;
+  return b.items.filter(id => owned.includes(id)).length;
+}
+function renderBundles(){
+  const host = $('#shopBundles');
+  if(!host) return;
+  host.innerHTML = BUNDLES.map(b => {
+    const ownedN = bundleOwnedCount(b);
+    const allOwned = ownedN === b.items.length;
+    const pieces = b.items.map(id => {
+      const it = COSMETIC_BY_ID[id];
+      if(!it) return '';
+      const has = ownsCosmetic(id);
+      return `<button type="button" class="bd-piece${has ? ' owned' : ''}" data-cx-inspect="${it.id}" title="Preview ${escapeHTML(it.name)}">
+        <span class="bd-piece-prev">${buildCosmeticPreview(it, false)}</span>
+        <span class="bd-piece-name">${escapeHTML(it.name)}</span>
+        <span class="bd-piece-type">${CX_TYPE_LABEL[it.type]}</span>
+        ${has ? '<span class="bd-piece-owned">✓</span>' : ''}
+      </button>`;
+    }).join('');
+    return `<div class="bundle-card ${b.cls}${b.flagship ? ' flagship' : ''}" style="--bda:${b.accent}">
+      <div class="bd-fx" aria-hidden="true"></div>
+      <div class="bd-head">
+        <span class="bd-badge">${b.flagship ? '★ FLAGSHIP' : 'EXCLUSIVE'} SET</span>
+        <span class="bd-count">${ownedN}/${b.items.length} OWNED</span>
+      </div>
+      <div class="bd-title">${escapeHTML(b.name)}</div>
+      <div class="bd-tagline">${escapeHTML(b.tagline)}</div>
+      <div class="bd-pieces">${pieces}</div>
+      <button type="button" class="btn bd-buy${allOwned ? ' owned' : ''}" data-bundle-buy="${b.id}" ${allOwned ? 'disabled' : ''}>
+        ${allOwned ? '✓ COMPLETE LOOK OWNED' : `GET THE FULL LOOK · ${fmtUSD(b.price)}`}
+      </button>
+    </div>`;
+  }).join('');
+  host.querySelectorAll('[data-bundle-buy]').forEach(btn =>
+    btn.addEventListener('click', () => openBundleCheckout(btn.dataset.bundleBuy)));
+}
+function openBundleCheckout(bundleId){
+  const b = BUNDLE_BY_ID[bundleId];
+  if(!b) return;
+  if(isGuest()){
+    try { toast('Create a free account first — guests can\'t buy bundles', 'info', { duration: 6000 }); } catch(e){}
+    return;
+  }
+  state._bundle = b;
+  const card = $('#bundleCheckoutCard'); if(card) card.className = 'modal bundle-checkout ' + b.cls;
+  if(card) card.style.setProperty('--bda', b.accent);
+  setText('#bckName', b.name);
+  setText('#bckTagline', b.tagline);
+  setText('#bckBundle', b.name);
+  setText('#bckPrice', fmtUSD(b.price));
+  setText('#bckPayLabel', `Checkout · ${fmtUSD(b.price)}`);
+  const list = $('#bckItems');
+  if(list) list.innerHTML = b.items.map(id => {
+    const it = COSMETIC_BY_ID[id];
+    if(!it) return '';
+    return `<button type="button" class="bck-item" data-cx-inspect="${it.id}" title="Preview ${escapeHTML(it.name)}">
+      <span class="bck-item-prev">${buildCosmeticPreview(it, false)}</span>
+      <span class="bck-item-meta"><b>${escapeHTML(it.name)}</b><i>${CX_TYPE_LABEL[it.type]} · ${CX_RARITY[it.rarity].label}</i></span>
+    </button>`;
+  }).join('');
+  $('#bundleCheckoutModal')?.classList.add('show');
+}
+on('#bckPayBtn', 'click', async () => {
+  const b = state._bundle;
+  if(!b) return;
+  const btn = $('#bckPayBtn');
+  try { haptic(10); } catch(e){}
+  if(btn){ btn.disabled = true; setText('#bckPayLabel', 'Opening secure checkout…'); }
+  try {
+    const out = await callFn('createCheckout', { packId: b.id });
+    if(out && out.url){ window.location.href = out.url; return; }
+    throw new Error('No checkout URL returned');
+  } catch(e){
+    fnErrorToast(e, 'Could not start checkout');
+    if(btn){ btn.disabled = false; setText('#bckPayLabel', `Checkout · ${fmtUSD(b.price)}`); }
+  }
+});
+
 // ---------- SECTION RAIL + NEXT BUTTON (scroll-spy) ----------
 function shopSections(){ return [...document.querySelectorAll('.shop-sec')]; }
 function shopSpyInit(){
@@ -27489,6 +28367,7 @@ function renderShopPage(){
   renderShopWallet();
   renderShopItems();
   renderCoinPacks();
+  try { renderBundles(); } catch(e){}
   try { renderCaseInventory(); } catch(e){}
   shopSpyInit();
   shopSetActiveSec(state._shopActiveSec || 'featured');
@@ -27536,7 +28415,7 @@ function openShopBuyModal(item, opts={}){
   const r = CX_RARITY[item.rarity];
   // Case/rank-exclusive items (or an explicit preview) show the same big
   // preview, but they can't be bought or gifted — you earn them.
-  const previewOnly = !!opts.preview || !!item.caseOnly || !!item.rankOnly;
+  const previewOnly = !!opts.preview || !!item.caseOnly || !!item.rankOnly || !!item.prestigeOnly || !!item.bundleOnly;
   const stage = $('#sbmStage');
   if(stage){
     stage.innerHTML = `<span class="sbm-stage-item">${buildCosmeticPreview(item, true)}</span>` + buildProfilePreviewHTML(item);
@@ -27560,7 +28439,11 @@ function openShopBuyModal(item, opts={}){
         ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b> — equip it in Edit profile → Cosmetics`
         : (item.rankOnly
           ? `<b class="sbm-short" style="color:#ffd45e">Rank-exclusive</b> — reach <b>${escapeHTML(rankName)}</b> to earn it`
-          : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a ROSHCAM Case`);
+          : (item.prestigeOnly
+            ? `<b class="sbm-short" style="color:#ffd45e">Prestige-exclusive</b> — reach <b>Prestige ${item.prestigeOnly} · ${escapeHTML(prestigeName(item.prestigeOnly))}</b> to earn it`
+            : (item.bundleOnly
+              ? `<b class="sbm-short" style="color:#ffd45e">Bundle-exclusive</b> — part of the <b>${escapeHTML(BUNDLE_BY_ID[item.bundleOnly]?.name || 'bundle')}</b> bundle in the shop`
+              : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a case`)));
     }
     if(btn) btn.style.display = 'none';
     if(giftBtn) giftBtn.style.display = 'none';
@@ -28215,6 +29098,27 @@ function syncRankCosmetics(){
       try { sfxCaseUnlock(); } catch(e){}
     }, 900 + i * 1100));
   } catch(e){ console.warn('[rank-cosmetics]', e); }
+}
+// Same idea for prestige: everything at or below your prestige is yours.
+function syncPrestigeCosmetics(){
+  try {
+    if(!state.profile || !state.user) return;
+    const pr = prestigeOf(state.profile);
+    if(pr <= 0) return;
+    const c = getCosmetics();
+    const have = new Set(c.owned);
+    const newly = [];
+    PRESTIGE_COSMETICS.forEach(pc => {
+      if(pr >= pc.prestigeOnly && !have.has(pc.id)){ have.add(pc.id); newly.push(pc); }
+    });
+    if(!newly.length) return;
+    c.owned = [...have];
+    saveCosmetics(c);
+    newly.forEach((pc, i) => setTimeout(() => {
+      try { toast(`✦ Prestige ${pc.prestigeOnly} reward unlocked: ${pc.name}!`, 'success', { duration: 6500 }); } catch(e){}
+      try { sfxCaseUnlock(); } catch(e){}
+    }, 900 + i * 1100));
+  } catch(e){ console.warn('[prestige-cosmetics]', e); }
 }
 
 // Hook into the level-up system to grant cases every 7th level.
@@ -33906,13 +34810,17 @@ function openPrestigeConfirm(){
     ? `This is the final step. Prestige one last time to claim the permanent Prestige Master rank — the summit of the climb.`
     : `You've reached level ${MAX_LEVEL}. Prestige to restart your climb with the ${prestigeName(next)} prestige rank.`);
   const ptitle = PRESTIGE_TITLES[Math.min(next, PRESTIGE_TITLES.length) - 1];
+  const pcx = PRESTIGE_COSMETICS.find(c => c.prestigeOnly === next);
+  const cxReward = pcx ? [{ ic:'💎', t:`"${pcx.name}" ${CX_TYPE_LABEL[pcx.type].toLowerCase()}`, d:`${CX_RARITY[pcx.rarity].label} prestige-exclusive cosmetic — can't be bought or unboxed.` }] : [];
   const rewards = becomingMaster ? [
     { ic:'👑', t:'Prestige Master rank', d:'The permanent apex badge on your level — the highest there is.' },
     { ic:'🏷️', t:'"Prestige Master" title', d:'The final, mythic prestige title, auto-equipped.' },
+    ...cxReward,
     { ic:'🏔️', t:'The summit', d:`You'll have completed all ${MAX_PRESTIGE} prestiges. Your level resets to 1.` },
   ] : [
     { ic:'✦', t:`Prestige ${next} rank`, d:`The ${prestigeName(next)} badge on your level — shown everywhere.` },
     { ic:'🏷️', t:`"${ptitle ? ptitle.name : prestigeName(next) + ' Prestige'}" title`, d:'A new equippable prestige title, auto-equipped.' },
+    ...cxReward,
     { ic:'🌟', t:'A fresh climb', d:'Your level resets to 1 so you can earn it all again.' },
   ];
   const box = $('#pcfRewards');
@@ -33935,6 +34843,7 @@ async function doPrestige(){
     if(ptitle) p.equippedTitle = ptitle.id;
     $('#prestigeConfirmModal')?.classList.remove('show');
     try { showPrestigeUp({ from: cur, to: next, level: 1 }); } catch(e){}
+    try { setTimeout(() => syncPrestigeCosmetics(), 3400); } catch(e){}
     try { logActivity({ event:'prestige', prestige: next, prestigeName: prestigeName(next) }); } catch(e){}
     try { refreshStatsUI(); } catch(e){}
     try { renderAchievementsPage(); } catch(e){}
@@ -34961,6 +35870,15 @@ function renderRankPage(){
       row.style.setProperty('--lr-accent', r.color);
       let main = `<div class="lr-name">${r.name}${isCurrent ? '<span class="lr-you">YOU</span>' : ''}</div>
           <div class="lr-range">${rangeText} ELO</div>`;
+      // Rank-exclusive cosmetic reward — tap the chip to inspect it full-size.
+      const rc = RANK_COSMETICS.find(x => x.rankOnly === r.id);
+      if(rc){
+        const rcOwned = ownsCosmetic(rc.id);
+        main += `<button type="button" class="lr-reward${rcOwned ? ' owned' : ''}" data-cx-inspect="${rc.id}" title="Preview ${escapeHTML(rc.name)}">
+          <span class="lr-reward-ic">${rcOwned ? '✓' : '🎁'}</span> ${escapeHTML(rc.name)}
+          <span class="lr-reward-rar" style="color:${CX_RARITY[rc.rarity].color}">${CX_RARITY[rc.rarity].label}</span>
+        </button>`;
+      }
       if(isCurrent && next){
         const prog = Math.max(0, Math.min(1, (rating - r.base) / (next.base - r.base)));
         main += `<div class="lr-prog"><i style="width:${Math.round(prog*100)}%"></i></div>`;
@@ -35138,12 +36056,15 @@ function renderLevelLadder(p, lvl, prestige){
       reached: lvl.level >= L, current: lvl.level === L,
     });
   }
-  const prestigeTiers = PRESTIGE_TIERS.map((pt, i) => ({
-    n: i + 1, type: 'prestige', master: pt.master, milestone: true,
-    name: pt.name, sub: pt.master ? 'Final rank' : 'Prestige ' + (i + 1),
-    color: pt.glow, a: pt.a, b: pt.b, t: pt.t,
-    reached: prestige >= i + 1, current: prestige === i + 1 || (prestige === 0 && i === 0 && atCap),
-  }));
+  const prestigeTiers = PRESTIGE_TIERS.map((pt, i) => {
+    const reward = PRESTIGE_COSMETICS.find(c => c.prestigeOnly === i + 1);
+    return {
+      n: i + 1, type: 'prestige', master: pt.master, milestone: true,
+      name: pt.name, sub: reward ? reward.name : (pt.master ? 'Final rank' : 'Prestige ' + (i + 1)),
+      color: pt.glow, a: pt.a, b: pt.b, t: pt.t, reward,
+      reached: prestige >= i + 1, current: prestige === i + 1 || (prestige === 0 && i === 0 && atCap),
+    };
+  });
   state._lpData = { level: levelTiers, prestige: prestigeTiers };
   // Fractional progress INTO the current tier (drives the track rail fill).
   state._lpProg = {
@@ -35191,6 +36112,7 @@ function renderLevelLadder(p, lvl, prestige){
           <div class="lp-head-sub">${prestige > 0 ? `${escapeHTML(prestigeName(prestige))} · ${isPrestigeMaster(prestige) ? 'the summit' : 'climbing'}` : 'Reach level ' + MAX_LEVEL + ' to start prestiging'}</div>
         </div>
       </div>
+      <div class="lp-reward"><span class="lp-reward-ic">💎</span> Every prestige tier awards an <b>exclusive cosmetic</b> · tap any tier to preview its reward</div>
       <div class="lp-track">
         <div class="lp-stage" id="lpStagePrestige"></div>
       </div>
@@ -35215,13 +36137,18 @@ function lpTierCardHTML(tr, i){
   const node = `<div class="lp-node">${current ? '<span class="lp-here">YOU</span>' : ''}<span class="lp-node-n">${tr.type === 'prestige' && tr.master ? '★' : tr.n}</span></div>`;
   // Case-reward badge on every 7th level so it's clear you earn a case there.
   const caseBadge = tr.caseReward ? `<div class="lp-case-badge" title="Earn a ROSHCAM Case at level ${tr.n}">📦</div>` : '';
-  return `<div class="lp-tier ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}${tr.milestone ? ' milestone' : ' minor'}${tr.caseReward ? ' case-reward' : ''}" style="--tc:${tr.color}; --d:${(i * 0.035).toFixed(3)}s">
+  // Prestige tiers carry an exclusive cosmetic — badge it and make the tile
+  // clickable to inspect the reward full-size.
+  const cxBadge = tr.reward ? `<div class="lp-case-badge lp-cx-badge" title="Prestige-exclusive: ${escapeHTML(tr.reward.name)}">💎</div>` : '';
+  const inspect = tr.reward ? ` data-cx-inspect="${tr.reward.id}" role="button" tabindex="0" title="Tap to preview ${escapeHTML(tr.reward.name)}"` : '';
+  return `<div class="lp-tier ${reached ? 'reached' : 'locked'}${current ? ' current' : ''}${tr.milestone ? ' milestone' : ' minor'}${tr.caseReward ? ' case-reward' : ''}${tr.reward ? ' has-reward' : ''}" style="--tc:${tr.color}; --d:${(i * 0.035).toFixed(3)}s">
     ${node}
-    <div class="lp-tile">
-      ${caseBadge}
+    <div class="lp-tile"${inspect}>
+      ${caseBadge}${cxBadge}
       ${emblem}
       <div class="lp-tier-name">${escapeHTML(tr.name)}</div>
       <div class="lp-tier-sub">${escapeHTML(tr.sub)}</div>
+      ${tr.reward ? '<div class="lp-tier-inspect">TAP TO PREVIEW</div>' : ''}
       <div class="lp-tier-state">${reached ? checkSvg : lockSvg}</div>
     </div>
   </div>`;
@@ -35279,6 +36206,22 @@ function renderLpPage(type){
     }
   }
 }
+// Reward inspection — any element carrying data-cx-inspect (prestige tier
+// tiles, rank ladder reward chips) opens the full cosmetic preview modal.
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-cx-inspect]');
+  if(!el) return;
+  const item = COSMETIC_BY_ID[el.dataset.cxInspect];
+  if(item){ openShopBuyModal(item, { preview: true }); try { haptic(6); } catch(e2){} }
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key !== 'Enter' && e.key !== ' ') return;
+  const el = e.target.closest?.('[data-cx-inspect]');
+  if(!el) return;
+  e.preventDefault();
+  const item = COSMETIC_BY_ID[el.dataset.cxInspect];
+  if(item) openShopBuyModal(item, { preview: true });
+});
 // Pagination clicks (delegated once).
 document.addEventListener('click', (e) => {
   const prev = e.target.closest('[data-lp-prev]');
@@ -38736,4 +39679,3 @@ setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
-// ===== please work =====
