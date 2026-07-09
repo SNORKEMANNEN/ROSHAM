@@ -1232,6 +1232,8 @@ body.reduced-motion .nav-item .nav-badge.nav-prestige, body.low-power .nav-item 
 .mni-you .mni-av{ box-shadow: 0 0 0 2px var(--line-bright, rgba(255,255,255,.18)); }
 .mni-you.active .mni-av, .mni-you .mni-icon .mni-av{ transition: box-shadow .2s; }
 .mni-you.active .mni-av{ box-shadow: 0 0 0 2px var(--mint); }
+/* "More" grid tab — a small unread dot sits top-right of the icon */
+.mni-more .mni-more-dot{ top: 5px; right: calc(50% - 15px); min-width: 9px; height: 9px; padding: 0; background: var(--coral); border: 2px solid var(--bg); box-shadow: 0 0 0 0 transparent; }
 
 /* ===== NAV PAGES ===== */
 .nav-page{ display: none; }
@@ -12530,11 +12532,19 @@ body.reduced-motion .sk, body.low-power .sk{ animation: none; }
 .ms-tile{ position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 15px 8px; border-radius: 15px; cursor: pointer;
   background: var(--surface-2); border: 1px solid var(--line); color: var(--text); transition: transform .12s, border-color .15s, background .15s; }
 .ms-tile:active{ transform: scale(.95); border-color: var(--mint); background: rgba(34,211,163,.06); }
-.ms-tile-ic{ width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-3, rgba(255,255,255,.04)); }
+.ms-tile-ic{ width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-3, rgba(255,255,255,.04)); transition: background .15s; }
 .ms-tile-ic svg{ width: 20px; height: 20px; color: var(--mint); }
+/* Per-destination accent colours so the hub reads like a real app launcher */
+.ms-tile[data-act="shop"] .ms-tile-ic{ background: rgba(255,179,54,.14); } .ms-tile[data-act="shop"] .ms-tile-ic svg{ color: #ffb336; }
+.ms-tile[data-act="locker"] .ms-tile-ic{ background: rgba(181,108,255,.14); } .ms-tile[data-act="locker"] .ms-tile-ic svg{ color: #b56cff; }
+.ms-tile[data-act="rank"] .ms-tile-ic{ background: rgba(255,212,94,.14); } .ms-tile[data-act="rank"] .ms-tile-ic svg{ color: #ffd45e; }
+.ms-tile[data-act="achievements"] .ms-tile-ic{ background: rgba(95,201,255,.14); } .ms-tile[data-act="achievements"] .ms-tile-ic svg{ color: #5fc9ff; }
+.ms-tile[data-act="activity"] .ms-tile-ic{ background: rgba(255,93,108,.14); } .ms-tile[data-act="activity"] .ms-tile-ic svg{ color: #ff5d6c; }
+.ms-tile[data-act="chat"] .ms-tile-ic{ background: rgba(34,211,163,.14); } .ms-tile[data-act="chat"] .ms-tile-ic svg{ color: #22d3a3; }
 .ms-tile span:last-child{ font-size: 11.5px; font-weight: 600; }
 .ms-tile-badge{ position: absolute; top: 8px; right: calc(50% - 28px); min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px; background: var(--coral); color: #fff; font-family: var(--font-mono); font-size: 9px; font-weight: 700; display: flex; align-items: center; justify-content: center; z-index: 1; }
 .ms-tile-badge.ms-prestige{ background: linear-gradient(135deg,#ffd33d,#ff9a3d); color: #1c1402; }
+.ms-tile-badge.ms-new{ background: linear-gradient(135deg,#2ce0ad,#16b98a); color: #04120d; font-size: 8px; letter-spacing: .04em; right: calc(50% - 32px); }
 /* secondary list */
 .ms-list{ display: flex; flex-direction: column; gap: 4px; }
 .ms-row{ display: flex; align-items: center; gap: 13px; padding: 11px 12px; border-radius: 13px; cursor: pointer;
@@ -16646,7 +16656,198 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 .cosmetics-editor{ display:flex; flex-direction:column; }
 .cosmetics-editor .shop-section-label{ margin:14px 2px 8px; }
 .cosmetics-editor .locker-grid{ grid-template-columns:repeat(auto-fill, minmax(132px, 1fr)); }
+
+/* ═══ LOCKER v2 — Fortnite-style widescreen locker: big showcase left, wide
+   catalog right ═══ */
+.lk2{ display:grid; grid-template-columns:minmax(300px, 380px) minmax(0, 1fr); gap:26px; align-items:start; }
+@media (max-width:820px){ .lk2{ grid-template-columns:minmax(240px, 320px) minmax(0, 1fr); gap:18px; } }
+@media (max-width:680px){ .lk2{ grid-template-columns:1fr; gap:16px; } }
+/* LEFT — the showcase */
+/* the showcase is one tall panel: big preview stage on top, item info below */
+.lk2-left{
+  position:sticky; top:8px; display:flex; flex-direction:column; gap:0;
+  border-radius:20px; overflow:hidden; min-height:560px;
+  background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.012));
+  border:1px solid var(--line);
+  box-shadow:0 22px 54px -32px rgba(0,0,0,.9);
+}
+.lk2-left .sbm-profile-prev{
+  flex:1; min-height:300px; margin:0; gap:18px; justify-content:center;
+  border:none !important; border-radius:0 !important;
+  background:
+    radial-gradient(85% 60% at 50% 32%, rgba(181,108,255,.16), transparent 66%),
+    linear-gradient(180deg, #1b1728, #131020) !important;
+}
+.lk2-left .sbm-profile-prev::after{ /* soft studio floor */
+  content:''; position:absolute; left:0; right:0; bottom:0; height:40%; z-index:1; pointer-events:none;
+  background:radial-gradient(60% 100% at 50% 100%, rgba(255,255,255,.05), transparent 70%);
+}
+.lk2-left .sbm-profile-prev .cx-prev-av{ width:118px; height:118px; }
+.lk2-left .sbm-profile-prev .cx-prev-av-core{ font-size:46px; border-radius:34px; }
+.lk2-left .spp-name{ font-size:25px; }
+.lk2-left .spp-label{ font-size:8px; }
+.lk2-left .lk2-meta{
+  padding:16px 18px 18px; gap:9px;
+  background:linear-gradient(180deg, rgba(10,9,16,.35), rgba(10,9,16,.72));
+  border-top:1px solid var(--line-soft);
+}
+@media (max-width:680px){
+  .lk2-left{ position:static; min-height:0; }
+  .lk2-left .sbm-profile-prev{ min-height:220px; }
+  .lk2-left .sbm-profile-prev .cx-prev-av{ width:96px; height:96px; }
+}
+.lk2-meta{ display:flex; flex-direction:column; gap:7px; padding:2px 4px; }
+.lk2-item-rar{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.lk2-rar-pill{
+  font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.18em;
+  padding:3px 9px; border-radius:999px; color:#0c0a14;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--rc,#fff) 90%, #fff), var(--rc,#fff));
+  box-shadow:0 2px 8px -2px var(--rc,#fff);
+}
+.lk2-item-type{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.16em; color:var(--text-faint); }
+.lk2-eq-pill{
+  font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.14em;
+  padding:3px 8px; border-radius:999px; color:#04140f; background:var(--mint);
+}
+.lk2-item-name{
+  font-family:var(--font-display); font-stretch:64%; font-style:italic; font-weight:900;
+  font-size:26px; line-height:1.02; text-transform:uppercase; letter-spacing:.01em;
+}
+.lk2-item-desc{ font-size:12.5px; line-height:1.5; color:var(--text-dim); }
+.lk2-actions{ margin-top:4px; }
+.lk2-btn{ min-height:42px; padding:9px 18px; justify-content:center; font-weight:800; border-radius:12px; }
+.lk2-btn.lk2-get{
+  background:linear-gradient(180deg, #ffd95e, #f5b431); border:none; color:#221302;
+  box-shadow:0 8px 20px -8px rgba(245,180,49,.8);
+}
+.lk2-btn.lk2-unequip{ background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim); }
+.lk2-earn{
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.06em;
+  color:#ffd45e; padding:9px 13px; border-radius:11px;
+  background:rgba(255,180,54,.08); border:1px solid rgba(255,180,54,.3);
+}
+/* RIGHT — the catalog */
+.lk2-tabs{ display:flex; gap:5px; flex-wrap:wrap; margin-bottom:10px; }
+.lk2-tab{
+  flex:1 1 auto; display:inline-flex; align-items:center; justify-content:center; gap:7px; cursor:pointer;
+  font-family:var(--font-display); font-stretch:70%; font-style:italic; font-weight:800;
+  font-size:12.5px; letter-spacing:.06em; white-space:nowrap;
+  padding:10px 12px; border-radius:11px;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim);
+  transition:background .15s, color .15s, border-color .15s, transform .15s;
+}
+.lk2-tab:hover{ color:var(--text); border-color:var(--line-bright, var(--line)); }
+.lk2-tab.active{ background:#fff; border-color:#fff; color:#0c0a14; transform:scale(1.02); }
+.lk2-tab-n{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.04em; opacity:.75; font-style:normal; }
+.lk2-controls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+.lk2-search{
+  flex:1 1 170px; display:flex; align-items:center; gap:8px; min-width:0;
+  padding:9px 12px; border-radius:11px;
+  background:var(--surface-2); border:1px solid var(--line); color:var(--text-faint);
+}
+.lk2-search:focus-within{ border-color:var(--mint); }
+.lk2-search input{
+  flex:1; min-width:0; background:none; border:none; outline:none;
+  color:var(--text); font-family:var(--font-body); font-size:13px;
+}
+/* sort dropdown, styled like a Fortnite control */
+.lk2-sort{
+  position:relative; display:inline-flex; align-items:center; gap:8px; flex:0 0 auto;
+  padding:9px 30px 9px 13px; border-radius:11px; cursor:pointer;
+  background:var(--surface-2); border:1px solid var(--line);
+  transition:border-color .15s;
+}
+.lk2-sort:hover{ border-color:var(--line-bright, var(--line)); }
+.lk2-sort:focus-within{ border-color:var(--mint); }
+.lk2-sort-lbl{ font-family:var(--font-mono); font-size:8.5px; font-weight:900; letter-spacing:.14em; color:var(--text-faint); }
+.lk2-sort select{
+  appearance:none; -webkit-appearance:none; background:none; border:none; outline:none; cursor:pointer;
+  font-family:var(--font-body); font-size:12.5px; font-weight:700; color:var(--text);
+  padding:0; min-width:96px;
+}
+.lk2-sort select option{ background:var(--surface); color:var(--text); }
+.lk2-sort-chev{ position:absolute; right:11px; color:var(--text-faint); pointer-events:none; }
+.lk2-count{
+  font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.12em;
+  color:var(--text-faint); margin:-2px 2px 9px;
+}
+.lk2-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(112px, 1fr)); gap:10px; }
+/* the tile — full rarity-coloured card, Fortnite style */
+.lk2-tile{
+  --rc:#5fc9ff;
+  position:relative; display:flex; flex-direction:column; overflow:hidden; cursor:pointer;
+  aspect-ratio:1; border-radius:12px; padding:0; text-align:center; isolation:isolate;
+  background:
+    radial-gradient(100% 70% at 50% 108%, color-mix(in srgb, var(--rc) 52%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--rc) 14%, #191524), color-mix(in srgb, var(--rc) 30%, #120e1c));
+  border:1.5px solid color-mix(in srgb, var(--rc) 36%, rgba(255,255,255,.06));
+  color:var(--text);
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), border-color .18s, box-shadow .2s;
+}
+.lk2-tile.rar-rare{ --rc:#5fc9ff; } .lk2-tile.rar-epic{ --rc:#b56cff; }
+.lk2-tile.rar-legendary{ --rc:#ffb336; } .lk2-tile.rar-mythic{ --rc:#ff5ec8; }
+.lk2-tile.rar-ascended{ --rc:#ff2d6b; }
+.lk2-tile:hover{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--rc) 75%, #fff); box-shadow:0 10px 24px -12px rgba(0,0,0,.8), 0 0 20px -8px var(--rc); z-index:2; }
+.lk2-tile.sel{
+  border-color:#fff;
+  box-shadow:0 0 0 2px rgba(255,255,255,.85), 0 0 26px -6px var(--rc);
+}
+.lk2-tile.equipped{ border-color:var(--mint); }
+.lk2-tile.equipped.sel{ box-shadow:0 0 0 2px var(--mint), 0 0 26px -6px var(--rc); }
+.lk2-tile.locked{ filter:saturate(.45) brightness(.75); }
+.lk2-tile.locked:hover{ filter:saturate(.7) brightness(.9); }
+.lk2-tile-prev{ flex:1; display:grid; place-items:center; padding:8px 6px 2px; min-height:0; overflow:hidden; }
+.lk2-tile-prev .cx-prev-name{ font-size:13px; }
+.lk2-tile-prev .cx-prev-av{ width:46px; height:46px; }
+.lk2-tile-prev .cx-prev-frame{ transform:scale(.5); margin:-16px 0; }
+.lk2-tile-prev .cx-prev-tagrow{ transform:scale(.72); }
+.lk2-tile-name{
+  font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:9.5px;
+  text-transform:uppercase; line-height:1.15; padding:4px 5px 7px;
+  background:linear-gradient(180deg, transparent, rgba(0,0,0,.36));
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.lk2-tile-eq{
+  position:absolute; top:5px; left:5px; z-index:3; width:17px; height:17px; border-radius:50%;
+  display:grid; place-items:center; color:#04140f; background:var(--mint);
+  box-shadow:0 2px 8px -2px rgba(34,211,163,.9);
+}
+.lk2-tile-lock{
+  position:absolute; top:5px; right:5px; z-index:3; width:18px; height:18px; border-radius:6px;
+  display:grid; place-items:center; color:rgba(255,255,255,.8); background:rgba(0,0,0,.5);
+}
+.lk2-grid .locker-empty{
+  grid-column:1 / -1; display:grid; place-items:center; align-content:center;
+  padding:48px 24px; line-height:1.8; font-size:12px; min-height:300px; max-width:340px; margin:0 auto;
+}
+@media (max-width:680px){
+  .lk2-grid{ grid-template-columns:repeat(3, 1fr); }
+  .lk2-item-name{ font-size:22px; }
+}
 .cosmetics-editor.cx-flash .locker-look{ animation:lpFlash 1.2s ease; }
+
+/* ═══ LOCKER PAGE chrome + motion ═══ */
+#lockerHost .lk2{ max-width:1320px; }
+.lk-header{ display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.lk-shop-btn{ min-height:40px; padding:9px 16px; border-radius:12px; font-weight:800; flex:0 0 auto; }
+#lockerHost.cx-flash .lk2-left{ animation:lpFlash 1.2s ease; }
+/* showcase glides in; tiles pop in on a stagger for that "locker loading" feel */
+#lockerHost .lk2-left{ animation:lkLeftIn .5s cubic-bezier(.2,.9,.3,1) both; }
+@keyframes lkLeftIn{ from{ opacity:0; transform:translateX(-14px); } to{ opacity:1; transform:none; } }
+.lk2-tile{ animation:lkTileIn .4s cubic-bezier(.2,1.1,.35,1) both; animation-delay:calc(var(--lki, 0) * .022s); }
+@keyframes lkTileIn{ from{ opacity:0; transform:translateY(10px) scale(.94); } to{ opacity:1; transform:none; } }
+/* the selected tile gets a soft breathing halo so the pick is obvious */
+.lk2-tile.sel{ animation:lkTileIn .4s cubic-bezier(.2,1.1,.35,1) both, lkSelPulse 2.4s ease-in-out .4s infinite; }
+@keyframes lkSelPulse{ 0%,100%{ box-shadow:0 0 0 2px rgba(255,255,255,.85), 0 0 22px -8px var(--rc); } 50%{ box-shadow:0 0 0 2px #fff, 0 0 30px -4px var(--rc); } }
+.lk2-tile.equipped:not(.sel){ animation:lkTileIn .4s cubic-bezier(.2,1.1,.35,1) both; }
+/* equipping ripples the showcase avatar/name */
+#lockerHost .lk2-left .sbm-profile-prev{ transition:box-shadow .3s; }
+.lk2-eq-pill{ animation:lkEqPop .4s cubic-bezier(.2,1.6,.4,1) both; }
+@keyframes lkEqPop{ from{ opacity:0; transform:scale(.6); } to{ opacity:1; transform:none; } }
+body.reduced-motion :is(.lk2-tile, .lk2-tile.sel, #lockerHost .lk2-left, .lk2-eq-pill),
+body.low-power :is(.lk2-tile, .lk2-tile.sel, #lockerHost .lk2-left, .lk2-eq-pill){ animation:none !important; }
+@media (max-width:920px){ #lockerHost .lk2{ max-width:none; } }
 .locker-shop-link{
   background:none; border:none; padding:0; cursor:pointer; color:var(--violet);
   font:inherit; text-decoration:underline; text-underline-offset:2px;
@@ -16770,8 +16971,37 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
   transition:background .2s, box-shadow .2s;
 }
 .pm3-presence.online{ background:var(--mint); box-shadow:0 0 12px var(--mint-glow, rgba(34,211,163,.8)); }
-.pm3-head-actions{ display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; padding-bottom:8px; }
-.pm3-head-actions .btn{ min-height:38px; padding:8px 14px; font-size:13px; border-radius:11px; }
+.pm3-head-actions{ display:flex; gap:9px; flex-wrap:wrap; justify-content:flex-end; padding-bottom:8px; }
+.pm3-head-actions .btn{
+  min-height:40px; padding:9px 16px; font-size:13px; border-radius:12px;
+  display:inline-flex; align-items:center; gap:7px;
+  font-family:var(--font-display); font-stretch:86%; font-weight:800; letter-spacing:.01em;
+  background:linear-gradient(180deg, #221d30, #1a1626);
+  border:1px solid rgba(255,255,255,.09);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 6px 16px -12px rgba(0,0,0,.9);
+  transition:transform .14s cubic-bezier(.34,1.56,.64,1), border-color .16s, box-shadow .16s, background .16s;
+}
+.pm3-head-actions .btn svg{ opacity:.85; }
+.pm3-head-actions .btn:hover{ transform:translateY(-2px); border-color:rgba(255,255,255,.17); box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 12px 22px -14px rgba(0,0,0,.95); }
+.pm3-head-actions .btn:active{ transform:translateY(0) scale(.97); }
+/* Primary action (Challenge / Edit) — a vivid accent chip that leads the row */
+.pm3-head-actions .btn-mint{
+  background:linear-gradient(180deg, #2ce0ad, #16b98a); color:#04120d; border-color:transparent;
+  box-shadow:0 6px 18px -8px rgba(34,211,163,.65);
+}
+.pm3-head-actions .btn-mint:hover{ box-shadow:0 12px 26px -10px rgba(34,211,163,.8); }
+.pm3-head-actions .btn-mint svg{ opacity:1; }
+.pm3-head-actions .btn-primary{
+  background:linear-gradient(180deg, var(--violet, #8b5cff), #6d3fe0); color:#fff; border-color:transparent;
+  box-shadow:0 6px 18px -8px rgba(139,92,255,.6);
+}
+.pm3-head-actions .btn-primary:hover{ box-shadow:0 12px 26px -10px rgba(139,92,255,.8); }
+/* Danger actions (Block / Report) — muted until hovered, then flush red */
+.pm3-head-actions .btn-danger{ color:#ff8b95; border-color:rgba(255,93,108,.24); }
+.pm3-head-actions .btn-danger:hover{ background:linear-gradient(180deg, #ff5d6c, #e2384a); color:#fff; border-color:transparent; box-shadow:0 12px 24px -12px rgba(255,93,108,.7); }
+/* Ghost (Cancel request) — outline only, reads as a quiet undo */
+.pm3-head-actions .btn-ghost{ background:transparent; border-color:rgba(255,255,255,.14); color:var(--text-dim); }
+.pm3-head-actions .btn-ghost:hover{ background:rgba(255,255,255,.04); color:#fff; }
 
 /* Cards */
 .pm3-card{ background:rgba(255,255,255,.028); border:1px solid var(--line-soft); border-radius:16px; padding:14px 16px; }
@@ -16850,16 +17080,239 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
 }
 
 /* ════════════════════════════════════════════════════════════════════
+   V26 — PROFILE v6: widescreen dashboard (banner cover · identity + stat
+   strip · left-rail nav · Progress & Level + Highlights · sparkline stats)
+   ════════════════════════════════════════════════════════════════════ */
+.pm3{ max-width:1060px; }
+.pm3 .pm-banner{ height:210px; }
+/* TOP BAR — identity left, actions + stat strip right, straddling the banner */
+/* TOP BAR: identity (avatar + name) on the left, actions on the right, both
+   straddling the banner. The stat strip is its own row below (never wraps). */
+.pm3-topbar{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:14px 20px;
+  margin-top:-58px; position:relative; z-index:3; flex-wrap:wrap;
+}
+.pm3-idrow{ display:flex; align-items:flex-end; gap:18px; min-width:0; flex:1 1 auto; }
+.pm3 .pm3-idrow .pm-av-wrap{ transform:none; margin:0; flex:0 0 auto; }
+.pm3-identity{
+  display:flex; flex-direction:column; gap:6px; position:relative; z-index:2;
+  padding-bottom:4px; min-width:0; background:none !important; border:none !important;
+}
+.pm3-topbar .pm3-head-actions{ flex:0 0 auto; align-self:flex-end; }
+/* the stat strip — a clean full-width row of 4 tiles under the top bar */
+.pm3-hstats{
+  display:grid; grid-template-columns:repeat(4, 1fr); gap:10px;
+  margin-top:16px; position:relative; z-index:2;
+}
+.hstat{
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; gap:12px; padding:13px 16px; border-radius:15px;
+  background:linear-gradient(180deg, #1b1726, #161221);
+  border:1px solid rgba(255,255,255,.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 8px 20px -14px rgba(0,0,0,.85);
+  transition:transform .16s cubic-bezier(.34,1.56,.64,1), border-color .18s, box-shadow .18s;
+}
+/* a thin colour spine on the left edge, tinted per stat via the icon accent */
+.hstat::before{
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
+  background:currentColor; opacity:.9;
+}
+.hstat:hover{ transform:translateY(-2px); border-color:rgba(255,255,255,.13); box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 14px 26px -16px rgba(0,0,0,.9); }
+.hstat.w{ color:#22d3a3; }
+.hstat.l{ color:#ff5d6c; }
+.hstat.r{ color:#5fc9ff; }
+.hstat.s{ color:#ffb336; }
+.hstat-ic{ width:36px; height:36px; border-radius:11px; display:grid; place-items:center; flex:0 0 auto; box-shadow:inset 0 0 0 1px rgba(255,255,255,.06); }
+.hstat-ic.w{ color:#22d3a3; background:rgba(34,211,163,.14); }
+.hstat-ic.l{ color:#ff5d6c; background:rgba(255,93,108,.14); }
+.hstat-ic.r{ color:#5fc9ff; background:rgba(95,201,255,.14); }
+.hstat-ic.s{ color:#ffb336; background:rgba(255,179,54,.14); }
+.hstat-txt{ display:flex; flex-direction:column; line-height:1.05; }
+.hstat-txt b{ font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:22px; color:#fff; }
+.hstat-txt i{ font-style:normal; font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:.1em; color:var(--text-faint); text-transform:uppercase; margin-top:1px; }
+/* BODY — left rail nav + content column. align-items:stretch lets the nav
+   rail run the full height of the content so its background reaches the
+   bottom, with the nav buttons pinned at the top and "member since" below. */
+.pm3-body{ display:flex; align-items:stretch; gap:22px; margin-top:20px; }
+.pm3-panes{ flex:1; min-width:0; }
+.pm3-tabs{
+  flex:0 0 194px; display:flex; flex-direction:column; gap:4px; padding:10px;
+  border-radius:16px;
+  background:linear-gradient(180deg, #1a1626, #141020);
+  border:1px solid rgba(255,255,255,.06);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+  margin:0; backdrop-filter:none; -webkit-backdrop-filter:none;
+}
+.pm3-tab{
+  flex:0 0 auto;   /* natural height — don't grow to fill the tall rail */
+  width:100%; justify-content:flex-start; gap:11px; padding:11px 14px; border-radius:11px;
+  font-stretch:88%; font-size:14px; letter-spacing:.01em;
+}
+.pm3-tab svg{ opacity:.7; flex:0 0 auto; }
+.pm3-tab.active svg{ opacity:1; color:var(--violet); }
+.pm3-since{
+  margin-top:auto; padding:12px 10px 4px; font-family:var(--font-mono);
+  font-size:9.5px; letter-spacing:.04em; color:var(--text-faint); line-height:1.5;
+  border-top:1px solid rgba(255,255,255,.06);
+}
+.pm3-since b{ display:block; color:var(--text-dim); font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:12px; letter-spacing:.02em; margin-top:2px; }
+.pm3-since:empty{ display:none; }
+/* Progress & Level + Highlights row */
+.pm3-cardrow{ display:grid; grid-template-columns:1.5fr 1fr; gap:12px; }
+.pm3-prog-body{ display:flex; align-items:center; gap:18px; }
+.pm3-levelcol{ display:flex; flex-direction:column; align-items:center; gap:7px; flex:0 0 auto; }
+/* Level badge → a clean 1:1 square tile with a big bold number.
+   Selector is boosted to .profile-modal .pm-level-badge.pm3-lvl-hex (0,3,0)
+   so it beats the base `.profile-modal .pm-level-badge` pill sizing. */
+.profile-modal .pm-level-badge.pm3-lvl-hex{
+  position:relative; box-sizing:border-box;
+  width:78px !important; height:78px !important; min-width:0 !important; padding:0 !important; margin:0;
+  font-size:40px; line-height:1; letter-spacing:-.04em;
+  border-radius:18px;
+  display:grid; place-items:center; font-family:var(--font-display); font-stretch:62%; font-weight:900;
+  box-shadow:
+    0 12px 28px -12px rgba(0,0,0,.75),
+    inset 0 0 0 1px rgba(255,255,255,.16),
+    inset 0 2px 1px rgba(255,255,255,.32);
+  text-shadow:0 1px 2px rgba(0,0,0,.22);
+}
+/* the big number sits above the gloss */
+.profile-modal .pm-level-badge.pm3-lvl-hex > *{ position:relative; z-index:1; }
+/* soft glossy sheen over the top half so the square reads as a crafted tile */
+.profile-modal .pm-level-badge.pm3-lvl-hex::after{
+  content:''; position:absolute; inset:0; border-radius:inherit; pointer-events:none; z-index:0;
+  background:linear-gradient(180deg, rgba(255,255,255,.24), transparent 54%);
+}
+/* prestige tiles get a coloured halo + a tiny ✦ marker */
+.profile-modal .pm-level-badge.pm3-lvl-hex.is-prestige{
+  box-shadow:0 12px 32px -8px var(--pr-glow, rgba(0,0,0,.75)), inset 0 0 0 1px rgba(255,255,255,.22), inset 0 2px 1px rgba(255,255,255,.36);
+}
+.profile-modal .pm-level-badge.pm3-lvl-hex.is-prestige::before{
+  content:'✦'; position:absolute; top:5px; right:7px; z-index:2;
+  font-size:11px; line-height:1; opacity:.9; text-shadow:0 1px 2px rgba(0,0,0,.4);
+}
+.pm3-lvl-name{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:12px; letter-spacing:.04em; text-transform:uppercase; color:var(--text-dim); }
+.pm3-prog-main{ flex:1; min-width:0; display:flex; flex-direction:column; gap:9px; }
+.pm3 .pm-level-bar-top{ display:flex; justify-content:space-between; align-items:baseline; font-family:var(--font-mono); font-size:11px; color:var(--text-dim); }
+.pm3-next{ color:var(--text-faint) !important; font-size:10px; }
+.pm3-prog-main .pm-rankprog{ background:rgba(255,255,255,.02); border:1px solid var(--line-soft); border-radius:12px; padding:11px 12px; }
+.pm3-prog-main .pm-rankprog-top{ display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:10px; color:var(--text-dim); margin-bottom:6px; }
+/* Highlights 2×2 */
+.pm3-hi-grid{ display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.pm3-hi{ display:flex; align-items:center; gap:10px; padding:11px; border-radius:13px; background:rgba(255,255,255,.02); border:1px solid var(--line-soft); }
+.pm3-hi-ic{ width:32px; height:32px; border-radius:9px; display:grid; place-items:center; flex:0 0 auto; }
+.pm3-hi-ic.s{ color:#ffb336; background:rgba(255,179,54,.13); }
+.pm3-hi-ic.d{ color:#5fc9ff; background:rgba(95,201,255,.13); }
+.pm3-hi-ic.x{ color:#b56cff; background:rgba(181,108,255,.13); }
+.pm3-hi-ic.t{ color:#ffd45e; background:rgba(255,212,94,.13); }
+.pm3-hi-txt{ display:flex; flex-direction:column; line-height:1.05; min-width:0; }
+.pm3-hi-txt b{ font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:19px; }
+.pm3-hi-txt i{ font-style:normal; font-family:var(--font-mono); font-size:8px; font-weight:700; letter-spacing:.08em; color:var(--text-faint); text-transform:uppercase; margin-top:2px; white-space:nowrap; }
+/* Statistics Overview — sparkline tiles */
+.pm3-spark-grid{ display:grid; grid-template-columns:repeat(5, 1fr); gap:10px; }
+.pm3-spark{ position:relative; overflow:hidden; padding:13px 13px 34px; border-radius:14px; background:rgba(255,255,255,.02); border:1px solid var(--line-soft); }
+.pm3-spark-l{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.08em; color:var(--text-faint); text-transform:uppercase; }
+.pm3-spark-v{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:24px; margin-top:3px; }
+.pm3-spark-svg{ position:absolute; left:0; right:0; bottom:0; width:100%; height:38px; }
+.pm3-spark-svg polyline{ animation:pmSparkDraw 1.1s ease both; }
+@keyframes pmSparkDraw{ from{ stroke-dasharray:300; stroke-dashoffset:300; } to{ stroke-dashoffset:0; } }
+/* entrances */
+.pm3-topbar{ animation:pmTopIn .45s cubic-bezier(.2,.9,.3,1) both; }
+.pm3-body{ animation:pmBodyIn .5s cubic-bezier(.2,.9,.3,1) .06s both; }
+@keyframes pmTopIn{ from{ opacity:0; transform:translateY(-10px); } to{ opacity:1; transform:none; } }
+@keyframes pmBodyIn{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:none; } }
+body.reduced-motion :is(.pm3-topbar,.pm3-body,.pm3-spark-svg polyline),
+body.low-power :is(.pm3-topbar,.pm3-body,.pm3-spark-svg polyline){ animation:none !important; }
+@media (max-width:900px){
+  .pm3-cardrow{ grid-template-columns:1fr; }
+  .pm3-spark-grid{ grid-template-columns:repeat(3, 1fr); }
+}
+@media (max-width:720px){
+  .pm3-body{ flex-direction:column; align-items:stretch; }
+  .pm3-tabs{ flex-direction:row; position:static; flex:0 0 auto; width:100%; }
+  .pm3-tab{ flex:1 1 0; justify-content:center; }
+  .pm3-since{ display:none; }
+  .pm3-topbar .pm3-head-actions{ width:100%; justify-content:flex-start; }
+}
+@media (max-width:560px){
+  .pm3 .pm-banner{ height:150px; }
+  .pm3-topbar{ margin-top:-46px; }
+  .pm3-idrow{ flex-direction:column; align-items:flex-start; gap:10px; }
+  .pm3-hstats{ grid-template-columns:repeat(2, 1fr); }
+  .pm3-spark-grid{ grid-template-columns:repeat(2, 1fr); }
+  .pm3-hi-txt i{ white-space:normal; }
+}
+
+/* ════════════════════════════════════════════════════════════════════
+   V28 — PROFILE v6 FIXES: readable identity plate over any banner/frame,
+   constrained showcase, square level badges
+   ════════════════════════════════════════════════════════════════════ */
+/* Identity sits over the banner on a MID-TONE spotlit plate (the shop-tile
+   "stage" trick) so BOTH dark styles (void/galaxy) and light ones (gold) read.
+   Sizes to its content and wraps long names. Wins over the adaptive glass. */
+.profile-modal.pm3 .pm3-topbar .pm3-identity{
+  align-self:flex-end; overflow:visible; width:fit-content; max-width:min(560px, 60vw);
+  padding:14px 20px !important; border-radius:18px;
+  /* OPAQUE clean plate (identical framed or not) with a soft top spotlight so
+     both light and dark name styles read. No backdrop-blur → no wash bleed. */
+  background:
+    radial-gradient(80% 120% at 24% -6%, rgba(255,255,255,.10), transparent 60%),
+    linear-gradient(180deg, #1a1726, #131020) !important;
+  border:1px solid var(--line) !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+  box-shadow:0 18px 40px -24px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+/* Long styled names WRAP instead of spilling out of the plate */
+.pm3 .pm3-identity .pm-name{ min-width:0; max-width:100%; overflow-wrap:anywhere; word-break:break-word; }
+.pm3 .pm3-identity .pm-name .cx-name{ min-width:0; overflow-wrap:anywhere; word-break:break-word; }
+/* Universal readability halo on the name WRAPPER (so each style keeps its own
+   glow): a tight light+dark micro-shadow so ANY name — dark void/galaxy or
+   bright gold — pops on the plate. */
+.pm3 .pm3-identity .pm-name{
+  filter:drop-shadow(0 0 1px rgba(255,255,255,.5)) drop-shadow(0 1px 2px rgba(0,0,0,.85));
+}
+/* Showcase: a constrained grid of small badges — never full-width cards, and
+   no dark container box (beats the adaptive-frame glass on .pm-showcase). */
+.profile-modal.pm3 .pm3-panes .pm-showcase{
+  display:grid !important; grid-template-columns:repeat(auto-fill, minmax(112px, 132px));
+  justify-content:start; gap:10px;
+  background:none !important; border:none !important; box-shadow:none !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important; padding:0 !important;
+}
+.pm3 .pm-sc-badge{
+  flex:none !important; width:auto; padding:14px 10px 12px; position:relative; overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 0%, rgba(255,211,61,.12), transparent 62%), #16131f !important;
+  border:1px solid color-mix(in srgb, var(--amber, #ffd33d) 22%, var(--line)) !important;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .22s, border-color .22s;
+}
+.pm3 .pm-sc-badge::before{
+  content:''; position:absolute; top:0; left:22%; right:22%; height:2px; border-radius:0 0 3px 3px;
+  background:linear-gradient(90deg, transparent, var(--amber, #ffd33d), transparent); opacity:.8;
+}
+.pm3 .pm-sc-badge:hover{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--amber,#ffd33d) 55%, var(--line)) !important; box-shadow:0 12px 26px -16px rgba(0,0,0,.8), 0 0 20px -8px rgba(255,211,61,.5); }
+.pm3 .pm-sc-ic{ font-size:24px; }
+/* Level pip on the avatar → a clean 1:1 square with a big number */
+.pm3 .pm-av-lvl{
+  width:38px !important; height:38px !important; min-width:0 !important; padding:0 !important; border-radius:11px;
+  font-size:19px; font-stretch:62%; line-height:1; letter-spacing:-.02em;
+  border:3px solid var(--surface); bottom:-9px; right:-9px;
+  box-shadow:0 4px 12px -3px rgba(0,0,0,.6);
+}
+/* Progress card level badge → a clean square (less rounded) with a big number */
+.profile-modal .pm-level-badge.pm3-lvl-hex{ border-radius:18px; font-stretch:62%; }
+
+/* ════════════════════════════════════════════════════════════════════
    V23 — FRAMES v3 (full-card coverage) + SECTIONED EDIT PROFILE
    ════════════════════════════════════════════════════════════════════ */
 
-/* ---------- FRAME CHROME: sticky top + bottom rails with corners ---------- */
+/* ---------- FRAME CHROME: corner rails pinned to the card, OUT OF FLOW so
+   equipping a frame never shifts the profile layout ---------- */
 .cx-frame-top, .cx-frame-edge{
-  position:sticky; display:block; height:0; margin:0; z-index:8; pointer-events:none;
+  position:absolute; left:0; right:0; display:block; height:0; margin:0; z-index:8; pointer-events:none;
   background:none; box-shadow:none; border-radius:0; opacity:1;
 }
-.cx-frame-top{ top:0; margin-top:-32px; }
-.cx-frame-edge{ bottom:0; }
+.cx-frame-top{ top:2px; }
+.cx-frame-edge{ bottom:2px; }
 .cx-frame-top b, .cx-frame-edge b{
   position:absolute; width:38px; height:38px; opacity:.95;
   border:2.5px solid var(--fxc, #fff);
@@ -16994,29 +17447,35 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
    frame colour, and the banner melts into the card instead of banding.
    Cosmetics and UI read as ONE designed look, not layers fighting.
    ════════════════════════════════════════════════════════════════════ */
-/* Content surfaces → frame-tinted dark glass. Readability is guaranteed:
-   whatever the wash behind, text always sits on a dark pane. */
+/* A dark scrim over the frame wash so the whole-card material stays a SUBTLE
+   themed backdrop and the content reads exactly as clean as an unframed
+   profile — no muddy bleed-through — plus a clean themed glowing border that
+   frames the whole card at every scroll position (replaces the old rails). */
+.profile-modal[class*="cxf-"]{
+  box-shadow:
+    inset 0 0 0 3000px rgba(9,8,15,.5),
+    inset 0 0 0 1.5px color-mix(in srgb, var(--fxc,#fff) 55%, transparent),
+    inset 0 0 30px -6px color-mix(in srgb, var(--fxc,#fff) 40%, transparent),
+    0 0 46px -14px color-mix(in srgb, var(--fxc,#fff) 60%, transparent);
+  border-color:color-mix(in srgb, var(--fxc,#fff) 55%, transparent) !important;
+}
+/* Content surfaces → SOLID, opaque, clean (identical to the unframed profile),
+   with just a hint of the frame colour on the border. No backdrop-blur, so the
+   wash behind can never bleed into them. */
 .profile-modal[class*="cxf-"] .pm3-card,
 .profile-modal[class*="cxf-"] .pm-stat,
-.profile-modal[class*="cxf-"] .pm-showcase,
 .profile-modal[class*="cxf-"] .pm-h2h{
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--fxc,#fff) 6%, rgba(13,12,20,.78)), rgba(11,10,17,.82)) !important;
-  -webkit-backdrop-filter:blur(12px) saturate(1.15); backdrop-filter:blur(12px) saturate(1.15);
-  border-color:color-mix(in srgb, var(--fxc,#fff) 26%, rgba(255,255,255,.07)) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+  background:linear-gradient(180deg, #16131f, #110e1a) !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+  border-color:color-mix(in srgb, var(--fxc,#fff) 20%, var(--line)) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
 }
-.profile-modal[class*="cxf-"] .pm3-card:hover{ border-color:color-mix(in srgb, var(--fxc,#fff) 45%, rgba(255,255,255,.1)) !important; }
-/* Identity card gets the strongest pane — the name must ALWAYS read. */
-.profile-modal[class*="cxf-"] .pm3-identity{
-  background:linear-gradient(180deg, color-mix(in srgb, var(--fxc,#fff) 8%, rgba(12,11,19,.86)), rgba(10,9,16,.9)) !important;
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 10px 30px -18px rgba(0,0,0,.8);
-}
-/* Tab bar joins the theme */
+.profile-modal[class*="cxf-"] .pm3-card:hover{ border-color:color-mix(in srgb, var(--fxc,#fff) 40%, var(--line)) !important; }
+/* Tab bar stays a clean solid rail */
 .profile-modal[class*="cxf-"] .pm3-tabs{
-  background:rgba(11,10,17,.72);
-  -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px);
-  border:1px solid color-mix(in srgb, var(--fxc,#fff) 20%, rgba(255,255,255,.06));
+  background:#141020 !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+  border:1px solid color-mix(in srgb, var(--fxc,#fff) 18%, var(--line));
 }
 .profile-modal[class*="cxf-"] .pm3-tab.active{ color:color-mix(in srgb, var(--fxc,#fff) 70%, #fff); }
 /* Frame-coloured cohesion: section labels, stat values and bars pick up
@@ -17114,20 +17573,18 @@ body.reduced-motion .cxf-liquid .cx-frame-corners b, body.low-power .cxf-liquid 
   to{ opacity:1; transform:none; filter:blur(0); }
 }
 
-/* ---------- SLIDING TAB INDICATOR (profile tabs) ---------- */
-.pm3-tabs{ --ti:0; }
-.pm3-tabs::before{
-  content:''; position:absolute; top:5px; bottom:5px; left:5px;
-  width:calc((100% - 22px) / 3); border-radius:10px;
-  background:rgba(255,255,255,.08);
-  box-shadow:inset 0 0 0 1px var(--line-bright, var(--line)), 0 4px 14px -8px rgba(0,0,0,.8);
-  transform:translateX(calc(var(--ti, 0) * (100% + 6px)));
-  transition:transform .4s cubic-bezier(.3,1.35,.35,1);
-  pointer-events:none;
-}
+/* ---------- PROFILE TABS (v6 vertical rail) ---------- */
+.pm3-tabs::before{ display:none; }   /* the old horizontal slider — retired */
 .pm3-tab{ position:relative; z-index:1; }
-.pm3-tab.active{ background:transparent; box-shadow:none; }
-.pm3-tab:hover:not(.active){ color:var(--text); }
+.pm3-tab.active{
+  background:rgba(181,108,255,.14); color:#fff;
+  box-shadow:inset 0 0 0 1px rgba(181,108,255,.4);
+}
+.pm3-tab.active::before{
+  content:''; position:absolute; left:0; top:20%; bottom:20%; width:3px; border-radius:999px;
+  background:var(--violet); box-shadow:0 0 10px var(--violet);
+}
+.pm3-tab:hover:not(.active){ color:var(--text); background:rgba(255,255,255,.04); }
 .pm3-tab:hover svg{ transform:translateY(-1px) scale(1.12); opacity:1; }
 .pm3-tab svg{ transition:transform .2s cubic-bezier(.34,1.56,.64,1), opacity .2s; }
 
@@ -18367,6 +18824,824 @@ body.reduced-motion .case-unlock-pop .cup-glow, body.low-power .case-unlock-pop 
 /* Respect reduced-motion / low-power for the new case cosmetics */
 body.reduced-motion :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt-apex, .cxt-sigma, .cxt-ghost, .cxa-quantum, .cxa-supernova, .cxa-storm, .cxa-cherry, .cxf-aurora, .cxf-aurora .cx-frame-overlay, .cxf-hologram .cx-frame-overlay),
 body.low-power :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt-apex, .cxt-sigma, .cxt-ghost, .cxa-quantum, .cxa-supernova, .cxa-storm, .cxa-cherry, .cxf-aurora, .cxf-aurora .cx-frame-overlay, .cxf-hologram .cx-frame-overlay){ animation:none !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   FRAME IDENTITY v3 — every profile frame gets its own STRUCTURAL
+   signature: a unique animated prop in the banner (overlay ::before /
+   ::after), bespoke corner brackets, and its own edge-line treatment.
+   No two frames share a silhouette anymore.
+   ════════════════════════════════════════════════════════════════════ */
+/* shared motion vocabulary */
+@keyframes cxfScanDown{ 0%{ top:-8%; opacity:0; } 8%{ opacity:1; } 92%{ opacity:1; } 100%{ top:104%; opacity:0; } }
+@keyframes cxfTransit{ from{ left:-12%; } to{ left:104%; } }
+@keyframes cxfBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-5px); } }
+@keyframes cxfBlink{ 0%,86%,100%{ opacity:1; } 90%,94%{ opacity:.2; } 92%{ opacity:.7; } }
+@keyframes cxfRiseLoop{ from{ background-position:0 120%; } to{ background-position:0 -40%; } }
+@keyframes cxfSway{ 0%,100%{ transform:skewX(-5deg); } 50%{ transform:skewX(5deg); } }
+@keyframes cxfPopSpark{ 0%,100%{ opacity:0; transform:scale(.3); } 12%{ opacity:1; transform:scale(1.15); } 26%{ opacity:0; transform:scale(.5); } }
+@keyframes cxfCornerBreathe{ 0%,100%{ opacity:.8; filter:drop-shadow(0 0 6px var(--fxc,#fff)); } 50%{ opacity:1; filter:drop-shadow(0 0 14px var(--fxc,#fff)); } }
+@keyframes cxfBoltFlash{ 0%,88%,93.5%,100%{ opacity:0; } 89%,92%{ opacity:1; } 90.5%{ opacity:.35; } }
+@keyframes cxfWindowFlicker{ 0%,100%{ opacity:.75; } 12%{ opacity:.9; } 13%{ opacity:.55; } 14%{ opacity:.9; } 47%{ opacity:.8; } 48%{ opacity:.5; } 49%{ opacity:.85; } 78%{ opacity:.7; } }
+@keyframes cxfHaloArc{ 0%,100%{ transform:translateX(-50%) rotate(-4deg); } 50%{ transform:translateX(-50%) rotate(4deg); } }
+.cx-frame-overlay::before, .cx-frame-overlay::after{ pointer-events:none; }
+
+/* ═══ ROYAL GILD — a palace: rotating royal medallion + ornate double corners ═══ */
+.cxf-gold .cx-frame-overlay::before{ /* the medallion, hanging top-centre */
+  content:''; position:absolute; left:50%; top:10px; width:30px; height:30px; margin-left:-15px;
+  background:conic-gradient(from 0deg, #fff3c4, #ffd45e 25%, #a8741a 50%, #ffd45e 75%, #fff3c4);
+  transform:rotate(45deg); border-radius:6px;
+  box-shadow:0 0 0 2px rgba(255,214,110,.55), 0 0 18px rgba(255,190,60,.85), inset 0 0 8px rgba(120,70,0,.6);
+  animation:cxfMedallion 5s ease-in-out infinite;
+}
+@keyframes cxfMedallion{ 0%,100%{ transform:rotate(45deg) scale(1); box-shadow:0 0 0 2px rgba(255,214,110,.5), 0 0 14px rgba(255,190,60,.7), inset 0 0 8px rgba(120,70,0,.6); } 50%{ transform:rotate(225deg) scale(1.08); box-shadow:0 0 0 2px rgba(255,236,160,.85), 0 0 26px rgba(255,205,80,1), inset 0 0 8px rgba(120,70,0,.6); } }
+.cxf-gold .cx-frame-overlay::after{ /* candle-light pools flickering in the hall */
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(26% 60% at 12% 92%, rgba(255,200,90,.4), transparent 70%),
+    radial-gradient(26% 60% at 88% 92%, rgba(255,200,90,.4), transparent 70%);
+  animation:cxfCandle 2.8s ease-in-out infinite; mix-blend-mode:screen;
+}
+@keyframes cxfCandle{ 0%,100%{ opacity:.65; } 30%{ opacity:1; } 55%{ opacity:.75; } 80%{ opacity:.95; } }
+.profile-modal.cxf-gold :is(.cx-frame-top, .cx-frame-edge) b{
+  border-width:3px; border-color:#ffd45e;
+  box-shadow:3px 3px 0 -1px rgba(168,116,26,.75), 0 0 12px rgba(255,190,60,.6);
+  animation:cxfCornerBreathe 3s ease-in-out infinite;
+}
+.profile-modal.cxf-gold :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:repeating-linear-gradient(90deg, transparent 0 6px, #ffd45e 6px 18px, transparent 18px 24px);
+  box-shadow:0 0 10px rgba(255,190,60,.7); height:2.5px;
+}
+/* ═══ NEBULA — deep space: an orbiting ringed planet + star-tipped corners ═══ */
+.cxf-galaxy .cx-frame-overlay::before{ /* the planet, drifting across the banner */
+  content:''; position:absolute; top:34%; left:-12%; width:16px; height:16px; border-radius:50%;
+  background:radial-gradient(circle at 35% 32%, #d7c4ff, #7b5fd0 55%, #372a66);
+  box-shadow:0 0 12px rgba(155,123,255,.8), 0 0 0 3.5px rgba(180,150,255,.22), 0 0 0 6px rgba(180,150,255,.1);
+  animation:cxfTransit 13s linear infinite, cxfBob 4s ease-in-out infinite;
+}
+.profile-modal.cxf-galaxy :is(.cx-frame-top, .cx-frame-edge) b{
+  border-color:#b56cff; border-style:solid;
+  box-shadow:0 0 12px rgba(155,123,255,.7);
+}
+.profile-modal.cxf-galaxy .cx-frame-top b::after, .profile-modal.cxf-galaxy .cx-frame-edge b::after{
+  content:''; position:absolute; width:5px; height:5px; border-radius:50%;
+  background:#fff; box-shadow:0 0 8px 2px rgba(255,255,255,.9), 0 0 14px 4px rgba(155,123,255,.6);
+  right:-3px; bottom:-3px;
+  animation:cxfTwinkle 2.6s ease-in-out infinite;
+}
+.profile-modal.cxf-galaxy :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #b56cff 30%, #5fc9ff 50%, #ff6cd8 70%, transparent);
+  box-shadow:0 0 12px rgba(155,123,255,.8);
+}
+/* ═══ NEON GRID — the arcade: CRT scanline sweep + neon-tube corners ═══ */
+.cxf-neon .cx-frame-overlay::before{ /* scanline bar rolling down the screen */
+  content:''; position:absolute; left:0; right:0; top:-8%; height:22%;
+  background:linear-gradient(180deg, transparent, rgba(125,249,255,.28) 45%, rgba(255,94,200,.22) 55%, transparent);
+  mix-blend-mode:screen;
+  animation:cxfScanDown 3.2s linear infinite;
+}
+.profile-modal.cxf-neon :is(.cx-frame-top, .cx-frame-edge) b{
+  border-width:3.5px; border-radius:14px; border-color:#5fc9ff;
+  box-shadow:0 0 12px rgba(95,201,255,.9), inset 0 0 6px rgba(95,201,255,.5);
+  animation:cxfBlink 4.6s linear infinite;
+}
+.profile-modal.cxf-neon .cx-frame-edge b{ border-color:#ff5ec8; box-shadow:0 0 12px rgba(255,94,200,.9), inset 0 0 6px rgba(255,94,200,.5); }
+.profile-modal.cxf-neon .cx-frame-top .cxline{ background:linear-gradient(90deg, transparent, #5fc9ff, transparent); box-shadow:0 0 14px #5fc9ff; }
+.profile-modal.cxf-neon .cx-frame-edge .cxline{ background:linear-gradient(90deg, transparent, #ff5ec8, transparent); box-shadow:0 0 14px #ff5ec8; }
+/* ═══ LIQUID — living metal: two morphing iridescent blobs + oil-slick sheen ═══ */
+.cxf-liquid .cx-frame-overlay::before{
+  content:''; position:absolute; left:12%; top:18%; width:52px; height:44px;
+  background:linear-gradient(120deg, rgba(181,108,255,.55), rgba(95,201,255,.5) 50%, rgba(255,94,200,.5));
+  filter:blur(6px) hue-rotate(0deg); mix-blend-mode:screen;
+  animation:cxaBlob 6s ease-in-out infinite, cxfLiquidHue 8s linear infinite, cxfBob 5s ease-in-out infinite;
+}
+.cxf-liquid .cx-frame-overlay::after{
+  content:''; position:absolute; right:10%; top:40%; width:38px; height:34px;
+  background:linear-gradient(240deg, rgba(94,255,186,.5), rgba(181,108,255,.5) 55%, rgba(95,201,255,.5));
+  filter:blur(6px) hue-rotate(180deg); mix-blend-mode:screen;
+  animation:cxaBlob 7s ease-in-out infinite reverse, cxfLiquidHue 8s linear infinite reverse, cxfBob 6s ease-in-out infinite reverse;
+}
+.profile-modal.cxf-liquid :is(.cx-frame-top, .cx-frame-edge) b{
+  border-radius:50% 20% 45% 25%; border-width:3px;
+  animation:cxfHue 6s linear infinite, cxaBlob 8s ease-in-out infinite;
+}
+/* ═══ CRIMSON COURT — the gothic hall: velvet drapes + a beating heart ═══ */
+.cxf-blood .cx-frame-overlay::before{ /* drapes falling in from both sides */
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(42% 120% at 0% 0%, rgba(90,4,18,.85), rgba(140,10,30,.35) 55%, transparent 75%),
+    radial-gradient(42% 120% at 100% 0%, rgba(90,4,18,.85), rgba(140,10,30,.35) 55%, transparent 75%),
+    repeating-linear-gradient(90deg, rgba(0,0,0,.16) 0 7px, transparent 7px 15px);
+  -webkit-mask:linear-gradient(180deg, #000 55%, transparent); mask:linear-gradient(180deg, #000 55%, transparent);
+}
+.cxf-blood .cx-frame-overlay::after{ /* the heart of the court, beating */
+  content:''; position:absolute; left:50%; top:26%; width:22px; height:22px; margin-left:-11px;
+  background:radial-gradient(circle, #ff8ca0 15%, #ff3358 45%, rgba(140,10,30,.4) 75%, transparent);
+  border-radius:50%; filter:blur(1px);
+  animation:cxfHeartBeat 1.5s ease-in-out infinite;
+}
+@keyframes cxfHeartBeat{ 0%,52%,100%{ transform:scale(1); opacity:.75; } 10%{ transform:scale(1.45); opacity:1; } 24%{ transform:scale(1); opacity:.8; } 36%{ transform:scale(1.28); opacity:.95; } }
+.profile-modal.cxf-blood :is(.cx-frame-top, .cx-frame-edge) b{
+  border-radius:0; border-width:3px; border-color:#ff3358;
+  box-shadow:0 0 10px rgba(255,51,88,.7);
+  animation:cxfBloodBeat 1.5s ease-in-out infinite;
+}
+.profile-modal.cxf-blood :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #8a0e24 20%, #ff3358 50%, #8a0e24 80%, transparent);
+  animation:cxfBloodPulseO 1.5s ease-in-out infinite;
+}
+/* ═══ CIRCUIT — a live motherboard: data pulses racing the traces + LED nodes ═══ */
+.cxf-circuit .cx-frame-overlay::before{ /* three data packets streaming through */
+  content:''; position:absolute; top:30%; left:-10%; width:26px; height:2.5px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, #7dffd8 60%, #fff);
+  box-shadow:0 0 8px rgba(120,255,220,.9);
+  animation:cxfTransit 2.4s linear infinite;
+}
+.cxf-circuit .cx-frame-overlay::after{
+  content:''; position:absolute; top:62%; left:-10%; width:18px; height:2px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, #22d3a3 60%, #d8fff2);
+  box-shadow:0 0 7px rgba(34,211,163,.9);
+  animation:cxfTransit 3.1s linear .9s infinite;
+}
+.profile-modal.cxf-circuit :is(.cx-frame-top, .cx-frame-edge) b{
+  border-radius:0; border-width:2.5px; border-color:#22d3a3;
+}
+.profile-modal.cxf-circuit .cx-frame-top b::after, .profile-modal.cxf-circuit .cx-frame-edge b::after{
+  content:''; position:absolute; width:6px; height:6px; border-radius:2px; right:-3px; bottom:-3px;
+  background:#7dffd8; box-shadow:0 0 8px rgba(120,255,220,.95);
+  animation:cxfBlink 2.2s linear infinite;
+}
+.profile-modal.cxf-circuit :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:repeating-linear-gradient(90deg, #22d3a3 0 10px, transparent 10px 16px);
+  opacity:.7; animation:cxfDataFlow 1.2s linear infinite;
+}
+@keyframes cxfDataFlow{ to{ background-position:16px 0; } }
+/* ═══ GOLDEN HOUR — dusk itself: a sinking sun with lens flare ═══ */
+.cxf-sunset .cx-frame-overlay::before{ /* the sun, slowly setting */
+  content:''; position:absolute; left:50%; top:26%; width:44px; height:44px; margin-left:-22px; border-radius:50%;
+  background:radial-gradient(circle, #fff2cf 18%, #ffc257 48%, rgba(255,122,94,.85) 72%, transparent 88%);
+  box-shadow:0 0 26px rgba(255,170,90,.9), 0 0 60px rgba(255,122,94,.5);
+  animation:cxfSunSink 9s ease-in-out infinite;
+}
+@keyframes cxfSunSink{ 0%,100%{ top:24%; filter:brightness(1); } 50%{ top:44%; filter:brightness(1.15); } }
+.cxf-sunset .cx-frame-overlay::after{ /* anamorphic flare across the horizon */
+  content:''; position:absolute; left:8%; right:8%; top:46%; height:2px;
+  background:linear-gradient(90deg, transparent, rgba(255,214,150,.85) 45%, #fff 50%, rgba(255,214,150,.85) 55%, transparent);
+  filter:blur(.5px); box-shadow:0 0 16px rgba(255,190,110,.8);
+  animation:cxfTwinkle 3.6s ease-in-out infinite;
+}
+.profile-modal.cxf-sunset :is(.cx-frame-top, .cx-frame-edge) b{
+  border-radius:999px; border-width:3px; border-color:#ff9a5e;
+  box-shadow:0 0 12px rgba(255,140,90,.7);
+}
+.profile-modal.cxf-sunset :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #ffb347 25%, #ff5e9c 60%, #b56cff 85%, transparent);
+}
+/* ═══ JADE COURT — the garden: rising jade motes + hanging vine arcs + bead corners ═══ */
+.cxf-emerald .cx-frame-overlay::before{ /* spirit motes drifting upward */
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(2.5px 2.5px at 18% 50%, rgba(180,255,225,.95) 45%, transparent 60%),
+    radial-gradient(2px 2px at 46% 78%, rgba(140,255,210,.8) 45%, transparent 60%),
+    radial-gradient(2.5px 2.5px at 72% 60%, rgba(200,255,235,.9) 45%, transparent 60%),
+    radial-gradient(2px 2px at 90% 44%, rgba(150,255,215,.75) 45%, transparent 60%);
+  background-size:100% 220%;
+  animation:cxfRiseLoop 7s linear infinite; mix-blend-mode:screen;
+}
+.cxf-emerald .cx-frame-overlay::after{ /* twin vine arcs hanging from the top */
+  content:''; position:absolute; left:6%; right:6%; top:-28px; height:56px;
+  border:2px solid rgba(56,230,160,.55); border-top:none; border-left:none; border-right:none;
+  border-radius:0 0 50% 50%;
+  box-shadow:0 6px 14px -6px rgba(56,230,160,.6);
+  animation:cxfSway 6s ease-in-out infinite;
+}
+.profile-modal.cxf-emerald :is(.cx-frame-top, .cx-frame-edge) b{
+  border-radius:999px; border-width:4px; border-color:#2ee6a6;
+  box-shadow:0 0 12px rgba(46,230,166,.7), inset 0 0 6px rgba(46,230,166,.4);
+  animation:cxfCornerBreathe 4s ease-in-out infinite;
+}
+/* ═══ AURORA BOREALIS — add a waving curtain + real twinkling to the sky ═══ */
+.cxf-aurora .cx-frame-overlay::before{ /* a bright curtain that sways */
+  content:''; position:absolute; left:20%; top:-10%; width:60%; height:120%;
+  background:linear-gradient(96deg, transparent 20%, rgba(90,240,200,.4) 40%, rgba(150,110,255,.32) 60%, transparent 80%);
+  filter:blur(6px); mix-blend-mode:screen; transform-origin:50% 0%;
+  animation:cxfSway 7s ease-in-out infinite;
+}
+.cxf-aurora .cx-frame-overlay::after{ /* stars that actually twinkle */
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(1.6px 1.6px at 16% 22%, #fff 45%, transparent 60%),
+    radial-gradient(1.4px 1.4px at 52% 12%, rgba(255,255,255,.9) 45%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 82% 28%, rgba(255,255,255,.95) 45%, transparent 60%);
+  animation:cxfTwinkle 2.4s ease-in-out infinite; mix-blend-mode:screen;
+}
+.profile-modal.cxf-aurora :is(.cx-frame-top, .cx-frame-edge) b{
+  border-width:2.5px; animation:cxfCornerBreathe 3.4s ease-in-out infinite;
+}
+/* ═══ HOLOGRAPHIC — a diffraction scan bar + RGB-split glitch edges ═══ */
+.cxf-hologram .cx-frame-overlay::before{ /* the reading beam */
+  content:''; position:absolute; left:0; right:0; top:-8%; height:16%;
+  background:linear-gradient(180deg, transparent, rgba(95,201,255,.35) 30%, rgba(255,94,200,.3) 50%, rgba(94,255,186,.3) 70%, transparent);
+  mix-blend-mode:screen;
+  animation:cxfScanDown 2.6s linear infinite;
+}
+.cxf-hologram .cx-frame-overlay::after{ /* RGB split flicker at the edges */
+  content:''; position:absolute; inset:0;
+  box-shadow:inset 3px 0 0 rgba(255,60,80,.25), inset -3px 0 0 rgba(60,180,255,.25);
+  animation:cxfWindowFlicker 3.4s linear infinite;
+}
+.profile-modal.cxf-hologram :is(.cx-frame-top, .cx-frame-edge) b{
+  border-width:2.5px; border-style:dashed;
+  animation:cxfHue 5s linear infinite, cxfBlink 4.2s linear infinite;
+}
+.profile-modal.cxf-hologram :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #5fc9ff 30%, #ff5ec8 50%, #5dffba 70%, transparent);
+  animation:cxfHue 5s linear infinite;
+}
+/* ═══ CARBON FIBER — the race car: weave highlight sweep + racing stripes ═══ */
+.cxf-carbon .cx-frame-overlay::before{ /* light gliding across the weave */
+  content:''; position:absolute; inset:0;
+  background:linear-gradient(115deg, transparent 38%, rgba(255,255,255,.14) 48%, rgba(200,215,235,.2) 50%, rgba(255,255,255,.14) 52%, transparent 62%);
+  background-size:240% 100%;
+  animation:cxSweep 3.4s linear infinite;
+}
+.cxf-carbon .cx-frame-overlay::after{ /* twin racing stripes */
+  content:''; position:absolute; left:0; right:0; bottom:12%; height:9px;
+  background:
+    linear-gradient(180deg, #ff3b30 0 3px, transparent 3px 6px, #ff3b30 6px 9px);
+  opacity:.85; box-shadow:0 0 10px rgba(255,60,48,.45);
+}
+.profile-modal.cxf-carbon :is(.cx-frame-top, .cx-frame-edge) b{
+  border-radius:2px; border-width:3px; border-color:#9aa3b2;
+  box-shadow:inset 0 0 4px rgba(0,0,0,.6), 0 0 8px rgba(154,163,178,.4);
+}
+.profile-modal.cxf-carbon :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #ff3b30 40%, #ff3b30 60%, transparent); opacity:.8;
+}
+/* ═══ TOTAL ECLIPSE — the transit: a moon crossing the corona + rotating rays ═══ */
+.cxf-eclipse .cx-frame-overlay::before{ /* the moon, passing in front */
+  content:''; position:absolute; top:20%; left:-14%; width:26px; height:26px; border-radius:50%;
+  background:radial-gradient(circle at 38% 34%, #2a2231, #0b0810 68%);
+  box-shadow:0 0 0 1.5px rgba(255,170,90,.4), -6px 0 14px rgba(255,150,60,.55);
+  animation:cxfTransit 16s linear infinite;
+}
+.cxf-eclipse .cx-frame-overlay::after{ /* corona rays, slowly wheeling */
+  content:''; position:absolute; left:50%; top:34%; width:120px; height:120px; margin:-60px;
+  background:conic-gradient(from 0deg, transparent 0 14deg, rgba(255,150,60,.25) 14deg 17deg, transparent 17deg 46deg, rgba(255,150,60,.2) 46deg 49deg, transparent 49deg 90deg, rgba(255,150,60,.25) 90deg 93deg, transparent 93deg 135deg, rgba(255,150,60,.2) 135deg 138deg, transparent 138deg 180deg, rgba(255,150,60,.25) 180deg 183deg, transparent 183deg 225deg, rgba(255,150,60,.2) 225deg 228deg, transparent 228deg 270deg, rgba(255,150,60,.25) 270deg 273deg, transparent 273deg 315deg, rgba(255,150,60,.2) 315deg 318deg, transparent 318deg 360deg);
+  -webkit-mask:radial-gradient(closest-side, transparent 30%, #000 45%, transparent 95%); mask:radial-gradient(closest-side, transparent 30%, #000 45%, transparent 95%);
+  animation:cxaSpin 22s linear infinite; mix-blend-mode:screen;
+}
+.profile-modal.cxf-eclipse :is(.cx-frame-top, .cx-frame-edge) b{
+  border-color:#241a12; border-width:4px; border-radius:999px;
+  box-shadow:0 0 0 1.5px rgba(255,170,90,.7), 0 0 14px rgba(255,150,60,.6);
+}
+.profile-modal.cxf-eclipse :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #0b0810 30%, #ffaa5a 50%, #0b0810 70%, transparent);
+}
+/* ═══ STORMFRONT — the storm breaks: a real lightning bolt + drifting clouds ═══ */
+.cxf-stormfront .cx-frame-overlay::before{ /* the bolt */
+  content:''; position:absolute; left:58%; top:6%; width:26px; height:64px;
+  background:linear-gradient(180deg, #eaf4ff, #9fd0ff);
+  clip-path:polygon(52% 0, 14% 44%, 44% 44%, 20% 100%, 88% 36%, 54% 36%, 82% 0);
+  filter:drop-shadow(0 0 10px rgba(160,210,255,.95)) drop-shadow(0 0 22px rgba(120,180,255,.6));
+  opacity:0; animation:cxfBoltFlash 5s linear infinite;
+}
+.cxf-stormfront .cx-frame-overlay::after{ /* cloud bank rolling past */
+  content:''; position:absolute; left:-20%; top:-6%; width:140%; height:52%;
+  background:
+    radial-gradient(38% 90% at 24% 30%, rgba(70,95,130,.65), transparent 72%),
+    radial-gradient(30% 80% at 52% 20%, rgba(55,78,110,.6), transparent 70%),
+    radial-gradient(36% 85% at 78% 32%, rgba(70,95,130,.6), transparent 72%);
+  filter:blur(3px);
+  animation:cxfCloudDrift 14s linear infinite alternate;
+}
+@keyframes cxfCloudDrift{ from{ transform:translateX(-4%); } to{ transform:translateX(6%); } }
+.profile-modal.cxf-stormfront :is(.cx-frame-top, .cx-frame-edge) b{
+  border-color:#7fb6ff; border-width:2.5px; border-radius:3px;
+  animation:cxfBoltCorner 5s linear infinite;
+}
+@keyframes cxfBoltCorner{ 0%,88%,93.5%,100%{ box-shadow:0 0 8px rgba(127,182,255,.5); } 89%,92%{ box-shadow:0 0 20px rgba(200,230,255,1); } }
+/* ═══ CHAMPION'S BLAZE — the arena: living flames + golden laurel arcs ═══ */
+.cxf-champion .cx-frame-overlay::before{ /* fire tongues licking up from the base */
+  content:''; position:absolute; left:0; right:0; bottom:-6%; height:66%;
+  background:
+    radial-gradient(16% 70% at 14% 100%, rgba(255,140,66,.8), rgba(255,80,20,.3) 60%, transparent 78%),
+    radial-gradient(13% 58% at 32% 100%, rgba(255,180,90,.7), transparent 74%),
+    radial-gradient(17% 74% at 52% 100%, rgba(255,120,40,.75), rgba(255,80,20,.28) 62%, transparent 80%),
+    radial-gradient(13% 56% at 71% 100%, rgba(255,190,100,.65), transparent 72%),
+    radial-gradient(16% 68% at 89% 100%, rgba(255,130,50,.75), transparent 78%);
+  mix-blend-mode:screen;
+  animation:cxfFlameLick 1.1s ease-in-out infinite alternate;
+}
+@keyframes cxfFlameLick{ from{ transform:scaleY(.94) translateY(1px); filter:brightness(.95); } to{ transform:scaleY(1.06) translateY(-3px); filter:brightness(1.15); } }
+.cxf-champion .cx-frame-overlay::after{ /* laurel arcs of the victor */
+  content:''; position:absolute; left:50%; top:8px; width:120px; height:34px; transform:translateX(-50%);
+  border:2.5px solid rgba(255,200,110,.75); border-bottom:none; border-radius:60px 60px 0 0;
+  box-shadow:0 0 12px rgba(255,170,70,.6), inset 0 4px 8px -4px rgba(255,200,110,.5);
+  animation:cxfHaloArc 5s ease-in-out infinite;
+}
+.profile-modal.cxf-champion :is(.cx-frame-top, .cx-frame-edge) b{
+  border-color:#ff8c42; border-width:3.5px;
+  box-shadow:0 0 14px rgba(255,140,66,.75);
+  animation:cxfCornerBreathe 2.2s ease-in-out infinite;
+}
+.profile-modal.cxf-champion :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #ffb35e 30%, #fff0c4 50%, #ffb35e 70%, transparent);
+  box-shadow:0 0 14px rgba(255,170,70,.8);
+}
+/* ═══ LEGEND'S HALO — the apex: a grand swaying halo + prism sparkles ═══ */
+.cxf-legend .cx-frame-overlay::before{ /* the halo itself, over the crown of the card */
+  content:''; position:absolute; left:50%; top:6px; width:150px; height:44px; transform:translateX(-50%);
+  border:3px solid transparent; border-bottom:none; border-radius:75px 75px 0 0;
+  background:linear-gradient(90deg, #ffd36e, #ff7ad9, #a48bff, #5fc9ff) border-box;
+  -webkit-mask:linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); mask-composite:exclude;
+  filter:drop-shadow(0 0 12px rgba(255,150,220,.8));
+  animation:cxfHaloArc 6s ease-in-out infinite, cxfHue 7s linear infinite;
+}
+.cxf-legend .cx-frame-overlay::after{ /* prism glitter */
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(2px 2px at 22% 34%, #fff 45%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 48% 20%, rgba(255,210,250,.95) 45%, transparent 60%),
+    radial-gradient(2px 2px at 72% 42%, rgba(210,240,255,.95) 45%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 88% 24%, #fff 45%, transparent 60%);
+  animation:cxfTwinkle 2.2s ease-in-out infinite; mix-blend-mode:screen;
+}
+.profile-modal.cxf-legend :is(.cx-frame-top, .cx-frame-edge) b{
+  border-width:3px; border-radius:999px;
+  animation:cxfHue 7s linear infinite, cxfCornerBreathe 3s ease-in-out infinite;
+}
+.profile-modal.cxf-legend :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #ffd36e 25%, #ff7ad9 45%, #a48bff 60%, #5fc9ff 78%, transparent);
+  animation:cxfHue 7s linear infinite;
+}
+/* ═══ CRIMSON REGALIA — the throne room: gold-corded drapes + pulsing crest ═══ */
+.cxf-regalia .cx-frame-overlay::before{ /* velvet drapes with gold cords */
+  content:''; position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(255,214,110,.85), rgba(255,214,110,0) 70%) 12% 0 / 2px 100% no-repeat,
+    linear-gradient(180deg, rgba(255,214,110,.85), rgba(255,214,110,0) 70%) 88% 0 / 2px 100% no-repeat,
+    radial-gradient(34% 130% at 0% 0%, rgba(96,4,20,.9), rgba(150,12,34,.4) 55%, transparent 74%),
+    radial-gradient(34% 130% at 100% 0%, rgba(96,4,20,.9), rgba(150,12,34,.4) 55%, transparent 74%);
+}
+.cxf-regalia .cx-frame-overlay::after{ /* the royal crest, breathing light */
+  content:''; position:absolute; left:50%; top:14px; width:26px; height:26px; margin-left:-13px;
+  background:linear-gradient(135deg, #ff5a8a, #8a0e24); transform:rotate(45deg); border-radius:5px;
+  box-shadow:0 0 0 2px rgba(255,214,110,.75), 0 0 18px rgba(255,51,88,.85);
+  animation:cxfCrestPulse 2.8s ease-in-out infinite;
+}
+@keyframes cxfCrestPulse{ 0%,100%{ box-shadow:0 0 0 2px rgba(255,214,110,.6), 0 0 12px rgba(255,51,88,.6); } 50%{ box-shadow:0 0 0 2.5px rgba(255,236,160,.95), 0 0 26px rgba(255,90,138,1); } }
+.profile-modal.cxf-regalia :is(.cx-frame-top, .cx-frame-edge) b{
+  border-color:#ff3358; border-width:3px; border-radius:0;
+  box-shadow:2.5px 2.5px 0 -1px rgba(255,214,110,.8), 0 0 12px rgba(255,51,88,.6);
+}
+.profile-modal.cxf-regalia :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:repeating-linear-gradient(90deg, #ff3358 0 14px, rgba(255,214,110,.9) 14px 20px);
+  opacity:.75; height:2.5px;
+}
+/* ═══ MASTER'S DOMINION — the summit: an orbiting star crown + wheeling aura ═══ */
+.cxf-dominion .cx-frame-overlay::before{ /* three crown-stars circling the peak */
+  content:''; position:absolute; left:50%; top:26%; width:90px; height:90px; margin:-45px;
+  background:
+    radial-gradient(4px 4px at 50% 2%, #fff 40%, transparent 65%),
+    radial-gradient(3.5px 3.5px at 8% 78%, #ffd36e 40%, transparent 65%),
+    radial-gradient(3.5px 3.5px at 92% 78%, #7adfff 40%, transparent 65%);
+  filter:drop-shadow(0 0 6px rgba(255,255,255,.9));
+  animation:cxaSpin 6s linear infinite;
+}
+.cxf-dominion .cx-frame-overlay::after{ /* the wheeling iridescent aura */
+  content:''; position:absolute; left:50%; top:30%; width:150px; height:150px; margin:-75px;
+  background:conic-gradient(from 0deg, rgba(255,211,110,.4), rgba(255,122,217,.35), rgba(164,139,255,.4), rgba(95,201,255,.35), rgba(93,255,186,.3), rgba(255,211,110,.4));
+  -webkit-mask:radial-gradient(closest-side, transparent 42%, #000 58%, transparent 82%); mask:radial-gradient(closest-side, transparent 42%, #000 58%, transparent 82%);
+  filter:blur(2px); mix-blend-mode:screen;
+  animation:cxaSpinRev 9s linear infinite;
+}
+.profile-modal.cxf-dominion :is(.cx-frame-top, .cx-frame-edge) b{
+  border-width:3.5px;
+  animation:cxfHue 7s linear infinite, cxfCornerBreathe 2.6s ease-in-out infinite;
+}
+/* ═══ THE HOARD — the dragon's lair: coin glints + a watching dragon eye ═══ */
+.cxf-hoard .cx-frame-overlay::before{ /* treasure glinting in the dark */
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(3px 3px at 14% 84%, #fff6d8 40%, rgba(255,214,110,.7) 60%, transparent 75%),
+    radial-gradient(2.5px 2.5px at 38% 90%, #ffe9a8 40%, transparent 70%),
+    radial-gradient(3px 3px at 62% 86%, #fff2c4 40%, rgba(255,190,60,.6) 60%, transparent 75%),
+    radial-gradient(2.5px 2.5px at 84% 90%, #ffe9a8 40%, transparent 70%);
+  animation:cxfPopSpark 3.2s ease-in-out infinite; mix-blend-mode:screen;
+}
+.cxf-hoard .cx-frame-overlay::after{ /* the dragon's eye, watching — then blinking */
+  content:''; position:absolute; left:50%; top:20px; width:34px; height:16px; margin-left:-17px;
+  background:radial-gradient(50% 100% at 50% 50%, #ffb040 0 18%, #7a2400 42%, transparent 70%);
+  border-radius:50%;
+  box-shadow:0 0 16px rgba(255,150,40,.85), inset 0 0 4px rgba(0,0,0,.8);
+  animation:cxfDragonBlink 6s linear infinite;
+}
+@keyframes cxfDragonBlink{ 0%,90%,100%{ transform:scaleY(1); opacity:1; } 93%,96%{ transform:scaleY(.08); opacity:.7; } 94.5%{ transform:scaleY(1); } }
+.profile-modal.cxf-hoard :is(.cx-frame-top, .cx-frame-edge) b{
+  border-color:#ffb040; border-width:3.5px; border-radius:2px 14px;
+  box-shadow:0 0 12px rgba(255,176,64,.7), inset 0 0 5px rgba(122,36,0,.6);
+  animation:cxfCornerBreathe 2.8s ease-in-out infinite;
+}
+/* ═══ NIGHT CITY — the skyline: flickering tower windows + a neon sign ═══ */
+.cxf-nightcity .cx-frame-overlay::before{ /* city towers with lit windows */
+  content:''; position:absolute; left:0; right:0; bottom:0; height:58%;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 10px, rgba(6,10,18,.92) 10px 34px, transparent 34px 46px, rgba(6,10,18,.92) 46px 82px, transparent 82px 96px),
+    repeating-linear-gradient(0deg, rgba(125,249,255,.34) 0 2px, transparent 2px 9px),
+    linear-gradient(180deg, transparent, rgba(4,8,14,.9));
+  -webkit-mask:linear-gradient(180deg, transparent, #000 30%); mask:linear-gradient(180deg, transparent, #000 30%);
+  animation:cxfWindowFlicker 4.6s linear infinite;
+}
+.cxf-nightcity .cx-frame-overlay::after{ /* the buzzing neon sign */
+  content:''; position:absolute; right:12%; top:18%; width:46px; height:14px; border-radius:4px;
+  border:1.5px solid rgba(255,54,200,.9);
+  box-shadow:0 0 12px rgba(255,54,200,.9), inset 0 0 8px rgba(255,54,200,.5);
+  animation:cxfBlink 3.8s linear infinite;
+}
+.profile-modal.cxf-nightcity .cx-frame-top b{ border-color:#00e5ff; box-shadow:0 0 12px rgba(0,229,255,.85); border-radius:3px; animation:cxfBlink 5.2s linear infinite; }
+.profile-modal.cxf-nightcity .cx-frame-edge b{ border-color:#ff36c8; box-shadow:0 0 12px rgba(255,54,200,.85); border-radius:3px; animation:cxfBlink 4.4s linear .6s infinite; }
+.profile-modal.cxf-nightcity .cx-frame-top .cxline{ background:linear-gradient(90deg, transparent, #00e5ff, transparent); box-shadow:0 0 12px rgba(0,229,255,.8); }
+.profile-modal.cxf-nightcity .cx-frame-edge .cxline{ background:linear-gradient(90deg, transparent, #ff36c8, transparent); box-shadow:0 0 12px rgba(255,54,200,.8); }
+/* ═══ THE STARFORGE — the forge floor: anvil sparks + a wheeling star ring ═══ */
+.cxf-starforge .cx-frame-overlay::before{ /* sparks popping off the anvil */
+  content:''; position:absolute; inset:0;
+  background:
+    radial-gradient(3px 3px at 26% 66%, #fff 35%, rgba(255,211,110,.8) 55%, transparent 72%),
+    radial-gradient(2.5px 2.5px at 44% 48%, #ffe9b0 40%, transparent 68%),
+    radial-gradient(3px 3px at 64% 62%, #fff 35%, rgba(255,150,220,.75) 55%, transparent 72%),
+    radial-gradient(2.5px 2.5px at 78% 44%, #d8f2ff 40%, transparent 68%);
+  animation:cxfPopSpark 2.1s ease-in-out infinite; mix-blend-mode:screen;
+}
+.profile-modal.cxf-starforge :is(.cx-frame-top, .cx-frame-edge) b{
+  border-width:3.5px; border-radius:999px 4px;
+  animation:cxfHue 6s linear infinite, cxfCornerBreathe 2.4s ease-in-out infinite;
+}
+.profile-modal.cxf-starforge :is(.cx-frame-top, .cx-frame-edge) .cxline{
+  background:linear-gradient(90deg, transparent, #ffd36e 25%, #ff7ad9 45%, #a48bff 62%, #5fc9ff 80%, transparent);
+  animation:cxfHue 6s linear infinite;
+}
+
+/* Tiny catalog previews (~90px) can't fit the full-size signature props —
+   show the frame's base character there, keep the props for the real thing. */
+.cx-prev-frame .cx-frame-overlay::before, .cx-prev-frame .cx-frame-overlay::after{ display:none; }
+
+/* v3 reduced-motion / low-power: silence every signature prop and bracket */
+body.reduced-motion :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-frame-top b, .cx-frame-edge b, .cx-frame-top b::after, .cx-frame-edge b::after, .cx-frame-top .cxline, .cx-frame-edge .cxline),
+body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-frame-top b, .cx-frame-edge b, .cx-frame-top b::after, .cx-frame-edge b::after, .cx-frame-top .cxline, .cx-frame-edge .cxline){ animation:none !important; }
+
+/* ════════════════════════════════════════════════════════════════════
+   MATERIAL PASS v4 — mastery-camo grade surfaces. Every frame's card is
+   now a crafted MATERIAL with real pattern detail (engraving, damascus
+   ripples, scales, circuitry, cracked ember obsidian, skylines…), not a
+   colour wash. Applied to every surface a frame can appear on.
+   ════════════════════════════════════════════════════════════════════ */
+/* ═══ ROYAL GILD — engraved gold plate: brushed metal, filigree lattice, facets ═══ */
+.profile-modal.cxf-gold, .locker-look.cxf-gold, .sbm-profile-prev.cxf-gold, .cx-prev-frame.cxf-gold{
+  background:
+    /* engraved diamond filigree */
+    repeating-linear-gradient(45deg, rgba(255,214,110,.16) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-45deg, rgba(255,214,110,.16) 0 1px, transparent 1px 14px),
+    /* brushed-metal grain */
+    repeating-linear-gradient(90deg, rgba(255,236,170,.05) 0 1px, transparent 1px 3px),
+    /* engraved sunburst facets radiating from the crown */
+    repeating-conic-gradient(from 0deg at 50% -10%, rgba(255,214,110,.07) 0deg 9deg, rgba(90,55,8,.1) 9deg 18deg),
+    /* gold dust */
+    radial-gradient(1.3px 1.3px at 22% 24%, rgba(255,244,200,.9) 45%, transparent 60%),
+    radial-gradient(1.3px 1.3px at 74% 60%, rgba(255,236,175,.8) 45%, transparent 60%),
+    radial-gradient(1.1px 1.1px at 48% 82%, rgba(255,244,200,.7) 45%, transparent 60%),
+    /* molten sheen + depth */
+    linear-gradient(115deg, rgba(255,222,120,.16) 0%, transparent 30%, transparent 70%, rgba(255,222,120,.16) 100%),
+    radial-gradient(130% 50% at 50% 0%, rgba(255,190,70,.3), transparent 62%),
+    linear-gradient(180deg, #241a08, #120c04) !important;
+}
+/* ═══ NEBULA — a Hubble deep field: structured clouds, a blazing hero star,
+   layered star depth and fine cosmic dust — no hard edges anywhere ═══ */
+.profile-modal.cxf-galaxy, .locker-look.cxf-galaxy, .sbm-profile-prev.cxf-galaxy, .cx-prev-frame.cxf-galaxy{
+  background:
+    /* the hero star: blazing core inside a glow halo */
+    radial-gradient(3px 3px at 26% 22%, #fff 40%, rgba(255,255,255,.9) 60%, transparent 75%),
+    radial-gradient(26px 26px at 26% 22%, rgba(200,190,255,.5), rgba(160,140,255,.18) 55%, transparent 74%),
+    /* second magnitude stars */
+    radial-gradient(2px 2px at 68% 14%, #fff 45%, transparent 62%),
+    radial-gradient(1.8px 1.8px at 88% 40%, rgba(210,230,255,.95) 45%, transparent 62%),
+    radial-gradient(2px 2px at 48% 58%, rgba(255,235,255,.9) 45%, transparent 62%),
+    radial-gradient(1.8px 1.8px at 10% 56%, rgba(255,255,255,.85) 45%, transparent 62%),
+    /* faint background field */
+    radial-gradient(1.3px 1.3px at 38% 34%, rgba(255,255,255,.6) 45%, transparent 62%),
+    radial-gradient(1.2px 1.2px at 58% 26%, rgba(255,255,255,.5) 45%, transparent 62%),
+    radial-gradient(1.3px 1.3px at 80% 74%, rgba(255,255,255,.55) 45%, transparent 62%),
+    radial-gradient(1.2px 1.2px at 18% 80%, rgba(255,255,255,.5) 45%, transparent 62%),
+    radial-gradient(1.2px 1.2px at 66% 90%, rgba(255,255,255,.45) 45%, transparent 62%),
+    radial-gradient(1.1px 1.1px at 92% 88%, rgba(255,255,255,.4) 45%, transparent 62%),
+    /* structured nebula: bright rims wrapping darker cores */
+    radial-gradient(34% 26% at 30% 40%, rgba(255,120,215,.38), rgba(255,94,200,.14) 55%, transparent 72%),
+    radial-gradient(20% 15% at 33% 43%, rgba(30,14,50,.6), transparent 75%),
+    radial-gradient(38% 30% at 74% 64%, rgba(95,201,255,.32), rgba(95,201,255,.1) 55%, transparent 72%),
+    radial-gradient(22% 17% at 71% 61%, rgba(16,20,54,.55), transparent 75%),
+    radial-gradient(42% 30% at 56% 14%, rgba(155,123,255,.36), rgba(155,123,255,.12) 55%, transparent 72%),
+    /* the milky-way band — a soft luminous river, meant to be wide */
+    linear-gradient(118deg, transparent 34%, rgba(170,150,255,.12) 46%, rgba(235,230,255,.15) 51%, rgba(140,180,255,.11) 56%, transparent 68%),
+    /* deep space with a violet floor */
+    radial-gradient(120% 60% at 50% 112%, rgba(80,50,140,.3), transparent 62%),
+    linear-gradient(180deg, #110d2a, #090714) !important;
+}
+/* ═══ NEON GRID — the Tron floor: perspective grid, horizon sun, scanlines ═══ */
+.profile-modal.cxf-neon, .locker-look.cxf-neon, .sbm-profile-prev.cxf-neon, .cx-prev-frame.cxf-neon{
+  background:
+    /* CRT scanlines */
+    repeating-linear-gradient(0deg, rgba(0,0,0,.16) 0 1px, transparent 1px 3px),
+    /* the sun on the horizon: hot core inside a magenta bloom */
+    radial-gradient(22px 18px at 50% 40%, rgba(255,230,250,.85), rgba(255,120,210,.55) 55%, transparent 74%),
+    radial-gradient(52px 40px at 50% 41%, rgba(255,94,200,.4), rgba(255,94,200,.14) 60%, transparent 76%),
+    /* converging floor grid */
+    repeating-linear-gradient(90deg, rgba(95,201,255,.22) 0 1.5px, transparent 1.5px 34px),
+    repeating-linear-gradient(0deg, transparent 0 12px, rgba(95,201,255,.2) 12px 13.5px, transparent 13.5px 30px),
+    /* sky glow */
+    radial-gradient(120% 55% at 50% 30%, rgba(255,94,200,.14), transparent 62%),
+    linear-gradient(180deg, #0d0d22 0%, #131332 44%, #0a0a18 100%) !important;
+}
+/* ═══ LIQUID — DAMASCUS STEEL: rippled forge-fold banding under iridescent oil ═══ */
+.profile-modal.cxf-liquid, .locker-look.cxf-liquid, .sbm-profile-prev.cxf-liquid, .cx-prev-frame.cxf-liquid{
+  background:
+    /* damascus ripples — two offset ring systems create the folded-steel moiré */
+    repeating-radial-gradient(circle at 28% 36%, rgba(220,230,250,.14) 0 2px, rgba(20,22,34,.16) 4px 7px, transparent 7px 12px),
+    repeating-radial-gradient(circle at 76% 68%, rgba(200,215,245,.12) 0 2px, rgba(20,22,34,.14) 4px 8px, transparent 8px 14px),
+    repeating-radial-gradient(circle at 55% 10%, rgba(235,240,255,.09) 0 3px, transparent 6px 16px),
+    /* iridescent oil film */
+    linear-gradient(125deg, rgba(181,108,255,.2), rgba(95,201,255,.16) 30%, rgba(94,255,186,.13) 55%, rgba(255,94,200,.17) 78%, rgba(181,108,255,.2)),
+    linear-gradient(180deg, #171624, #0d0c16) !important;
+}
+/* ═══ CRIMSON COURT — black marble with living blood veins ═══ */
+.profile-modal.cxf-blood, .locker-look.cxf-blood, .sbm-profile-prev.cxf-blood, .cx-prev-frame.cxf-blood{
+  background:
+    /* glowing vein web — three crossing fracture systems (self-tiling) */
+    repeating-linear-gradient(107deg, transparent 0 78px, rgba(255,51,88,.5) 78px 79.5px, transparent 79.5px 158px),
+    repeating-linear-gradient(64deg, transparent 0 96px, rgba(255,51,88,.36) 96px 97px, transparent 97px 193px),
+    repeating-linear-gradient(-48deg, transparent 0 118px, rgba(200,20,50,.4) 118px 119px, transparent 119px 237px),
+    /* marble mottling */
+    radial-gradient(40% 32% at 24% 30%, rgba(255,255,255,.045), transparent 70%),
+    radial-gradient(36% 30% at 74% 64%, rgba(255,255,255,.035), transparent 70%),
+    radial-gradient(30% 26% at 50% 88%, rgba(255,60,90,.08), transparent 70%),
+    /* candle-blood ambience */
+    radial-gradient(130% 52% at 50% 0%, rgba(255,51,88,.2), transparent 60%),
+    linear-gradient(180deg, #16090e, #0c0507) !important;
+}
+/* ═══ CIRCUIT — a dense motherboard: traces, solder pads, via dots ═══ */
+.profile-modal.cxf-circuit, .locker-look.cxf-circuit, .sbm-profile-prev.cxf-circuit, .cx-prev-frame.cxf-circuit{
+  background:
+    /* solder pad glints */
+    radial-gradient(2.6px 2.6px at 18% 28%, rgba(120,255,220,.7) 45%, transparent 65%),
+    radial-gradient(2.2px 2.2px at 56% 64%, rgba(120,255,220,.55) 45%, transparent 65%),
+    radial-gradient(2.6px 2.6px at 82% 36%, rgba(120,255,220,.6) 45%, transparent 65%),
+    radial-gradient(2.2px 2.2px at 34% 86%, rgba(120,255,220,.5) 45%, transparent 65%),
+    /* fine trace grid + main buses */
+    repeating-linear-gradient(90deg, rgba(34,211,163,.13) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(0deg, rgba(34,211,163,.11) 0 1px, transparent 1px 10px),
+    repeating-linear-gradient(90deg, rgba(34,211,163,.3) 0 1.5px, transparent 1.5px 84px),
+    repeating-linear-gradient(0deg, rgba(34,211,163,.26) 0 1.5px, transparent 1.5px 68px),
+    /* solder-mask sheen */
+    radial-gradient(120% 55% at 50% 0%, rgba(34,211,163,.16), transparent 62%),
+    linear-gradient(180deg, #07130f, #050c09) !important;
+}
+/* ═══ GOLDEN HOUR — layered dusk: haze bands over rolling silhouette hills ═══ */
+.profile-modal.cxf-sunset, .locker-look.cxf-sunset, .sbm-profile-prev.cxf-sunset, .cx-prev-frame.cxf-sunset{
+  background:
+    /* far + near silhouette hills */
+    radial-gradient(60% 34% at 18% 104%, #140a08 42%, transparent 63%),
+    radial-gradient(70% 40% at 78% 108%, #170c09 45%, transparent 66%),
+    radial-gradient(90% 30% at 45% 112%, #0f0706 48%, transparent 70%),
+    /* drifting haze bands */
+    linear-gradient(4deg, transparent 30%, rgba(255,150,90,.12) 38%, transparent 46%, transparent 55%, rgba(255,110,130,.1) 62%, transparent 70%),
+    /* dusk sky gradient with sun glow */
+    radial-gradient(60% 42% at 50% 34%, rgba(255,190,110,.4), rgba(255,120,94,.18) 55%, transparent 74%),
+    linear-gradient(180deg, #2a1420 0%, #3a1a22 34%, #241016 68%, #120a0c 100%) !important;
+}
+/* ═══ JADE COURT — carved jade: fish-scale relief with a polished gloss ═══ */
+.profile-modal.cxf-emerald, .locker-look.cxf-emerald, .sbm-profile-prev.cxf-emerald, .cx-prev-frame.cxf-emerald{
+  background:
+    /* carved concentric ripples — jade turned on the lathe */
+    repeating-radial-gradient(circle at 50% -30%, rgba(56,230,160,.16) 0 2px, transparent 5px 22px),
+    repeating-radial-gradient(circle at 50% 130%, rgba(120,255,210,.1) 0 2px, transparent 5px 26px),
+    /* stone grain */
+    repeating-linear-gradient(78deg, rgba(214,255,240,.03) 0 2px, transparent 2px 7px),
+    /* polished gloss + inner light */
+    radial-gradient(80% 45% at 50% 0%, rgba(120,255,210,.16), transparent 64%),
+    radial-gradient(60% 40% at 50% 100%, rgba(15,107,74,.4), transparent 66%),
+    linear-gradient(180deg, #0c221a, #071510) !important;
+}
+/* ═══ AURORA — the full arctic scene: curtains over a mountain ridge + moon ═══ */
+.profile-modal.cxf-aurora, .locker-look.cxf-aurora, .sbm-profile-prev.cxf-aurora, .cx-prev-frame.cxf-aurora{
+  background:
+    /* snow-capped ridge line across the base */
+    radial-gradient(34% 20% at 12% 106%, #0a1226 46%, transparent 62%),
+    radial-gradient(30% 24% at 38% 108%, #0b142c 48%, transparent 64%),
+    radial-gradient(36% 22% at 66% 106%, #091124 46%, transparent 62%),
+    radial-gradient(30% 26% at 92% 108%, #0b142c 48%, transparent 64%),
+    /* the moon */
+    radial-gradient(9px 9px at 82% 16%, rgba(240,248,255,.95) 35%, rgba(200,225,255,.35) 60%, transparent 75%),
+    /* flowing aurora curtains */
+    linear-gradient(96deg, transparent 3%, rgba(60,240,190,.5) 11%, transparent 21%, transparent 39%, rgba(130,240,205,.4) 47%, transparent 57%, transparent 71%, rgba(60,240,190,.46) 79%, transparent 89%),
+    linear-gradient(84deg, transparent 0%, rgba(165,110,255,.46) 9%, transparent 19%, transparent 53%, rgba(255,120,215,.4) 62%, transparent 73%, transparent 91%, rgba(120,185,255,.36) 98%),
+    /* starfield */
+    radial-gradient(1.4px 1.4px at 12% 11%, rgba(255,255,255,.95), transparent 60%),
+    radial-gradient(1.4px 1.4px at 44% 8%, rgba(255,255,255,.9), transparent 60%),
+    radial-gradient(1.4px 1.4px at 70% 24%, rgba(255,255,255,.85), transparent 60%),
+    radial-gradient(1.1px 1.1px at 28% 34%, rgba(255,255,255,.6), transparent 60%),
+    radial-gradient(1.1px 1.1px at 90% 40%, rgba(255,255,255,.55), transparent 60%),
+    radial-gradient(1.1px 1.1px at 56% 48%, rgba(255,255,255,.5), transparent 60%),
+    /* glow pools + deep sky */
+    radial-gradient(120% 85% at 22% -6%, rgba(52,235,180,.32), transparent 62%),
+    radial-gradient(120% 85% at 82% 10%, rgba(150,100,255,.28), transparent 62%),
+    linear-gradient(180deg, #06122c 0%, #0b1638 45%, #0a0e24 100%) !important;
+  background-size:auto, auto, auto, auto, auto, 200% 100%, 200% 100%, auto, auto, auto, auto, auto, auto, auto, auto, 100% 100% !important;
+  background-repeat:no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat, no-repeat !important;
+  animation:cxfAuroraCardV4 8s linear infinite, cxfAuroraHue 9s linear infinite !important;
+}
+@keyframes cxfAuroraCardV4{
+  from{ background-position:0 0, 0 0, 0 0, 0 0, 0 0, 0% 0, 0% 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+  to{   background-position:0 0, 0 0, 0 0, 0 0, 0 0, -200% 0, 200% 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 0 0; }
+}
+/* ═══ HOLOGRAPHIC — diffraction foil: dense rainbow grating + facet quadrants ═══ */
+.profile-modal.cxf-hologram, .locker-look.cxf-hologram, .sbm-profile-prev.cxf-hologram, .cx-prev-frame.cxf-hologram{
+  background:
+    /* fine diffraction grating */
+    repeating-linear-gradient(115deg, rgba(95,201,255,.14) 0 1px, rgba(255,94,200,.12) 2px 3px, rgba(94,255,186,.1) 4px 5px, transparent 5px 9px),
+    /* foil facet pinwheel radiating from the seal point */
+    repeating-conic-gradient(from 30deg at 34% 38%, rgba(95,201,255,.07) 0deg 24deg, rgba(255,94,200,.07) 24deg 48deg, rgba(94,255,186,.05) 48deg 72deg, rgba(181,108,255,.07) 72deg 96deg),
+    /* sweeping sheen */
+    linear-gradient(135deg, rgba(95,201,255,.12), rgba(181,108,255,.1) 50%, rgba(255,94,200,.12)),
+    linear-gradient(180deg, #14141e, #0d0d15) !important;
+}
+/* ═══ CARBON FIBER — 2×2 twill weave with a gloss coat (red racing stripes
+   live on the banner overlay) ═══ */
+.profile-modal.cxf-carbon, .locker-look.cxf-carbon, .sbm-profile-prev.cxf-carbon, .cx-prev-frame.cxf-carbon{
+  background:
+    /* twill weave — alternating warp/weft blocks */
+    repeating-linear-gradient(45deg, #23262e 0 4px, #191c23 4px 8px),
+    repeating-linear-gradient(-45deg, rgba(255,255,255,.09) 0 1px, transparent 1px 4px, rgba(0,0,0,.32) 4px 5px, transparent 5px 8px),
+    /* clear-coat gloss */
+    radial-gradient(120% 60% at 30% 0%, rgba(255,255,255,.09), transparent 58%),
+    radial-gradient(90% 40% at 70% 105%, rgba(255,59,48,.08), transparent 60%),
+    linear-gradient(180deg, #16181d, #0e1013) !important;
+}
+/* ═══ TOTAL ECLIPSE — the dark sky: star scatter + double corona ring + scorched ground ═══ */
+.profile-modal.cxf-eclipse, .locker-look.cxf-eclipse, .sbm-profile-prev.cxf-eclipse, .cx-prev-frame.cxf-eclipse{
+  background:
+    /* the eclipse disc: black core, twin corona rings */
+    radial-gradient(46px 46px at 50% 26%, #050308 0 38%, rgba(255,150,60,.9) 42% 45%, rgba(255,220,150,.55) 46% 48%, rgba(255,120,40,.28) 52% 58%, transparent 66%),
+    radial-gradient(70px 70px at 50% 26%, transparent 58%, rgba(255,150,60,.16) 64% 68%, transparent 76%),
+    /* stars */
+    radial-gradient(1.5px 1.5px at 14% 18%, rgba(255,230,190,.85) 45%, transparent 60%),
+    radial-gradient(1.3px 1.3px at 34% 40%, rgba(255,210,160,.6) 45%, transparent 60%),
+    radial-gradient(1.5px 1.5px at 80% 14%, rgba(255,230,190,.8) 45%, transparent 60%),
+    radial-gradient(1.3px 1.3px at 90% 52%, rgba(255,210,160,.55) 45%, transparent 60%),
+    radial-gradient(1.3px 1.3px at 8% 62%, rgba(255,210,160,.5) 45%, transparent 60%),
+    /* scorched ground haze */
+    radial-gradient(130% 40% at 50% 108%, rgba(120,50,10,.4), transparent 64%),
+    linear-gradient(180deg, #120806, #080404) !important;
+}
+/* ═══ STORMFRONT — the supercell: boiling clouds, sheet rain, drowned city lights ═══ */
+.profile-modal.cxf-stormfront, .locker-look.cxf-stormfront, .sbm-profile-prev.cxf-stormfront, .cx-prev-frame.cxf-stormfront{
+  background:
+    /* sheet rain */
+    repeating-linear-gradient(105deg, transparent 0 9px, rgba(160,205,255,.07) 9px 10px, transparent 10px 21px),
+    repeating-linear-gradient(102deg, transparent 0 14px, rgba(130,180,235,.05) 14px 15px, transparent 15px 29px),
+    /* boiling cloud deck */
+    radial-gradient(34% 26% at 16% 8%, rgba(78,104,142,.6), transparent 70%),
+    radial-gradient(30% 24% at 44% 2%, rgba(60,84,118,.65), transparent 68%),
+    radial-gradient(36% 28% at 74% 8%, rgba(78,104,142,.55), transparent 70%),
+    radial-gradient(30% 22% at 96% 4%, rgba(60,84,118,.5), transparent 68%),
+    /* distant city lights through the rain */
+    radial-gradient(2px 1.4px at 20% 88%, rgba(255,220,150,.5) 45%, transparent 65%),
+    radial-gradient(2px 1.4px at 38% 90%, rgba(160,220,255,.42) 45%, transparent 65%),
+    radial-gradient(2px 1.4px at 62% 89%, rgba(255,220,150,.44) 45%, transparent 65%),
+    radial-gradient(2px 1.4px at 82% 91%, rgba(160,220,255,.4) 45%, transparent 65%),
+    linear-gradient(180deg, #131c2e 0%, #0f1626 46%, #090d18 100%) !important;
+}
+/* ═══ CHAMPION'S BLAZE — ember-cracked obsidian: charred stone, glowing fissures ═══ */
+.profile-modal.cxf-champion, .locker-look.cxf-champion, .sbm-profile-prev.cxf-champion, .cx-prev-frame.cxf-champion{
+  background:
+    /* glowing fissure web — three crossing crack systems (self-tiling) */
+    repeating-linear-gradient(99deg, transparent 0 68px, rgba(255,140,66,.65) 68px 69.5px, transparent 69.5px 141px),
+    repeating-linear-gradient(38deg, transparent 0 88px, rgba(255,100,30,.5) 88px 89.5px, transparent 89.5px 179px),
+    repeating-linear-gradient(-62deg, transparent 0 104px, rgba(255,170,80,.45) 104px 105px, transparent 105px 211px),
+    /* charred stone mottling */
+    radial-gradient(30% 24% at 26% 36%, rgba(40,28,24,.55), transparent 70%),
+    radial-gradient(26% 22% at 66% 58%, rgba(30,20,17,.6), transparent 70%),
+    radial-gradient(24% 20% at 44% 82%, rgba(36,25,21,.5), transparent 70%),
+    /* under-heat */
+    radial-gradient(130% 46% at 50% 110%, rgba(255,110,30,.42), transparent 64%),
+    radial-gradient(120% 40% at 50% -4%, rgba(255,140,66,.14), transparent 60%),
+    linear-gradient(180deg, #170d08, #0b0604) !important;
+}
+/* ═══ LEGEND'S HALO — the interstellar sea: prism grating over a star ocean ═══ */
+.profile-modal.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend, .cx-prev-frame.cxf-legend{
+  background:
+    /* fine prism grating */
+    repeating-linear-gradient(100deg, rgba(255,211,110,.09) 0 1px, rgba(255,122,217,.08) 2px 3px, rgba(164,139,255,.08) 4px 5px, rgba(95,201,255,.07) 6px 7px, transparent 7px 12px),
+    /* star ocean */
+    radial-gradient(2px 2px at 16% 22%, #fff 45%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 38% 12%, rgba(255,240,255,.9) 45%, transparent 60%),
+    radial-gradient(2px 2px at 64% 30%, #fff 45%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 86% 18%, rgba(240,250,255,.85) 45%, transparent 60%),
+    radial-gradient(1.4px 1.4px at 26% 56%, rgba(255,255,255,.7) 45%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 74% 62%, rgba(255,230,250,.75) 45%, transparent 60%),
+    radial-gradient(1.4px 1.4px at 48% 84%, rgba(255,255,255,.6) 45%, transparent 60%),
+    /* iridescent bands */
+    linear-gradient(115deg, rgba(255,211,110,.2), rgba(255,122,217,.18) 30%, rgba(164,139,255,.18) 55%, rgba(95,201,255,.16) 78%, rgba(255,211,110,.2)),
+    radial-gradient(130% 55% at 50% 0%, rgba(255,150,220,.16), transparent 62%),
+    linear-gradient(180deg, #1a1026, #0e0815) !important;
+}
+/* ═══ CRIMSON REGALIA — royal damask: gold-thread lattice on crushed velvet ═══ */
+.profile-modal.cxf-regalia, .locker-look.cxf-regalia, .sbm-profile-prev.cxf-regalia, .cx-prev-frame.cxf-regalia{
+  background:
+    /* gold-thread damask lattice */
+    repeating-linear-gradient(45deg, rgba(255,214,110,.14) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(-45deg, rgba(255,214,110,.14) 0 1px, transparent 1px 22px),
+    /* gold-thread pinstripe weave between the lattice */
+    repeating-linear-gradient(0deg, rgba(255,214,110,.05) 0 1px, transparent 1px 11px),
+    /* crushed velvet mottling */
+    radial-gradient(36% 30% at 26% 32%, rgba(255,70,110,.12), transparent 70%),
+    radial-gradient(40% 34% at 74% 60%, rgba(180,20,50,.16), transparent 70%),
+    radial-gradient(32% 26% at 48% 86%, rgba(255,70,110,.1), transparent 70%),
+    /* throne-room light */
+    radial-gradient(130% 52% at 50% 0%, rgba(255,51,88,.22), transparent 60%),
+    linear-gradient(180deg, #1e0a12, #100609) !important;
+}
+/* ═══ MASTER'S DOMINION — the galactic wheel: spiral arms, facets, star dust ═══ */
+.profile-modal.cxf-dominion, .locker-look.cxf-dominion, .sbm-profile-prev.cxf-dominion, .cx-prev-frame.cxf-dominion{
+  background:
+    /* the spiral galaxy, seen from above */
+    conic-gradient(from 40deg at 50% 30%, transparent 0deg, rgba(255,211,110,.22) 40deg, transparent 90deg, rgba(255,122,217,.2) 140deg, transparent 190deg, rgba(164,139,255,.22) 240deg, transparent 290deg, rgba(95,201,255,.18) 330deg, transparent 360deg),
+    radial-gradient(10px 10px at 50% 30%, rgba(255,244,214,.85), rgba(255,211,110,.3) 60%, transparent 78%),
+    /* iridescent facet rays fanning from the wheel */
+    repeating-conic-gradient(from 15deg at 50% 30%, rgba(255,211,110,.05) 0deg 20deg, rgba(164,139,255,.06) 20deg 40deg, rgba(95,201,255,.045) 40deg 60deg),
+    /* star dust */
+    radial-gradient(1.6px 1.6px at 18% 26%, #fff 45%, transparent 60%),
+    radial-gradient(1.4px 1.4px at 78% 20%, rgba(255,255,255,.85) 45%, transparent 60%),
+    radial-gradient(1.4px 1.4px at 32% 66%, rgba(255,255,255,.65) 45%, transparent 60%),
+    radial-gradient(1.6px 1.6px at 68% 82%, rgba(255,255,255,.7) 45%, transparent 60%),
+    linear-gradient(180deg, #191128, #0d0916) !important;
+}
+/* ═══ THE HOARD — dragon-scale hide over a mountain of coins ═══ */
+.profile-modal.cxf-hoard, .locker-look.cxf-hoard, .sbm-profile-prev.cxf-hoard, .cx-prev-frame.cxf-hoard{
+  background:
+    /* coin glints scattered across the pile */
+    radial-gradient(3px 3px at 14% 90%, #fff6d8 30%, rgba(255,214,110,.85) 55%, transparent 74%),
+    radial-gradient(2.4px 2.4px at 30% 94%, rgba(255,228,150,.9) 45%, transparent 70%),
+    radial-gradient(3px 3px at 48% 91%, #fff2c4 30%, rgba(255,200,90,.8) 55%, transparent 74%),
+    radial-gradient(2.4px 2.4px at 66% 95%, rgba(255,228,150,.85) 45%, transparent 70%),
+    radial-gradient(3px 3px at 84% 90%, #fff6d8 30%, rgba(255,214,110,.8) 55%, transparent 74%),
+    radial-gradient(2.2px 2.2px at 22% 82%, rgba(255,220,130,.6) 45%, transparent 70%),
+    radial-gradient(2.2px 2.2px at 58% 84%, rgba(255,220,130,.55) 45%, transparent 70%),
+    radial-gradient(2.2px 2.2px at 90% 82%, rgba(255,220,130,.5) 45%, transparent 70%),
+    /* the mound of treasure rising from the base */
+    radial-gradient(60% 26% at 30% 108%, rgba(120,70,15,.75), transparent 66%),
+    radial-gradient(64% 30% at 72% 110%, rgba(140,85,20,.7), transparent 68%),
+    /* dragon-hide ripple (self-tiling scallop arcs) */
+    repeating-radial-gradient(circle at 50% -40%, rgba(255,150,50,.1) 0 3px, rgba(60,20,4,.22) 6px 10px, transparent 10px 30px),
+    /* treasure-light from below */
+    radial-gradient(130% 46% at 50% 112%, rgba(255,176,64,.4), transparent 64%),
+    linear-gradient(180deg, #1c0f06, #0e0703) !important;
+}
+/* ═══ NIGHT CITY — neon-soaked night: rain, tower glow pockets, wet street
+   mirror (the lit skyline itself lives on the banner overlay) ═══ */
+.profile-modal.cxf-nightcity, .locker-look.cxf-nightcity, .sbm-profile-prev.cxf-nightcity, .cx-prev-frame.cxf-nightcity{
+  background:
+    /* rain, two angles */
+    repeating-linear-gradient(103deg, transparent 0 11px, rgba(150,240,255,.055) 11px 12px, transparent 12px 23px),
+    repeating-linear-gradient(100deg, transparent 0 17px, rgba(120,200,245,.04) 17px 18px, transparent 18px 35px),
+    /* far tower light pockets glowing through the haze */
+    radial-gradient(9% 26% at 16% 78%, rgba(0,229,255,.22), transparent 72%),
+    radial-gradient(7% 20% at 30% 82%, rgba(255,54,200,.18), transparent 72%),
+    radial-gradient(9% 24% at 54% 80%, rgba(125,249,255,.16), transparent 72%),
+    radial-gradient(7% 22% at 72% 83%, rgba(255,54,200,.2), transparent 72%),
+    radial-gradient(8% 24% at 88% 79%, rgba(0,229,255,.18), transparent 72%),
+    /* wet street reflection */
+    linear-gradient(180deg, transparent 84%, rgba(0,229,255,.12) 88%, rgba(255,54,200,.14) 94%, rgba(0,229,255,.08) 100%),
+    /* neon sky haze */
+    radial-gradient(130% 48% at 50% 0%, rgba(0,229,255,.16), transparent 60%),
+    radial-gradient(110% 40% at 50% 86%, rgba(255,54,200,.2), transparent 62%),
+    linear-gradient(180deg, #0a1018 0%, #0a0d16 60%, #070810 100%) !important;
+}
+/* ═══ THE STARFORGE — hot forged starmetal: grain, heat bloom, spark shower ═══ */
+.profile-modal.cxf-starforge, .locker-look.cxf-starforge, .sbm-profile-prev.cxf-starforge, .cx-prev-frame.cxf-starforge{
+  background:
+    /* hammered metal grain + anvil-strike rays */
+    repeating-linear-gradient(12deg, rgba(255,255,255,.045) 0 1px, transparent 1px 5px),
+    repeating-conic-gradient(from 60deg at 50% 44%, rgba(255,211,110,.06) 0deg 16deg, rgba(28,24,38,.24) 16deg 32deg, rgba(164,139,255,.05) 32deg 48deg, rgba(22,18,32,.24) 48deg 64deg),
+    /* spark shower */
+    radial-gradient(2.2px 2.2px at 24% 38%, #fff 40%, rgba(255,211,110,.7) 58%, transparent 74%),
+    radial-gradient(1.8px 1.8px at 42% 60%, rgba(255,233,176,.9) 45%, transparent 66%),
+    radial-gradient(2.2px 2.2px at 62% 34%, #fff 40%, rgba(255,150,220,.65) 58%, transparent 74%),
+    radial-gradient(1.8px 1.8px at 80% 56%, rgba(216,242,255,.85) 45%, transparent 66%),
+    /* white-hot heart of the forge */
+    radial-gradient(50% 34% at 50% 44%, rgba(255,220,150,.3), rgba(255,140,80,.12) 58%, transparent 74%),
+    /* aurora tempering colours */
+    linear-gradient(115deg, rgba(255,211,110,.14), rgba(255,122,217,.12) 30%, rgba(164,139,255,.13) 55%, rgba(95,201,255,.11) 78%, rgba(255,211,110,.14)),
+    linear-gradient(180deg, #161020, #0c0812) !important;
+}
 body.reduced-motion :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quantum::before, .cxa-supernova::before, .cxa-supernova::after),
 body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quantum::before, .cxa-supernova::before, .cxa-supernova::after){ animation:none !important; }
 
@@ -18448,7 +19723,6 @@ body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quant
 
 /* ── CASE INVENTORY (shop section) ── */
 .shop-sec-cases .shop-slab::before{ background:linear-gradient(180deg, #ff2d6b, #b56cff); }
-.shop-sec-bundles .shop-slab::before{ background:linear-gradient(180deg, #ffd36e, #ff7ad9); }
 .case-inv-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(172px, 1fr)); gap:16px; }
 .case-card{
   position:relative; isolation:isolate; display:flex; flex-direction:column; align-items:center; gap:11px; cursor:pointer;
@@ -19090,6 +20364,7 @@ body.low-power :is(.case-card, .case-card::before, .case-card-glow, .case-detail
     <symbol id="i-sound-off" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M11 5 6 9H2v6h4l5 4V5zM22 9l-6 6M16 9l6 6"/></symbol>
     <symbol id="i-flag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V15"/></symbol>
     <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
     <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
     <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.48 12c0-.73.13-1.44.36-2.1V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></symbol>
     <!-- Additional Lucide icons used in the redesign -->
@@ -19208,6 +20483,7 @@ body.low-power :is(.case-card, .case-card::before, .case-card-glow, .case-detail
       <button class="nav-item active" data-nav="home"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></button>
       <button class="nav-item" data-nav="play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg><span>Play</span></button>
       <button class="nav-item" data-nav="shop"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg><span>Shop</span><span class="nav-badge nav-shop-new" id="navShopBadge" style="display:none;">NEW</span></button>
+      <button class="nav-item" data-nav="locker"><svg viewBox="0 0 24 24"><use href="#i-gem"/></svg><span>Locker</span></button>
       <button class="nav-item" data-nav="activity"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg><span>Activity</span></button>
       <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
@@ -19298,7 +20574,7 @@ body.low-power :is(.case-card, .case-card::before, .case-card-glow, .case-detail
     <button class="mobile-nav-item" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
     <button class="mobile-nav-item mni-play" data-mnav="play" aria-label="Play"><span class="mni-play-btn"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
     <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
-    <button class="mobile-nav-item mni-you" data-mnav="settings"><span class="mni-badge mni-prestige" id="mnavPrestigeDot" style="display:none;">✦</span><span class="mni-icon"><span class="mni-av" id="mnavAv">?</span></span><span>You</span></button>
+    <button class="mobile-nav-item mni-more" data-mnav="settings" aria-label="More"><span class="mni-badge mni-prestige" id="mnavPrestigeDot" style="display:none;">✦</span><span class="mni-badge mni-more-dot" id="mnavMoreDot" style="display:none;"></span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg></span><span>More</span></button>
   </nav>
 
   <!-- ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== -->
@@ -19330,9 +20606,11 @@ body.low-power :is(.case-card, .case-card::before, .case-card-glow, .case-detail
         <!-- Explore — destinations that AREN'T already on the bottom bar -->
         <div class="ms-section-label">Explore</div>
         <div class="ms-grid">
-          <button class="ms-tile" data-act="shop"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg></span><span>Shop</span></button>
-          <button class="ms-tile" data-act="activity"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
+          <button class="ms-tile" data-act="shop"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg></span><span>Shop</span><span class="ms-tile-badge ms-new" id="msShopBadge" style="display:none;">NEW</span></button>
+          <button class="ms-tile" data-act="locker"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-gem"/></svg></span><span>Locker</span></button>
+          <button class="ms-tile" data-act="rank"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
           <button class="ms-tile" data-act="achievements"><span class="ms-tile-badge ms-prestige" id="msAchBadge" style="display:none;">✦</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
+          <button class="ms-tile" data-act="activity"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
           <button class="ms-tile" data-act="chat"><span class="ms-tile-badge" id="msChatBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span>Messages</span></button>
         </div>
 
@@ -20203,15 +21481,6 @@ const FIREBASE_CONFIG = {
             <div class="case-inv-grid" id="caseInventoryGrid"></div>
           </section>
 
-          <section class="shop-sec shop-sec-bundles" id="shopSecBundles" data-sec="bundles" data-sec-label="Bundles">
-            <div class="shop-slab">
-              <span class="shop-slab-title">BUNDLES</span>
-              <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-gem"/></svg> COMPLETE LOOKS</span>
-            </div>
-            <p class="shop-coins-sub">Full matching sets — name, tag, avatar ring and profile frame designed to be worn together. Every piece is <b style="color:#ffd45e">bundle-exclusive</b>: it can never appear in the shop or drop from a case. Tap any piece to preview it.</p>
-            <div class="bundle-grid" id="shopBundles"></div>
-          </section>
-
           <section class="shop-sec shop-sec-coins" id="shopSecCoins" data-sec="coins" data-sec-label="RoshCoins">
             <div class="shop-slab">
               <span class="shop-slab-title">ROSHCOINS</span>
@@ -20229,7 +21498,6 @@ const FIREBASE_CONFIG = {
           <button type="button" class="shop-rail-item active" data-rail="featured"><i class="sri-dot"></i><span class="sri-label">Featured</span></button>
           <button type="button" class="shop-rail-item" data-rail="daily"><i class="sri-dot"></i><span class="sri-label">Daily items</span></button>
           <button type="button" class="shop-rail-item" data-rail="cases"><i class="sri-dot"></i><span class="sri-label">Cases</span></button>
-          <button type="button" class="shop-rail-item" data-rail="bundles"><i class="sri-dot"></i><span class="sri-label">Bundles</span></button>
           <button type="button" class="shop-rail-item sri-coins" data-rail="coins"><i class="sri-dot"></i><span class="sri-label">RoshCoins</span></button>
         </nav>
 
@@ -20261,26 +21529,16 @@ const FIREBASE_CONFIG = {
         </div>
       </div>
 
-      <!-- BUNDLE CHECKOUT -->
-      <div class="modal-bg" id="bundleCheckoutModal">
-        <div class="modal bundle-checkout" id="bundleCheckoutCard">
-          <button class="modal-close" data-close="bundleCheckoutModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-          <div class="bck-stage" id="bckStage" aria-hidden="true"><span class="bck-stage-fx"></span></div>
-          <div class="bck-eyebrow">COMPLETE LOOK · 4 EXCLUSIVES</div>
-          <div class="bck-name" id="bckName">—</div>
-          <div class="bck-tagline" id="bckTagline">—</div>
-          <div class="bck-items" id="bckItems"></div>
-          <div class="cck-rows">
-            <div class="cck-row"><span>Bundle</span><b id="bckBundle">—</b></div>
-            <div class="cck-row"><span>Contents</span><b>Name style · Tag · Avatar ring · Frame</b></div>
-            <div class="cck-row cck-total"><span>Total</span><b id="bckPrice">—</b></div>
+      <!-- ============ PAGE: LOCKER ============ -->
+      <div class="nav-page" data-page="locker">
+        <div class="page-header lk-header">
+          <div>
+            <h2 class="page-title">LOCKER</h2>
+            <p class="page-subtitle">Your collection. Equip a name style, tag, avatar ring and profile frame to build your look.</p>
           </div>
-          <button class="btn btn-primary cck-pay" id="bckPayBtn">
-            <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-gem"/></svg>
-            <span id="bckPayLabel">Checkout</span>
-          </button>
-          <p class="cck-note">Secure card checkout powered by Stripe — you'll be redirected to pay. All four pieces land in your locker instantly after payment.</p>
+          <button type="button" class="btn lk-shop-btn" data-nav-to="shop"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-shop"/></svg> Item Shop</button>
         </div>
+        <div id="lockerHost"></div>
       </div>
 
       <!-- ============ PAGE: ACTIVITY ============ -->
@@ -22288,13 +23546,26 @@ const FIREBASE_CONFIG = {
     <!-- COVER — rank/accent tinted, frame-decorated -->
     <div class="pm-banner" id="pmBanner"><svg class="pm-banner-mark" id="pmBannerMark" viewBox="0 0 24 24"></svg></div>
 
-    <!-- FLOATING HEAD: avatar (presence + level pip) · level ring · actions -->
-    <div class="pm3-head">
-      <div class="pm-av-wrap">
-        <div class="av-xl" id="pmAv">?</div>
-        <span class="pm-av-ring" id="pmAvRing"></span>
-        <span class="pm-av-lvl" id="pmAvLvl">1</span>
-        <span class="pm3-presence" id="pmPresence" title="offline"></span>
+    <!-- TOP BAR: identity (avatar + name + chips) left · actions + stat strip right -->
+    <div class="pm3-topbar">
+      <div class="pm3-idrow">
+        <div class="pm-av-wrap">
+          <div class="av-xl" id="pmAv">?</div>
+          <span class="pm-av-ring" id="pmAvRing"></span>
+          <span class="pm-av-lvl" id="pmAvLvl">1</span>
+          <span class="pm3-presence" id="pmPresence" title="offline"></span>
+        </div>
+        <div class="pm3-identity">
+          <div class="pm-name" id="pmName">— <svg class="rank-mini" id="pmRankMini"></svg></div>
+          <div class="pm-sub" id="pmSub">—</div>
+          <div class="pm-title-row" id="pmTitleRow">
+            <span class="pm-title" id="pmTitle">Rookie</span>
+            <span class="pm-prestige" id="pmPrestige" style="display:none;">✦ PRESTIGE 1</span>
+            <span class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></span>
+          </div>
+          <div class="pm-status" id="pmStatus" style="display:none;">—</div>
+          <div class="pm-lastseen" id="pmLastSeen"></div>
+        </div>
       </div>
       <div class="pm3-head-actions" id="pmActions">
         <button class="btn btn-mint" id="pmChallengeBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-sword"/></svg> Challenge</button>
@@ -22303,30 +23574,29 @@ const FIREBASE_CONFIG = {
         <button class="btn" id="pmMessageBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Message</button>
         <button class="btn" id="pmShareBtn"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-send"/></svg> Share</button>
         <button class="btn btn-danger" id="pmBlockBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block</button>
+        <button class="btn btn-danger" id="pmReportBtn" style="display:none;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-flag"/></svg> Report</button>
       </div>
     </div>
 
-    <!-- IDENTITY CARD -->
-    <div class="pm3-card pm3-identity">
-      <div class="pm-name" id="pmName">— <svg class="rank-mini" id="pmRankMini"></svg></div>
-      <div class="pm-sub" id="pmSub">—</div>
-      <div class="pm-title-row" id="pmTitleRow">
-        <span class="pm-level-badge" id="pmLevelBadge">1</span>
-        <span class="pm-title" id="pmTitle">Rookie</span>
-        <span class="pm-prestige" id="pmPrestige" style="display:none;">✦ PRESTIGE 1</span>
-        <span class="pm-rating"><svg id="pmRankIcon"></svg> <span id="pmRankName">Bronze I</span> · <span id="pmRating">1000</span></span>
-      </div>
-      <div class="pm-status" id="pmStatus" style="display:none;">—</div>
-      <div class="pm-lastseen" id="pmLastSeen"></div>
+    <!-- STAT STRIP — its own full-width row so nothing wraps into the top bar -->
+    <div class="pm3-hstats">
+      <div class="hstat w"><span class="hstat-ic w"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-trophy"/></svg></span><span class="hstat-txt"><b id="pmHWins">0</b><i>Wins</i></span></div>
+      <div class="hstat l"><span class="hstat-ic l"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-close"/></svg></span><span class="hstat-txt"><b id="pmHLosses">0</b><i>Losses</i></span></div>
+      <div class="hstat r"><span class="hstat-ic r"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-target"/></svg></span><span class="hstat-txt"><b id="pmHWinrate">0%</b><i>Win rate</i></span></div>
+      <div class="hstat s"><span class="hstat-ic s"><svg viewBox="0 0 24 24" width="16" height="16" data-anim="flicker"><use href="#i-flame"/></svg></span><span class="hstat-txt"><b id="pmHStreak">0</b><i>Best streak</i></span></div>
     </div>
 
+    <!-- BODY: left rail nav + content -->
+    <div class="pm3-body">
     <!-- TABS -->
     <div class="pm3-tabs" role="tablist">
-      <button class="pm3-tab active" data-pmtab="overview" role="tab"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-home"/></svg> Overview</button>
-      <button class="pm3-tab" data-pmtab="matches" role="tab"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-swords"/></svg> Matches</button>
-      <button class="pm3-tab" data-pmtab="comments" role="tab"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Comments</button>
+      <button class="pm3-tab active" data-pmtab="overview" role="tab"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-home"/></svg> <span>Overview</span></button>
+      <button class="pm3-tab" data-pmtab="matches" role="tab"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-swords"/></svg> <span>Matches</span></button>
+      <button class="pm3-tab" data-pmtab="comments" role="tab"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-message"/></svg> <span>Comments</span></button>
+      <div class="pm3-since" id="pmMemberSince"></div>
     </div>
 
+    <div class="pm3-panes">
     <!-- PANE: OVERVIEW -->
     <div class="pm3-pane" data-pmpane="overview">
       <div class="pm3-card pm3-about" id="pmAboutCard" style="display:none;">
@@ -22335,40 +23605,52 @@ const FIREBASE_CONFIG = {
       </div>
       <!-- Showcase — up to 3 featured badges  -->
       <div class="pm-showcase" id="pmShowcase" style="display:none;"></div>
-      <div class="pm-stats">
-        <div class="pm-stat"><div class="v" id="pmWins">0</div><div class="l">wins</div></div>
-        <div class="pm-stat"><div class="v" id="pmLosses">0</div><div class="l">losses</div></div>
-        <div class="pm-stat"><div class="v" id="pmGames">0</div><div class="l">games</div></div>
-        <div class="pm-stat"><div class="v" id="pmStreak">0</div><div class="l">best streak</div></div>
+
+      <!-- Progress & Level + Highlights, side by side -->
+      <div class="pm3-cardrow">
+        <div class="pm3-card pm3-progress">
+          <h4>Progress &amp; Level</h4>
+          <div class="pm3-prog-body">
+            <div class="pm3-levelcol">
+              <span class="pm-level-badge pm3-lvl-hex" id="pmLevelBadge">1</span>
+              <span class="pm3-lvl-name" id="pmLevelTitle">Rookie</span>
+            </div>
+            <div class="pm3-prog-main">
+              <div class="pm-level-bar-top">
+                <span id="pmLevelXpText">0 / 200 XP</span>
+                <span class="pm3-next" id="pmNextXp"></span>
+              </div>
+              <div class="pm-level-bar"><div class="pm-level-bar-fill" id="pmLevelBarFill" style="width:0%"></div></div>
+              <div class="pm-rankprog" id="pmRankProg">
+                <div class="pm-rankprog-top">
+                  <span class="pm-rankprog-cur" id="pmRankProgCur">Bronze I</span>
+                  <span class="pm-rankprog-next" id="pmRankProgNext">Bronze II</span>
+                </div>
+                <div class="ui-bar"><div class="ui-bar-fill" id="pmRankProgFill" style="width:0%"></div></div>
+                <div class="pm-rankprog-label" id="pmRankProgLabel">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pm3-card pm3-highlights">
+          <h4>Highlights</h4>
+          <div class="pm3-hi-grid">
+            <div class="pm3-hi"><span class="pm3-hi-ic s"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-zap"/></svg></span><span class="pm3-hi-txt"><b id="pmCurStreak">0</b><i>Current streak</i></span></div>
+            <div class="pm3-hi"><span class="pm3-hi-ic d"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-handshake"/></svg></span><span class="pm3-hi-txt"><b id="pmDraws">0</b><i>Total draws</i></span></div>
+            <div class="pm3-hi"><span class="pm3-hi-ic x"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-star"/></svg></span><span class="pm3-hi-txt"><b id="pmTotalXp">0</b><i>Total XP</i></span></div>
+            <div class="pm3-hi"><span class="pm3-hi-ic t"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-crown"/></svg></span><span class="pm3-hi-txt"><b id="pmTitlesCount">0</b><i>Titles</i></span></div>
+          </div>
+        </div>
       </div>
-      <div class="pm-stats pm-stats-2">
-        <div class="pm-stat"><div class="v" id="pmWinrate">0%</div><div class="l">win rate</div></div>
-        <div class="pm-stat"><div class="v" id="pmCurStreak">0</div><div class="l">current streak</div></div>
-        <div class="pm-stat"><div class="v" id="pmDraws">0</div><div class="l">draws</div></div>
-        <div class="pm-stat"><div class="v" id="pmLevelStat">1</div><div class="l">level</div></div>
+
+      <!-- Statistics Overview with sparklines -->
+      <div class="pm3-card pm3-statsov">
+        <h4>Statistics Overview</h4>
+        <div class="pm3-spark-grid" id="pmSparkGrid"></div>
       </div>
+
       <div class="pm-h2h" id="pmH2H" style="display:none;"></div>
       <div class="pm-stats pm-stats-3" id="pmExtraStats"></div>
-      <!-- Progress: rank + level side by side on desktop -->
-      <div class="pm3-progress-grid">
-        <div class="pm-rankprog pm3-card" id="pmRankProg">
-          <h4>Rank progress</h4>
-          <div class="pm-rankprog-top">
-            <span class="pm-rankprog-cur" id="pmRankProgCur">Bronze I</span>
-            <span class="pm-rankprog-next" id="pmRankProgNext">Bronze II</span>
-          </div>
-          <div class="ui-bar"><div class="ui-bar-fill" id="pmRankProgFill" style="width:0%"></div></div>
-          <div class="pm-rankprog-label" id="pmRankProgLabel">—</div>
-        </div>
-        <div class="pm-level-bar-wrap pm3-card">
-          <h4>Level</h4>
-          <div class="pm-level-bar-top">
-            <span id="pmLevelTitle">Rookie</span>
-            <span id="pmLevelXpText">0 / 200 XP</span>
-          </div>
-          <div class="pm-level-bar"><div class="pm-level-bar-fill" id="pmLevelBarFill" style="width:0%"></div></div>
-        </div>
-      </div>
       <div class="pm-badges-section pm3-card" id="pmBadgesSection" style="display:none;">
         <h4>Badges <span class="pm-badges-count" id="pmBadgesCount"></span></h4>
         <div class="pm-badges" id="pmBadges"></div>
@@ -22400,6 +23682,8 @@ const FIREBASE_CONFIG = {
         <div class="pm-comment-list" id="pmCommentList"></div>
       </div>
     </div>
+    </div><!-- /pm3-panes -->
+    </div><!-- /pm3-body -->
   </div>
 </div>
 
@@ -22419,7 +23703,6 @@ const FIREBASE_CONFIG = {
         <button type="button" class="eps-nav-item" data-eps="avatar"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg> Avatar</button>
         <button type="button" class="eps-nav-item" data-eps="banner"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-star"/></svg> Banner &amp; theme</button>
         <button type="button" class="eps-nav-item" data-eps="title"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-medal"/></svg> Title</button>
-        <button type="button" class="eps-nav-item" data-eps="cosmetics"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-shop"/></svg> Cosmetics</button>
         <button type="button" class="eps-nav-item" data-eps="showcase"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg> Showcase</button>
         <button type="button" class="eps-nav-item" data-eps="privacy"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-eye-off"/></svg> Privacy</button>
       </nav>
@@ -22502,11 +23785,6 @@ const FIREBASE_CONFIG = {
           </div>
         </section>
 
-        <section class="eps-pane" data-eps-pane="cosmetics">
-          <h4 class="eps-pane-title">Cosmetics</h4>
-          <p class="eps-pane-desc">Name styles, player tags, avatar effects and profile frames from the Item Shop. Equips save instantly.</p>
-          <div id="cosmeticsEditor" class="cosmetics-editor"></div>
-        </section>
 
         <section class="eps-pane" data-eps-pane="showcase">
           <h4 class="eps-pane-title">Showcase</h4>
@@ -23780,6 +25058,7 @@ const state = {
   unsubActivity: null,
   friendsList: [],
   pendingRequests: [],
+  sentRequests: [],
   leaderboard: [],
   activityFeed: [],
   pendingChallenge: null,
@@ -25745,6 +27024,11 @@ function attachSocialListeners(){
   state.unsubSentRequests = onSnapshot(
     query(collection(state.db, 'friendRequests'), where('from', '==', uid)),
     (snap) => {
+      // Keep a live list of our still-pending outgoing requests so a profile can
+      // offer to CANCEL one.
+      state.sentRequests = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(r => r.status !== 'accepted');
       snap.docChanges().forEach(async change => {
         const data = change.doc.data();
         if(data.status === 'accepted'){
@@ -27713,7 +28997,7 @@ const CX_RARITY = {
   mythic:    { label: 'MYTHIC',    color: '#ff5ec8' },
   ascended:  { label: 'ASCENDED',  color: '#ff2d6b' },
 };
-const CX_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000, ascended: 0 };
+const CX_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000, ascended: 14000 };
 const CX_TYPE_LABEL = { name: 'NAME STYLE', tag: 'PLAYER TAG', avatar: 'AVATAR EFFECT', frame: 'PROFILE FRAME' };
 
 // ---------- CATALOG ----------
@@ -27847,38 +29131,26 @@ const PRESTIGE_COSMETICS = [
 ];
 PRESTIGE_COSMETICS.forEach(c => { c.price = 0; });
 COSMETICS.push(...PRESTIGE_COSMETICS);
-// ── BUNDLE-EXCLUSIVE COSMETICS — full matching sets sold only as real-money
-// bundles. Each bundle is a complete themed look: name + tag + avatar + frame,
-// designed to be worn together. ──
-const BUNDLE_COSMETICS = [
+// ── SIGNATURE SETS — premium themed cosmetics (Dragon's Hoard, Night City,
+// The Starforge). Sold individually through the daily shop rotation. ──
+const SET_COSMETICS = [
   // DRAGON'S HOARD — molten scale, ember light, treasure gold.
-  { id:'ns_dragonlord',  type:'name',   name:'Dragon Sovereign', rarity:'mythic',   cls:'cxn-dragonlord',  bundleOnly:'bd_dragon', desc:'Molten scales roll through your name while embers climb off the letters. Part of the Dragon\'s Hoard bundle.' },
-  { id:'tg_dragon',      type:'tag',    name:'Dragon',           rarity:'mythic',   cls:'cxt-dragon',      bundleOnly:'bd_dragon', text:'DRAGON 🐉', desc:'A smoldering seal in living dragonfire. Part of the Dragon\'s Hoard bundle.' },
-  { id:'av_wyrmfire',    type:'avatar', name:'Wyrmfire Orbit',   rarity:'mythic',   cls:'cxa-wyrmfire',    bundleOnly:'bd_dragon', desc:'A ring of dragon breath with twin embers chasing each other around it. Part of the Dragon\'s Hoard bundle.' },
-  { id:'fr_hoard',       type:'frame',  name:'The Hoard',        rarity:'mythic',   cls:'cxf-hoard',       bundleOnly:'bd_dragon', desc:'Your profile sits atop the treasure pile — gold dust rains and embers rise. Part of the Dragon\'s Hoard bundle.' },
+  { id:'ns_dragonlord',  type:'name',   name:'Dragon Sovereign', rarity:'mythic',   cls:'cxn-dragonlord',  desc:'Molten scales roll through your name while embers climb off the letters. Dragon\'s Hoard set.' },
+  { id:'tg_dragon',      type:'tag',    name:'Dragon',           rarity:'mythic',   cls:'cxt-dragon',      text:'DRAGON 🐉', desc:'A smoldering seal in living dragonfire. Dragon\'s Hoard set.' },
+  { id:'av_wyrmfire',    type:'avatar', name:'Wyrmfire Orbit',   rarity:'mythic',   cls:'cxa-wyrmfire',    desc:'A ring of dragon breath with twin embers chasing each other around it. Dragon\'s Hoard set.' },
+  { id:'fr_hoard',       type:'frame',  name:'The Hoard',        rarity:'mythic',   cls:'cxf-hoard',       desc:'Your profile sits atop the treasure pile — gold dust rains and embers rise. Dragon\'s Hoard set.' },
   // NIGHT CITY — chrome, neon, rain.
-  { id:'ns_netrunner',   type:'name',   name:'Netrunner',        rarity:'mythic',   cls:'cxn-netrunner',   bundleOnly:'bd_nightcity', desc:'Cyan chrome and magenta signal bleed, glitching between frequencies. Part of the Night City bundle.' },
-  { id:'tg_syndicate',   type:'tag',    name:'Syndicate',        rarity:'mythic',   cls:'cxt-syndicate',   bundleOnly:'bd_nightcity', text:'SYNDICATE ⌁', desc:'The mark of the city\'s most wanted crew. Part of the Night City bundle.' },
-  { id:'av_hologrid',    type:'avatar', name:'Holo Grid',        rarity:'mythic',   cls:'cxa-hologrid',    bundleOnly:'bd_nightcity', desc:'A holographic ring flickering between cyan and magenta with a racing signal pulse. Part of the Night City bundle.' },
-  { id:'fr_nightcity',   type:'frame',  name:'Night City',       rarity:'mythic',   cls:'cxf-nightcity',   bundleOnly:'bd_nightcity', desc:'Neon rain over a scrolling grid skyline — the whole profile goes cyberpunk. Part of the Night City bundle.' },
+  { id:'ns_netrunner',   type:'name',   name:'Netrunner',        rarity:'mythic',   cls:'cxn-netrunner',   desc:'Cyan chrome and magenta signal bleed, glitching between frequencies. Night City set.' },
+  { id:'tg_syndicate',   type:'tag',    name:'Syndicate',        rarity:'mythic',   cls:'cxt-syndicate',   text:'SYNDICATE ⌁', desc:'The mark of the city\'s most wanted crew. Night City set.' },
+  { id:'av_hologrid',    type:'avatar', name:'Holo Grid',        rarity:'mythic',   cls:'cxa-hologrid',    desc:'A holographic ring flickering between cyan and magenta with a racing signal pulse. Night City set.' },
+  { id:'fr_nightcity',   type:'frame',  name:'Night City',       rarity:'mythic',   cls:'cxf-nightcity',   desc:'Neon rain over a scrolling grid skyline — the whole profile goes cyberpunk. Night City set.' },
   // THE STARFORGE — where stars are made. The flagship set.
-  { id:'ns_starforged',  type:'name',   name:'Starforged',       rarity:'ascended', cls:'cxn-starforged',  bundleOnly:'bd_starforge', desc:'Hammered from starlight — aurora metal with live forge sparks. Part of the Starforge bundle.' },
-  { id:'tg_cosmic',      type:'tag',    name:'Cosmic',           rarity:'ascended', cls:'cxt-cosmic',      bundleOnly:'bd_starforge', text:'COSMIC ☄', desc:'An iridescent seal that cycles through every colour in the universe. Part of the Starforge bundle.' },
-  { id:'av_eventhorizon',type:'avatar', name:'Event Horizon',    rarity:'ascended', cls:'cxa-eventhorizon',bundleOnly:'bd_starforge', desc:'A collapsed star\'s accretion ring — light bends, a captured sun orbits forever. Part of the Starforge bundle.' },
-  { id:'fr_starforge',   type:'frame',  name:'The Starforge',    rarity:'ascended', cls:'cxf-starforge',   bundleOnly:'bd_starforge', desc:'A living forge of stars: aurora fire, drifting starfields and shooting stars across your entire profile. Part of the Starforge bundle.' },
+  { id:'ns_starforged',  type:'name',   name:'Starforged',       rarity:'ascended', cls:'cxn-starforged',  desc:'Hammered from starlight — aurora metal with live forge sparks. Starforge set.' },
+  { id:'tg_cosmic',      type:'tag',    name:'Cosmic',           rarity:'ascended', cls:'cxt-cosmic',      text:'COSMIC ☄', desc:'An iridescent seal that cycles through every colour in the universe. Starforge set.' },
+  { id:'av_eventhorizon',type:'avatar', name:'Event Horizon',    rarity:'ascended', cls:'cxa-eventhorizon',desc:'A collapsed star\'s accretion ring — light bends, a captured sun orbits forever. Starforge set.' },
+  { id:'fr_starforge',   type:'frame',  name:'The Starforge',    rarity:'ascended', cls:'cxf-starforge',   desc:'A living forge of stars: aurora fire, drifting starfields and shooting stars across your entire profile. Starforge set.' },
 ];
-BUNDLE_COSMETICS.forEach(c => { c.price = 0; });
-COSMETICS.push(...BUNDLE_COSMETICS);
-// The three bundles — complete looks, bought with real money.
-const BUNDLES = [
-  { id:'bd_dragon',    name:"Dragon's Hoard", tagline:'Wear the fire. Keep the gold.',            price:12.99, cls:'bd-dragon',    accent:'#ff7a2e',
-    items:['ns_dragonlord','tg_dragon','av_wyrmfire','fr_hoard'] },
-  { id:'bd_nightcity', name:'Night City',     tagline:'Neon-soaked. Chrome-plated. Untouchable.', price:12.99, cls:'bd-nightcity', accent:'#00e5ff',
-    items:['ns_netrunner','tg_syndicate','av_hologrid','fr_nightcity'] },
-  { id:'bd_starforge', name:'The Starforge',  tagline:'Forged where stars are born.',             price:19.99, cls:'bd-starforge', accent:'#ffd36e', flagship:true,
-    items:['ns_starforged','tg_cosmic','av_eventhorizon','fr_starforge'] },
-];
-const BUNDLE_BY_ID = {}; BUNDLES.forEach(b => { BUNDLE_BY_ID[b.id] = b; });
+COSMETICS.push(...SET_COSMETICS);
 COSMETICS.forEach(c => { if(!c.price) c.price = CX_PRICE[c.rarity] || 0; });
 const COSMETIC_BY_ID = {}; COSMETICS.forEach(c => { COSMETIC_BY_ID[c.id] = c; });
 const CX_SLOTS = ['name', 'tag', 'avatar', 'frame'];
@@ -27903,15 +29175,16 @@ async function equipCosmetic(slot, id){
   c[slot] = id || '';
   await saveCosmetics(c);
   try { haptic(12); } catch(e){}
-  try { renderCosmeticsEditor(); } catch(e){}
+  // Re-render whichever locker views are on screen, plus any live previews.
+  try { if($('#lockerHost')){ lkRenderTabs(); lkRenderGrid(); lkRenderStage(); } } catch(e){}
   try { renderShopItems(); } catch(e){}
 }
-// Jump straight to the Cosmetics section of Edit Profile (post-purchase guide).
+// Jump to the Locker page (post-purchase guide + "Equip now" toasts).
 function openCosmeticsEditor(){
-  try { openEditProfile(); } catch(e){ return; }
+  try { $('#editProfileModal')?.classList.remove('show'); } catch(e){}
+  try { showNavPage('locker'); } catch(e){ return; }
   setTimeout(() => {
-    try { epsSetPane('cosmetics'); } catch(e){}
-    try { const s = $('#cosmeticsEditor'); if(s){ s.classList.remove('cx-flash'); void s.offsetWidth; s.classList.add('cx-flash'); } } catch(e){}
+    try { const s = $('#lockerHost'); if(s){ s.classList.remove('cx-flash'); void s.offsetWidth; s.classList.add('cx-flash'); } } catch(e){}
   }, 220);
 }
 // All economy mutations go through Cloud Functions — the server owns the
@@ -27939,7 +29212,6 @@ async function refreshWallet(){
       if(d.cosmetics) state.profile.cosmetics = d.cosmetics;
       updateCoinPill(true);
       try { renderShopWallet(); } catch(e){}
-      try { renderBundles(); } catch(e){}
     }
   } catch(e){}
 }
@@ -28048,19 +29320,10 @@ function applyProfileFrame(modalEl, bannerEl, p){
     o.setAttribute('aria-hidden', 'true');
     bannerEl.appendChild(o);
   }
-  // STICKY frame chrome — top + bottom rails with corner brackets that stay
-  // pinned to the card viewport while the profile scrolls, so the frame wraps
-  // the whole card at all times (paired with the full-card wash per frame).
-  const top = document.createElement('i');
-  top.className = 'cx-frame-top';
-  top.setAttribute('aria-hidden', 'true');
-  top.innerHTML = '<b class="tl"></b><b class="tr"></b><i class="cxline"></i>';
-  modalEl.prepend(top);
-  const edge = document.createElement('i');
-  edge.className = 'cx-frame-edge';
-  edge.setAttribute('aria-hidden', 'true');
-  edge.innerHTML = '<b class="bl"></b><b class="br"></b><i class="cxline"></i>';
-  modalEl.appendChild(edge);
+  // The frame's identity now comes from the banner prop + the dimmed full-card
+  // wash + a clean themed glowing border on the modal itself (see CSS). We no
+  // longer inject sticky top/bottom rails — in the tall scrolling dashboard
+  // they floated as glowing lines across the middle of the content.
 }
 // Live preview of any catalog item (shop tiles, buy modal, locker).
 function buildCosmeticPreview(item, big){
@@ -28105,8 +29368,8 @@ function _seededOrder(arr, seed){
 // deck cycles — no item ever lingers from one day into the next.
 function shopRotation(){
   const d = _dayIndex(getTodayKey());
-  const pool = COSMETICS.filter(c => !c.caseOnly && !c.rankOnly && !c.prestigeOnly && !c.bundleOnly);
-  const isHeavy = c => c.rarity === 'legendary' || c.rarity === 'mythic';
+  const pool = COSMETICS.filter(c => !c.caseOnly && !c.rankOnly && !c.prestigeOnly);
+  const isHeavy = c => c.rarity === 'legendary' || c.rarity === 'mythic' || c.rarity === 'ascended';
   // FEATURED: a rolling deck of premium (legendary/mythic) items — two fresh
   // ones every day. The deck order is fixed, so a featured item can't return
   // until the whole deck cycles.
@@ -28233,87 +29496,6 @@ on('#cckPayBtn', 'click', async () => {
 });
 on('#shopWallet', 'click', () => { $('#shopSecCoins')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 
-// ---------- BUNDLES (real-money complete looks) ----------
-function bundleOwnedCount(b){
-  const owned = getCosmetics().owned;
-  return b.items.filter(id => owned.includes(id)).length;
-}
-function renderBundles(){
-  const host = $('#shopBundles');
-  if(!host) return;
-  host.innerHTML = BUNDLES.map(b => {
-    const ownedN = bundleOwnedCount(b);
-    const allOwned = ownedN === b.items.length;
-    const pieces = b.items.map(id => {
-      const it = COSMETIC_BY_ID[id];
-      if(!it) return '';
-      const has = ownsCosmetic(id);
-      return `<button type="button" class="bd-piece${has ? ' owned' : ''}" data-cx-inspect="${it.id}" title="Preview ${escapeHTML(it.name)}">
-        <span class="bd-piece-prev">${buildCosmeticPreview(it, false)}</span>
-        <span class="bd-piece-name">${escapeHTML(it.name)}</span>
-        <span class="bd-piece-type">${CX_TYPE_LABEL[it.type]}</span>
-        ${has ? '<span class="bd-piece-owned">✓</span>' : ''}
-      </button>`;
-    }).join('');
-    return `<div class="bundle-card ${b.cls}${b.flagship ? ' flagship' : ''}" style="--bda:${b.accent}">
-      <div class="bd-fx" aria-hidden="true"></div>
-      <div class="bd-head">
-        <span class="bd-badge">${b.flagship ? '★ FLAGSHIP' : 'EXCLUSIVE'} SET</span>
-        <span class="bd-count">${ownedN}/${b.items.length} OWNED</span>
-      </div>
-      <div class="bd-title">${escapeHTML(b.name)}</div>
-      <div class="bd-tagline">${escapeHTML(b.tagline)}</div>
-      <div class="bd-pieces">${pieces}</div>
-      <button type="button" class="btn bd-buy${allOwned ? ' owned' : ''}" data-bundle-buy="${b.id}" ${allOwned ? 'disabled' : ''}>
-        ${allOwned ? '✓ COMPLETE LOOK OWNED' : `GET THE FULL LOOK · ${fmtUSD(b.price)}`}
-      </button>
-    </div>`;
-  }).join('');
-  host.querySelectorAll('[data-bundle-buy]').forEach(btn =>
-    btn.addEventListener('click', () => openBundleCheckout(btn.dataset.bundleBuy)));
-}
-function openBundleCheckout(bundleId){
-  const b = BUNDLE_BY_ID[bundleId];
-  if(!b) return;
-  if(isGuest()){
-    try { toast('Create a free account first — guests can\'t buy bundles', 'info', { duration: 6000 }); } catch(e){}
-    return;
-  }
-  state._bundle = b;
-  const card = $('#bundleCheckoutCard'); if(card) card.className = 'modal bundle-checkout ' + b.cls;
-  if(card) card.style.setProperty('--bda', b.accent);
-  setText('#bckName', b.name);
-  setText('#bckTagline', b.tagline);
-  setText('#bckBundle', b.name);
-  setText('#bckPrice', fmtUSD(b.price));
-  setText('#bckPayLabel', `Checkout · ${fmtUSD(b.price)}`);
-  const list = $('#bckItems');
-  if(list) list.innerHTML = b.items.map(id => {
-    const it = COSMETIC_BY_ID[id];
-    if(!it) return '';
-    return `<button type="button" class="bck-item" data-cx-inspect="${it.id}" title="Preview ${escapeHTML(it.name)}">
-      <span class="bck-item-prev">${buildCosmeticPreview(it, false)}</span>
-      <span class="bck-item-meta"><b>${escapeHTML(it.name)}</b><i>${CX_TYPE_LABEL[it.type]} · ${CX_RARITY[it.rarity].label}</i></span>
-    </button>`;
-  }).join('');
-  $('#bundleCheckoutModal')?.classList.add('show');
-}
-on('#bckPayBtn', 'click', async () => {
-  const b = state._bundle;
-  if(!b) return;
-  const btn = $('#bckPayBtn');
-  try { haptic(10); } catch(e){}
-  if(btn){ btn.disabled = true; setText('#bckPayLabel', 'Opening secure checkout…'); }
-  try {
-    const out = await callFn('createCheckout', { packId: b.id });
-    if(out && out.url){ window.location.href = out.url; return; }
-    throw new Error('No checkout URL returned');
-  } catch(e){
-    fnErrorToast(e, 'Could not start checkout');
-    if(btn){ btn.disabled = false; setText('#bckPayLabel', `Checkout · ${fmtUSD(b.price)}`); }
-  }
-});
-
 // ---------- SECTION RAIL + NEXT BUTTON (scroll-spy) ----------
 function shopSections(){ return [...document.querySelectorAll('.shop-sec')]; }
 function shopSpyInit(){
@@ -28367,7 +29549,6 @@ function renderShopPage(){
   renderShopWallet();
   renderShopItems();
   renderCoinPacks();
-  try { renderBundles(); } catch(e){}
   try { renderCaseInventory(); } catch(e){}
   shopSpyInit();
   shopSetActiveSec(state._shopActiveSec || 'featured');
@@ -28382,12 +29563,6 @@ document.addEventListener('click', (e) => {
   if(!tile) return;
   const item = COSMETIC_BY_ID[tile.dataset.shopItem];
   if(!item) return;
-  // Inside the cosmetics editor, tiles equip/unequip directly.
-  if(tile.closest('#cosmeticsEditor')){
-    const cur = cosmeticEquipped(state.profile, item.type);
-    equipCosmetic(item.type, cur?.id === item.id ? '' : item.id);
-    return;
-  }
   if(ownsCosmetic(item.id)){ openCosmeticsEditor(); return; }
   openShopBuyModal(item);
 });
@@ -28415,7 +29590,7 @@ function openShopBuyModal(item, opts={}){
   const r = CX_RARITY[item.rarity];
   // Case/rank-exclusive items (or an explicit preview) show the same big
   // preview, but they can't be bought or gifted — you earn them.
-  const previewOnly = !!opts.preview || !!item.caseOnly || !!item.rankOnly || !!item.prestigeOnly || !!item.bundleOnly;
+  const previewOnly = !!opts.preview || !!item.caseOnly || !!item.rankOnly || !!item.prestigeOnly;
   const stage = $('#sbmStage');
   if(stage){
     stage.innerHTML = `<span class="sbm-stage-item">${buildCosmeticPreview(item, true)}</span>` + buildProfilePreviewHTML(item);
@@ -28441,9 +29616,7 @@ function openShopBuyModal(item, opts={}){
           ? `<b class="sbm-short" style="color:#ffd45e">Rank-exclusive</b> — reach <b>${escapeHTML(rankName)}</b> to earn it`
           : (item.prestigeOnly
             ? `<b class="sbm-short" style="color:#ffd45e">Prestige-exclusive</b> — reach <b>Prestige ${item.prestigeOnly} · ${escapeHTML(prestigeName(item.prestigeOnly))}</b> to earn it`
-            : (item.bundleOnly
-              ? `<b class="sbm-short" style="color:#ffd45e">Bundle-exclusive</b> — part of the <b>${escapeHTML(BUNDLE_BY_ID[item.bundleOnly]?.name || 'bundle')}</b> bundle in the shop`
-              : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a case`)));
+            : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a case`));
     }
     if(btn) btn.style.display = 'none';
     if(giftBtn) giftBtn.style.display = 'none';
@@ -29141,58 +30314,169 @@ grantXp = async function(amount, reason, opts){
   }
 };
 
-// ---------- COSMETICS EDITOR (lives inside Edit Profile) ----------
-function lockerTileHTML(item, equippedId){
-  const isEq = equippedId === item.id;
-  return `<button type="button" class="locker-tile rar-${item.rarity}${isEq ? ' equipped' : ''}" data-shop-item="${item.id}">
-    <span class="st-preview">${buildCosmeticPreview(item, false)}</span>
-    <b class="lt-name">${escapeHTML(item.name)}</b>
-    <span class="lt-state">${isEq ? '✓ EQUIPPED' : 'EQUIP'}</span>
-  </button>`;
+// ═══ LOCKER PAGE — Fortnite-style: big showcase left, wide OWNED-ONLY catalog
+// right with slot tabs, search + sort. Click a tile to preview it in the
+// showcase; equip / unequip from there (or double-tap to equip). ═══
+const LK_SLOTS = [
+  { slot:'name',   label:'NAME STYLE' },
+  { slot:'tag',    label:'PLAYER TAG' },
+  { slot:'avatar', label:'AVATAR RING' },
+  { slot:'frame',  label:'FRAME' },
+];
+const LK_SORTS = [
+  { id:'rarity',    label:'Rarity: high → low' },
+  { id:'rarityAsc', label:'Rarity: low → high' },
+  { id:'name',      label:'Name: A → Z' },
+  { id:'recent',    label:'Recently unlocked' },
+];
+function lkState(){
+  state._lk = state._lk || { slot:'name', q:'', sort:'rarity', sel:'' };
+  if(state._lk.own) delete state._lk.own;
+  if(!state._lk.sort || state._lk.sort === 'owned') state._lk.sort = 'rarity';
+  return state._lk;
 }
-function renderCosmeticsEditor(){
-  const host = $('#cosmeticsEditor');
-  if(!host) return;
+// The locker only ever shows what you OWN.
+function lkItems(){
+  const lk = lkState();
   const c = getCosmetics();
-  const me = state.profile || {};
-  // "Your look" header — everything equipped, in one place.
-  const lookName = styledNameHTML(me, me.username || 'YourName');
-  const fxItem = cosmeticEquipped(me, 'avatar');
-  const frItem = cosmeticEquipped(me, 'frame');
-  const init = escapeHTML(initialOf(me.username || 'R'));
-  const bg = AVATAR_COLORS[me.colorIdx || 0] || AVATAR_COLORS[0];
-  let html = `
-    <div class="locker-look ${frItem ? frItem.cls : ''}">
-      <i class="cx-frame-overlay" aria-hidden="true" style="${frItem ? '' : 'display:none;'}"></i>
-      <span class="cx-prev-av big"><span class="cx-prev-av-core" style="background:${bg};">${init}</span>${fxItem ? `<i class="cx-avfx ${fxItem.cls}" aria-hidden="true"></i>` : ''}</span>
-      <div class="locker-look-name">${lookName}</div>
-      <div class="locker-look-sub">YOUR LOOK · tap any owned item to equip / unequip</div>
-    </div>`;
-  const sections = [
-    ['name', 'NAME STYLES'], ['tag', 'PLAYER TAGS'], ['avatar', 'AVATAR EFFECTS'], ['frame', 'PROFILE FRAMES'],
-  ];
-  let ownedTotal = 0;
-  for(const [slot, label] of sections){
-    const owned = COSMETICS.filter(i => i.type === slot && c.owned.includes(i.id));
-    ownedTotal += owned.length;
-    html += `<div class="shop-section-label"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-star"/></svg> ${label} <span class="ssl-count">${owned.length}/${COSMETICS.filter(i => i.type === slot).length}</span></div>`;
-    if(!owned.length){
-      html += `<div class="locker-empty">Nothing here yet — check today's <button type="button" class="locker-shop-link" data-goto-shop-page>Item Shop</button>.</div>`;
-    } else {
-      html += `<div class="locker-grid">${owned.map(i => lockerTileHTML(i, c[slot])).join('')}</div>`;
+  const q = lk.q.trim().toLowerCase();
+  let items = COSMETICS.filter(i => i.type === lk.slot && c.owned.includes(i.id));
+  if(q) items = items.filter(i => i.name.toLowerCase().includes(q) || (i.text || '').toLowerCase().includes(q));
+  const acq = {}; c.owned.forEach((id, i) => { acq[id] = i; });
+  const byRarity = (a, b) => _rarRank(b.rarity) - _rarRank(a.rarity) || a.name.localeCompare(b.name);
+  items.sort((a, b) => {
+    switch(lk.sort){
+      case 'name':      return a.name.localeCompare(b.name);
+      case 'rarityAsc': return _rarRank(a.rarity) - _rarRank(b.rarity) || a.name.localeCompare(b.name);
+      case 'recent':    return (acq[b.id] ?? -1) - (acq[a.id] ?? -1);
+      default:          return byRarity(a, b);
     }
-  }
-  if(!ownedTotal){
-    html += `<div class="locker-cta"><button type="button" class="btn btn-primary" data-goto-shop-page><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-shop"/></svg> Browse the Item Shop</button></div>`;
-  }
-  host.innerHTML = html;
+  });
+  return items;
 }
-// "Item Shop" links inside the editor close the modal and open the shop page.
+function lkRenderTabs(){
+  const el = $('#lkTabs');
+  if(!el) return;
+  const lk = lkState();
+  const c = getCosmetics();
+  el.innerHTML = LK_SLOTS.map(s => {
+    const all = COSMETICS.filter(i => i.type === s.slot);
+    const own = all.filter(i => c.owned.includes(i.id)).length;
+    return `<button type="button" class="lk2-tab${lk.slot === s.slot ? ' active' : ''}" data-lk-tab="${s.slot}">
+      ${s.label}<span class="lk2-tab-n">${own}/${all.length}</span>
+    </button>`;
+  }).join('');
+}
+function lkRenderGrid(){
+  const el = $('#lkGrid');
+  if(!el) return;
+  const lk = lkState();
+  const c = getCosmetics();
+  const items = lkItems();
+  const cnt = $('#lkCount');
+  if(cnt) cnt.textContent = `${items.length} ITEM${items.length === 1 ? '' : 'S'}`;
+  if(!items.length){
+    const label = (LK_SLOTS.find(s => s.slot === lk.slot)?.label || 'items').toLowerCase();
+    el.innerHTML = lk.q
+      ? `<div class="locker-empty">No ${label}s match “${escapeHTML(lk.q)}”.</div>`
+      : `<div class="locker-empty">No ${label}s yet — unlock them in the <button type="button" class="locker-shop-link" data-nav-to="shop">Item Shop</button>, cases, or by ranking up.</div>`;
+    return;
+  }
+  el.innerHTML = items.map((i, idx) => {
+    const equipped = c[lk.slot] === i.id;
+    return `<button type="button" class="lk2-tile rar-${i.rarity}${lk.sel === i.id ? ' sel' : ''}${equipped ? ' equipped' : ''}" data-lk-item="${i.id}" style="--lki:${idx}" title="${escapeHTML(i.name)}">
+      <span class="lk2-tile-prev">${buildCosmeticPreview(i, false)}</span>
+      <span class="lk2-tile-name">${escapeHTML(i.name)}</span>
+      ${equipped ? '<span class="lk2-tile-eq"><svg viewBox="0 0 24 24" width="10" height="10"><use href="#i-check"/></svg></span>' : ''}
+    </button>`;
+  }).join('');
+}
+function lkRenderStage(){
+  const el = $('#lkLeft');
+  if(!el) return;
+  const lk = lkState();
+  const c = getCosmetics();
+  const owns = c.owned.includes(lk.sel);
+  const item = (owns && COSMETIC_BY_ID[lk.sel]) || COSMETIC_BY_ID[c[lk.slot]] || null;
+  if(!item){
+    el.innerHTML = `${buildProfilePreviewHTML({ type:'_none' })}
+      <div class="lk2-meta">
+        <div class="lk2-item-name">YOUR LOOK</div>
+        <div class="lk2-item-desc">This slot is empty. Unlock ${(LK_SLOTS.find(s => s.slot === lk.slot)?.label || 'items').toLowerCase()}s in the Item Shop, then equip them here.</div>
+        <div class="lk2-actions"><button type="button" class="btn lk2-btn lk2-get" data-nav-to="shop"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-shop"/></svg> Item Shop</button></div>
+      </div>`;
+    return;
+  }
+  const r = CX_RARITY[item.rarity];
+  const equipped = c[lk.slot] === item.id;
+  const action = equipped
+    ? `<button type="button" class="btn lk2-btn lk2-unequip" data-lk-unequip><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-close"/></svg> Unequip</button>`
+    : `<button type="button" class="btn btn-primary lk2-btn" data-lk-equip="${item.id}"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Equip</button>`;
+  el.innerHTML = `
+    ${buildProfilePreviewHTML(item)}
+    <div class="lk2-meta">
+      <div class="lk2-item-rar"><span class="lk2-rar-pill" style="--rc:${r.color}">${r.label}</span><span class="lk2-item-type">${CX_TYPE_LABEL[item.type]}</span>${equipped ? '<span class="lk2-eq-pill">EQUIPPED</span>' : ''}</div>
+      <div class="lk2-item-name">${escapeHTML(item.name)}</div>
+      <div class="lk2-item-desc">${escapeHTML(item.desc || '')}</div>
+      <div class="lk2-actions">${action}</div>
+    </div>`;
+}
+function renderLockerPage(){
+  const host = $('#lockerHost');
+  if(!host) return;
+  const lk = lkState();
+  const c = getCosmetics();
+  // Default the active slot's selection to whatever's equipped (only if owned).
+  if(!lk.sel || COSMETIC_BY_ID[lk.sel]?.type !== lk.slot || !c.owned.includes(lk.sel)){
+    lk.sel = c.owned.includes(c[lk.slot]) ? c[lk.slot] : '';
+  }
+  host.innerHTML = `
+    <div class="lk2">
+      <div class="lk2-left" id="lkLeft"></div>
+      <div class="lk2-right">
+        <div class="lk2-tabs" id="lkTabs"></div>
+        <div class="lk2-controls">
+          <div class="lk2-search"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-search"/></svg><input id="lkSearch" type="text" placeholder="Search your locker…" maxlength="30" autocomplete="off" value="${escapeHTML(lk.q)}"></div>
+          <label class="lk2-sort">
+            <span class="lk2-sort-lbl">SORT</span>
+            <select id="lkSort">${LK_SORTS.map(s => `<option value="${s.id}"${lk.sort === s.id ? ' selected' : ''}>${s.label}</option>`).join('')}</select>
+            <svg viewBox="0 0 24 24" width="13" height="13" class="lk2-sort-chev"><use href="#i-chevron-down"/></svg>
+          </label>
+        </div>
+        <div class="lk2-count" id="lkCount"></div>
+        <div class="lk2-grid" id="lkGrid"></div>
+      </div>
+    </div>`;
+  lkRenderTabs(); lkRenderGrid(); lkRenderStage();
+  $('#lkSearch')?.addEventListener('input', (e) => { lk.q = e.target.value; lkRenderGrid(); });
+  $('#lkSort')?.addEventListener('change', (e) => { lk.sort = e.target.value; lkRenderGrid(); });
+}
+// Locker interactions (delegated once — the page re-renders freely).
 document.addEventListener('click', (e) => {
-  const go = e.target.closest && e.target.closest('[data-goto-shop-page]');
+  const host = e.target.closest && e.target.closest('#lockerHost');
+  if(!host) return;
+  const lk = lkState();
+  const tab = e.target.closest('[data-lk-tab]');
+  if(tab){ const c = getCosmetics(); lk.slot = tab.dataset.lkTab; lk.sel = c.owned.includes(c[lk.slot]) ? c[lk.slot] : ''; lkRenderTabs(); lkRenderGrid(); lkRenderStage(); try { haptic(6); } catch(err){} return; }
+  const tile = e.target.closest('[data-lk-item]');
+  if(tile){ lk.sel = tile.dataset.lkItem; lkRenderGrid(); lkRenderStage(); try { haptic(6); } catch(err){} return; }
+  const eq = e.target.closest('[data-lk-equip]');
+  if(eq){ equipCosmetic(lk.slot, eq.dataset.lkEquip); return; }
+  if(e.target.closest('[data-lk-unequip]')){ equipCosmetic(lk.slot, ''); return; }
+});
+// Double-tap a tile to equip / unequip instantly.
+document.addEventListener('dblclick', (e) => {
+  const tile = e.target.closest && e.target.closest('#lockerHost [data-lk-item]');
+  if(!tile) return;
+  const item = COSMETIC_BY_ID[tile.dataset.lkItem];
+  if(item && ownsCosmetic(item.id)) equipCosmetic(item.type, cosmeticEquipped(state.profile, item.type)?.id === item.id ? '' : item.id);
+});
+// Any "Item Shop" / cross-page link (locker empty states, header button).
+document.addEventListener('click', (e) => {
+  const go = e.target.closest && (e.target.closest('[data-nav-to]') || e.target.closest('[data-goto-shop-page]'));
   if(!go) return;
   try { $('#editProfileModal')?.classList.remove('show'); } catch(err){}
-  try { showNavPage('shop'); } catch(err){}
+  try { showNavPage(go.dataset.navTo || 'shop'); } catch(err){}
 });
 
 // ---------- COSMETIC GIFTING ----------
@@ -29645,15 +30929,38 @@ async function addFriendByUsername(username){
       createdAt: serverTimestamp(),
     });
     recordFriendRequest();
+    // Optimistic: reflect the pending outgoing request immediately so the
+    // profile button can flip to "Cancel request" before the listener catches up.
+    if(!(state.sentRequests || []).some(r => r.to === targetUid)){
+      (state.sentRequests = state.sentRequests || []).push({ to: targetUid, from: state.user.uid, status: 'pending', _optimistic: true });
+    }
     pushNotification(targetUid, {
       type: 'friend_request',
       text: `<b>@${escapeHTML(state.profile.username)}</b> sent you a friend request`,
       actionUid: state.user.uid,
     });
     toast('Friend request sent', 'success');
+    return true;
   } catch(e){ toast('Could not send: ' + (e.message || e), 'error'); }
+  return false;
 }
 
+// Cancel an outgoing (still-pending) friend request we sent.
+async function cancelFriendRequest(toUid){
+  try {
+    let reqId = (state.sentRequests || []).find(r => r.to === toUid)?.id;
+    if(!reqId){
+      const snap = await getDocs(query(collection(state.db, 'friendRequests'),
+        where('from', '==', state.user.uid), where('to', '==', toUid)));
+      reqId = snap.docs[0]?.id;
+    }
+    if(!reqId){ toast('No pending request to cancel', 'info'); return; }
+    await deleteDoc(doc(state.db, 'friendRequests', reqId));
+    state.sentRequests = (state.sentRequests || []).filter(r => r.to !== toUid);
+    try { haptic(10); } catch(e){}
+    toast('Friend request cancelled', 'info');
+  } catch(e){ toast('Could not cancel request', 'error'); }
+}
 async function acceptFriendRequest(reqId, fromUid){
   try {
     // Force-refresh auth token in case session is fresh
@@ -30439,9 +31746,8 @@ on('#addFriendInput', 'keydown', e => {
 });
 
 // Apply a player's chosen profile banner.
-//  • Default: the player's chosen ACCENT colour ONLY (no rank-colour mixing).
-//  • Optional: an unlocked rank background ('rank:<id>') — that rank's colour + icon.
-//  • AUTO (no accent picked): falls back to the current rank's colour gradient.
+//  • rank:<id>   — an unlocked rank background (that rank's colour + crest).
+//  • Default: the player's chosen ACCENT colour; AUTO falls back to rank colour.
 function applyProfileBanner(bannerEl, markEl, p){
   if(!bannerEl) return;
   const rank = rankFromRating(p.rating || 1000);
@@ -30464,6 +31770,56 @@ function applyProfileBanner(bannerEl, markEl, p){
     bannerEl.style.background = `radial-gradient(120% 150% at 12% -15%, ${rank.color}, transparent 62%), linear-gradient(125deg, ${rank.color}, ${rank.color2 || rank.color})`;
   }
   if(markEl) markEl.innerHTML = showMark ? `<use href="#${markIcon}"/>` : '';
+}
+// Compact big-number formatter so huge values (Total XP, etc.) never overflow
+// their tile — 1,234 stays as-is, 2,500,000 → 2.5M, 214877500013394 → 214.9T.
+function fmtCompact(n){
+  n = Number(n) || 0;
+  if(n < 1e6) return n.toLocaleString();
+  for(const [v, s] of [[1e12, 'T'], [1e9, 'B'], [1e6, 'M']]){
+    if(n >= v){ const x = n / v; return (x >= 100 ? Math.round(x) : x.toFixed(1).replace(/\.0$/, '')) + s; }
+  }
+  return n.toLocaleString();
+}
+// Deterministic decorative sparkline for a stat tile (seeded by the player so
+// it's stable per profile — the shape is flavour, the number is the truth).
+function _sparkPoints(seed, w, h, n){
+  const rnd = _mulberry((seed >>> 0) || 7);
+  const pts = []; let v = 0.45;
+  for(let i = 0; i < n; i++){
+    v += (rnd() - 0.48) * 0.42 + (i / n) * 0.03;   // slight upward drift
+    v = Math.max(0.12, Math.min(0.9, v));
+    pts.push(`${((i / (n - 1)) * w).toFixed(1)},${(h - v * h).toFixed(1)}`);
+  }
+  return pts.join(' ');
+}
+function pmSparkTile(label, value, color, seed){
+  const w = 130, h = 40, n = 18;
+  const pts = _sparkPoints(seed, w, h, n);
+  const gid = 'spk' + (seed >>> 0).toString(36);
+  return `<div class="pm3-spark">
+    <div class="pm3-spark-l">${escapeHTML(label)}</div>
+    <div class="pm3-spark-v">${escapeHTML(String(value))}</div>
+    <svg class="pm3-spark-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+      <defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="${color}" stop-opacity=".42"/><stop offset="1" stop-color="${color}" stop-opacity="0"/>
+      </linearGradient></defs>
+      <polygon points="0,${h} ${pts} ${w},${h}" fill="url(#${gid})"/>
+      <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
+    </svg>
+  </div>`;
+}
+function pmRenderSparklines(p, wr){
+  const el = $('#pmSparkGrid'); if(!el) return;
+  const games = p.games || ((p.wins || 0) + (p.losses || 0) + (p.draws || 0));
+  const S = (p.username || 'x').split('').reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+  el.innerHTML = [
+    pmSparkTile('Wins', p.wins || 0, '#22d3a3', S + 11),
+    pmSparkTile('Losses', p.losses || 0, '#ff5d6c', S + 23),
+    pmSparkTile('Win Rate', wr + '%', '#5fc9ff', S + 37),
+    pmSparkTile('Best Streak', p.bestStreak || 0, '#ffb336', S + 53),
+    pmSparkTile('Games Played', games, '#b56cff', S + 71),
+  ].join('');
 }
 // ============= PROFILE VIEW =============
 async function openProfile(uid){
@@ -30553,6 +31909,30 @@ async function openProfile(uid){
     setText('#pmCurStreak', p.currentStreak || 0);
     setText('#pmDraws', p.draws || 0);
 
+    // Header stat strip
+    setText('#pmHWins', p.wins || 0);
+    setText('#pmHLosses', p.losses || 0);
+    setText('#pmHWinrate', pWr + '%');
+    setText('#pmHStreak', p.bestStreak || 0);
+    // Highlights extras
+    { const el = $('#pmTotalXp'); if(el){ el.textContent = fmtCompact(p.totalXp || 0); el.title = (p.totalXp || 0).toLocaleString() + ' XP'; } }
+    try {
+      const tCount = titlesUnlockedAt(levelOf(p).level).length + (specialTitlesFor(p)?.length || 0);
+      setText('#pmTitlesCount', tCount);
+    } catch(e){ setText('#pmTitlesCount', 0); }
+    // Member since (footer pinned at the bottom of the left nav rail)
+    try {
+      const created = p.createdAt?.toMillis ? p.createdAt.toMillis() : (typeof p.createdAt === 'number' ? p.createdAt : 0);
+      const msEl = $('#pmMemberSince');
+      if(msEl){
+        msEl.innerHTML = created
+          ? 'Member since<b>' + new Date(created).toLocaleString('en-US', { month: 'long', year: 'numeric' }) + '</b>'
+          : '';
+      }
+    } catch(e){ const msEl = $('#pmMemberSince'); if(msEl) msEl.textContent = ''; }
+    // Statistics Overview sparklines
+    try { pmRenderSparklines(p, pWr); } catch(e){}
+
     // Level + title (+ prestige at max level)
     const lvl = levelOf(p);
     setText('#pmLevelBadge', lvl.level); paintLevelBadge('#pmLevelBadge', lvl.level, pmPrestige);
@@ -30576,9 +31956,14 @@ async function openProfile(uid){
       pmTitleEl.textContent = pTitle.name;
       pmTitleEl.style.setProperty('--title-color', pTitle.color);
     }
-    // Level XP bar
+    // Level XP bar — compact numbers, and a clean "maxed" state instead of an
+    // absurd XP-to-next figure for players at the level cap / prestige master.
+    const atLevelCap = lvl.level >= MAX_LEVEL;
     setText('#pmLevelTitle', pTitle.name);
-    setText('#pmLevelXpText', pmPrestige > 0 ? `✦ PRESTIGE ${pmPrestige}` : (lvl.level >= 99 ? 'MAX' : `${lvl.xpInLevel} / ${lvl.xpForThis} XP`));
+    setText('#pmLevelXpText', atLevelCap
+      ? (isPrestigeMaster(pmPrestige) ? '★ PRESTIGE MASTER' : (pmPrestige > 0 ? `✦ PRESTIGE ${pmPrestige} · MAX` : 'MAX LEVEL'))
+      : `${fmtCompact(lvl.xpInLevel)} / ${fmtCompact(lvl.xpForThis)} XP`);
+    setText('#pmNextXp', atLevelCap ? '' : `Next level in ${fmtCompact(lvl.xpForThis - lvl.xpInLevel)} XP`);
     const pmLevelFill = $('#pmLevelBarFill');
     if(pmLevelFill) pmLevelFill.style.width = (lvl.progress * 100) + '%';
     const pmTitleColorEl = $('#pmLevelTitle');
@@ -30617,6 +32002,7 @@ async function openProfile(uid){
       $('#pmAddFriendBtn').style.display = 'none';
       $('#pmChallengeBtn').style.display = 'none';
       $('#pmBlockBtn').style.display = 'none';
+      const rptBtn0 = $('#pmReportBtn'); if(rptBtn0) rptBtn0.style.display = 'none';
       const msgBtn = $('#pmMessageBtn'); if(msgBtn) msgBtn.style.display = 'none';
       // Your own profile: shown exactly as others see it, plus an Edit button
       if(editBtn){ editBtn.style.display = ''; editBtn.onclick = () => { $('#profileModal').classList.remove('show'); openEditProfile(); }; }
@@ -30626,19 +32012,26 @@ async function openProfile(uid){
       const isBlocked = state.profile.blocked?.includes(uid);
       // Did THIS person send ME a friend request? If so, the button accepts it.
       const incomingReq = (state.pendingRequests || []).find(r => r.from === uid);
+      // Did I send THEM a request that's still pending? If so, the button cancels it.
+      const sentReq = (state.sentRequests || []).find(r => r.to === uid);
       const addBtn = $('#pmAddFriendBtn');
       if(addBtn){
+        addBtn.classList.remove('btn-mint', 'btn-ghost');
         if(isFriend || isBlocked){ addBtn.style.display = 'none'; }
         else if(incomingReq){
           addBtn.style.display = '';
           addBtn.classList.add('btn-mint');
           addBtn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Accept request';
           addBtn.onclick = () => { acceptFriendRequest(incomingReq.id, uid); $('#profileModal').classList.remove('show'); };
+        } else if(sentReq){
+          addBtn.style.display = '';
+          addBtn.classList.add('btn-ghost');
+          addBtn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-close"/></svg> Cancel request';
+          addBtn.onclick = async () => { await cancelFriendRequest(uid); openProfile(uid); };
         } else {
           addBtn.style.display = '';
-          addBtn.classList.remove('btn-mint');
           addBtn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-plus"/></svg> Add friend';
-          addBtn.onclick = () => { addFriendByUsername(p.username); $('#profileModal').classList.remove('show'); };
+          addBtn.onclick = async () => { await addFriendByUsername(p.username); openProfile(uid); };
         }
       }
       $('#pmChallengeBtn').style.display = isBlocked ? 'none' : '';
@@ -30655,6 +32048,11 @@ async function openProfile(uid){
         ? '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Unblock'
         : '<svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-block"/></svg> Block';
       $('#pmBlockBtn').onclick = () => toggleBlock(uid, p.username, !isBlocked);
+      const rptBtn = $('#pmReportBtn');
+      if(rptBtn){
+        rptBtn.style.display = '';
+        rptBtn.onclick = () => openProfileReport(uid, p.username);
+      }
     }
     // ===== Richer content: extra detail tiles + head-to-head + comments =====
     const extra = $('#pmExtraStats');
@@ -30665,7 +32063,7 @@ async function openProfile(uid){
       let titlesCount = 1; try { titlesCount = titlesUnlockedAt(lvl.level).length; } catch(e){}
       extra.innerHTML = `
         <div class="pm-stat"><div class="v gold">${gr && gr.rank ? '#'+gr.rank : '#—'}</div><div class="l">global rank</div></div>
-        <div class="pm-stat"><div class="v">${(p.totalXp||0).toLocaleString()}</div><div class="l">total XP</div></div>
+        <div class="pm-stat"><div class="v" title="${(p.totalXp||0).toLocaleString()} XP">${fmtCompact(p.totalXp||0)}</div><div class="l">total XP</div></div>
         <div class="pm-stat"><div class="v">${titlesCount}</div><div class="l">titles</div></div>
         <div class="pm-stat"><div class="v" style="font-size:14px;">${since}</div><div class="l">member since</div></div>`;
     }
@@ -31144,8 +32542,6 @@ function openEditProfile(){
   $('#editAcceptChallenges').checked = (p.acceptChallenges !== false);
   pendingPhotoDataURL = null;
   updateEditPhotoPreview(p.photoURL || null);
-  // Cosmetics editor (equips save instantly — not part of the form snapshot).
-  try { renderCosmeticsEditor(); } catch(e){}
   // Privacy rows mirror the Settings page state.
   try {
     $('#epStreamerToggle')?.classList.toggle('off', !state.streamerMode);
@@ -35630,6 +37026,7 @@ function showNavPage(page){
     else if(page === 'friends') renderFriendsPage();
     else if(page === 'chat') renderChatPage();
     else if(page === 'settings') renderSettingsPage();
+    else if(page === 'locker') renderLockerPage();
   } catch(e){ console.warn('[nav] page render', e); }
   // scroll content to top
   const sc = document.querySelector('.screens'); if(sc) sc.scrollTop = 0;
@@ -37503,6 +38900,9 @@ function openMoreSheet(){
     const cb = $('#chatBadge'), msc = $('#msChatBadge');
     if(msc){ if(cb && cb.style.display !== 'none' && cb.textContent){ msc.textContent = cb.textContent; msc.style.display = 'flex'; } else { msc.style.display = 'none'; } }
     const ach = $('#msAchBadge'); if(ach) ach.style.display = canPrestige(p) ? 'flex' : 'none';
+    // mirror the shop "NEW" pill into the sheet
+    const nsb = $('#navShopBadge'), mssb = $('#msShopBadge');
+    if(mssb){ mssb.style.display = (nsb && nsb.style.display !== 'none') ? 'flex' : 'none'; }
   }
   try { $('#moreSheetAdmin').style.display = isAdmin() ? '' : 'none'; } catch(e){}
   sheet.classList.remove('closing');
@@ -37531,6 +38931,7 @@ on('#moreSheet', 'click', (e) => {
       case 'friends': showNavPage('friends'); break;
       case 'activity': showNavPage('activity'); break;
       case 'shop': showNavPage('shop'); break;
+      case 'locker': showNavPage('locker'); break;
       case 'chat': closeAllFlyouts(); $('#chatPanel')?.classList.add('show'); renderChatConvList(); break;
       case 'achievements': showNavPage('achievements'); break;
       case 'settings': showNavPage('settings'); break;
@@ -38354,16 +39755,48 @@ function reportPlayer(){
   syncNcmec();
   const det = $('#reportDetails');
   if(det) det.value = state._fairplayFlagged ? 'Auto-flagged: opponent throws arrived suspiciously late.' : '';
+  state._reportTarget = { uid: state.oppUid, username: state.oppProfile?.username || '', inMatch: true };
+  $('#reportModal')?.classList.add('show');
+}
+// Report a player straight from their profile (no live-match evidence).
+function openProfileReport(uid, username){
+  if(!uid || uid === state.user?.uid){ toast("Can't report this player", 'error'); return; }
+  _reportReason = null; _reportEvidence = null;
+  state._reportTarget = { uid, username: username || '', inMatch: false };
+  const ev = $('#reportEvidence'); if(ev) ev.style.display = 'none';
+  setText('#reportTargetName', '@' + (username || 'this player'));
+  const box = $('#reportReasons');
+  const ncmec = $('#reportNcmec');
+  const syncNcmec = () => { if(ncmec) ncmec.style.display = (_reportReason === 'child_safety') ? '' : 'none'; };
+  if(box){
+    box.innerHTML = '';
+    REPORT_REASONS.forEach(r => {
+      const el = document.createElement('div');
+      el.className = 'report-reason' + (r.priority ? ' priority' : '');
+      el.innerHTML = `<span class="rr-radio"></span><span>${r.label}</span>`;
+      el.addEventListener('click', () => {
+        _reportReason = r.id;
+        box.querySelectorAll('.report-reason').forEach(x => x.classList.remove('selected'));
+        el.classList.add('selected');
+        syncNcmec();
+      });
+      box.appendChild(el);
+    });
+  }
+  syncNcmec();
+  const det = $('#reportDetails'); if(det) det.value = '';
+  try { $('#profileModal')?.classList.remove('show'); } catch(e){}
   $('#reportModal')?.classList.add('show');
 }
 on('#reportSubmitBtn', 'click', async () => {
   if(!_reportReason){ toast('Pick a reason first', 'error'); return; }
-  if(!state.user || !state.oppUid){ toast("Can't report this player", 'error'); return; }
+  const target = state._reportTarget || { uid: state.oppUid, username: state.oppProfile?.username || '', inMatch: true };
+  if(!state.user || !target.uid){ toast("Can't report this player", 'error'); return; }
   const reasonMeta = REPORT_REASONS.find(r => r.id === _reportReason) || {};
   const reasonLabel = reasonMeta.label || _reportReason;
   const details = $('#reportDetails')?.value?.trim() || '';
   const attachShot = $('#reportAttachShot')?.checked;
-  const evidence = (attachShot && _reportEvidence) ? _reportEvidence : null;
+  const evidence = (target.inMatch && attachShot && _reportEvidence) ? _reportEvidence : null;
   const isChildSafety = _reportReason === 'child_safety';
   const btn = $('#reportSubmitBtn');
   if(btn) btn.disabled = true;
@@ -38373,8 +39806,8 @@ on('#reportSubmitBtn', 'click', async () => {
     const reportDoc = {
       reporter: state.user.uid,
       reporterUsername: state.profile?.username || '',
-      reported: state.oppUid,
-      reportedUsername: state.oppProfile?.username || '',
+      reported: target.uid,
+      reportedUsername: target.username || '',
       reason: _reportReason,
       reasonLabel,
       details,
@@ -39624,6 +41057,21 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   ['mnavFriendsBadge', 'chatBadge'].forEach(id => { const el = document.getElementById(id); if(el) obs.observe(el, { attributes: true, childList: true, characterData: true, subtree: true }); });
   setInterval(update, 6000);
   window.addEventListener('focus', update);
+})();
+
+/* ---- Mirror unread messages onto the mobile "More" tab dot, since Messages
+        now lives inside the More sheet (no header on small screens). ---- */
+(function(){
+  const read = (id) => { const el = document.getElementById(id); if(!el) return 0; const cs = getComputedStyle(el); if(cs.display === 'none') return 0; const n = parseInt((el.textContent || '').replace(/\D/g, ''), 10); return isNaN(n) ? 0 : n; };
+  function sync(){
+    const dot = document.getElementById('mnavMoreDot'); if(!dot) return;
+    dot.style.display = read('chatBadge') > 0 ? 'flex' : 'none';
+  }
+  const obs = new MutationObserver(sync);
+  const cb = document.getElementById('chatBadge');
+  if(cb) obs.observe(cb, { attributes: true, childList: true, characterData: true, subtree: true });
+  setInterval(sync, 5000);
+  sync();
 })();
 
 /* ---- "Update available" prompt when a new service worker is ready ---- */
