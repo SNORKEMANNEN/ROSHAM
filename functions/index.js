@@ -21,8 +21,8 @@ admin.initializeApp();
 const db = admin.firestore();
 const FieldValue = admin.firestore.FieldValue;
 
-const STRIPE_SECRET_KEY = defineSecret("STRIPE_SECRET_KEY");
-const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
+const STRIPE_SECRET_KEY = defineSecret("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");
+const STRIPE_WEBHOOK_SECRET = defineSecret("whsec_XqZiHJDL8Uyf3FQ8UYreEf93ApZRVJUP");
 const SITE_URL = defineString("SITE_URL", { default: "https://roshcam.com" });
 
 // ---------- SERVER-SIDE TRUTH: packs + catalog prices ----------
