@@ -14710,7 +14710,73 @@ body.low-power .rps-ring, body.low-power .rps-ic, body.low-power .rps-core, body
 .aot-row{ display: flex; gap: 8px; margin-bottom: 8px; align-items: center; }
 .aot-row input[type=text]{ flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; color: var(--text); font-size: 13px; }
 .aot-row input[type=color]{ width: 42px; height: 38px; flex: 0 0 auto; padding: 2px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); cursor: pointer; }
-.aot-note{ font-size: 10.5px; color: var(--text-faint); line-height: 1.4; }
+.aot-row input[type=number]{ flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; color: var(--text); font-size: 13px; }
+.aot-note{ font-size: 10.5px; color: var(--text-faint); line-height: 1.4; margin-top: 4px; }
+.aot-sub{ font-family: var(--font-mono); font-size: 9px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); margin: 12px 0 7px; }
+.aot-sub:first-of-type{ margin-top: 4px; }
+.aot-select{ flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; color: var(--text); font-size: 12.5px; }
+.admin-owner-tools .btn.apc-on{ background: rgba(34,211,163,.14); border-color: rgba(34,211,163,.4); color: var(--mint); }
+.admin-owner-tools.mod-tools{ border-color: color-mix(in srgb, var(--mint) 30%, transparent); background: rgba(34,211,163,.05); }
+.admin-owner-tools.mod-tools .aot-label{ color: var(--mint); }
+/* ===== MODERATION PANEL v2 — tabs, filters, rich player card ===== */
+.admin-h3{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:22px; margin:0 0 12px; display:flex; align-items:center; gap:9px; }
+.admin-role-pill{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.12em; padding:3px 8px; border-radius:999px; }
+.admin-role-pill.owner{ background:linear-gradient(135deg,#ffd33d,#ff9a3d); color:#221302; }
+.admin-role-pill.mod{ background:rgba(34,211,163,.16); color:var(--mint); border:1px solid rgba(34,211,163,.4); }
+.admin-tabs{ display:flex; gap:5px; padding:5px; border-radius:13px; background:rgba(255,255,255,.04); border:1px solid var(--line-soft); margin-bottom:14px; }
+.admin-tab{ flex:1; display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:9px 12px; border:none; border-radius:9px; cursor:pointer; background:transparent; color:var(--text-dim); font-family:var(--font-display); font-stretch:82%; font-weight:800; font-size:13px; transition:background .15s, color .15s; }
+.admin-tab.active{ background:var(--surface-2); color:var(--text); box-shadow:inset 0 0 0 1px var(--line); }
+.admin-tab svg{ opacity:.8; }
+.admin-tab-n{ font-family:var(--font-mono); font-size:9px; font-weight:800; min-width:16px; height:16px; padding:0 4px; border-radius:999px; background:var(--coral); color:#fff; display:inline-grid; place-items:center; }
+.admin-pane{ display:none; }
+.admin-pane.active{ display:block; animation:apFade .22s ease both; }
+@keyframes apFade{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:none; } }
+.admin-rep-bar{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+.admin-filter{ display:flex; gap:6px; flex:1; overflow-x:auto; scrollbar-width:none; padding-bottom:2px; }
+.admin-filter::-webkit-scrollbar{ display:none; }
+.admin-chip{ flex:0 0 auto; padding:6px 11px; border-radius:999px; border:1px solid var(--line); background:var(--surface-2); color:var(--text-dim); font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.03em; cursor:pointer; white-space:nowrap; transition:border-color .15s, color .15s, background .15s; }
+.admin-chip:hover{ color:var(--text); border-color:var(--line-bright,var(--line)); }
+.admin-chip.active{ background:var(--mint); border-color:transparent; color:#04140f; }
+.admin-refresh{ flex:0 0 auto; width:34px; height:34px; border-radius:10px; display:grid; place-items:center; background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim); cursor:pointer; transition:color .15s, border-color .15s; }
+.admin-refresh:hover{ color:var(--text); border-color:var(--line-bright,var(--line)); }
+.admin-refresh.spinning svg{ animation:adminSpin .5s linear; }
+@keyframes adminSpin{ from{ transform:rotate(0); } to{ transform:rotate(360deg); } }
+.admin-reports{ max-height:44vh; overflow-y:auto; }
+.admin-report-row.priority{ border-color:rgba(255,93,108,.5); background:radial-gradient(120% 140% at 0% 0%, rgba(255,93,108,.09), transparent 60%), var(--surface-2); }
+.arr-prio{ font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.08em; padding:2px 6px; border-radius:5px; background:var(--coral); color:#fff; vertical-align:1px; }
+.arr-cnt{ font-family:var(--font-mono); font-size:9px; font-weight:700; color:var(--amber,#ffd33d); vertical-align:1px; }
+/* player card */
+.apc-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.apc-av{ width:52px; height:52px; border-radius:15px; flex:0 0 auto; display:grid; place-items:center; background-size:cover; background-position:center; font-family:var(--font-display); font-weight:800; font-size:22px; color:#06120e; }
+.apc-id{ min-width:0; flex:1; }
+.apc-name{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:17px; display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+.apc-badge{ font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.08em; padding:2px 7px; border-radius:999px; }
+.apc-badge.owner{ background:linear-gradient(135deg,#ffd33d,#ff9a3d); color:#221302; }
+.apc-badge.mod{ background:rgba(34,211,163,.16); color:var(--mint); border:1px solid rgba(34,211,163,.4); }
+.apc-badge.banned{ background:var(--coral); color:#fff; }
+.apc-uid{ display:inline-flex; align-items:center; gap:5px; margin-top:3px; background:none; border:none; padding:0; cursor:pointer; font-family:var(--font-mono); font-size:10px; color:var(--text-faint); max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.apc-uid:hover{ color:var(--text-dim); }
+.apc-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:7px; margin-bottom:11px; }
+.apc-stat{ background:var(--surface); border:1px solid var(--line-soft); border-radius:11px; padding:9px 11px; }
+.apc-stat b{ display:block; font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:17px; }
+.apc-stat i{ font-style:normal; font-family:var(--font-mono); font-size:8px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
+.apc-status{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
+.apc-chip{ font-family:var(--font-mono); font-size:10px; font-weight:700; padding:5px 10px; border-radius:999px; background:var(--surface-2); border:1px solid var(--line); color:var(--text-dim); }
+.apc-chip.good{ color:var(--mint); border-color:rgba(34,211,163,.35); }
+.apc-chip.bad{ color:var(--coral); border-color:rgba(255,93,108,.4); background:rgba(255,93,108,.08); }
+.apc-chip.warn{ color:var(--amber,#ffd33d); border-color:rgba(255,211,61,.35); }
+.apc-sec{ border-top:1px solid var(--line-soft); padding-top:12px; margin-bottom:4px; }
+.apc-sec-h{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--text-dim); margin-bottom:9px; }
+.apc-custom{ display:flex; align-items:center; gap:8px; margin-bottom:9px; }
+.apc-custom-l{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); white-space:nowrap; }
+.apc-custom input{ flex:1; min-width:0; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:8px 11px; color:var(--text); font-size:13px; }
+.apc-reasons{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:9px; }
+.apc-reason-chip{ padding:5px 10px; border-radius:9px; border:1px solid var(--line); background:var(--surface); color:var(--text-dim); font-size:11px; cursor:pointer; transition:border-color .15s, color .15s; }
+.apc-reason-chip:hover{ color:var(--text); border-color:var(--mint); }
+.apc #adminReason{ width:100%; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px; color:var(--text); font-size:13px; margin-bottom:10px; }
+.apc-btns{ display:flex; gap:8px; }
+.apc-btns .btn{ flex:1; }
+.apc-btns .apc-apply{ flex:1.3; background:var(--coral); }
 /* ============================================================
    MOBILE EXPERIENCE LAYER (v1.4)
    Reusable sheets, in-flow hints, keyboard/viewport handling,
@@ -20515,6 +20581,7 @@ body.low-power :is(.case-card, .case-card::before, .case-card-glow, .case-detail
     <symbol id="i-flag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22V15"/></symbol>
     <symbol id="i-more" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="19" r="1.6" fill="currentColor"/></symbol>
     <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M5 15V5a2 2 0 0 1 2-2h10"/></symbol>
     <symbol id="i-locker" viewBox="0 0 24 24"><rect x="4" y="2.5" width="16" height="19" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><line x1="12" y1="3" x2="12" y2="21" stroke="currentColor" stroke-width="2"/><line x1="8.6" y1="7" x2="8.6" y2="9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="15.4" y1="7" x2="15.4" y2="9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="7.6" y1="14" x2="9.6" y2="14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="14.4" y1="14" x2="16.4" y2="14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
     <symbol id="i-chat" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></symbol>
     <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A10.99 10.99 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1A6.6 6.6 0 0 1 5.48 12c0-.73.13-1.44.36-2.1V7.07H2.18A11 11 0 0 0 1 12c0 1.77.42 3.45 1.18 4.93l3.66-2.83z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.83C6.71 7.31 9.14 5.38 12 5.38z"/></symbol>
@@ -24292,14 +24359,27 @@ const FIREBASE_CONFIG = {
 
 <!-- ADMIN MODERATION PANEL -->
 <div class="modal-bg" id="adminModal">
-  <div class="modal" style="max-width:560px;">
+  <div class="modal admin-modal-v2" style="max-width:680px;">
     <button class="modal-close" data-close="adminModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <h3 style="font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:22px; margin:0 0 4px;"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px; color:var(--mint);"><use href="#i-shield"/></svg> Moderation</h3>
-    <p style="color:var(--text-dim); font-size:13px; margin:0 0 14px;">Recent reports. Take action on a player below.</p>
-    <div class="admin-reports" id="adminReports" style="max-height:46vh; overflow-y:auto;"><div class="side-empty">Loading reports…</div></div>
-    <div style="border-top:1px solid var(--line-soft); margin-top:14px; padding-top:14px;">
-      <div class="card-hd-title" style="margin-bottom:8px;"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg> Action a player by username</div>
-      <div class="add-friend-input"><input id="adminUserInput" type="text" placeholder="username…" maxlength="20" /><button id="adminUserLookup">Find</button></div>
+    <h3 class="admin-h3"><svg viewBox="0 0 24 24" width="18" height="18" style="vertical-align:-3px; color:var(--mint);"><use href="#i-shield"/></svg> Moderation <span class="admin-role-pill" id="adminRolePill"></span></h3>
+    <div class="admin-tabs" id="adminTabs">
+      <button type="button" class="admin-tab active" data-atab="reports"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-flag"/></svg> Reports<span class="admin-tab-n" id="adminReportsN" style="display:none;">0</span></button>
+      <button type="button" class="admin-tab" data-atab="player"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-user"/></svg> Player</button>
+    </div>
+
+    <!-- REPORTS PANE -->
+    <div class="admin-pane active" data-apane="reports">
+      <div class="admin-rep-bar">
+        <div class="admin-filter" id="adminRepFilter"></div>
+        <button class="admin-refresh" id="adminRepRefresh" title="Refresh reports"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-rotate"/></svg></button>
+      </div>
+      <div class="admin-reports" id="adminReports"><div class="side-empty">Loading reports…</div></div>
+    </div>
+
+    <!-- PLAYER PANE -->
+    <div class="admin-pane" data-apane="player">
+      <div class="card-hd-title" style="margin-bottom:8px;"><svg viewBox="0 0 24 24"><use href="#i-search"/></svg> Look up a player by username or ID</div>
+      <div class="add-friend-input"><input id="adminUserInput" type="text" placeholder="username or user ID…" maxlength="40" /><button id="adminUserLookup">Find</button></div>
       <div id="adminActionBox"></div>
     </div>
   </div>
@@ -24649,12 +24729,20 @@ const REPORT_REASONS = [
   { id:'other', label:'Something else' },
 ];
 const BAN_DURATIONS = [
-  { id:'warn', label:'Warning only', ms:0 },
+  { id:'warn', label:'Warning', ms:0 },
+  { id:'15m', label:'15 min', ms:900e3 },
   { id:'1h', label:'1 hour', ms:3600e3 },
+  { id:'6h', label:'6 hours', ms:6*3600e3 },
   { id:'1d', label:'1 day', ms:86400e3 },
+  { id:'3d', label:'3 days', ms:3*86400e3 },
   { id:'7d', label:'7 days', ms:7*86400e3 },
   { id:'30d', label:'30 days', ms:30*86400e3 },
   { id:'perm', label:'Permanent', ms:-1 },
+];
+// Quick-pick reasons for the moderation action box.
+const ADMIN_BAN_REASONS = [
+  'Cheating / exploiting', 'Harassment or abuse', 'Nudity / sexual content',
+  'Offensive username', 'Inappropriate behaviour', 'AFK / griefing', 'Ban evasion',
 ];
 // Returns {banned, until, reason} or null
 function getBanStatus(profile){
@@ -40301,52 +40389,98 @@ on('#banSignOut', 'click', () => $('#signOutBtn')?.click());
 
 // ===== ADMIN MODERATION PANEL =====
 let _adminReports = [];
+let _adminRepFilter = 'all';
+let _adminTarget = null, _adminDuration = null, _adminCustomMin = 0;
 function openAdminPanel(){
   if(!isAdmin()){ toast('Admins only', 'error'); return; }
   $('#adminModal')?.classList.add('show');
+  const pill = $('#adminRolePill');
+  if(pill){ pill.textContent = isOwner() ? 'OWNER' : 'MOD'; pill.className = 'admin-role-pill ' + (isOwner() ? 'owner' : 'mod'); }
+  _adminRepFilter = 'all';
+  adminSwitchTab('reports');
   loadAdminReports();
-  $('#adminActionBox').innerHTML = '';
+  $('#adminActionBox').innerHTML = '<div class="side-empty">Look up a player above to see their profile and take action.</div>';
   $('#adminUserInput').value = '';
 }
+function adminSwitchTab(tab){
+  document.querySelectorAll('#adminTabs .admin-tab').forEach(b => b.classList.toggle('active', b.dataset.atab === tab));
+  document.querySelectorAll('#adminModal .admin-pane').forEach(p => p.classList.toggle('active', p.dataset.apane === tab));
+}
+document.addEventListener('click', (e) => {
+  const t = e.target.closest && e.target.closest('#adminTabs .admin-tab');
+  if(t) adminSwitchTab(t.dataset.atab);
+});
+
+// ---------- REPORTS ----------
 async function loadAdminReports(){
   const box = $('#adminReports');
   if(!box) return;
   box.innerHTML = '<div class="side-empty">Loading reports…</div>';
   try {
-    const snap = await getDocs(query(collection(state.db, 'reports'), orderBy('createdAt', 'desc'), limit(40)));
+    const snap = await getDocs(query(collection(state.db, 'reports'), orderBy('createdAt', 'desc'), limit(100)));
     _adminReports = [];
     snap.forEach(d => _adminReports.push({ id:d.id, ...d.data() }));
-    if(_adminReports.length === 0){ box.innerHTML = '<div class="side-empty">No reports 🎉</div>'; return; }
-    box.innerHTML = '';
-    // group by reported user
-    _adminReports.forEach(r => {
-      const row = document.createElement('div');
-      row.className = 'admin-report-row';
-      const when = r.createdAt?.toMillis ? timeAgo(r.createdAt.toMillis()) : 'recently';
-      row.innerHTML = `
-        <div class="arr-body">
-          <div class="arr-target">@${escapeHTML(r.reportedUsername || r.reported?.slice(0,6) || '?')}</div>
-          <div class="arr-reason">${escapeHTML(r.reasonLabel || r.reason || 'reported')}</div>
-          ${r.details ? `<div class="arr-meta">"${escapeHTML(r.details)}"</div>` : ''}
-          ${r.evidence ? `<img class="arr-evidence" src="${r.evidence}" alt="evidence" title="Webcam evidence — click to enlarge" />` : ''}
-          <div class="arr-meta">by @${escapeHTML(r.reporterUsername || '?')} · ${when}</div>
-        </div>
-        <div class="arr-actions">
-          <button class="arr-action">Action</button>
-          <button class="arr-dismiss" title="Dismiss / delete this report">Dismiss</button>
-        </div>`;
-      row.querySelector('.arr-action').addEventListener('click', () => showAdminAction(r.reported, r.reportedUsername));
-      row.querySelector('.arr-dismiss').addEventListener('click', () => dismissReport(r.id, row));
-      const evImg = row.querySelector('.arr-evidence');
-      if(evImg) evImg.addEventListener('click', () => evImg.classList.toggle('big'));
-      box.appendChild(row);
-    });
+    renderAdminReportFilters();
+    renderAdminReports();
   } catch(e){
     console.error('[admin] reports', e);
     box.innerHTML = '<div class="side-empty">Could not load reports (need a Firestore index on reports.createdAt)</div>';
   }
 }
-// Remove/dismiss a single report (admin). Requires the reports delete rule for admin.
+function renderAdminReportFilters(){
+  const nEl = $('#adminReportsN');
+  if(nEl){ if(_adminReports.length){ nEl.textContent = _adminReports.length; nEl.style.display = ''; } else nEl.style.display = 'none'; }
+  const bar = $('#adminRepFilter');
+  if(!bar) return;
+  const prio = _adminReports.filter(r => r.priority || r.urgent).length;
+  const counts = {};
+  _adminReports.forEach(r => { const k = r.reason || 'other'; counts[k] = (counts[k] || 0) + 1; });
+  const chips = [ { id:'all', label:`All · ${_adminReports.length}` } ];
+  if(prio) chips.push({ id:'priority', label:`⚠ Priority · ${prio}` });
+  Object.keys(counts).sort((a,b) => counts[b] - counts[a]).forEach(k => {
+    const lbl = (REPORT_REASONS.find(x => x.id === k)?.label || k).split('—')[0].split('/')[0].trim();
+    chips.push({ id:'reason:' + k, label:`${lbl} · ${counts[k]}` });
+  });
+  bar.innerHTML = chips.map(c => `<button type="button" class="admin-chip${_adminRepFilter === c.id ? ' active' : ''}" data-repf="${c.id}">${escapeHTML(c.label)}</button>`).join('');
+  bar.querySelectorAll('[data-repf]').forEach(b => b.addEventListener('click', () => { _adminRepFilter = b.dataset.repf; renderAdminReportFilters(); renderAdminReports(); }));
+}
+function renderAdminReports(){
+  const box = $('#adminReports');
+  if(!box) return;
+  let list = _adminReports.slice();
+  if(_adminRepFilter === 'priority') list = list.filter(r => r.priority || r.urgent);
+  else if(_adminRepFilter.startsWith('reason:')){ const k = _adminRepFilter.slice(7); list = list.filter(r => (r.reason || 'other') === k); }
+  // priority first (newest already, from the query order)
+  list.sort((a, b) => ((b.priority || b.urgent ? 1 : 0) - (a.priority || a.urgent ? 1 : 0)));
+  const perUser = {};
+  _adminReports.forEach(r => { if(r.reported) perUser[r.reported] = (perUser[r.reported] || 0) + 1; });
+  if(!list.length){ box.innerHTML = '<div class="side-empty">No reports here 🎉</div>'; return; }
+  box.innerHTML = '';
+  list.forEach(r => {
+    const row = document.createElement('div');
+    row.className = 'admin-report-row' + ((r.priority || r.urgent) ? ' priority' : '');
+    const when = r.createdAt?.toMillis ? timeAgo(r.createdAt.toMillis()) : 'recently';
+    const cnt = perUser[r.reported] || 1;
+    row.innerHTML = `
+      <div class="arr-body">
+        <div class="arr-target">@${escapeHTML(r.reportedUsername || r.reported?.slice(0,6) || '?')}${(r.priority || r.urgent) ? ' <span class="arr-prio">PRIORITY</span>' : ''}${cnt > 1 ? ` <span class="arr-cnt">${cnt}× reports</span>` : ''}</div>
+        <div class="arr-reason">${escapeHTML(r.reasonLabel || r.reason || 'reported')}</div>
+        ${r.details ? `<div class="arr-meta">"${escapeHTML(r.details)}"</div>` : ''}
+        ${r.evidence ? `<img class="arr-evidence" src="${r.evidence}" alt="evidence" title="Webcam evidence — click to enlarge" />` : ''}
+        <div class="arr-meta">by @${escapeHTML(r.reporterUsername || '?')} · ${when}</div>
+      </div>
+      <div class="arr-actions">
+        <button class="arr-action">Action</button>
+        <button class="arr-dismiss" title="Dismiss / delete this report">Dismiss</button>
+      </div>`;
+    row.querySelector('.arr-action').addEventListener('click', () => { adminSwitchTab('player'); loadPlayerCard(r.reported, r.reportedUsername, { reason: r.reasonLabel || r.reason }); });
+    row.querySelector('.arr-dismiss').addEventListener('click', () => dismissReport(r.id, row));
+    const evImg = row.querySelector('.arr-evidence');
+    if(evImg) evImg.addEventListener('click', () => evImg.classList.toggle('big'));
+    box.appendChild(row);
+  });
+}
+on('#adminRepRefresh', 'click', () => { const b = $('#adminRepRefresh'); b?.classList.add('spinning'); loadAdminReports().finally(() => setTimeout(() => b?.classList.remove('spinning'), 400)); });
 async function dismissReport(id, rowEl){
   if(!id) return;
   if(!confirm('Dismiss and delete this report?')) return;
@@ -40355,65 +40489,220 @@ async function dismissReport(id, rowEl){
     if(rowEl){ rowEl.style.opacity = '0'; setTimeout(() => rowEl.remove(), 180); }
     _adminReports = _adminReports.filter(r => r.id !== id);
     toast('Report dismissed', 'success');
+    renderAdminReportFilters();
     const box = $('#adminReports');
     if(box && _adminReports.length === 0) setTimeout(() => { box.innerHTML = '<div class="side-empty">No reports 🎉</div>'; }, 200);
   } catch(e){ console.warn('[admin] dismiss', e); toast('Could not dismiss (check Firestore reports delete rule)', 'error'); }
 }
-let _adminTarget = null, _adminDuration = null;
-function showAdminAction(uid, username){
-  _adminTarget = { uid, username };
-  _adminDuration = null;
+
+// ---------- PLAYER CARD ----------
+function showAdminAction(uid, username){ adminSwitchTab('player'); loadPlayerCard(uid, username); }
+async function loadPlayerCard(uid, username, opts){
+  opts = opts || {};
+  _adminTarget = { uid, username }; _adminDuration = null; _adminCustomMin = 0;
   const box = $('#adminActionBox');
   if(!box) return;
+  box.innerHTML = '<div class="side-empty">Loading player…</div>';
+  let p = {};
+  try { const snap = await getDoc(doc(state.db, 'users', uid)); if(snap.exists()) p = snap.data(); } catch(e){}
+  username = username || p.username || (uid ? uid.slice(0, 6) : '?');
+  _adminTarget.username = username;
   const owner = isOwner();
   const targetIsOwner = uid === OWNER_UID;
+  const ban = getBanStatus(p);
+  const warnCount = Array.isArray(p.warnings) ? p.warnings.length : 0;
+  const reportsAgainst = _adminReports.filter(r => r.reported === uid).length;
+  const rating = p.rating || 1000, games = p.games || 0, wins = p.wins || 0, losses = p.losses || 0;
+  const wr = games ? Math.round((wins / games) * 100) : 0;
+  const created = p.createdAt?.toMillis ? p.createdAt.toMillis() : 0;
+  const joined = created ? new Date(created).toLocaleDateString(undefined, { month:'short', day:'numeric', year:'numeric' }) : '—';
+  const avHTML = p.photoURL
+    ? `<span class="apc-av" style="background-image:url('${p.photoURL}')"></span>`
+    : `<span class="apc-av" style="background:${AVATAR_COLORS[p.colorIdx || 0] || '#666'}">${escapeHTML(initialOf(username))}</span>`;
+  const badges = [];
+  if(targetIsOwner) badges.push('<span class="apc-badge owner">OWNER</span>');
+  else if(p.isMod) badges.push('<span class="apc-badge mod">MOD</span>');
+  if(ban) badges.push(`<span class="apc-badge banned">${ban.until ? 'BANNED' : 'PERMA-BANNED'}</span>`);
+  const stat = (l, v) => `<div class="apc-stat"><b>${v}</b><i>${l}</i></div>`;
+  const canModerate = owner || (isMod() && !targetIsOwner);
+  const cosOpts = ['name','tag','avatar','frame'].map(t =>
+    `<optgroup label="${CX_TYPE_LABEL[t]}">` +
+    COSMETICS.filter(c => c.type === t).map(c => `<option value="${c.id}">${escapeHTML(c.name)} · ${c.rarity}</option>`).join('') +
+    `</optgroup>`).join('');
   box.innerHTML = `
-    <div class="admin-action-card">
-      <div style="font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:15px; margin-bottom:4px;">Action @${escapeHTML(username || uid?.slice(0,6) || '?')}${targetIsOwner ? ' <span style="color:var(--amber,#ffd33d)">· Owner</span>' : ''}</div>
-      ${targetIsOwner ? `<div class="side-empty">The owner can't be moderated.</div>` : `
-      <div class="admin-dur-grid" id="adminDurGrid"></div>
-      <input id="adminReason" type="text" placeholder="Reason / note (shown to user)…" maxlength="140" style="width:100%; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px; color:var(--text); font-size:13px; margin-bottom:10px;" />
-      <div style="display:flex; gap:8px;">
-        <button class="btn btn-ghost" id="adminUnban" style="flex:1;">Lift ban</button>
-        <button class="btn btn-primary" id="adminApply" style="flex:1; background:var(--coral);">Apply</button>
+    <div class="admin-action-card apc">
+      <div class="apc-head">
+        ${avHTML}
+        <div class="apc-id">
+          <div class="apc-name">@${escapeHTML(username)} ${badges.join(' ')}</div>
+          <button class="apc-uid" id="adminCopyUid" title="Copy user ID">${escapeHTML(uid || '')} <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-copy"/></svg></button>
+        </div>
+      </div>
+      <div class="apc-stats">
+        ${stat('Rating', rating)}${stat('Wins', wins)}${stat('Losses', losses)}${stat('Win rate', wr + '%')}${stat('Games', games)}${stat('Joined', joined)}
+      </div>
+      <div class="apc-status">
+        <span class="apc-chip ${ban ? 'bad' : 'good'}">${ban ? (ban.until ? 'Banned · ' + fmtBanRemaining(ban.until) + ' left' : 'Permanently banned') : 'Not banned'}</span>
+        <span class="apc-chip ${warnCount ? 'warn' : ''}">${warnCount} warning${warnCount === 1 ? '' : 's'}</span>
+        <span class="apc-chip ${reportsAgainst ? 'warn' : ''}">${reportsAgainst} report${reportsAgainst === 1 ? '' : 's'}</span>
+      </div>
+      ${targetIsOwner ? '<div class="side-empty">The owner can\'t be moderated.</div>' : `
+      <div class="apc-sec">
+        <div class="apc-sec-h">Moderation</div>
+        <div class="admin-dur-grid" id="adminDurGrid"></div>
+        <div class="apc-custom"><span class="apc-custom-l">or custom</span><input id="adminCustomMin" type="number" min="1" max="525600" placeholder="minutes" /><span class="apc-custom-l">min ban</span></div>
+        <div class="apc-reasons" id="adminReasonChips"></div>
+        <input id="adminReason" type="text" placeholder="Reason / note (shown to the user)…" maxlength="140" value="${escapeHTML(opts.reason || '')}" />
+        <div class="apc-btns">
+          <button class="btn btn-ghost" id="adminUnban">Lift ban</button>
+          <button class="btn" id="adminMessage"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-message"/></svg> Message</button>
+          <button class="btn btn-primary apc-apply" id="adminApply">Apply</button>
+        </div>
       </div>`}
       ${(owner && !targetIsOwner) ? `
       <div class="admin-owner-tools">
         <div class="aot-label">★ Owner tools</div>
+        <div class="aot-sub">Give cosmetics</div>
+        <div class="aot-row">
+          <select id="adminCosSel" class="aot-select">${cosOpts}</select>
+          <button class="btn" id="adminGrantCos">Give</button>
+        </div>
+        <div class="aot-row">
+          <button class="btn" id="adminGrantAllCos" style="flex:1;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-gem"/></svg> Give ALL cosmetics</button>
+          <button class="btn btn-ghost" id="adminRevokeCos" style="flex:1;">Revoke all</button>
+        </div>
+        <div class="aot-sub">RoshCoins &amp; rating</div>
+        <div class="aot-row">
+          <input id="adminCoins" type="number" placeholder="coins (±)…" />
+          <button class="btn" id="adminGrantCoins">Give coins</button>
+        </div>
+        <div class="aot-row">
+          <input id="adminRating" type="number" min="0" max="5000" placeholder="set rating…" value="${rating}" />
+          <button class="btn" id="adminSetRating">Set rating</button>
+          <button class="btn btn-ghost" id="adminResetStats">Reset stats</button>
+        </div>
+        <div class="aot-sub">Title &amp; role</div>
         <div class="aot-row">
           <input id="adminTitleName" type="text" placeholder="Custom title (e.g. VIP)…" maxlength="24" />
           <input id="adminTitleColor" type="color" value="#ffd33d" title="Title colour" />
           <button class="btn" id="adminGrantTitle">Grant</button>
         </div>
         <div class="aot-row">
-          <button class="btn" id="adminMakeMod" style="flex:1;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-shield"/></svg> Make moderator</button>
+          <button class="btn ${p.isMod ? '' : 'apc-on'}" id="adminMakeMod" style="flex:1;"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-shield"/></svg> ${p.isMod ? 'Moderator ✓' : 'Make moderator'}</button>
           <button class="btn btn-ghost" id="adminRemoveMod" style="flex:1;">Remove mod</button>
         </div>
-        <div class="aot-note">Moderators can warn &amp; temp-ban only — not grant titles/mod or permanent-ban.</div>
+        <div class="aot-note">Moderators can warn &amp; temp-ban and give cosmetics/coins — only the owner can permanent-ban, grant titles/mod, or edit ratings.</div>
+      </div>` : (isMod() && !targetIsOwner) ? `
+      <div class="admin-owner-tools mod-tools">
+        <div class="aot-label">🎁 Give cosmetics</div>
+        <div class="aot-row">
+          <select id="adminCosSel" class="aot-select">${cosOpts}</select>
+          <button class="btn" id="adminGrantCos">Give</button>
+        </div>
+        <div class="aot-note">Coins, ratings, titles and permanent bans are owner-only.</div>
       </div>` : ''}
     </div>`;
-  if(!targetIsOwner){
+  // Copy UID
+  $('#adminCopyUid')?.addEventListener('click', () => { try { navigator.clipboard.writeText(uid); toast('User ID copied', 'success'); } catch(e){} });
+  if(canModerate && !targetIsOwner){
     const grid = $('#adminDurGrid');
-    // Moderators (non-owner) can't issue permanent bans.
     BAN_DURATIONS.filter(d => owner || d.id !== 'perm').forEach(d => {
       const b = document.createElement('button');
-      b.className = 'admin-dur-btn' + (d.id === 'warn' ? ' warn-dur' : '');
+      b.className = 'admin-dur-btn' + (d.id === 'warn' ? ' warn-dur' : '') + (d.id === 'perm' ? ' perm-dur' : '');
       b.textContent = d.label;
       b.addEventListener('click', () => {
-        _adminDuration = d;
+        _adminDuration = d; _adminCustomMin = 0;
+        const ci = $('#adminCustomMin'); if(ci) ci.value = '';
         grid.querySelectorAll('.admin-dur-btn').forEach(x => x.classList.remove('selected'));
         b.classList.add('selected');
       });
       grid.appendChild(b);
     });
+    $('#adminCustomMin')?.addEventListener('input', (e) => {
+      _adminCustomMin = parseInt(e.target.value, 10) || 0;
+      if(_adminCustomMin > 0){ _adminDuration = null; grid.querySelectorAll('.admin-dur-btn').forEach(x => x.classList.remove('selected')); }
+    });
+    const chips = $('#adminReasonChips');
+    if(chips){ ADMIN_BAN_REASONS.forEach(rs => { const c = document.createElement('button'); c.type = 'button'; c.className = 'apc-reason-chip'; c.textContent = rs; c.addEventListener('click', () => { const ri = $('#adminReason'); if(ri) ri.value = rs; }); chips.appendChild(c); }); }
     $('#adminApply')?.addEventListener('click', () => applyAdminAction());
     $('#adminUnban')?.addEventListener('click', () => liftBan());
+    $('#adminMessage')?.addEventListener('click', () => { $('#adminModal')?.classList.remove('show'); try { openChatThread(uid, username, p.photoURL, p.colorIdx); } catch(e){} });
   }
+  // grants (owner OR mod)
+  $('#adminGrantCos')?.addEventListener('click', () => adminGrantCosmetic(uid, $('#adminCosSel')?.value));
+  $('#adminGrantCoins')?.addEventListener('click', () => adminGrantCoins(uid, $('#adminCoins')?.value));
   if(owner && !targetIsOwner){
+    $('#adminGrantAllCos')?.addEventListener('click', () => adminGrantAllCosmetics(uid));
+    $('#adminRevokeCos')?.addEventListener('click', () => adminRevokeCosmetics(uid));
+    $('#adminSetRating')?.addEventListener('click', () => adminSetRating(uid, $('#adminRating')?.value));
+    $('#adminResetStats')?.addEventListener('click', () => adminResetStats(uid));
     $('#adminGrantTitle')?.addEventListener('click', () => grantCustomTitle(uid, $('#adminTitleName')?.value, $('#adminTitleColor')?.value));
     $('#adminMakeMod')?.addEventListener('click', () => setUserMod(uid, username, true));
     $('#adminRemoveMod')?.addEventListener('click', () => setUserMod(uid, username, false));
   }
+}
+// ADMIN: grant a cosmetic to any player (arrayUnion into their owned list).
+async function adminGrantCosmetic(uid, itemId){
+  if(!isAdmin()) return;
+  const item = COSMETIC_BY_ID[itemId];
+  if(!item){ toast('Pick a cosmetic', 'error'); return; }
+  try {
+    await updateDoc(doc(state.db, 'users', uid), { 'cosmetics.owned': arrayUnion(itemId) });
+    toast(`Gave ${item.name} to @${_adminTarget?.username || uid.slice(0,6)}`, 'success');
+    try { pushNotification(uid, { type:'cosmetic', text:`🎁 A moderator gifted you a cosmetic: <b>${escapeHTML(item.name)}</b> — check your Locker!`, actionUid:null }); } catch(e){}
+    if(uid === state.user?.uid){ state.profile.cosmetics = { ...getCosmetics(), owned:[...new Set([...getCosmetics().owned, itemId])] }; try { updateLockerBadge(); } catch(e){} }
+  } catch(e){ console.error('[admin] grant cosmetic', e); toast('Could not grant (check Firestore rules)', 'error'); }
+}
+async function adminGrantAllCosmetics(uid){
+  if(!isOwner()){ toast('Owner only', 'error'); return; }
+  if(!confirm('Give ALL cosmetics to @' + (_adminTarget?.username || '') + '?')) return;
+  try {
+    const all = COSMETICS.map(c => c.id);
+    await updateDoc(doc(state.db, 'users', uid), { 'cosmetics.owned': arrayUnion(...all) });
+    toast(`Gave all ${all.length} cosmetics`, 'success');
+    try { pushNotification(uid, { type:'cosmetic', text:'🎁 A moderator unlocked <b>every cosmetic</b> for you — check your Locker!', actionUid:null }); } catch(e){}
+    if(uid === state.user?.uid){ state.profile.cosmetics = { ...getCosmetics(), owned:[...new Set([...getCosmetics().owned, ...all])] }; try { updateLockerBadge(); } catch(e){} }
+  } catch(e){ console.error('[admin] grant all', e); toast('Could not grant all', 'error'); }
+}
+async function adminRevokeCosmetics(uid){
+  if(!isOwner()){ toast('Owner only', 'error'); return; }
+  if(!confirm('Remove ALL cosmetics from @' + (_adminTarget?.username || '') + ' and unequip everything?')) return;
+  try {
+    await updateDoc(doc(state.db, 'users', uid), { cosmetics: { owned:[], name:'', tag:'', avatar:'', frame:'' } });
+    toast('Revoked all cosmetics', 'success');
+  } catch(e){ console.error('[admin] revoke', e); toast('Could not revoke', 'error'); }
+}
+async function adminGrantCoins(uid, amount){
+  if(!isAdmin()) return;
+  amount = parseInt(amount, 10);
+  if(!amount || isNaN(amount)){ toast('Enter a coin amount', 'error'); return; }
+  if(amount < 0 && !isOwner()){ toast('Only the owner can remove coins', 'error'); return; }
+  try {
+    await updateDoc(doc(state.db, 'users', uid), { coins: increment(amount) });
+    toast(`${amount > 0 ? 'Gave' : 'Took'} ${Math.abs(amount).toLocaleString()} coins ${amount > 0 ? 'to' : 'from'} @${_adminTarget?.username || ''}`, 'success');
+    if(amount > 0){ try { pushNotification(uid, { type:'coins', text:`🪙 A moderator gave you <b>${amount.toLocaleString()} RoshCoins</b>!`, actionUid:null }); } catch(e){} }
+    if(uid === state.user?.uid){ state.profile.coins = (state.profile.coins || 0) + amount; try { updateCoinPill?.(); } catch(e){} }
+    const ci = $('#adminCoins'); if(ci) ci.value = '';
+  } catch(e){ console.error('[admin] coins', e); toast('Could not update coins', 'error'); }
+}
+async function adminSetRating(uid, rating){
+  if(!isOwner()){ toast('Owner only', 'error'); return; }
+  rating = parseInt(rating, 10);
+  if(isNaN(rating) || rating < 0 || rating > 5000){ toast('Rating must be 0–5000', 'error'); return; }
+  try {
+    await updateDoc(doc(state.db, 'users', uid), { rating });
+    toast(`Set @${_adminTarget?.username || ''} rating to ${rating}`, 'success');
+    loadPlayerCard(uid, _adminTarget?.username);
+  } catch(e){ console.error('[admin] rating', e); toast('Could not set rating', 'error'); }
+}
+async function adminResetStats(uid){
+  if(!isOwner()){ toast('Owner only', 'error'); return; }
+  if(!confirm("Reset this player's rating and W/L/games to defaults?")) return;
+  try {
+    await updateDoc(doc(state.db, 'users', uid), { rating:1000, wins:0, losses:0, draws:0, games:0, currentStreak:0, bestStreak:0 });
+    toast('Stats reset', 'success');
+    loadPlayerCard(uid, _adminTarget?.username);
+  } catch(e){ console.error('[admin] reset', e); toast('Could not reset', 'error'); }
 }
 // OWNER: grant a custom equippable title to a user.
 async function grantCustomTitle(uid, name, color){
@@ -40447,48 +40736,60 @@ async function setUserMod(uid, username, makeMod){
 async function applyAdminAction(){
   if(!_adminTarget){ return; }
   if(_adminTarget.uid === OWNER_UID){ toast("The owner can't be moderated", 'error'); return; }
-  if(!_adminDuration){ toast('Pick a duration / warning', 'error'); return; }
-  // Moderators (non-owner) can't issue permanent bans.
-  if(_adminDuration.ms === -1 && !isOwner()){ toast('Only the owner can permanently ban', 'error'); return; }
+  // Resolve the chosen duration: a preset button, or a custom minutes value.
+  let dur = _adminDuration;
+  if(!dur && _adminCustomMin > 0) dur = { id:'custom', label: _adminCustomMin + ' min', ms: _adminCustomMin * 60e3 };
+  if(!dur){ toast('Pick a duration / warning, or enter custom minutes', 'error'); return; }
+  if(dur.ms === -1 && !isOwner()){ toast('Only the owner can permanently ban', 'error'); return; }
+  if(dur.ms === -1 && !confirm('PERMANENTLY ban @' + _adminTarget.username + '? This cannot be undone by moderators.')) return;
   const reason = $('#adminReason')?.value?.trim() || '';
+  const uid = _adminTarget.uid, uname = _adminTarget.username;
   try {
-    if(_adminDuration.id === 'warn'){
-      // Issue a warning (append to warnings array)
-      const tgt = await getDoc(doc(state.db, 'users', _adminTarget.uid));
+    if(dur.id === 'warn'){
+      const tgt = await getDoc(doc(state.db, 'users', uid));
       const warnings = (tgt.exists() && Array.isArray(tgt.data().warnings)) ? tgt.data().warnings : [];
       warnings.push({ reason: reason || 'Inappropriate behaviour', note:'', by: state.profile.username, at: Date.now(), seen:false });
-      await updateDoc(doc(state.db, 'users', _adminTarget.uid), { warnings });
-      pushNotification(_adminTarget.uid, { type:'warning', text:`⚠️ A moderator issued you a warning: <b>${escapeHTML(reason||'Inappropriate behaviour')}</b>`, actionUid:null });
-      toast(`Warned @${_adminTarget.username}`, 'success');
+      await updateDoc(doc(state.db, 'users', uid), { warnings });
+      pushNotification(uid, { type:'warning', text:`⚠️ A moderator issued you a warning: <b>${escapeHTML(reason||'Inappropriate behaviour')}</b>`, actionUid:null });
+      toast(`Warned @${uname}`, 'success');
     } else {
-      const update = { banReason: reason || 'Violation of community rules' };
-      if(_adminDuration.ms === -1){ update.bannedPermanent = true; update.bannedUntil = null; }
-      else { update.bannedPermanent = false; update.bannedUntil = new Date(Date.now() + _adminDuration.ms); }
-      await updateDoc(doc(state.db, 'users', _adminTarget.uid), update);
-      pushNotification(_adminTarget.uid, { type:'ban', text:`🚫 You have been banned (${_adminDuration.label}): <b>${escapeHTML(reason||'Violation')}</b>`, actionUid:null });
-      toast(`Banned @${_adminTarget.username} (${_adminDuration.label})`, 'success');
+      const update = { banReason: reason || 'Violation of community rules', bannedBy: state.profile?.username || '', bannedAt: Date.now() };
+      if(dur.ms === -1){ update.bannedPermanent = true; update.bannedUntil = null; }
+      else { update.bannedPermanent = false; update.bannedUntil = new Date(Date.now() + dur.ms); }
+      await updateDoc(doc(state.db, 'users', uid), update);
+      pushNotification(uid, { type:'ban', text:`🚫 You have been banned (${dur.label}): <b>${escapeHTML(reason||'Violation')}</b>`, actionUid:null });
+      toast(`Banned @${uname} (${dur.label})`, 'success');
     }
-    $('#adminActionBox').innerHTML = '';
-    _adminTarget = null;
+    loadPlayerCard(uid, uname);   // refresh the card so status updates live
   } catch(e){ console.error('[admin] action', e); toast('Could not apply (check permissions)', 'error'); }
 }
 async function liftBan(){
   if(!_adminTarget) return;
+  const uid = _adminTarget.uid, uname = _adminTarget.username;
   try {
-    await updateDoc(doc(state.db, 'users', _adminTarget.uid), { bannedPermanent:false, bannedUntil:null, banReason:'' });
-    toast(`Lifted ban on @${_adminTarget.username}`, 'success');
-    $('#adminActionBox').innerHTML = '';
+    await updateDoc(doc(state.db, 'users', uid), { bannedPermanent:false, bannedUntil:null, banReason:'' });
+    toast(`Lifted ban on @${uname}`, 'success');
+    try { pushNotification(uid, { type:'mod', text:'✅ Your ban has been lifted — welcome back.', actionUid:null }); } catch(e){}
+    loadPlayerCard(uid, uname);
   } catch(e){ toast('Could not lift ban', 'error'); }
 }
+// Look up a player by username OR by raw user ID.
 on('#adminUserLookup', 'click', async () => {
-  const uname = $('#adminUserInput')?.value?.trim().toLowerCase();
-  if(!uname) return;
+  const raw = $('#adminUserInput')?.value?.trim();
+  if(!raw){ return; }
+  adminSwitchTab('player');
   try {
-    const u = await getDoc(doc(state.db, 'usernames', uname));
+    // A Firebase UID is 28 chars, no spaces — treat a long token as a UID.
+    if(raw.length >= 20 && !/\s/.test(raw)){
+      const snap = await getDoc(doc(state.db, 'users', raw));
+      if(snap.exists()){ loadPlayerCard(raw, snap.data().username); return; }
+    }
+    const u = await getDoc(doc(state.db, 'usernames', raw.toLowerCase()));
     if(!u.exists()){ toast('User not found', 'error'); return; }
-    showAdminAction(u.data().uid, uname);
-  } catch(e){ toast('Lookup failed', 'error'); }
+    loadPlayerCard(u.data().uid, raw.toLowerCase());
+  } catch(e){ console.error('[admin] lookup', e); toast('Lookup failed', 'error'); }
 });
+$('#adminUserInput')?.addEventListener('keydown', (e) => { if(e.key === 'Enter'){ e.preventDefault(); $('#adminUserLookup')?.click(); } });
 
 // NEW: Leave match button (forfeit with ELO penalty)
 on('#leaveMatchBtn', 'click', forfeitMatch);
