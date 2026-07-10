@@ -1,0 +1,115 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // The moderation admin account.
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == '9DURgNdTyUhtBso2L8Lo22R3Dru1';
+    }
+
+    // ECONOMY GUARD: the browser may never change its own coin balance or the
+    // list of owned cosmetics — only Cloud Functions (Admin SDK) can. Equipped
+    // cosmetic SLOTS stay client-writable, so equipping still works offline of
+    // the functions.
+    function economyUntouched() {
+      return request.resource.data.get('coins', 0) == resource.data.get('coins', 0)
+        && request.resource.data.get('cosmetics', {}).get('owned', [])
+           == resource.data.get('cosmetics', {}).get('owned', []);
+    }
+
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && (request.auth.uid == userId || isAdmin())
+        && request.resource.data.get('coins', 0) == 0
+        && request.resource.data.get('cosmetics', {}).get('owned', []).size() == 0;
+      allow update: if request.auth != null
+        && (request.auth.uid == userId || isAdmin())
+        && (economyUntouched() || isAdmin());
+    }
+    match /usernames/{name} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+    match /queue/{userId} {
+      allow read, list: if request.auth != null;
+      allow create, update: if request.auth != null && request.auth.uid == userId;
+      // Allow deleting any queue entry (matchmaking transactions need this)
+      allow delete: if request.auth != null;
+    }
+    match /matches/{matchId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null &&
+        (resource.data.caller == request.auth.uid || resource.data.callee == request.auth.uid);
+      match /callerCandidates/{doc} { allow read, write: if request.auth != null; }
+      match /calleeCandidates/{doc} { allow read, write: if request.auth != null; }
+    }
+    match /friendRequests/{reqId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
+      allow update, delete: if request.auth != null &&
+        (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+    }
+    match /invites/{inviteId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
+      allow update, delete: if request.auth != null &&
+        (resource.data.from == request.auth.uid || resource.data.to == request.auth.uid);
+    }
+    match /activity/{actId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+    }
+    match /matchHistory/{histId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.uid == request.auth.uid;
+    }
+    match /reports/{reportId} {
+      allow create: if request.auth != null && request.resource.data.reporter == request.auth.uid;
+      // Only the admin can read / triage / dismiss (delete) reports.
+      allow read, list, update, delete: if isAdmin();
+    }
+    match /profileComments/{profileUid}/comments/{id} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
+      allow delete: if request.auth != null &&
+        (resource.data.from == request.auth.uid || profileUid == request.auth.uid || isAdmin());
+    }
+    match /globalChat/{msgId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 300;
+      allow delete: if request.auth != null &&
+        (resource.data.uid == request.auth.uid || isAdmin());
+    }
+    // Direct messages: index doc per conversation + message subcollection.
+    match /dmIndex/{convId} {
+      allow read: if request.auth != null && request.auth.uid in resource.data.participants;
+      allow create: if request.auth != null && request.auth.uid in request.resource.data.participants;
+      allow update: if request.auth != null && request.auth.uid in resource.data.participants;
+    }
+    match /dms/{convId}/messages/{msgId} {
+      allow read, list: if request.auth != null;
+      allow create: if request.auth != null && request.resource.data.from == request.auth.uid;
+      allow update: if request.auth != null;   // reactions + soft-delete flags
+    }
+    match /notifications/{userId}/items/{id} {
+      allow read, list, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;   // anyone can notify you
+    }
+    // GIFTS + PURCHASES are function-only: readable by the people involved,
+    // never writable from the browser.
+    match /gifts/{giftId} {
+      allow read, list: if request.auth != null &&
+        (resource.data.to == request.auth.uid || resource.data.from == request.auth.uid);
+    }
+    match /purchases/{purchaseId} {
+      allow read: if request.auth != null && resource.data.uid == request.auth.uid;
+    }
+  }
+}
