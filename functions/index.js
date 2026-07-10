@@ -33,23 +33,77 @@ const COIN_PACKS = {
   p5000:  { coins: 5000,  usd: 799,  name: "Pro pack (+28% extra)" },
   p13500: { coins: 13500, usd: 1999, name: "Whale pack (+38% extra)" },
 };
-const RARITY_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000 };
+const RARITY_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000, ascended: 14000 };
 const COSMETIC_RARITY = {
   // name styles
-  ns_galaxy: "legendary", ns_gold: "legendary", ns_prisma: "mythic",
-  ns_neon: "epic", ns_fire: "epic", ns_void: "epic",
-  ns_ice: "rare", ns_toxic: "rare", ns_chrome: "rare", ns_blood: "rare",
+  ns_amethyst: "rare",
+  ns_blood: "rare",
+  ns_chrome: "rare",
+  ns_cyber: "epic",
+  ns_dragonlord: "mythic",
+  ns_emerald: "rare",
+  ns_fire: "epic",
+  ns_galaxy: "legendary",
+  ns_gold: "legendary",
+  ns_ice: "rare",
+  ns_neon: "epic",
+  ns_netrunner: "mythic",
+  ns_prisma: "mythic",
+  ns_royal: "legendary",
+  ns_sakura: "rare",
+  ns_starforged: "ascended",
+  ns_starlight: "legendary",
+  ns_sunset: "epic",
+  ns_toxic: "rare",
+  ns_void: "epic",
   // player tags
-  tg_goat: "mythic", tg_og: "legendary", tg_king: "legendary",
-  tg_clutch: "epic", tg_menace: "epic",
-  tg_lucky: "rare", tg_sweat: "rare", tg_bot: "rare",
+  tg_beast: "epic",
+  tg_boss: "epic",
+  tg_bot: "rare",
+  tg_clutch: "epic",
+  tg_cosmic: "ascended",
+  tg_dragon: "mythic",
+  tg_goat: "mythic",
+  tg_king: "legendary",
+  tg_legend: "legendary",
+  tg_lucky: "rare",
+  tg_menace: "epic",
+  tg_og: "legendary",
+  tg_pro: "rare",
+  tg_sweat: "rare",
+  tg_syndicate: "mythic",
+  tg_vibe: "rare",
   // avatar effects
-  av_liquid: "mythic", av_void: "mythic", av_galaxy: "legendary", av_gold: "legendary",
-  av_flame: "epic", av_electric: "epic", av_prism: "epic",
-  av_ice: "rare", av_rose: "rare", av_mint: "rare",
+  av_aqua: "rare",
+  av_crimson: "epic",
+  av_electric: "epic",
+  av_emerald: "rare",
+  av_eventhorizon: "ascended",
+  av_flame: "epic",
+  av_galaxy: "legendary",
+  av_gold: "legendary",
+  av_hologrid: "mythic",
+  av_ice: "rare",
+  av_liquid: "mythic",
+  av_mint: "rare",
+  av_nebula: "legendary",
+  av_prism: "epic",
+  av_rose: "rare",
+  av_sunfire: "epic",
+  av_void: "mythic",
+  av_wyrmfire: "mythic",
   // profile frames
-  fr_liquid: "mythic", fr_galaxy: "legendary", fr_gold: "legendary",
-  fr_neon: "epic", fr_blood: "epic", fr_circuit: "rare",
+  fr_blood: "epic",
+  fr_circuit: "rare",
+  fr_emerald: "epic",
+  fr_galaxy: "legendary",
+  fr_gold: "legendary",
+  fr_hoard: "mythic",
+  fr_liquid: "mythic",
+  fr_neon: "epic",
+  fr_nightcity: "mythic",
+  fr_starforge: "ascended",
+  fr_sunset: "legendary",
 };
 const itemPrice = (id) => RARITY_PRICE[COSMETIC_RARITY[id]] || null;
 
@@ -220,5 +274,34 @@ exports.respondGift = onCall({ cors: true }, async (req) => {
     tx.update(userRef(gift.from), { coins: FieldValue.increment(gift.price || 0) });
     tx.update(giftRef, { status: "refunded", duplicate, resolvedAt: FieldValue.serverTimestamp() });
     return { result: "refunded", duplicate };
+  });
+});
+
+// ═══════════════ 6. CASE DUPLICATES → ROSHCOINS ═══════════════
+// The wallet is server-owned, so the client can't credit itself the 50-coin
+// duplicate refund from case openings — it asks here instead. Each item must
+// already be owned (that's what makes it a duplicate). Batched for bulk opens.
+const DUPE_COIN_VALUE = 50;
+exports.redeemDupeCoins = onCall({ cors: true }, async (req) => {
+  const uid = requireUser(req);
+  const raw = Array.isArray(req.data?.items) ? req.data.items : [req.data?.itemId];
+  const items = raw.map((x) => String(x || "")).filter(Boolean).slice(0, 60);
+  if (!items.length) throw new HttpsError("invalid-argument", "No items.");
+  const ref = userRef(uid);
+  return await db.runTransaction(async (tx) => {
+    const snap = await tx.get(ref);
+    if (!snap.exists) throw new HttpsError("not-found", "Profile missing.");
+    const data = snap.data();
+    const owned = ownedOf(data);
+    for (const id of items) {
+      if (!owned.includes(id)) throw new HttpsError("failed-precondition", "Not a duplicate.");
+    }
+    const credit = items.length * DUPE_COIN_VALUE;
+    tx.update(ref, { coins: FieldValue.increment(credit) });
+    tx.set(db.collection("purchases").doc(), {
+      uid, items, coins: credit, type: "dupe_convert",
+      createdAt: FieldValue.serverTimestamp(),
+    });
+    return { coins: coinsOf(data) + credit, credited: credit };
   });
 });
