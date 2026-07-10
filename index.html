@@ -41970,3 +41970,4 @@ setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
+// Safety net: never let the preloader linger if init stalls (e.g. slow Firebase).
