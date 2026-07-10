@@ -16413,10 +16413,12 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
   100%{ box-shadow:0 0 0 1.5px #b56cff, 0 0 46px -12px #b56cff; }
 }
 .cxf-liquid .cx-frame-overlay{
-  background:linear-gradient(115deg, rgba(181,108,255,.46), rgba(95,201,255,.4) 30%, rgba(94,255,186,.36) 55%, rgba(255,94,200,.42) 78%, rgba(181,108,255,.46));
-  background-size:200% 100%; animation:cxfDrift 4s linear infinite, cxfLiquidHue 8s linear infinite; mix-blend-mode:screen;
+  /* static gloss — the morphing blobs (::before/::after) carry the motion;
+     the old sliding 200% wash left a hard vertical seam over the blue */
+  background:radial-gradient(90% 70% at 50% 30%, rgba(140,200,255,.16), transparent 74%);
+  mix-blend-mode:screen;
 }
-@keyframes cxfLiquidHue{ to{ filter:hue-rotate(360deg); } }
+@keyframes cxfLiquidHue{ 0%,100%{ filter:blur(7px) hue-rotate(0deg); } 50%{ filter:blur(7px) hue-rotate(40deg); } }
 /* ═══ CRIMSON COURT — dark royal velvet with a living heartbeat glow ═══ */
 .cxf-blood{ border-color:rgba(255,51,88,.6) !important; animation:cxfBloodBeat 1.5s ease-in-out infinite; }
 @keyframes cxfBloodBeat{
@@ -16450,11 +16452,13 @@ body.low-power :is(.cxa-galaxy::before,.cxa-gold::before,.cxa-void::before,.cxa-
 /* ═══ GOLDEN HOUR — warm dusk light washing the whole profile ═══ */
 .cxf-sunset{ border-color:rgba(255,138,94,.62) !important; box-shadow:0 0 48px -12px rgba(255,138,94,.6), 0 0 70px -28px rgba(255,94,156,.5) !important; animation:cxfGoldGlow 3.6s ease-in-out infinite; }
 .cxf-sunset .cx-frame-overlay{
+  /* static warm shimmer — no drifting wash (a sliding 200% layer left a hard
+     vertical seam across the sunset scene) */
   background:
     radial-gradient(1.4px 1.4px at 20% 30%, rgba(255,236,200,.9) 45%, transparent 55%),
     radial-gradient(1.2px 1.2px at 70% 22%, rgba(255,220,180,.8) 45%, transparent 55%),
-    linear-gradient(115deg, rgba(255,179,71,.42), rgba(255,122,94,.4) 40%, rgba(255,94,156,.4) 70%, rgba(181,108,255,.36));
-  background-size:200% 100%; animation:cxfDrift 5s linear infinite; mix-blend-mode:screen;
+    radial-gradient(80% 60% at 50% 55%, rgba(255,179,110,.2), transparent 74%);
+  animation:cxfTwinkle 4.5s ease-in-out infinite; mix-blend-mode:screen;
 }
 /* ═══ JADE COURT — deep emerald light with drifting motes ═══ */
 .cxf-emerald{ border-color:rgba(46,230,166,.55) !important; box-shadow:0 0 42px -12px rgba(46,230,166,.6) !important; }
@@ -17020,6 +17024,27 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 @keyframes navLockerPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,90,110,.5); } 50%{ box-shadow:0 0 0 5px rgba(255,90,110,0); } }
 body.reduced-motion :is(.lk2-tile, #lockerHost .lk2-left, .lk2-eq-pill, .lk2-grid.lk-swipe, .lk2-tab-ind, .nav-badge.nav-locker-new, .lk2-sort-opt, .lk2-tile-new),
 body.low-power :is(.lk2-tile, #lockerHost .lk2-left, .lk2-eq-pill, .lk2-grid.lk-swipe, .lk2-tab-ind, .nav-badge.nav-locker-new, .lk2-sort-opt, .lk2-tile-new){ animation:none !important; }
+
+/* ═══ COSMETIC GRID PERFORMANCE ═══
+   Cosmetic effects carry ~190 infinite keyframe animations. A grid of 20-35
+   mini-previews all animating at once repaints constantly and lags whole PCs.
+   So: previews inside ANY catalog grid (locker tiles, shop tiles, bundle and
+   case lists) are frozen at their base frame, and only the tile you hover or
+   select comes alive. The big stage preview stays fully animated — it's one
+   element. Paused (not removed) so the resume is instant with no reflow. */
+:is(.lk2-tile-prev, .shop-tile .st-preview, .bd-piece-prev, .bck-item-prev) *,
+:is(.lk2-tile-prev, .shop-tile .st-preview, .bd-piece-prev, .bck-item-prev) *::before,
+:is(.lk2-tile-prev, .shop-tile .st-preview, .bd-piece-prev, .bck-item-prev) *::after{
+  animation-play-state:paused !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+:is(.lk2-tile:hover, .lk2-tile.sel, .shop-tile:hover) :is(.lk2-tile-prev, .st-preview) *,
+:is(.lk2-tile:hover, .lk2-tile.sel, .shop-tile:hover) :is(.lk2-tile-prev, .st-preview) *::before,
+:is(.lk2-tile:hover, .lk2-tile.sel, .shop-tile:hover) :is(.lk2-tile-prev, .st-preview) *::after{
+  animation-play-state:running !important;
+}
+/* Offscreen tiles skip rendering entirely (long collections scroll smoothly) */
+.lk2-grid .lk2-tile{ content-visibility:auto; contain-intrinsic-size:auto 140px; }
 body.reduced-motion .lk2-tab-ind, body.low-power .lk2-tab-ind{ transition:none !important; }
 @media (max-width:920px){ #lockerHost .lk2{ max-width:none; } }
 .locker-shop-link{
@@ -18231,29 +18256,31 @@ body.low-power :is(.cxn-goldstandard,.cxn-sovereign,.cxn-viridian,.cxn-obsidian,
   background:radial-gradient(circle, #fff 28%, rgba(255,220,140,.95) 58%, transparent 78%);
   box-shadow:0 0 11px 3px #fff, 0 0 22px 7px rgba(255,211,110,.75);
 }
-.cxf-starforge{ border-color:transparent !important; animation:cxfDominionAura 5s linear infinite; }
+.cxf-starforge{ border-color:rgba(150,190,255,.7) !important; animation:cxfStarforgeGlow 3.2s ease-in-out infinite; }
+@keyframes cxfStarforgeGlow{
+  0%,100%{ box-shadow:0 0 36px -10px rgba(130,175,255,.55), 0 0 80px -30px rgba(160,200,255,.4), inset 0 0 0 1px rgba(200,225,255,.28); }
+  50%{ box-shadow:0 0 56px -8px rgba(160,200,255,.9), 0 0 110px -26px rgba(190,220,255,.6), inset 0 0 0 1px rgba(225,240,255,.5); }
+}
 .cxf-starforge .cx-frame-overlay{
   background:
     radial-gradient(1.8px 1.8px at 14% 24%, #fff 45%, transparent 55%),
     radial-gradient(1.4px 1.4px at 38% 70%, rgba(255,255,255,.9) 45%, transparent 55%),
     radial-gradient(1.8px 1.8px at 66% 20%, rgba(255,255,255,.95) 45%, transparent 55%),
-    radial-gradient(1.4px 1.4px at 88% 58%, rgba(255,255,255,.85) 45%, transparent 55%),
-    linear-gradient(110deg, rgba(255,211,110,.44), rgba(255,122,217,.4) 26%, rgba(164,139,255,.42) 50%, rgba(95,201,255,.4) 72%, rgba(93,255,186,.36) 88%, rgba(255,211,110,.44));
-  background-size:auto, auto, auto, auto, 220% 100%;
-  animation:cxfDrift 4s linear infinite, cxfDominionHue 7s linear infinite, cxfTwinkle 3s ease-in-out infinite; mix-blend-mode:screen;
+    radial-gradient(1.4px 1.4px at 88% 58%, rgba(230,240,255,.85) 45%, transparent 55%),
+    radial-gradient(40% 60% at 50% 50%, rgba(130,175,255,.28), transparent 75%);
+  animation:cxfTwinkle 3s ease-in-out infinite; mix-blend-mode:screen;
 }
-.cxf-starforge .cx-frame-overlay::after{ /* shooting stars in the forge */
+.cxf-starforge .cx-frame-overlay::after{ /* a shooting star streaks past */
   content:''; position:absolute; top:20%; left:-14%; width:80px; height:1.5px; border-radius:999px;
   background:linear-gradient(90deg, transparent, #fff 60%, transparent);
-  filter:drop-shadow(0 0 7px rgba(255,255,255,1));
+  filter:drop-shadow(0 0 7px rgba(200,225,255,1));
   transform:rotate(-12deg); opacity:0;
   animation:cxfShootingStar 5.5s ease-in .8s infinite;
 }
 /* frame theme colours + full-card washes */
 .cxf-hoard{ --fxc:#ffb040; }
 .cxf-nightcity{ --fxc:#00e5ff; }
-.cxf-starforge{ --fxc:#ffd36e; }
-.cxf-starforge .cx-frame-edge, .cxf-starforge .cx-frame-corners b{ animation:cxfHue 6s linear infinite; }
+.cxf-starforge{ --fxc:#9fc4ff; }
 .profile-modal.cxf-hoard{
   background:
     radial-gradient(1.4px 1.4px at 20% 86%, rgba(255,236,170,.7) 45%, transparent 55%),
@@ -18271,14 +18298,13 @@ body.low-power :is(.cxn-goldstandard,.cxn-sovereign,.cxn-viridian,.cxn-obsidian,
     linear-gradient(180deg, #0a1218, #080a12) !important;
 }
 .profile-modal.cxf-starforge{
-  --fxc:#ffd36e; animation:cxfDominionHueVar 7s linear infinite;
+  --fxc:#9fc4ff;
   background:
     radial-gradient(1.7px 1.7px at 12% 14%, #fff 45%, transparent 55%),
     radial-gradient(1.4px 1.4px at 72% 8%, rgba(255,255,255,.85) 45%, transparent 55%),
     radial-gradient(1.7px 1.7px at 44% 28%, rgba(255,255,255,.7) 45%, transparent 55%),
-    radial-gradient(1.4px 1.4px at 90% 44%, rgba(255,255,255,.65) 45%, transparent 55%),
-    linear-gradient(120deg, rgba(255,211,110,.15), rgba(255,122,217,.13) 28%, rgba(164,139,255,.13) 52%, rgba(95,201,255,.12) 74%, rgba(93,255,186,.1) 90%, rgba(255,211,110,.15)),
-    linear-gradient(180deg, #151022, #0b0813) !important;
+    radial-gradient(1.4px 1.4px at 90% 44%, rgba(230,240,255,.65) 45%, transparent 55%),
+    linear-gradient(180deg, #0c1430, #060a1a) !important;
 }
 /* ── BUNDLE CARDS — hero showcases in the shop ── */
 .bundle-grid{ display:flex; flex-direction:column; gap:18px; }
@@ -18992,16 +19018,19 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
     linear-gradient(180deg, #1e1208, #120a05) !important;
 }
 /* LEGEND — Legend's Halo: iridescent halo sweep under a starlit magenta sky */
-.cxf-legend{ --fxc:#ff61c3; border-color:rgba(255,97,195,.65) !important; animation:cxfLegendGlow 3.4s ease-in-out infinite; }
-@keyframes cxfLegendGlow{ 0%,100%{ box-shadow:0 0 44px -12px rgba(255,97,195,.6); } 50%{ box-shadow:0 0 66px -8px rgba(255,97,195,.95), 0 0 90px -30px rgba(164,139,255,.7); } }
+.cxf-legend{ --fxc:#ff61c3; border-color:rgba(255,97,195,.8) !important; animation:cxfLegendGlow 3.4s ease-in-out infinite; }
+@keyframes cxfLegendGlow{
+  0%,100%{ box-shadow:0 0 34px -8px rgba(255,60,170,.65), 0 0 80px -26px rgba(255,60,170,.5), inset 0 0 0 2px rgba(255,205,120,.5), inset 0 0 22px -6px rgba(255,60,170,.4); }
+  50%{ box-shadow:0 0 54px -6px rgba(255,80,190,.95), 0 0 110px -22px rgba(255,60,170,.7), inset 0 0 0 2px rgba(255,225,150,.75), inset 0 0 30px -4px rgba(255,80,190,.55); }
+}
 .cxf-legend .cx-frame-overlay{
+  /* rim-only crystal light — the centre stays pitch black (no full washes) */
   background:
     radial-gradient(1.6px 1.6px at 16% 26%, #fff 45%, transparent 55%),
     radial-gradient(1.3px 1.3px at 58% 18%, rgba(255,255,255,.9) 45%, transparent 55%),
     radial-gradient(1.6px 1.6px at 84% 40%, rgba(255,255,255,.85) 45%, transparent 55%),
-    linear-gradient(100deg, rgba(255,97,195,.5), rgba(164,139,255,.4) 30%, rgba(95,201,255,.36) 52%, rgba(255,211,61,.32) 72%, rgba(255,97,195,.5));
-  background-size:200% 100%, 200% 100%, 200% 100%, 200% 100%;
-  animation:cxfDrift 5s linear infinite, cxfTwinkle 3.4s ease-in-out infinite; mix-blend-mode:screen;
+    radial-gradient(115% 110% at 50% 50%, transparent 62%, rgba(255,60,170,.16) 88%, rgba(255,80,190,.3) 100%);
+  animation:cxfTwinkle 3.4s ease-in-out infinite; mix-blend-mode:screen;
 }
 .profile-modal.cxf-legend, .cx-prev-frame.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend{
   background:
@@ -19129,23 +19158,32 @@ body.low-power :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt
 .profile-modal.cxf-neon .cx-frame-edge b{ border-color:#ff5ec8; box-shadow:0 0 12px rgba(255,94,200,.9), inset 0 0 6px rgba(255,94,200,.5); }
 .profile-modal.cxf-neon .cx-frame-top .cxline{ background:linear-gradient(90deg, transparent, #5fc9ff, transparent); box-shadow:0 0 14px #5fc9ff; }
 .profile-modal.cxf-neon .cx-frame-edge .cxline{ background:linear-gradient(90deg, transparent, #ff5ec8, transparent); box-shadow:0 0 14px #ff5ec8; }
-/* ═══ LIQUID — living metal: two morphing iridescent blobs + oil-slick sheen ═══ */
+/* ═══ LIQUID — holographic fluid: two big morphing chrome blobs flow and
+   melt through the frame, cycling cyan → violet → magenta as they move. ═══ */
 .cxf-liquid .cx-frame-overlay::before{
-  content:''; position:absolute; left:12%; top:18%; width:52px; height:44px;
-  background:linear-gradient(120deg, rgba(181,108,255,.55), rgba(95,201,255,.5) 50%, rgba(255,94,200,.5));
-  filter:blur(6px) hue-rotate(0deg); mix-blend-mode:screen;
-  animation:cxaBlob 6s ease-in-out infinite, cxfLiquidHue 8s linear infinite, cxfBob 5s ease-in-out infinite;
+  content:''; position:absolute; left:8%; top:12%; width:74px; height:60px;
+  background:linear-gradient(120deg, rgba(120,240,255,.75), rgba(150,110,255,.65) 50%, rgba(230,150,255,.6));
+  filter:blur(7px); mix-blend-mode:screen;
+  animation:cxaBlob 6s ease-in-out infinite, cxfLiquidHue 9s linear infinite, cxfBob 5s ease-in-out infinite;
 }
 .cxf-liquid .cx-frame-overlay::after{
-  content:''; position:absolute; right:10%; top:40%; width:38px; height:34px;
-  background:linear-gradient(240deg, rgba(94,255,186,.5), rgba(181,108,255,.5) 55%, rgba(95,201,255,.5));
-  filter:blur(6px) hue-rotate(180deg); mix-blend-mode:screen;
-  animation:cxaBlob 7s ease-in-out infinite reverse, cxfLiquidHue 8s linear infinite reverse, cxfBob 6s ease-in-out infinite reverse;
+  content:''; position:absolute; right:6%; top:34%; width:56px; height:48px;
+  background:linear-gradient(240deg, rgba(150,245,255,.7), rgba(170,120,255,.6) 55%, rgba(110,150,255,.6));
+  filter:blur(7px); mix-blend-mode:screen;
+  animation:cxaBlob 7s ease-in-out infinite reverse, cxfLiquidHue 9s linear infinite reverse, cxfBob 6s ease-in-out infinite reverse;
 }
 .profile-modal.cxf-liquid :is(.cx-frame-top, .cx-frame-edge) b{
   border-radius:50% 20% 45% 25%; border-width:3px;
   animation:cxfHue 6s linear infinite, cxaBlob 8s ease-in-out infinite;
 }
+/* the whole preview card breathes through the holographic spectrum
+   (kept OFF the full profile modal — there the blobs do the moving) */
+.locker-look.cxf-liquid, .sbm-profile-prev.cxf-liquid, .cx-prev-frame.cxf-liquid{
+  animation:cxfLiquidFlow 9s ease-in-out infinite;
+}
+@keyframes cxfLiquidFlow{ 0%,100%{ filter:hue-rotate(0deg) saturate(1); } 50%{ filter:hue-rotate(26deg) saturate(1.18); } }
+body.reduced-motion :is(.locker-look.cxf-liquid, .sbm-profile-prev.cxf-liquid, .cx-prev-frame.cxf-liquid),
+body.low-power :is(.locker-look.cxf-liquid, .sbm-profile-prev.cxf-liquid, .cx-prev-frame.cxf-liquid){ animation:none !important; }
 /* ═══ CRIMSON COURT — the gothic hall: velvet drapes + a beating heart ═══ */
 .cxf-blood .cx-frame-overlay::before{ /* drapes falling in from both sides */
   content:''; position:absolute; inset:0;
@@ -19198,15 +19236,15 @@ body.low-power :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt
 }
 @keyframes cxfDataFlow{ to{ background-position:16px 0; } }
 /* ═══ GOLDEN HOUR — dusk itself: a sinking sun with lens flare ═══ */
-.cxf-sunset .cx-frame-overlay::before{ /* the sun, slowly setting */
-  content:''; position:absolute; left:50%; top:26%; width:44px; height:44px; margin-left:-22px; border-radius:50%;
-  background:radial-gradient(circle, #fff2cf 18%, #ffc257 48%, rgba(255,122,94,.85) 72%, transparent 88%);
-  box-shadow:0 0 26px rgba(255,170,90,.9), 0 0 60px rgba(255,122,94,.5);
-  animation:cxfSunSink 9s ease-in-out infinite;
+.cxf-sunset .cx-frame-overlay::before{ /* the sun's living glow, breathing */
+  content:''; position:absolute; left:50%; top:55%; width:64px; height:52px; margin:-26px 0 0 -32px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,242,207,.55) 12%, rgba(255,194,87,.35) 46%, rgba(255,122,94,.18) 70%, transparent 86%);
+  mix-blend-mode:screen;
+  animation:cxfSunBreathe 5s ease-in-out infinite;
 }
-@keyframes cxfSunSink{ 0%,100%{ top:24%; filter:brightness(1); } 50%{ top:44%; filter:brightness(1.15); } }
+@keyframes cxfSunBreathe{ 0%,100%{ transform:scale(1); opacity:.8; } 50%{ transform:scale(1.18); opacity:1; } }
 .cxf-sunset .cx-frame-overlay::after{ /* anamorphic flare across the horizon */
-  content:''; position:absolute; left:8%; right:8%; top:46%; height:2px;
+  content:''; position:absolute; left:8%; right:8%; top:55%; height:2px;
   background:linear-gradient(90deg, transparent, rgba(255,214,150,.85) 45%, #fff 50%, rgba(255,214,150,.85) 55%, transparent);
   filter:blur(.5px); box-shadow:0 0 16px rgba(255,190,110,.8);
   animation:cxfTwinkle 3.6s ease-in-out infinite;
@@ -19355,12 +19393,7 @@ body.low-power :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt
   animation:cxfFlameLick 1.1s ease-in-out infinite alternate;
 }
 @keyframes cxfFlameLick{ from{ transform:scaleY(.94) translateY(1px); filter:brightness(.95); } to{ transform:scaleY(1.06) translateY(-3px); filter:brightness(1.15); } }
-.cxf-champion .cx-frame-overlay::after{ /* laurel arcs of the victor */
-  content:''; position:absolute; left:50%; top:8px; width:120px; height:34px; transform:translateX(-50%);
-  border:2.5px solid rgba(255,200,110,.75); border-bottom:none; border-radius:60px 60px 0 0;
-  box-shadow:0 0 12px rgba(255,170,70,.6), inset 0 4px 8px -4px rgba(255,200,110,.5);
-  animation:cxfHaloArc 5s ease-in-out infinite;
-}
+/* (the old laurel half-arc was removed — it read as a floating half-square) */
 .profile-modal.cxf-champion :is(.cx-frame-top, .cx-frame-edge) b{
   border-color:#ff8c42; border-width:3.5px;
   box-shadow:0 0 14px rgba(255,140,66,.75);
@@ -19370,32 +19403,33 @@ body.low-power :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt
   background:linear-gradient(90deg, transparent, #ffb35e 30%, #fff0c4 50%, #ffb35e 70%, transparent);
   box-shadow:0 0 14px rgba(255,170,70,.8);
 }
-/* ═══ LEGEND'S HALO — the apex: a grand swaying halo + prism sparkles ═══ */
-.cxf-legend .cx-frame-overlay::before{ /* the halo itself, over the crown of the card */
-  content:''; position:absolute; left:50%; top:6px; width:150px; height:44px; transform:translateX(-50%);
-  border:3px solid transparent; border-bottom:none; border-radius:75px 75px 0 0;
-  background:linear-gradient(90deg, #ffd36e, #ff7ad9, #a48bff, #5fc9ff) border-box;
-  -webkit-mask:linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor;
-  mask:linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0); mask-composite:exclude;
-  filter:drop-shadow(0 0 12px rgba(255,150,220,.8));
-  animation:cxfHaloArc 6s ease-in-out infinite, cxfHue 7s linear infinite;
+/* ═══ LEGEND'S HALO — the crowning star: a faceted magenta jewel at the top
+   of the frame (the Legend crest), plus glitter. No more swaying arc. ═══ */
+.cxf-legend .cx-frame-overlay::before{ /* the crest jewel — a glowing cut diamond */
+  content:''; position:absolute; left:50%; top:10px; width:20px; height:20px; margin-left:-10px;
+  transform:rotate(45deg);
+  background:linear-gradient(135deg, #ffd9f0 0%, #ff5ec8 40%, #c1257f 100%);
+  border:1.5px solid rgba(255,225,160,.9); border-radius:4px;
+  box-shadow:0 0 16px rgba(255,94,200,.95), 0 0 34px rgba(255,60,170,.55), inset 0 0 6px rgba(255,255,255,.6);
+  animation:cxfCornerBreathe 2.6s ease-in-out infinite;
 }
 .cxf-legend .cx-frame-overlay::after{ /* prism glitter */
   content:''; position:absolute; inset:0;
   background:
     radial-gradient(2px 2px at 22% 34%, #fff 45%, transparent 60%),
     radial-gradient(1.6px 1.6px at 48% 20%, rgba(255,210,250,.95) 45%, transparent 60%),
-    radial-gradient(2px 2px at 72% 42%, rgba(210,240,255,.95) 45%, transparent 60%),
+    radial-gradient(2px 2px at 72% 42%, rgba(255,220,250,.95) 45%, transparent 60%),
     radial-gradient(1.6px 1.6px at 88% 24%, #fff 45%, transparent 60%);
   animation:cxfTwinkle 2.2s ease-in-out infinite; mix-blend-mode:screen;
 }
 .profile-modal.cxf-legend :is(.cx-frame-top, .cx-frame-edge) b{
-  border-width:3px; border-radius:999px;
-  animation:cxfHue 7s linear infinite, cxfCornerBreathe 3s ease-in-out infinite;
+  border-width:3px; border-radius:5px; border-color:#ff5ec8;
+  box-shadow:0 0 14px rgba(255,94,200,.85), inset 0 0 0 1px rgba(255,220,150,.6);
+  animation:cxfCornerBreathe 3s ease-in-out infinite;
 }
 .profile-modal.cxf-legend :is(.cx-frame-top, .cx-frame-edge) .cxline{
-  background:linear-gradient(90deg, transparent, #ffd36e 25%, #ff7ad9 45%, #a48bff 60%, #5fc9ff 78%, transparent);
-  animation:cxfHue 7s linear infinite;
+  background:linear-gradient(90deg, transparent, #ffd36e 22%, #ff9adf 40%, #ff5ec8 50%, #ff9adf 60%, #ffd36e 78%, transparent);
+  box-shadow:0 0 14px rgba(255,94,200,.8);
 }
 /* ═══ CRIMSON REGALIA — the throne room: gold-corded drapes + pulsing crest ═══ */
 .cxf-regalia .cx-frame-overlay::before{ /* velvet drapes with gold cords */
@@ -19485,23 +19519,24 @@ body.low-power :is(.cxn-singularity, .cxn-phantom, .cxn-matrix, .cxn-ocean, .cxt
 .profile-modal.cxf-nightcity .cx-frame-edge b{ border-color:#ff36c8; box-shadow:0 0 12px rgba(255,54,200,.85); border-radius:3px; animation:cxfBlink 4.4s linear .6s infinite; }
 .profile-modal.cxf-nightcity .cx-frame-top .cxline{ background:linear-gradient(90deg, transparent, #00e5ff, transparent); box-shadow:0 0 12px rgba(0,229,255,.8); }
 .profile-modal.cxf-nightcity .cx-frame-edge .cxline{ background:linear-gradient(90deg, transparent, #ff36c8, transparent); box-shadow:0 0 12px rgba(255,54,200,.8); }
-/* ═══ THE STARFORGE — the forge floor: anvil sparks + a wheeling star ring ═══ */
-.cxf-starforge .cx-frame-overlay::before{ /* sparks popping off the anvil */
+/* ═══ THE STARFORGE — star nursery: twinkling newborn stars around the frame ═══ */
+.cxf-starforge .cx-frame-overlay::before{ /* newborn stars flaring in and out */
   content:''; position:absolute; inset:0;
   background:
-    radial-gradient(3px 3px at 26% 66%, #fff 35%, rgba(255,211,110,.8) 55%, transparent 72%),
-    radial-gradient(2.5px 2.5px at 44% 48%, #ffe9b0 40%, transparent 68%),
-    radial-gradient(3px 3px at 64% 62%, #fff 35%, rgba(255,150,220,.75) 55%, transparent 72%),
+    radial-gradient(3px 3px at 26% 66%, #fff 35%, rgba(180,210,255,.8) 55%, transparent 72%),
+    radial-gradient(2.5px 2.5px at 44% 48%, #e6efff 40%, transparent 68%),
+    radial-gradient(3px 3px at 64% 62%, #fff 35%, rgba(200,225,255,.75) 55%, transparent 72%),
     radial-gradient(2.5px 2.5px at 78% 44%, #d8f2ff 40%, transparent 68%);
   animation:cxfPopSpark 2.1s ease-in-out infinite; mix-blend-mode:screen;
 }
 .profile-modal.cxf-starforge :is(.cx-frame-top, .cx-frame-edge) b{
-  border-width:3.5px; border-radius:999px 4px;
-  animation:cxfHue 6s linear infinite, cxfCornerBreathe 2.4s ease-in-out infinite;
+  border-width:3.5px; border-radius:999px 4px; border-color:#bcd6ff;
+  box-shadow:0 0 14px rgba(160,200,255,.85);
+  animation:cxfCornerBreathe 2.4s ease-in-out infinite;
 }
 .profile-modal.cxf-starforge :is(.cx-frame-top, .cx-frame-edge) .cxline{
-  background:linear-gradient(90deg, transparent, #ffd36e 25%, #ff7ad9 45%, #a48bff 62%, #5fc9ff 80%, transparent);
-  animation:cxfHue 6s linear infinite;
+  background:linear-gradient(90deg, transparent, #9fc4ff 25%, #e6f0ff 50%, #9fc4ff 75%, transparent);
+  box-shadow:0 0 14px rgba(160,200,255,.75);
 }
 
 /* Tiny catalog previews (~90px) can't fit the full-size signature props —
@@ -19583,16 +19618,24 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     radial-gradient(120% 55% at 50% 30%, rgba(255,94,200,.14), transparent 62%),
     linear-gradient(180deg, #0d0d22 0%, #131332 44%, #0a0a18 100%) !important;
 }
-/* ═══ LIQUID — DAMASCUS STEEL: rippled forge-fold banding under iridescent oil ═══ */
+/* ═══ LIQUID — holographic fluid: vivid royal blue with molten chrome blobs
+   flowing in from the corners, each one cycling cyan → violet → magenta. ═══ */
 .profile-modal.cxf-liquid, .locker-look.cxf-liquid, .sbm-profile-prev.cxf-liquid, .cx-prev-frame.cxf-liquid{
   background:
-    /* damascus ripples — two offset ring systems create the folded-steel moiré */
-    repeating-radial-gradient(circle at 28% 36%, rgba(220,230,250,.14) 0 2px, rgba(20,22,34,.16) 4px 7px, transparent 7px 12px),
-    repeating-radial-gradient(circle at 76% 68%, rgba(200,215,245,.12) 0 2px, rgba(20,22,34,.14) 4px 8px, transparent 8px 14px),
-    repeating-radial-gradient(circle at 55% 10%, rgba(235,240,255,.09) 0 3px, transparent 6px 16px),
-    /* iridescent oil film */
-    linear-gradient(125deg, rgba(181,108,255,.2), rgba(95,201,255,.16) 30%, rgba(94,255,186,.13) 55%, rgba(255,94,200,.17) 78%, rgba(181,108,255,.2)),
-    linear-gradient(180deg, #171624, #0d0c16) !important;
+    /* molten chrome blobs — bright holographic cores with soft falloff */
+    radial-gradient(30% 24% at 10% 6%, rgba(120,240,255,.85), rgba(150,110,255,.5) 55%, transparent 74%),
+    radial-gradient(26% 20% at 92% 12%, rgba(200,150,255,.8), rgba(90,140,255,.45) 55%, transparent 74%),
+    radial-gradient(32% 24% at 88% 92%, rgba(110,225,255,.8), rgba(160,110,255,.45) 55%, transparent 74%),
+    radial-gradient(28% 22% at 8% 90%, rgba(190,140,255,.75), rgba(90,150,255,.4) 55%, transparent 74%),
+    /* floating droplets */
+    radial-gradient(7% 6% at 64% 24%, rgba(150,245,255,.9), rgba(140,110,255,.5) 60%, transparent 78%),
+    radial-gradient(5.5% 5% at 30% 68%, rgba(210,160,255,.85), rgba(110,150,255,.45) 60%, transparent 78%),
+    radial-gradient(4.5% 4% at 76% 58%, rgba(150,240,255,.8), transparent 76%),
+    /* soft flow currents through the fluid */
+    linear-gradient(115deg, transparent 30%, rgba(120,180,255,.14) 46%, rgba(160,120,255,.12) 58%, transparent 74%),
+    /* vivid royal-blue body */
+    radial-gradient(120% 100% at 50% 50%, #2434d6 30%, #1b26b4 62%, #121a86 100%),
+    linear-gradient(180deg, #1e2cc8, #101876) !important;
 }
 /* ═══ CRIMSON COURT — black marble with living blood veins ═══ */
 .profile-modal.cxf-blood, .locker-look.cxf-blood, .sbm-profile-prev.cxf-blood, .cx-prev-frame.cxf-blood{
@@ -19626,18 +19669,30 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     radial-gradient(120% 55% at 50% 0%, rgba(34,211,163,.16), transparent 62%),
     linear-gradient(180deg, #07130f, #050c09) !important;
 }
-/* ═══ GOLDEN HOUR — layered dusk: haze bands over rolling silhouette hills ═══ */
+/* ═══ GOLDEN HOUR — a real sunset: violet dusk overhead melting through
+   orange to a blazing sun half-hidden by clouds, god rays fanning up,
+   and jagged mountain silhouettes along the bottom. ═══ */
 .profile-modal.cxf-sunset, .locker-look.cxf-sunset, .sbm-profile-prev.cxf-sunset, .cx-prev-frame.cxf-sunset{
   background:
-    /* far + near silhouette hills */
-    radial-gradient(60% 34% at 18% 104%, #140a08 42%, transparent 63%),
-    radial-gradient(70% 40% at 78% 108%, #170c09 45%, transparent 66%),
-    radial-gradient(90% 30% at 45% 112%, #0f0706 48%, transparent 70%),
-    /* drifting haze bands */
-    linear-gradient(4deg, transparent 30%, rgba(255,150,90,.12) 38%, transparent 46%, transparent 55%, rgba(255,110,130,.1) 62%, transparent 70%),
-    /* dusk sky gradient with sun glow */
-    radial-gradient(60% 42% at 50% 34%, rgba(255,190,110,.4), rgba(255,120,94,.18) 55%, transparent 74%),
-    linear-gradient(180deg, #2a1420 0%, #3a1a22 34%, #241016 68%, #120a0c 100%) !important;
+    /* mountain silhouettes — overlapping dark ridges along the base */
+    radial-gradient(34% 18% at 8% 100%, #170b10 55%, transparent 74%),
+    radial-gradient(40% 22% at 36% 104%, #120910 58%, transparent 74%),
+    radial-gradient(36% 18% at 66% 100%, #150a0f 55%, transparent 74%),
+    radial-gradient(42% 22% at 96% 103%, #10080d 58%, transparent 74%),
+    linear-gradient(180deg, transparent 80%, rgba(14,7,11,.85) 93%, #0c060a 100%),
+    /* cloud bands — dark slats crossing the sun and upper sky */
+    radial-gradient(40% 3% at 45% 44%, rgba(56,20,34,.8), rgba(56,20,34,.3) 62%, transparent 76%),
+    radial-gradient(32% 2.6% at 60% 51%, rgba(48,18,30,.75), transparent 74%),
+    radial-gradient(48% 3.4% at 52% 33%, rgba(62,24,42,.6), transparent 76%),
+    radial-gradient(36% 2.8% at 34% 26%, rgba(58,26,48,.5), transparent 76%),
+    /* the sun: white-gold core burning through the cloud line */
+    radial-gradient(8% 5.5% at 50% 55%, #fff6d8 20%, rgba(255,214,120,.95) 48%, rgba(255,150,60,.55) 72%, transparent 84%),
+    /* god rays fanning up from the sun */
+    repeating-conic-gradient(from -118deg at 50% 55%, rgba(255,200,120,.09) 0deg 4deg, transparent 4deg 12deg),
+    /* the warm bloom filling the middle sky */
+    radial-gradient(58% 38% at 50% 54%, rgba(255,170,80,.55), rgba(255,120,60,.25) 58%, transparent 78%),
+    /* dusk sky: violet → rose → burning orange → dark foothill haze */
+    linear-gradient(180deg, #37224e 0%, #6b2c48 24%, #b04a30 44%, #e0702e 58%, #7e3423 74%, #2c141b 90%, #140a0f 100%) !important;
 }
 /* ═══ JADE COURT — carved jade: fish-scale relief with a polished gloss ═══ */
 .profile-modal.cxf-emerald, .locker-look.cxf-emerald, .sbm-profile-prev.cxf-emerald, .cx-prev-frame.cxf-emerald{
@@ -19757,24 +19812,33 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     radial-gradient(120% 40% at 50% -4%, rgba(255,140,66,.14), transparent 60%),
     linear-gradient(180deg, #170d08, #0b0604) !important;
 }
-/* ═══ LEGEND'S HALO — the interstellar sea: prism grating over a star ocean ═══ */
+/* ═══ LEGEND'S HALO — the trophy frame: a near-black stage wrapped in a
+   crystalline pink-and-gold jewelled border (the Legend crest, made a frame).
+   The centre stays dark so the PLAYER is the artwork; all the drama lives
+   on the edges: faceted magenta crystal, gold trim, ember dust. ═══ */
 .profile-modal.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend, .cx-prev-frame.cxf-legend{
   background:
-    /* fine prism grating */
-    repeating-linear-gradient(100deg, rgba(255,211,110,.09) 0 1px, rgba(255,122,217,.08) 2px 3px, rgba(164,139,255,.08) 4px 5px, rgba(95,201,255,.07) 6px 7px, transparent 7px 12px),
-    /* star ocean */
-    radial-gradient(2px 2px at 16% 22%, #fff 45%, transparent 60%),
-    radial-gradient(1.6px 1.6px at 38% 12%, rgba(255,240,255,.9) 45%, transparent 60%),
-    radial-gradient(2px 2px at 64% 30%, #fff 45%, transparent 60%),
-    radial-gradient(1.6px 1.6px at 86% 18%, rgba(240,250,255,.85) 45%, transparent 60%),
-    radial-gradient(1.4px 1.4px at 26% 56%, rgba(255,255,255,.7) 45%, transparent 60%),
-    radial-gradient(1.6px 1.6px at 74% 62%, rgba(255,230,250,.75) 45%, transparent 60%),
-    radial-gradient(1.4px 1.4px at 48% 84%, rgba(255,255,255,.6) 45%, transparent 60%),
-    /* iridescent bands */
-    linear-gradient(115deg, rgba(255,211,110,.2), rgba(255,122,217,.18) 30%, rgba(164,139,255,.18) 55%, rgba(95,201,255,.16) 78%, rgba(255,211,110,.2)),
-    radial-gradient(130% 55% at 50% 0%, rgba(255,150,220,.16), transparent 62%),
-    linear-gradient(180deg, #1a1026, #0e0815) !important;
+    /* faceted crystal shards leaning in from every edge (bright rims) */
+    linear-gradient(90deg,  rgba(255,60,170,.34) 0%, rgba(255,60,170,.1) 2.5%, transparent 7%),
+    linear-gradient(-90deg, rgba(255,60,170,.34) 0%, rgba(255,60,170,.1) 2.5%, transparent 7%),
+    linear-gradient(180deg, rgba(255,60,170,.3) 0%, rgba(255,60,170,.08) 2.5%, transparent 7%),
+    linear-gradient(0deg,   rgba(255,60,170,.3) 0%, rgba(255,60,170,.08) 2.5%, transparent 7%),
+    /* gold facet lines just inside the crystal rim */
+    linear-gradient(90deg,  rgba(255,205,120,.28) 0 1.5px, transparent 1.5px),
+    linear-gradient(-90deg, rgba(255,205,120,.28) 0 1.5px, transparent 1.5px),
+    /* magenta ember dust floating near the edges */
+    radial-gradient(1.6px 1.6px at 6% 30%, rgba(255,170,225,.9) 45%, transparent 62%),
+    radial-gradient(1.4px 1.4px at 94% 24%, rgba(255,150,215,.8) 45%, transparent 62%),
+    radial-gradient(1.6px 1.6px at 92% 72%, rgba(255,190,235,.75) 45%, transparent 62%),
+    radial-gradient(1.4px 1.4px at 8% 78%, rgba(255,150,215,.7) 45%, transparent 62%),
+    radial-gradient(1.3px 1.3px at 50% 5%, rgba(255,220,170,.8) 45%, transparent 62%),
+    radial-gradient(1.3px 1.3px at 46% 95%, rgba(255,200,150,.6) 45%, transparent 62%),
+    /* the black stage: a wide dark heart, crystal light only at the rim */
+    radial-gradient(94% 90% at 50% 50%, #070409 56%, #0b050d 74%, rgba(60,12,42,.9) 93%, rgba(150,30,95,.8) 100%),
+    linear-gradient(180deg, #08040a, #050307) !important;
 }
+/* the conic sparkle ring must never wash the centre — mask it to the rim */
+.profile-modal.cxf-legend{ box-shadow:inset 0 0 90px 18px rgba(255,60,170,.14), inset 0 0 0 1px rgba(255,205,120,.3); }
 /* ═══ CRIMSON REGALIA — royal damask: gold-thread lattice on crushed velvet ═══ */
 .profile-modal.cxf-regalia, .locker-look.cxf-regalia, .sbm-profile-prev.cxf-regalia, .cx-prev-frame.cxf-regalia{
   background:
@@ -19847,22 +19911,37 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     radial-gradient(110% 40% at 50% 86%, rgba(255,54,200,.2), transparent 62%),
     linear-gradient(180deg, #0a1018 0%, #0a0d16 60%, #070810 100%) !important;
 }
-/* ═══ THE STARFORGE — hot forged starmetal: grain, heat bloom, spark shower ═══ */
+/* ═══ THE STARFORGE — a lone blazing star in deep blue space: white-hot core,
+   six light rays, a soft blue halo and a dense starfield all around. ═══ */
 .profile-modal.cxf-starforge, .locker-look.cxf-starforge, .sbm-profile-prev.cxf-starforge, .cx-prev-frame.cxf-starforge{
   background:
-    /* hammered metal grain + anvil-strike rays */
-    repeating-linear-gradient(12deg, rgba(255,255,255,.045) 0 1px, transparent 1px 5px),
-    repeating-conic-gradient(from 60deg at 50% 44%, rgba(255,211,110,.06) 0deg 16deg, rgba(28,24,38,.24) 16deg 32deg, rgba(164,139,255,.05) 32deg 48deg, rgba(22,18,32,.24) 48deg 64deg),
-    /* spark shower */
-    radial-gradient(2.2px 2.2px at 24% 38%, #fff 40%, rgba(255,211,110,.7) 58%, transparent 74%),
-    radial-gradient(1.8px 1.8px at 42% 60%, rgba(255,233,176,.9) 45%, transparent 66%),
-    radial-gradient(2.2px 2.2px at 62% 34%, #fff 40%, rgba(255,150,220,.65) 58%, transparent 74%),
-    radial-gradient(1.8px 1.8px at 80% 56%, rgba(216,242,255,.85) 45%, transparent 66%),
-    /* white-hot heart of the forge */
-    radial-gradient(50% 34% at 50% 44%, rgba(255,220,150,.3), rgba(255,140,80,.12) 58%, transparent 74%),
-    /* aurora tempering colours */
-    linear-gradient(115deg, rgba(255,211,110,.14), rgba(255,122,217,.12) 30%, rgba(164,139,255,.13) 55%, rgba(95,201,255,.11) 78%, rgba(255,211,110,.14)),
-    linear-gradient(180deg, #161020, #0c0812) !important;
+    /* the hero star: white-hot core */
+    radial-gradient(4.5px 4.5px at 50% 40%, #fff 40%, rgba(235,245,255,.95) 62%, transparent 78%),
+    /* horizontal + vertical light beams through the core */
+    radial-gradient(44% 1.1% at 50% 40%, rgba(225,240,255,.75), rgba(170,205,255,.28) 60%, transparent 82%),
+    radial-gradient(1.4% 30% at 50% 40%, rgba(225,240,255,.7), rgba(170,205,255,.24) 60%, transparent 82%),
+    /* diagonal rays — thin beams crossing the core */
+    linear-gradient(52deg, transparent 47.2%, rgba(190,215,255,.16) 49.4%, rgba(220,238,255,.34) 50%, rgba(190,215,255,.16) 50.6%, transparent 52.8%),
+    linear-gradient(-52deg, transparent 47.2%, rgba(190,215,255,.14) 49.4%, rgba(220,238,255,.3) 50%, rgba(190,215,255,.14) 50.6%, transparent 52.8%),
+    /* layered glow halo around the star */
+    radial-gradient(13% 10% at 50% 40%, rgba(215,232,255,.55), rgba(150,190,255,.25) 60%, transparent 80%),
+    radial-gradient(34% 27% at 50% 40%, rgba(120,165,255,.28), rgba(90,130,230,.1) 62%, transparent 80%),
+    /* the starfield — bright seconds + faint background suns */
+    radial-gradient(1.8px 1.8px at 12% 16%, #fff 45%, transparent 62%),
+    radial-gradient(1.5px 1.5px at 30% 74%, rgba(230,240,255,.9) 45%, transparent 62%),
+    radial-gradient(1.8px 1.8px at 78% 14%, rgba(255,255,255,.95) 45%, transparent 62%),
+    radial-gradient(1.5px 1.5px at 90% 62%, rgba(215,232,255,.85) 45%, transparent 62%),
+    radial-gradient(1.4px 1.4px at 64% 84%, rgba(255,255,255,.75) 45%, transparent 62%),
+    radial-gradient(1.2px 1.2px at 22% 42%, rgba(255,255,255,.55) 45%, transparent 62%),
+    radial-gradient(1.2px 1.2px at 44% 10%, rgba(230,240,255,.5) 45%, transparent 62%),
+    radial-gradient(1.1px 1.1px at 84% 36%, rgba(255,255,255,.45) 45%, transparent 62%),
+    radial-gradient(1.1px 1.1px at 8% 88%, rgba(230,240,255,.4) 45%, transparent 62%),
+    radial-gradient(1.2px 1.2px at 56% 62%, rgba(255,255,255,.4) 45%, transparent 62%),
+    radial-gradient(1.1px 1.1px at 38% 30%, rgba(255,255,255,.35) 45%, transparent 62%),
+    radial-gradient(1.1px 1.1px at 70% 48%, rgba(230,240,255,.35) 45%, transparent 62%),
+    /* deep blue space */
+    radial-gradient(120% 90% at 50% 38%, #101c3f 30%, #0b1330 62%, #070c20 100%),
+    linear-gradient(180deg, #0c1430, #060a1a) !important;
 }
 body.reduced-motion :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quantum::before, .cxa-supernova::before, .cxa-supernova::after),
 body.low-power :is(.cxn-singularity::before, .cxn-singularity::after, .cxa-quantum::before, .cxa-supernova::before, .cxa-supernova::after){ animation:none !important; }
@@ -29308,7 +29387,7 @@ const COSMETICS = [
   { id:'av_rose',    type:'avatar', name:'Rose Gold',     rarity:'rare',      cls:'cxa-rose',    desc:'Understated. Expensive-looking. Iconic.' },
   { id:'av_mint',    type:'avatar', name:'Minted',        rarity:'rare',      cls:'cxa-mint',    desc:'The house colour, pulsing softly.' },
   // ── PROFILE FRAMES ──
-  { id:'fr_liquid',  type:'frame', name:'Liquid Frame',  rarity:'mythic',    cls:'cxf-liquid',  desc:'Your whole profile flows inside an animated gradient border.' },
+  { id:'fr_liquid',  type:'frame', name:'Liquid Frame',  rarity:'mythic',    cls:'cxf-liquid',  desc:'Holographic fluid — molten chrome blobs flow through vivid blue, cycling cyan to violet.' },
   { id:'fr_galaxy',  type:'frame', name:'Nebula Frame',  rarity:'legendary', cls:'cxf-galaxy',  desc:'A deep-space banner with drifting stars.' },
   { id:'fr_gold',    type:'frame', name:'Royal Gild',    rarity:'legendary', cls:'cxf-gold',    desc:'Ornate gold trim fit for a champion.' },
   { id:'fr_neon',    type:'frame', name:'Neon Grid',     rarity:'epic',      cls:'cxf-neon',    desc:'A synthwave horizon behind your name.' },
@@ -29335,7 +29414,7 @@ const COSMETICS = [
   { id:'av_emerald',  type:'avatar', name:'Emerald Ring', rarity:'rare',      cls:'cxa-emerald', desc:'A polished jade ring with a soft glow.' },
   { id:'av_aqua',     type:'avatar', name:'Aqua Ring',    rarity:'rare',      cls:'cxa-aqua',    desc:'Cool teal water-light circling your avatar.' },
   // ── PROFILE FRAMES (wave 2) ──
-  { id:'fr_sunset',   type:'frame', name:'Golden Hour', rarity:'legendary', cls:'cxf-sunset',  desc:'Your whole profile bathes in warm dusk light.' },
+  { id:'fr_sunset',   type:'frame', name:'Golden Hour', rarity:'legendary', cls:'cxf-sunset',  desc:'A blazing dusk: violet sky, a burning sun behind the clouds and mountain silhouettes.' },
   { id:'fr_emerald',  type:'frame', name:'Jade Court',  rarity:'epic',      cls:'cxf-emerald', desc:'Deep emerald light with drifting motes around your profile.' },
 ];
 // ── CASE-EXCLUSIVE COSMETICS (can only be obtained from cases) ──
@@ -29384,7 +29463,7 @@ const RANK_COSMETICS = [
   { id:'av_master',     type:'avatar', name:"Master's Orbit",   rarity:'legendary', cls:'cxa-master',     rankOnly:'master',      desc:'A violet gravity ring with a star locked in orbit. Awarded for reaching Master.' },
   { id:'ns_ruthless',   type:'name',   name:'Ruthless',         rarity:'mythic',    cls:'cxn-ruthless',   rankOnly:'grandmaster', desc:'A crimson edge that never stops bleeding light. Awarded for reaching Grandmaster.' },
   { id:'fr_champion',   type:'frame',  name:"Champion's Blaze", rarity:'mythic',    cls:'cxf-champion',   rankOnly:'champion',    desc:'Embers rise around your entire profile. Awarded for reaching Champion.' },
-  { id:'fr_legend',     type:'frame',  name:"Legend's Halo",    rarity:'ascended',  cls:'cxf-legend',     rankOnly:'legend',      desc:'The apex: an iridescent halo sweeps your profile under a starlit sky. Awarded for reaching Legend.' },
+  { id:'fr_legend',     type:'frame',  name:"Legend's Halo",    rarity:'ascended',  cls:'cxf-legend',     rankOnly:'legend',      desc:'The apex: a jewelled crystal border of pink and gold around a pitch-black stage — you are the artwork. Awarded for reaching Legend.' },
 ];
 RANK_COSMETICS.forEach(c => { c.price = 0; });
 COSMETICS.push(...RANK_COSMETICS);
@@ -29421,7 +29500,7 @@ const SET_COSMETICS = [
   { id:'ns_starforged',  type:'name',   name:'Starforged',       rarity:'ascended', cls:'cxn-starforged',  desc:'Hammered from starlight — aurora metal with live forge sparks. Starforge set.' },
   { id:'tg_cosmic',      type:'tag',    name:'Cosmic',           rarity:'ascended', cls:'cxt-cosmic',      text:'COSMIC ☄', desc:'An iridescent seal that cycles through every colour in the universe. Starforge set.' },
   { id:'av_eventhorizon',type:'avatar', name:'Event Horizon',    rarity:'ascended', cls:'cxa-eventhorizon',desc:'A collapsed star\'s accretion ring — light bends, a captured sun orbits forever. Starforge set.' },
-  { id:'fr_starforge',   type:'frame',  name:'The Starforge',    rarity:'ascended', cls:'cxf-starforge',   desc:'A living forge of stars: aurora fire, drifting starfields and shooting stars across your entire profile. Starforge set.' },
+  { id:'fr_starforge',   type:'frame',  name:'The Starforge',    rarity:'ascended', cls:'cxf-starforge',   desc:'A lone star blazes at the heart of deep-blue space — light rays, twinkling starfields and shooting stars. Starforge set.' },
 ];
 COSMETICS.push(...SET_COSMETICS);
 COSMETICS.forEach(c => { if(!c.price) c.price = CX_PRICE[c.rarity] || 0; });
@@ -29607,7 +29686,10 @@ function applyProfileFrame(modalEl, bannerEl, p){
   const fr = cosmeticEquipped(p, 'frame');
   if(!fr) return;
   modalEl.classList.add(fr.cls);
-  if(bannerEl){
+  // The frame's decorative overlay only paints when the player has REMOVED
+  // their banner ('none'): with a real banner equipped, the banner owns that
+  // strip and the frame starts underneath it — never inside it.
+  if(bannerEl && ((p && p.banner) || '') === 'none'){
     const o = document.createElement('i');
     o.className = 'cx-frame-overlay';
     o.setAttribute('aria-hidden', 'true');
