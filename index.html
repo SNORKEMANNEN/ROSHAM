@@ -15761,7 +15761,8 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 .cx-prev-av.big{ width:92px; height:92px; }
 .cx-prev-av-core{
   position:relative; z-index:1; width:100%; height:100%; border-radius:26%;
-  display:grid; place-items:center; color:#fff;
+  display:grid; place-items:center; color:#fff; overflow:hidden;
+  background-size:cover; background-position:center; background-repeat:no-repeat;
   font-family:var(--font-display); font-weight:800; font-size:26px;
   box-shadow:0 8px 20px -8px rgba(0,0,0,.7);
 }
@@ -16763,7 +16764,7 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
   box-shadow:0 22px 54px -32px rgba(0,0,0,.9);
 }
 .lk2-left .sbm-profile-prev{
-  flex:1; min-height:300px; margin:0; gap:18px; justify-content:center;
+  flex:1; min-height:300px; margin:0; gap:14px; justify-content:center;
   border:none !important; border-radius:0 !important;
   background:
     radial-gradient(85% 60% at 50% 32%, rgba(181,108,255,.16), transparent 66%),
@@ -16936,18 +16937,22 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 .lk2-tile.rar-legendary{ --rc:#ffb336; } .lk2-tile.rar-mythic{ --rc:#ff5ec8; }
 .lk2-tile.rar-ascended{ --rc:#ff2d6b; }
 .lk2-tile:hover{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--rc) 75%, #fff); box-shadow:0 10px 24px -12px rgba(0,0,0,.8), 0 0 20px -8px var(--rc); z-index:2; }
+/* Selection is a clean STATIC ring (no keyframe on the tile) so toggling .sel
+   never restarts the pop-in animation — selecting stays buttery-smooth. A
+   short transition gives it a soft grow-in instead. */
 .lk2-tile.sel{
   border-color:#fff;
-  box-shadow:0 0 0 2px rgba(255,255,255,.85), 0 0 26px -6px var(--rc);
+  box-shadow:0 0 0 2px rgba(255,255,255,.9), 0 0 26px -6px var(--rc);
 }
 .lk2-tile.equipped{ border-color:var(--mint); }
 .lk2-tile.equipped.sel{ box-shadow:0 0 0 2px var(--mint), 0 0 26px -6px var(--rc); }
 .lk2-tile.locked{ filter:saturate(.45) brightness(.75); }
 .lk2-tile.locked:hover{ filter:saturate(.7) brightness(.9); }
-.lk2-tile-prev{ flex:1; display:grid; place-items:center; padding:8px 6px 2px; min-height:0; overflow:hidden; }
+.lk2-tile-prev{ flex:1; display:grid; place-items:center; padding:6px; min-height:0; overflow:hidden; }
 .lk2-tile-prev .cx-prev-name{ font-size:13px; }
 .lk2-tile-prev .cx-prev-av{ width:46px; height:46px; }
-.lk2-tile-prev .cx-prev-frame{ transform:scale(.5); margin:-16px 0; }
+/* frame mini-card: scale it down about its centre so it sits dead-centre in the tile */
+.lk2-tile-prev .cx-prev-frame{ transform:scale(.56); transform-origin:center; margin:0; flex:0 0 auto; }
 .lk2-tile-prev .cx-prev-tagrow{ transform:scale(.72); }
 .lk2-tile-name{
   font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:9.5px;
@@ -17001,10 +17006,8 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 @keyframes lkLeftIn{ from{ opacity:0; transform:translateX(-14px); } to{ opacity:1; transform:none; } }
 .lk2-tile{ animation:lkTileIn .4s cubic-bezier(.2,1.1,.35,1) both; animation-delay:calc(var(--lki, 0) * .022s); }
 @keyframes lkTileIn{ from{ opacity:0; transform:translateY(10px) scale(.94); } to{ opacity:1; transform:none; } }
-/* the selected tile gets a soft breathing halo so the pick is obvious */
-.lk2-tile.sel{ animation:lkTileIn .4s cubic-bezier(.2,1.1,.35,1) both, lkSelPulse 2.4s ease-in-out .4s infinite; }
-@keyframes lkSelPulse{ 0%,100%{ box-shadow:0 0 0 2px rgba(255,255,255,.85), 0 0 22px -8px var(--rc); } 50%{ box-shadow:0 0 0 2px #fff, 0 0 30px -4px var(--rc); } }
-.lk2-tile.equipped:not(.sel){ animation:lkTileIn .4s cubic-bezier(.2,1.1,.35,1) both; }
+/* the selected tile's breathing halo (on ::after, so it never re-pops the tile) */
+@keyframes lkSelPulse{ 0%,100%{ opacity:.72; } 50%{ opacity:1; } }
 /* equipping ripples the showcase avatar/name */
 #lockerHost .lk2-left .sbm-profile-prev{ transition:box-shadow .3s; }
 .lk2-eq-pill{ animation:lkEqPop .4s cubic-bezier(.2,1.6,.4,1) both; }
@@ -17015,8 +17018,8 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 /* pulsing "new items" badge on the Locker nav button */
 .nav-item .nav-badge.nav-locker-new{ background:var(--coral); animation:navLockerPulse 2s ease-in-out infinite; }
 @keyframes navLockerPulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,90,110,.5); } 50%{ box-shadow:0 0 0 5px rgba(255,90,110,0); } }
-body.reduced-motion :is(.lk2-tile, .lk2-tile.sel, #lockerHost .lk2-left, .lk2-eq-pill, .lk2-grid.lk-swipe, .lk2-tab-ind, .nav-badge.nav-locker-new, .lk2-sort-opt, .lk2-tile-new),
-body.low-power :is(.lk2-tile, .lk2-tile.sel, #lockerHost .lk2-left, .lk2-eq-pill, .lk2-grid.lk-swipe, .lk2-tab-ind, .nav-badge.nav-locker-new, .lk2-sort-opt, .lk2-tile-new){ animation:none !important; }
+body.reduced-motion :is(.lk2-tile, #lockerHost .lk2-left, .lk2-eq-pill, .lk2-grid.lk-swipe, .lk2-tab-ind, .nav-badge.nav-locker-new, .lk2-sort-opt, .lk2-tile-new),
+body.low-power :is(.lk2-tile, #lockerHost .lk2-left, .lk2-eq-pill, .lk2-grid.lk-swipe, .lk2-tab-ind, .nav-badge.nav-locker-new, .lk2-sort-opt, .lk2-tile-new){ animation:none !important; }
 body.reduced-motion .lk2-tab-ind, body.low-power .lk2-tab-ind{ transition:none !important; }
 @media (max-width:920px){ #lockerHost .lk2{ max-width:none; } }
 .locker-shop-link{
@@ -17907,6 +17910,9 @@ body.reduced-motion .pm3, body.reduced-motion .eps-modal, body.reduced-motion .m
 }
 .sbm-profile-prev .cx-prev-av{ position:relative; z-index:2; }
 .spp-name{ position:relative; z-index:2; font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:19px; }
+.spp-rank{ position:relative; z-index:2; display:inline-flex; align-items:center; gap:6px; margin-top:1px; font-family:var(--font-mono); font-size:10.5px; font-weight:700; color:var(--text-dim); }
+.spp-rank svg{ opacity:.9; }
+.lk2-left .spp-rank{ font-size:12px; }
 
 /* ---------- GIFT RECEIVED — unboxing ceremony ---------- */
 .gift-overlay{
@@ -29443,8 +29449,8 @@ async function equipCosmetic(slot, id){
   c[slot] = id || '';
   await saveCosmetics(c);
   try { haptic(12); } catch(e){}
-  // Re-render whichever locker views are on screen, plus any live previews.
-  try { if($('#lockerHost')){ lkRenderTabs(); lkRenderGrid(); lkRenderStage(); } } catch(e){}
+  // Update the locker in place (no full re-render → no jarring re-pop of tiles).
+  try { if($('#lockerHost')){ lkUpdateEquipped(); lkRenderStage(); } } catch(e){}
   try { renderShopItems(); } catch(e){}
   // Equipping a FRAME? Frames look best on a clean profile — nudge the player to
   // drop their banner (only once per session, and only if they still have one).
@@ -29895,12 +29901,20 @@ function buildProfilePreviewHTML(item){
   ov[item.type] = item;
   const init = escapeHTML(initialOf(p.username || 'R'));
   const bg = AVATAR_COLORS[p.colorIdx || 0] || AVATAR_COLORS[0];
+  // Use the player's REAL avatar photo when they have one, so the preview
+  // actually matches how their profile looks.
+  const avCore = p.photoURL
+    ? `<span class="cx-prev-av-core" style="background-image:url('${p.photoURL}');"></span>`
+    : `<span class="cx-prev-av-core" style="background:${bg};">${init}</span>`;
+  const rk = rankFromRating(p.rating || 1000);
+  const showRank = !inPlacements(p);
   const nameHtml = `<span class="cx-name${ov.name ? ' ' + ov.name.cls : ''}">${escapeHTML(p.username || 'YourName')}</span>${ov.tag ? ` <span class="cx-tag ${ov.tag.cls}">${escapeHTML(ov.tag.text)}</span>` : ''}`;
   return `<div class="sbm-profile-prev ${ov.frame ? ov.frame.cls : ''}">
     <i class="cx-frame-overlay" aria-hidden="true"${ov.frame ? '' : ' style="display:none;"'}></i>
     <span class="spp-label">ON YOUR PROFILE</span>
-    <span class="cx-prev-av"><span class="cx-prev-av-core" style="background:${bg};">${init}</span>${ov.avatar ? `<i class="cx-avfx ${ov.avatar.cls}" aria-hidden="true"></i>` : ''}</span>
+    <span class="cx-prev-av">${avCore}${ov.avatar ? `<i class="cx-avfx ${ov.avatar.cls}" aria-hidden="true"></i>` : ''}</span>
     <div class="spp-name">${nameHtml}</div>
+    <div class="spp-rank">${showRank ? `<svg viewBox="0 0 24 24" width="13" height="13"><use href="#${rk.icon}"/></svg> ${escapeHTML(rk.tierName || rk.name || '')} · ${p.rating || 1000}` : 'Unranked'}</div>
   </div>`;
 }
 function openShopBuyModal(item, opts={}){
@@ -30734,6 +30748,23 @@ function lkRenderGrid(){
     el.classList.remove('lk-swipe'); void el.offsetWidth; el.classList.add('lk-swipe');
   }
 }
+// Update ONLY the equipped state of the existing tiles (add/remove the mint
+// border + check pip) without re-rendering the grid — keeps equipping smooth.
+function lkUpdateEquipped(){
+  const grid = $('#lkGrid'); if(!grid) return;
+  const lk = lkState(); const c = getCosmetics();
+  grid.querySelectorAll('.lk2-tile').forEach(t => {
+    const isEq = c[lk.slot] === t.dataset.lkItem;
+    t.classList.toggle('equipped', isEq);
+    let eq = t.querySelector('.lk2-tile-eq');
+    if(isEq && !eq){
+      eq = document.createElement('span');
+      eq.className = 'lk2-tile-eq';
+      eq.innerHTML = '<svg viewBox="0 0 24 24" width="10" height="10"><use href="#i-check"/></svg>';
+      t.appendChild(eq);
+    } else if(!isEq && eq){ eq.remove(); }
+  });
+}
 function lkRenderStage(){
   const el = $('#lkLeft');
   if(!el) return;
@@ -30830,7 +30861,17 @@ document.addEventListener('click', (e) => {
   const tab = e.target.closest('[data-lk-tab]');
   if(tab){ const c = getCosmetics(); lk.slot = tab.dataset.lkTab; lk.sel = c.owned.includes(c[lk.slot]) ? c[lk.slot] : ''; lkRenderTabs(); lkRenderGrid(); lkRenderStage(); try { haptic(6); } catch(err){} return; }
   const tile = e.target.closest('[data-lk-item]');
-  if(tile){ lk.sel = tile.dataset.lkItem; lkRenderGrid(); lkRenderStage(); try { haptic(6); } catch(err){} return; }
+  if(tile){
+    // Update the selection IN PLACE — never re-render the whole grid, so tiles
+    // don't all re-pop and the DOM node persists (which lets dblclick-equip work).
+    lk.sel = tile.dataset.lkItem;
+    const grid = tile.closest('.lk2-grid');
+    if(grid) grid.querySelectorAll('.lk2-tile.sel').forEach(t => { if(t !== tile) t.classList.remove('sel'); });
+    tile.classList.add('sel');
+    lkRenderStage();
+    try { haptic(6); } catch(err){}
+    return;
+  }
   const eq = e.target.closest('[data-lk-equip]');
   if(eq){ equipCosmetic(lk.slot, eq.dataset.lkEquip); return; }
   if(e.target.closest('[data-lk-unequip]')){ equipCosmetic(lk.slot, ''); return; }
