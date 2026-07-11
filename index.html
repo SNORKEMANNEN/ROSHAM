@@ -20720,7 +20720,8 @@ body.low-power :is(.screen.scr-in, .pre-ready.show .pre-ready-card, .pre-ready.c
    ════════════════════════════════════════════════════════════════════ */
 /* the big VS cards: static material only — no filters, no infinite glow,
    no backdrop blur (their material backgrounds are opaque anyway) */
-.mf-player.mfc{ animation:none !important; filter:none !important; }
+/* keep the slam-in entrance; only strip the leaked infinite filter loops */
+.mf-player.mfc{ filter:none !important; }
 .mf-player{
   -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
   background:linear-gradient(180deg, rgba(24,23,34,.97), rgba(13,12,20,.97));
@@ -20753,6 +20754,189 @@ body.low-power :is(.screen.scr-in, .pre-ready.show .pre-ready-card, .pre-ready.c
 @keyframes engageFlash{ from{ opacity:1; } to{ opacity:0; } }
 body.reduced-motion :is(.match-found-v2 .mf-banner, .match-found-v2 .mf-player.you, .match-found-v2 .mf-player.opp, .match-found-v2 .mf-vs, #screen-game.scr-in::before),
 body.low-power :is(.match-found-v2 .mf-banner, .match-found-v2 .mf-player.you, .match-found-v2 .mf-player.opp, .match-found-v2 .mf-vs, #screen-game.scr-in::before){ animation:none !important; }
+
+
+/* ════════════════════════════════════════════════════════════════════
+   MOTION v3 — a broad pass of micro-interactions + transitions so the
+   whole app feels alive: button press/loading, list hover-lifts, shop
+   tiles, nav, modals, chips, toasts. All transition-based or one-shot;
+   reduced-motion / low-power opt out at the end.
+   ════════════════════════════════════════════════════════════════════ */
+/* ---- loading buttons (shop purchase, and any .btn.is-loading) ---- */
+.btn.is-loading{ position:relative; color:transparent !important; pointer-events:none; }
+.btn.is-loading > *{ visibility:hidden; }
+.btn.is-loading::after{
+  content:''; position:absolute; top:50%; left:50%; width:18px; height:18px; margin:-9px 0 0 -9px;
+  border-radius:50%; border:2.5px solid rgba(255,255,255,.28); border-top-color:#fff;
+  animation:lucideSpin .7s linear infinite;
+}
+.sbm-buy.is-loading::after{ border-color:rgba(4,18,13,.3); border-top-color:#04120d; }
+/* ---- universal tactile press (additive; springs back) ---- */
+.btn, .btn-cta, .topbar-icon-btn, .icon-btn, .chip, .seg-btn, .pill-btn,
+.shop-tile, .case-card, .bundle-card, .ms-tile, .ms-row, .friend-card,
+.lbg-row, .arena-ctrl-btn, .dock-emote-btn, .dock-predict-btn{
+  transition:transform .16s cubic-bezier(.34,1.56,.64,1), box-shadow .2s, border-color .18s, background .18s, color .18s, filter .18s;
+}
+.btn:active, .btn-cta:active, .topbar-icon-btn:active, .icon-btn:active,
+.chip:active, .seg-btn:active, .pill-btn:active{ transform:scale(.95); }
+/* ---- list rows lift + slide on hover ---- */
+.friend-card:hover, .lbg-row:hover, .ms-row:hover, .mh-row:hover,
+.activity-row:hover, .req-card:hover, .recent-row:hover{
+  transform:translateY(-2px); box-shadow:0 10px 24px -16px rgba(0,0,0,.85);
+}
+.lbg-row:hover, .ms-row:hover{ padding-left:14px; }
+/* ---- shop tiles: hover rise + a light sheen sweep ---- */
+.shop-tile{ position:relative; overflow:hidden; }
+.shop-tile:hover{ transform:translateY(-4px); box-shadow:0 18px 40px -20px rgba(0,0,0,.9), 0 0 26px -12px var(--rc, rgba(120,140,255,.6)); }
+.shop-tile::before{
+  content:''; position:absolute; top:0; left:-140%; width:55%; height:100%; z-index:3; transform:skewX(-18deg); pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+}
+.shop-tile:hover::before{ animation:mv3Sheen .8s ease; }
+@keyframes mv3Sheen{ from{ left:-140%; } to{ left:170%; } }
+/* ---- case + bundle cards ---- */
+.case-card:hover, .bundle-card:hover{ transform:translateY(-4px) scale(1.008); }
+/* ---- sidebar nav items slide their icon on hover ---- */
+.nav-item{ transition:background .16s, color .16s, box-shadow .16s; }
+.nav-item:not(.active):hover{ background:rgba(255,255,255,.045); color:var(--text); }
+.nav-item svg{ transition:transform .18s cubic-bezier(.34,1.56,.64,1); }
+.nav-item:hover svg{ transform:translateX(2px) scale(1.08); }
+/* ---- topbar icon buttons pulse ---- */
+.topbar-icon-btn:hover{ transform:translateY(-1px); color:var(--text); }
+/* ---- modal close button spins on hover ---- */
+.modal-close{ transition:transform .25s cubic-bezier(.34,1.56,.64,1), background .18s, color .18s; }
+.modal-close:hover{ transform:rotate(90deg); }
+/* ---- modal backdrop blur eases in ---- */
+.modal-bg.show{ animation:mv3ModalBg .28s ease both; }
+@keyframes mv3ModalBg{ from{ opacity:0; -webkit-backdrop-filter:blur(0); backdrop-filter:blur(0); } to{ opacity:1; } }
+/* ---- toasts spring in from the side ---- */
+.toast{ animation:mv3Toast .42s cubic-bezier(.2,1.4,.35,1) both; }
+@keyframes mv3Toast{ from{ opacity:0; transform:translateX(26px) scale(.96); } to{ opacity:1; transform:none; } }
+/* ---- coin / rating pills give a little bump when hovered ---- */
+.coin-pill:hover, .chip-rating:hover, .user-chip:hover{ transform:translateY(-1px); }
+/* ---- segmented controls: the thumb + labels ease ---- */
+.seg-btn{ transition:color .2s, background .2s; }
+/* ---- avatars gently lift where they're interactive ---- */
+.friend-card .av:hover, .lbg-row .av:hover{ transform:scale(1.06); }
+/* ---- generic clickable cards ---- */
+.card.clickable{ transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .2s, border-color .18s; }
+.card.clickable:hover{ transform:translateY(-3px); box-shadow:0 16px 34px -20px rgba(0,0,0,.85); }
+/* ---- home play button breathes a touch stronger on hover ---- */
+.hero-play-btn:hover, .play-cta:hover{ transform:translateY(-2px) scale(1.02); }
+/* ---- section reveal for freshly-rendered lists (opt-in via .mv3-stagger) ---- */
+.mv3-stagger > *{ animation:mv3RowIn .4s cubic-bezier(.2,.9,.3,1) both; }
+.mv3-stagger > *:nth-child(1){ animation-delay:.02s } .mv3-stagger > *:nth-child(2){ animation-delay:.05s }
+.mv3-stagger > *:nth-child(3){ animation-delay:.08s } .mv3-stagger > *:nth-child(4){ animation-delay:.11s }
+.mv3-stagger > *:nth-child(5){ animation-delay:.14s } .mv3-stagger > *:nth-child(n+6){ animation-delay:.17s }
+@keyframes mv3RowIn{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+/* ---- respect user motion prefs everywhere in this layer ---- */
+body.reduced-motion :is(.shop-tile::before, .modal-bg.show, .toast, .modal-close, .nav-item svg, .mv3-stagger > *),
+body.low-power :is(.shop-tile::before, .modal-bg.show, .toast, .modal-close, .nav-item svg, .mv3-stagger > *){ animation:none !important; }
+body.reduced-motion :is(.btn, .friend-card, .lbg-row, .shop-tile, .case-card, .bundle-card, .nav-item, .card.clickable),
+body.low-power :is(.btn, .friend-card, .lbg-row, .shop-tile, .case-card, .bundle-card, .nav-item, .card.clickable){ transition:none !important; }
+body.reduced-motion :is(.friend-card, .lbg-row, .shop-tile, .card.clickable):hover,
+body.low-power :is(.friend-card, .lbg-row, .shop-tile, .card.clickable):hover{ transform:none !important; }
+
+
+/* ════════════════════════════════════════════════════════════════════
+   PERF v2 — zero visual change. Long lists skip rendering offscreen rows
+   (content-visibility), and the few constantly-moving ornaments get
+   compositor hints so they animate off the main thread.
+   ════════════════════════════════════════════════════════════════════ */
+.friend-card, .lbg-row, .mh-row, .activity-row, .shop-tile{ content-visibility:auto; }
+.friend-card{ contain-intrinsic-size:auto 64px; }
+.lbg-row{ contain-intrinsic-size:auto 46px; }
+.mh-row{ contain-intrinsic-size:auto 58px; }
+.activity-row{ contain-intrinsic-size:auto 52px; }
+.shop-tile{ contain-intrinsic-size:auto 250px; }
+.mm-sweep, .mm-ring, .mm-blip{ will-change:transform; }
+.duel-countdown.flash, .duel-countdown.shoot{ will-change:transform, filter; }
+
+/* ════════════════════════════════════════════════════════════════════
+   MOBILE v2 — phone-first passes for the Locker (full overhaul), Shop
+   and the profile display. Desktop untouched.
+   ════════════════════════════════════════════════════════════════════ */
+@media (max-width:680px){
+  /* ── LOCKER: catalog-first. The big side stage becomes a compact,
+        fixed "selected item" bar docked above the bottom nav — browse the
+        grid full-width, act on the pick from the bar. ── */
+  #lockerHost .lk2{ display:block; }
+  #lockerHost .lk2-left{
+    position:fixed; left:10px; right:10px; z-index:60; top:auto;
+    bottom:calc(76px + env(safe-area-inset-bottom, 0px));
+    display:flex; flex-direction:row; align-items:center; gap:12px;
+    min-height:0; padding:10px 12px; border-radius:18px;
+    background:linear-gradient(180deg, #1c1728, #120e1c);
+    border:1px solid var(--line-bright, var(--line));
+    box-shadow:0 20px 54px -16px rgba(0,0,0,.95);
+    animation:none;
+  }
+  #lockerHost .lk2-left .sbm-profile-prev{
+    flex:0 0 88px; width:88px; height:70px; min-height:0 !important;
+    border-radius:12px; padding:4px !important; gap:3px; justify-content:center;
+  }
+  #lockerHost .lk2-left .sbm-profile-prev .cx-prev-av{ width:32px !important; height:32px !important; }
+  #lockerHost .lk2-left .sbm-profile-prev .cx-prev-av-core{ font-size:14px; border-radius:9px; }
+  #lockerHost .lk2-left .spp-name{ font-size:9px; max-width:78px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  #lockerHost .lk2-left .spp-label, #lockerHost .lk2-left .spp-rank{ display:none; }
+  #lockerHost .lk2-left .lk2-meta{
+    flex:1; min-width:0; padding:0 !important; background:none !important; border:none !important;
+    display:grid; grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"rar btn" "name btn";
+    align-items:center; column-gap:10px; row-gap:3px;
+  }
+  #lockerHost .lk2-item-rar{ grid-area:rar; gap:6px; }
+  #lockerHost .lk2-item-name{ grid-area:name; font-size:15px; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  #lockerHost .lk2-item-desc{ display:none; }
+  #lockerHost .lk2-actions{ grid-area:btn; margin:0; }
+  #lockerHost .lk2-btn{ min-height:44px; padding:9px 15px; font-size:13px; }
+  /* room so the grid never hides behind the bar + nav */
+  #lockerHost .lk2-right{ padding-bottom:150px; }
+  /* slot tabs: bigger touch targets, pinned while you browse */
+  #lockerHost .lk2-tabs{ position:sticky; top:calc(env(safe-area-inset-top, 0px) + 58px); z-index:30; }
+  #lockerHost .lk2-tab{ padding:12px 12px; font-size:12px; }
+  .lk2-controls{ gap:6px; }
+  .lk2-search{ padding:11px 12px; }
+  .lk2-sort-btn{ padding:11px 12px; }
+  .lk2-grid{ gap:8px; }
+  .lk-shop-btn{ min-height:38px; padding:7px 12px; font-size:12px; }
+
+  /* ── SHOP: kill the floating section rail (it overlapped content),
+        compact the hero + wallet, tighten section spacing ── */
+  .shop-rail{ display:none !important; }
+  .shop-hero{ padding:16px 14px; border-radius:16px; }
+  .shop-hero-sub{ font-size:12px; }
+  .shop-wallet{ padding:8px 12px; gap:8px; }
+  .shop-wallet-info b{ font-size:18px; }
+  .shop-sec{ scroll-margin-top:64px; }
+  .bundle-grid{ gap:12px; }
+}
+@media (max-width:560px){
+  /* ── PROFILE DISPLAY: centred identity, tighter everything ── */
+  #profileModal .modal{ padding-left:12px; padding-right:12px; }
+  .pm3 .pm-banner{ height:128px; }
+  .pm3-topbar{ margin-top:-40px; }
+  .pm3-idrow{ flex-direction:column; align-items:center; gap:8px; }
+  .pm3 .pm3-idrow .pm-av-wrap{ margin:0 auto; }
+  .profile-modal.pm3 .pm3-topbar .pm3-identity{
+    width:100%; max-width:100%; align-items:center; text-align:center;
+    padding:12px 12px !important; border-radius:15px;
+  }
+  .pm3 .pm-name{ justify-content:center; font-size:22px; }
+  .pm3 .pm-title-row{ justify-content:center; }
+  .pm3 .pm-status{ align-self:center; }
+  .pm3-hstats{ gap:7px; }
+  .hstat{ padding:10px 11px; gap:8px; border-radius:12px; }
+  .hstat-ic{ width:28px; height:28px; border-radius:9px; }
+  .hstat-txt b{ font-size:17px; }
+  .pm3-tab{ padding:10px 4px; font-size:11.5px; }
+  .pm3-cardrow{ gap:9px; }
+  .pm3-hi-grid{ gap:8px; }
+  .pm3-prog-body{ flex-direction:column; gap:12px; }
+  .pm3-prog-main{ width:100%; }
+  .profile-modal .pm-level-badge.pm3-lvl-hex{ width:64px !important; height:64px !important; font-size:32px; }
+  .pm3-spark-v{ font-size:19px; }
+  .profile-modal.pm3 .pm3-panes .pm-showcase{ grid-template-columns:repeat(auto-fill, minmax(96px, 1fr)); }
+}
 
 </style>
 </head>
@@ -30336,12 +30520,22 @@ function openShopBuyModal(item, opts={}){
   const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal rar-' + item.rarity;
   $('#shopBuyModal')?.classList.add('show');
 }
-on('#sbmBuyBtn', 'click', async () => {
+on('#sbmBuyBtn', 'click', async (e) => {
   const item = state._shopBuyItem; if(!item) return;
-  const ok = await buyCosmetic(item.id);
-  if(ok){
-    $('#shopBuyModal')?.classList.remove('show');
-    renderShopItems();
+  const btn = e.currentTarget || $('#sbmBuyBtn');
+  if(btn.classList.contains('is-loading')) return;   // guard double-click
+  const prevLabel = $('#sbmBuyLabel')?.textContent;
+  btn.classList.add('is-loading'); btn.disabled = true;
+  setText('#sbmBuyLabel', 'Purchasing…');
+  try {
+    const ok = await buyCosmetic(item.id);
+    if(ok){
+      $('#shopBuyModal')?.classList.remove('show');
+      renderShopItems();
+    }
+  } finally {
+    btn.classList.remove('is-loading'); btn.disabled = false;
+    if(prevLabel) setText('#sbmBuyLabel', prevLabel);
   }
 });
 on('#sbmGiftBtn', 'click', () => {
@@ -38771,30 +38965,6 @@ function loadClientPrefs(){
   } catch(e){}
 }
 loadClientPrefs();
-
-/* ---- FPS watchdog: if a match is dropping frames, quietly switch on
-        performance mode (only when the player has no explicit preference,
-        and never the other way around). ---- */
-(function(){
-  if(localStorage.getItem('rosham_low_power') !== null) return;   // explicit choice wins
-  let slow = 0, last = performance.now(), applied = false;
-  function tick(now){
-    if(applied) return;
-    const dt = now - last; last = now;
-    if(state.screen === 'game' && !document.body.classList.contains('low-power') && !document.body.classList.contains('reduced-motion')){
-      // count seconds where the frame budget is blown (under ~42fps)
-      if(dt > 24 && dt < 1000) slow += dt; else if(dt <= 24) slow = Math.max(0, slow - dt * .5);
-      if(slow > 3500){
-        applied = true;
-        document.body.classList.add('low-power');
-        try { toast('⚡ Performance mode enabled — heavy effects reduced to keep the match smooth', 'info', { duration: 5000 }); } catch(e){}
-        return;
-      }
-    } else if(slow > 0){ slow = 0; }
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-})();
 
 // Mobile dynamic viewport height (accounts for browser chrome)
 function setVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
