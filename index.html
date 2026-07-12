@@ -377,7 +377,7 @@ body.low-power .age-gate-glow, body.reduced-motion .age-gate-card{ animation:non
 .age-gate-live.bad{ color:var(--coral); }
 .age-gate-err{ position:relative; font-size:13px; font-weight:600; color:var(--coral); margin:8px 0 0; }
 /* Terms / Privacy must sit ABOVE the age gate when opened from it (gate is z 9999). */
-#termsModal, #privacyModal{ z-index:10000; }
+#termsModal, #privacyModal, #refundModal{ z-index:10000; }
 
 /* ===== First-login intro trailer ===== */
 .intro-trailer{ position:fixed; inset:0; z-index:100000; background:#000; overflow:hidden; animation:introIn .4s ease; }
@@ -425,6 +425,8 @@ body.low-power .age-gate-glow, body.reduced-motion .age-gate-card{ animation:non
 .legal-foot{ margin-top:18px; padding-top:12px; border-top:1px solid var(--line-soft); font-size:12.5px; }
 .legal-body a{ color:var(--mint); font-weight:600; text-decoration:none; }
 .legal-body a:hover{ text-decoration:underline; }
+.legal-inline-link{ color:var(--mint); font-weight:700; background:none; border:none; padding:0; cursor:pointer; font:inherit; }
+.legal-inline-link:hover{ text-decoration:underline; }
 /* Safety center callout cards */
 .safety-call{ margin:14px 0; padding:13px 15px; border-radius:14px; background:var(--surface-2); border:1px solid var(--line); }
 .safety-call .sc-title{ display:flex; align-items:center; gap:8px; font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:14px; color:var(--text); margin-bottom:6px; }
@@ -16653,6 +16655,16 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
   background:rgba(155,123,255,.08); border:1px solid rgba(155,123,255,.35); color:var(--violet);
   font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.06em;
 }
+/* quick jump to the Locker straight from the shop — a shortcut for browsing what
+   you already own and equipping it without leaving through the nav bar */
+.shop-locker-btn{
+  display:inline-flex; align-items:center; gap:7px; padding:9px 14px; border-radius:12px;
+  background:rgba(34,211,163,.08); border:1px solid rgba(34,211,163,.38); color:var(--mint);
+  font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.06em;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), background .18s, box-shadow .2s;
+}
+.shop-locker-btn:hover{ background:rgba(34,211,163,.15); box-shadow:0 8px 20px -12px rgba(34,211,163,.8); transform:translateY(-1px); }
+.shop-locker-btn:active{ transform:scale(.95); }
 .shop-wallet{
   display:inline-flex; align-items:center; gap:9px; padding:9px 16px; border-radius:12px;
   background:linear-gradient(180deg, rgba(245,180,49,.16), rgba(245,180,49,.05));
@@ -17899,6 +17911,9 @@ body.reduced-motion .pm3, body.reduced-motion .eps-modal, body.reduced-motion .m
 /* ---------- GIFT BUTTON + PICKER (purchase modal) ---------- */
 .sbm-gift{ border-color:rgba(155,123,255,.5); color:#cabdff; }
 .sbm-gift:hover{ background:rgba(155,123,255,.12); }
+.sbm-locker{ border-color:rgba(34,211,163,.5); color:#7fe9cd; gap:7px; }
+.sbm-locker:hover{ background:rgba(34,211,163,.12); }
+.sbm-locker svg{ width:15px; height:15px; }
 .sbm-gift-ic{ font-size:14px; }
 .sbm-gift-panel{ margin-top:12px; text-align:left; }
 .sbm-gift-head{
@@ -20765,12 +20780,33 @@ body.low-power :is(.match-found-v2 .mf-banner, .match-found-v2 .mf-player.you, .
 /* ---- loading buttons (shop purchase, and any .btn.is-loading) ---- */
 .btn.is-loading{ position:relative; color:transparent !important; pointer-events:none; }
 .btn.is-loading > *{ visibility:hidden; }
+/* a smooth "comet" ring — a conic-gradient tail masked into a thin circle,
+   which reads far cleaner than a single-segment border spinner */
 .btn.is-loading::after{
-  content:''; position:absolute; top:50%; left:50%; width:18px; height:18px; margin:-9px 0 0 -9px;
-  border-radius:50%; border:2.5px solid rgba(255,255,255,.28); border-top-color:#fff;
-  animation:lucideSpin .7s linear infinite;
+  content:''; position:absolute; top:50%; left:50%; width:20px; height:20px; margin:-10px 0 0 -10px;
+  border-radius:50%;
+  background:conic-gradient(from 90deg, rgba(255,255,255,0) 8%, rgba(255,255,255,.95));
+  -webkit-mask:radial-gradient(farthest-side, #0000 calc(100% - 2.6px), #000 calc(100% - 2.6px));
+  mask:radial-gradient(farthest-side, #0000 calc(100% - 2.6px), #000 calc(100% - 2.6px));
+  animation:lucideSpin .62s linear infinite;
 }
-.sbm-buy.is-loading::after{ border-color:rgba(4,18,13,.3); border-top-color:#04120d; }
+/* the Buy button is special: it keeps its coin + label and flips the coin like
+   a spinning token, with a light sweep passing over the button — friendlier and
+   more on-brand than a bare spinner while the purchase resolves */
+.sbm-buy{ perspective:340px; }
+.sbm-buy.is-loading{ color:#04120d !important; overflow:hidden; }
+.sbm-buy.is-loading > *{ visibility:visible; }
+.sbm-buy.is-loading svg{ animation:sbmCoinFlip .72s cubic-bezier(.45,.05,.55,.95) infinite; }
+.sbm-buy.is-loading::after{
+  content:''; position:absolute; inset:0; top:0; left:0; width:auto; height:auto; margin:0;
+  border-radius:inherit; background:linear-gradient(100deg, transparent 30%, rgba(255,255,255,.4) 50%, transparent 70%);
+  -webkit-mask:none; mask:none; transform:translateX(-100%);
+  animation:sbmSweep 1.05s ease-in-out infinite;
+}
+@keyframes sbmCoinFlip{ from{ transform:rotateY(0); } to{ transform:rotateY(360deg); } }
+@keyframes sbmSweep{ from{ transform:translateX(-100%); } to{ transform:translateX(100%); } }
+body.reduced-motion .sbm-buy.is-loading::after, body.low-power .sbm-buy.is-loading::after{ animation:none !important; opacity:0; }
+body.reduced-motion .sbm-buy.is-loading svg, body.low-power .sbm-buy.is-loading svg{ animation-duration:1.4s; }
 /* ---- universal tactile press (additive; springs back) ---- */
 .btn, .btn-cta, .topbar-icon-btn, .icon-btn, .chip, .seg-btn, .pill-btn,
 .shop-tile, .case-card, .bundle-card, .ms-tile, .ms-row, .friend-card,
@@ -20919,10 +20955,16 @@ body.low-power :is(.friend-card, .lbg-row, .shop-tile, .card.clickable):hover{ t
   .shop-hero-sub{ font-size:12px; }
   .shop-wallet{ padding:8px 12px; gap:8px; }
   .shop-wallet-info b{ font-size:18px; }
+  /* keep the Locker shortcut prominent; the collection chip yields space first */
+  .shop-topbar-side{ gap:7px; }
+  .shop-locker-btn{ padding:8px 12px; font-size:11px; }
+  .shop-collect{ padding:8px 11px; }
   .shop-sec{ scroll-margin-top:64px; }
   .bundle-grid{ gap:12px; }
 }
 @media (max-width:560px){
+  /* the collection chip is the least essential item in a cramped shop bar */
+  .shop-collect{ display:none; }
   /* ── PROFILE DISPLAY: centred identity, tighter everything ── */
   #profileModal .modal{ padding-left:12px; padding-right:12px; }
   .pm3 .pm-banner{ height:128px; }
@@ -22277,6 +22319,10 @@ const FIREBASE_CONFIG = {
             <span class="shop-topbar-sub"><span class="live-dot"></span> Rotates daily · top up RoshCoins below</span>
           </div>
           <div class="shop-topbar-side">
+            <button type="button" class="shop-locker-btn" id="shopLockerBtn" title="Open your Locker">
+              <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-locker"/></svg>
+              <span>Locker</span>
+            </button>
             <div class="shop-collect" id="shopCollect" title="Cosmetics collected">
               <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-star"/></svg>
               <span id="shopCollectNum">0/34</span>
@@ -22322,7 +22368,7 @@ const FIREBASE_CONFIG = {
               <span class="shop-slab-title">ROSHCOINS</span>
               <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-coin"/></svg> <b id="shopCoinsBal">0</b> IN WALLET</span>
             </div>
-            <p class="shop-coins-sub">RoshCoins are the shop currency — grab a pack, get cosmetics, gift friends. Bigger packs pay bonus coins.</p>
+            <p class="shop-coins-sub">RoshCoins are the shop currency — grab a pack, get cosmetics, gift friends. Bigger packs pay bonus coins. Coins &amp; items are delivered instantly; see our <button class="legal-inline-link" data-open-legal="refund">Refund &amp; Purchase Policy</button>.</p>
             <div class="shop-coins-grid" id="shopCoinPacks"></div>
           </section>
 
@@ -22813,6 +22859,11 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Privacy Policy</div><div class="set-sub">What we collect, your camera &amp; your data</div></div>
             <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
           </button>
+          <button class="settings-row" data-open-legal="refund">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-coin"/></svg></div>
+            <div class="set-text"><div class="set-title">Refund &amp; Purchase Policy</div><div class="set-sub">RoshCoins, cosmetics, gifts &amp; refunds</div></div>
+            <svg viewBox="0 0 24 24" width="16" height="16" class="set-arrow"><use href="#i-arrow-right"/></svg>
+          </button>
         </div>
         </div><!-- /group -->
 <div class="settings-group sg-account">
@@ -22857,6 +22908,8 @@ const FIREBASE_CONFIG = {
             <button data-open-legal="terms">Terms of Service</button>
             <span class="app-footer-dot">·</span>
             <button data-open-legal="privacy">Privacy Policy</button>
+            <span class="app-footer-dot">·</span>
+            <button data-open-legal="refund">Refunds</button>
             <span class="app-footer-dot">·</span>
             <button id="footerHelpBtn">How to play</button>
           </div>
@@ -23819,6 +23872,53 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- ===== REFUND & PURCHASE POLICY ===== -->
+<div class="modal-bg" id="refundModal">
+  <div class="modal legal-modal">
+    <button class="modal-close" data-close="refundModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3>REFUND &amp; PURCHASE POLICY</h3>
+    <div class="legal-meta">Last updated: 12 Jul 2026</div>
+    <div class="legal-body">
+      <p>This policy covers <b>RoshCoins</b> (our virtual currency) and <b>cosmetics</b> (virtual items) bought inside ROSHCAM. By purchasing you agree to the terms below. RoshCoins and cosmetics have no real-world monetary value, cannot be exchanged for cash, and exist only inside the game.</p>
+
+      <h4>1. Virtual items are delivered instantly</h4>
+      <p>RoshCoin packs are credited to your wallet the moment payment clears, and cosmetics are added to your Locker the moment you buy them. Because delivery is immediate, <b>all sales are final</b> once the coins or item reach your account, except where a refund is required by law or granted at our discretion below.</p>
+
+      <h4>2. Your statutory right of withdrawal</h4>
+      <p>If you live somewhere with a legal "cooling-off" period (for example the EU/UK 14-day right of withdrawal), note that this applies to digital content only until delivery begins. By completing a purchase you <b>request immediate delivery</b> and acknowledge that you <b>lose the right of withdrawal</b> once the coins or cosmetic have been delivered. Nothing in this policy limits mandatory consumer rights you cannot legally waive.</p>
+
+      <h4>3. When we <i>will</i> refund or restore</h4>
+      <ul>
+        <li><b>You were charged but nothing arrived.</b> If a payment succeeds but RoshCoins or a cosmetic are missing, contact us and we'll credit the item or refund the charge.</li>
+        <li><b>Duplicate or accidental charge.</b> If you were billed twice for the same order, we'll refund the extra charge.</li>
+        <li><b>Unauthorized purchase.</b> If someone bought coins on your account without permission, tell us within <b>14 days</b> and we'll investigate.</li>
+      </ul>
+
+      <h4>4. When we generally <i>won't</i> refund</h4>
+      <ul>
+        <li>RoshCoins that have already been spent, gifted, or partially used.</li>
+        <li>Cosmetics you bought and then changed your mind about, or bought by mistake when the item's price and preview were shown before purchase.</li>
+        <li>Items or coins lost because an account was suspended or banned for breaking our <button class="legal-inline-link" data-open-legal="terms">Terms of Service</button>.</li>
+        <li>Bonus/promotional coins granted for free.</li>
+      </ul>
+
+      <h4>5. Gifts</h4>
+      <p>When you gift a cosmetic, the coin cost is held at the time you send it. If the recipient <b>declines</b> the gift, the full coin cost is <b>returned to your wallet automatically</b>. If they accept, the gift is complete and non-refundable. You cannot gift an item to reclaim coins from a purchase.</p>
+
+      <h4>6. Purchases through app stores</h4>
+      <p>If you bought RoshCoins through the Apple App Store or Google Play, those transactions are also governed by the store's own refund rules, and refunds may need to be requested directly from the store. We can restore missing items regardless of where you paid.</p>
+
+      <h4>7. Chargebacks</h4>
+      <p>Please contact us before disputing a charge with your bank — we can usually resolve it faster. Filing a chargeback for coins or items you received may result in your account being suspended and the disputed items removed.</p>
+
+      <h4>8. How to request a refund</h4>
+      <p>Email <b>support@roshcam.com</b> from the address on your account with the date, amount, and pack or item name (a receipt or order ID helps). We aim to respond within <b>5 business days</b>.</p>
+
+      <p class="legal-foot">This policy works alongside our <button class="legal-inline-link" data-open-legal="terms">Terms of Service</button> and <button class="legal-inline-link" data-open-legal="privacy">Privacy Policy</button>.</p>
+    </div>
+  </div>
+</div>
+
 <!-- ===== SAFETY CENTER ===== -->
 <div class="modal-bg" id="safetyModal">
   <div class="modal legal-modal safety-modal">
@@ -24261,6 +24361,10 @@ const FIREBASE_CONFIG = {
       <button class="btn btn-ghost" data-close="shopBuyModal">Not now</button>
       <button class="btn sbm-gift" id="sbmGiftBtn" title="Gift this to a friend">
         <span class="sbm-gift-ic">🎁</span> Gift
+      </button>
+      <button class="btn sbm-locker" id="sbmLockerBtn" title="Open this in your Locker" style="display:none;">
+        <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-locker"/></svg>
+        Open in Locker
       </button>
       <button class="btn btn-primary sbm-buy" id="sbmBuyBtn">
         <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-coin"/></svg>
@@ -30420,6 +30524,7 @@ on('#cckPayBtn', 'click', async () => {
   }
 });
 on('#shopWallet', 'click', () => { $('#shopSecCoins')?.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+on('#shopLockerBtn', 'click', () => { try { haptic(6); } catch(e){} openCosmeticsEditor(); });
 
 // ---------- SECTION RAIL + NEXT BUTTON (scroll-spy) ----------
 function shopSections(){ return [...document.querySelectorAll('.shop-sec')]; }
@@ -30513,13 +30618,14 @@ function renderShopPage(){
 // "NEW" nudge on the Shop nav entry until the first visit.
 try { updateShopBadge(); } catch(e){}
 
-// Tile click → purchase modal; owned items jump to the cosmetics editor.
+// Tile click → the item modal. Owned items open the SAME modal in an
+// "already owned" state (gift it / open in Locker) rather than yanking you
+// away to the cosmetics editor.
 document.addEventListener('click', (e) => {
   const tile = e.target.closest && e.target.closest('[data-shop-item]');
   if(!tile) return;
   const item = COSMETIC_BY_ID[tile.dataset.shopItem];
   if(!item) return;
-  if(ownsCosmetic(item.id)){ openCosmeticsEditor(); return; }
   openShopBuyModal(item);
 });
 // Live "on your profile" preview — your current look with the previewed item
@@ -30567,15 +30673,17 @@ function openShopBuyModal(item, opts={}){
   const guest = isGuest();
   const btn = $('#sbmBuyBtn');
   const giftBtn = $('#sbmGiftBtn');
+  const lockerBtn = $('#sbmLockerBtn');
   const gp = $('#sbmGiftPanel');
   const balEl = $('#sbmBalance');
   if(gp) gp.style.display = 'none';
+  if(lockerBtn) lockerBtn.style.display = 'none';
   if(previewOnly){
     const owned = ownsCosmetic(item.id);
     if(balEl){
       const rankName = item.rankOnly ? (RANKS.find(rk => rk.id === item.rankOnly)?.name || item.rankOnly) : '';
       balEl.innerHTML = owned
-        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b> — equip it in Edit profile → Cosmetics`
+        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b> — equip it in your Locker`
         : (item.rankOnly
           ? `<b class="sbm-short" style="color:#ffd45e">Rank-exclusive</b> — reach <b>${escapeHTML(rankName)}</b> to earn it`
           : (item.prestigeOnly
@@ -30584,6 +30692,21 @@ function openShopBuyModal(item, opts={}){
     }
     if(btn) btn.style.display = 'none';
     if(giftBtn) giftBtn.style.display = 'none';
+    // owned case/rank items still deserve a shortcut to go equip them
+    if(lockerBtn) lockerBtn.style.display = owned ? '' : 'none';
+  } else if(ownsCosmetic(item.id)){
+    // ALREADY OWNED (a normally-buyable item). Don't send the player away —
+    // tell them they own it right here, and let them gift a copy or jump to
+    // the Locker to equip it.
+    if(balEl){
+      balEl.innerHTML = guest
+        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b>`
+        : `<b class="sbm-short" style="color:var(--mint)">✓ You already own this</b> — gift a copy to a friend, or open it in your Locker`;
+    }
+    if(btn) btn.style.display = 'none';
+    if(lockerBtn) lockerBtn.style.display = '';
+    if(giftBtn) giftBtn.style.display = guest ? 'none' : '';
+    setText('#sbmGiftCost', fmtCoins(item.price));
   } else {
     const bal = getCoins(), after = bal - item.price;
     if(balEl){
@@ -30618,6 +30741,11 @@ on('#sbmBuyBtn', 'click', async (e) => {
     btn.classList.remove('is-loading'); btn.disabled = false;
     if(prevLabel) setText('#sbmBuyLabel', prevLabel);
   }
+});
+on('#sbmLockerBtn', 'click', () => {
+  $('#shopBuyModal')?.classList.remove('show');
+  try { haptic(6); } catch(e){}
+  openCosmeticsEditor();
 });
 on('#sbmGiftBtn', 'click', () => {
   const item = state._shopBuyItem; if(!item) return;
@@ -40265,7 +40393,7 @@ document.querySelectorAll('[data-close]').forEach(b => {
 document.querySelectorAll('[data-open-legal]').forEach(b => {
   b.addEventListener('click', () => {
     const which = b.dataset.openLegal;
-    const id = which === 'privacy' ? 'privacyModal' : 'termsModal';
+    const id = which === 'privacy' ? 'privacyModal' : (which === 'refund' ? 'refundModal' : 'termsModal');
     $('#' + id)?.classList.add('show');
   });
 });
