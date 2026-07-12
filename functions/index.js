@@ -33,7 +33,8 @@ const COIN_PACKS = {
   p5000:  { coins: 5000,  usd: 799,  name: "Pro pack (+28% extra)" },
   p13500: { coins: 13500, usd: 1999, name: "Whale pack (+38% extra)" },
 };
-const RARITY_PRICE = { rare: 800, epic: 2000, legendary: 4500, mythic: 8000, ascended: 14000 };
+// Keep in lockstep with CX_PRICE in index.html — tuned to the ROSHCOIN packs.
+const RARITY_PRICE = { rare: 400, epic: 900, legendary: 2200, mythic: 4500, ascended: 8000 };
 const COSMETIC_RARITY = {
   // name styles
   ns_amethyst: "rare",
