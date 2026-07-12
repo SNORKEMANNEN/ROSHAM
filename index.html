@@ -16162,6 +16162,110 @@ body.reduced-motion .sbm-buy.holding .sbm-hold-ring, body.low-power .sbm-buy.hol
   mask-composite:exclude;
 }
 .pm-av-wrap{ position:relative; }
+/* rank progress ring around the profile avatar (conic fill → next tier) */
+.pm-rank-ring{
+  position:absolute; inset:-7px; border-radius:50%; z-index:0; pointer-events:none;
+  background:conic-gradient(from -90deg, var(--rc, #22d3a3) calc(var(--rp, 0) * 360deg), rgba(255,255,255,.13) 0);
+  -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  mask:radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  transition:background .6s ease;
+}
+body.reduced-motion .pm-rank-ring, body.low-power .pm-rank-ring{ transition:none; }
+/* signature stat callout */
+.pm3-signature{
+  display:flex; align-items:center; gap:14px; padding:13px 16px; margin-bottom:14px; border-radius:16px;
+  background:linear-gradient(135deg, color-mix(in srgb, var(--violet) 20%, transparent), rgba(255,255,255,.02));
+  border:1px solid color-mix(in srgb, var(--violet) 30%, var(--line));
+  animation:v10Rise .4s cubic-bezier(.2,.9,.3,1) both;
+}
+.pm3-signature.pm3-sig-empty{ background:linear-gradient(135deg, rgba(34,211,163,.12), rgba(255,255,255,.02)); border-color:rgba(34,211,163,.3); }
+.pm3-sig-ic{ flex:0 0 auto; width:46px; height:46px; display:grid; place-items:center; font-size:25px; border-radius:13px; background:rgba(0,0,0,.28); }
+.pm3-sig-txt{ display:flex; flex-direction:column; min-width:0; }
+.pm3-sig-txt b{ font-family:var(--font-display); font-stretch:70%; font-style:italic; font-weight:900; font-size:21px; line-height:1.04; text-transform:uppercase; overflow:hidden; text-overflow:ellipsis; }
+.pm3-sig-txt i{ font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.08em; color:var(--text-faint); font-style:normal; margin-top:3px; }
+/* suspended-account notice + hiding of rich content */
+.pm-mod-notice{
+  display:flex; align-items:center; gap:10px; margin-top:12px; padding:11px 14px; border-radius:12px;
+  background:rgba(255,90,120,.1); border:1px solid rgba(255,90,120,.35); color:#ffb3c0; font-size:12.5px; line-height:1.4;
+}
+.pm-mod-notice svg{ flex:0 0 auto; color:#ff5a78; }
+.profile-modal.pm-suspended .pm-showcase, .profile-modal.pm-suspended .pm3-signature{ display:none !important; }
+/* friends-only restricted view — only identity + notice remain */
+.profile-modal.pm-restricted .pm3-hstats, .profile-modal.pm-restricted .pm3-body,
+.profile-modal.pm-restricted .pm3-signature, .profile-modal.pm-restricted .pm-showcase{ display:none !important; }
+/* condensed sticky identity bar */
+.pm3-stickybar{
+  position:sticky; top:0; z-index:14; display:flex; align-items:center; gap:11px;
+  padding:10px 46px 10px 16px; margin:-1px -1px 0; border-radius:20px 20px 0 0;
+  background:rgba(16,13,24,.9); backdrop-filter:blur(18px); border-bottom:1px solid var(--line-soft);
+  transform:translateY(-100%); opacity:0; pointer-events:none; transition:transform .28s cubic-bezier(.2,.9,.3,1), opacity .2s;
+}
+.profile-modal.pm-scrolled .pm3-stickybar{ transform:translateY(0); opacity:1; pointer-events:auto; }
+.pm3-sb-av{ width:34px; height:34px; border-radius:10px; flex:0 0 auto; background-size:cover; background-position:center; display:grid; place-items:center; font-weight:800; font-size:15px; overflow:hidden; }
+.pm3-sb-name{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pm3-sb-rank{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.05em; color:var(--text-dim); margin-left:auto; }
+.pm3-sb-rank .rank-mini{ width:14px; height:14px; }
+body.reduced-motion .pm3-stickybar{ transition:none; }
+/* profile skeleton */
+.modal.profile-modal{ position:relative; }
+.pm-skel{ display:none; position:absolute; inset:0; z-index:12; padding:0 0 24px; overflow:hidden; border-radius:20px; }
+.profile-modal.pm-loading .pm-skel{ display:block; }
+.profile-modal.pm-loading > *:not(.pm-skel):not(.modal-close):not(.pm3-stickybar){ visibility:hidden; }
+.pm-skel-banner{ height:120px; border-radius:20px 20px 0 0; }
+.pm-skel-row{ display:flex; gap:16px; align-items:flex-end; padding:0 24px; margin-top:-40px; }
+.pm-skel-av{ width:96px; height:96px; border-radius:26px; flex:0 0 auto; }
+.pm-skel-lines{ flex:1; display:flex; flex-direction:column; gap:9px; padding-bottom:8px; }
+.pm-skel-line{ height:16px; border-radius:7px; }
+.pm-skel-line.lg{ width:55%; height:22px; } .pm-skel-line.sm{ width:32%; }
+.pm-skel-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; padding:20px 24px 0; }
+.pm-skel-box{ height:56px; border-radius:15px; }
+.pm-skel-card{ height:120px; border-radius:16px; margin:16px 24px 0; }
+.shimmer{ background:linear-gradient(100deg, rgba(255,255,255,.04) 30%, rgba(255,255,255,.10) 50%, rgba(255,255,255,.04) 70%); background-size:200% 100%; animation:pmShimmer 1.3s linear infinite; }
+@keyframes pmShimmer{ from{ background-position:200% 0; } to{ background-position:-200% 0; } }
+body.reduced-motion .shimmer, body.low-power .shimmer{ animation:none; }
+/* live cosmetic hero — equipped loadout */
+.pm3-load-grid{ display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; }
+.pm3-load-item{ position:relative; padding:9px 12px 9px 14px; border-radius:11px; background:rgba(255,255,255,.03); border:1px solid var(--line); overflow:hidden; }
+.pm3-load-item::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--rc, #888); }
+.pm3-load-slot{ display:block; font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.14em; color:var(--text-faint); }
+.pm3-load-name{ display:block; font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:14px; color:var(--text); margin-top:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pm3-load-rar{ display:inline-block; margin-top:3px; font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.1em; color:var(--rc, #aaa); }
+/* compare mode */
+.pm3-cmp{ display:flex; flex-direction:column; gap:4px; }
+.pm3-cmp-row{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:8px; padding:6px 4px; border-bottom:1px solid var(--line-soft); }
+.pm3-cmp-row:last-child{ border-bottom:none; }
+.pm3-cmp-lbl{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.08em; color:var(--text-faint); white-space:nowrap; }
+.pm3-cmp-a, .pm3-cmp-b{ font-family:var(--font-display); font-stretch:74%; font-weight:800; font-size:16px; font-variant-numeric:tabular-nums; color:var(--text-dim); }
+.pm3-cmp-a{ text-align:right; } .pm3-cmp-b{ text-align:left; }
+.pm3-cmp-a.win, .pm3-cmp-b.win{ color:var(--mint); }
+/* achievements shelf */
+.pm3-ach-head{ display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.pm3-ach-count{ font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.05em; color:var(--text-dim); white-space:nowrap; }
+.pm3-ach-bar{ flex:1; height:6px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+.pm3-ach-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg, var(--violet), #ff5ec8); transition:width .5s cubic-bezier(.2,.9,.3,1); }
+.pm3-ach-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:10px; }
+.pm3-ach{ display:flex; gap:11px; padding:11px 13px; border-radius:13px; background:rgba(255,255,255,.025); border:1px solid var(--line); opacity:.62; }
+.pm3-ach.on{ opacity:1; background:linear-gradient(180deg, rgba(34,211,163,.08), rgba(255,255,255,.02)); border-color:rgba(34,211,163,.3); }
+.pm3-ach-ic{ flex:0 0 auto; width:38px; height:38px; display:grid; place-items:center; font-size:20px; border-radius:11px; background:rgba(0,0,0,.28); filter:grayscale(.7); }
+.pm3-ach.on .pm3-ach-ic{ filter:none; }
+.pm3-ach-info{ min-width:0; flex:1; }
+.pm3-ach-name{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pm3-ach-desc{ font-size:10.5px; color:var(--text-faint); line-height:1.3; margin:1px 0 5px; }
+.pm3-ach-done{ font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.06em; color:var(--mint); }
+.pm3-ach-prog{ height:4px; border-radius:999px; background:rgba(255,255,255,.1); overflow:hidden; }
+.pm3-ach-prog i{ display:block; height:100%; background:var(--violet); border-radius:999px; }
+.pm3-ach-num{ font-family:var(--font-mono); font-size:8.5px; font-weight:700; color:var(--text-faint); margin-top:3px; }
+.pm-sc-peak .pm-sc-ic svg{ color:var(--rc, #ffd45e); }
+/* share profile sheet */
+.share-sheet{ max-width:340px; text-align:center; }
+.share-title{ font-family:var(--font-display); font-stretch:68%; font-style:italic; font-weight:900; font-size:22px; margin-bottom:4px; }
+.share-sub{ font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.04em; color:var(--text-dim); margin-bottom:16px; }
+.share-qr{ width:180px; height:180px; margin:0 auto 16px; border-radius:14px; overflow:hidden; background:#fff; padding:10px; box-shadow:0 10px 30px -12px rgba(0,0,0,.6); }
+.share-qr img{ display:block; width:100%; height:100%; }
+.share-linkrow{ display:flex; gap:8px; margin-bottom:10px; }
+.share-linkrow input{ flex:1; min-width:0; padding:10px 12px; border-radius:10px; font-size:12px; color:var(--text); background:rgba(0,0,0,.28); border:1px solid var(--line); }
+.share-copy{ flex:0 0 auto; }
+.share-native{ width:100%; justify-content:center; min-height:44px; }
 .pm-av-wrap .av-xl{ position:relative; z-index:1; }
 /* ═══ Premium avatar rings — a THICK, glossy ring (own radial mask, not the
    thin 4px border) with a counter-rotating light sweep shimmering through it.
@@ -17843,6 +17947,33 @@ body.low-power :is(.pm3-topbar,.pm3-body,.pm3-spark-svg polyline){ animation:non
 .eps-header-name{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:21px; min-width:0; }
 .eps-header-chev{ color:var(--text-faint); font-weight:400; margin:0 2px; }
 .eps-header-crumb{ color:var(--text-dim); font-weight:700; font-size:16px; }
+/* edit-profile: live preview card */
+.eps-livepreview{ position:relative; overflow:hidden; border-radius:14px; margin:0 0 16px; border:1px solid var(--line); background:rgba(255,255,255,.02); min-height:78px; }
+.eps-lp-banner{ position:absolute; inset:0; height:100%; opacity:.5; }
+.eps-lp-row{ position:relative; display:flex; align-items:center; gap:13px; padding:14px 16px; }
+.eps-lp-av{ width:52px; height:52px; border-radius:15px; flex:0 0 auto; display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:22px; color:#fff; box-shadow:0 6px 16px -8px rgba(0,0,0,.7); }
+.eps-lp-id{ min-width:0; }
+.eps-lp-name{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:19px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.eps-lp-title{ font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.06em; margin-top:1px; }
+.eps-lp-status{ font-size:11px; color:var(--text-dim); margin-top:3px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:260px; }
+/* edit-profile: inline validation + counters */
+.ep-field-note{ font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:.02em; margin-top:6px; min-height:14px; color:var(--text-faint); }
+.ep-field-note.ok{ color:var(--mint); } .ep-field-note.bad{ color:#ff8095; }
+.ep-count{ font-family:var(--font-mono); font-size:9.5px; font-weight:700; color:var(--text-faint); float:right; letter-spacing:.03em; }
+/* edit-profile: picker search + clear */
+.ep-picker-tools{ display:flex; gap:8px; margin-bottom:10px; }
+.ep-picker-search{ flex:1; min-width:0; padding:9px 12px; border-radius:10px; font-size:12.5px; color:var(--text); background:rgba(0,0,0,.26); border:1px solid var(--line); outline:none; margin-bottom:10px; }
+.ep-picker-tools .ep-picker-search{ margin-bottom:0; }
+.ep-picker-search:focus{ border-color:rgba(155,123,255,.5); }
+.ep-clear-btn, .accent-reset{ flex:0 0 auto; font-size:11px; padding:8px 12px; min-height:0; }
+/* edit-profile: custom accent hex */
+.accent-custom{ display:flex; align-items:center; gap:8px; margin-top:10px; flex-wrap:wrap; }
+.accent-swatch-input{ position:relative; display:inline-flex; align-items:center; gap:7px; padding:7px 11px; border-radius:10px; background:rgba(255,255,255,.04); border:1px solid var(--line); cursor:pointer; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.05em; color:var(--text-dim); }
+.accent-swatch-input input[type=color]{ width:18px; height:18px; border:none; background:none; padding:0; cursor:pointer; }
+.accent-hex-text{ width:96px; padding:8px 10px; border-radius:9px; font-family:var(--font-mono); font-size:12px; color:var(--text); background:rgba(0,0,0,.26); border:1px solid var(--line); outline:none; }
+.accent-hex-text:focus{ border-color:rgba(155,123,255,.5); }
+.accent-hex-apply{ font-size:11px; padding:8px 14px; min-height:0; }
+.accent-custom-swatch{ position:relative; }
 .eps-body{ display:grid; grid-template-columns:176px minmax(0, 1fr); gap:0 22px; }
 .eps-nav{ display:flex; flex-direction:column; gap:3px; align-self:start; position:sticky; top:8px; }
 .eps-nav-item{
@@ -24658,6 +24789,21 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- ===== SHARE PROFILE SHEET (copy link + QR) ===== -->
+<div class="modal-bg" id="profileShareModal">
+  <div class="modal share-sheet">
+    <button class="modal-close" data-close="profileShareModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <h3 class="share-title">Share profile</h3>
+    <div class="share-sub" id="shareSub">—</div>
+    <div class="share-qr" id="shareQr"></div>
+    <div class="share-linkrow">
+      <input id="shareLinkInput" type="text" readonly value="">
+      <button type="button" class="btn share-copy" id="shareCopyBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-copy"/></svg> Copy</button>
+    </div>
+    <button type="button" class="btn btn-primary share-native" id="shareNativeBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-send"/></svg> Share…</button>
+  </div>
+</div>
+
 <!-- VIEW PROFILE MODAL -->
 <!-- PROFILE v5 — built from scratch: cover-and-card profile layout.
      Cover banner → floating avatar with presence → identity card →
@@ -24666,6 +24812,21 @@ const FIREBASE_CONFIG = {
   <div class="modal profile-modal pm3">
     <button class="modal-close" data-close="profileModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
 
+    <!-- Condensed identity bar that slides in once you scroll the profile -->
+    <div class="pm3-stickybar" id="pmStickyBar" aria-hidden="true">
+      <div class="pm3-sb-av" id="pmSbAv">?</div>
+      <div class="pm3-sb-name" id="pmSbName">—</div>
+      <div class="pm3-sb-rank" id="pmSbRank"></div>
+    </div>
+
+    <!-- Skeleton shown while the profile loads, so nothing pops in piecemeal -->
+    <div class="pm-skel" id="pmSkel" aria-hidden="true">
+      <div class="pm-skel-banner shimmer"></div>
+      <div class="pm-skel-row"><div class="pm-skel-av shimmer"></div><div class="pm-skel-lines"><div class="pm-skel-line lg shimmer"></div><div class="pm-skel-line sm shimmer"></div></div></div>
+      <div class="pm-skel-grid"><div class="pm-skel-box shimmer"></div><div class="pm-skel-box shimmer"></div><div class="pm-skel-box shimmer"></div><div class="pm-skel-box shimmer"></div></div>
+      <div class="pm-skel-card shimmer"></div>
+    </div>
+
     <!-- COVER — rank/accent tinted, frame-decorated -->
     <div class="pm-banner" id="pmBanner"><svg class="pm-banner-mark" id="pmBannerMark" viewBox="0 0 24 24"></svg></div>
 
@@ -24673,6 +24834,7 @@ const FIREBASE_CONFIG = {
     <div class="pm3-topbar">
       <div class="pm3-idrow">
         <div class="pm-av-wrap">
+          <span class="pm-rank-ring" id="pmRankRing" aria-hidden="true"></span>
           <div class="av-xl" id="pmAv">?</div>
           <span class="pm-av-ring" id="pmAvRing"></span>
           <span class="pm-av-lvl" id="pmAvLvl">1</span>
@@ -24701,6 +24863,9 @@ const FIREBASE_CONFIG = {
       </div>
     </div>
 
+    <!-- Suspended-account notice (moderation-aware rendering) -->
+    <div class="pm-mod-notice" id="pmModNotice" style="display:none;"></div>
+
     <!-- STAT STRIP — its own full-width row so nothing wraps into the top bar -->
     <div class="pm3-hstats">
       <div class="hstat w"><span class="hstat-ic w"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-trophy"/></svg></span><span class="hstat-txt"><b id="pmHWins">0</b><i>Wins</i></span></div>
@@ -24715,6 +24880,7 @@ const FIREBASE_CONFIG = {
     <div class="pm3-tabs" role="tablist">
       <button class="pm3-tab active" data-pmtab="overview" role="tab"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-home"/></svg> <span>Overview</span></button>
       <button class="pm3-tab" data-pmtab="matches" role="tab"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-swords"/></svg> <span>Matches</span></button>
+      <button class="pm3-tab" data-pmtab="achievements" role="tab"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-trophy"/></svg> <span>Achievements</span></button>
       <button class="pm3-tab" data-pmtab="comments" role="tab"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-message"/></svg> <span>Comments</span></button>
       <div class="pm3-since" id="pmMemberSince"></div>
     </div>
@@ -24722,12 +24888,23 @@ const FIREBASE_CONFIG = {
     <div class="pm3-panes">
     <!-- PANE: OVERVIEW -->
     <div class="pm3-pane" data-pmpane="overview">
+      <!-- Signature callout — the player's most impressive stat, auto-picked -->
+      <div class="pm3-signature" id="pmSignature" style="display:none;"></div>
       <div class="pm3-card pm3-about" id="pmAboutCard" style="display:none;">
         <h4>About</h4>
         <div class="bio" id="pmBio" style="display:none;">—</div>
       </div>
-      <!-- Showcase — up to 3 featured badges  -->
+      <!-- Showcase — up to 3 featured pins (badges / peak rank / cosmetic) -->
       <div class="pm-showcase" id="pmShowcase" style="display:none;"></div>
+
+      <!-- Live cosmetic hero — the equipped loadout, shown off -->
+      <div class="pm3-card pm3-loadout" id="pmLoadout" style="display:none;">
+        <h4>Equipped loadout</h4>
+        <div class="pm3-load-grid" id="pmLoadGrid"></div>
+      </div>
+
+      <!-- Compare mode — you vs them (only when viewing someone else) -->
+      <div class="pm3-card pm3-compare" id="pmCompare" style="display:none;"></div>
 
       <!-- Progress & Level + Highlights, side by side -->
       <div class="pm3-cardrow">
@@ -24794,6 +24971,15 @@ const FIREBASE_CONFIG = {
       <div class="pm3-empty" id="pmMatchesEmpty">No recent matches — challenge them to be the first!</div>
     </div>
 
+    <!-- PANE: ACHIEVEMENTS -->
+    <div class="pm3-pane" data-pmpane="achievements" style="display:none;">
+      <div class="pm3-ach-head">
+        <span class="pm3-ach-count" id="pmAchCount">0 / 0 unlocked</span>
+        <div class="pm3-ach-bar"><i id="pmAchBar" style="width:0%"></i></div>
+      </div>
+      <div class="pm3-ach-grid" id="pmAchGrid"></div>
+    </div>
+
     <!-- PANE: COMMENTS -->
     <div class="pm3-pane" data-pmpane="comments" style="display:none;">
       <div class="pm-comments pm3-card" id="pmCommentsSection">
@@ -24819,6 +25005,8 @@ const FIREBASE_CONFIG = {
       <div class="eps-header-av av-photo-host" id="epsHeaderAv">?</div>
       <div class="eps-header-name"><b id="epsHeaderName">—</b> <span class="eps-header-chev">»</span> <span class="eps-header-crumb">Edit profile</span></div>
     </div>
+    <!-- Live preview — updates as you edit -->
+    <div class="eps-livepreview" id="epsLivePreview"></div>
     <form id="editProfileForm" class="eps-body">
       <!-- SECTION SIDEBAR -->
       <nav class="eps-nav" id="epsNav" aria-label="Profile settings sections">
@@ -24837,18 +25025,19 @@ const FIREBASE_CONFIG = {
           <p class="eps-pane-desc">Your name and the basics — how you appear to everyone on ROSHCAM.</p>
           <div class="field">
             <label>Username</label>
-            <input type="text" name="username" minlength="2" maxlength="20" />
+            <input type="text" name="username" minlength="2" maxlength="20" autocomplete="off" />
+            <div class="ep-field-note" id="epUsernameNote"></div>
           </div>
           <div class="field">
             <label>Country</label>
             <select name="country" id="editCountry"></select>
           </div>
           <div class="field">
-            <label>Status (optional)</label>
+            <label>Status (optional) <span class="ep-count" id="epStatusCount"></span></label>
             <input type="text" name="status" maxlength="40" placeholder="e.g. 🔥 on a win streak" />
           </div>
           <div class="field">
-            <label>Bio (optional)</label>
+            <label>Bio (optional) <span class="ep-count" id="epBioCount"></span></label>
             <textarea name="bio" maxlength="140" placeholder="say something about yourself"></textarea>
           </div>
         </section>
@@ -24893,6 +25082,12 @@ const FIREBASE_CONFIG = {
           <div class="field">
             <label>Profile accent <span style="color:var(--text-faint); font-weight:400;">· your banner colour</span></label>
             <div class="accent-pick" id="accentPick"></div>
+            <div class="accent-custom">
+              <label class="accent-swatch-input" title="Pick any colour"><input type="color" id="accentHexPicker" value="#a48bff"><span>Custom</span></label>
+              <input type="text" id="accentHexText" maxlength="7" placeholder="#a48bff" class="accent-hex-text" autocomplete="off">
+              <button type="button" class="btn accent-hex-apply" id="accentHexApply">Use</button>
+              <button type="button" class="btn btn-ghost accent-reset" id="accentReset" title="Back to your rank colour">Reset</button>
+            </div>
           </div>
           <div class="field">
             <label>Profile banner <span style="color:var(--text-faint); font-weight:400;">· accent colour, a rank background, or none for a clean look</span></label>
@@ -24908,6 +25103,7 @@ const FIREBASE_CONFIG = {
           <h4 class="eps-pane-title">Title</h4>
           <p class="eps-pane-desc">Shown under your name everywhere. Unlock more by leveling up and prestiging.</p>
           <div class="field">
+            <input type="text" class="ep-picker-search" id="titleSearch" placeholder="Search titles…" autocomplete="off">
             <div class="title-pick" id="titlePick"></div>
           </div>
         </section>
@@ -24915,8 +25111,12 @@ const FIREBASE_CONFIG = {
 
         <section class="eps-pane" data-eps-pane="showcase">
           <h4 class="eps-pane-title">Showcase</h4>
-          <p class="eps-pane-desc">Feature up to 3 badges at the top of your profile.</p>
+          <p class="eps-pane-desc">Feature up to 3 pins — your peak rank, a favourite cosmetic, or achievements.</p>
           <div class="field">
+            <div class="ep-picker-tools">
+              <input type="text" class="ep-picker-search" id="showcaseSearch" placeholder="Search pins…" autocomplete="off">
+              <button type="button" class="btn btn-ghost ep-clear-btn" id="showcaseClear">Clear</button>
+            </div>
             <div class="showcase-pick" id="showcasePick"></div>
           </div>
         </section>
@@ -24949,6 +25149,24 @@ const FIREBASE_CONFIG = {
               <span class="ep-priv-ico"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-block"/></svg></span>
               <span class="ep-priv-text"><b>Blocked users</b><span>See and manage who you've blocked</span></span>
               <svg viewBox="0 0 24 24" width="15" height="15" class="ep-priv-chev"><use href="#i-chevron-right"/></svg>
+            </button>
+          </div>
+          <div class="field">
+            <label>Profile visibility</label>
+            <button type="button" class="ep-priv-row" data-priv-toggle="friendsOnly" id="epFriendsOnlyRow">
+              <span class="ep-priv-ico"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-lock"/></svg></span>
+              <span class="ep-priv-text"><b>Friends-only profile</b><span>Only friends can see your full profile</span></span>
+              <span class="set-toggle off" id="epFriendsOnlyToggle"></span>
+            </button>
+            <button type="button" class="ep-priv-row" data-priv-toggle="hideRating" id="epHideRatingRow">
+              <span class="ep-priv-ico"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-target"/></svg></span>
+              <span class="ep-priv-text"><b>Hide my rating</b><span>Keep your ELO number private (rank still shows)</span></span>
+              <span class="set-toggle off" id="epHideRatingToggle"></span>
+            </button>
+            <button type="button" class="ep-priv-row" data-priv-toggle="hideHistory" id="epHideHistoryRow">
+              <span class="ep-priv-ico"><svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-swords"/></svg></span>
+              <span class="ep-priv-text"><b>Hide match history</b><span>Others won't see your recent matches</span></span>
+              <span class="set-toggle off" id="epHideHistoryToggle"></span>
             </button>
           </div>
         </section>
@@ -33643,20 +33861,50 @@ function pmRenderSparklines(p, wr){
 }
 // ============= PROFILE VIEW =============
 async function openProfile(uid){
+  const modal = $('#profileModal');
   try {
+    // Show the shell immediately with a skeleton so the modal doesn't pop in
+    // piecemeal while we fetch the doc + match history.
+    if(modal){ modal.classList.add('show', 'pm-loading'); }
     const snap = await getDoc(doc(state.db, 'users', uid));
-    if(!snap.exists()){ toast('Profile not found', 'error'); return; }
+    if(!snap.exists()){ if(modal) modal.classList.remove('show', 'pm-loading'); toast('Profile not found', 'error'); return; }
     const p = snap.data();
     const rating = p.rating || 1000;
     const rank = rankFromRating(rating);
+    // Moderation- and privacy-aware rendering. A suspended account, or a
+    // friends-only profile viewed by a non-friend, is stripped down; the owner's
+    // rating / match history can also be hidden from others.
+    let banned = null; try { banned = getBanStatus(p); } catch(e){}
+    const modHidden = !!banned;
+    const isSelf = uid === state.user?.uid;
+    const amFriend = isSelf || (state.profile?.friends || []).includes(uid) || (Array.isArray(p.friends) && p.friends.includes(state.user?.uid));
+    const restricted = !isSelf && !!p.friendsOnly && !amFriend;
+    const hideRating = !isSelf && !!p.hideRating;
+    const hideHistory = !isSelf && !!p.hideHistory;
+    const stripped = modHidden || restricted;
+    const modal2 = document.querySelector('#profileModal .modal');
+    if(modal2){ modal2.classList.toggle('pm-suspended', modHidden); modal2.classList.toggle('pm-restricted', restricted); }
     // Name with equipped cosmetics (name style + player tag) and the rank crest.
     const nameEl = $('#pmName');
-    nameEl.innerHTML = styledNameHTML(p, p.username, {
+    nameEl.innerHTML = styledNameHTML(stripped ? { username: p.username } : p, p.username, {
       mid: `<svg class="rank-mini ${rank.cls}" viewBox="0 0 24 24" aria-hidden="true"><use href="#${rank.icon}"/></svg>`,
     });
-    // Avatar effect ring + profile frame (equipped cosmetics)
-    try { applyAvatarFx(document.querySelector('#profileModal .pm-av-wrap'), p); } catch(e){}
-    try { applyProfileFrame(document.querySelector('#profileModal .modal'), $('#pmBanner'), p); } catch(e){}
+    // Avatar effect ring + profile frame (equipped cosmetics) — dropped if stripped
+    try { applyAvatarFx(document.querySelector('#profileModal .pm-av-wrap'), stripped ? {} : p); } catch(e){}
+    try { applyProfileFrame(document.querySelector('#profileModal .modal'), $('#pmBanner'), stripped ? {} : p); } catch(e){}
+    // A rank progress ring around the avatar + peak-rating crest.
+    try { pmRenderRankRing(p, rank, rating, uid); } catch(e){}
+    // Condensed sticky identity bar (revealed on scroll).
+    try {
+      const sbAv = $('#pmSbAv'); if(sbAv) renderAvatar(sbAv, modHidden ? { username: p.username } : p);
+      setText('#pmSbName', p.username || '—');
+      const sbRank = $('#pmSbRank'); if(sbRank) sbRank.innerHTML = `<svg class="rank-mini ${rank.cls}" viewBox="0 0 24 24"><use href="#${rank.icon}"/></svg> ${escapeHTML(rank.tierName)}`;
+      const card = modal?.querySelector('.profile-modal');
+      if(card){
+        card.scrollTop = 0; card.classList.remove('pm-scrolled');
+        if(!card._pmScrollBound){ card.addEventListener('scroll', () => card.classList.toggle('pm-scrolled', card.scrollTop > 150)); card._pmScrollBound = true; }
+      }
+    } catch(e){}
 
     setText('#pmSub', `${flagOf(p.country)} ${nameOfCountry(p.country)}`);
     setRankIconEl($('#pmRankIcon'), rank.id);
@@ -33704,13 +33952,25 @@ async function openProfile(uid){
         setText('#pmRankProgLabel', rp.toNext > 0 ? `${rp.toNext} ELO to ${nextRank.tierName}` : 'Apex rank reached');
       }
     } catch(e){}
+    // Rating hidden by the owner → show a lock in place of the ELO number.
+    if(hideRating && !inPlacements(p)){
+      setText('#pmRating', '🔒');
+      const w = $('#pmRating')?.parentElement; if(w) w.title = 'Rating hidden by this player';
+    }
 
-    if(p.status){ $('#pmStatus').textContent = p.status; $('#pmStatus').style.display = ''; }
+    if(p.status && !stripped){ $('#pmStatus').textContent = p.status; $('#pmStatus').style.display = ''; }
     else $('#pmStatus').style.display = 'none';
-    if(p.bio){ $('#pmBio').textContent = p.bio; $('#pmBio').style.display = ''; }
+    if(p.bio && !stripped){ $('#pmBio').textContent = p.bio; $('#pmBio').style.display = ''; }
     else $('#pmBio').style.display = 'none';
     // "About" card wraps the bio in the v5 layout — hide it when there's no bio.
-    { const ac = $('#pmAboutCard'); if(ac) ac.style.display = p.bio ? '' : 'none'; }
+    { const ac = $('#pmAboutCard'); if(ac) ac.style.display = (p.bio && !stripped) ? '' : 'none'; }
+    // Suspended / friends-only notice replaces the rich content.
+    try { pmRenderModNotice(banned, restricted); } catch(e){}
+    // Signature callout — the single most impressive brag, auto-picked.
+    try {
+      if(stripped){ const sg = $('#pmSignature'); if(sg) sg.style.display = 'none'; }
+      else pmRenderSignature(p, rank, rating);
+    } catch(e){}
     // Always land on the Overview tab when a profile opens.
     try { pmSetTab('overview'); } catch(e){}
     // Share button shares this player's profile
@@ -33813,8 +34073,16 @@ async function openProfile(uid){
       }
     }
 
-    // load match history
-    await loadMatchHistory(uid);
+    // load match history (unless the owner hid it, or the profile is restricted)
+    if(hideHistory || restricted){
+      try {
+        $('#pmFormWrap') && ($('#pmFormWrap').style.display = 'none');
+        $('#pmHistorySection') && ($('#pmHistorySection').style.display = 'none');
+        const me = $('#pmMatchesEmpty'); if(me){ me.style.display = ''; me.textContent = restricted ? 'Add them as a friend to see their matches.' : 'This player has hidden their match history.'; }
+      } catch(e){}
+    } else {
+      await loadMatchHistory(uid);
+    }
 
     // actions
     const editBtn = $('#pmEditBtn');
@@ -33899,12 +34167,139 @@ async function openProfile(uid){
       } else { h2hEl.style.display = 'none'; }
     }
     try { renderProfileBadges(p); } catch(e){ console.warn('[profile] badges', e); }
+    try { pmRenderLoadout(modHidden ? {} : p); } catch(e){}
+    try { pmRenderCompare(p, uid, rating); } catch(e){}
+    try { pmRenderAchievements(p); } catch(e){}
     loadProfileComments(uid);
-    $('#profileModal').classList.add('show');
+    if(modal){ modal.classList.add('show'); modal.classList.remove('pm-loading'); }
   } catch(e){
     console.error(e);
+    if(modal) modal.classList.remove('pm-loading');
     toast('Could not load profile', 'error');
   }
+}
+
+// A conic progress ring around the avatar showing % toward the next tier, plus
+// a peak-rating crest. Peak is tracked (best-effort) on your own profile.
+function pmRenderRankRing(p, rank, rating, uid){
+  const ring = $('#pmRankRing'); if(!ring) return;
+  let prog = 0;
+  try { prog = inPlacements(p) ? (placementsDone(p) / PLACEMENT_TOTAL) : (rankProgressToNext(rating).progress || 0); } catch(e){}
+  ring.style.setProperty('--rp', Math.max(0, Math.min(1, prog)));
+  ring.style.setProperty('--rc', rank.color);
+  // Peak rating — persist a new high on your own profile; show it on the crest.
+  let peak = Math.max(rating, p.peakRating || 0);
+  if(uid && uid === state.user?.uid && peak > (p.peakRating || 0)){
+    try { updateDoc(doc(state.db, 'users', uid), { peakRating: peak }); if(state.profile) state.profile.peakRating = peak; } catch(e){}
+  }
+  ring.title = inPlacements(p) ? 'In placements' : `Peak: ${peak} · ${rankFromRating(peak).tierName}`;
+}
+// The single most impressive stat, auto-chosen, shown as a headline.
+function pmRenderSignature(p, rank, rating){
+  const el = $('#pmSignature'); if(!el) return;
+  const games = p.games || ((p.wins || 0) + (p.losses || 0) + (p.draws || 0));
+  const wr = games > 0 ? Math.round(((p.wins || 0) / games) * 100) : 0;
+  const cands = [];
+  if((p.bestStreak || 0) >= 3)              cands.push({ pr: 40 + (p.bestStreak || 0) * 6, ic: '🔥', big: `${p.bestStreak}-win streak`, sub: 'personal best' });
+  if(games >= 20 && wr >= 60)               cands.push({ pr: wr, ic: '🎯', big: `${wr}% win rate`, sub: `across ${fmtCompact(games)} games` });
+  if((p.wins || 0) >= 25)                   cands.push({ pr: 30 + Math.min(60, (p.wins || 0) / 5), ic: '🏆', big: `${fmtCompact(p.wins)} wins`, sub: 'and counting' });
+  if(!inPlacements(p) && rating >= 1500)    cands.push({ pr: rating / 45, ic: '⭐', big: rank.tierName, sub: `${rating} ELO` });
+  if(prestigeOf(p) >= 1)                     cands.push({ pr: 55 + prestigeOf(p) * 4, ic: '✦', big: `Prestige ${prestigeOf(p)}`, sub: 'reborn' });
+  if(!cands.length){
+    // New player → an encouraging nudge instead of a blank space.
+    if(games === 0){
+      el.style.display = ''; el.classList.add('pm3-sig-empty');
+      el.innerHTML = `<span class="pm3-sig-ic">🎮</span><span class="pm3-sig-txt"><b>New challenger</b><i>Play your first ranked match to start climbing</i></span>`;
+      return;
+    }
+    el.style.display = 'none'; el.classList.remove('pm3-sig-empty'); return;
+  }
+  el.classList.remove('pm3-sig-empty');
+  cands.sort((a, b) => b.pr - a.pr);
+  const s = cands[0];
+  el.style.display = '';
+  el.innerHTML = `<span class="pm3-sig-ic">${s.ic}</span><span class="pm3-sig-txt"><b>${escapeHTML(s.big)}</b><i>${escapeHTML(s.sub)}</i></span>`;
+}
+// Suspended / friends-only notice; hides the rich profile content behind it.
+function pmRenderModNotice(banned, restricted){
+  const el = $('#pmModNotice'); if(!el) return;
+  if(banned){
+    el.style.display = '';
+    el.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-shield"/></svg>
+      <span>This account is currently <b>suspended</b>. Cosmetics and profile details are hidden.</span>`;
+  } else if(restricted){
+    el.style.display = '';
+    el.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-lock"/></svg>
+      <span>This profile is <b>friends-only</b>. Add them as a friend to see their full profile.</span>`;
+  } else { el.style.display = 'none'; el.innerHTML = ''; }
+}
+
+// Live cosmetic hero — the equipped loadout (name / tag / avatar / frame).
+function pmRenderLoadout(p){
+  const card = $('#pmLoadout'), grid = $('#pmLoadGrid');
+  if(!card || !grid) return;
+  const c = getCosmetics(p);
+  const slots = [
+    { slot: 'name', label: 'NAME STYLE' }, { slot: 'tag', label: 'PLAYER TAG' },
+    { slot: 'avatar', label: 'AVATAR FX' }, { slot: 'frame', label: 'FRAME' },
+  ];
+  const items = slots.map(s => ({ ...s, item: COSMETIC_BY_ID[c[s.slot]] })).filter(s => s.item);
+  if(!items.length){ card.style.display = 'none'; return; }
+  card.style.display = '';
+  grid.innerHTML = items.map(s => {
+    const r = CX_RARITY[s.item.rarity];
+    return `<div class="pm3-load-item" style="--rc:${r.color}">
+      <span class="pm3-load-slot">${s.label}</span>
+      <span class="pm3-load-name">${escapeHTML(s.item.name)}</span>
+      <span class="pm3-load-rar">${r.label}</span>
+    </div>`;
+  }).join('');
+}
+// Compare mode — a compact you-vs-them table on someone else's profile.
+function pmRenderCompare(p, uid, rating){
+  const el = $('#pmCompare'); if(!el) return;
+  if(uid === state.user?.uid){ el.style.display = 'none'; return; }
+  const stat = (o) => {
+    const g = o.games || ((o.wins || 0) + (o.losses || 0) + (o.draws || 0));
+    return { rating: o.rating || 1000, wr: g > 0 ? Math.round((o.wins || 0) / g * 100) : 0, lvl: levelOf(o).level, streak: o.bestStreak || 0, wins: o.wins || 0 };
+  };
+  const A = stat(state.profile || {}), B = stat(p);
+  const row = (label, a, b) => `<div class="pm3-cmp-row"><span class="pm3-cmp-a${a > b ? ' win' : ''}">${fmtCompact(a)}</span><span class="pm3-cmp-lbl">${label}</span><span class="pm3-cmp-b${b > a ? ' win' : ''}">${fmtCompact(b)}</span></div>`;
+  el.style.display = '';
+  el.innerHTML = `<h4>You vs @${escapeHTML(p.username || 'them')}</h4>
+    <div class="pm3-cmp">
+      ${row('Rating', A.rating, B.rating)}
+      ${row('Win rate %', A.wr, B.wr)}
+      ${row('Level', A.lvl, B.lvl)}
+      ${row('Best streak', A.streak, B.streak)}
+      ${row('Wins', A.wins, B.wins)}
+    </div>`;
+}
+// Achievements shelf — every achievement with unlocked/locked + progress.
+function pmRenderAchievements(p){
+  const grid = $('#pmAchGrid'); if(!grid) return;
+  let unlockedIds; try { unlockedIds = achievementUnlockedIds(p); } catch(e){ unlockedIds = new Set(); }
+  const total = ACHIEVEMENTS.length, got = unlockedIds.size;
+  setText('#pmAchCount', `${got} / ${total} unlocked`);
+  const bar = $('#pmAchBar'); if(bar) bar.style.width = Math.round(got / total * 100) + '%';
+  const meta = ACHIEVEMENTS.map(a => {
+    const on = unlockedIds.has(a.id);
+    let cur = 0, tgt = 1; try { const pr = a.prog(p); cur = pr[0] || 0; tgt = pr[1] || 1; } catch(e){}
+    const pct = on ? 100 : Math.max(0, Math.min(99, Math.round((cur / (tgt || 1)) * 100)));
+    return { a, on, cur, tgt, pct };
+  });
+  meta.sort((x, y) => (y.on - x.on) || (y.pct - x.pct));
+  grid.innerHTML = meta.map(m => `
+    <div class="pm3-ach${m.on ? ' on' : ''}" title="${escapeHTML(m.a.title)} — ${escapeHTML(m.a.desc)}">
+      <span class="pm3-ach-ic">${m.a.icon}</span>
+      <div class="pm3-ach-info">
+        <div class="pm3-ach-name">${escapeHTML(m.a.title)}</div>
+        <div class="pm3-ach-desc">${escapeHTML(m.a.desc)}</div>
+        ${m.on
+          ? '<div class="pm3-ach-done">✓ Unlocked</div>'
+          : `<div class="pm3-ach-prog"><i style="width:${m.pct}%"></i></div><div class="pm3-ach-num">${fmtCompact(Math.min(m.cur, m.tgt))} / ${fmtCompact(m.tgt)}</div>`}
+      </div>
+    </div>`).join('');
 }
 
 // ===== PROFILE BADGES + SHOWCASE =====
@@ -33912,17 +34307,32 @@ function renderProfileBadges(p){
   let unlockedIds;
   try { unlockedIds = achievementUnlockedIds(p); } catch(e){ unlockedIds = new Set(); }
   const unlocked = ACHIEVEMENTS.filter(a => unlockedIds.has(a.id));
-  // Showcase — up to 3 featured (only those still unlocked)
+  // Showcase — up to 3 featured pins. A pin can be an unlocked achievement, the
+  // player's peak rank ('peak'), or a favourite cosmetic they own ('cos:<id>').
   const showcaseIds = Array.isArray(p.showcase) ? p.showcase.slice(0, 3) : [];
-  const showcase = showcaseIds.map(id => ACHIEVEMENTS.find(a => a.id === id)).filter(a => a && unlockedIds.has(a.id));
+  const ownedSet = new Set(getCosmetics(p).owned || []);
+  const renderPin = (id) => {
+    if(id === 'peak'){
+      if(inPlacements(p)) return '';
+      const peak = Math.max(p.rating || 1000, p.peakRating || 0);
+      const rk = rankFromRating(peak);
+      return `<div class="pm-sc-badge pm-sc-peak" style="--rc:${rk.color}" title="Peak rank"><span class="pm-sc-ic"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#${rk.icon}"/></svg></span><span class="pm-sc-name">Peak ${escapeHTML(rk.tierName)}</span></div>`;
+    }
+    if(typeof id === 'string' && id.startsWith('cos:')){
+      const it = COSMETIC_BY_ID[id.slice(4)];
+      if(!it || !ownedSet.has(it.id)) return '';
+      const r = CX_RARITY[it.rarity];
+      return `<div class="pm-sc-badge" style="--rc:${r.color}" title="${escapeHTML(it.name)} — ${escapeHTML(CX_TYPE_LABEL[it.type] || '')}"><span class="pm-sc-ic">✨</span><span class="pm-sc-name">${escapeHTML(it.name)}</span></div>`;
+    }
+    const a = ACHIEVEMENTS.find(x => x.id === id);
+    if(!a || !unlockedIds.has(a.id)) return '';
+    return `<div class="pm-sc-badge" title="${escapeHTML(a.title)} — ${escapeHTML(a.desc)}"><span class="pm-sc-ic">${a.icon}</span><span class="pm-sc-name">${escapeHTML(a.title)}</span></div>`;
+  };
   const scEl = $('#pmShowcase');
   if(scEl){
-    if(showcase.length){
-      scEl.style.display = '';
-      scEl.innerHTML = showcase.map(a =>
-        `<div class="pm-sc-badge" title="${escapeHTML(a.title)} — ${escapeHTML(a.desc)}"><span class="pm-sc-ic">${a.icon}</span><span class="pm-sc-name">${escapeHTML(a.title)}</span></div>`
-      ).join('');
-    } else scEl.style.display = 'none';
+    const html = showcaseIds.map(renderPin).filter(Boolean).join('');
+    if(html){ scEl.style.display = ''; scEl.innerHTML = html; }
+    else scEl.style.display = 'none';
   }
   // Full badge grid
   const sec = $('#pmBadgesSection'), grid = $('#pmBadges'), count = $('#pmBadgesCount');
@@ -34120,45 +34530,80 @@ async function toggleBlock(uid, username, doBlock){
 let pendingPhotoDataURL = null; // staged photo for save
 
 on('#userChip', 'click', () => { if(state.user) openProfile(state.user.uid); });
-async function shareProfile(username, rating, tier){
-  const text = `Check out @${username} on ROSHCAM — ${tier} · ${rating} ELO. Play webcam rock·paper·scissors at`;
-  const url = 'https://roshcam.com';
-  try {
-    if(navigator.share){ await navigator.share({ title: 'ROSHCAM', text, url }); return; }
-  } catch(e){ if(e && e.name === 'AbortError') return; }
-  try { await navigator.clipboard.writeText(`${text} ${url}`); toast('Copied profile link', 'success'); }
-  catch(e){ toast('Could not share', 'error'); }
+function shareProfile(username, rating, tier){
+  const url = `https://roshcam.com/?u=${encodeURIComponent(username)}`;
+  const text = `Check out @${username} on ROSHCAM — ${tier} · ${rating} ELO. Play webcam rock·paper·scissors:`;
+  state._shareCtx = { username, url, text };
+  setText('#shareSub', `@${username} · ${tier} · ${rating} ELO`);
+  const input = $('#shareLinkInput'); if(input) input.value = url;
+  // QR via a lightweight image service; hide gracefully if it can't load.
+  const qr = $('#shareQr');
+  if(qr){
+    qr.innerHTML = `<img alt="QR code to profile" width="180" height="180" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(url)}" onerror="this.closest('.share-qr').style.display='none'">`;
+    qr.style.display = '';
+  }
+  $('#profileShareModal')?.classList.add('show');
 }
-// Showcase picker — toggle up to 3 unlocked badges to feature on your profile
+on('#shareCopyBtn', 'click', async () => {
+  const url = state._shareCtx?.url; if(!url) return;
+  try { await navigator.clipboard.writeText(url); toast('Profile link copied', 'success'); }
+  catch(e){ try { $('#shareLinkInput')?.select(); document.execCommand('copy'); toast('Profile link copied', 'success'); } catch(_){ toast('Could not copy', 'error'); } }
+});
+on('#shareNativeBtn', 'click', async () => {
+  const ctx = state._shareCtx; if(!ctx) return;
+  try {
+    if(navigator.share){ await navigator.share({ title: 'ROSHCAM', text: ctx.text, url: ctx.url }); return; }
+    await navigator.clipboard.writeText(`${ctx.text} ${ctx.url}`); toast('Copied — paste it anywhere', 'success');
+  } catch(e){ if(e && e.name === 'AbortError') return; toast('Could not share', 'error'); }
+});
+// Showcase picker — feature up to 3 pins: your peak rank, a favourite cosmetic
+// you own, or any unlocked achievement.
 function buildShowcasePicker(){
   const box = $('#showcasePick');
   if(!box) return;
   const p = state.profile || {};
   let unlockedIds;
   try { unlockedIds = achievementUnlockedIds(p); } catch(e){ unlockedIds = new Set(); }
-  const unlocked = ACHIEVEMENTS.filter(a => unlockedIds.has(a.id));
-  state._pendingShowcase = (Array.isArray(p.showcase) ? p.showcase : []).filter(id => unlockedIds.has(id)).slice(0, 3);
-  if(!unlocked.length){
-    box.innerHTML = '<div style="font-size:12px; color:var(--text-faint);">Unlock achievements to feature them here.</div>';
-    return;
-  }
+  const ownedSet = new Set(getCosmetics(p).owned || []);
+  const isValid = (id) => {
+    if(id === 'peak') return !inPlacements(p);
+    if(typeof id === 'string' && id.startsWith('cos:')) return ownedSet.has(id.slice(4));
+    return unlockedIds.has(id);
+  };
+  state._pendingShowcase = (Array.isArray(p.showcase) ? p.showcase : []).filter(isValid).slice(0, 3);
   box.innerHTML = '';
-  unlocked.forEach(a => {
+  const addChip = (id, icon, label, title) => {
     const b = document.createElement('button');
-    b.type = 'button'; b.className = 'showcase-chip' + (state._pendingShowcase.includes(a.id) ? ' active' : '');
-    b.dataset.ach = a.id; b.title = a.title + ' — ' + a.desc;
-    b.innerHTML = `<span class="sc-ic">${a.icon}</span><span class="sc-nm">${escapeHTML(a.title)}</span>`;
+    b.type = 'button'; b.className = 'showcase-chip' + (state._pendingShowcase.includes(id) ? ' active' : '');
+    b.title = title || label;
+    b.innerHTML = `<span class="sc-ic">${icon}</span><span class="sc-nm">${escapeHTML(label)}</span>`;
     b.addEventListener('click', () => {
-      const i = state._pendingShowcase.indexOf(a.id);
+      const i = state._pendingShowcase.indexOf(id);
       if(i >= 0){ state._pendingShowcase.splice(i, 1); b.classList.remove('active'); }
       else {
-        if(state._pendingShowcase.length >= 3){ toast('You can feature up to 3 badges', 'info'); return; }
-        state._pendingShowcase.push(a.id); b.classList.add('active');
+        if(state._pendingShowcase.length >= 3){ toast('You can feature up to 3 pins', 'info'); return; }
+        state._pendingShowcase.push(id); b.classList.add('active');
       }
+      try { epsSaveState && epsSaveState('dirty'); } catch(e){}
       haptic(9);
     });
     box.appendChild(b);
-  });
+  };
+  // Peak rank pin (once ranked)
+  if(!inPlacements(p)){
+    const peak = Math.max(p.rating || 1000, p.peakRating || 0);
+    const rk = rankFromRating(peak);
+    addChip('peak', '📈', `Peak ${rk.tierName}`, 'Feature your highest rank');
+  }
+  // Favourite cosmetic pins — your currently equipped cosmetics
+  const c = getCosmetics(p);
+  CX_SLOTS.forEach(slot => { const it = COSMETIC_BY_ID[c[slot]]; if(it) addChip('cos:' + it.id, '✨', it.name, 'Feature this cosmetic'); });
+  // Unlocked achievements
+  const unlocked = ACHIEVEMENTS.filter(a => unlockedIds.has(a.id));
+  unlocked.forEach(a => addChip(a.id, a.icon, a.title, a.title + ' — ' + a.desc));
+  if(!box.children.length){
+    box.innerHTML = '<div style="font-size:12px; color:var(--text-faint);">Rank up, equip a cosmetic, or unlock achievements to feature them here.</div>';
+  }
 }
 // Banner-style picker: the accent colour, plus a background for every rank the
 // player has unlocked (reached). Unlocks are gated on peak rating so a dip below
@@ -34296,6 +34741,93 @@ function applyGuestProfileLock(){
   } else if(note){ note.style.display = 'none'; }
 }
 
+// ── EDIT PROFILE ENHANCEMENTS: live preview · validation · pickers · accent hex ──
+function epUpdateCounts(){
+  const bio = $('#editProfileForm textarea[name=bio]'); const st = $('#editProfileForm input[name=status]');
+  if(bio) setText('#epBioCount', `${bio.value.length}/140`);
+  if(st) setText('#epStatusCount', `${st.value.length}/40`);
+}
+function epRenderLivePreview(){
+  const host = $('#epsLivePreview'); if(!host) return;
+  const p = state.profile || {};
+  const uname = (($('#editProfileForm input[name=username]')?.value) || p.username || 'YourName').trim() || 'YourName';
+  const status = ($('#editProfileForm input[name=status]')?.value || '').trim();
+  const colorBtn = document.querySelector('#colorPick button.active');
+  const colorIdx = colorBtn ? parseInt(colorBtn.dataset.idx) : (p.colorIdx || 0);
+  const accentBtn = document.querySelector('#accentPick button.active');
+  const accent = accentBtn ? (accentBtn.dataset.accent || '') : (p.accent || '');
+  let titleObj = null; try { titleObj = state._pendingTitle ? titleById(state._pendingTitle, p) : null; } catch(e){}
+  const photo = (pendingPhotoDataURL === '' ? '' : (pendingPhotoDataURL || p.photoURL || ''));
+  const rank = rankFromRating(p.rating || 1000);
+  const bannerColor = accent || rank.color;
+  const avStyle = photo ? `background-image:url('${photo}');background-size:cover;background-position:center` : `background:${AVATAR_COLORS[colorIdx] || AVATAR_COLORS[0]}`;
+  host.innerHTML = `
+    <div class="eps-lp-banner" style="background:linear-gradient(120deg, ${bannerColor}, transparent 78%)"></div>
+    <div class="eps-lp-row">
+      <div class="eps-lp-av" style="${avStyle}">${photo ? '' : escapeHTML(initialOf(uname))}</div>
+      <div class="eps-lp-id">
+        <div class="eps-lp-name">${escapeHTML(uname)}</div>
+        <div class="eps-lp-title" style="color:${titleObj ? titleObj.color : 'var(--text-dim)'}">${escapeHTML(titleObj ? titleObj.name : '—')}</div>
+        ${status ? `<div class="eps-lp-status">${escapeHTML(status)}</div>` : ''}
+      </div>
+    </div>`;
+}
+function epSyncAccent(silent){
+  const accSwatch = document.querySelector('#bannerPick .banner-opt[data-banner=""]');
+  const active = document.querySelector('#accentPick button.active');
+  const color = active ? (active.dataset.accent || '') : '';
+  if(accSwatch) accSwatch.style.setProperty('--bo', color || '#7a78ff');
+  try { updateEditBannerPreview(); } catch(e){}
+  try { epRenderLivePreview(); } catch(e){}
+  if(!silent){ try { scheduleProfileAutosave(); } catch(e){} }
+}
+function epSetCustomAccent(hex, silent){
+  hex = (hex || '').trim(); if(hex && hex[0] !== '#') hex = '#' + hex;
+  if(!/^#([0-9a-fA-F]{6})$/.test(hex)){ if(!silent) toast('Enter a hex colour like #a48bff', 'info'); return; }
+  const ap = $('#accentPick'); if(!ap) return;
+  let sw = ap.querySelector('.accent-custom-swatch');
+  if(!sw){
+    sw = document.createElement('button'); sw.type = 'button'; sw.className = 'accent-custom-swatch'; sw.title = 'Custom colour';
+    sw.addEventListener('click', () => { ap.querySelectorAll('button').forEach(x => x.classList.remove('active')); sw.classList.add('active'); epSyncAccent(); });
+    ap.appendChild(sw);
+  }
+  sw.dataset.accent = hex; sw.style.background = hex;
+  ap.querySelectorAll('button').forEach(x => x.classList.remove('active')); sw.classList.add('active');
+  const txt = $('#accentHexText'); if(txt) txt.value = hex;
+  const pk = $('#accentHexPicker'); if(pk){ try { pk.value = hex; } catch(e){} }
+  epSyncAccent(silent);
+}
+function epFilterPicker(inputSel, chipSel){
+  const q = ($(inputSel)?.value || '').toLowerCase();
+  document.querySelectorAll(chipSel).forEach(c => { c.style.display = (!q || c.textContent.toLowerCase().includes(q)) ? '' : 'none'; });
+}
+function epBindEnhancements(){
+  if(state._epEnhBound) return; state._epEnhBound = true;
+  const bio = $('#editProfileForm textarea[name=bio]'); const st = $('#editProfileForm input[name=status]'); const un = $('#editProfileForm input[name=username]');
+  [bio, st].forEach(el => el?.addEventListener('input', () => { epUpdateCounts(); epRenderLivePreview(); }));
+  let ut = null;
+  un?.addEventListener('input', () => {
+    epRenderLivePreview();
+    const note = $('#epUsernameNote'); const v = un.value.trim();
+    if(ut) clearTimeout(ut);
+    if(!/^[a-zA-Z0-9_]{2,20}$/.test(v)){ if(note){ note.className = 'ep-field-note bad'; note.textContent = v.length ? '2–20 letters, numbers or underscore' : ''; } return; }
+    if(v.toLowerCase() === (state.profile?.username || '').toLowerCase()){ if(note){ note.className = 'ep-field-note'; note.textContent = 'Your current username'; } return; }
+    if(note){ note.className = 'ep-field-note'; note.textContent = 'Checking…'; }
+    ut = setTimeout(async () => {
+      try {
+        const snap = await getDoc(doc(state.db, 'usernames', v.toLowerCase()));
+        if(un.value.trim().toLowerCase() !== v.toLowerCase()) return;
+        if(note){ if(snap.exists()){ note.className = 'ep-field-note bad'; note.textContent = `✗ @${v} is taken`; } else { note.className = 'ep-field-note ok'; note.textContent = `✓ @${v} is available`; } }
+      } catch(e){ if(note){ note.className = 'ep-field-note'; note.textContent = ''; } }
+    }, 450);
+  });
+  on('#accentHexApply', 'click', () => epSetCustomAccent($('#accentHexText')?.value));
+  $('#accentHexPicker')?.addEventListener('input', (e) => epSetCustomAccent(e.target.value));
+  on('#accentReset', 'click', () => { const auto = document.querySelector('#accentPick button[data-accent=""]'); if(auto){ document.querySelectorAll('#accentPick button').forEach(x => x.classList.remove('active')); auto.classList.add('active'); epSyncAccent(); } });
+  on('#titleSearch', 'input', () => epFilterPicker('#titleSearch', '#titlePick .title-chip'));
+  on('#showcaseSearch', 'input', () => epFilterPicker('#showcaseSearch', '#showcasePick .showcase-chip'));
+  on('#showcaseClear', 'click', () => { state._pendingShowcase = []; document.querySelectorAll('#showcasePick .showcase-chip').forEach(c => c.classList.remove('active')); try { scheduleProfileAutosave(); } catch(e){} try { haptic(6); } catch(e){} });
+}
 function openEditProfile(){
   const p = state.profile;
   if(!p){ toast('Profile still loading — try again in a moment', 'info'); return; }
@@ -34383,6 +34915,19 @@ function openEditProfile(){
     $('#epStreamerToggle')?.classList.toggle('off', !state.streamerMode);
     $('#epRequestsToggle')?.classList.toggle('off', !!p.blockFriendRequests);
     setText('#epRequestsSub', p.blockFriendRequests ? 'Blocking all incoming requests' : 'Allow others to send you requests');
+    $('#epFriendsOnlyToggle')?.classList.toggle('off', !p.friendsOnly);
+    $('#epHideRatingToggle')?.classList.toggle('off', !p.hideRating);
+    $('#epHideHistoryToggle')?.classList.toggle('off', !p.hideHistory);
+  } catch(e){}
+  // Live preview + inline validation + custom-accent restore.
+  try {
+    epBindEnhancements();
+    epUpdateCounts();
+    const presets = ['', '#ff3358', '#ff8c42', '#ffd33d', '#22d3a3', '#5fc9ff', '#a48bff', '#ff61c3'];
+    if(p.accent && !presets.includes(p.accent) && /^#([0-9a-fA-F]{6})$/.test(p.accent)) epSetCustomAccent(p.accent, true);
+    const unNote = $('#epUsernameNote'); if(unNote){ unNote.textContent = ''; unNote.className = 'ep-field-note'; }
+    ['#titleSearch', '#showcaseSearch'].forEach(s => { const el = $(s); if(el) el.value = ''; });
+    epRenderLivePreview();
   } catch(e){}
   try { epsSaveState(''); } catch(e){}
   // Snapshot the pristine form so we can detect unsaved changes on close.
@@ -34526,7 +35071,7 @@ on('#editProfileForm', 'click', (e) => {
   if(!btn) return;
   // Only picker buttons trigger a save — not nav / cosmetics / photo / footer controls.
   if(btn.closest('#cosmeticsEditor, .eps-nav, .eps-foot') || btn.id === 'pickPhotoBtn' || btn.id === 'removePhotoBtn' || btn.hasAttribute('data-goto-shop-page')) return;
-  if(btn.closest('.title-pick, #colorPick, #accentPick, .banner-pick, .showcase-pick')) scheduleProfileAutosave();
+  if(btn.closest('.title-pick, #colorPick, #accentPick, .banner-pick, .showcase-pick')){ scheduleProfileAutosave(); try { epRenderLivePreview(); } catch(err){} }
 });
 
 // ---------- EDIT PROFILE: privacy rows (mirror the Settings page) ----------
@@ -34546,6 +35091,19 @@ on('#epRequestsRow', 'click', async () => {
   setText('#setBlockRequestsState', blocking ? 'Blocking all incoming requests' : 'Allow others to send you requests');
   try { await updateDoc(doc(state.db, 'users', state.user.uid), { blockFriendRequests: blocking }); } catch(e){ console.warn('[privacy] could not save', e); }
   toast(blocking ? 'Friend requests blocked' : 'Friend requests allowed', 'info');
+});
+// Profile visibility toggles (friends-only / hide rating / hide history) —
+// persisted immediately, like the other privacy rows.
+document.addEventListener('click', async (e) => {
+  const row = e.target.closest && e.target.closest('[data-priv-toggle]');
+  if(!row || !row.closest('#editProfileModal')) return;
+  if(isGuest()){ toast('Create a free account to use privacy controls', 'info'); return; }
+  const key = row.dataset.privToggle;
+  const next = !state.profile?.[key];
+  if(state.profile) state.profile[key] = next;
+  row.querySelector('.set-toggle')?.classList.toggle('off', !next);
+  try { haptic(8); } catch(err){}
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { [key]: next }); } catch(err){ console.warn('[privacy] could not save', err); }
 });
 
 // Blocked list
