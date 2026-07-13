@@ -11266,6 +11266,9 @@ body.low-power .prestige-rays.r2, body.reduced-motion .prestige-rays.r2{ animati
 .modal-bg.show{display:flex; animation: fadeIn .3s;}
 /* the cosmetic preview can open on top of the case modal — keep it above */
 #shopBuyModal{ z-index:210; }
+/* the share sheet + gift flow open on TOP of the profile / shop modals */
+#profileShareModal{ z-index:270; }
+#giftFlowModal{ z-index:280; }
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .modal{
   background:
@@ -14919,7 +14922,7 @@ body.reduced-motion .nav-page.swipe-in-l, body.reduced-motion .nav-page.swipe-in
   /* a little breathing room at the bottom of every bottom-sheet modal */
   .modal-bg .modal{ padding-bottom:calc(26px + env(safe-area-inset-bottom, 0px)); }
   /* the profile sheet's close button clears the rank banner cleanly */
-  .profile-modal .modal-close{ z-index:5; background:rgba(8,7,13,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
+  .profile-modal .modal-close{ z-index:20; background:rgba(8,7,13,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); }
 }
 
 /* ===== v1.5 mobile polish — scroll-lock, tap feedback, smooth menus ===== */
@@ -15745,6 +15748,146 @@ body.reduced-motion .lp-rail i, body.low-power .lp-rail i{ animation:none !impor
 @keyframes sbmCharged{ 0%{ filter:brightness(1.7) saturate(1.2); } 100%{ filter:none; } }
 body.reduced-motion .sbm-buy.holding .sbm-hold-ring, body.low-power .sbm-buy.holding .sbm-hold-ring{ animation:none; }
 
+/* ═══════════ PREMIUM COSMETIC MODAL (sbm2) ═══════════ */
+.shop-buy-modal.sbm2{ --rc:#b56cff; max-width:600px; text-align:left; padding:0; overflow:hidden; }
+.shop-buy-modal.sbm2.rar-rare{ --rc:#5fc9ff; } .shop-buy-modal.sbm2.rar-epic{ --rc:#b56cff; }
+.shop-buy-modal.sbm2.rar-legendary{ --rc:#ffb336; } .shop-buy-modal.sbm2.rar-mythic{ --rc:#ff5ec8; } .shop-buy-modal.sbm2.rar-ascended{ --rc:#ff2d6b; }
+.sbm2 .modal-close{ z-index:8; }
+.sbm-hero{
+  position:relative; overflow:hidden; padding:32px 28px 24px; min-height:224px; display:grid; place-items:center;
+  background:
+    radial-gradient(120% 90% at 50% 6%, color-mix(in srgb, var(--rc) 28%, transparent), transparent 60%),
+    radial-gradient(90% 75% at 50% 122%, color-mix(in srgb, var(--rc) 42%, transparent), transparent 62%),
+    linear-gradient(180deg, #17121f, #0c0912);
+  border-bottom:1px solid color-mix(in srgb, var(--rc) 32%, var(--line));
+}
+.sbm-hero-rays{ position:absolute; inset:0; pointer-events:none; opacity:.45;
+  background:repeating-conic-gradient(from 0deg at 50% 42%, transparent 0deg 8deg, color-mix(in srgb, var(--rc) 24%, transparent) 8deg 9deg);
+  -webkit-mask:radial-gradient(58% 58% at 50% 42%, #000, transparent 72%); mask:radial-gradient(58% 58% at 50% 42%, #000, transparent 72%); animation:sbmRays 44s linear infinite; }
+@keyframes sbmRays{ to{ transform:rotate(360deg); } }
+.sbm-hero-glow{ position:absolute; left:50%; bottom:9%; transform:translateX(-50%); width:66%; height:38px; border-radius:50%; background:radial-gradient(closest-side, color-mix(in srgb, var(--rc) 75%, #fff), transparent); filter:blur(11px); opacity:.9; pointer-events:none; }
+.sbm-hero-floor{ position:absolute; left:0; right:0; bottom:0; height:34%; pointer-events:none; background:linear-gradient(180deg, transparent, color-mix(in srgb, var(--rc) 15%, transparent)); }
+.sbm-hero .sbm-stage{ position:relative; z-index:2; width:100%; max-width:360px; display:grid; place-items:center; min-height:0; margin:0; border:none; background:none; }
+.sbm-hero .sbm-profile-prev{ background:transparent !important; border:none !important; }
+.sbm2 .sbm-detail{ display:flex; gap:16px; align-items:flex-start; padding:20px 24px 6px; }
+.sbm2 .sbm-info{ flex:1; min-width:0; }
+.sbm2 .sbm-rarity{ font-family:var(--font-mono); font-size:11px; font-weight:900; letter-spacing:.1em; color:var(--text-faint); text-align:left; }
+.sbm2 .sbm-name{ font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:40px; line-height:.94; margin:7px 0 0; text-transform:uppercase; }
+.sbm-underline{ display:flex; align-items:center; gap:8px; margin:12px 0; color:color-mix(in srgb, var(--rc) 70%, #fff); }
+.sbm-underline i{ height:2px; border-radius:2px; }
+.sbm-underline i:first-child{ width:36px; background:linear-gradient(90deg, var(--rc), color-mix(in srgb,var(--rc) 20%, transparent)); }
+.sbm-underline i:last-child{ flex:1; background:linear-gradient(90deg, color-mix(in srgb,var(--rc) 25%, transparent), transparent); }
+.sbm-underline svg{ opacity:.55; }
+.sbm2 .sbm-desc{ color:var(--text-dim); font-size:14px; line-height:1.5; margin:0 0 14px; max-width:none; text-align:left; }
+.sbm-meta{ display:flex; flex-wrap:wrap; gap:14px; }
+.sbm-meta-chip{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.05em; color:color-mix(in srgb, var(--rc) 65%, #fff); }
+.sbm-meta-chip .smc-ic{ font-size:12px; }
+.sbm-thumbs{ flex:0 0 148px; display:flex; flex-direction:column; gap:10px; }
+.sbm-thumb{ position:relative; border-radius:12px; overflow:hidden; height:74px; background:rgba(255,255,255,.03); border:1px solid var(--line); display:grid; place-items:center; }
+.sbm-thumb.active{ border-color:color-mix(in srgb, var(--rc) 55%, var(--line)); box-shadow:0 0 0 1px color-mix(in srgb, var(--rc) 40%, transparent), 0 8px 20px -12px var(--rc); }
+.sbm-thumb.plain{ filter:grayscale(1) brightness(.72); opacity:.62; }
+.sbm-thumb .sbm-profile-prev{ transform:scale(.5); transform-origin:center; background:transparent !important; border:none !important; }
+.sbm-thumb .spp-label{ display:none; }
+.sbm-sep{ height:1px; margin:14px 24px 0; background:var(--line-soft); }
+.sbm-balrow{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding:15px 24px; }
+.sbm-bal-left{ display:flex; align-items:center; gap:12px; }
+.sbm-bal-coin{ color:#ffd45e; display:grid; place-items:center; }
+.sbm-bal-lbl{ display:block; font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.13em; color:var(--text-faint); }
+.sbm-bal-num{ font-family:var(--font-display); font-stretch:74%; font-weight:800; font-size:14px; color:var(--text-dim); }
+.sbm-bal-num b{ font-size:19px; color:var(--text); }
+.sbm-bal-right{ text-align:right; }
+.sbm-bal-hint{ font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-dim); }
+.sbm-bal-hint b{ color:var(--text); }
+.sbm-welcome-tag{ display:block; font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.06em; color:#5fffd0; margin-bottom:3px; }
+.sbm2 .sbm-actions{ gap:12px; padding:0 24px 8px; }
+.sbm2 .sbm-buy{
+  flex:1.7; min-height:64px; border-radius:16px; padding:0 62px 0 20px; display:flex; align-items:center; color:#fff;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--rc) 76%, #fff 8%), color-mix(in srgb, var(--rc) 94%, #000));
+  box-shadow:0 12px 30px -12px var(--rc), inset 0 1px 0 rgba(255,255,255,.2);
+}
+.sbm2 .sbm-buy.is-loading{ color:#fff !important; }
+.sbm2 .sbm-buy-inner{ flex-direction:column; align-items:flex-start; gap:1px; }
+.sbm-buy-price{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:26px; line-height:1; }
+.sbm-buy-price svg{ color:#ffe08a; }
+.sbm-buy-sub{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.13em; opacity:.85; }
+.sbm2 .sbm-hold-fill{ background:linear-gradient(90deg, rgba(255,255,255,.14), rgba(255,255,255,.28)); box-shadow:none; }
+.sbm-hold-ring2{ position:absolute; right:12px; top:50%; transform:translateY(-50%); width:44px; height:44px; display:grid; place-items:center; }
+.sbm-ring-svg{ position:absolute; inset:0; width:44px; height:44px; }
+.sbm-ring-bg{ fill:none; stroke:rgba(255,255,255,.22); stroke-width:3; }
+.sbm-ring-fg{ fill:none; stroke:#fff; stroke-width:3; stroke-linecap:round; stroke-dasharray:119.4; stroke-dashoffset:119.4; transform:rotate(-90deg); transform-origin:center; transition:stroke-dashoffset .2s ease; }
+.sbm-buy.holding .sbm-ring-fg{ stroke-dashoffset:0; transition:stroke-dashoffset var(--holdms,.82s) linear; }
+.sbm-ring-ic{ position:relative; z-index:1; color:#fff; opacity:.92; }
+.sbm2 .sbm-buy.holding{ transform:scale(.985); }
+.sbm2 .sbm-gift{ flex:1; flex-direction:row; align-items:center; gap:10px; min-height:64px; border-radius:16px; justify-content:flex-start; padding:0 16px; border-color:rgba(155,123,255,.4); }
+.sbm2 .sbm-gift .sbm-gift-ic{ font-size:20px; }
+.sbm-gift-txt{ display:flex; flex-direction:column; align-items:flex-start; line-height:1.12; }
+.sbm-gift-txt b{ font-family:var(--font-display); font-stretch:76%; font-weight:900; font-size:15px; letter-spacing:.02em; }
+.sbm-gift-txt i{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.03em; color:var(--text-faint); font-style:normal; }
+.sbm2 .sbm-locker{ flex:1; min-height:64px; border-radius:16px; justify-content:center; }
+.sbm-foot{ display:flex; flex-wrap:wrap; gap:0; justify-content:center; padding:8px 24px 22px; }
+.sbm-foot-chip{ font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.02em; color:var(--text-faint); padding:0 14px; border-right:1px solid var(--line); }
+.sbm-foot-chip:last-child{ border-right:none; }
+@media (max-width:560px){
+  .sbm2 .sbm-detail{ flex-direction:column-reverse; }
+  .sbm-thumbs{ flex-direction:row; flex:none; width:100%; }
+  .sbm-thumb{ flex:1; }
+  .sbm2 .sbm-name{ font-size:32px; }
+  .sbm2 .sbm-actions{ flex-wrap:wrap; }
+  .sbm2 .sbm-buy{ flex:1 1 100%; order:-1; }
+  .sbm-foot-chip{ font-size:9px; padding:0 9px; }
+}
+body.reduced-motion .sbm-hero-rays, body.low-power .sbm-hero-rays{ animation:none; }
+
+/* ═══════════ FORTNITE-STYLE GIFT FLOW ═══════════ */
+.gift-flow-modal{ max-width:440px; }
+.gf-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:14px; }
+.gf-eyebrow{ font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.14em; color:var(--violet); }
+.gf-title{ font-family:var(--font-display); font-stretch:66%; font-style:italic; font-weight:900; font-size:23px; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.gf-hist{ font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.03em; color:var(--violet); background:none; border:none; cursor:pointer; padding:0; }
+.gf-hist:hover{ text-decoration:underline; }
+.gf-item{ display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:14px; margin-bottom:16px; background:rgba(255,255,255,.03); border:1px solid var(--line); }
+.gf-item-prev{ flex:0 0 auto; width:66px; height:48px; display:grid; place-items:center; border-radius:10px; overflow:hidden; background:rgba(0,0,0,.28); }
+.gf-item-prev > *{ transform:scale(.66); }
+.gf-item-meta{ display:flex; flex-direction:column; min-width:0; }
+.gf-item-rar{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.07em; }
+.gf-item-name{ font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:18px; }
+.gf-section{ margin-bottom:16px; }
+.gf-label{ display:flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:10px; font-weight:900; letter-spacing:.07em; color:var(--text-dim); margin-bottom:9px; }
+.gf-step{ display:grid; place-items:center; width:18px; height:18px; border-radius:50%; background:var(--violet); color:#fff; font-size:9px; font-weight:900; }
+.gf-count{ margin-left:auto; color:var(--text-faint); font-weight:700; }
+.gf-search, .gf-note{ width:100%; padding:11px 13px; border-radius:11px; font-size:13px; color:var(--text); background:rgba(0,0,0,.28); border:1px solid var(--line); outline:none; }
+.gf-search{ margin-bottom:9px; }
+.gf-search:focus, .gf-note:focus{ border-color:rgba(155,123,255,.55); }
+.gf-friends{ display:flex; flex-direction:column; gap:6px; max-height:230px; overflow-y:auto; }
+.gf-friend{ display:flex; align-items:center; gap:11px; padding:9px 12px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid var(--line); cursor:pointer; transition:border-color .16s, background .16s, transform .12s; }
+.gf-friend:hover{ border-color:var(--line-bright, var(--line)); background:rgba(255,255,255,.06); transform:translateX(2px); }
+.gf-friend.sel{ border-color:var(--violet); background:rgba(155,123,255,.14); box-shadow:0 0 0 1px var(--violet); }
+.gf-friend.owns{ opacity:.62; }
+.gf-friend-av{ width:34px; height:34px; border-radius:10px; flex:0 0 auto; display:grid; place-items:center; font-family:var(--font-display); font-weight:800; color:#fff; }
+.gf-friend-name{ flex:1; min-width:0; text-align:left; font-family:var(--font-display); font-stretch:78%; font-weight:700; font-size:14px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.gf-friend-owns{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.04em; color:var(--text-faint); }
+.gf-friend-check{ flex:0 0 auto; width:22px; height:22px; border-radius:50%; display:grid; place-items:center; color:#fff; background:var(--violet); opacity:0; transform:scale(.6); transition:opacity .16s, transform .16s; }
+.gf-friend.sel .gf-friend-check{ opacity:1; transform:scale(1); }
+.gf-wraprow{ display:flex; align-items:center; gap:10px; margin-top:10px; }
+.gf-wraplbl{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.07em; color:var(--text-faint); }
+.gf-wraps{ display:flex; gap:6px; flex-wrap:wrap; }
+.gf-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:4px; padding-top:14px; border-top:1px solid var(--line-soft); flex-wrap:wrap; }
+.gf-cost{ font-family:var(--font-mono); font-size:10.5px; font-weight:700; color:var(--text-faint); }
+.gf-cost b{ color:#ffd45e; }
+.gf-send{ min-height:46px; padding:0 24px; }
+.gf-send:disabled{ opacity:.5; cursor:not-allowed; }
+
+/* welcome offer: preview affordance + shine */
+.welcome-offer{ position:relative; overflow:hidden; }
+.wo-shine{ position:absolute; top:0; left:-60%; width:38%; height:100%; transform:skewX(-20deg); background:linear-gradient(90deg, transparent, rgba(255,255,255,.13), transparent); pointer-events:none; animation:woShine 5s ease-in-out infinite; }
+@keyframes woShine{ 0%,100%{ left:-60%; } 55%,82%{ left:135%; } }
+.wo-prev{ position:relative; cursor:pointer; background:none; border:none; padding:0; }
+.wo-prev-hint{ position:absolute; left:50%; bottom:6px; transform:translateX(-50%); display:inline-flex; align-items:center; gap:4px; font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.04em; color:#fff; background:rgba(0,0,0,.55); padding:3px 8px; border-radius:999px; opacity:0; transition:opacity .18s; }
+.wo-prev:hover .wo-prev-hint{ opacity:1; }
+.wo-actions{ display:flex; gap:9px; flex-wrap:wrap; }
+.wo-view{ flex:0 0 auto; }
+body.reduced-motion .wo-shine, body.low-power .wo-shine{ display:none; }
+
 /* ---------- LOCKER ---------- */
 .locker-look{
   position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:12px;
@@ -16194,17 +16337,25 @@ body.reduced-motion .pm-rank-ring, body.low-power .pm-rank-ring{ transition:none
 .profile-modal.pm-restricted .pm3-hstats, .profile-modal.pm-restricted .pm3-body,
 .profile-modal.pm-restricted .pm3-signature, .profile-modal.pm-restricted .pm-showcase{ display:none !important; }
 /* condensed sticky identity bar */
+/* full-bleed condensed identity bar — spans the whole modal width (negative
+   margins cancel the modal's 32px padding) and clears the close button */
 .pm3-stickybar{
-  position:sticky; top:0; z-index:14; display:flex; align-items:center; gap:11px;
-  padding:10px 46px 10px 16px; margin:-1px -1px 0; border-radius:20px 20px 0 0;
-  background:rgba(16,13,24,.9); backdrop-filter:blur(18px); border-bottom:1px solid var(--line-soft);
-  transform:translateY(-100%); opacity:0; pointer-events:none; transition:transform .28s cubic-bezier(.2,.9,.3,1), opacity .2s;
+  position:sticky; top:0; z-index:16; display:flex; align-items:center; gap:12px;
+  margin:0 -32px; padding:13px 62px 13px 32px; border-radius:24px 24px 0 0;
+  background:linear-gradient(180deg, rgba(22,17,32,.97), rgba(18,14,26,.94));
+  backdrop-filter:blur(22px) saturate(140%); -webkit-backdrop-filter:blur(22px) saturate(140%);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 10px 26px -18px rgba(0,0,0,.9);
+  transform:translateY(-101%); opacity:0; pointer-events:none;
+  transition:transform .3s cubic-bezier(.2,.9,.3,1), opacity .22s;
 }
 .profile-modal.pm-scrolled .pm3-stickybar{ transform:translateY(0); opacity:1; pointer-events:auto; }
-.pm3-sb-av{ width:34px; height:34px; border-radius:10px; flex:0 0 auto; background-size:cover; background-position:center; display:grid; place-items:center; font-weight:800; font-size:15px; overflow:hidden; }
-.pm3-sb-name{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.pm3-sb-rank{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.05em; color:var(--text-dim); margin-left:auto; }
+.profile-modal .modal-close{ z-index:20; }
+.pm3-sb-av{ width:36px; height:36px; border-radius:11px; flex:0 0 auto; background-size:cover; background-position:center; display:grid; place-items:center; font-family:var(--font-display); font-weight:800; font-size:16px; color:#fff; overflow:hidden; box-shadow:0 4px 12px -6px rgba(0,0,0,.7); }
+.pm3-sb-name{ font-family:var(--font-display); font-stretch:74%; font-weight:900; font-size:17px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.pm3-sb-rank{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10.5px; font-weight:800; letter-spacing:.06em; color:var(--text-dim); margin-left:auto; padding:5px 10px; border-radius:999px; background:rgba(255,255,255,.05); border:1px solid var(--line-soft); white-space:nowrap; }
 .pm3-sb-rank .rank-mini{ width:14px; height:14px; }
+@media (max-width:560px){ .pm3-stickybar{ margin:0 -12px; padding:12px 52px 12px 14px; border-radius:0; } }
 body.reduced-motion .pm3-stickybar{ transition:none; }
 /* profile skeleton */
 .modal.profile-modal{ position:relative; }
@@ -24644,18 +24795,40 @@ const FIREBASE_CONFIG = {
 
 <!-- SHOP PURCHASE MODAL -->
 <div class="modal-bg" id="shopBuyModal">
-  <div class="modal shop-buy-modal" id="shopBuyCard">
+  <div class="modal shop-buy-modal sbm2" id="shopBuyCard">
     <button class="modal-close" data-close="shopBuyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <div class="sbm-stage" id="sbmStage"></div>
-    <div class="sbm-rarity" id="sbmRarity">LEGENDARY</div>
-    <h3 class="sbm-name" id="sbmName">Galaxy</h3>
-    <div class="sbm-type" id="sbmType">NAME STYLE</div>
-    <p class="sbm-desc" id="sbmDesc">—</p>
-    <div class="sbm-balance" id="sbmBalance"></div>
+    <!-- HERO — the cosmetic dramatically shown on your profile -->
+    <div class="sbm-hero" id="sbmHero">
+      <i class="sbm-hero-rays" aria-hidden="true"></i>
+      <i class="sbm-hero-glow" aria-hidden="true"></i>
+      <div class="sbm-stage" id="sbmStage"></div>
+      <i class="sbm-hero-floor" aria-hidden="true"></i>
+    </div>
+    <!-- DETAIL — rarity/name/description + thumbnails -->
+    <div class="sbm-detail">
+      <div class="sbm-info">
+        <div class="sbm-rarity" id="sbmRarity">EPIC · PROFILE TAG</div>
+        <h3 class="sbm-name" id="sbmName">Galaxy</h3>
+        <div class="sbm-underline"><i></i><svg viewBox="0 0 24 24" width="10" height="10"><use href="#i-close"/></svg><i></i></div>
+        <p class="sbm-desc" id="sbmDesc">—</p>
+        <div class="sbm-meta" id="sbmMeta"></div>
+      </div>
+      <div class="sbm-thumbs" id="sbmThumbs"></div>
+    </div>
+    <div class="sbm-sep"></div>
+    <!-- BALANCE -->
+    <div class="sbm-balrow">
+      <div class="sbm-bal-left">
+        <span class="sbm-bal-coin"><svg viewBox="0 0 24 24" width="26" height="26"><use href="#i-coin"/></svg></span>
+        <div class="sbm-bal-txt"><span class="sbm-bal-lbl">YOUR BALANCE</span><span class="sbm-bal-num"><b id="sbmBalNum">0</b> Coins</span></div>
+      </div>
+      <div class="sbm-bal-right" id="sbmBalance"></div>
+    </div>
+    <!-- ACTIONS -->
     <div class="sbm-actions">
-      <button class="btn btn-ghost" data-close="shopBuyModal">Not now</button>
       <button class="btn sbm-gift" id="sbmGiftBtn" title="Gift this to a friend">
-        <span class="sbm-gift-ic">🎁</span> Gift
+        <span class="sbm-gift-ic">🎁</span>
+        <span class="sbm-gift-txt"><b>GIFT</b><i>Send to a friend</i></span>
       </button>
       <button class="btn sbm-locker" id="sbmLockerBtn" title="Open this in your Locker" style="display:none;">
         <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-locker"/></svg>
@@ -24663,25 +24836,44 @@ const FIREBASE_CONFIG = {
       </button>
       <button class="btn btn-primary sbm-buy" id="sbmBuyBtn">
         <span class="sbm-hold-fill" aria-hidden="true"></span>
-        <span class="sbm-hold-ring" aria-hidden="true"></span>
         <span class="sbm-buy-inner">
-          <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-coin"/></svg>
-          <span id="sbmBuyLabel">Hold to buy · 4,500</span>
+          <span class="sbm-buy-price"><svg viewBox="0 0 24 24" width="19" height="19"><use href="#i-coin"/></svg> <span id="sbmBuyLabel">900</span></span>
+          <span class="sbm-buy-sub" id="sbmBuySub">HOLD TO BUY</span>
+        </span>
+        <span class="sbm-hold-ring2" aria-hidden="true">
+          <svg class="sbm-ring-svg" viewBox="0 0 44 44"><circle class="sbm-ring-bg" cx="22" cy="22" r="19"/><circle class="sbm-ring-fg" cx="22" cy="22" r="19"/></svg>
+          <svg class="sbm-ring-ic" viewBox="0 0 24 24" width="17" height="17"><use href="#i-crown"/></svg>
         </span>
       </button>
     </div>
-    <!-- GIFT PICKER — slides open under the actions -->
-    <div class="sbm-gift-panel" id="sbmGiftPanel" style="display:none;">
-      <div class="sbm-gift-head">
-        <span>SEND TO A FRIEND</span>
-        <button type="button" class="sbm-gift-hist" id="sbmGiftHistBtn">🎁 Gift history ›</button>
-      </div>
-      <div class="sbm-gift-compose">
-        <input id="sbmGiftNote" type="text" maxlength="80" class="sbm-gift-note-input" placeholder="Add a message (optional)…" autocomplete="off">
-        <div class="sbm-gift-wraps" id="sbmGiftWraps"></div>
-      </div>
-      <div class="sbm-gift-costline">costs <svg viewBox="0 0 24 24" width="11" height="11" style="vertical-align:-1.5px;"><use href="#i-coin"/></svg> <b id="sbmGiftCost">—</b> · refunded if declined</div>
-      <div class="sbm-gift-list" id="sbmGiftList"><div class="side-empty">Loading friends…</div></div>
+    <!-- FOOTER META CHIPS -->
+    <div class="sbm-foot" id="sbmFoot"></div>
+  </div>
+</div>
+
+<!-- ===== GIFT FLOW (Fortnite-style: pick friend → message → send) ===== -->
+<div class="modal-bg" id="giftFlowModal">
+  <div class="modal gift-flow-modal">
+    <button class="modal-close" data-close="giftFlowModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+    <div class="gf-head">
+      <div class="gf-eyebrow">🎁 SEND A GIFT</div>
+      <h3 class="gf-title" id="gfTitle">Gift</h3>
+      <button type="button" class="gf-hist" id="gfHistBtn">History ›</button>
+    </div>
+    <div class="gf-item" id="gfItem"></div>
+    <div class="gf-section">
+      <div class="gf-label"><span class="gf-step">1</span> Choose a friend</div>
+      <input type="text" class="gf-search" id="gfSearch" placeholder="Search friends…" autocomplete="off">
+      <div class="gf-friends" id="gfFriends"><div class="side-empty">Loading friends…</div></div>
+    </div>
+    <div class="gf-section">
+      <div class="gf-label"><span class="gf-step">2</span> Add a message <span class="gf-count" id="gfNoteCount">0/80</span></div>
+      <input type="text" class="gf-note" id="gfNote" maxlength="80" placeholder="Say something nice… (optional)" autocomplete="off">
+      <div class="gf-wraprow"><span class="gf-wraplbl">Wrap</span><div class="gf-wraps" id="gfWraps"></div></div>
+    </div>
+    <div class="gf-foot">
+      <div class="gf-cost">Costs <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg> <b id="gfCost">—</b> · refunded if declined</div>
+      <button type="button" class="btn btn-primary gf-send" id="gfSendBtn" disabled>Select a friend</button>
     </div>
   </div>
 </div>
@@ -30912,9 +31104,13 @@ function renderWelcomeOffer(){
   const off = Math.round((1 - WELCOME_OFFER.price / item.price) * 100);
   host.innerHTML = `<section class="shop-sec">
     <div class="welcome-offer rar-${item.rarity}" style="--wc:${r.color}">
-      <div class="wo-badge">👋 WELCOME OFFER · ONE TIME ONLY</div>
+      <i class="wo-shine" aria-hidden="true"></i>
+      <div class="wo-badge">👋 WELCOME OFFER · ONE&nbsp;TIME&nbsp;ONLY</div>
       <div class="wo-body">
-        <div class="wo-prev">${buildCosmeticPreview(item, true)}</div>
+        <button type="button" class="wo-prev" data-welcome-preview title="Preview ${escapeHTML(item.name)}">
+          ${buildCosmeticPreview(item, true)}
+          <span class="wo-prev-hint"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-eye"/></svg> Preview</span>
+        </button>
         <div class="wo-info">
           <div class="wo-rar">${r.label} · ${CX_TYPE_LABEL[item.type]}</div>
           <div class="wo-name">${escapeHTML(item.name)}</div>
@@ -30922,19 +31118,22 @@ function renderWelcomeOffer(){
           <div class="wo-pricerow">
             <span class="wo-was">${fmtCoins(item.price)}</span>
             <span class="wo-now"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-coin"/></svg> ${fmtCoins(WELCOME_OFFER.price)}</span>
-            <span class="wo-off">-${off}%</span>
+            <span class="wo-off">−${off}%</span>
           </div>
-          <button type="button" class="btn btn-primary wo-buy" data-welcome-buy>Claim your welcome gift</button>
+          <div class="wo-actions">
+            <button type="button" class="btn wo-view" data-welcome-preview><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-eye"/></svg> Preview</button>
+            <button type="button" class="btn btn-primary wo-buy" data-welcome-buy>Claim your welcome gift</button>
+          </div>
         </div>
       </div>
     </div></section>`;
 }
 async function buyWelcomeOffer(btn){
   const item = COSMETIC_BY_ID[WELCOME_OFFER.itemId];
-  if(!item || isGuest() || !welcomeEligible()) return;
+  if(!item || isGuest() || !welcomeEligible()) return false;
   if(getCoins() < WELCOME_OFFER.price){
     try { toast(`You need ${fmtCoins(WELCOME_OFFER.price - getCoins())} more coins — grab the Starter pack below`, 'error'); } catch(e){}
-    return;
+    return false;
   }
   if(btn){ btn.classList.add('is-loading'); btn.disabled = true; }
   try {
@@ -30949,13 +31148,17 @@ async function buyWelcomeOffer(btn){
     try { bigBurst(CX_RARITY[item.rarity].color, 100); } catch(e){}
     try { haptic([15, 40, 25]); } catch(e){}
     try { toast(`🎉 Welcome to ROSHCAM! ${item.name} is yours — equip it in your Locker.`, 'success', { duration: 7000, action: { label: 'Locker', onClick: () => openCosmeticsEditor() } }); } catch(e){}
+    return true;
   } catch(e){
     fnErrorToast(e, 'Could not claim the welcome offer');
     if(btn){ btn.classList.remove('is-loading'); btn.disabled = false; }
+    return false;
   }
 }
 on('#shopWelcomeHost', 'click', (e) => {
-  if(e.target.closest('[data-welcome-buy]')) buyWelcomeOffer(e.target.closest('[data-welcome-buy]'));
+  if(e.target.closest('[data-welcome-buy]')){ buyWelcomeOffer(e.target.closest('[data-welcome-buy]')); return; }
+  // clicking the card art / preview opens the premium modal in welcome mode
+  if(e.target.closest('[data-welcome-preview]')){ const it = COSMETIC_BY_ID[WELCOME_OFFER.itemId]; if(it) openShopBuyModal(it, { welcome: true }); }
 });
 function coinPileHTML(n){
   // A little stacked-coin illustration — more coins for bigger packs.
@@ -31242,67 +31445,77 @@ function openShopBuyModal(item, opts={}){
   // Case/rank-exclusive items (or an explicit preview) show the same big
   // preview, but they can't be bought or gifted — you earn them.
   const previewOnly = !!opts.preview || !!item.caseOnly || !!item.rankOnly || !!item.prestigeOnly;
-  const stage = $('#sbmStage');
-  if(stage){
-    stage.innerHTML = `<span class="sbm-stage-item">${buildCosmeticPreview(item, true)}</span>` + buildProfilePreviewHTML(item);
-    stage.className = 'sbm-stage rar-' + item.rarity;
-  }
-  const rarEl = $('#sbmRarity'); if(rarEl){ rarEl.textContent = r.label; rarEl.style.color = r.color; }
-  setText('#sbmName', item.name);
-  setText('#sbmType', CX_TYPE_LABEL[item.type]);
-  setText('#sbmDesc', item.desc || '');
+  const welcome = !!opts.welcome;
+  state._shopBuyWelcome = welcome;
   const guest = isGuest();
+  const owned = ownsCosmetic(item.id);
+  // HERO — the cosmetic shown live on your profile.
+  const stage = $('#sbmStage');
+  if(stage) stage.innerHTML = buildProfilePreviewHTML(item);
+  const hero = $('#sbmHero'); if(hero) hero.className = 'sbm-hero rar-' + item.rarity;
+  // side-by-side thumbnails: with the item / without it
+  const thumbs = $('#sbmThumbs');
+  if(thumbs) thumbs.innerHTML = `<div class="sbm-thumb active">${buildProfilePreviewHTML(item)}</div><div class="sbm-thumb plain">${buildProfilePreviewHTML({ type: '_none' })}</div>`;
+  // rarity · type, name, description
+  const rarEl = $('#sbmRarity');
+  if(rarEl){ rarEl.innerHTML = `<b style="color:${r.color}">${r.label}</b> · ${CX_TYPE_LABEL[item.type]}`; rarEl.style.setProperty('--rc', r.color); }
+  setText('#sbmName', item.name);
+  setText('#sbmDesc', item.desc || '');
+  // meta chips
+  const meta = [{ ic: '✨', t: 'ANIMATED' }, { ic: '👁', t: 'VISIBLE IN MATCH' }];
+  if(previewOnly) meta.push({ ic: '🏆', t: 'EARNED ONLY' });
+  const metaEl = $('#sbmMeta'); if(metaEl) metaEl.innerHTML = meta.map(m => `<span class="sbm-meta-chip"><span class="smc-ic">${m.ic}</span>${m.t}</span>`).join('');
+  // footer chips
+  const foot = [];
+  foot.push(previewOnly ? '🔒 Earned, not sold' : '🎁 Can be gifted');
+  foot.push(`<span style="color:${r.color}">★</span> ${r.label}`);
+  foot.push('👤 Works on your profile');
+  const footEl = $('#sbmFoot'); if(footEl) footEl.innerHTML = foot.map(f => `<span class="sbm-foot-chip">${f}</span>`).join('');
+  // balance
+  setText('#sbmBalNum', fmtCoins(getCoins()));
   const btn = $('#sbmBuyBtn');
   const giftBtn = $('#sbmGiftBtn');
   const lockerBtn = $('#sbmLockerBtn');
-  const gp = $('#sbmGiftPanel');
   const balEl = $('#sbmBalance');
-  if(gp) gp.style.display = 'none';
+  if(btn){ btn.classList.remove('holding', 'charged', 'is-loading'); }
   if(lockerBtn) lockerBtn.style.display = 'none';
   if(previewOnly){
-    const owned = ownsCosmetic(item.id);
+    const rankName = item.rankOnly ? (RANKS.find(rk => rk.id === item.rankOnly)?.name || item.rankOnly) : '';
     if(balEl){
-      const rankName = item.rankOnly ? (RANKS.find(rk => rk.id === item.rankOnly)?.name || item.rankOnly) : '';
       balEl.innerHTML = owned
-        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b> — equip it in your Locker`
+        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b>`
         : (item.rankOnly
-          ? `<b class="sbm-short" style="color:#ffd45e">Rank-exclusive</b> — reach <b>${escapeHTML(rankName)}</b> to earn it`
+          ? `<b class="sbm-short" style="color:#ffd45e">Rank-exclusive</b><br><span class="sbm-bal-hint">Reach ${escapeHTML(rankName)} to earn it</span>`
           : (item.prestigeOnly
-            ? `<b class="sbm-short" style="color:#ffd45e">Prestige-exclusive</b> — reach <b>Prestige ${item.prestigeOnly} · ${escapeHTML(prestigeName(item.prestigeOnly))}</b> to earn it`
-            : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b> — win it from a case`));
+            ? `<b class="sbm-short" style="color:#ffd45e">Prestige ${item.prestigeOnly}</b><br><span class="sbm-bal-hint">${escapeHTML(prestigeName(item.prestigeOnly))} unlock</span>`
+            : `<b class="sbm-short" style="color:#ff8adf">Case-exclusive</b><br><span class="sbm-bal-hint">Win it from a case</span>`));
     }
     if(btn) btn.style.display = 'none';
     if(giftBtn) giftBtn.style.display = 'none';
-    // owned case/rank items still deserve a shortcut to go equip them
     if(lockerBtn) lockerBtn.style.display = owned ? '' : 'none';
-  } else if(ownsCosmetic(item.id)){
-    // ALREADY OWNED (a normally-buyable item). Don't send the player away —
-    // tell them they own it right here, and let them gift a copy or jump to
-    // the Locker to equip it.
-    if(balEl){
-      balEl.innerHTML = guest
-        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b>`
-        : `<b class="sbm-short" style="color:var(--mint)">✓ You already own this</b> — gift a copy to a friend, or open it in your Locker`;
-    }
+  } else if(owned){
+    if(balEl) balEl.innerHTML = `<b class="sbm-short" style="color:var(--mint)">✓ You already own this</b><br><span class="sbm-bal-hint">Gift a copy or open it in your Locker</span>`;
     if(btn) btn.style.display = 'none';
     if(lockerBtn) lockerBtn.style.display = '';
     if(giftBtn) giftBtn.style.display = guest ? 'none' : '';
-    setText('#sbmGiftCost', fmtCoins(item.price));
   } else {
-    const bal = getCoins(), after = bal - item.price;
+    const price = welcome ? WELCOME_OFFER.price : item.price;
+    const after = getCoins() - price;
     if(balEl){
+      const welcomeTag = welcome ? `<span class="sbm-welcome-tag">👋 WELCOME OFFER · was ${fmtCoins(item.price)}</span>` : '';
       balEl.innerHTML = guest
-        ? `<b class="sbm-short">Guests can't buy cosmetics</b> — create a free account to unlock the shop`
+        ? `<span class="sbm-bal-hint">Create a free account to buy</span>`
         : (after >= 0
-          ? `Balance after: <b>${fmtCoins(after)}</b> <svg viewBox="0 0 24 24" width="12" height="12" style="vertical-align:-2px;"><use href="#i-coin"/></svg>`
-          : `You need <b class="sbm-short">${fmtCoins(-after)}</b> more coins — grab a RoshCoin pack at the bottom of the shop`);
+          ? `${welcomeTag}<span class="sbm-bal-hint">You'll have <b>${fmtCoins(after)}</b> remaining</span>`
+          : `<span class="sbm-bal-hint" style="color:#ffb3c0">Need <b>${fmtCoins(-after)}</b> more coins</span>`);
     }
     if(btn){ btn.style.display = ''; btn.disabled = guest || after < 0; }
-    setText('#sbmBuyLabel', `${(guest || after < 0) ? 'Buy' : 'Hold to buy'} · ${fmtCoins(item.price)}`);
-    if(giftBtn) giftBtn.style.display = guest ? 'none' : '';
-    setText('#sbmGiftCost', fmtCoins(item.price));
+    setText('#sbmBuyLabel', fmtCoins(price));
+    setText('#sbmBuySub', welcome ? 'HOLD TO CLAIM' : ((guest || after < 0) ? 'BUY' : 'HOLD TO BUY'));
+    // the welcome offer is a personal first-buy deal — not giftable at that price
+    if(giftBtn) giftBtn.style.display = (guest || welcome) ? 'none' : '';
   }
-  const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal rar-' + item.rarity;
+  const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal sbm2 rar-' + item.rarity + (welcome ? ' sbm-welcome' : '');
   $('#shopBuyModal')?.classList.add('show');
 }
 // HOLD-TO-BUY: the Buy button must be held for a beat before it fires, so a
@@ -31312,18 +31525,18 @@ const SBM_HOLD_MS = 820;
 async function sbmDoPurchase(btn){
   const item = state._shopBuyItem; if(!item) return;
   if(btn.classList.contains('is-loading')) return;   // guard double-fire
-  const prevLabel = $('#sbmBuyLabel')?.textContent;
+  const prevSub = $('#sbmBuySub')?.textContent;
   btn.classList.add('is-loading'); btn.disabled = true;
-  setText('#sbmBuyLabel', 'Purchasing…');
+  setText('#sbmBuySub', 'PURCHASING…');
   try {
-    const ok = await buyCosmetic(item.id);
-    if(ok){
+    const ok = state._shopBuyWelcome ? await buyWelcomeOffer(null) : await buyCosmetic(item.id);
+    if(ok !== false){
       $('#shopBuyModal')?.classList.remove('show');
       renderShopItems();
     }
   } finally {
     btn.classList.remove('is-loading', 'charged'); btn.disabled = false;
-    if(prevLabel) setText('#sbmBuyLabel', prevLabel);
+    if(prevSub) setText('#sbmBuySub', prevSub);
   }
 }
 (function bindSbmHold(){
@@ -31362,23 +31575,67 @@ on('#sbmLockerBtn', 'click', () => {
 });
 on('#sbmGiftBtn', 'click', () => {
   const item = state._shopBuyItem; if(!item) return;
-  const gp = $('#sbmGiftPanel');
-  if(!gp) return;
-  const opening = gp.style.display === 'none';
-  gp.style.display = opening ? '' : 'none';
-  if(opening){
-    gp.classList.remove('pane-in'); void gp.offsetWidth; gp.classList.add('pane-in');
-    renderGiftPicker(item);
-  }
+  openGiftFlow(item);
 });
-// wrap-style selection inside the gift panel
-on('#sbmGiftWraps', 'click', (e) => {
-  const w = e.target.closest('[data-gift-wrap]'); if(!w) return;
-  state._giftWrap = w.dataset.giftWrap;
-  $('#sbmGiftWraps')?.querySelectorAll('.sbm-wrap').forEach(b => b.classList.toggle('on', b === w));
-  try { haptic(5); } catch(err){}
+// ── FORTNITE-STYLE GIFT FLOW: dedicated modal, pick a friend → message → send ──
+function openGiftFlow(item){
+  if(!item) return;
+  if(isGuest()){ try { toast('Create a free account to send gifts', 'info'); } catch(e){} return; }
+  state._gfItem = item; state._gfSelected = null; state._giftWrap = state._giftWrap || 'gift';
+  const r = CX_RARITY[item.rarity];
+  setText('#gfTitle', `Gift ${item.name}`);
+  const gi = $('#gfItem');
+  if(gi) gi.innerHTML = `<div class="gf-item-prev rar-${item.rarity}">${buildCosmeticPreview(item, true)}</div>
+    <div class="gf-item-meta"><span class="gf-item-rar" style="color:${r.color}">${r.label} · ${CX_TYPE_LABEL[item.type]}</span><span class="gf-item-name">${escapeHTML(item.name)}</span></div>`;
+  const note = $('#gfNote'); if(note) note.value = '';
+  setText('#gfNoteCount', '0/80');
+  setText('#gfCost', fmtCoins(item.price));
+  const wrapHost = $('#gfWraps');
+  if(wrapHost) wrapHost.innerHTML = GIFT_WRAPS.map(w => `<button type="button" class="sbm-wrap${state._giftWrap === w.id ? ' on' : ''}" data-gift-wrap="${w.id}">${w.e}</button>`).join('');
+  const sendBtn = $('#gfSendBtn'); if(sendBtn){ sendBtn.disabled = true; sendBtn.textContent = 'Select a friend'; }
+  const search = $('#gfSearch'); if(search) search.value = '';
+  renderGiftFlowFriends(item, '');
+  $('#giftFlowModal')?.classList.add('show');
+}
+async function renderGiftFlowFriends(item, q){
+  const list = $('#gfFriends'); if(!list || !item) return;
+  const friends = state.profile?.friends || [];
+  if(!friends.length){ list.innerHTML = '<div class="side-empty">No friends yet — add some to send gifts!</div>'; return; }
+  list.innerHTML = '<div class="side-empty">Loading friends…</div>';
+  try { await ensureFriendDocs(); } catch(e){}
+  let rows = friends.map(u => state._friendDocs?.[u] ? { uid: u, ...state._friendDocs[u] } : null).filter(Boolean);
+  const ql = (q || '').trim().toLowerCase();
+  if(ql) rows = rows.filter(f => (f.username || '').toLowerCase().includes(ql));
+  const ownsIt = f => (f.cosmetics?.owned || []).includes(item.id);
+  rows.sort((a, b) => (ownsIt(a) ? 1 : 0) - (ownsIt(b) ? 1 : 0));
+  if(!rows.length){ list.innerHTML = '<div class="side-empty">No friends match.</div>'; return; }
+  list.innerHTML = rows.map(f => {
+    const owns = ownsIt(f);
+    const sel = state._gfSelected === f.uid;
+    return `<button type="button" class="gf-friend${sel ? ' sel' : ''}${owns ? ' owns' : ''}" data-gf-friend="${escapeHTML(f.uid)}">
+      <span class="gf-friend-av" style="background:${AVATAR_COLORS[f.colorIdx || 0]}">${escapeHTML(initialOf(f.username || '?'))}</span>
+      <span class="gf-friend-name">@${escapeHTML(f.username || 'player')}</span>
+      ${owns ? '<span class="gf-friend-owns">Owns it</span>' : ''}
+      <span class="gf-friend-check"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-check"/></svg></span>
+    </button>`;
+  }).join('');
+}
+on('#gfFriends', 'click', (e) => {
+  const f = e.target.closest('[data-gf-friend]'); if(!f) return;
+  state._gfSelected = f.dataset.gfFriend;
+  $('#gfFriends')?.querySelectorAll('.gf-friend').forEach(x => x.classList.toggle('sel', x === f));
+  const sb = $('#gfSendBtn'); if(sb){ sb.disabled = false; sb.textContent = 'Send gift'; }
+  try { haptic(6); } catch(err){}
 });
-on('#sbmGiftHistBtn', 'click', () => openGiftHistory());
+on('#gfSearch', 'input', (e) => renderGiftFlowFriends(state._gfItem, e.target.value));
+on('#gfNote', 'input', (e) => setText('#gfNoteCount', `${e.target.value.length}/80`));
+on('#gfWraps', 'click', (e) => { const w = e.target.closest('[data-gift-wrap]'); if(!w) return; state._giftWrap = w.dataset.giftWrap; $('#gfWraps')?.querySelectorAll('.sbm-wrap').forEach(b => b.classList.toggle('on', b === w)); try { haptic(5); } catch(err){} });
+on('#gfHistBtn', 'click', () => openGiftHistory());
+on('#gfSendBtn', 'click', (e) => {
+  const item = state._gfItem, uid = state._gfSelected;
+  if(!item || !uid) return;
+  sendCosmeticGift(uid, item, e.currentTarget);
+});
 // ── GIFT HISTORY (receipts) + GENEROSITY ACHIEVEMENTS ──
 const GIFT_TIERS = [
   { n:1,  name:'First Gift',        e:'🎁' },
@@ -32540,23 +32797,24 @@ async function sendCosmeticGift(toUid, item, rowEl){
     try { toast(`Not enough RoshCoins — gifting ${item.name} costs ${fmtCoins(item.price)}`, 'error'); } catch(e){}
     return;
   }
-  if(rowEl){ rowEl.disabled = true; rowEl.classList.add('sending'); }
+  if(rowEl){ rowEl.disabled = true; rowEl.classList.add('sending'); if(rowEl.id === 'gfSendBtn') rowEl.textContent = 'Sending…'; }
   const toName = state._friendDocs?.[toUid]?.username || 'friend';
-  const note = ($('#sbmGiftNote')?.value || '').replace(/[<>]/g, '').trim().slice(0, 80);
+  const note = (($('#gfNote')?.value || $('#sbmGiftNote')?.value) || '').replace(/[<>]/g, '').trim().slice(0, 80);
   const wrap = state._giftWrap || 'gift';
   try {
     const out = await callFn('giftCosmetic', { toUid, itemId: item.id, note, wrap });
     state.profile.coins = out.coins;
     updateCoinPill(true);
     try { renderShopWallet(); } catch(e){}
-    try { if($('#sbmGiftNote')) $('#sbmGiftNote').value = ''; } catch(e){}
+    try { if($('#gfNote')) $('#gfNote').value = ''; } catch(e){}
+    $('#giftFlowModal')?.classList.remove('show');
     $('#shopBuyModal')?.classList.remove('show');
     try { haptic([12, 30, 20]); } catch(e){}
     try { bigBurst(CX_RARITY[item.rarity].color, 70); } catch(e){}
     try { toast(`${giftWrapEmoji(wrap)} Gift on its way to @${toName}! If they decline, your ${fmtCoins(item.price)} coins come back.`, 'success', { duration: 6000 }); } catch(e){}
   } catch(e){
     console.warn('[gift] send failed', e);
-    if(rowEl){ rowEl.disabled = false; rowEl.classList.remove('sending'); }
+    if(rowEl){ rowEl.disabled = false; rowEl.classList.remove('sending'); if(rowEl.id === 'gfSendBtn') rowEl.textContent = 'Send gift'; }
     fnErrorToast(e, 'Gift failed to send — coins not spent');
   }
 }
@@ -43885,4 +44143,3 @@ setTimeout(() => { try { hidePreloader(); } catch(e){} }, 9000);
 </script>
 </body>
 </html>
-// ===== please work =====
