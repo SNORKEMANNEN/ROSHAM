@@ -1241,6 +1241,121 @@ body.pd-fresh #dxpPill,
 body.pd-fresh #boostPill,
 body.pd-fresh .play-lower-grid .xpboost-panel{ display:none !important; }
 
+/* ═══════════ RANK REWARDS POPUP — season-pass reward browser ═══════════ */
+.modal.rrw-modal{ --rrw:#ffd33d;
+  display:grid; grid-template-columns:264px 1fr; gap:0; padding:0; max-width:1060px; width:min(1060px, 96vw);
+  max-height:88vh; overflow:hidden; border-radius:22px;
+  background:linear-gradient(180deg, #100d18, #0b0912);
+  border:1px solid var(--line-bright, var(--line));
+}
+.modal.rrw-modal::before{ display:none; }
+.rrw-ambient{ position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(70% 90% at 0% 100%, color-mix(in srgb, var(--rrw) 9%, transparent), transparent 60%),
+    radial-gradient(50% 60% at 100% 0%, color-mix(in srgb, var(--rrw) 7%, transparent), transparent 60%);
+  transition:background .5s; }
+/* left rail */
+.rrw-side{ position:relative; z-index:1; padding:22px 18px 18px; border-right:1px solid var(--line);
+  display:flex; flex-direction:column; min-height:0; background:rgba(0,0,0,.22); }
+.rrw-back{ display:inline-flex; align-items:center; gap:7px; align-self:flex-start; padding:7px 12px 7px 9px; border-radius:9px; cursor:pointer;
+  border:none; background:transparent; color:var(--text-dim); font-family:var(--font-body); font-size:12.5px; font-weight:600;
+  transition:color .15s, background .15s; }
+.rrw-back:hover{ color:var(--text); background:rgba(255,255,255,.05); }
+.rrw-season-num{ margin-top:14px; font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.2em; color:var(--rrw); filter:brightness(1.15); }
+.rrw-season-name{ margin:2px 0 4px; font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:34px; letter-spacing:-.01em; text-transform:uppercase; color:#fff; }
+.rrw-season-sub{ margin:0 0 16px; font-size:12px; color:var(--text-dim); line-height:1.45; }
+.rrw-ranks{ position:relative; flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column; gap:6px; padding:2px 2px 2px 0;
+  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.14) transparent; }
+.rrw-ranks::-webkit-scrollbar{ width:5px; }
+.rrw-ranks::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:999px; }
+.rrw-rank{ position:relative; display:flex; align-items:center; gap:11px; padding:9px 11px 9px 20px; border-radius:13px; cursor:pointer; text-align:left;
+  border:1px solid transparent; background:transparent; color:var(--text);
+  animation:rrwRowIn .4s var(--d, 0ms) cubic-bezier(.2,.9,.3,1) both;
+  transition:background .16s, border-color .16s, transform .16s; }
+@keyframes rrwRowIn{ from{ opacity:0; transform:translateX(-12px); } to{ opacity:1; transform:none; } }
+.rrw-rank:hover{ background:rgba(255,255,255,.045); }
+/* timeline: a continuous rail + one dot per rank */
+.rrw-rank::before{ content:""; position:absolute; left:7px; top:-6px; bottom:-6px; width:2px; background:rgba(255,255,255,.08); }
+.rrw-rank:first-child::before{ top:50%; }
+.rrw-rank:last-child::before{ bottom:50%; }
+.rrw-rank-dot{ position:absolute; left:4px; top:50%; transform:translateY(-50%); width:8px; height:8px; border-radius:50%;
+  background:#3a3650; transition:background .2s, box-shadow .2s; }
+.rrw-rank.done .rrw-rank-dot{ background:var(--rc); }
+.rrw-rank.sel .rrw-rank-dot{ background:var(--rc); box-shadow:0 0 10px var(--rc); animation:rrwDotPulse 1.8s ease-in-out infinite; }
+@keyframes rrwDotPulse{ 0%,100%{ box-shadow:0 0 4px var(--rc); } 50%{ box-shadow:0 0 12px var(--rc); } }
+.rrw-rank-ic{ width:34px; height:34px; flex:0 0 auto; filter:saturate(.35) opacity(.75); transition:filter .2s, transform .2s; }
+.rrw-rank.done .rrw-rank-ic, .rrw-rank.sel .rrw-rank-ic{ filter:none; }
+.rrw-rank.sel .rrw-rank-ic{ transform:scale(1.12); }
+.rrw-rank-txt{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.rrw-rank-txt b{ font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:14px; }
+.rrw-rank-txt small{ font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint); letter-spacing:.04em; }
+.rrw-rank-chev{ opacity:0; color:var(--rc); transition:opacity .18s, transform .18s; transform:translateX(-4px); }
+.rrw-rank.sel{ border-color:color-mix(in srgb, var(--rc) 55%, transparent); background:color-mix(in srgb, var(--rc) 8%, transparent);
+  box-shadow:0 0 22px -10px var(--rc); }
+.rrw-rank.sel .rrw-rank-chev{ opacity:1; transform:none; }
+/* right pane */
+.rrw-main{ position:relative; z-index:1; display:flex; flex-direction:column; min-height:0; padding:24px 26px 20px; max-height:88vh; }
+.rrw-head{ display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+.rrw-head-crest{ position:relative; width:74px; height:74px; flex:0 0 auto; display:grid; place-items:center; }
+.rrw-head-crest.pop .rrw-head-ic{ animation:rrwCrestPop .5s cubic-bezier(.15,1.6,.3,1); }
+@keyframes rrwCrestPop{ 0%{ transform:scale(.55) rotate(-8deg); } 100%{ transform:scale(1) rotate(0); } }
+.rrw-head-glow{ position:absolute; inset:-18%; border-radius:50%; filter:blur(16px); opacity:.5; animation:rk2GlowPulse 3.4s ease-in-out infinite; }
+.rrw-head-ic{ position:relative; width:64px; height:64px; filter:drop-shadow(0 8px 18px rgba(0,0,0,.55)); }
+.rrw-head-t{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:26px; letter-spacing:.01em; color:#fff; }
+.rrw-head-s{ font-size:13px; color:var(--text-dim); margin-top:2px; }
+.rrw-rewards{ flex:1; min-height:220px; overflow-y:auto; border-radius:16px; border:1px solid var(--line);
+  background:rgba(255,255,255,.02); padding:18px; display:flex; flex-wrap:wrap; gap:16px; align-content:flex-start;
+  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.14) transparent; }
+.rrw-card{ width:212px; border-radius:16px; overflow:hidden; cursor:pointer; text-align:left; padding:0 0 13px;
+  background:rgba(0,0,0,.3); border:1px solid color-mix(in srgb, var(--rar) 35%, var(--line));
+  animation:rrwCardIn .5s var(--d, 0ms) cubic-bezier(.2,1.2,.3,1) both;
+  transition:transform .2s, box-shadow .25s, border-color .2s; }
+@keyframes rrwCardIn{ from{ opacity:0; transform:translateY(14px) scale(.96); } to{ opacity:1; transform:none; } }
+.rrw-card:hover{ transform:translateY(-4px); border-color:var(--rar); box-shadow:0 18px 40px -18px var(--rar); }
+.rrw-card-art{ position:relative; height:150px; display:grid; place-items:center; overflow:hidden; margin-bottom:11px;
+  background:radial-gradient(90% 90% at 50% 20%, color-mix(in srgb, var(--rar) 14%, transparent), transparent 70%), rgba(0,0,0,.35);
+  border-bottom:1px solid color-mix(in srgb, var(--rar) 25%, transparent); }
+.rrw-card-art > *{ transform:scale(1.05); }
+.rrw-card-owned{ position:absolute; top:9px; right:9px; padding:4px 9px; border-radius:999px;
+  background:rgba(34,211,163,.16); border:1px solid rgba(34,211,163,.5); color:var(--mint);
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.08em; }
+.rrw-card-name{ padding:0 14px; font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:15px; color:#fff; }
+.rrw-card-meta{ display:flex; align-items:center; gap:7px; padding:6px 14px 0; }
+.rrw-card-type{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid var(--line); color:var(--text-dim); }
+.rrw-card-rar{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--rar); }
+.rrw-empty{ width:100%; min-height:200px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+  color:var(--text-dim); font-size:13.5px; text-align:center; }
+.rrw-empty span{ font-size:34px; }
+/* unlock footer */
+.rrw-foot{ display:flex; align-items:center; justify-content:space-between; gap:18px; margin-top:14px; padding:13px 16px;
+  border-radius:14px; border:1px solid var(--line); background:rgba(255,255,255,.025); }
+.rrw-foot-label{ display:inline-flex; align-items:center; gap:9px; font-size:13px; font-weight:600; color:var(--text-dim); flex:0 0 auto; white-space:nowrap; }
+.rrw-foot.unlocked .rrw-foot-label{ color:var(--mint); }
+.rrw-foot-prog{ display:flex; align-items:center; gap:12px; flex:0 1 340px; }
+.rrw-foot-nums{ font-family:var(--font-mono); font-size:12px; font-weight:800; color:var(--rrw); filter:brightness(1.15); white-space:nowrap; font-variant-numeric:tabular-nums; }
+.rrw-foot-bar{ flex:1; height:7px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; }
+.rrw-foot-bar i{ display:block; height:100%; width:0; border-radius:999px;
+  background:linear-gradient(90deg, color-mix(in srgb, var(--rrw) 65%, #fff), var(--rrw));
+  box-shadow:0 0 10px -2px var(--rrw); transition:width .9s cubic-bezier(.2,.8,.2,1); }
+.rrw-foot.unlocked .rrw-foot-bar i{ background:linear-gradient(90deg, var(--mint), #5fc9ff); box-shadow:0 0 10px -2px var(--mint); }
+/* responsive: stack panes; the rank list becomes a horizontal chip rail */
+@media (max-width:860px){
+  .modal.rrw-modal{ grid-template-columns:1fr; max-height:92vh; }
+  .rrw-side{ border-right:none; border-bottom:1px solid var(--line); padding:16px 16px 12px; }
+  .rrw-season-name{ font-size:26px; }
+  .rrw-ranks{ flex-direction:row; overflow-x:auto; overflow-y:hidden; gap:8px; padding-bottom:6px; }
+  .rrw-rank{ flex:0 0 auto; padding:8px 12px; }
+  .rrw-rank::before, .rrw-rank-dot{ display:none; }
+  .rrw-rank-txt small{ display:none; }
+  .rrw-rank-chev{ display:none; }
+  .rrw-main{ padding:16px 16px 14px; }
+  .rrw-rewards{ justify-content:center; }
+  .rrw-foot{ flex-direction:column; align-items:stretch; gap:10px; }
+}
+body.reduced-motion :is(.rrw-rank, .rrw-card, .rrw-head-crest.pop .rrw-head-ic),
+body.low-power :is(.rrw-rank, .rrw-card, .rrw-head-crest.pop .rrw-head-ic){ animation:none !important; opacity:1 !important; }
+
 /* ═══════════════ RANK PAGE v3 — cinematic overhaul ═══════════════ */
 .rk2-top{ display:grid; grid-template-columns:1fr 330px; gap:14px; margin-bottom:14px; }
 .rk2-hero{
@@ -22124,6 +22239,37 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
 <canvas id="particles"></canvas>
 <div class="toast" id="toast"></div>
 
+<!-- ═══ RANK REWARDS — season-pass style reward browser ═══ -->
+<div class="modal-bg keep-dialog" id="rankRewardsModal">
+  <div class="modal rrw-modal">
+    <div class="rrw-ambient"></div>
+    <aside class="rrw-side">
+      <button type="button" class="rrw-back" data-close="rankRewardsModal"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-arrow-left"/></svg> Back to Rank</button>
+      <div class="rrw-season-num" id="rrwSeasonNum">SEASON 2</div>
+      <h3 class="rrw-season-name" id="rrwSeasonName">ASCENSION</h3>
+      <p class="rrw-season-sub">Climb the ranks. Earn exclusive rewards.</p>
+      <div class="rrw-ranks" id="rrwRanks"></div>
+    </aside>
+    <div class="rrw-main">
+      <div class="rrw-head">
+        <div class="rrw-head-crest"><div class="rrw-head-glow" id="rrwHeadGlow"></div><svg class="rrw-head-ic" id="rrwHeadIcon"></svg></div>
+        <div class="rrw-head-txt">
+          <div class="rrw-head-t" id="rrwHeadTitle">GOLD REWARDS</div>
+          <div class="rrw-head-s" id="rrwHeadSub">Reach Gold rank and unlock these rewards.</div>
+        </div>
+      </div>
+      <div class="rrw-rewards" id="rrwRewards"></div>
+      <div class="rrw-foot" id="rrwFoot">
+        <span class="rrw-foot-label" id="rrwFootLabel"><svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-lock"/></svg> Reach 1650 ELO to unlock</span>
+        <div class="rrw-foot-prog">
+          <span class="rrw-foot-nums" id="rrwFootNums">89 / 1650 ELO</span>
+          <div class="rrw-foot-bar"><i id="rrwFootFill"></i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Generic confirm dialog (uiConfirm) — one consistent confirmation everywhere -->
 <div class="modal-bg" id="uiConfirmModal" data-static data-no-esc style="z-index:9500;">
   <div class="modal ui-confirm">
@@ -23522,7 +23668,7 @@ const FIREBASE_CONFIG = {
         <!-- Ladder · ELO chart · Recent matches -->
         <div class="rk2-grid">
           <section class="rk2-panel rk2-ladder-panel">
-            <div class="rk2-panel-head"><h3>Rank ladder</h3><span class="rk2-hint">🎁 tap a reward to preview</span></div>
+            <div class="rk2-panel-head"><h3>Rank ladder</h3><span class="rk2-hint">your climb, tier by tier</span></div>
             <div class="rank-ladder" id="rankLadder"></div>
           </section>
           <section class="rk2-panel rk2-chart-panel">
@@ -41322,15 +41468,7 @@ function renderRankPage(){
       row.style.setProperty('--lr-accent', r.color);
       let main = `<div class="lr-name">${r.name}${isCurrent ? '<span class="lr-you">YOU</span>' : ''}</div>
           <div class="lr-range">${rangeText} ELO</div>`;
-      // Rank-exclusive cosmetic reward — tap the chip to inspect it full-size.
-      const rc = RANK_COSMETICS.find(x => x.rankOnly === r.id);
-      if(rc){
-        const rcOwned = ownsCosmetic(rc.id);
-        main += `<button type="button" class="lr-reward${rcOwned ? ' owned' : ''}" data-cx-inspect="${rc.id}" title="Preview ${escapeHTML(rc.name)}">
-          <span class="lr-reward-ic">${rcOwned ? '✓' : '🎁'}</span> ${escapeHTML(rc.name)}
-          <span class="lr-reward-rar" style="color:${CX_RARITY[rc.rarity].color}">${CX_RARITY[rc.rarity].label}</span>
-        </button>`;
-      }
+      // (Rank rewards moved to the dedicated Rank Rewards popup — see openRankRewards.)
       if(isCurrent && next){
         const prog = Math.max(0, Math.min(1, (rating - r.base) / (next.base - r.base)));
         main += `<div class="lr-prog"><i style="width:${Math.round(prog*100)}%"></i></div>`;
@@ -41472,15 +41610,110 @@ function renderRankHistoryPanels(items){
     </svg>
     <div class="rk2-chart-now" style="left:calc(${(parseFloat(ex) / W * 100).toFixed(1)}% ); top:calc(${(parseFloat(ey) / H * 100).toFixed(1)}% - 34px); --rk:${rk.color}">${current}</div>`;
 }
-// View all → the existing match-history modal; rewards → flash the ladder
+// View all → the existing match-history modal
 on('#rk2ViewAll', 'click', () => { hapticTick(); openMatchHistory(); });
-on('#rk2SeasonRewards', 'click', () => {
-  hapticTick();
-  const ladder = $('#rankLadder');
-  if(ladder){
-    ladder.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    ladder.classList.remove('rk2-flash'); void ladder.offsetWidth; ladder.classList.add('rk2-flash');
+on('#rk2SeasonRewards', 'click', () => { hapticTick(); openRankRewards(); });
+
+// ═══════════ RANK REWARDS POPUP — season-pass style browser ═══════════
+// Left: the rank timeline. Right: the selected rank's exclusive reward,
+// with an unlock-progress footer. Rewards start at Gold.
+let _rrwSelected = null;
+function openRankRewards(selectId){
+  const m = $('#rankRewardsModal'); if(!m) return;
+  try {
+    const s = getSeason();
+    setText('#rrwSeasonNum', 'SEASON ' + s.number);
+    setText('#rrwSeasonName', s.name);
+  } catch(e){}
+  // Default selection: the next reward you haven't reached yet (else your rank)
+  const rating = state.profile?.rating || 1000;
+  const unranked = state.profile ? inPlacements(state.profile) : true;
+  if(!selectId){
+    const nextReward = RANKS.find(r => RANK_COSMETICS.some(c => c.rankOnly === r.id) && (unranked || rating < r.base));
+    selectId = nextReward ? nextReward.id : (unranked ? 'gold' : rankFromRating(rating).id);
   }
+  renderRrwSidebar();
+  rrwSelect(selectId);
+  m.classList.add('show');
+}
+function renderRrwSidebar(){
+  const host = $('#rrwRanks'); if(!host) return;
+  const rating = state.profile?.rating || 1000;
+  const unranked = state.profile ? inPlacements(state.profile) : true;
+  host.innerHTML = RANKS.map((r, i) => {
+    const next = RANKS[i + 1];
+    const range = next ? `${r.base} – ${next.base - 1} ELO` : `${r.base}+ ELO`;
+    const reached = !unranked && rating >= r.base;
+    return `<button type="button" class="rrw-rank${reached ? ' done' : ''}" data-rrw="${r.id}" style="--rc:${r.color}; --d:${i * 45}ms">
+      <span class="rrw-rank-dot"></span>
+      <svg class="rrw-rank-ic" viewBox="0 0 24 24"><use href="#${r.icon}"/></svg>
+      <span class="rrw-rank-txt"><b>${r.name}</b><small>${range}</small></span>
+      <svg class="rrw-rank-chev" viewBox="0 0 24 24" width="14" height="14"><use href="#i-arrow-right"/></svg>
+    </button>`;
+  }).join('');
+}
+function rrwSelect(rankId){
+  _rrwSelected = rankId;
+  const r = RANKS.find(x => x.id === rankId); if(!r) return;
+  const m = $('#rankRewardsModal');
+  if(m) m.style.setProperty('--rrw', r.color);
+  document.querySelectorAll('#rrwRanks .rrw-rank').forEach(b => b.classList.toggle('sel', b.dataset.rrw === rankId));
+  // Header
+  setRankIconEl($('#rrwHeadIcon'), r.id);
+  const hic = $('#rrwHeadIcon'); if(hic) hic.style.color = r.color;
+  const hglow = $('#rrwHeadGlow'); if(hglow) hglow.style.background = `radial-gradient(circle, ${r.color}, transparent 70%)`;
+  setText('#rrwHeadTitle', r.name.toUpperCase() + ' REWARDS');
+  const rewards = RANK_COSMETICS.filter(c => c.rankOnly === r.id);
+  setText('#rrwHeadSub', rewards.length
+    ? `Reach ${r.name} rank and unlock these rewards.`
+    : `No exclusive reward at this tier — rank rewards begin at Gold.`);
+  // Replay the header pop
+  const crest = document.querySelector('.rrw-head-crest');
+  if(crest){ crest.classList.remove('pop'); void crest.offsetWidth; crest.classList.add('pop'); }
+  // Rewards grid
+  const grid = $('#rrwRewards');
+  if(grid){
+    if(!rewards.length){
+      grid.innerHTML = `<div class="rrw-empty"><span>🎁</span>Keep climbing — the first exclusive reward waits at <b style="color:#ffd33d">Gold</b>.</div>`;
+    } else {
+      grid.innerHTML = rewards.map((c, i) => {
+        const rar = CX_RARITY[c.rarity];
+        const owned = ownsCosmetic(c.id);
+        return `<button type="button" class="rrw-card${owned ? ' owned' : ''}" data-cx-inspect="${c.id}" style="--rar:${rar.color}; --d:${i * 80}ms" title="Preview ${escapeHTML(c.name)}">
+          <div class="rrw-card-art">${buildCosmeticPreview(c, true)}${owned ? '<span class="rrw-card-owned">✓ OWNED</span>' : ''}</div>
+          <div class="rrw-card-name">${escapeHTML(c.name)}</div>
+          <div class="rrw-card-meta"><span class="rrw-card-type">${CX_TYPE_LABEL[c.type] || c.type}</span><span class="rrw-card-rar">${rar.label}</span></div>
+        </button>`;
+      }).join('');
+    }
+  }
+  // Footer: unlock progress toward this rank
+  const rating = state.profile?.rating || 1000;
+  const unranked = state.profile ? inPlacements(state.profile) : true;
+  const label = $('#rrwFootLabel'), nums = $('#rrwFootNums'), fillEl = $('#rrwFootFill'), foot = $('#rrwFoot');
+  const reached = !unranked && rating >= r.base;
+  if(foot) foot.classList.toggle('unlocked', reached);
+  if(reached){
+    if(label) label.innerHTML = `<svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-check"/></svg> ${r.name} reached — rewards unlocked`;
+    if(nums) nums.textContent = `${rating} ELO`;
+    if(fillEl){ fillEl.style.width = '100%'; }
+  } else {
+    if(label) label.innerHTML = unranked
+      ? `<svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-lock"/></svg> Finish placements, then reach ${r.base} ELO to unlock`
+      : `<svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-lock"/></svg> Reach ${r.base} ELO to unlock`;
+    if(nums) nums.textContent = `${unranked ? '—' : rating} / ${r.base} ELO`;
+    if(fillEl){
+      const p = unranked ? 0 : Math.max(0, Math.min(1, rating / r.base));
+      fillEl.style.transition = 'none'; fillEl.style.width = '0%';
+      void fillEl.offsetWidth;
+      fillEl.style.transition = ''; fillEl.style.width = (p * 100) + '%';
+    }
+  }
+  try { hapticTick(); } catch(e){}
+}
+on('#rrwRanks', 'click', (e) => {
+  const b = e.target.closest('[data-rrw]');
+  if(b) rrwSelect(b.dataset.rrw);
 });
 
 function renderAchievementsPage(){
