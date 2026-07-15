@@ -5224,6 +5224,47 @@ body.reduced-motion .mm-ring{ opacity:.25; }
 .mm-stat + .mm-stat{ border-left:1px solid var(--line-soft); }
 .mm-stat-v{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:22px; }
 .mm-stat-l{ font-family:var(--font-mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); }
+.mm-elapsed{ display:inline-flex; align-items:center; gap:6px; margin-top:12px; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.04em; color:var(--text-faint); }
+.mm-elapsed b{ color:var(--text-dim); }
+.mm-elapsed svg{ opacity:.7; }
+/* privacy pause overlay on your own video */
+.privacy-overlay{ position:absolute; inset:0; z-index:8; display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px; text-align:center; padding:8px;
+  background:rgba(8,6,14,.82); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); color:#fff; border-radius:inherit; }
+.privacy-overlay.show{ display:flex; }
+.privacy-overlay svg{ opacity:.85; }
+.privacy-overlay span{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:14px; }
+.privacy-overlay small{ font-family:var(--font-mono); font-size:8.5px; letter-spacing:.02em; color:var(--text-faint); }
+#yourVideoWrap.privacy-paused #yourVideo{ filter:blur(26px) brightness(.35); }
+/* gesture confidence read-out over the local video */
+.gest-conf{ position:absolute; left:8px; bottom:8px; z-index:7; display:none; align-items:center; gap:7px; padding:5px 9px 5px 6px; border-radius:999px;
+  background:rgba(8,6,14,.6); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); border:1px solid var(--line); --gcc:#a48bff; }
+.gest-conf.show{ display:inline-flex; }
+.gc-emoji{ font-size:16px; line-height:1; }
+.gc-meter{ width:52px; height:5px; border-radius:999px; background:rgba(255,255,255,.16); overflow:hidden; }
+.gc-meter i{ display:block; height:100%; width:0; border-radius:999px; background:var(--gcc); transition:width .12s linear; }
+.gest-conf.locked{ border-color:var(--gcc); box-shadow:0 0 12px -4px var(--gcc); }
+.gest-conf.locked .gc-meter i{ box-shadow:0 0 8px var(--gcc); }
+/* "read" callout after a round */
+.read-callout{ position:fixed; top:23%; left:50%; transform:translate(-50%, -8px) scale(.9); z-index:120; pointer-events:none; opacity:0;
+  display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
+  font-family:var(--font-display); font-stretch:76%; font-weight:900; font-size:16px; color:#fff;
+  background:linear-gradient(180deg, rgba(40,32,58,.96), rgba(24,18,36,.96)); border:1px solid var(--line-bright, var(--line)); box-shadow:0 16px 40px -18px rgba(0,0,0,.9); }
+.read-callout.good{ border-color:rgba(34,211,163,.6); box-shadow:0 16px 40px -14px rgba(34,211,163,.55); }
+.read-callout .rc-ic{ font-size:19px; }
+.read-callout.show{ animation:rcPop 2.2s cubic-bezier(.2,1.3,.4,1) both; }
+@keyframes rcPop{ 0%{ opacity:0; transform:translate(-50%,-8px) scale(.85); } 12%{ opacity:1; transform:translate(-50%,0) scale(1); } 82%{ opacity:1; transform:translate(-50%,0) scale(1); } 100%{ opacity:0; transform:translate(-50%,-10px) scale(.96); } }
+body.reduced-motion .read-callout.show, body.low-power .read-callout.show{ animation:none; opacity:1; }
+/* VS screen: rank-gap tag + rank-reveal flourish on the opponent crest */
+.mf-gap{ margin-top:8px; display:inline-block; font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.08em; padding:4px 10px; border-radius:999px;
+  background:rgba(255,255,255,.06); border:1px solid var(--line); color:var(--text-dim); animation:mfGapIn .5s .7s cubic-bezier(.2,1.4,.4,1) both; }
+.mf-gap.even{ color:#04140f; background:var(--mint); border-color:var(--mint); }
+.mf-gap.wide{ color:#ffd45e; background:rgba(255,180,54,.14); border-color:rgba(255,180,54,.5); }
+@keyframes mfGapIn{ from{ opacity:0; transform:translateY(6px) scale(.9); } to{ opacity:1; transform:none; } }
+.mf-rank-reveal{ animation:mfRankReveal .6s .45s cubic-bezier(.15,1.7,.3,1) both; }
+@keyframes mfRankReveal{ 0%{ opacity:0; transform:scale(2.4) rotate(-14deg); filter:brightness(2.4); } 60%{ opacity:1; } 100%{ opacity:1; transform:none; filter:none; } }
+.mf-tier-reveal{ animation:mfTierReveal .5s .6s ease both; }
+@keyframes mfTierReveal{ from{ opacity:0; letter-spacing:.4em; } to{ opacity:1; } }
+body.reduced-motion :is(.mf-gap, .mf-rank-reveal, .mf-tier-reveal), body.low-power :is(.mf-gap, .mf-rank-reveal, .mf-tier-reveal){ animation:none !important; opacity:1 !important; }
 .mm-actions{ margin-top:24px; display:flex; flex-direction:column; gap:8px; align-items:center; }
 .mm-cancel{ min-width:200px; justify-content:center; }
 @media(max-width:480px){ .mm-core{ width:82px; height:82px; } .mm-core-av{ width:62px; height:62px; font-size:24px; } .mm-stat{ padding:11px 14px; } .mm-stat-v{ font-size:19px; } }
@@ -21616,6 +21657,7 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
   </div>
 </div>
 <div class="combo-popup" id="comboPopup"></div>
+<div class="read-callout" id="readCallout" aria-hidden="true"></div>
 <div class="spotlight-you" id="spotlightYou"></div>
 <canvas id="particles"></canvas>
 <div class="toast" id="toast"></div>
@@ -23388,9 +23430,11 @@ const FIREBASE_CONFIG = {
 
         <div class="mm-stats">
           <div class="mm-stat"><span class="mm-stat-v" id="queueSize">—</span><span class="mm-stat-l">in queue</span></div>
-          <div class="mm-stat"><span class="mm-stat-v" id="searchElapsed">0s</span><span class="mm-stat-l">searching</span></div>
-          <div class="mm-stat"><span class="mm-stat-v">🌍</span><span class="mm-stat-l">worldwide</span></div>
+          <div class="mm-stat"><span class="mm-stat-v" id="searchEta">~15s</span><span class="mm-stat-l">est. wait</span></div>
+          <div class="mm-stat"><span class="mm-stat-v" id="mmPos">#1</span><span class="mm-stat-l">your spot</span></div>
+          <div class="mm-stat"><span class="mm-stat-v" id="mmBand">±90</span><span class="mm-stat-l">skill band</span></div>
         </div>
+        <div class="mm-elapsed"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-clock"/></svg> searching <b id="searchElapsed">0s</b></div>
 
         <div id="matchDebug" style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); max-width:380px; text-align:left; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2); display:none; white-space:pre-wrap; max-height:140px; overflow-y:auto;"></div>
         <div class="mm-actions">
@@ -23460,6 +23504,7 @@ const FIREBASE_CONFIG = {
                 <span class="mf-h2h-score opp" id="mfH2HOppWins">0</span>
               </div>
               <div class="mf-h2h-label" id="mfH2HLabel">first encounter</div>
+              <div class="mf-gap" id="mfGap" style="display:none;"></div>
             </div>
           </div>
 
@@ -23591,6 +23636,11 @@ const FIREBASE_CONFIG = {
               <span class="igs-label">Blur their camera</span>
               <span class="set-toggle off" id="igsBlur"></span>
             </button>
+            <button class="igs-row" id="igsPrivacyRow" type="button">
+              <span class="igs-ic"><svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-eye-off"/></svg></span>
+              <span class="igs-label">Pause my camera</span>
+              <span class="set-toggle off" id="igsPrivacy"></span>
+            </button>
           </div>
           <button class="arena-ctrl-btn" id="reportBtn" title="Report player" aria-label="Report player">
             <svg viewBox="0 0 24 24"><use href="#i-flag"/></svg><span class="actl-label">Report</span>
@@ -23613,6 +23663,10 @@ const FIREBASE_CONFIG = {
           <video id="yourVideo" class="local" autoplay playsinline muted></video>
           <canvas id="overlay-canvas"></canvas>
           <canvas class="energy-particles" id="energyParticles"></canvas>
+          <!-- privacy pause overlay -->
+          <div class="privacy-overlay" id="privacyOverlay"><svg viewBox="0 0 24 24" width="26" height="26"><use href="#i-eye-off"/></svg><span>Camera paused</span><small>Tap "Pause my camera" to resume</small></div>
+          <!-- gesture confidence read-out -->
+          <div class="gest-conf" id="gestConf" aria-hidden="true"><span class="gc-emoji" id="gcEmoji">✊</span><span class="gc-meter"><i id="gcBar"></i></span></div>
           <div class="ready-ring" id="youReadyRing">
             <div class="energy-field"></div>
             <div class="vignette"></div>
@@ -26556,8 +26610,12 @@ function calcMatchXp(opts){
   if(o.correctPredictions > 0){ const a = o.correctPredictions * 15; xp += a; breakdown.push({ label:`${o.correctPredictions} read${o.correctPredictions>1?'s':''}`, amount:a }); }
   // Win streak bonus
   if(o.result === 'win' && o.streakAfter >= 3){ const a = Math.min(100, o.streakAfter * 15); xp += a; breakdown.push({ label:`${o.streakAfter}-win streak`, amount:a }); }
-  // First win of session
-  if(o.result === 'win' && o.firstWinOfSession){ xp += 50; breakdown.push({ label:'First win today', amount:50 }); }
+  // First win of the day (a true calendar-day first)
+  if(o.result === 'win' && o.firstWinOfSession){ xp += 50; breakdown.push({ label:'☀️ First win of the day', amount:50 }); }
+  // Upset — beating a clearly higher-rated opponent
+  if(o.result === 'win' && ((o.oppRating || 0) - (o.myRating || 0)) >= 150){ const a = 40; xp += a; breakdown.push({ label:'⚡ Upset win', amount:a }); }
+  // First match of the day (any result) — a small nudge to keep the habit
+  if(o.firstMatchOfDay){ xp += 15; breakdown.push({ label:'🎯 First match of the day', amount:15 }); }
   // WEEKEND DOUBLE XP — doubles the whole match XP
   if(isDoubleXP()){
     const bonus = xp; // doubling = +100% of the subtotal
@@ -27531,8 +27589,35 @@ function stabilizeGesture(g){
   for(const x of state.recentGestures){ const k = x===null ? '_null_' : x; counts[k] = (counts[k]||0)+1; }
   let best = null, bestN = 0;
   for(const k in counts){ if(counts[k] > bestN){ best = k; bestN = counts[k]; } }
+  // Detection confidence = how many of the recent frames agree (for the read-out).
+  state._gcRatio = bestN / Math.max(1, state.recentGestures.length);
+  state._gcBest = (best === '_null_' || best == null) ? null : best;
   if(bestN >= 3) return best === '_null_' ? null : best;
   return state.currentGesture;
+}
+// Live "is my throw being read?" indicator over the local video.
+function updateGestureConf(){
+  const el = $('#gestConf'); if(!el) return;
+  const g = state._gcBest;
+  const active = (state.phase === 'idle' || state.phase === 'done') && !state._prematch && !state._privacyPaused && state.screen === 'game';
+  if(!active || !g){ el.classList.remove('show'); return; }
+  el.classList.add('show');
+  const emoji = g === 'rock' ? '✊' : g === 'paper' ? '✋' : g === 'scissors' ? '✌️' : '✊';
+  const gc = $('#gcEmoji'); if(gc) gc.textContent = emoji;
+  const ratio = state._gcRatio || 0;
+  const bar = $('#gcBar'); if(bar) bar.style.width = Math.round(ratio * 100) + '%';
+  el.classList.toggle('locked', ratio >= 0.75);
+  try { el.style.setProperty('--gcc', gestureColor(g)); } catch(e){}
+}
+// Floating "read" callout after a round (you predicted them / got predicted).
+function showReadCallout(rc){
+  const el = $('#readCallout'); if(!el || !rc) return;
+  el.innerHTML = `<span class="rc-ic">${rc.icon}</span> ${escapeHTML(rc.text)}`;
+  el.classList.toggle('good', rc.text.indexOf('read') >= 0);
+  el.classList.remove('show'); void el.offsetWidth; el.classList.add('show');
+  try { haptic(rc.text.indexOf('read') >= 0 ? [10, 30, 10] : 6); } catch(e){}
+  clearTimeout(state._rcTimer);
+  state._rcTimer = setTimeout(() => el.classList.remove('show'), 2200);
 }
 
 // =================== CAMERA + MEDIAPIPE ===================
@@ -27603,6 +27688,8 @@ async function setupCamera(){
     // Mobile reliability: watch the track + run a freeze watchdog so a suspended
     // or OS-reclaimed camera transparently re-acquires instead of sitting dead.
     try { attachCamTrackWatch(stream.getVideoTracks()[0]); startCamWatchdog(); } catch(e){}
+    // Pre-flight: quietly check that P2P can traverse this network (once/session).
+    try { runConnectionPrecheck(); } catch(e){}
     return true;
   } catch(e){
     setText('#camStatusText', 'denied');
@@ -35427,8 +35514,38 @@ function startMatchmakingTips(){
   }, 4000);
 }
 function stopMatchmakingTips(){ if(state._mmTipTimer){ clearInterval(state._mmTipTimer); state._mmTipTimer = null; } }
+// ── MATCHMAKING QUALITY HELPERS (per-uid, localStorage) ──
+// Recent opponents: skip an immediate rematch of the same person in ranked.
+function _recentOppKey(){ return 'rosham_recent_opp_' + (state.user?.uid || 'anon'); }
+function getRecentOpponents(){
+  try { const a = JSON.parse(localStorage.getItem(_recentOppKey()) || '[]'); const now = Date.now(); return new Set(a.filter(x => now - x.t < 180000).map(x => x.uid)); }
+  catch(e){ return new Set(); }
+}
+function pushRecentOpponent(uid){
+  if(!uid) return;
+  try { const a = JSON.parse(localStorage.getItem(_recentOppKey()) || '[]').filter(x => Date.now() - x.t < 180000); a.push({ uid, t: Date.now() }); localStorage.setItem(_recentOppKey(), JSON.stringify(a.slice(-4))); } catch(e){}
+}
+// Dodge protection: leaving a found match early adds a short, escalating requeue wait.
+function _dodgeKey(){ return 'rosham_dodge_' + (state.user?.uid || 'anon'); }
+function dodgeState(){ try { return JSON.parse(localStorage.getItem(_dodgeKey()) || '{"n":0,"until":0}'); } catch(e){ return { n: 0, until: 0 }; } }
+function dodgeCooldownLeft(){ return Math.max(0, Math.ceil((dodgeState().until - Date.now()) / 1000)); }
+function recordDodge(){
+  const d = dodgeState(); const now = Date.now();
+  if(now > (d.until || 0) + 180000) d.n = 0;               // long since the last dodge → reset
+  d.n = Math.min(5, (d.n || 0) + 1);
+  const secs = [0, 8, 18, 35, 70, 120][d.n] || 120;
+  d.until = now + secs * 1000;
+  try { localStorage.setItem(_dodgeKey(), JSON.stringify(d)); } catch(e){}
+  return secs;
+}
+function easeDodge(){ const d = dodgeState(); d.n = Math.max(0, (d.n || 0) - 1); try { localStorage.setItem(_dodgeKey(), JSON.stringify(d)); } catch(e){} }
+// A friendly wait estimate from the live queue size.
+function estQueueWait(n){ n = n || 0; if(n <= 1) return '~30s'; if(n <= 3) return '~15s'; if(n <= 8) return '~8s'; return '~5s'; }
+
 async function findMatch(){
   if(!state.user || !state.cameraReady) return;
+  // Dodge protection — a recent early-leave adds a brief requeue delay.
+  state._pairBlockUntil = dodgeState().until || 0;
   // Two tabs share one camera + one queue entry — that combination produces
   // ghost matches. Warn (don't block — the other tab may just be a leftover).
   try {
@@ -35642,38 +35759,68 @@ async function findMatch(){
     try {
       const qSnap = await getDocs(collection(state.db, 'queue'));
       const now = Date.now();
+      // Dodge cooldown gate — a recent early-leave holds pairing for a beat.
+      const cdLeft = Math.max(0, Math.ceil(((state._pairBlockUntil || 0) - now) / 1000));
+      if(cdLeft > 0){
+        $('#matchFeed').innerHTML = `<span class="blink">●</span> brief cooldown · pairing in ${cdLeft}s`;
+        setText('#mmBand', 'COOLDOWN'); setText('#mmPos', '—');
+        return;
+      }
       const others = [];
+      let myEntry = null, freshCount = 0;
+      const joinMs = e => (e?.joinedAt?.toMillis ? e.joinedAt.toMillis() : (e?.lastBeat || 0));
       qSnap.forEach(d => {
-        if(d.id === uid) return;
         const o = d.data();
         if(!o || !o.uid) return;
         const beat = o.lastBeat || 0;
-        if(now - beat > STALE_MS){
-          console.log('[match] skipping stale entry:', o.uid, 'age=', now-beat);
-          return;
-        }
+        if(now - beat > STALE_MS) return;                 // stale entry
+        freshCount++;
+        if(d.id === uid){ myEntry = o; return; }
         if(state.profile.blocked?.includes(o.uid)) return;
         if(o.blocked?.includes(uid)) return;
         others.push(o);
       });
 
-      console.log(`[match] scan attempt ${attempts}: found ${others.length} candidates`);
+      // Live "position in line" (by join order among fresh entries) + est wait.
+      const myJoin = joinMs(myEntry) || (state._queueJoinedAt || now);
+      const ahead = others.filter(o => joinMs(o) && joinMs(o) < myJoin).length;
+      setText('#mmPos', '#' + (ahead + 1));
+      setText('#searchEta', estQueueWait(freshCount));
 
+      console.log(`[match] scan attempt ${attempts}: ${others.length} candidates, ${freshCount} in queue`);
       if(others.length === 0){
-        $('#matchFeed').innerHTML = `<span class="blink">●</span> waiting · ${attempts}s · be the first hand drawn`;
+        setText('#mmBand', 'OPEN');
+        $('#matchFeed').innerHTML = `<span class="blink">●</span> waiting for a challenger · ${attempts}s`;
         return;
       }
 
       const myRating = state.profile.rating || 1000;
-      let candidates = others.slice();
-      // No manual filters — always pair with the closest-rated opponent available.
-      candidates.sort((a,b) => Math.abs((a.rating||1000)-myRating) - Math.abs((b.rating||1000)-myRating));
-      if(candidates.length === 0){
-        $('#matchFeed').innerHTML = `<span class="blink">●</span> expanding search · ${attempts}s · ${others.length} in queue`;
+      // SKILL-BANDED matching that WIDENS the longer you wait: start tight, open up.
+      const band = Math.min(650, 90 + attempts * 45);
+      setText('#mmBand', '±' + band);
+      const inBand = others.filter(o => Math.abs((o.rating || 1000) - myRating) <= band);
+      let pool = inBand.length ? inBand : others;         // nothing in band yet → consider all
+      // Recent-opponent cooldown — skip an immediate rematch unless the pool is thin
+      // or we've been waiting a while.
+      if(attempts < 9 && pool.length > 1){
+        const recent = getRecentOpponents();
+        const notRecent = pool.filter(o => !recent.has(o.uid));
+        if(notRecent.length) pool = notRecent;
+      }
+      // Region preference — same country first for the first few attempts (lower ping),
+      // then widen to worldwide so nobody waits forever.
+      const myCountry = state.profile.country || '';
+      if(attempts < 5 && myCountry && myCountry !== 'XX'){
+        const sameRegion = pool.filter(o => (o.country || '') === myCountry);
+        if(sameRegion.length) pool = sameRegion;
+      }
+      pool.sort((a, b) => Math.abs((a.rating || 1000) - myRating) - Math.abs((b.rating || 1000) - myRating));
+      const opp = pool[0];
+      if(!opp){
+        $('#matchFeed').innerHTML = `<span class="blink">●</span> expanding search · ±${band} ELO · ${others.length} nearby`;
         return;
       }
-
-      const opp = candidates[0];
+      $('#matchFeed').innerHTML = `<span class="blink">●</span> opponent found · ±${band} ELO`;
 
       // DETERMINISTIC: only the player with LOWER uid creates the match doc.
       // The higher-uid player just waits for the listener to fire.
@@ -35951,6 +36098,25 @@ async function showMatchFound(){
   setText('#mfH2HOppWins', h2hOpp);
   setText('#mfH2HLabel', h2hLabel);
 
+  // RANK-REVEAL FLOURISH — a rank-gap tag + a stamped-in reveal on the opp crest.
+  try {
+    const gapEl = $('#mfGap');
+    if(gapEl){
+      if(state.isBotMatch || youUnranked || oppUnranked){ gapEl.style.display = 'none'; }
+      else {
+        const gap = Math.abs((state.profile.rating || 1000) - (o.rating || 1000));
+        gapEl.style.display = '';
+        if(myRank.id === oRank.id){ gapEl.className = 'mf-gap even'; gapEl.textContent = '⚖ EVENLY MATCHED'; }
+        else if(gap >= 400){ gapEl.className = 'mf-gap wide'; gapEl.textContent = `⚡ ${gap} ELO GAP · UPSET?`; }
+        else { gapEl.className = 'mf-gap'; gapEl.textContent = `${gap} ELO apart`; }
+      }
+    }
+    const oppRankEl = $('#mfOppRankIcon');
+    if(oppRankEl){ oppRankEl.classList.remove('mf-rank-reveal'); void oppRankEl.getBoundingClientRect(); oppRankEl.classList.add('mf-rank-reveal'); }
+    const oppTierEl = $('#mfOppTier');
+    if(oppTierEl){ oppTierEl.classList.remove('mf-tier-reveal'); void oppTierEl.getBoundingClientRect(); oppTierEl.classList.add('mf-tier-reveal'); }
+  } catch(e){}
+
   $('#mfFeed').textContent = state.isBotMatch ? 'warming up the bot…' : 'establishing connection…';
 
   // Animate progress bar to indicate connection in progress
@@ -35986,6 +36152,30 @@ async function cancelMatchmaking(){
   showScreen('landing');
 }
 
+// CONNECTION PRE-CHECK — a quiet, throwaway ICE-gathering probe that runs once
+// per session after the camera is ready. If neither a STUN reflexive nor a TURN
+// relay candidate turns up, this network likely blocks P2P video, so we warn
+// BEFORE the player queues ranked (rather than failing to connect mid-match).
+async function runConnectionPrecheck(){
+  if(state._connCheckDone) return; state._connCheckDone = true;
+  let pc = null;
+  try {
+    pc = new RTCPeerConnection(RTC_CONFIG);
+    pc.createDataChannel('probe');
+    let ok = false;
+    pc.onicecandidate = (e) => {
+      const c = e.candidate?.candidate || '';
+      if(c.indexOf('srflx') >= 0 || c.indexOf('relay') >= 0) ok = true;
+    };
+    await pc.setLocalDescription(await pc.createOffer());
+    await new Promise(r => setTimeout(r, 4500));   // let candidates gather
+    if(!ok && state.screen !== 'game'){
+      toast('⚠ Your network may block peer-to-peer video — ranked matches could fail to connect. Wi-Fi tends to work better than strict work/VPN networks.', 'info', { duration: 9000 });
+    }
+  } catch(e){ /* best-effort */ }
+  finally { try { pc && pc.close(); } catch(e){} }
+}
+
 // ============= WEBRTC =============
 const RTC_CONFIG = {
   iceServers: [
@@ -36009,11 +36199,15 @@ async function enterMatch(matchData){
   // you can't farm rating off a friend). This is made clear on the VS + result UI.
   state.isCasual = (matchData && (matchData.mode === 'casual' || matchData.mode === 'challenge'));
   state._rematchStreak = 0;   // fresh opponent → reset the rematch counter
+  // Remember this opponent so ranked won't immediately rematch us with them.
+  try { if(!state.isBotMatch && !state.isCasual) pushRecentOpponent(state.oppUid); } catch(e){}
   state.oppProfile = state.isCaller ? matchData.calleeProfile : matchData.callerProfile;
   // Let friends see you're in a match (presence) — fire-and-forget.
   try { if(state.user) updateDoc(doc(state.db, 'users', state.user.uid), { inMatch: true }).catch(()=>{}); } catch(e){}
   showScreen('game');
   resetMatchUI();
+  try { setPrivacyPause(false); } catch(e){}
+  state._oppThrowCounts = {}; state._myThrowCounts = {}; state._readCallout = null;
   // PRE-MATCH READY-UP: once connected, both players see each other and must
   // press READY before the first round's gesture system arms.
   state._prematch = true;
@@ -36793,6 +36987,7 @@ function startReadySystem(){
 }
 function onGestureFrame(){
   if(state.screen !== 'game') return;
+  try { updateGestureConf(); } catch(e){}
   if(state._prematch) return;   // gesture-ready only arms after both press READY
   if(state.phase !== 'idle' && state.phase !== 'done') return;
   // NOTE: do NOT hard-gate on the data channel here. The charge meter must build
@@ -37302,6 +37497,23 @@ function applyRoundResult(result, yourMove, oppMove){
     predictionCorrect
   });
 
+  // "READ" CALLOUTS — did you win by countering their go-to move, or get predicted?
+  try {
+    state._readCallout = null;
+    const topOf = (c) => { let k = null, n = 0; for(const x in (c || {})){ if(c[x] > n){ n = c[x]; k = x; } } return { move: k, n }; };
+    state._oppThrowCounts = state._oppThrowCounts || {};
+    state._myThrowCounts = state._myThrowCounts || {};
+    const oppTopPrior = topOf(state._oppThrowCounts);
+    const myTopPrior = topOf(state._myThrowCounts);
+    if(!isDraw && result === 'win' && oppMove && oppTopPrior.move === oppMove && oppTopPrior.n >= 2){
+      state._readCallout = { icon: '🧠', text: 'You read them!' };
+    } else if(!isDraw && (result === 'lose' || result === 'forfeit') && yourMove && myTopPrior.move === yourMove && myTopPrior.n >= 2){
+      state._readCallout = { icon: '😅', text: 'You got predicted!' };
+    }
+    if(oppMove) state._oppThrowCounts[oppMove] = (state._oppThrowCounts[oppMove] || 0) + 1;
+    if(yourMove) state._myThrowCounts[yourMove] = (state._myThrowCounts[yourMove] || 0) + 1;
+  } catch(e){ state._readCallout = null; }
+
   if(!isDraw){
     if(result === 'win') state.scoreYou++;
     else if(result === 'lose' || result === 'forfeit') state.scoreOpp++;
@@ -37333,6 +37545,7 @@ function applyRoundResult(result, yourMove, oppMove){
   if(resultInner) resultInner.classList.remove('win','lose','draw');
 
   showRoundResultUI(result, yourMove, oppMove, predictionCorrect);
+  try { if(state._readCallout) showReadCallout(state._readCallout); } catch(e){}
 
   setText('#roundState', result === 'draw' ? 'DRAW — REPLAY' : (result === 'win' ? 'NICE THROW' : 'TOUGH ROUND'));
   state.phase = 'done';
@@ -37643,6 +37856,8 @@ function resetRoundIndicator(){
 async function endMatch(){
   if(state._endMatchCalled) return; // prevent double-call
   state._endMatchCalled = true;
+  // Finishing a match cleanly walks back any dodge penalty.
+  try { easeDodge(); } catch(e){}
 
   // The match can end during the ready-up phase (opponent left) — clear it.
   state._prematch = false;
@@ -37702,8 +37917,12 @@ function forfeitMatch(){
   // The match hasn't started during the ready-up phase — leaving is free, so
   // skip the -25 forfeit dialog entirely and just bail cleanly.
   if(state._prematch){
-    if(!state._preReadyOpp){ openStallLeave(); }   // opponent stalling → full explainer
-    else { leavePrematchFree(); }                   // both ready but you want out → quiet free leave
+    if(!state._preReadyOpp){ openStallLeave(); }   // opponent stalling → full explainer (no dodge)
+    else {
+      // Both were ready and you bailed → a dodge. Add a short escalating requeue wait.
+      try { const s = recordDodge(); if(s) toast(`Left a ready match — ${s}s cooldown before the next search`, 'info'); } catch(e){}
+      leavePrematchFree();
+    }
     return;
   }
   $('#surrenderModal')?.classList.add('show');
@@ -37906,7 +38125,15 @@ let updateMatchStats = async function(matchResult){
 
   // ===== XP / LEVEL PROGRESSION =====
   const streakAfter = matchResult === 'win' ? (state.profile.currentStreak || 0) + 1 : 0;
-  const firstWin = matchResult === 'win' && !state._sessionHadWin;
+  // "Firsts" of the day — persisted per calendar day so the bonus is a real daily
+  // first, not just the first of this browser session.
+  const _fwUid = state.user?.uid || 'anon';
+  const _today = (typeof getTodayKey === 'function') ? getTodayKey() : new Date().toDateString();
+  let firstWin = false, firstMatchOfDay = false;
+  try {
+    if(localStorage.getItem('rosham_firstmatch_' + _fwUid) !== _today){ firstMatchOfDay = true; localStorage.setItem('rosham_firstmatch_' + _fwUid, _today); }
+    if(matchResult === 'win' && localStorage.getItem('rosham_firstwin_' + _fwUid) !== _today){ firstWin = true; localStorage.setItem('rosham_firstwin_' + _fwUid, _today); }
+  } catch(e){ firstWin = matchResult === 'win' && !state._sessionHadWin; }
   const xpResult = calcMatchXp({
     result: matchResult,
     roundsWon: state.scoreYou || 0,
@@ -37914,6 +38141,9 @@ let updateMatchStats = async function(matchResult){
     correctPredictions: state._matchPredictionsCorrect || 0,
     streakAfter,
     firstWinOfSession: firstWin,
+    firstMatchOfDay,
+    myRating: state._preMatchRating || state.profile.rating || 1000,
+    oppRating: state.oppProfile?.rating || 1000,
   });
   if(matchResult === 'win') state._sessionHadWin = true;
   const oldTotalXp = state.profile.totalXp || 0;
@@ -43123,6 +43353,20 @@ on('#igsBlurRow', 'click', () => {
   $('#igsBlur')?.classList.toggle('off', !state._blurOpp);
   toast(state._blurOpp ? "Opponent's camera blurred" : 'Blur off', 'info');
   haptic(9);
+});
+// One-tap privacy pause — disables the outgoing video track (the opponent sees
+// black) and blurs your own preview. Detection pauses while it's on.
+function setPrivacyPause(on){
+  state._privacyPaused = !!on;
+  try { state.localStream?.getVideoTracks().forEach(t => { t.enabled = !on; }); } catch(e){}
+  try { $('#privacyOverlay')?.classList.toggle('show', !!on); } catch(e){}
+  try { $('#yourVideoWrap')?.classList.toggle('privacy-paused', !!on); } catch(e){}
+  try { $('#igsPrivacy')?.classList.toggle('off', !on); } catch(e){}
+}
+on('#igsPrivacyRow', 'click', () => {
+  setPrivacyPause(!state._privacyPaused);
+  toast(state._privacyPaused ? '🙈 Camera paused — the opponent sees black. Detection is paused too.' : 'Camera resumed', 'info', { duration: state._privacyPaused ? 5000 : 2500 });
+  try { haptic(9); } catch(e){}
 });
 function applyOppBlur(){
   try { $('#oppVideoWrap')?.classList.toggle('opp-blurred', !!state._blurOpp); } catch(e){}
