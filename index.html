@@ -4186,6 +4186,13 @@ body.low-power .ach-unlock-toast, body.low-power .ach-unlock-toast::before{ anim
 .ach-unlock-toast.maxlevel-card{ background: linear-gradient(135deg, rgba(255,211,61,.18), rgba(255,154,61,.05)), var(--surface); border-color: rgba(255,211,61,.5); box-shadow: 0 12px 32px rgba(0,0,0,.5), 0 0 26px rgba(255,211,61,.22); }
 .ach-unlock-toast.levelup-card .lu-kicker{ color: var(--mint); }
 .ach-unlock-toast .lu-card-badge{ width:42px; height:42px; font-size:19px; }
+/* "Next reward" teaser row inside the level-up card */
+.lu-next-reward{ display:flex; align-items:center; gap:7px; flex-wrap:wrap; margin-top:7px; padding-top:7px; border-top:1px solid rgba(255,255,255,.08); }
+.lunr-label{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.1em; color:var(--text-faint); }
+.lunr-chip{ font-family:var(--font-display); font-stretch:84%; font-weight:800; font-size:11.5px; color:var(--rc,#5dffba);
+  padding:2px 8px; border-radius:999px; background:color-mix(in srgb, var(--rc,#5dffba) 14%, transparent);
+  border:1px solid color-mix(in srgb, var(--rc,#5dffba) 42%, transparent); }
+.lunr-at{ font-family:var(--font-mono); font-size:9px; color:var(--text-dim); letter-spacing:.03em; }
 
 @media (max-width: 600px){
   .stats-grid{ grid-template-columns: repeat(2, 1fr); }
@@ -5227,6 +5234,65 @@ body.reduced-motion .mm-ring{ opacity:.25; }
 .mm-elapsed{ display:inline-flex; align-items:center; gap:6px; margin-top:12px; font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.04em; color:var(--text-faint); }
 .mm-elapsed b{ color:var(--text-dim); }
 .mm-elapsed svg{ opacity:.7; }
+/* ═══════════ MATCHMAKING v3 — premium search card ═══════════ */
+.mm-wrap{ justify-content:center; }
+.mm2-card{
+  position:relative; width:100%; max-width:440px; display:flex; flex-direction:column; align-items:center;
+  padding:16px 22px 24px; border-radius:26px; overflow:hidden;
+  background:
+    radial-gradient(120% 70% at 50% -6%, rgba(34,211,163,.14), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.012));
+  border:1px solid var(--line);
+  box-shadow:0 30px 70px -34px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.05);
+  animation:mm2CardIn .5s cubic-bezier(.2,.9,.3,1) both;
+}
+@keyframes mm2CardIn{ from{ opacity:0; transform:translateY(14px) scale(.98); } to{ opacity:1; transform:none; } }
+.mm2-top{ width:100%; display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+.mm2-live{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:10px; font-weight:900; letter-spacing:.15em; color:var(--mint); padding:5px 11px; border-radius:999px; background:rgba(34,211,163,.1); border:1px solid rgba(34,211,163,.35); }
+.mm2-livedot{ width:6px; height:6px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px var(--mint); animation:mm2Pulse 1.4s ease-in-out infinite; }
+@keyframes mm2Pulse{ 0%,100%{ opacity:1; transform:scale(1); } 50%{ opacity:.35; transform:scale(.65); } }
+.mm2-online{ font-family:var(--font-mono); font-size:11px; font-weight:700; color:var(--text-faint); display:inline-flex; align-items:center; gap:6px; }
+.mm2-online b{ color:var(--text); }
+.mm2-onlinedot{ width:6px; height:6px; border-radius:50%; background:var(--mint); box-shadow:0 0 7px var(--mint); }
+.mm2-card .mm-radar{ margin:2px auto 4px; width:clamp(150px,42vw,188px); height:clamp(150px,42vw,188px); }
+.mm2-card .mm-head{ margin-top:2px; }
+.mm2-card .mm-title{ font-size:clamp(24px,5.2vw,32px); }
+.mm2-card .mm-feed{ margin-top:7px; }
+/* skill-band visualizer — the ELO window widening as you wait */
+.mm2-band{ width:100%; margin-top:20px; }
+.mm2-band-head{ display:flex; align-items:baseline; justify-content:space-between; margin-bottom:7px; }
+.mm2-band-lbl{ font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.15em; color:var(--text-faint); }
+.mm2-band-val{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:18px; color:var(--mint); font-variant-numeric:tabular-nums; }
+.mm2-band-track{ position:relative; height:32px; border-radius:11px; overflow:hidden;
+  background:linear-gradient(90deg, rgba(95,201,255,.14), rgba(34,211,163,.14) 50%, rgba(255,94,200,.14)); border:1px solid var(--line); }
+.mm2-band-fill{ position:absolute; top:0; bottom:0; left:50%; width:26%; transform:translateX(-50%);
+  background:linear-gradient(90deg, transparent, rgba(34,211,163,.55) 50%, transparent); box-shadow:0 0 26px 2px rgba(34,211,163,.4);
+  transition:width .6s cubic-bezier(.2,.9,.3,1); }
+.mm2-band-you{ position:absolute; left:50%; top:0; bottom:0; width:2px; transform:translateX(-50%); z-index:2;
+  background:linear-gradient(180deg, #fff, rgba(255,255,255,.4)); box-shadow:0 0 10px rgba(255,255,255,.8); }
+.mm2-band-you i{ position:absolute; top:50%; left:50%; width:9px; height:9px; border-radius:50%; transform:translate(-50%,-50%); background:#fff; box-shadow:0 0 10px #fff; }
+.mm2-band-foot{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:6px; font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:.02em; color:var(--text-faint); }
+.mm2-band-foot #mmBandNote{ flex:1; color:var(--text-dim); text-align:center; }
+/* live feature chips */
+.mm2-chips{ display:flex; flex-wrap:wrap; justify-content:center; gap:7px; margin-top:16px; }
+.mm2-chip{ display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:999px; font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:.02em; color:var(--text-dim); background:rgba(255,255,255,.04); border:1px solid var(--line); transition:border-color .2s, background .2s; }
+.mm2-chip b{ color:var(--text); font-weight:900; }
+.mm2-chip svg{ opacity:.7; }
+.mm2-chip-eta b{ color:var(--mint); }
+.mm2-card .mm-tip{ margin-top:16px; }
+/* elapsed + cancel below the card */
+.mm2-foot{ width:100%; max-width:440px; display:flex; flex-direction:column; align-items:center; gap:12px; margin-top:18px; }
+.mm2-foot .mm-elapsed{ margin-top:0; }
+.mm2-foot .mm-actions{ margin-top:0; width:100%; }
+.mm2-foot .mm-cancel{ min-width:200px; }
+body.reduced-motion .mm2-card, body.low-power .mm2-card{ animation:none; }
+/* mobile: dissolve the card into the immersive full-bleed search */
+@media (max-width:600px){
+  .mm2-card{ background:none; border:none; box-shadow:none; padding:0 2px; max-width:400px; animation:none; }
+  .mm2-card .mm-radar{ width:min(64vw,260px); height:min(64vw,260px); margin:2vh auto 2px; }
+  .mm2-band{ margin-top:22px; }
+  .mm2-foot{ margin-top:20px; padding-bottom:88px; }
+}
 /* privacy pause overlay on your own video */
 .privacy-overlay{ position:absolute; inset:0; z-index:8; display:none; flex-direction:column; align-items:center; justify-content:center; gap:5px; text-align:center; padding:8px;
   background:rgba(8,6,14,.82); -webkit-backdrop-filter:blur(10px); backdrop-filter:blur(10px); color:#fff; border-radius:inherit; }
@@ -5244,6 +5310,19 @@ body.reduced-motion .mm-ring{ opacity:.25; }
 .gc-meter i{ display:block; height:100%; width:0; border-radius:999px; background:var(--gcc); transition:width .12s linear; }
 .gest-conf.locked{ border-color:var(--gcc); box-shadow:0 0 12px -4px var(--gcc); }
 .gest-conf.locked .gc-meter i{ box-shadow:0 0 8px var(--gcc); }
+/* Hand guard — "show one hand" / "hand not visible" nudge over the local cam */
+.hand-guard{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:16;
+  display:flex; align-items:center; gap:9px; padding:9px 15px; border-radius:12px; pointer-events:none;
+  font-family:var(--font-display); font-stretch:82%; font-weight:800; font-size:13px; letter-spacing:.01em; color:#fff;
+  background:rgba(10,8,16,.72); -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  border:1px solid var(--line-bright, var(--line)); box-shadow:0 12px 34px -18px rgba(0,0,0,.9);
+  animation:handGuardIn .18s ease both; max-width:82%; text-align:center; line-height:1.15; }
+.hand-guard.warn{ border-color:rgba(255,180,54,.55); color:#ffe1a6; background:rgba(28,18,6,.72); animation:handGuardIn .18s ease both, handGuardPulse 1.5s ease-in-out infinite; }
+.hand-guard .hg-ic{ font-size:20px; line-height:1; }
+@keyframes handGuardIn{ from{ opacity:0; transform:translate(-50%,-46%) scale(.92); } to{ opacity:1; transform:translate(-50%,-50%) scale(1); } }
+@keyframes handGuardPulse{ 0%,100%{ box-shadow:0 12px 34px -18px rgba(0,0,0,.9); } 50%{ box-shadow:0 0 22px -4px rgba(255,180,54,.4); } }
+body.reduced-motion .hand-guard, body.low-power .hand-guard{ animation:none !important; }
+@media (max-width:600px){ .hand-guard{ font-size:11.5px; padding:7px 12px; } .hand-guard .hg-ic{ font-size:17px; } }
 /* "read" callout after a round */
 .read-callout{ position:fixed; top:23%; left:50%; transform:translate(-50%, -8px) scale(.9); z-index:120; pointer-events:none; opacity:0;
   display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px;
@@ -5310,11 +5389,8 @@ body.reduced-motion :is(.mf-gap, .mf-rank-reveal, .mf-tier-reveal), body.low-pow
   .mm-title{ font-size:clamp(28px, 8.2vw, 40px); }
   .mm-feed{ font-size:13px; margin-top:9px; letter-spacing:.02em; }
 
-  /* tip + stats fused into one cohesive glass status panel */
-  .mm-tip{ margin-top:26px; width:100%; max-width:380px; justify-content:flex-start; text-align:left; padding:13px 16px; font-size:13px; border-radius:18px 18px 0 0; border-bottom-color:transparent; }
-  .mm-stats{ margin-top:0; width:100%; max-width:380px; justify-content:space-around; border-radius:0 0 18px 18px; border-top:none; }
-  .mm-stat{ flex:1; padding:14px 8px; }
-  .mm-stat-v{ font-size:21px; }
+  /* standalone glass tip card */
+  .mm2-card .mm-tip{ margin-top:16px; width:100%; justify-content:flex-start; text-align:left; padding:12px 15px; font-size:13px; border-radius:16px; }
 
   /* thumb-friendly cancel bar pinned to the bottom */
   .mm-actions{
@@ -9248,7 +9324,12 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
   font-weight: 800;
   color: #ffb347;
   letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  display: inline-block;
 }
+.mxp-gain.cu-pop{ animation: mxpGainPop .4s cubic-bezier(.2,1.7,.4,1); }
+@keyframes mxpGainPop{ 0%{ transform:scale(1); } 45%{ transform:scale(1.18); text-shadow:0 0 14px rgba(255,179,71,.7); } 100%{ transform:scale(1); } }
+body.reduced-motion .mxp-gain.cu-pop{ animation:none; }
 .mxp-bar{
   height: 7px;
   background: rgba(0,0,0,.3);
@@ -9506,6 +9587,24 @@ body.reduced-motion .match-result-card-v2 *{ animation-duration:.01s !important;
   70%{ transform: scale(1.08); }
   100%{ transform: scale(1); }
 }
+/* SUDDEN DEATH — the countdown & stage go molten gold for the golden round */
+.countdown.golden{
+  background:linear-gradient(180deg, #fff7cc 0%, #ffd700 40%, #ffae00 75%, #ff7a00 100%);
+  -webkit-background-clip:text; background-clip:text;
+  filter: drop-shadow(0 0 34px rgba(255,215,0,.6)) drop-shadow(0 0 70px rgba(255,140,0,.45));
+}
+.countdown.golden.shoot{
+  background:linear-gradient(180deg, #fff 0%, #ffd700 45%, #ff8c00 100%);
+  -webkit-background-clip:text; background-clip:text;
+  filter: drop-shadow(0 0 44px rgba(255,215,0,.8)) drop-shadow(0 0 110px rgba(255,255,255,.45));
+}
+body.sudden-death #screen-game::after{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:1;
+  box-shadow: inset 0 0 200px -40px rgba(255,180,0,.35);
+  animation: suddenDeathPulse 2.2s ease-in-out infinite;
+}
+@keyframes suddenDeathPulse{ 0%,100%{ opacity:.5; } 50%{ opacity:1; } }
+body.sudden-death.reduced-motion #screen-game::after, body.sudden-death.low-power #screen-game::after{ animation:none; opacity:.6; }
 
 /* Stage lights radiating from the countdown */
 .stage-lights{
@@ -13395,6 +13494,10 @@ input:focus, select:focus, textarea:focus{
 .cgt.done{ animation:cgtPop .4s cubic-bezier(.2,1.6,.4,1); box-shadow:0 0 20px -10px var(--mint-glow); }
 @keyframes cgtPop{ 0%{ transform:scale(.92); } 60%{ transform:scale(1.06); } 100%{ transform:scale(1); } }
 .calib-step .btn{ min-height:46px; }
+.calib-tip{ font-family:var(--font-body); font-size:12px; line-height:1.5; color:var(--text-dim);
+  background:rgba(95,201,255,.06); border:1px solid rgba(95,201,255,.22); border-radius:12px;
+  padding:10px 13px; max-width:360px; margin-bottom:14px; text-align:left; }
+.calib-tip b{ color:var(--text); }
 
 /* ---------- PROFILE v2 — cinematic header + richer sections ---------- */
 .profile-modal .pm-banner{ height:148px; }
@@ -14558,11 +14661,32 @@ body.low-power .pm-rankprog .ui-bar-fill::after, body.reduced-motion .pm-rankpro
 .phr-icon-glow{ position:absolute; inset:-14%; border-radius:50%; filter:blur(15px); opacity:.55; }
 .phr-icon{ position:relative; z-index:1; width:64px; height:64px; filter:drop-shadow(0 6px 14px rgba(0,0,0,.55)); }
 .phr-info{ flex:1; min-width:0; display:flex; flex-direction:column; gap:5px; }
-.phr-tier{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:20px; line-height:1; letter-spacing:-.01em; text-transform:uppercase; }
+.phr-tier{ font-family:var(--font-display); font-stretch:72%; font-weight:800; font-size:20px; line-height:1; letter-spacing:-.01em; text-transform:uppercase; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+.phr-pct{
+  font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.05em;
+  text-transform:none; padding:2px 7px; border-radius:999px; line-height:1.4;
+  background:rgba(255,255,255,.05); border:1px solid var(--line);
+  filter:saturate(1.15);
+}
 .phr-elo{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); letter-spacing:.04em; }
 .phr-elo b{ color:var(--text); }
 .phr-bar{ height:7px; border-radius:999px; margin-top:2px; }
 .phr-next{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); letter-spacing:.04em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.phr-track{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:1px; }
+.phr-track-item{ font-family:var(--font-mono); font-size:10px; color:var(--text-dim); letter-spacing:.03em; }
+.phr-track-item b{ color:var(--text); font-weight:700; }
+.phr-track-item .pt-dim{ color:var(--text-faint); }
+.phr-track-sep{ color:var(--text-faint); font-size:10px; opacity:.6; }
+.phr-nudge{
+  margin-top:3px; align-self:flex-start;
+  font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.03em;
+  padding:4px 9px; border-radius:8px; line-height:1.3;
+  color:#ffe98a; background:linear-gradient(135deg, rgba(255,211,61,.14), rgba(255,138,61,.1));
+  border:1px solid rgba(255,211,61,.28);
+  animation:phrNudgePulse 2.4s ease-in-out infinite;
+}
+.phr-nudge b{ color:#fff; }
+@keyframes phrNudgePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,211,61,.0); } 50%{ box-shadow:0 0 14px -2px rgba(255,211,61,.35); } }
 .phr-view{
   display:inline-flex; align-items:center; gap:5px; margin-top:4px; align-self:flex-start;
   font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
@@ -22714,10 +22838,19 @@ const FIREBASE_CONFIG = {
                 <svg id="playRankIcon" class="phr-icon"></svg>
               </div>
               <div class="phr-info">
-                <div class="phr-tier" id="playRankTier">Bronze I</div>
+                <div class="phr-tier">
+                  <span id="playRankTier">Bronze I</span>
+                  <span class="phr-pct" id="playRankPct" style="display:none;"></span>
+                </div>
                 <div class="phr-elo"><span id="playRankRating">1000</span> ELO · <b id="playRankWR">—</b> WR</div>
                 <div class="ui-bar phr-bar"><div class="ui-bar-fill" id="playRankFill" style="width:0%;"></div></div>
                 <div class="phr-next" id="playRankNext">—</div>
+                <div class="phr-track" id="playRankTrack">
+                  <span class="phr-track-item" id="playRankTrackRank"></span>
+                  <span class="phr-track-sep">·</span>
+                  <span class="phr-track-item" id="playRankTrackLvl"></span>
+                </div>
+                <div class="phr-nudge" id="playRankNudge" style="display:none;"></div>
                 <span class="phr-view">View rank progress <svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-arrow-right"/></svg></span>
               </div>
             </div>
@@ -23410,35 +23543,55 @@ const FIREBASE_CONFIG = {
     <!-- ====== MATCHING ====== -->
     <section class="screen" id="screen-matching">
       <div class="match-wrap mm-wrap" id="matchSearchView">
-        <!-- Animated radar: expanding rings + sweeping beam, your avatar at center -->
-        <div class="mm-radar">
-          <span class="mm-ring"></span><span class="mm-ring d2"></span><span class="mm-ring d3"></span>
-          <span class="mm-sweep"></span>
-          <div class="mm-core">
-            <div class="mm-core-av" id="mmAvatar">?</div>
+        <div class="mm2-card">
+          <!-- top status strip -->
+          <div class="mm2-top">
+            <span class="mm2-live"><i class="mm2-livedot"></i> SEARCHING</span>
+            <span class="mm2-online"><span class="mm2-onlinedot"></span><b id="queueSize">—</b> online</span>
           </div>
-          <span class="mm-blip b1"></span><span class="mm-blip b2"></span><span class="mm-blip b3"></span>
+
+          <!-- radar hero: your avatar at the centre of an expanding scan -->
+          <div class="mm-radar">
+            <span class="mm-ring"></span><span class="mm-ring d2"></span><span class="mm-ring d3"></span>
+            <span class="mm-sweep"></span>
+            <div class="mm-core"><div class="mm-core-av" id="mmAvatar">?</div></div>
+            <span class="mm-blip b1"></span><span class="mm-blip b2"></span><span class="mm-blip b3"></span>
+          </div>
+
+          <div class="mm-head">
+            <h2 class="mm-title">FINDING OPPONENT<span class="mm-dots"><i>.</i><i>.</i><i>.</i></span></h2>
+            <div class="mm-feed" id="matchFeed">scanning the globe…</div>
+          </div>
+
+          <!-- SKILL-BAND VISUALIZER — the ELO window that widens as you wait -->
+          <div class="mm2-band">
+            <div class="mm2-band-head"><span class="mm2-band-lbl">MATCH RANGE</span><span class="mm2-band-val" id="mmBand">±90</span></div>
+            <div class="mm2-band-track">
+              <span class="mm2-band-fill" id="mmBandFill"></span>
+              <span class="mm2-band-you"><i></i></span>
+            </div>
+            <div class="mm2-band-foot"><span>◄ lower ELO</span><span id="mmBandNote">widening the net as you wait…</span><span>higher ELO ►</span></div>
+          </div>
+
+          <!-- live feature chips -->
+          <div class="mm2-chips">
+            <span class="mm2-chip" id="mmRegionChip">🌍 Worldwide</span>
+            <span class="mm2-chip"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-people"/></svg> Spot <b id="mmPos">#1</b></span>
+            <span class="mm2-chip mm2-chip-eta"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-clock"/></svg> <b id="searchEta">~15s</b> wait</span>
+          </div>
+
+          <!-- rotating pro-tip -->
+          <div class="mm-tip" id="mmTip"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-zap"/></svg> <span id="mmTipText">Hold a clear gesture before the timer ends.</span></div>
+
+          <div id="matchDebug" style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); width:100%; text-align:left; padding:8px 12px; margin-top:12px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2); display:none; white-space:pre-wrap; max-height:140px; overflow-y:auto;"></div>
         </div>
 
-        <div class="mm-head">
-          <h2 class="mm-title">FINDING OPPONENT<span class="mm-dots"><i>.</i><i>.</i><i>.</i></span></h2>
-          <div class="mm-feed" id="matchFeed">scanning the globe…</div>
-        </div>
-
-        <!-- Rotating pro-tip while you wait -->
-        <div class="mm-tip" id="mmTip"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-zap"/></svg> <span id="mmTipText">Hold a clear gesture before the timer ends.</span></div>
-
-        <div class="mm-stats">
-          <div class="mm-stat"><span class="mm-stat-v" id="queueSize">—</span><span class="mm-stat-l">in queue</span></div>
-          <div class="mm-stat"><span class="mm-stat-v" id="searchEta">~15s</span><span class="mm-stat-l">est. wait</span></div>
-          <div class="mm-stat"><span class="mm-stat-v" id="mmPos">#1</span><span class="mm-stat-l">your spot</span></div>
-          <div class="mm-stat"><span class="mm-stat-v" id="mmBand">±90</span><span class="mm-stat-l">skill band</span></div>
-        </div>
-        <div class="mm-elapsed"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-clock"/></svg> searching <b id="searchElapsed">0s</b></div>
-
-        <div id="matchDebug" style="font-family:var(--font-mono); font-size:10px; color:var(--text-faint); max-width:380px; text-align:left; padding:8px 12px; border:1px solid var(--line); border-radius:8px; background:var(--surface-2); display:none; white-space:pre-wrap; max-height:140px; overflow-y:auto;"></div>
-        <div class="mm-actions">
-          <button class="btn btn-ghost mm-cancel" id="cancelMatchBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg> Cancel search</button>
+        <!-- elapsed + cancel -->
+        <div class="mm2-foot">
+          <span class="mm-elapsed"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-clock"/></svg> searching <b id="searchElapsed">0s</b></span>
+          <div class="mm-actions">
+            <button class="btn btn-ghost mm-cancel" id="cancelMatchBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg> Cancel search</button>
+          </div>
         </div>
       </div>
 
@@ -23667,6 +23820,8 @@ const FIREBASE_CONFIG = {
           <div class="privacy-overlay" id="privacyOverlay"><svg viewBox="0 0 24 24" width="26" height="26"><use href="#i-eye-off"/></svg><span>Camera paused</span><small>Tap "Pause my camera" to resume</small></div>
           <!-- gesture confidence read-out -->
           <div class="gest-conf" id="gestConf" aria-hidden="true"><span class="gc-emoji" id="gcEmoji">✊</span><span class="gc-meter"><i id="gcBar"></i></span></div>
+          <!-- hand guard: clear prompt when no hand / two hands are visible -->
+          <div class="hand-guard" id="handGuard" style="display:none;"><span class="hg-ic" id="handGuardIc">✋</span><span class="hg-txt" id="handGuardTxt">Show one hand</span></div>
           <div class="ready-ring" id="youReadyRing">
             <div class="energy-field"></div>
             <div class="vignette"></div>
@@ -25814,6 +25969,7 @@ const FIREBASE_CONFIG = {
       <div class="calib-icon success"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-check"/></svg></div>
       <h3 class="calib-title">Calibration complete!</h3>
       <p class="calib-sub" id="calibDoneSummary">Camera and lighting verified. You're ready to throw hands.</p>
+      <div class="calib-tip">🪞 Your camera is <b>mirrored</b>, like a selfie — move your hand right, it goes right on screen. Either hand works; just show <b>one</b> clear shape.</div>
       <button class="btn btn-primary" id="calibFinish" style="width:100%;">Let's play</button>
     </div>
   </div>
@@ -26246,6 +26402,25 @@ function rankProgressToNext(rating){
   const progress = Math.max(0, Math.min(1, into / span));
   return { progress, toNext: nextT.threshold - rating, nextLabel: `${nextT.threshold - rating} to next` };
 }
+// Modeled rank distribution — the ladder skews low (most players cluster in
+// Bronze/Silver), so we CDF an asymmetric bell to turn a rating into a
+// "Top X%" standing. Purely cosmetic (no live population data), but stable and
+// monotonic so climbing always moves the number the right way.
+function ratingPercentileTop(rating){
+  // Logistic CDF fit: midpoint ~1150 (just above the 1000 start), spread ~560, so
+  // a fresh player sits near the middle and every climb visibly improves standing.
+  const mid = 1150, spread = 560;
+  const cdf = 1 / (1 + Math.exp(-(rating - mid) / spread)); // fraction at/below
+  let top = (1 - cdf) * 100; // percent of ladder above you
+  top = Math.max(0.1, Math.min(95, top));
+  return top;
+}
+// Human label — always "Top X%" (standard competitive framing, never demoralising).
+function rankPercentileLabel(rating){
+  const top = ratingPercentileTop(rating);
+  if(top < 1) return 'Top ' + top.toFixed(1) + '%';
+  return 'Top ' + Math.round(top) + '%';
+}
 
 // =================== XP / LEVEL / TITLE PROGRESSION ===================
 // Level 55 is the prestige cap — reaching it unlocks the (optional) Prestige.
@@ -26384,6 +26559,10 @@ const RARITY = {
 function titleRarity(t){ return RARITY[(t && t.rarity)] || RARITY.common; }
 function titlesUnlockedAt(level){
   return TITLES.filter(t => level >= t.level);
+}
+// The next title you'll unlock ABOVE a given level (for reward previews).
+function nextTitleAfterLevel(level){
+  return TITLES.find(t => t.level > level) || null;
 }
 // Prestige titles — earned by prestiging (one per prestige tier). Equippable.
 const PRESTIGE_TITLES = [
@@ -27888,21 +28067,67 @@ async function setupHands(){
 function onHandsResults(results){
   overlayCtx.clearRect(0,0,overlayCanvas.width, overlayCanvas.height);
   let conf = 0;
-  if(results.multiHandLandmarks && results.multiHandLandmarks.length){
-    if(state._showSkeleton !== false) drawLandmarks(results.multiHandLandmarks[0]);
-    const g = classifyGesture(results.multiHandLandmarks[0]);
-    setCurrentGesture(stabilizeGesture(g));
-    const hs = (results.multiHandedness && results.multiHandedness[0] && results.multiHandedness[0].score) || 0.85;
+  const nHands = (results.multiHandLandmarks && results.multiHandLandmarks.length) || 0;
+  state._handCount = nHands;
+  if(nHands){
+    // With two hands in frame it's ambiguous which is "the throw" — pick the
+    // larger (closer to camera) so a passer-by's hand doesn't hijack the read,
+    // but the guard still nags them to show only one.
+    let idx = 0;
+    if(nHands > 1){
+      let best = -1;
+      for(let i = 0; i < results.multiHandLandmarks.length; i++){
+        const lm = results.multiHandLandmarks[i];
+        const span = Math.abs(lm[0].x - lm[12].x) + Math.abs(lm[0].y - lm[12].y);
+        if(span > best){ best = span; idx = i; }
+      }
+    }
+    const chosen = results.multiHandLandmarks[idx];
+    if(state._showSkeleton !== false) drawLandmarks(chosen);
+    const g = classifyGesture(chosen);
+    // Two hands = treat as no clean read for readying up (never charge on it).
+    setCurrentGesture(nHands > 1 ? null : stabilizeGesture(g));
+    const hs = (results.multiHandedness && results.multiHandedness[idx] && results.multiHandedness[idx].score) || 0.85;
+    // Which hand (mirror-corrected label, for the clarity read-out).
+    state._handedness = (results.multiHandedness && results.multiHandedness[idx] && results.multiHandedness[idx].label) || null;
     // Hand present = solid base; a recognised gesture lifts it; a stable (committed)
     // gesture maxes it out — so the meter rewards holding a clear shape.
     conf = 0.42 * hs + (g ? 0.26 : 0) + (state.currentGesture ? 0.32 : 0);
-    try { updateHandZoom(results.multiHandLandmarks[0]); } catch(e){}
+    if(nHands > 1) conf *= 0.4;
+    try { updateHandZoom(chosen); } catch(e){}
   } else {
     setCurrentGesture(null);
+    state._handedness = null;
     try { updateHandZoom(null); } catch(e){}
   }
   state._handConfidence = (state._handConfidence || 0) * 0.6 + Math.min(1, conf) * 0.4;
   updateHandConfMeter(state._handConfidence);
+  try { updateHandGuard(); } catch(e){}
+}
+// Guard prompt — surfaces "show one hand" / "hand not visible" during the
+// ready-up window so a round never gets armed on a bad frame. It only shows
+// when we actually need a clean read (idle / armed pre-round), never mid-reveal.
+function updateHandGuard(){
+  const el = $('#handGuard'); if(!el) return;
+  const armed = state.screen === 'game'
+    && !state._privacyPaused && !state._prematch
+    && (state.phase === 'idle' || state.phase === 'countdown')
+    && !state.matchOver;
+  if(!armed){ el.style.display = 'none'; return; }
+  const n = state._handCount || 0;
+  const ic = $('#handGuardIc'); const tx = $('#handGuardTxt');
+  if(n === 0){
+    el.style.display = 'flex'; el.className = 'hand-guard warn';
+    if(ic) ic.textContent = '👀'; if(tx) tx.textContent = 'Hand not visible';
+  } else if(n > 1){
+    el.style.display = 'flex'; el.className = 'hand-guard warn';
+    if(ic) ic.textContent = '✋'; if(tx) tx.textContent = 'Show only one hand';
+  } else if(!state.currentGesture){
+    el.style.display = 'flex'; el.className = 'hand-guard';
+    if(ic) ic.textContent = '🤟'; if(tx) tx.textContent = 'Make a clear rock / paper / scissors';
+  } else {
+    el.style.display = 'none';
+  }
 }
 function updateHandConfMeter(c){
   const el = $('#handConf'); if(!el) return;
@@ -35763,7 +35988,9 @@ async function findMatch(){
       const cdLeft = Math.max(0, Math.ceil(((state._pairBlockUntil || 0) - now) / 1000));
       if(cdLeft > 0){
         $('#matchFeed').innerHTML = `<span class="blink">●</span> brief cooldown · pairing in ${cdLeft}s`;
-        setText('#mmBand', 'COOLDOWN'); setText('#mmPos', '—');
+        setText('#mmBand', `${cdLeft}s`); setText('#mmPos', '—');
+        setText('#mmBandNote', 'left a ready match — short cooldown');
+        const bfc = $('#mmBandFill'); if(bfc) bfc.style.width = '0%';
         return;
       }
       const others = [];
@@ -35790,6 +36017,8 @@ async function findMatch(){
       console.log(`[match] scan attempt ${attempts}: ${others.length} candidates, ${freshCount} in queue`);
       if(others.length === 0){
         setText('#mmBand', 'OPEN');
+        const bf0 = $('#mmBandFill'); if(bf0) bf0.style.width = '100%';
+        setText('#mmBandNote', 'open to anyone — be the first drawn');
         $('#matchFeed').innerHTML = `<span class="blink">●</span> waiting for a challenger · ${attempts}s`;
         return;
       }
@@ -35798,6 +36027,8 @@ async function findMatch(){
       // SKILL-BANDED matching that WIDENS the longer you wait: start tight, open up.
       const band = Math.min(650, 90 + attempts * 45);
       setText('#mmBand', '±' + band);
+      const bandFill = $('#mmBandFill'); if(bandFill) bandFill.style.width = Math.max(18, Math.min(100, Math.round((band / 650) * 100))) + '%';
+      setText('#mmBandNote', band >= 650 ? 'searching every rank' : 'widening the net as you wait…');
       const inBand = others.filter(o => Math.abs((o.rating || 1000) - myRating) <= band);
       let pool = inBand.length ? inBand : others;         // nothing in band yet → consider all
       // Recent-opponent cooldown — skip an immediate rematch unless the pool is thin
@@ -35810,10 +36041,12 @@ async function findMatch(){
       // Region preference — same country first for the first few attempts (lower ping),
       // then widen to worldwide so nobody waits forever.
       const myCountry = state.profile.country || '';
+      let regionChip = '🌍 Worldwide';
       if(attempts < 5 && myCountry && myCountry !== 'XX'){
         const sameRegion = pool.filter(o => (o.country || '') === myCountry);
-        if(sameRegion.length) pool = sameRegion;
+        if(sameRegion.length){ pool = sameRegion; try { regionChip = `${flagOf(myCountry)} Your region`; } catch(e){ regionChip = '📍 Your region'; } }
       }
+      setText('#mmRegionChip', regionChip);
       pool.sort((a, b) => Math.abs((a.rating || 1000) - myRating) - Math.abs((b.rating || 1000) - myRating));
       const opp = pool[0];
       if(!opp){
@@ -37155,6 +37388,7 @@ function resetGameUI(){
   // Reset ready-up gesture snapshot — needs fresh recording each round
   state._readyUpGesture = null;
   state._readyUpGestureAt = null;
+  state._shootSnapshot = null;   // clear anti-late-swap lock for the new round
   $('#countdown').classList.remove('show','flash','shoot');
   const rd = $('#resultDisplay');
   rd.classList.remove('show');
@@ -37184,6 +37418,8 @@ function resetMatchUI(){
   { const fw = $('#fairplayWarn'); if(fw) fw.classList.remove('show'); }
   $('#inMatchSettings')?.classList.remove('show');
   state.matchOver = false;
+  state._suddenDeath = false;
+  try { document.body.classList.remove('sudden-death'); $('#countdown')?.classList.remove('golden'); } catch(e){}
   state.matchRoundsToWin = state.preferredBestOf ? Math.ceil(state.preferredBestOf / 2) : 2; // best of 3 default — may grow during overtime
   state._endMatchCalled = false; // reset for new match
   state._matchPredictionsCorrect = 0;
@@ -37300,7 +37536,10 @@ async function runCountdown(){
   ];
   const roundNum = state.scoreYou + state.scoreOpp + 1;
   const isFinal = roundNum >= state.matchRoundsToWin && (state.scoreYou === state.matchRoundsToWin - 1 || state.scoreOpp === state.matchRoundsToWin - 1);
-  if(isFinal){
+  if(state._suddenDeath){
+    cd.classList.add('golden');
+    showAnnouncer('⚡ SUDDEN DEATH — GOLDEN ROUND ⚡');
+  } else if(isFinal){
     showAnnouncer('FINAL ROUND — WINNER TAKES ALL!');
   } else {
     showAnnouncer(`ROUND ${roundNum} OF 3 — ${announceLines[Math.floor(Math.random()*announceLines.length)]}`);
@@ -37326,6 +37565,10 @@ async function runCountdown(){
   }
   state.phase = 'shoot';
   state._shootAt = Date.now();   // anti-cheat: reference point for throw timing
+  // ANTI-LATE-SWAP LOCK: snapshot the gesture held AT the shoot instant, before
+  // the opponent's cam is revealed. If you were holding a clear shape, that's
+  // what you're committed to — a swap after seeing their throw can't override it.
+  state._shootSnapshot = state.currentGesture || null;
   cd.textContent = 'SHOOT!';
   cd.classList.add('shoot');
   // Reveal the opponent's cam AT the shoot moment — you should see their throw
@@ -37340,7 +37583,9 @@ async function runCountdown(){
   burst(window.innerWidth/2, window.innerHeight*0.4, '#ff3d68', 40);
   try { haptic([26, 18, 46]); } catch(e){}
   await sleep(220);
-  state.myGesture = getGestureForShoot();
+  // Prefer the anti-late-swap snapshot (gesture at the shoot instant). Only fall
+  // back to live resolution when nothing clean was locked (MediaPipe lag / no hand).
+  state.myGesture = state._shootSnapshot || getGestureForShoot();
 
   // POST-SHOOT GRACE PERIOD: if we still don't have a gesture, wait up to 500ms
   // for one to come in. This catches edge cases where the hand was held up but
@@ -37561,12 +37806,17 @@ function applyRoundResult(result, yourMove, oppMove){
   // So: matchRoundsToWin=2 normally. If both reach 2, raise the bar to 3. Both reach 3? raise to 4. etc.
   // Implementation: matchRoundsToWin grows with the max score whenever the trailing player ties up.
   if(state.scoreYou >= state.matchRoundsToWin && state.scoreOpp >= state.matchRoundsToWin){
-    // Both have hit the current threshold — raise it by 1 (overtime)
+    // Both have hit the current threshold — raise it by 1 (overtime). Because a
+    // draw just replays, the next DECISIVE round wins it: true golden-goal
+    // sudden death. Flag it so the next round gets the golden treatment.
     state.matchRoundsToWin = Math.max(state.scoreYou, state.scoreOpp) + 1;
-    console.log('[match] OVERTIME — both at threshold, new target:', state.matchRoundsToWin);
+    state._suddenDeath = true;
+    console.log('[match] SUDDEN DEATH — both at threshold, new target:', state.matchRoundsToWin);
     // Visual signal of overtime (the score label tracks the live target too)
-    try { showAnnouncer('OVERTIME — FIRST TO ' + state.matchRoundsToWin); } catch(e){}
-    try { setText('#arenaScoreLabel', 'OT · FIRST TO ' + state.matchRoundsToWin); } catch(e){}
+    try { showAnnouncer('⚡ SUDDEN DEATH — NEXT ROUND WINS'); } catch(e){}
+    try { setText('#arenaScoreLabel', 'SUDDEN DEATH · GOLDEN ROUND'); } catch(e){}
+    try { document.body.classList.add('sudden-death'); } catch(e){}
+    try { haptic([30, 40, 30]); } catch(e){}
   }
 
   const matchOver = !isDraw && (
@@ -38067,7 +38317,11 @@ let updateMatchStats = async function(matchResult){
   const breakdown = [];
   const margin = (state.scoreYou || 0) - (state.scoreOpp || 0); // +2 = clean sweep
   const reads = state._matchPredictionsCorrect || 0;
-  const streakBefore = state.profile.currentStreak || 0;
+  // Streaks are directional. `currentStreak` is a WIN-only counter (it resets to 0
+  // on any loss), so it IS the win streak. Losses are tracked separately in
+  // `lossStreak` (added below) so forgiveness has an unambiguous source.
+  const winStreakBefore = state.profile.currentStreak || 0;
+  const lossStreakBefore = state.profile.lossStreak || 0;
   if(matchResult === 'win'){
     const winBase = eloWinBase(myRating);
     delta = winBase; breakdown.push({ label:'Win', amount:winBase });
@@ -38077,8 +38331,8 @@ let updateMatchStats = async function(matchResult){
     if(oppRating > myRating){ const up = Math.min(20, Math.round((oppRating - myRating) / 25)); if(up > 0){ delta += up; breakdown.push({ label:'Upset bonus', amount:up }); } }
     // Read bonus: outpredicting your opponent
     if(reads > 0){ const r = Math.min(10, reads * 3); delta += r; breakdown.push({ label:`${reads} read${reads>1?'s':''}`, amount:r }); }
-    // Win-streak bonus (compounds, capped)
-    if(streakBefore >= 2){ const sb = Math.min(15, (streakBefore) * 3); delta += sb; breakdown.push({ label:`${streakBefore+1}-win streak`, amount:sb }); }
+    // Win-streak bonus (compounds, capped) — rewards momentum
+    if(winStreakBefore >= 2){ const sb = Math.min(15, winStreakBefore * 3); delta += sb; breakdown.push({ label:`${winStreakBefore+1}-win streak`, amount:sb }); }
   } else if(matchResult === 'draw'){
     delta = 3; breakdown.push({ label:'Draw', amount:3 });
   } else {
@@ -38089,6 +38343,19 @@ let updateMatchStats = async function(matchResult){
     delta = base + cushion; breakdown.push({ label:'Loss', amount:base });
     if(cushion) breakdown.push({ label:'Tough opponent', amount:cushion });
     delta = Math.max(base - 2, delta);
+    // Loss-streak forgiveness — soften the spiral after 3+ losses in a row.
+    if(lossStreakBefore >= 3){ const relief = Math.min(9, (lossStreakBefore - 2) * 3); delta += relief; breakdown.push({ label:'Loss-streak relief', amount:relief }); }
+  }
+  // SOFT MMR / rating confidence — while your rating is still uncertain (few games
+  // played), gains and losses swing wider so you settle at your true rank faster;
+  // the multiplier eases from ~1.45× down to 1.0× by ~30 games.
+  const _gp = state.profile.games || 0;
+  if(_gp < 30 && matchResult !== 'draw'){
+    const confMult = 1 + 0.45 * (1 - _gp / 30);
+    const beforeConf = delta;
+    delta = Math.round(delta * confMult);
+    const swing = delta - beforeConf;
+    if(swing !== 0) breakdown.push({ label: (swing > 0 ? '↑' : '↓') + ' Calibrating rank', amount: swing });
   }
   // (Daily challenges pay level-scaled XP + tokens — they never touch ELO.)
   const newRating = Math.max(0, myRating + delta);
@@ -38118,9 +38385,13 @@ let updateMatchStats = async function(matchResult){
   if(matchResult === 'win'){
     const ns = (state.profile.currentStreak || 0) + 1;
     updates.currentStreak = ns;
+    updates.lossStreak = 0;
+    updates.streakType = 'W';
     if(ns > (state.profile.bestStreak || 0)) updates.bestStreak = ns;
   } else if(matchResult === 'lose'){
     updates.currentStreak = 0;
+    updates.lossStreak = increment(1);
+    updates.streakType = 'L';
   }
 
   // ===== XP / LEVEL PROGRESSION =====
@@ -38176,8 +38447,12 @@ let updateMatchStats = async function(matchResult){
     if(matchResult === 'win'){
       state.profile.currentStreak = (state.profile.currentStreak || 0) + 1;
       state.profile.bestStreak = Math.max(state.profile.bestStreak || 0, state.profile.currentStreak);
+      state.profile.lossStreak = 0;
+      state.profile.streakType = 'W';
     } else if(matchResult === 'lose'){
       state.profile.currentStreak = 0;
+      state.profile.lossStreak = (state.profile.lossStreak || 0) + 1;
+      state.profile.streakType = 'L';
     }
     // Apply XP locally
     state.profile.totalXp = newTotalXp;
@@ -38248,6 +38523,21 @@ let updateMatchStats = async function(matchResult){
   } catch(e){ console.warn('match stat update fail', e); }
 };
 
+// Animate the match XP total ticking up (respecting reduced-motion).
+function countUpXpGain(total){
+  const el = $('#mxpGain'); if(!el) return;
+  total = Math.max(0, Math.round(total || 0));
+  if(document.body.classList.contains('reduced-motion') || total <= 0){ el.textContent = `+${total} XP`; return; }
+  clearInterval(el._cuTimer);
+  const dur = 900, start = performance.now();
+  el._cuTimer = setInterval(() => {
+    const t = Math.min(1, (performance.now() - start) / dur);
+    // easeOutCubic
+    const v = Math.round(total * (1 - Math.pow(1 - t, 3)));
+    el.textContent = `+${v} XP`;
+    if(t >= 1){ clearInterval(el._cuTimer); el.textContent = `+${total} XP`; el.classList.remove('cu-pop'); void el.offsetWidth; el.classList.add('cu-pop'); }
+  }, 40);
+}
 // Populate the XP card on the match result screen using state._lastXpAward
 function populateMatchXpCard(){
   const card = $('#matchXpCard');
@@ -38264,7 +38554,9 @@ function populateMatchXpCard(){
   const oldL = award.oldLevel;
   const newL = award.newLevel;
   setText('#mxpLevelBadge', oldL.level); paintLevelBadge('#mxpLevelBadge', oldL.level);
-  setText('#mxpGain', `+${award.xp} XP`);
+  // Count the total up from 0 so it lands right as the breakdown chips finish
+  // popping in — the number and the reasons build together.
+  countUpXpGain(award.xp);
 
   // Title (equipped or highest unlocked at old level)
   let equipped = state.profile?.equippedTitle ? titleById(state.profile.equippedTitle) : TITLES[0];
@@ -39061,6 +39353,21 @@ function checkForfeitNotice(){
 // ============= LEVEL UP =============
 // Subtle, non-blocking level-up toast (slides in at the top, auto-dismisses).
 // Replaces the old full-screen overlay so it doesn't interrupt play.
+// "Coming up next" reward teaser on the level-up card — shows the next title
+// milestone and how many levels away it is, so climbing always has a visible goal.
+function levelUpRewardPreview(curLevel){
+  try {
+    const nt = nextTitleAfterLevel(curLevel);
+    if(!nt) return '';
+    const away = nt.level - curLevel;
+    const rar = titleRarity(nt);
+    return `<div class="lu-next-reward">
+      <span class="lunr-label">NEXT REWARD</span>
+      <span class="lunr-chip" style="--rc:${nt.color}">${escapeHTML(nt.name)}</span>
+      <span class="lunr-at">Lv ${nt.level} · ${away} ${away === 1 ? 'level' : 'levels'} away</span>
+    </div>`;
+  } catch(e){ return ''; }
+}
 function showLevelUp(info){
   if(!info) return;
   const stack = getPopupStack();
@@ -39078,7 +39385,8 @@ function showLevelUp(info){
        <div class="ach-unlock-desc">Open your profile to prestige &amp; earn a prestige title</div>`
     : `<div class="ach-unlock-kicker lu-kicker">▲ Level up</div>
        <div class="ach-unlock-title">Level ${info.to.level}</div>
-       ${titlesHTML || `<div class="ach-unlock-desc">You reached level ${info.to.level}</div>`}`;
+       ${titlesHTML || `<div class="ach-unlock-desc">You reached level ${info.to.level}</div>`}
+       ${levelUpRewardPreview(info.to.level)}`;
   card.innerHTML = `
     <div class="lut-badge lu-card-badge">${info.to.level}</div>
     <div class="ach-unlock-body">${body}</div>`;
@@ -41393,6 +41701,39 @@ function openChallengePicker(){
   });
 }
 
+// ===== Milestone notifications — one-time nudges for promotions/levels =====
+// Fires a toast at most once per (uid, milestone-key). localStorage-guarded so
+// it never nags on every render or across sessions.
+const MILESTONE_KEY = 'rosham_milestones_v1';
+function _milestoneSeen(){ try { return JSON.parse(localStorage.getItem(MILESTONE_KEY) || '{}'); } catch(e){ return {}; } }
+function _milestoneMark(k){ try { const s = _milestoneSeen(); s[k] = 1; localStorage.setItem(MILESTONE_KEY, JSON.stringify(s)); } catch(e){} }
+function maybeMilestoneToast(p, rating){
+  if(!p || inPlacements(p)) return;
+  const uid = (state.user && state.user.uid) || 'anon';
+  const seen = _milestoneSeen();
+  const rank = rankFromRating(rating);
+  const tierKey = uid + ':lastTier';
+  const lastTier = seen[tierKey];
+  // Promotion celebration — announce once when the tier index climbs.
+  if(lastTier != null && rank.index > lastTier){
+    toast(`⬆ Promoted to ${rank.tierName}!`, 'success');
+  }
+  // Always keep the stored tier index current.
+  if(lastTier !== rank.index){
+    const s = seen; s[tierKey] = rank.index;
+    try { localStorage.setItem(MILESTONE_KEY, JSON.stringify(s)); } catch(e){}
+  }
+  // "On the cusp" one-time nudge — within ~1 win of a promotion.
+  const prog = rankProgressToNext(rating);
+  if(prog.toNext > 0 && prog.toNext <= 18){
+    const cuspKey = uid + ':cusp:' + rank.index;
+    if(!seen[cuspKey]){
+      toast(`🔥 You're 1 win from ${rankFromRating(rating + 20).tierName}!`, 'info');
+      _milestoneMark(cuspKey);
+    }
+  }
+}
+
 // ===== PLAY PAGE render (rank + daily) =====
 function renderPlayPage(){
   if(!state.profile) return;
@@ -41417,10 +41758,63 @@ function renderPlayPage(){
     const prog = rankProgressToNext(rating);
     if(fill){ fill.style.width = (prog.progress*100)+'%'; fill.style.setProperty('--rank-color', rank.color); fill.style.setProperty('--rank-color-2', rank.color2 || rank.color); }
     setText('#playRankNext', prog.nextLabel);
+    // Rank distribution — a modeled "Top X%" standing next to the tier name.
+    const pctEl = $('#playRankPct');
+    if(pctEl){ pctEl.textContent = rankPercentileLabel(rating); pctEl.style.display = ''; pctEl.style.color = rank.color; }
   }
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games>0 ? Math.round(((p.wins||0)/games)*100) : 0;
   setText('#playRankWR', wr+'%');
+  // ---- Next-reward tracker: ELO/wins to next rank + XP to next level ----
+  const trackRank = $('#playRankTrackRank');
+  const trackLvl = $('#playRankTrackLvl');
+  const nudge = $('#playRankNudge');
+  if(trackRank){
+    if(inPlacements(p)){
+      trackRank.textContent = '';
+    } else {
+      const prog = rankProgressToNext(rating);
+      if(prog.toNext > 0){
+        // ~18 ELO per win at the average — a friendly "wins away" estimate.
+        const wins = Math.max(1, Math.ceil(prog.toNext / 18));
+        trackRank.innerHTML = `<b>${prog.toNext}</b> ELO <span class="pt-dim">(~${wins} ${wins===1?'win':'wins'})</span> to rank up`;
+      } else {
+        trackRank.innerHTML = `<b>Max rank</b> reached`;
+      }
+    }
+  }
+  if(trackLvl){
+    const lv = levelOf(p);
+    if(lv.level >= MAX_LEVEL){
+      trackLvl.innerHTML = canPrestige(p) ? `<b>Prestige</b> ready` : `<b>Lv ${lv.level}</b> · max`;
+    } else {
+      const toNext = Math.max(0, lv.xpForThis - lv.xpInLevel);
+      trackLvl.innerHTML = `<b>${toNext.toLocaleString()}</b> XP to Lv ${lv.level + 1}`;
+    }
+  }
+  // ---- Milestone nudge: on the cusp of a promotion ----
+  if(nudge){
+    let msg = '';
+    if(!inPlacements(p)){
+      const prog = rankProgressToNext(rating);
+      const winsToRank = prog.toNext > 0 ? Math.ceil(prog.toNext / 18) : 99;
+      if(winsToRank <= 1 && prog.toNext > 0){
+        msg = `🔥 <b>1 win</b> from ranking up — go for it!`;
+      } else if(winsToRank <= 2 && prog.toNext > 0){
+        msg = `⚡ Just <b>${winsToRank} wins</b> from the next rank`;
+      }
+    }
+    if(!msg){
+      const lv = levelOf(p);
+      if(lv.level < MAX_LEVEL){
+        const toNext = Math.max(0, lv.xpForThis - lv.xpInLevel);
+        if(toNext <= 200) msg = `✨ <b>${toNext} XP</b> from Level ${lv.level + 1}`;
+      }
+    }
+    if(msg){ nudge.innerHTML = msg; nudge.style.display = ''; }
+    else nudge.style.display = 'none';
+  }
+  try { maybeMilestoneToast(p, rating); } catch(e){}
   // Daily + weekly challenge cards (mounted on the play page too)
   try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
