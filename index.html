@@ -1241,6 +1241,241 @@ body.pd-fresh #dxpPill,
 body.pd-fresh #boostPill,
 body.pd-fresh .play-lower-grid .xpboost-panel{ display:none !important; }
 
+/* ═══════════════ RANK PAGE v3 — cinematic overhaul ═══════════════ */
+.rk2-top{ display:grid; grid-template-columns:1fr 330px; gap:14px; margin-bottom:14px; }
+.rk2-hero{
+  --rk:#c0c0c0; --rk2:#888;
+  position:relative; overflow:hidden; border-radius:22px;
+  border:1px solid var(--line-bright, var(--line));
+  background:
+    radial-gradient(120% 150% at 82% 30%, color-mix(in srgb, var(--rk) 16%, transparent), transparent 55%),
+    radial-gradient(90% 120% at 0% 100%, rgba(122,95,220,.14), transparent 60%),
+    linear-gradient(180deg, #14111f, #0d0b15);
+  padding:30px 32px 26px;
+  animation:rk2HeroIn .5s cubic-bezier(.2,.85,.3,1) both;
+}
+@keyframes rk2HeroIn{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:none; } }
+.rk2-hero-bg{ position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(60% 90% at 70% 110%, rgba(122,95,220,.22), transparent 65%); }
+.rk2-hero-peaks{ position:absolute; left:0; right:0; bottom:0; height:44%; pointer-events:none; opacity:.5;
+  background:
+    linear-gradient(115deg, transparent 44%, rgba(122,95,220,.16) 44.5%, rgba(20,16,34,.9) 47%, rgba(12,10,20,.95) 60%, transparent 60.5%),
+    linear-gradient(245deg, transparent 40%, rgba(95,60,180,.13) 40.5%, rgba(16,12,28,.92) 44%, rgba(10,8,18,.95) 62%, transparent 62.5%);
+}
+.rk2-hero-stars{ position:absolute; inset:0; pointer-events:none; }
+.rk2-hero-stars i{ position:absolute; width:3px; height:3px; border-radius:50%; background:rgba(255,255,255,.55);
+  animation:rk2Star linear infinite; opacity:0; }
+@keyframes rk2Star{ 0%,100%{ opacity:0; transform:translateY(0) scale(.6); } 50%{ opacity:.8; transform:translateY(-9px) scale(1); } }
+.rk2-hero-inner{ position:relative; display:flex; align-items:center; gap:26px; }
+.rk2-hero-left{ flex:1; min-width:0; }
+.rk2-eyebrow{ font-family:var(--font-mono); font-size:10.5px; font-weight:800; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--rk); filter:saturate(1.2) brightness(1.15); margin-bottom:8px; animation:rk2Rise .45s .06s cubic-bezier(.2,.85,.3,1) both; }
+.rk2-tier-row{ display:flex; align-items:center; gap:14px; flex-wrap:wrap; animation:rk2Rise .45s .12s cubic-bezier(.2,.85,.3,1) both; }
+.rk2-tier{
+  margin:0; font-family:var(--font-display); font-stretch:64%; font-weight:900; font-size:clamp(38px, 5vw, 58px);
+  line-height:.95; letter-spacing:-.015em; text-transform:uppercase;
+  background:linear-gradient(100deg, #fff 30%, color-mix(in srgb, var(--rk) 70%, #fff) 46%, #fff 60%);
+  background-size:220% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:rk2Sheen 5.5s ease-in-out infinite;
+}
+@keyframes rk2Sheen{ 0%, 62%, 100%{ background-position:0% 0; } 80%{ background-position:-120% 0; } }
+.rk2-elo-chip{ display:inline-flex; align-items:baseline; padding:7px 14px; border-radius:12px;
+  background:rgba(255,255,255,.05); border:1px solid var(--line-bright, var(--line));
+  font-family:var(--font-mono); font-size:12px; color:var(--text-dim); letter-spacing:.05em; }
+.rk2-elo-chip b{ color:var(--text); font-size:16px; font-variant-numeric:tabular-nums; }
+.rk2-tag{ margin:9px 0 20px; font-size:13.5px; color:var(--text-dim); animation:rk2Rise .45s .18s cubic-bezier(.2,.85,.3,1) both; }
+.rk2-next{ font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--rk); filter:brightness(1.2); margin-bottom:9px; animation:rk2Rise .45s .24s cubic-bezier(.2,.85,.3,1) both; }
+.rk2-bar{ position:relative; height:10px; border-radius:999px; background:rgba(255,255,255,.07); overflow:hidden;
+  border:1px solid rgba(255,255,255,.06); animation:rk2Rise .45s .28s cubic-bezier(.2,.85,.3,1) both; }
+.rk2-bar-fill{ position:relative; height:100%; width:0; border-radius:999px;
+  background:linear-gradient(90deg, var(--mint), #5fc9ff 55%, var(--rk));
+  box-shadow:0 0 14px -3px var(--rk);
+  transition:width 1.1s cubic-bezier(.2,.8,.2,1); }
+.rk2-bar-spark{ position:absolute; top:0; bottom:0; right:0; width:26px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.55)); filter:blur(1px);
+  animation:rk2Spark 2.4s ease-in-out infinite; }
+@keyframes rk2Spark{ 0%,100%{ opacity:.25; } 50%{ opacity:.9; } }
+.rk2-bar-range{ display:flex; justify-content:space-between; margin-top:7px;
+  font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); font-variant-numeric:tabular-nums;
+  animation:rk2Rise .45s .32s cubic-bezier(.2,.85,.3,1) both; }
+@keyframes rk2Rise{ from{ opacity:0; transform:translateY(9px); } to{ opacity:1; transform:none; } }
+/* crest */
+.rk2-crest{ position:relative; flex:0 0 auto; width:188px; height:188px; display:grid; place-items:center; }
+.rk2-crest-glow{ position:absolute; inset:-16%; border-radius:50%; filter:blur(26px); opacity:.5;
+  animation:rk2GlowPulse 3.6s ease-in-out infinite; }
+@keyframes rk2GlowPulse{ 0%,100%{ opacity:.38; transform:scale(.96); } 50%{ opacity:.62; transform:scale(1.05); } }
+.rk2-crest-ring, .rk2-crest-ring.r2{ position:absolute; inset:6%; border-radius:50%; pointer-events:none;
+  border:1.5px dashed color-mix(in srgb, var(--rk) 45%, transparent); animation:rk2Spin 26s linear infinite; }
+.rk2-crest-ring.r2{ inset:-3%; border-color:color-mix(in srgb, var(--rk) 22%, transparent); animation:rk2SpinRev 40s linear infinite; }
+@keyframes rk2Spin{ to{ transform:rotate(360deg); } }
+@keyframes rk2SpinRev{ to{ transform:rotate(-360deg); } }
+.rk2-crest-icon{ position:relative; width:140px; height:140px; filter:drop-shadow(0 14px 30px rgba(0,0,0,.6));
+  animation:rk2Float 5s ease-in-out infinite, rk2CrestIn .7s cubic-bezier(.15,1.5,.3,1) both; }
+@keyframes rk2Float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-8px); } }
+@keyframes rk2CrestIn{ 0%{ opacity:0; transform:scale(1.7) rotate(-10deg); filter:brightness(2.2); } 100%{ opacity:1; transform:none; } }
+/* season rail */
+.rk2-season{ position:relative; overflow:hidden; border-radius:22px; padding:22px 22px 20px;
+  border:1px solid rgba(164,139,255,.28);
+  background:
+    radial-gradient(130% 110% at 100% 0%, rgba(122,95,220,.28), transparent 58%),
+    linear-gradient(180deg, #16112a, #0e0b18);
+  display:flex; flex-direction:column; gap:7px;
+  animation:rk2HeroIn .5s .08s cubic-bezier(.2,.85,.3,1) both; }
+.rk2-season-glow{ position:absolute; top:-40%; right:-30%; width:75%; aspect-ratio:1; border-radius:50%;
+  background:radial-gradient(circle, rgba(164,139,255,.35), transparent 65%); filter:blur(20px);
+  animation:rk2GlowPulse 4.5s ease-in-out infinite; pointer-events:none; }
+.rk2-season-eyebrow{ font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:#c9b7ff; }
+.rk2-season-sub{ font-size:12.5px; color:var(--text-dim); }
+.rk2-season-days{ display:flex; align-items:baseline; gap:8px; margin:2px 0 4px; }
+.rk2-season-days b{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:46px; line-height:1; color:#e4d9ff;
+  text-shadow:0 0 24px rgba(164,139,255,.5); font-variant-numeric:tabular-nums; }
+.rk2-season-days span{ font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:#a48bff; }
+.rk2-season-bar{ margin:0 0 6px; }
+.rk2-season-btn{ display:inline-flex; align-items:center; gap:8px; align-self:flex-start; padding:9px 15px; border-radius:11px; cursor:pointer;
+  border:1px solid rgba(164,139,255,.45); background:rgba(164,139,255,.1); color:#d6c4ff;
+  font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:12.5px; letter-spacing:.02em;
+  transition:background .18s, border-color .18s, transform .15s, box-shadow .2s; }
+.rk2-season-btn:hover{ background:rgba(164,139,255,.2); border-color:#a48bff; transform:translateY(-1px); box-shadow:0 8px 22px -10px rgba(164,139,255,.6); }
+.rk2-season-btn:active{ transform:scale(.97); }
+/* milestone track */
+.rk2-track{ display:flex; align-items:center; gap:4px; margin-top:auto; padding-top:14px; }
+.rk2-track-node{ display:flex; flex-direction:column; align-items:center; gap:4px; flex:0 0 auto;
+  animation:rk2NodeIn .5s var(--d, 0ms) cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes rk2NodeIn{ from{ opacity:0; transform:scale(.4); } to{ opacity:1; transform:scale(1); } }
+.rk2-track-node svg{ width:22px; height:22px; color:#4a4560; filter:grayscale(1) opacity(.55); transition:filter .3s; }
+.rk2-track-node span{ font-family:var(--font-mono); font-size:8px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--text-faint); }
+.rk2-track-node.lit svg{ color:var(--tc); filter:none; }
+.rk2-track-node.lit span{ color:var(--text-dim); }
+.rk2-track-node.cur svg{ animation:rk2CurNode 2.2s ease-in-out infinite; filter:drop-shadow(0 0 7px var(--tc)); }
+@keyframes rk2CurNode{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.18); } }
+.rk2-track-line{ flex:1; height:2px; min-width:8px; border-radius:999px; background:rgba(255,255,255,.09); margin-bottom:13px; }
+.rk2-track-line.lit{ background:linear-gradient(90deg, rgba(164,139,255,.7), rgba(164,139,255,.25)); }
+/* stat strip */
+.rk2-stats{ display:grid; grid-template-columns:repeat(5, 1fr); gap:12px; margin-bottom:14px; }
+.rk2-stat{ --sc:var(--mint);
+  display:flex; align-items:center; gap:13px; padding:16px 16px; border-radius:16px;
+  background:var(--surface); border:1px solid var(--line);
+  transition:transform .18s, border-color .18s, box-shadow .22s;
+  animation:rk2Rise .5s calc(.08s + var(--i, 0) * 0s) both; }
+.rk2-stats .rk2-stat:nth-child(1){ animation-delay:.05s; } .rk2-stats .rk2-stat:nth-child(2){ animation-delay:.11s; }
+.rk2-stats .rk2-stat:nth-child(3){ animation-delay:.17s; } .rk2-stats .rk2-stat:nth-child(4){ animation-delay:.23s; }
+.rk2-stats .rk2-stat:nth-child(5){ animation-delay:.29s; }
+.rk2-stat:hover{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--sc) 45%, var(--line)); box-shadow:0 14px 30px -18px color-mix(in srgb, var(--sc) 60%, transparent); }
+.rk2-stat-ic{ flex:0 0 auto; width:46px; height:46px; border-radius:13px; display:grid; place-items:center;
+  color:var(--sc); background:color-mix(in srgb, var(--sc) 12%, transparent);
+  border:1px solid color-mix(in srgb, var(--sc) 26%, transparent); transition:transform .2s, box-shadow .25s; }
+.rk2-stat:hover .rk2-stat-ic{ transform:scale(1.1) rotate(-4deg); box-shadow:0 0 18px -6px var(--sc); }
+.rk2-stat-ic svg{ width:22px; height:22px; }
+.rk2-stat-txt{ min-width:0; }
+.rk2-stat-l{ font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); }
+.rk2-stat-v{ font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:25px; line-height:1.15; color:var(--sc); filter:saturate(1.1); font-variant-numeric:tabular-nums; }
+.rk2-stat-s{ font-size:10.5px; color:var(--text-faint); line-height:1.3; }
+/* three-panel grid */
+.rk2-grid{ display:grid; grid-template-columns:1.05fr 1.4fr 1fr; gap:14px; align-items:start; }
+.rk2-panel{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px 16px 14px; overflow:hidden; }
+.rk2-panel-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px; }
+.rk2-panel-head h3{ margin:0; font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:14.5px; letter-spacing:.1em; text-transform:uppercase;
+  background:linear-gradient(90deg, var(--mint), #a48bff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.rk2-hint{ font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint); letter-spacing:.04em; }
+.rk2-chip{ font-family:var(--font-mono); font-size:10px; font-weight:700; letter-spacing:.06em; padding:5px 11px; border-radius:999px;
+  background:rgba(255,255,255,.05); border:1px solid var(--line); color:var(--text-dim); }
+.rk2-viewall{ font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:6px 12px;
+  border-radius:9px; border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text-dim); cursor:pointer;
+  transition:color .15s, border-color .15s; }
+.rk2-viewall:hover{ color:var(--text); border-color:var(--line-bright, #3a3850); }
+/* ladder rows: entrance + current emphasis (extends existing .ladder-row) */
+.rk2-ladder-panel .rank-ladder{ max-height:560px; overflow-y:auto; overscroll-behavior:contain; padding-right:4px;
+  scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.14) transparent;
+  -webkit-mask-image:linear-gradient(180deg, #000 92%, transparent); mask-image:linear-gradient(180deg, #000 92%, transparent); }
+.rk2-ladder-panel .rank-ladder::-webkit-scrollbar{ width:6px; }
+.rk2-ladder-panel .rank-ladder::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.14); border-radius:999px; }
+@media (max-width:800px){ .rk2-ladder-panel .rank-ladder{ max-height:440px; } }
+.rk2-ladder-panel .ladder-row{ animation:rk2LadderIn .45s var(--d, 0ms) cubic-bezier(.2,.9,.3,1) both; }
+@keyframes rk2LadderIn{ from{ opacity:0; transform:translateX(-14px); } to{ opacity:1; transform:none; } }
+.rk2-ladder-panel .ladder-row.current{ box-shadow:0 0 0 1px var(--lr-accent), 0 10px 26px -16px var(--lr-accent); }
+.rk2-flash{ animation:rk2FlashKf 1.1s ease; }
+@keyframes rk2FlashKf{ 0%{ box-shadow:0 0 0 0 rgba(164,139,255,0); } 30%{ box-shadow:0 0 34px -4px rgba(164,139,255,.75); } 100%{ box-shadow:0 0 0 0 rgba(164,139,255,0); } }
+/* ELO chart */
+.rk2-chart{ position:relative; height:262px; }
+.rk2-chart-svg{ width:100%; height:100%; display:block; }
+.rk2-grid-line{ stroke:rgba(255,255,255,.06); stroke-width:1; }
+.rk2-axis{ fill:var(--text-faint); font-family:var(--font-mono); font-size:9px; }
+.rk2-line{ stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round;
+  stroke-dasharray:1; stroke-dashoffset:1; animation:rk2Draw 1.15s .15s cubic-bezier(.3,.7,.3,1) forwards;
+  filter:drop-shadow(0 3px 8px rgba(95,201,255,.35)); }
+@keyframes rk2Draw{ to{ stroke-dashoffset:0; } }
+.rk2-area{ opacity:0; animation:rk2AreaIn .7s .75s ease forwards; }
+@keyframes rk2AreaIn{ to{ opacity:1; } }
+.rk2-dot{ opacity:0; animation:rk2AreaIn .3s 1.1s ease forwards; }
+.rk2-dot-pulse{ opacity:0; stroke-width:2; animation:rk2DotPulse 2s 1.3s ease-out infinite; transform-origin:center; transform-box:fill-box; }
+@keyframes rk2DotPulse{ 0%{ opacity:.8; transform:scale(1); } 70%{ opacity:0; transform:scale(3.2); } 100%{ opacity:0; transform:scale(3.2); } }
+.rk2-chart-now{ position:absolute; transform:translateX(-50%); padding:4px 10px; border-radius:9px;
+  background:var(--rk, #a48bff); color:#0c0a12; font-family:var(--font-mono); font-size:11.5px; font-weight:800; font-variant-numeric:tabular-nums;
+  box-shadow:0 6px 18px -6px var(--rk, #a48bff); opacity:0; animation:rk2NowIn .4s 1.2s cubic-bezier(.2,1.6,.4,1) forwards; pointer-events:none; }
+.rk2-chart-now::after{ content:""; position:absolute; left:50%; bottom:-4px; transform:translateX(-50%) rotate(45deg); width:8px; height:8px; background:inherit; border-radius:2px; }
+@keyframes rk2NowIn{ from{ opacity:0; transform:translateX(-50%) translateY(6px) scale(.8); } to{ opacity:1; transform:translateX(-50%) translateY(0) scale(1); } }
+.rk2-chart-empty{ position:absolute; inset:0; display:grid; place-items:center; text-align:center; padding:20px;
+  color:var(--text-faint); font-size:13px; }
+/* recent matches */
+.rk2-matches{ display:flex; flex-direction:column; gap:9px; }
+.rk2-match{ display:flex; align-items:center; gap:12px; padding:11px 13px; border-radius:13px;
+  background:rgba(255,255,255,.025); border:1px solid var(--line); border-left-width:3px;
+  animation:rk2MatchIn .4s var(--d, 0ms) cubic-bezier(.2,.9,.3,1) both;
+  transition:transform .15s, background .18s; }
+.rk2-match:hover{ transform:translateX(3px); background:rgba(255,255,255,.045); }
+@keyframes rk2MatchIn{ from{ opacity:0; transform:translateX(12px); } to{ opacity:1; transform:none; } }
+.rk2-match.win{ border-left-color:var(--mint); background:linear-gradient(90deg, rgba(34,211,163,.09), rgba(255,255,255,.02) 55%); }
+.rk2-match.loss{ border-left-color:var(--coral); background:linear-gradient(90deg, rgba(255,51,88,.09), rgba(255,255,255,.02) 55%); }
+.rk2-match.draw{ border-left-color:#8a8fa3; }
+.rk2-match-ic{ flex:0 0 auto; width:36px; height:36px; border-radius:11px; display:grid; place-items:center; }
+.rk2-match.win .rk2-match-ic{ color:var(--mint); background:rgba(34,211,163,.12); }
+.rk2-match.loss .rk2-match-ic{ color:var(--coral); background:rgba(255,51,88,.12); }
+.rk2-match.draw .rk2-match-ic{ color:#8a8fa3; background:rgba(255,255,255,.06); }
+.rk2-match-ic svg{ width:17px; height:17px; }
+.rk2-match-main{ flex:1; min-width:0; }
+.rk2-match-t{ font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:13.5px; }
+.rk2-match.win .rk2-match-t{ color:var(--mint); }
+.rk2-match.loss .rk2-match-t{ color:var(--coral); }
+.rk2-match-s{ font-size:10.5px; color:var(--text-faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.rk2-match-side{ text-align:right; flex:0 0 auto; }
+.rk2-match-delta{ font-family:var(--font-mono); font-size:12.5px; font-weight:800; font-variant-numeric:tabular-nums; }
+.rk2-match.win .rk2-match-delta{ color:var(--mint); }
+.rk2-match.loss .rk2-match-delta{ color:var(--coral); }
+.rk2-match.draw .rk2-match-delta{ color:var(--text-dim); }
+.rk2-match-score{ font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint); }
+/* responsive */
+@media (max-width:1240px){
+  .rk2-grid{ grid-template-columns:1fr 1fr; }
+  .rk2-matches-panel{ grid-column:1 / -1; }
+  .rk2-stats{ grid-template-columns:repeat(3, 1fr); }
+}
+@media (max-width:980px){
+  .rk2-top{ grid-template-columns:1fr; }
+  .rk2-crest{ width:150px; height:150px; }
+  .rk2-crest-icon{ width:112px; height:112px; }
+}
+@media (max-width:800px){
+  .rk2-grid{ grid-template-columns:1fr; }
+  .rk2-stats{ grid-template-columns:repeat(2, 1fr); }
+  .rk2-stats .rk2-stat:nth-child(5){ grid-column:1 / -1; }
+  .rk2-hero{ padding:22px 20px 20px; }
+  .rk2-hero-inner{ flex-direction:column-reverse; align-items:center; text-align:left; gap:8px; }
+  .rk2-hero-left{ width:100%; }
+  .rk2-crest{ width:132px; height:132px; }
+  .rk2-crest-icon{ width:100px; height:100px; }
+  .rk2-tier{ font-size:clamp(34px, 10vw, 44px); }
+  .rk2-chart{ height:210px; }
+}
+/* motion opt-outs */
+body.reduced-motion :is(.rk2-hero, .rk2-season, .rk2-stat, .rk2-eyebrow, .rk2-tier-row, .rk2-tag, .rk2-next, .rk2-bar, .rk2-bar-range, .rk2-track-node, .ladder-row, .rk2-match, .rk2-line, .rk2-area, .rk2-dot, .rk2-dot-pulse, .rk2-chart-now, .rk2-crest-icon),
+body.low-power :is(.rk2-hero, .rk2-season, .rk2-stat, .rk2-eyebrow, .rk2-tier-row, .rk2-tag, .rk2-next, .rk2-bar, .rk2-bar-range, .rk2-track-node, .ladder-row, .rk2-match, .rk2-line, .rk2-area, .rk2-dot, .rk2-dot-pulse, .rk2-chart-now, .rk2-crest-icon){
+  animation:none !important; opacity:1 !important; stroke-dashoffset:0 !important; transform:none !important;
+}
+body.reduced-motion :is(.rk2-crest-glow, .rk2-crest-ring, .rk2-bar-spark, .rk2-hero-stars i, .rk2-season-glow),
+body.low-power :is(.rk2-crest-glow, .rk2-crest-ring, .rk2-bar-spark, .rk2-hero-stars i, .rk2-season-glow){ animation:none !important; }
+
 /* Nav customization chips (Settings → Navigation) */
 .navprefs-card{ padding:14px 16px; }
 .navprefs-head{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
@@ -23216,51 +23451,89 @@ const FIREBASE_CONFIG = {
           <h2 class="page-title">RANK</h2>
           <p class="page-subtitle">Your competitive standing and climb.</p>
         </div>
-        <div class="season-banner season-banner-v2">
-          <div class="season-ico"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-trophy"/></svg></div>
-          <div class="season-info">
-            <div class="season-name" id="seasonName">Season 1 · Genesis</div>
-            <div class="season-time" id="seasonTime">Ends in 60 days</div>
-            <div class="season-bar"><div class="season-bar-fill" id="seasonBarFill" style="width:0%"></div></div>
-          </div>
-          <div class="season-countdown" id="seasonCountdown">
-            <div class="sc-num" id="scDays">60</div>
-            <div class="sc-lbl">days left</div>
-          </div>
-        </div>
         <!-- Weekend 2× XP banner — only shown during the weekend window -->
         <div class="dxp-banner" id="dxpBanner" style="display:none;">
           <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
           <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub" id="dxpSub">Double XP on every match · ends Sun 11:59 PM</div></div>
           <div class="dxp-mult">2×</div>
         </div>
-        <div class="card rank-page-hero">
-          <div class="rank-page-icon" id="rankPageIcon"></div>
-          <div class="rank-page-info">
-            <div class="rank-page-tier" id="rankPageTier">Bronze I</div>
-            <div class="rank-page-rating"><span id="rankPageRating">1000</span> ELO</div>
-            <div class="ui-bar" style="margin:12px 0 6px;"><div class="ui-bar-fill" id="rankPageFill"></div></div>
-            <div class="rank-page-next" id="rankPageNext">— to next tier</div>
+
+        <!-- ═══════════ RANK v3 — cinematic hero + season rail ═══════════ -->
+        <div class="rk2-top">
+          <section class="rk2-hero" id="rk2Hero">
+            <div class="rk2-hero-bg"></div>
+            <div class="rk2-hero-peaks"></div>
+            <div class="rk2-hero-stars" id="rk2Stars"></div>
+            <div class="rk2-hero-inner">
+              <div class="rk2-hero-left">
+                <div class="rk2-eyebrow">Your rank</div>
+                <div class="rk2-tier-row">
+                  <h2 class="rk2-tier" id="rankPageTier">Bronze I</h2>
+                  <span class="rk2-elo-chip"><b id="rankPageRating">1000</b>&nbsp;ELO</span>
+                </div>
+                <p class="rk2-tag" id="rk2Tag">Keep climbing. The top is within reach.</p>
+                <div class="rk2-next" id="rankPageNext">— ELO to next rank</div>
+                <div class="rk2-bar"><div class="rk2-bar-fill" id="rankPageFill"><i class="rk2-bar-spark"></i></div></div>
+                <div class="rk2-bar-range"><span id="rk2RangeLo">0</span><span id="rk2RangeHi">1250</span></div>
+              </div>
+              <div class="rk2-crest">
+                <div class="rk2-crest-glow" id="rk2CrestGlow"></div>
+                <div class="rk2-crest-ring"></div>
+                <div class="rk2-crest-ring r2"></div>
+                <svg class="rk2-crest-icon" id="rankPageIcon"></svg>
+              </div>
+            </div>
+          </section>
+          <aside class="rk2-season">
+            <div class="rk2-season-glow"></div>
+            <div class="rk2-season-eyebrow" id="seasonName">Season 1 · Genesis</div>
+            <div class="rk2-season-sub" id="seasonTime">Season ends in 60 days</div>
+            <div class="rk2-season-days"><b id="scDays">60</b><span>days</span></div>
+            <div class="season-bar rk2-season-bar"><div class="season-bar-fill" id="seasonBarFill" style="width:0%"></div></div>
+            <button type="button" class="rk2-season-btn" id="rk2SeasonRewards"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trophy"/></svg> View rank rewards</button>
+            <div class="rk2-track" id="rk2Track"></div>
+          </aside>
+        </div>
+
+        <!-- Stat strip: five signature numbers -->
+        <div class="rk2-stats" id="rk2Stats">
+          <div class="rk2-stat" style="--sc:var(--mint);">
+            <span class="rk2-stat-ic"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span>
+            <div class="rk2-stat-txt"><div class="rk2-stat-l">Top</div><div class="rk2-stat-v" id="pctTop">—%</div><div class="rk2-stat-s">You're ahead of most players worldwide</div></div>
+          </div>
+          <div class="rk2-stat" style="--sc:#a48bff;">
+            <span class="rk2-stat-ic"><svg viewBox="0 0 24 24"><use href="#i-crown"/></svg></span>
+            <div class="rk2-stat-txt"><div class="rk2-stat-l">Global rank</div><div class="rk2-stat-v" id="pctGlobalRank">#—</div><div class="rk2-stat-s">Leaderboard position</div></div>
+          </div>
+          <div class="rk2-stat" style="--sc:#5fc9ff;">
+            <span class="rk2-stat-ic"><svg viewBox="0 0 24 24"><use href="#i-target"/></svg></span>
+            <div class="rk2-stat-txt"><div class="rk2-stat-l">Win rate</div><div class="rk2-stat-v" id="rpsWR">0%</div><div class="rk2-stat-s">Matches won</div></div>
+          </div>
+          <div class="rk2-stat" style="--sc:#ff7a3d;">
+            <span class="rk2-stat-ic"><svg viewBox="0 0 24 24"><use href="#i-flame"/></svg></span>
+            <div class="rk2-stat-txt"><div class="rk2-stat-l">Best streak</div><div class="rk2-stat-v" id="rpsStreak">0</div><div class="rk2-stat-s">Win streak</div></div>
+          </div>
+          <div class="rk2-stat" style="--sc:#ffd33d;">
+            <span class="rk2-stat-ic"><svg viewBox="0 0 24 24"><use href="#i-swords"/></svg></span>
+            <div class="rk2-stat-txt"><div class="rk2-stat-l">Matches</div><div class="rk2-stat-v" id="rpsGames">0</div><div class="rk2-stat-s">Total played</div></div>
           </div>
         </div>
-        <div class="stat-grid-2" style="margin-bottom:14px;">
-          <div class="card">
-            <div class="pct-big mint" id="pctTop">Top —%</div>
-            <div class="pct-lbl">You're ahead of most players worldwide</div>
-          </div>
-          <div class="card">
-            <div class="pct-big" id="pctGlobalRank">#—</div>
-            <div class="pct-lbl">Global leaderboard position</div>
-          </div>
+
+        <!-- Ladder · ELO chart · Recent matches -->
+        <div class="rk2-grid">
+          <section class="rk2-panel rk2-ladder-panel">
+            <div class="rk2-panel-head"><h3>Rank ladder</h3><span class="rk2-hint">🎁 tap a reward to preview</span></div>
+            <div class="rank-ladder" id="rankLadder"></div>
+          </section>
+          <section class="rk2-panel rk2-chart-panel">
+            <div class="rk2-panel-head"><h3>ELO progression</h3><span class="rk2-chip">This season</span></div>
+            <div class="rk2-chart" id="rk2Chart"><div class="rk2-chart-empty">Play ranked matches to chart your climb</div></div>
+          </section>
+          <section class="rk2-panel rk2-matches-panel">
+            <div class="rk2-panel-head"><h3>Recent matches</h3><button type="button" class="rk2-viewall" id="rk2ViewAll">View all</button></div>
+            <div class="rk2-matches" id="rk2MatchList"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
+          </section>
         </div>
-        <div class="stat-grid-4" style="margin-bottom:8px;">
-          <div class="stat-tile"><div class="stat-tile-v mint" id="rpsWins">0</div><div class="stat-tile-l">Wins</div></div>
-          <div class="stat-tile"><div class="stat-tile-v coral" id="rpsLosses">0</div><div class="stat-tile-l">Losses</div></div>
-          <div class="stat-tile"><div class="stat-tile-v" id="rpsWR">0%</div><div class="stat-tile-l">Win rate</div></div>
-          <div class="stat-tile"><div class="stat-tile-v gold" id="rpsStreak">0</div><div class="stat-tile-l">Best streak</div></div>
-        </div>
-        <div class="psection psection-row"><h3>Rank ladder</h3><span class="psection-hint">🎁 rank rewards — tap any to preview</span></div>
-        <div class="rank-ladder" id="rankLadder"></div>
 
         <div class="psection" style="margin-top:18px;"><h3>Global leaderboard</h3></div>
         <div class="card lb-full-card">
@@ -40905,7 +41178,8 @@ setInterval(() => {
 function refreshSeasonUI(){
   const s = getSeason();
   setText('#seasonName', `Season ${s.number} · ${s.name}`);
-  setText('#seasonTime', `Season ends ${s.daysLeft >= 1 ? 'in ' + s.daysLeft + ' days' : seasonCountdownText()}`);
+  // The big day-counter sits right below this line, so it just sets context.
+  setText('#seasonTime', s.daysLeft >= 1 ? 'Season ends in' : `Season ends ${seasonCountdownText()}`);
   const bar = $('#seasonBarFill'); if(bar) bar.style.width = (s.progress * 100) + '%';
   setText('#scDays', s.daysLeft);
   // Weekend 2× XP — toggle every weekend banner/pill at once. The token boost
@@ -40935,6 +41209,18 @@ function maybeDoubleXpToast(){
 setInterval(() => { try { if(state.screen === 'landing') refreshSeasonUI(); } catch(e){} }, 60000);
 on('#dxpPill', 'click', () => { try { toast(`⚡ 2× XP weekend — double XP on every match · ${doubleXpEndsText()}`, 'success', { duration: 5000 }); } catch(e){} });
 
+// Per-rank flavor lines for the hero tagline — a little identity per tier.
+const RK2_TAGLINES = {
+  bronze:      'Every legend started here. Throw hands.',
+  silver:      'Keep climbing. The top is within reach.',
+  gold:        'Now you\'re dangerous. Keep the streak alive.',
+  platinum:    'Top-shelf hands. The ladder is thinning out.',
+  diamond:     'Rarefied air. Every opponent knows your name.',
+  master:      'You don\'t follow the meta — you are the meta.',
+  grandmaster: 'One of the few. The summit is in sight.',
+  champion:    'The arena bows. Defend the crown.',
+  legend:      'The end of the ladder. The myth is you.',
+};
 function renderRankPage(){
   if(!state.profile) return;
   try { refreshSeasonUI(); } catch(e){}
@@ -40942,38 +41228,84 @@ function renderRankPage(){
   const p = state.profile;
   const rating = p.rating || 1000;
   const rank = rankFromRating(rating);
-  setRankIconEl($('#rankPageIcon'), inPlacements(p) ? 'unranked' : rank.id);
-  const ic = $('#rankPageIcon'); if(ic) ic.style.color = rank.color;
+  const unranked = inPlacements(p);
+  setRankIconEl($('#rankPageIcon'), unranked ? 'unranked' : rank.id);
+  const ic = $('#rankPageIcon'); if(ic) ic.style.color = unranked ? 'var(--violet)' : rank.color;
+  // Theme the whole hero to the rank colour (glow, bar, chip, ring)
+  const hero = $('#rk2Hero');
+  if(hero){
+    hero.style.setProperty('--rk', unranked ? '#a48bff' : rank.color);
+    hero.style.setProperty('--rk2', unranked ? '#7a5fdc' : (rank.color2 || rank.color));
+  }
+  const glow = $('#rk2CrestGlow');
+  if(glow) glow.style.background = `radial-gradient(circle, ${unranked ? 'rgba(164,139,255,.55)' : rank.color}, transparent 68%)`;
+  // Ambient floating star specks (once)
+  const stars = $('#rk2Stars');
+  if(stars && !stars.childElementCount && !document.body.classList.contains('reduced-motion') && !document.body.classList.contains('low-power')){
+    for(let i = 0; i < 14; i++){
+      const s = document.createElement('i');
+      s.style.left = (4 + Math.random() * 92) + '%';
+      s.style.top = (8 + Math.random() * 84) + '%';
+      s.style.animationDelay = (Math.random() * 6) + 's';
+      s.style.animationDuration = (4 + Math.random() * 5) + 's';
+      stars.appendChild(s);
+    }
+  }
   const fill = $('#rankPageFill');
-  if(inPlacements(p)){
+  if(unranked){
     const done = placementsDone(p); const left = PLACEMENT_TOTAL - done;
-    if(ic) ic.style.color = 'var(--violet)';
     setText('#rankPageTier', 'Unranked');
     setText('#rankPageRating', '—');
+    setText('#rk2Tag', 'Finish your placements to reveal your true rank.');
     if(fill) fill.style.width = (done/PLACEMENT_TOTAL*100) + '%';
     setText('#rankPageNext', `🔒 ${left} placement match${left === 1 ? '' : 'es'} left to unlock your rank & ELO`);
+    setText('#rk2RangeLo', `${done}/${PLACEMENT_TOTAL}`);
+    setText('#rk2RangeHi', 'placements');
   } else {
     setText('#rankPageTier', rank.tierName);
-    setText('#rankPageRating', rating);
+    setText('#rk2Tag', RK2_TAGLINES[rank.id] || RK2_TAGLINES.silver);
+    try { countUp('#rankPageRating', rating, 900); } catch(e){ setText('#rankPageRating', rating); }
     const prog = rankProgressToNext(rating);
-    if(fill) fill.style.width = (prog.progress*100) + '%';
-    setText('#rankPageNext', prog.nextLabel);
+    if(fill){
+      // animate the bar from 0 → progress on each visit
+      fill.style.transition = 'none'; fill.style.width = '0%';
+      void fill.offsetWidth;
+      fill.style.transition = ''; fill.style.width = (prog.progress*100) + '%';
+    }
+    setText('#rankPageNext', prog.toNext > 0 ? `${prog.toNext} ELO to next rank` : 'Max rank reached');
+    // Range labels: current position → next threshold
+    setText('#rk2RangeLo', rating);
+    setText('#rk2RangeHi', prog.toNext > 0 ? (rating + prog.toNext) : '★');
+  }
+  // Season milestone track — five landmark ranks, lit as you pass them
+  const track = $('#rk2Track');
+  if(track){
+    const landmarks = ['bronze', 'gold', 'diamond', 'grandmaster', 'legend'];
+    track.innerHTML = landmarks.map((id, i) => {
+      const r = RANKS.find(x => x.id === id);
+      const reached = !unranked && rating >= r.base;
+      const isCur = !unranked && rank.id === id;
+      return `<div class="rk2-track-node${reached ? ' lit' : ''}${isCur ? ' cur' : ''}" style="--tc:${r.color}; --d:${i * 90}ms" title="${r.name} · ${r.base}+ ELO">
+        <svg viewBox="0 0 24 24"><use href="#${r.icon}"/></svg><span>${r.name}</span>
+      </div>${i < landmarks.length - 1 ? '<div class="rk2-track-line' + (reached ? ' lit' : '') + '"></div>' : ''}`;
+    }).join('');
   }
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games > 0 ? Math.round(((p.wins||0)/games)*100) : 0;
-  setText('#rpsWins', p.wins||0);
-  setText('#rpsLosses', p.losses||0);
   setText('#rpsWR', wr+'%');
-  setText('#rpsStreak', p.bestStreak||0);
+  try { countUp('#rpsStreak', p.bestStreak||0, 700); } catch(e){ setText('#rpsStreak', p.bestStreak||0); }
+  try { countUp('#rpsGames', games, 700); } catch(e){ setText('#rpsGames', games); }
   // percentile + global rank (hidden while unranked)
-  if(inPlacements(p)){
-    setText('#pctTop', 'Top —');
+  if(unranked){
+    setText('#pctTop', '—%');
     setText('#pctGlobalRank', '#—');
   } else {
     const gr = computeGlobalRank(rating);
-    setText('#pctTop', 'Top ' + gr.pct + '%');
+    setText('#pctTop', Math.round(ratingPercentileTop(rating)) + '%');
     setText('#pctGlobalRank', gr.rank ? '#' + gr.rank : '#—');
   }
+  // ELO chart + recent matches (async — cached for 60s)
+  try { loadRankHistoryPanels(); } catch(e){}
   // ladder — visual climb: reached ✓ / current (YOU + in-tier progress) / locked 🔒
   const ladder = $('#rankLadder');
   if(ladder){
@@ -41010,10 +41342,147 @@ function renderRankPage(){
         <div class="lr-icon ${r.cls}"><svg viewBox="0 0 24 24"><use href="#${r.icon}"/></svg></div>
         <div class="lr-main">${main}</div>
         <div class="lr-side">${side}</div>`;
+      row.style.setProperty('--d', (i * 60) + 'ms');
       ladder.appendChild(row);
     });
+    // Keep "YOU" in view — the ladder scrolls internally now.
+    setTimeout(() => {
+      try { const cur = ladder.querySelector('.ladder-row.current'); if(cur) ladder.scrollTop = Math.max(0, cur.offsetTop - 76); } catch(e){}
+    }, 80);
   }
 }
+
+// ===== RANK v3 — ELO progression chart + recent matches (from matchHistory) =====
+async function loadRankHistoryPanels(){
+  if(!state.user || !state.db) return;
+  const now = Date.now();
+  // small cache so tab-hopping doesn't refetch constantly
+  if(state._rankHist && now - (state._rankHistAt || 0) < 60000){
+    renderRankHistoryPanels(state._rankHist);
+    return;
+  }
+  if(state._rankHistLoading) return;
+  state._rankHistLoading = true;
+  try {
+    const snap = await getDocs(query(collection(state.db, 'matchHistory'), where('uid', '==', state.user.uid), limit(60)));
+    const items = [];
+    snap.forEach(d => items.push(d.data()));
+    items.sort((a, b) => {
+      const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return tb - ta;   // newest first
+    });
+    state._rankHist = items;
+    state._rankHistAt = now;
+    renderRankHistoryPanels(items);
+  } catch(e){
+    console.warn('[rank] history load', e);
+    const list = $('#rk2MatchList');
+    if(list) renderEmptyState(list, { icon:'i-clock', text:'Couldn\'t load your match history right now.' });
+  } finally {
+    state._rankHistLoading = false;
+  }
+}
+function renderRankHistoryPanels(items){
+  // ---- Recent matches column ----
+  const list = $('#rk2MatchList');
+  if(list){
+    const rows = items.slice(0, 8);
+    if(!rows.length){
+      renderEmptyState(list, { icon:'i-swords', text:'No matches yet — your recent results will land here.', cta:'Play a match', onCta: () => showNavPage('play') });
+    } else {
+      list.innerHTML = rows.map((m, i) => {
+        const res = m.result === 'win' ? 'win' : (m.result === 'draw' ? 'draw' : 'loss');
+        const label = m.result === 'win' ? 'Victory' : m.result === 'draw' ? 'Draw' : m.forfeit ? 'Forfeit' : 'Defeat';
+        const d = typeof m.delta === 'number' ? m.delta : 0;
+        const delta = d > 0 ? `+${d}` : `${d}`;
+        const opp = m.oppUsername ? ` · vs ${escapeHTML(m.oppUsername)}` : '';
+        return `<div class="rk2-match ${res}" style="--d:${i * 55}ms">
+          <span class="rk2-match-ic"><svg viewBox="0 0 24 24"><use href="#${res === 'win' ? 'i-trophy' : res === 'draw' ? 'i-swords' : 'i-shield'}"/></svg></span>
+          <div class="rk2-match-main">
+            <div class="rk2-match-t">${label}</div>
+            <div class="rk2-match-s">${timeAgo(m.createdAt)}${opp}</div>
+          </div>
+          <div class="rk2-match-side">
+            <div class="rk2-match-delta">${d === 0 ? '—' : delta + ' ELO'}</div>
+            ${m.score ? `<div class="rk2-match-score">Score: ${escapeHTML(String(m.score)).replace('-', ' – ')}</div>` : ''}
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+  // ---- ELO progression chart ----
+  const host = $('#rk2Chart');
+  if(!host) return;
+  // Reconstruct the rating series by walking back from the current rating.
+  const deltas = items.filter(m => typeof m.delta === 'number' && !isNaN(m.delta));
+  if(deltas.length < 2){
+    host.innerHTML = '<div class="rk2-chart-empty">Play a few ranked matches to chart your climb 📈</div>';
+    return;
+  }
+  const current = state.profile?.rating || 1000;
+  const pts = [current];
+  for(const m of deltas){ pts.push(pts[pts.length - 1] - m.delta); }   // newest → oldest
+  pts.reverse();                                                        // oldest → newest
+  const series = pts.slice(-26);                                        // last ~25 matches
+  const lo = Math.min(...series), hi = Math.max(...series);
+  const pad = Math.max(24, Math.round((hi - lo) * 0.18));
+  const yMin = Math.max(0, lo - pad), yMax = hi + pad;
+  const W = 520, H = 240, L = 44, R = 16, T = 18, B = 26;
+  const X = (i) => L + (i / (series.length - 1)) * (W - L - R);
+  const Y = (v) => T + (1 - (v - yMin) / (yMax - yMin)) * (H - T - B);
+  let line = '', area = `M ${X(0)} ${H - B} `;
+  series.forEach((v, i) => {
+    line += `${i === 0 ? 'M' : 'L'} ${X(i).toFixed(1)} ${Y(v).toFixed(1)} `;
+    area += `L ${X(i).toFixed(1)} ${Y(v).toFixed(1)} `;
+  });
+  area += `L ${X(series.length - 1)} ${H - B} Z`;
+  const rk = rankFromRating(current);
+  const gLo = Math.round(yMin), gMid = Math.round((yMin + yMax) / 2), gHi = Math.round(yMax);
+  const ex = X(series.length - 1).toFixed(1), ey = Y(current).toFixed(1);
+  host.innerHTML = `
+    <svg class="rk2-chart-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="ELO progression">
+      <defs>
+        <linearGradient id="rk2Area" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${rk.color}" stop-opacity=".34"/>
+          <stop offset="100%" stop-color="${rk.color}" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="rk2Line" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#5fc9ff"/>
+          <stop offset="100%" stop-color="${rk.color}"/>
+        </linearGradient>
+      </defs>
+      ${[gLo, gMid, gHi].map(v => `<line class="rk2-grid-line" x1="${L}" y1="${Y(v)}" x2="${W - R}" y2="${Y(v)}"/>
+        <text class="rk2-axis" x="${L - 7}" y="${Y(v) + 3}" text-anchor="end">${v}</text>`).join('')}
+      ${(() => {
+        // X-axis: date of the oldest plotted match → today
+        try {
+          const shown = deltas.slice(0, series.length - 1);
+          const oldest = shown[shown.length - 1];
+          const fmt = (t) => new Date(t).toLocaleDateString([], { month: 'short', day: 'numeric' });
+          const t0 = oldest && oldest.createdAt?.toMillis ? fmt(oldest.createdAt.toMillis()) : '';
+          return `${t0 ? `<text class="rk2-axis" x="${L}" y="${H - 8}">${t0}</text>` : ''}
+            <text class="rk2-axis" x="${W - R}" y="${H - 8}" text-anchor="end">today</text>`;
+        } catch(e){ return ''; }
+      })()}
+      <path class="rk2-area" d="${area}" fill="url(#rk2Area)"/>
+      <path class="rk2-line" d="${line.trim()}" fill="none" stroke="url(#rk2Line)" pathLength="1"/>
+      <circle class="rk2-dot" cx="${ex}" cy="${ey}" r="4.5" fill="${rk.color}"/>
+      <circle class="rk2-dot-pulse" cx="${ex}" cy="${ey}" r="4.5" fill="none" stroke="${rk.color}"/>
+    </svg>
+    <div class="rk2-chart-now" style="left:calc(${(parseFloat(ex) / W * 100).toFixed(1)}% ); top:calc(${(parseFloat(ey) / H * 100).toFixed(1)}% - 34px); --rk:${rk.color}">${current}</div>`;
+}
+// View all → the existing match-history modal; rewards → flash the ladder
+on('#rk2ViewAll', 'click', () => { hapticTick(); openMatchHistory(); });
+on('#rk2SeasonRewards', 'click', () => {
+  hapticTick();
+  const ladder = $('#rankLadder');
+  if(ladder){
+    ladder.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    ladder.classList.remove('rk2-flash'); void ladder.offsetWidth; ladder.classList.add('rk2-flash');
+  }
+});
+
 function renderAchievementsPage(){
   if(!state.profile) return;
   const p = state.profile;
