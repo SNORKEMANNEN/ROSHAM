@@ -808,7 +808,48 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 .toast2-action{ flex:0 0 auto; margin-left:4px; padding:6px 12px; border-radius:9px; border:1px solid var(--mint); background:color-mix(in srgb, var(--mint) 16%, transparent); color:var(--mint); font-family:var(--font-display); font-stretch:80%; font-weight:700; font-size:12px; cursor:pointer; transition:background .15s; }
 .toast2-action:hover{ background:color-mix(in srgb, var(--mint) 28%, transparent); }
 .toast2.has-action{ cursor:default; }
+/* Older toasts compress when the stack piles up, so the newest stays readable */
+.toast2.t-collapsed{ padding:6px 14px; font-size:12px; opacity:.6; transform:scale(.92); }
+.toast2.t-collapsed .toast2-ic{ width:13px; height:13px; }
+.toast2.t-collapsed .toast2-action{ display:none; }
+/* Progress toast — indeterminate spinner for long actions */
+.toast2.t-progress{ cursor:default; border-color:rgba(164,139,255,.35); }
+.t-spin{ flex-shrink:0; width:15px; height:15px; border-radius:50%; border:2px solid rgba(164,139,255,.25); border-top-color:var(--violet, #a48bff); animation:tSpin .7s linear infinite; }
+@keyframes tSpin{ to{ transform:rotate(360deg); } }
+body.reduced-motion .t-spin{ animation-duration:1.4s; }
 @media (max-width:600px){ .toast-stack{ bottom:calc(80px + env(safe-area-inset-bottom,0px)); } }
+
+/* ===== PULL-TO-REFRESH INDICATOR ===== */
+.ptr-ind{ position:fixed; top:calc(8px + env(safe-area-inset-top, 0px)); left:50%; transform:translate(-50%, 0); z-index:9550;
+  width:40px; height:40px; border-radius:50%; display:grid; place-items:center;
+  background:var(--surface, #1a1826); border:1px solid var(--line); box-shadow:0 10px 26px rgba(0,0,0,.45);
+  opacity:0; pointer-events:none; transition:opacity .18s; }
+.ptr-ind.show{ opacity:calc(.35 + .65 * var(--ptr, 0)); }
+.ptr-ind .ptr-spin{ width:18px; height:18px; border-radius:50%;
+  border:2.5px solid rgba(255,255,255,.14); border-top-color:var(--mint); }
+.ptr-ind.ready{ border-color:rgba(34,211,163,.55); box-shadow:0 10px 26px rgba(0,0,0,.45), 0 0 14px -4px var(--mint-glow, rgba(34,211,163,.6)); }
+.ptr-ind.busy .ptr-spin{ animation:tSpin .7s linear infinite; }
+
+/* ===== LANDSCAPE IN-MATCH — short screens reflow instead of clipping ===== */
+@media (orientation: landscape) and (max-height: 500px){
+  #screen-game .countdown{ font-size:104px; min-height:104px; }
+  #screen-game .countdown.shoot{ font-size:72px; }
+  #screen-game .announcer-banner{ font-size:14px; padding:8px 16px; }
+  #screen-game .duel-prompt{ font-size:12px; }
+  .net-ribbon{ display:none; }
+}
+
+/* ===== OFFLINE / RECONNECTING RIBBON ===== */
+.net-ribbon{ position:fixed; top:0; left:0; right:0; z-index:9700; display:flex; align-items:center; justify-content:center; gap:8px;
+  padding:calc(6px + env(safe-area-inset-top, 0px)) 14px 6px;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.04em;
+  transform:translateY(-110%); transition:transform .3s cubic-bezier(.2,.9,.3,1), background .3s; pointer-events:none; }
+.net-ribbon.show{ transform:translateY(0); }
+.net-ribbon.off{ background:linear-gradient(180deg, rgba(120,50,10,.97), rgba(90,36,8,.97)); color:#ffd9b0; border-bottom:1px solid rgba(255,154,61,.4); }
+.net-ribbon.on{ background:linear-gradient(180deg, rgba(10,80,55,.97), rgba(8,60,42,.97)); color:#b9ffe5; border-bottom:1px solid rgba(34,211,163,.4); }
+.net-ribbon .nr-dot{ width:7px; height:7px; border-radius:50%; background:currentColor; animation:nrPulse 1.4s ease-in-out infinite; }
+@keyframes nrPulse{ 0%,100%{ opacity:.5; } 50%{ opacity:1; } }
+body.reduced-motion .net-ribbon .nr-dot{ animation:none; }
 
 /* ===== SCROLL TO TOP ===== */
 .scroll-top-btn{ position:fixed; right:20px; bottom:calc(20px + env(safe-area-inset-bottom,0px)); z-index:70; width:46px; height:46px; border-radius:50%; background:var(--surface); border:1px solid var(--line); color:var(--text); display:grid; place-items:center; cursor:pointer; opacity:0; transform:translateY(12px) scale(.8); transition:opacity .25s, transform .25s; box-shadow:0 8px 24px rgba(0,0,0,.35); pointer-events:none; }
@@ -1184,6 +1225,33 @@ body.reduced-motion .nav-item .nav-badge.nav-prestige, body.low-power .nav-item 
 }
 .app.logged-in .topbar{ display: flex; }
 .topbar-spacer{ flex: 1; }
+/* Active-page context chip — page name + one quick action */
+.topbar-ctx{ display:flex; align-items:center; gap:9px; min-width:0; }
+.tc-page{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:16px; letter-spacing:.01em; text-transform:uppercase; color:var(--text); white-space:nowrap; }
+.tc-page::before{ content:'/'; margin-right:9px; color:var(--text-faint); font-weight:400; }
+.tc-action{ flex:0 0 auto; padding:5px 11px; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.04);
+  color:var(--text-dim); font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+  cursor:pointer; transition:color .15s, border-color .15s, background .15s; white-space:nowrap; }
+.tc-action:hover{ color:var(--text); border-color:var(--line-bright, #3a3850); background:rgba(255,255,255,.07); }
+@media (max-width: 880px){ .topbar-ctx{ display:none; } }
+/* Progressive disclosure — a fresh account sees a focused app; the meta-systems
+   (XP boosters, 2× pill, prestige chrome) unlock as they play */
+body.pd-fresh .xpboost-panel,
+body.pd-fresh #dxpPill,
+body.pd-fresh #boostPill,
+body.pd-fresh .play-lower-grid .xpboost-panel{ display:none !important; }
+
+/* Nav customization chips (Settings → Navigation) */
+.navprefs-card{ padding:14px 16px; }
+.navprefs-head{ display:flex; align-items:flex-start; gap:12px; margin-bottom:12px; }
+.navprefs-chips{ display:flex; flex-wrap:wrap; gap:8px; }
+.navpref-chip{ display:inline-flex; align-items:center; gap:6px; padding:8px 13px; border-radius:999px; cursor:pointer;
+  font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.04em;
+  border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text-dim);
+  transition:color .15s, border-color .15s, background .15s, opacity .15s; }
+.navpref-chip.on{ color:var(--mint); border-color:rgba(34,211,163,.4); background:rgba(34,211,163,.08); }
+.navpref-chip.off{ opacity:.55; text-decoration:line-through; }
+.navpref-chip:hover{ opacity:1; border-color:var(--line-bright, #3a3850); }
 /* Mobile brand shown only on small screens in the topbar */
 .topbar-brand{ display: none; align-items: center; gap: 9px; font-family: var(--font-display); font-stretch: 70%; font-weight: 800; font-size: 19px; letter-spacing: -.01em; }
 .topbar-brand .tb-logo{ width: 30px; height: 30px; border-radius: 9px; background: linear-gradient(135deg, var(--mint), #159f78); display: grid; place-items: center; }
@@ -1221,6 +1289,11 @@ body.reduced-motion .nav-item .nav-badge.nav-prestige, body.low-power .nav-item 
 /* active top indicator pill */
 .mobile-nav-item:not(.mni-play)::after{ content:''; position: absolute; top: 1px; left: 50%; transform: translateX(-50%) scaleX(0); width: 16px; height: 3px; border-radius: 999px; background: var(--mint); transition: transform .2s cubic-bezier(.2,1.5,.4,1); }
 .mobile-nav-item.active:not(.mni-play)::after{ transform: translateX(-50%) scaleX(1); }
+/* During a page swipe the underline tracks the finger: active shrinks, target grows */
+.mobile-nav.swiping .mobile-nav-item::after{ transition: none; }
+.mobile-nav.swiping .mobile-nav-item.active:not(.mni-play)::after{ transform: translateX(-50%) scaleX(calc(1 - var(--swp, 0))); }
+.mobile-nav.swiping .mobile-nav-item.swipe-to:not(.mni-play)::after{ transform: translateX(-50%) scaleX(var(--swp, 0)); }
+.mobile-nav.swiping .mobile-nav-item.swipe-to{ color: color-mix(in srgb, var(--mint) calc(var(--swp, 0) * 100%), var(--text-faint)); }
 /* raised center PLAY button */
 .mobile-nav-item.mni-play{ justify-content: flex-end; gap: 5px; }
 .mni-play-btn{ width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; margin-top: -24px;
@@ -11429,6 +11502,36 @@ body.low-power .prestige-rays.r2, body.reduced-motion .prestige-rays.r2{ animati
   from{ opacity: 0; transform: scale(.94) translateY(20px); }
   to{ opacity: 1; transform: scale(1) translateY(0); }
 }
+/* Unified modal rules: page never scrolls behind an open modal/sheet */
+body.modal-open{ overflow:hidden; }
+/* Generic confirm dialog */
+.modal.ui-confirm{ max-width:380px; text-align:center; padding:28px 26px 24px; }
+.uic-icon{ font-size:34px; line-height:1; margin-bottom:12px; }
+.uic-title{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:22px; margin:0 0 8px; }
+.uic-sub{ font-size:13.5px; color:var(--text-dim); line-height:1.55; margin:0 0 20px; }
+.uic-actions{ display:flex; gap:10px; }
+.uic-actions .btn{ flex:1; min-height:44px; }
+.modal-bg:focus{ outline:none; }
+/* Sheet-on-mobile: standard dialogs present as bottom sheets on phones —
+   slide up from the bottom edge with a grab handle, like the More sheet. */
+@media (max-width:600px){
+  .modal-bg:not(.keep-dialog){ align-items:flex-end; padding:0; }
+  .modal-bg:not(.keep-dialog) > .modal{
+    width:100%; max-width:100%; margin:0;
+    border-radius:22px 22px 0 0;
+    border-left:none; border-right:none; border-bottom:none;
+    max-height:92vh; max-height:92dvh;
+    padding-top:38px;
+    padding-bottom:calc(24px + env(safe-area-inset-bottom, 0px));
+    animation: sheetSlideUp .32s cubic-bezier(.2,.9,.3,1);
+  }
+  .modal-bg:not(.keep-dialog) > .modal::after{
+    content:""; position:absolute; top:10px; left:50%; transform:translateX(-50%);
+    width:44px; height:4px; border-radius:999px; background:rgba(255,255,255,.22);
+  }
+  body.reduced-motion .modal-bg:not(.keep-dialog) > .modal{ animation:none; }
+}
+@keyframes sheetSlideUp{ from{ transform:translateY(40%); opacity:.5; } to{ transform:translateY(0); opacity:1; } }
 
 .modal::before{
   content: "";
@@ -12666,7 +12769,7 @@ body.reduced-motion .sk, body.low-power .sk{ animation: none; }
 .more-sheet.show{ display: flex; animation: msFade .22s ease-out; }
 @keyframes msFade{ from{ opacity: 0; } to{ opacity: 1; } }
 .more-sheet-card{ width: 100%; max-height: 90vh; background: var(--surface); border-radius: 24px 24px 0 0;
-  border: 1px solid var(--line); border-bottom: none; padding: 8px 0 0; display: flex; flex-direction: column;
+  border: 1px solid var(--line); border-bottom: none; padding: 8px 0 max(0px, env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column;
   box-shadow: 0 -20px 60px -20px rgba(0,0,0,.7); animation: sheetUp .3s cubic-bezier(.2,.9,.25,1); touch-action: pan-y; }
 @keyframes sheetUp{ from{ transform: translateY(100%); } to{ transform: none; } }
 .more-sheet.closing .more-sheet-card{ animation: sheetDown .25s cubic-bezier(.4,0,.7,.2) forwards; }
@@ -21786,6 +21889,19 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
 <canvas id="particles"></canvas>
 <div class="toast" id="toast"></div>
 
+<!-- Generic confirm dialog (uiConfirm) — one consistent confirmation everywhere -->
+<div class="modal-bg" id="uiConfirmModal" data-static data-no-esc style="z-index:9500;">
+  <div class="modal ui-confirm">
+    <div class="uic-icon" id="uiConfirmIcon">⚠️</div>
+    <h3 class="uic-title" id="uiConfirmTitle">Are you sure?</h3>
+    <p class="uic-sub" id="uiConfirmSub"></p>
+    <div class="uic-actions">
+      <button type="button" class="btn btn-ghost" id="uiConfirmCancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="uiConfirmOk">Confirm</button>
+    </div>
+  </div>
+</div>
+
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
     <!-- Lightning displacement for the Thunderstorm avatar ring: fractal noise
@@ -22016,6 +22132,11 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
   <header class="topbar">
     <button class="hamburger" id="hamburgerBtn" title="Menu"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-menu"/></svg></button>
     <div class="topbar-brand"><span class="tb-logo"><img src="logo.png" alt="" /></span>ROSHCAM</div>
+    <!-- Active-page context: where you are + one contextual quick action -->
+    <div class="topbar-ctx" id="topbarCtx" style="display:none;">
+      <span class="tc-page" id="topbarCtxName">Home</span>
+      <button class="tc-action" id="topbarCtxAction" style="display:none;"></button>
+    </div>
     <div class="live-stats" id="liveStats">
       <div class="stat"><span class="pulse"></span><span><b id="onlineCount">—</b> in queue</span></div>
       <div class="stat"><span>· <b id="matchCount">0</b> active matches</span></div>
@@ -23078,13 +23199,13 @@ const FIREBASE_CONFIG = {
               <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Global feed</div>
               <div class="card-hd-sub" id="activityPageStats">— in progress</div>
             </div>
-            <div class="side-body" id="activityPageBody"><div class="side-empty">Loading activity…</div></div>
+            <div class="side-body" id="activityPageBody"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
           </div>
           <div class="card">
             <div class="card-hd">
               <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Top players</div>
             </div>
-            <div class="side-body" id="activityPageLeaderboard"><div class="side-empty">Loading leaderboard…</div></div>
+            <div class="side-body" id="activityPageLeaderboard"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
           </div>
         </div>
       </div><!-- /page activity -->
@@ -23156,7 +23277,7 @@ const FIREBASE_CONFIG = {
             </div>
           </div>
           <div class="lb-global-results" id="lbGlobalResults" style="display:none;"></div>
-          <div class="lb-full-body" id="lbFullBody"><div class="side-empty">Loading leaderboard…</div></div>
+          <div class="lb-full-body" id="lbFullBody"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
         </div>
       </div><!-- /page rank -->
 
@@ -23186,7 +23307,7 @@ const FIREBASE_CONFIG = {
                 <button id="addFriendBtnPage">Add</button>
               </div>
             </div>
-            <div class="side-body" id="friendsBodyPage" style="padding:8px 14px 14px;"><div class="side-empty">Loading…</div></div>
+            <div class="side-body" id="friendsBodyPage" style="padding:8px 14px 14px;"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
           </div>
           <div class="home-col">
             <div class="card">
@@ -23436,6 +23557,18 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Auto-mute in background</div><div class="set-sub" id="setAutoMuteState">Mute audio when the app isn't focused</div></div>
             <div class="set-toggle off" id="setAutoMuteToggle"></div>
           </button>
+        </div>
+        </div><!-- /group -->
+<div class="settings-group sg-nav">
+        <div class="settings-section-title">NAVIGATION</div>
+        <div class="settings-list">
+          <div class="card navprefs-card" style="margin:0;">
+            <div class="navprefs-head">
+              <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-grid"/></svg></div>
+              <div class="set-text"><div class="set-title">Your pages</div><div class="set-sub">Hide pages you don't use — they stay reachable from here and the More menu.</div></div>
+            </div>
+            <div class="navprefs-chips" id="navPrefChips"></div>
+          </div>
         </div>
         </div><!-- /group -->
 <div class="settings-group sg-privacy">
@@ -24688,7 +24821,7 @@ const FIREBASE_CONFIG = {
     <button class="modal-close" data-close="matchHistoryModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
     <h3>MATCH HISTORY</h3>
     <p style="margin-bottom:14px;">Your last 30 matches — tap one to see it round by round.</p>
-    <div id="matchHistoryList"><div class="side-empty">Loading…</div></div>
+    <div id="matchHistoryList"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
   </div>
 </div>
 
@@ -25073,7 +25206,7 @@ const FIREBASE_CONFIG = {
     <div class="gf-section">
       <div class="gf-label"><span class="gf-step">1</span> Choose a friend</div>
       <input type="text" class="gf-search" id="gfSearch" placeholder="Search friends…" autocomplete="off">
-      <div class="gf-friends" id="gfFriends"><div class="side-empty">Loading friends…</div></div>
+      <div class="gf-friends" id="gfFriends"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
     </div>
     <div class="gf-section">
       <div class="gf-label"><span class="gf-step">2</span> Add a message <span class="gf-count" id="gfNoteCount">0/80</span></div>
@@ -27150,7 +27283,8 @@ function _ensureToastContainer(){
 }
 const TOAST_ICONS = { success:'i-check', error:'i-close', info:'i-zap', '':'i-zap' };
 function toast(text, kind='', opts={}){
-  try { if((kind === 'success' || kind === 'error') && isCoarse()) haptic(kind === 'error' ? [12, 30, 12] : 14); } catch(e){}
+  // Haptic vocabulary: success = double-tap pattern, error = firm double-buzz.
+  try { if(isCoarse()){ if(kind === 'error') hapticError(); else if(kind === 'success') hapticSuccess(); } } catch(e){}
   try {
     const c = _ensureToastContainer();
     const el = document.createElement('div');
@@ -27174,11 +27308,101 @@ function toast(text, kind='', opts={}){
     el.addEventListener('click', close);
     // Cap the stack
     while(c.children.length > 4){ c.firstChild.remove(); }
+    _collapseToastStack(c);
   } catch(e){
     // Fallback to the legacy single toast
     const t = $('#toast'); if(t){ t.textContent = text; t.className = 'toast ' + kind + ' show'; clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2800); }
   }
 }
+// When the stack piles up, older toasts compress so the newest stays readable.
+function _collapseToastStack(c){
+  const kids = [...c.children];
+  kids.forEach((k, i) => k.classList.toggle('t-collapsed', kids.length > 2 && i < kids.length - 2));
+}
+// ===== PROGRESS TOAST — for long-running actions =====
+// const h = toastProgress('Sending gift…');  h.update('Wrapping…');
+// h.done('Gift sent!')  /  h.fail('Could not send');
+function toastProgress(text){
+  const noop = { update(){}, done(){}, fail(){}, close(){} };
+  try {
+    const c = _ensureToastContainer();
+    const el = document.createElement('div');
+    el.className = 'toast2 t-progress show-static';
+    el.innerHTML = `<span class="t-spin"></span><span class="toast2-text">${text}</span>`;
+    c.appendChild(el);
+    requestAnimationFrame(() => el.classList.add('show'));
+    _collapseToastStack(c);
+    let settled = false;
+    const settle = (msg, kind) => {
+      if(settled || !el.isConnected){ if(!el.isConnected && msg) toast(msg, kind); return; }
+      settled = true;
+      el.classList.remove('t-progress');
+      el.classList.add(kind);
+      const icon = TOAST_ICONS[kind] || 'i-zap';
+      el.innerHTML = `<svg class="toast2-ic" viewBox="0 0 24 24" width="16" height="16"><use href="#${icon}"/></svg><span class="toast2-text">${msg}</span>`;
+      try { if(isCoarse()){ kind === 'error' ? hapticError() : hapticSuccess(); } } catch(e){}
+      setTimeout(() => { el.classList.remove('show'); setTimeout(() => el.remove(), 280); }, 2400);
+    };
+    // Safety: a progress toast can never get stuck forever
+    const guard = setTimeout(() => { if(!settled){ el.classList.remove('show'); setTimeout(() => el.remove(), 280); settled = true; } }, 30000);
+    return {
+      update(t){ if(!settled){ const s = el.querySelector('.toast2-text'); if(s) s.textContent = t; } },
+      done(t){ clearTimeout(guard); settle(t || 'Done', 'success'); },
+      fail(t){ clearTimeout(guard); settle(t || 'Something went wrong', 'error'); },
+      close(){ clearTimeout(guard); settled = true; el.classList.remove('show'); setTimeout(() => el.remove(), 280); },
+    };
+  } catch(e){ return noop; }
+}
+
+// Close-guard registry for the unified modal system (defined near the bottom).
+// Declared up here because guards are registered throughout the module at
+// evaluation time: { modalId: () => boolean } — return false to veto a close.
+const MODAL_GUARDS = {};
+
+// ===== SHARED SKELETON / EMPTY-STATE HELPERS =====
+// Skeleton rows for any list that's still fetching — no more bare "Loading…".
+function skelRowsHTML(n = 4){
+  let out = '';
+  for(let i = 0; i < n; i++){
+    out += `<div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div>`;
+  }
+  return out;
+}
+// (Empty states use the shared renderEmptyState(container, opts) helper.)
+
+// ===== OFFLINE / RECONNECTING RIBBON =====
+// A slim top banner when the network drops, so failures read as "offline",
+// not as randomly dead buttons. Flashes green on reconnect, then clears.
+(function(){
+  let el = null, hideT = null;
+  function ensure(){
+    if(el) return el;
+    el = document.createElement('div');
+    el.id = 'netRibbon';
+    el.className = 'net-ribbon';
+    el.innerHTML = '<span class="nr-dot"></span><span class="nr-text"></span>';
+    document.body.appendChild(el);
+    return el;
+  }
+  function show(text, cls){
+    const r = ensure();
+    clearTimeout(hideT);
+    r.querySelector('.nr-text').textContent = text;
+    r.className = 'net-ribbon show ' + cls;
+  }
+  function hide(){ if(el) el.classList.remove('show'); }
+  window.addEventListener('offline', () => {
+    show('You\'re offline — some things won\'t work until you reconnect', 'off');
+    try { hapticError(); } catch(e){}
+  });
+  window.addEventListener('online', () => {
+    show('Back online', 'on');
+    try { hapticSuccess(); } catch(e){}
+    hideT = setTimeout(hide, 2200);
+  });
+  // Cold start while already offline
+  if(navigator.onLine === false) show('You\'re offline — some things won\'t work until you reconnect', 'off');
+})();
 
 // =================== PARTICLES + SFX ===================
 const pCanvas = $('#particles');
@@ -29022,7 +29246,7 @@ async function renderFriends(){
   const body = $('#friendsBody');
   const friendUids = state.profile?.friends || [];
   if(friendUids.length === 0){
-    renderEmptyState(body, { icon:'i-people', text:'No friends yet — add some by username to compare ranks and challenge them.' });
+    renderEmptyState(body, { icon:'i-people', text:'No friends yet — add some by username to compare ranks and challenge them.', cta:'Add a friend', onCta: () => { try { showNavPage('friends'); setTimeout(() => $('#addFriendInputPage')?.focus(), 350); } catch(e){} } });
     setText('#friendCount', '0/0');
     return;
   }
@@ -29073,7 +29297,7 @@ function renderFriendsFromCache(){
   const friendUids = state.profile?.friends || [];
   const all = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean);
   if(all.length === 0){
-    renderEmptyState(body, { icon:'i-people', text:'No friends yet — add some by username to compare ranks and challenge them.' });
+    renderEmptyState(body, { icon:'i-people', text:'No friends yet — add some by username to compare ranks and challenge them.', cta:'Add a friend', onCta: () => { try { showNavPage('friends'); setTimeout(() => $('#addFriendInputPage')?.focus(), 350); } catch(e){} } });
     setText('#friendCount', '0/0');
     return;
   }
@@ -29605,7 +29829,7 @@ async function openMatchHistory(){
 }
 function renderMatchHistory(items){
   const list = $('#matchHistoryList'); if(!list) return;
-  if(!items.length){ renderEmptyState(list, { icon:'i-clock', text:'No matches yet — play a few games to build your history!' }); return; }
+  if(!items.length){ renderEmptyState(list, { icon:'i-clock', text:'No matches yet — play a few games to build your history!', cta:'Play a match', onCta: () => { try { requestModalClose($('#matchHistoryModal')) || $('#matchHistoryModal')?.classList.remove('show'); showNavPage('play'); } catch(e){} } }); return; }
   list.innerHTML = '';
   items.forEach(m => {
     const res = m.result || 'match';
@@ -30231,24 +30455,28 @@ on('#levelStrip', 'click', openStatsModal);
 on('#settingsBtn', 'click', openSettingsModal);
 on('#achievementsBtn', 'click', openAchievementsModal);
 
-// GLOBAL: modal close button + click-outside-to-close
+// GLOBAL: modal close button + click-outside-to-close.
+// Both paths route through requestModalClose so close-guards (unsaved changes)
+// and per-modal cleanup always run, no matter how the modal is dismissed.
+let _downOnBackdrop = null;
+document.addEventListener('pointerdown', (e) => {
+  _downOnBackdrop = (e.target.classList && e.target.classList.contains('modal-bg')) ? e.target : null;
+}, true);
 document.addEventListener('click', (e) => {
   // Close button with data-close attribute
   const closeBtn = e.target.closest('[data-close]');
   if(closeBtn){
-    const modalId = closeBtn.dataset.close;
-    const modal = document.getElementById(modalId);
-    if(modal){
-      modal.classList.remove('show');
-      if(modalId === 'editProfileModal') maybePromptUnsavedEdit();
-    }
+    const modal = document.getElementById(closeBtn.dataset.close);
+    if(modal) requestModalClose(modal);
     return;
   }
-  // Click on modal-bg backdrop (but not on the modal content itself)
+  // Click on modal-bg backdrop (but not on the modal content itself). The
+  // pointer must have gone DOWN on the backdrop too — drag-selecting text
+  // inside a modal and releasing outside must never dismiss it.
   if(e.target.classList && e.target.classList.contains('modal-bg')){
-    const wasEdit = e.target.id === 'editProfileModal';
-    e.target.classList.remove('show');
-    if(wasEdit) maybePromptUnsavedEdit();
+    if(e.target.hasAttribute('data-static')) return;
+    if(_downOnBackdrop !== e.target) return;
+    requestModalClose(e.target);
   }
 });
 
@@ -31083,20 +31311,39 @@ function cosmeticEquipped(p, slot){
   const it = COSMETIC_BY_ID[getCosmetics(p)[slot]];
   return (it && it.type === slot) ? it : null;
 }
-async function saveCosmetics(c){
-  if(!state.profile || !state.user) return;
+// Optimistic write: local state updates first (the UI already reflects it);
+// a server reject rolls back and reports. Returns true if the write stuck.
+async function saveCosmetics(c, prev){
+  if(!state.profile || !state.user) return true;
   state.profile.cosmetics = c;
-  try { await updateDoc(doc(state.db, 'users', state.user.uid), { cosmetics: c }); } catch(e){}
+  try {
+    await updateDoc(doc(state.db, 'users', state.user.uid), { cosmetics: c });
+  } catch(e){
+    if(prev !== undefined) state.profile.cosmetics = prev;   // roll back
+    return false;
+  }
   try { updateLockerBadge(); } catch(e){}
+  return true;
 }
 async function equipCosmetic(slot, id){
+  const prev = state.profile?.cosmetics;
   const c = getCosmetics();
+  const prevVal = c[slot];
   c[slot] = id || '';
-  await saveCosmetics(c);
+  // OPTIMISTIC: reflect the change immediately — the write happens behind it.
+  state.profile.cosmetics = c;
   try { haptic(12); } catch(e){}
-  // Update the locker in place (no full re-render → no jarring re-pop of tiles).
   try { if($('#lockerHost')){ lkUpdateEquipped(); lkRenderStage(); } } catch(e){}
   try { renderShopItems(); } catch(e){}
+  const ok = await saveCosmetics(c, prev);
+  if(!ok){
+    // Server rejected — roll the UI back and say so.
+    const c2 = getCosmetics(); c2[slot] = prevVal; state.profile.cosmetics = c2;
+    try { if($('#lockerHost')){ lkUpdateEquipped(); lkRenderStage(); } } catch(e){}
+    try { renderShopItems(); } catch(e){}
+    toast('Couldn\'t save that change — check your connection', 'error');
+    return;
+  }
   // Equipping a FRAME? Frames look best on a clean profile — nudge the player to
   // drop their banner (only once per session, and only if they still have one).
   try {
@@ -31829,6 +32076,13 @@ function openShopBuyModal(item, opts={}){
   }
   const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal sbm2 rar-' + item.rarity + (welcome ? ' sbm-welcome' : '');
   $('#shopBuyModal')?.classList.add('show');
+  // Shared-element morph: the clicked tile flies into the preview hero.
+  try {
+    const from = window._lastCxTile;
+    if(from && from.isConnected && Date.now() - (window._lastCxTileAt || 0) < 1200){
+      flyElement(from, $('#sbmHero') || $('#sbmStage'), { delay: 60 });
+    }
+  } catch(e){}
 }
 // HOLD-TO-BUY: the Buy button must be held for a beat before it fires, so a
 // fat-finger tap can't drain your coins. A charge bar fills while pressed;
@@ -31913,7 +32167,7 @@ async function renderGiftFlowFriends(item, q){
   const list = $('#gfFriends'); if(!list || !item) return;
   const friends = state.profile?.friends || [];
   if(!friends.length){ list.innerHTML = '<div class="side-empty">No friends yet — add some to send gifts!</div>'; return; }
-  list.innerHTML = '<div class="side-empty">Loading friends…</div>';
+  list.innerHTML = skelRowsHTML(4);
   try { await ensureFriendDocs(); } catch(e){}
   let rows = friends.map(u => state._friendDocs?.[u] ? { uid: u, ...state._friendDocs[u] } : null).filter(Boolean);
   const ql = (q || '').trim().toLowerCase();
@@ -32024,7 +32278,7 @@ async function openGiftHistory(){
   modal.classList.add('show');
   state._ghTab = 'received';
   modal.querySelectorAll('.gift-hist-tab').forEach(b => b.classList.toggle('active', b.dataset.ghTab === 'received'));
-  const list = $('#giftHistList'); if(list) list.innerHTML = '<div class="side-empty">Loading…</div>';
+  const list = $('#giftHistList'); if(list) list.innerHTML = skelRowsHTML(3);
   const ach = $('#giftHistAch'); if(ach) ach.innerHTML = '';
   try {
     const data = await loadGiftHistory();
@@ -33071,7 +33325,7 @@ async function renderGiftPicker(item){
     list.innerHTML = '<div class="side-empty">No friends yet — add some to send gifts!</div>';
     return;
   }
-  list.innerHTML = '<div class="side-empty">Loading friends…</div>';
+  list.innerHTML = skelRowsHTML(4);
   await ensureFriendDocs();
   const rows = friends.map(u => state._friendDocs?.[u] ? { uid: u, ...state._friendDocs[u] } : null).filter(Boolean);
   if(!rows.length){ list.innerHTML = '<div class="side-empty">Could not load friends</div>'; return; }
@@ -35275,6 +35529,46 @@ function maybePromptUnsavedEdit(){
     } },
   });
 }
+// ===== GENERIC CONFIRM — uiConfirm({title, sub, okLabel, cancelLabel, danger, icon}) → Promise<boolean> =====
+// One consistent confirmation dialog for the whole app (sheet on mobile, Esc-proof).
+function uiConfirm(opts = {}){
+  return new Promise((resolve) => {
+    const m = $('#uiConfirmModal');
+    if(!m){ resolve(window.confirm(opts.title || 'Are you sure?')); return; }
+    setText('#uiConfirmTitle', opts.title || 'Are you sure?');
+    setText('#uiConfirmSub', opts.sub || '');
+    $('#uiConfirmSub').style.display = opts.sub ? '' : 'none';
+    setText('#uiConfirmIcon', opts.icon || '⚠️');
+    const ok = $('#uiConfirmOk'), cancel = $('#uiConfirmCancel');
+    ok.textContent = opts.okLabel || 'Confirm';
+    cancel.textContent = opts.cancelLabel || 'Cancel';
+    ok.classList.toggle('btn-danger', !!opts.danger);
+    ok.classList.toggle('btn-primary', !opts.danger);
+    const settle = (v) => { m.classList.remove('show'); ok.onclick = cancel.onclick = null; resolve(v); };
+    ok.onclick = () => { hapticConfirm(); settle(true); };
+    cancel.onclick = () => { hapticTick(); settle(false); };
+    m.classList.add('show');
+    setTimeout(() => { try { cancel.focus({ preventScroll: true }); } catch(e){} }, 80);
+  });
+}
+// ===== UNSAVED-CHANGES GUARD — leaving Edit Profile with pending edits asks first =====
+MODAL_GUARDS.editProfileModal = () => {
+  if(!editFormDirty()) return true;
+  uiConfirm({
+    title: 'Discard changes?',
+    sub: 'You have unsaved profile edits. Save them, or throw them away?',
+    okLabel: 'Discard',
+    cancelLabel: 'Keep editing',
+    danger: true,
+    icon: '✏️',
+  }).then(discard => {
+    if(discard){
+      state._editSnapshot = null;             // silence the save-nudge toast
+      $('#editProfileModal')?.classList.remove('show');
+    }
+  });
+  return false;   // veto this close; the confirm above re-issues it if wanted
+};
 // A "guest" is an anonymous (no-account) player. They can play, but identity /
 // profile customization is locked until they create a real account.
 function isGuest(){ return !!(state.user?.isAnonymous || state.profile?.isAnon); }
@@ -40338,9 +40632,19 @@ on('#helpBtn', 'click', () => { const m = $('#helpModal'); if(m) m.classList.add
 function setActiveNav(nav){
   document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === nav));
 }
+// Per-page scroll memory — returning to a page puts you back where you were
+// (within this session), instead of always dumping you at the top.
+const _pageScroll = {};
 function showNavPage(page){
   // Make sure we're on the landing screen first
   if(state.screen !== 'landing') showScreen('landing');
+  // Remember where we were on the page we're leaving
+  try {
+    const cur = document.querySelector('.nav-page.active');
+    if(cur && cur.dataset.page && cur.dataset.page !== page){
+      _pageScroll[cur.dataset.page] = window.scrollY || document.documentElement.scrollTop || 0;
+    }
+  } catch(e){}
   // During a swipe the pager already slides the page in — suppress the app's
   // built-in page/stagger entrance so it doesn't replay on top (the "PC" load anim).
   const _tgt = document.querySelector('.nav-page[data-page="' + page + '"]');
@@ -40349,6 +40653,8 @@ function showNavPage(page){
   document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
   try { syncMobileNav(page); } catch(e){}
   try { closeSidebarMobile(); } catch(e){}
+  try { updateTopbarContext(page); } catch(e){}
+  try { applyProgressiveDisclosure(); } catch(e){}
   // populate the page being shown
   try {
     if(page === 'home') renderHomePage();
@@ -40362,15 +40668,98 @@ function showNavPage(page){
     else if(page === 'settings') renderSettingsPage();
     else if(page === 'locker') renderLockerPage();
   } catch(e){ console.warn('[nav] page render', e); }
-  // scroll content to top
+  // Restore this page's remembered scroll position (or top on first visit)
   const sc = document.querySelector('.screens'); if(sc) sc.scrollTop = 0;
-  window.scrollTo({ top: 0 });
+  const savedY = _pageScroll[page] || 0;
+  window.scrollTo({ top: savedY });
   // Animated content entrance — content rises in on every navigation. Skipped
   // during a swipe (the pager runs its own slide so we don't double-animate).
   if(!window._swipeNav){
     try { const ap = document.querySelector('.nav-page[data-page="' + page + '"]'); if(ap){ ap.classList.remove('page-enter'); void ap.offsetWidth; ap.classList.add('page-enter'); } } catch(e){}
   }
 }
+// ===== PROGRESSIVE DISCLOSURE =====
+// Brand-new players see a focused app: advanced meta-systems (XP boosters,
+// the 2× pill, prestige chrome) stay hidden until they've played a little.
+// Everything reappears automatically — no setting, no surprise.
+function applyProgressiveDisclosure(){
+  const p = state.profile; if(!p) return;
+  const games = p.games || 0;
+  const lvl = (typeof levelOf === 'function') ? levelOf(p).level : 1;
+  const fresh = games < 3 && lvl < 3 && !prestigeOf(p);
+  document.body.classList.toggle('pd-fresh', fresh);
+}
+// ===== ACTIVE-PAGE CONTEXT IN THE TOPBAR =====
+// Shows the current page name plus one contextual quick action, so you always
+// know where you are and what the natural next hop is.
+const TOPBAR_CTX = {
+  home:         { name:'Home' },
+  play:         { name:'Play' },
+  shop:         { name:'Item Shop',    action:{ label:'Locker',       go:() => showNavPage('locker') } },
+  locker:       { name:'Locker',       action:{ label:'Item Shop',    go:() => showNavPage('shop') } },
+  activity:     { name:'Activity',     action:{ label:'Match history', go:() => $('#setMatchHistory')?.click() } },
+  rank:         { name:'Rank',         action:{ label:'Play ranked',  go:() => showNavPage('play') } },
+  friends:      { name:'Friends' },
+  achievements: { name:'Achievements' },
+  settings:     { name:'Settings',     action:{ label:'Edit profile', go:() => openEditProfile() } },
+};
+function updateTopbarContext(page){
+  const box = $('#topbarCtx'); if(!box) return;
+  const ctx = TOPBAR_CTX[page];
+  if(!ctx){ box.style.display = 'none'; return; }
+  box.style.display = '';
+  setText('#topbarCtxName', ctx.name);
+  const btn = $('#topbarCtxAction');
+  if(btn){
+    if(ctx.action){
+      btn.style.display = '';
+      btn.textContent = ctx.action.label;
+      btn.onclick = () => { hapticTick(); try { ctx.action.go(); } catch(e){} };
+    } else btn.style.display = 'none';
+  }
+}
+// ===== NAV CUSTOMIZATION — pin / hide sidebar pages =====
+// Heavy users can hide pages they never open. Home, Play and Settings are
+// always pinned; everything hidden stays reachable via Settings + More sheet.
+const NAV_HIDEABLE = [
+  { id:'shop',         label:'Shop' },
+  { id:'locker',       label:'Locker' },
+  { id:'activity',     label:'Activity' },
+  { id:'rank',         label:'Rank' },
+  { id:'friends',      label:'Friends' },
+  { id:'achievements', label:'Achievements' },
+];
+const NAV_HIDDEN_KEY = 'rosham_nav_hidden';
+function getHiddenNav(){ try { const a = JSON.parse(localStorage.getItem(NAV_HIDDEN_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+function applyNavPrefs(){
+  const hidden = getHiddenNav();
+  document.querySelectorAll('.sidebar-nav .nav-item[data-nav]').forEach(b => {
+    if(NAV_HIDEABLE.some(h => h.id === b.dataset.nav)){
+      b.style.display = hidden.includes(b.dataset.nav) ? 'none' : '';
+    }
+  });
+}
+function renderNavPrefChips(){
+  const host = $('#navPrefChips'); if(!host) return;
+  const hidden = getHiddenNav();
+  host.innerHTML = NAV_HIDEABLE.map(h =>
+    `<button type="button" class="navpref-chip ${hidden.includes(h.id) ? 'off' : 'on'}" data-navpref="${h.id}">
+      <svg viewBox="0 0 24 24" width="12" height="12"><use href="#${hidden.includes(h.id) ? 'i-eye-off' : 'i-check'}"/></svg> ${h.label}
+    </button>`).join('');
+}
+on('#navPrefChips', 'click', (e) => {
+  const chip = e.target.closest('[data-navpref]'); if(!chip) return;
+  const id = chip.dataset.navpref;
+  let hidden = getHiddenNav();
+  if(hidden.includes(id)) hidden = hidden.filter(x => x !== id);
+  else hidden.push(id);
+  try { localStorage.setItem(NAV_HIDDEN_KEY, JSON.stringify(hidden)); } catch(err){}
+  hapticTick();
+  applyNavPrefs();
+  renderNavPrefChips();
+});
+// Apply saved prefs on boot
+try { applyNavPrefs(); } catch(e){}
 document.querySelectorAll('.nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const nav = btn.dataset.nav;
@@ -41104,6 +41493,7 @@ function renderSettingsPage(){
   setTog('setFloatChatToggle', sset.floatChat !== false);
   setTog('setLessFlashToggle', !!sset.lessFlash);
   setTog('setAutoMuteToggle', !!sset.autoMuteBg);
+  try { renderNavPrefChips(); } catch(e){}
 }
 
 // Load saved client preferences (volume, motion, haptics, streamer)
@@ -41205,17 +41595,11 @@ window.addEventListener('orientationchange', () => setTimeout(setVH, 200));
 })();
 
 // ===== QUALITY OF LIFE =====
-// Esc closes the topmost open modal (then flyouts).
+// Esc on flyouts/menus — modal closing lives in the unified modal system,
+// which respects close-guards (unsaved changes) and data-no-esc.
 document.addEventListener('keydown', (e) => {
   if(e.key !== 'Escape') return;
-  const open = document.querySelectorAll('.modal-bg.show');
-  if(open.length){
-    const m = open[open.length - 1];
-    m.classList.remove('show');
-    if(m.id === 'editProfileModal'){ try { maybePromptUnsavedEdit(); } catch(_){} }
-    e.preventDefault();
-    return;
-  }
+  if(document.querySelector('.modal-bg.show')) return;   // unified system handles modals
   try { closeAllFlyouts?.(); } catch(_){}
   try { toggleSpMenu?.(false); } catch(_){}
 });
@@ -41639,7 +42023,7 @@ function renderFriendsInto(sel){
   const all = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean);
   if(all.length === 0){
     if(friendUids.length > 0){ body.innerHTML = skeletonRows(Math.min(friendUids.length, 5)); }
-    else { renderEmptyState(body, { icon:'i-people', text:'No friends yet — add some by username to compare ranks and challenge them.' }); }
+    else { renderEmptyState(body, { icon:'i-people', text:'No friends yet — add some by username to compare ranks and challenge them.', cta:'Add a friend', onCta: () => { try { showNavPage('friends'); setTimeout(() => $('#addFriendInputPage')?.focus(), 350); } catch(e){} } }); }
     return;
   }
   all.sort((a,b) => ((isPinned(b.uid)?1:0)-(isPinned(a.uid)?1:0)) || (friendPresence(b).online - friendPresence(a).online) || ((b.rating||1000)-(a.rating||1000)));
@@ -41657,7 +42041,12 @@ function renderFriendsInto(sel){
 on('#playPageFindBtn', 'click', startRankedMatch);
 on('#playPageChallengeBtn', 'click', () => openChallengePicker());
 on('#play2v2Card', 'click', () => { haptic(14); toast('2v2 is in the works — it\'ll land in a future update', 'info'); });
-on('#playRankCard', 'click', () => showNavPage('rank'));
+on('#playRankCard', 'click', () => {
+  // Shared-element flourish: the rank crest glides toward the Rank page hero.
+  const from = $('#playRankIcon');
+  showNavPage('rank');
+  try { flyElement(from, $('#rankPageIcon'), { delay: 80 }); } catch(e){}
+});
 
 // ===== CHALLENGE FRIEND PICKER =====
 function openChallengePicker(){
@@ -42431,9 +42820,8 @@ on('#chatThreadBody', 'click', (e) => {
   }
 });
 
-document.querySelectorAll('[data-close]').forEach(b => {
-  b.addEventListener('click', () => $('#' + b.dataset.close).classList.remove('show'));
-});
+// (Legacy per-element [data-close] binding removed — the delegated global
+// handler routes every close through requestModalClose so guards apply.)
 // Legal modals (Terms of Service / Privacy Policy) — openable from Settings + footer
 document.querySelectorAll('[data-open-legal]').forEach(b => {
   b.addEventListener('click', () => {
@@ -42795,6 +43183,15 @@ on('#nsfwResumeBtn', 'click', () => restoreNsfwFeed(false));
 function haptic(pattern){
   try { if(!state.hapticsOff && navigator.vibrate) navigator.vibrate(pattern || 12); } catch(e){}
 }
+// ===== HAPTIC VOCABULARY — one consistent tactile language site-wide =====
+// tick    = navigation / selection (barely-there)
+// confirm = a committed action (button press that DID something)
+// success = something good landed (purchase, save, win)
+// error   = something failed (double-buzz, unmistakable)
+function hapticTick(){ haptic(7); }
+function hapticConfirm(){ haptic(14); }
+function hapticSuccess(){ haptic([12, 40, 18]); }
+function hapticError(){ haptic([40, 60, 40]); }
 // Light tap feedback on interactive controls (touch only — never on desktop).
 if(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches){
   document.addEventListener('pointerdown', (e) => {
@@ -42938,15 +43335,7 @@ document.addEventListener('keydown', (e) => {
     if(state.screen === 'game' && e.code === 'KeyR'){ e.preventDefault(); $('#reportBtn')?.click(); }
     // ? = Open help
     if(e.code === 'Slash' && e.shiftKey){ e.preventDefault(); $('#helpBtn')?.click(); }
-    if(e.code === 'Escape'){
-      // close any open modal
-      const open = document.querySelector('.modal-bg.show');
-      if(open){
-        const wasEdit = open.id === 'editProfileModal';
-        open.classList.remove('show');
-        if(wasEdit) maybePromptUnsavedEdit();
-      }
-    }
+    // (Escape handling lives in the unified modal system.)
   } catch(err){ console.error('[keydown]', err); }
 });
 document.querySelectorAll('.code-block .copy').forEach(b => {
@@ -44513,6 +44902,26 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
     nb.style.willChange = 'transform'; nb.style.transform = `translateX(${fromRight ? w : -w}px)`;
   }
   function restore(el){ if(el){ if(el._savedStyle != null) el.setAttribute('style', el._savedStyle); else el.removeAttribute('style'); el._savedStyle = null; } }
+  // Mobile-nav underline tracks the drag: the active tab's underline shrinks as
+  // the target tab's grows, proportional to how far the finger has travelled.
+  function navTrackStart(fromPage, toPage){
+    const nav = document.getElementById('mobileNav'); if(!nav) return;
+    nav.classList.add('swiping');
+    nav.querySelectorAll('.mobile-nav-item').forEach(b => {
+      b.classList.toggle('swipe-to', b.dataset.mnav === toPage);
+    });
+    nav.style.setProperty('--swp', '0');
+  }
+  function navTrackMove(p){
+    const nav = document.getElementById('mobileNav'); if(!nav || !nav.classList.contains('swiping')) return;
+    nav.style.setProperty('--swp', Math.max(0, Math.min(1, p)).toFixed(3));
+  }
+  function navTrackEnd(){
+    const nav = document.getElementById('mobileNav'); if(!nav) return;
+    nav.classList.remove('swiping');
+    nav.style.removeProperty('--swp');
+    nav.querySelectorAll('.swipe-to').forEach(b => b.classList.remove('swipe-to'));
+  }
   let sx = 0, sy = 0, mode = '', page = null, nb = null, idx = -1, ni = -1, w = 1, dirSign = 0, reduced = false;
   host.addEventListener('touchstart', (e) => {
     if(mode === 'committing') return;                 // let the current transition finish
@@ -44536,6 +44945,7 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
       if(ni >= 0 && ni < ORDER.length && !reduced){
         nb = document.querySelector('.nav-page[data-page="' + ORDER[ni] + '"]');
         if(nb){ try { renderFor(ORDER[ni]); showNeighbour(nb, dirSign > 0); } catch(err){ nb = null; } }
+        try { navTrackStart(ORDER[idx], ORDER[ni]); } catch(err){}
       }
     }
     if(mode !== 'drag') return;
@@ -44544,6 +44954,7 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
     if((dx > 0 && idx === 0) || (dx < 0 && idx === ORDER.length - 1)) d = dx * 0.32;   // rubber-band at the ends
     page.style.transform = `translateX(${d}px)`;
     if(nb) nb.style.transform = `translateX(${(dirSign > 0 ? w : -w) + d}px)`;
+    try { navTrackMove(Math.abs(d) / w); } catch(err){}
   }, { passive: false });
   function endDrag(e){
     if(mode !== 'drag'){ if(mode !== 'committing') mode = ''; return; }
@@ -44557,21 +44968,25 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
       const tr = 'transform .2s cubic-bezier(.3,.8,.3,1)';
       if(oldPage){ oldPage.style.transition = tr; oldPage.style.transform = `translateX(${dir < 0 ? w : -w}px)`; }
       if(oldNb){ oldNb.style.transition = tr; oldNb.style.transform = 'translateX(0)'; }
+      try { navTrackMove(1); } catch(err){}
       setTimeout(() => {
         if(oldPage){ oldPage.style.transition = ''; oldPage.style.transform = ''; oldPage.style.willChange = ''; }
         restore(oldNb);
         window._swipeNav = true;
         showNavPage(target);
         window._swipeNav = false;
+        try { navTrackEnd(); } catch(err){}
         mode = '';
       }, oldNb ? 190 : 150);
     } else {
       const tr = 'transform .25s cubic-bezier(.2,.9,.3,1)';
       if(oldPage){ oldPage.style.transition = tr; oldPage.style.transform = 'translateX(0)'; }
       if(oldNb){ oldNb.style.transition = tr; oldNb.style.transform = `translateX(${dir > 0 ? w : -w}px)`; }
+      try { navTrackMove(0); } catch(err){}
       setTimeout(() => {
         if(oldPage){ oldPage.style.transition = ''; oldPage.style.transform = ''; oldPage.style.willChange = ''; }
         restore(oldNb);
+        try { navTrackEnd(); } catch(err){}
         mode = '';
       }, 270);
     }
@@ -44579,6 +44994,221 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   }
   host.addEventListener('touchend', endDrag, { passive: true });
   host.addEventListener('touchcancel', endDrag, { passive: true });
+})();
+
+/* ---- PULL-TO-REFRESH (mobile · Activity / Rank / Friends) ----
+   Drag down from the very top of a refreshable page to re-fetch it. The
+   indicator tracks the pull; releasing past the threshold refreshes. */
+(function(){
+  if(!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches)) return;
+  const REFRESH = {
+    activity: () => { try { renderActivityPage(); } catch(e){} },
+    rank:     () => { try { renderRankPage(); } catch(e){} },
+    friends:  () => { try { renderFriendsPage(); } catch(e){} },
+  };
+  const THRESHOLD = 74;
+  let el = null, sy = 0, pulling = false, armed = false, busy = false;
+  function ind(){
+    if(el) return el;
+    el = document.createElement('div');
+    el.className = 'ptr-ind';
+    el.innerHTML = '<span class="ptr-spin"></span>';
+    document.body.appendChild(el);
+    return el;
+  }
+  document.addEventListener('touchstart', (e) => {
+    pulling = false; armed = false;
+    if(busy || e.touches.length !== 1) return;
+    if(state.screen !== 'landing') return;
+    if(document.querySelector('.modal-bg.show, .more-sheet.show')) return;
+    const page = (document.querySelector('.nav-page.active') || {}).dataset?.page;
+    if(!REFRESH[page]) return;
+    if((window.scrollY || document.documentElement.scrollTop || 0) > 2) return;
+    sy = e.touches[0].clientY;
+    armed = true;
+  }, { passive: true });
+  document.addEventListener('touchmove', (e) => {
+    if(!armed || busy) return;
+    const dy = e.touches[0].clientY - sy;
+    if(dy < 8) { if(pulling){ pulling = false; ind().classList.remove('show','ready'); } return; }
+    pulling = true;
+    const d = Math.min(1.4, dy / THRESHOLD);
+    const i = ind();
+    i.classList.add('show');
+    i.classList.toggle('ready', d >= 1);
+    i.style.setProperty('--ptr', Math.min(1, d).toFixed(3));
+    i.style.transform = `translate(-50%, ${Math.min(70, dy * 0.42)}px) rotate(${dy * 1.4}deg)`;
+  }, { passive: true });
+  function end(e){
+    if(!armed) return;
+    armed = false;
+    if(!pulling){ return; }
+    pulling = false;
+    const i = ind();
+    const ready = i.classList.contains('ready');
+    if(ready && !busy){
+      busy = true;
+      i.classList.add('busy');
+      i.style.transform = 'translate(-50%, 46px)';
+      try { hapticConfirm(); } catch(err){}
+      const page = (document.querySelector('.nav-page.active') || {}).dataset?.page;
+      try { REFRESH[page] && REFRESH[page](); } catch(err){}
+      setTimeout(() => {
+        i.classList.remove('show','ready','busy');
+        i.style.transform = '';
+        busy = false;
+      }, 700);
+    } else {
+      i.classList.remove('show','ready');
+      i.style.transform = '';
+    }
+  }
+  document.addEventListener('touchend', end, { passive: true });
+  document.addEventListener('touchcancel', end, { passive: true });
+})();
+
+/* ---- SHARED-ELEMENT TRANSITIONS (FLIP) ----
+   A clicked element visually "flies" into its destination — the cosmetic tile
+   morphs toward its preview hero, the rank crest glides toward the Rank page.
+   Purely decorative: skipped under reduced-motion / low-power, and any failure
+   degrades to the normal instant switch. */
+function flyElement(fromEl, toEl, opts = {}){
+  try {
+    if(!fromEl || !toEl) return;
+    if(document.body.classList.contains('reduced-motion') || document.body.classList.contains('low-power')) return;
+    const fr = fromEl.getBoundingClientRect();
+    if(!fr.width || !fr.height) return;
+    const ghost = fromEl.cloneNode(true);
+    ghost.className = '';
+    ghost.classList.add('fly-ghost');
+    Object.assign(ghost.style, {
+      position: 'fixed', left: fr.left + 'px', top: fr.top + 'px',
+      width: fr.width + 'px', height: fr.height + 'px',
+      margin: '0', zIndex: 9800, pointerEvents: 'none',
+      borderRadius: getComputedStyle(fromEl).borderRadius || '12px',
+      overflow: 'hidden', willChange: 'transform, opacity',
+      transition: 'transform .42s cubic-bezier(.2,.9,.25,1), opacity .42s ease',
+      background: getComputedStyle(fromEl).backgroundColor,
+    });
+    document.body.appendChild(ghost);
+    // Give the destination a beat to lay out (modal open / page switch)
+    setTimeout(() => {
+      try {
+        const tr = toEl.getBoundingClientRect();
+        if(!tr.width || !tr.height){ ghost.remove(); return; }
+        const dx = (tr.left + tr.width / 2) - (fr.left + fr.width / 2);
+        const dy = (tr.top + tr.height / 2) - (fr.top + fr.height / 2);
+        const s = Math.min(2.4, Math.max(.2, Math.min(tr.width / fr.width, tr.height / fr.height)));
+        ghost.style.transform = `translate(${dx}px, ${dy}px) scale(${s})`;
+        ghost.style.opacity = '0';
+      } catch(e){ try { ghost.remove(); } catch(_){} }
+      setTimeout(() => { try { ghost.remove(); } catch(e){} }, 460);
+    }, opts.delay || 40);
+  } catch(e){}
+}
+// Remember the last clicked cosmetic tile so the preview modal can morph from it.
+document.addEventListener('click', (e) => {
+  const tile = e.target.closest && e.target.closest('.shop-tile, .lk2-tile, .cxg-tile, .case-item, .locker-tile');
+  if(tile){ window._lastCxTile = tile; window._lastCxTileAt = Date.now(); }
+}, true);
+
+/* ---- UNIFIED MODAL SYSTEM ----
+   One rule set for every `.modal-bg` popup, so none behave differently:
+   · body scroll-lock while any modal is open
+   · Esc closes the top-most modal (opt out with data-no-esc)
+   · clicking the backdrop closes (opt out with data-static)
+   · focus moves into the modal on open and returns on close; Tab wraps
+   · close-guards (e.g. unsaved-changes) can veto a dismissal            */
+// NOTE: MODAL_GUARDS is declared early (near the toast helpers) because guards
+// are registered mid-module at evaluation time — a const here would be a TDZ crash.
+function _modalCleanup(m){
+  // Modal-specific teardown that must run however the modal was dismissed.
+  if(m.id === 'calibrationModal'){ try { calibStopStream(); } catch(e){} }
+}
+function topOpenModal(){
+  // Top-most = highest z-index; ties resolve to the later one in the DOM.
+  let best = null, bestZ = -1;
+  document.querySelectorAll('.modal-bg.show').forEach(m => {
+    const z = parseInt(getComputedStyle(m).zIndex, 10) || 0;
+    if(z >= bestZ){ bestZ = z; best = m; }
+  });
+  return best;
+}
+function requestModalClose(m){
+  if(!m || !m.classList.contains('show')) return false;
+  try { const g = MODAL_GUARDS[m.id]; if(g && g() === false) return false; } catch(e){}
+  m.classList.remove('show');
+  _modalCleanup(m);
+  return true;
+}
+(function(){
+  const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+  let lastFocus = null;
+  // Heavily custom modals keep their dialog presentation on phones; everything
+  // else (confirmations, pickers, docs) becomes a bottom sheet on ≤600px.
+  ['profileModal','editProfileModal','cropperModal','shopBuyModal','caseDetailModal',
+   'calibrationModal','adminModal','giftFlowModal','seasonModal','achievementsModal',
+   'matchHistoryModal','statsModal','cameraModal'].forEach(id => {
+    const m = document.getElementById(id); if(m) m.classList.add('keep-dialog');
+  });
+  // --- scroll-lock + focus hand-off, driven by class mutations ---
+  const sync = () => {
+    const anyOpen = !!document.querySelector('.modal-bg.show, .more-sheet.show');
+    document.body.classList.toggle('modal-open', anyOpen);
+  };
+  const obs = new MutationObserver((muts) => {
+    sync();
+    for(const mu of muts){
+      const el = mu.target;
+      if(!el.classList || !el.classList.contains('modal-bg')) continue;
+      const wasOpen = /(^|\s)show(\s|$)/.test(mu.oldValue || '');
+      const isOpen = el.classList.contains('show');
+      if(isOpen && !wasOpen){
+        // opened: remember focus, move it inside (unless something in it already has it)
+        lastFocus = document.activeElement;
+        setTimeout(() => {
+          if(!el.classList.contains('show') || el.contains(document.activeElement)) return;
+          const target = el.querySelector('[autofocus]') || el.querySelector(FOCUSABLE);
+          try { (target || el).focus({ preventScroll: true }); } catch(e){}
+        }, 60);
+      } else if(!isOpen && wasOpen){
+        // closed: give focus back to where the user was
+        if(lastFocus && document.contains(lastFocus) && !document.querySelector('.modal-bg.show')){
+          try { lastFocus.focus({ preventScroll: true }); } catch(e){}
+          lastFocus = null;
+        }
+      }
+    }
+  });
+  document.querySelectorAll('.modal-bg').forEach(m => {
+    if(!m.hasAttribute('tabindex')) m.setAttribute('tabindex', '-1');
+    obs.observe(m, { attributes: true, attributeFilter: ['class'], attributeOldValue: true });
+  });
+  document.querySelectorAll('.more-sheet').forEach(m => obs.observe(m, { attributes: true, attributeFilter: ['class'] }));
+  sync();
+  // --- Esc closes the top-most modal ---
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape'){
+      const m = topOpenModal();
+      if(m && !m.hasAttribute('data-no-esc')){
+        e.preventDefault();
+        requestModalClose(m);
+      }
+      return;
+    }
+    // --- Tab wraps inside the top modal (light focus trap) ---
+    if(e.key === 'Tab'){
+      const m = topOpenModal();
+      if(!m) return;
+      const items = [...m.querySelectorAll(FOCUSABLE)].filter(el => el.offsetParent !== null);
+      if(!items.length) return;
+      const first = items[0], last = items[items.length - 1];
+      if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+      else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+      else if(!m.contains(document.activeElement)){ e.preventDefault(); first.focus(); }
+    }
+  });
+  // (Backdrop click-to-close lives in the global [data-close] handler — one path.)
 })();
 
 /* ---- Hardware / gesture "back" closes the open sheet, modal or flyout ----
@@ -44593,8 +45223,8 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
     if((notif && notif.classList.contains('show')) || (chat && chat.classList.contains('show'))) return () => { try { closeAllFlyouts(); } catch(e){} };
     const more = document.getElementById('moreSheet');
     if(more && more.classList.contains('show') && !more.classList.contains('closing')) return () => { try { closeMoreSheet(); } catch(e){} };
-    const modal = document.querySelector('.modal-bg.show');
-    if(modal) return () => { modal.classList.remove('show'); if(modal.id === 'calibrationModal'){ try { calibStopStream(); } catch(e){} } };
+    const modal = topOpenModal();
+    if(modal) return () => { requestModalClose(modal); };
     return null;
   }
   const inGame = () => { try { return state.screen === 'game'; } catch(e){ return false; } };
