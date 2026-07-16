@@ -38,7 +38,8 @@ const RARITY_PRICE = { rare: 400, epic: 900, legendary: 2200, mythic: 4500, asce
 // One-time first-purchase deal. Must match WELCOME_OFFER in index.html.
 const WELCOME_OFFER = { itemId: "fr_neon", price: 300 };
 // How long after buying a cosmetic a player may undo it for a full refund.
-const REFUND_WINDOW_MS = 60000;
+// 10 minutes — pairs with the in-shop Refund button (see the preview modal).
+const REFUND_WINDOW_MS = 600000;
 // Plain-text a gift note down to something safe to store + render.
 function cleanGiftNote(s) {
   return String(s || "").replace(/[<>]/g, "").replace(/\s+/g, " ").trim().slice(0, 80);
@@ -249,14 +250,17 @@ exports.refundCosmetic = onCall({ cors: true }, async (req) => {
     if (Date.now() - (Number(lp.at) || 0) > REFUND_WINDOW_MS) throw new HttpsError("failed-precondition", "The refund window has passed.");
     const owned = ownedOf(data);
     if (!owned.includes(itemId)) throw new HttpsError("failed-precondition", "You don't own this.");
+    // Worn = kept. Equipping a cosmetic commits the purchase.
+    const cos = data.cosmetics || {};
+    if (["name", "tag", "avatar", "frame"].some((slot) => cos[slot] === itemId)) {
+      throw new HttpsError("failed-precondition", "You've equipped this item — equipped cosmetics can't be refunded.");
+    }
     const price = Number(lp.price) || itemPrice(itemId) || 0;
     const update = {
       coins: FieldValue.increment(price),
       "cosmetics.owned": FieldValue.arrayRemove(itemId),
       lastPurchase: FieldValue.delete(),
     };
-    const cos = data.cosmetics || {};
-    ["name", "tag", "avatar", "frame"].forEach((slot) => { if (cos[slot] === itemId) update["cosmetics." + slot] = ""; });
     tx.update(ref, update);
     tx.set(db.collection("purchases").doc(), {
       uid, itemId, coins: price, type: "refund",

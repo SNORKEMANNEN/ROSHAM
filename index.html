@@ -1241,6 +1241,126 @@ body.pd-fresh #dxpPill,
 body.pd-fresh #boostPill,
 body.pd-fresh .play-lower-grid .xpboost-panel{ display:none !important; }
 
+/* ═══════════════ PLAY PAGE v3 — main column + sidebar rail ═══════════════ */
+.play3-wrap{ display:grid; grid-template-columns:minmax(0,1fr) 316px; gap:14px; align-items:start; }
+.play3-main{ min-width:0; }
+/* hero */
+.play3-hero{ position:relative; overflow:hidden; display:flex; align-items:center; gap:20px;
+  border-radius:22px; border:1px solid var(--line-bright, var(--line)); padding:30px 32px; min-height:198px;
+  background:
+    radial-gradient(110% 160% at 88% 18%, rgba(122,95,220,.24), transparent 55%),
+    radial-gradient(70% 110% at 8% 100%, rgba(255,61,154,.1), transparent 60%),
+    linear-gradient(180deg, #151020, #0d0a14);
+  animation:rk2HeroIn .5s cubic-bezier(.2,.85,.3,1) both; margin-bottom:14px; }
+.p3h-glow{ position:absolute; right:-12%; top:-40%; width:60%; aspect-ratio:1; border-radius:50%; pointer-events:none;
+  background:radial-gradient(circle, rgba(164,139,255,.3), transparent 65%); filter:blur(22px);
+  animation:rk2GlowPulse 5s ease-in-out infinite; }
+.p3h-stars{ position:absolute; inset:0; pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.35) 1px, transparent 1.5px), radial-gradient(rgba(255,255,255,.2) 1px, transparent 1.5px);
+  background-size:110px 90px, 70px 60px; background-position:12px 8px, 40px 30px; opacity:.35; }
+.p3h-left{ position:relative; flex:1; min-width:0; }
+.p3h-eyebrow{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.18em;
+  color:var(--mint); margin-bottom:10px; animation:rk2Rise .45s .05s cubic-bezier(.2,.85,.3,1) both; }
+.p3h-eyebrow b{ color:#fff; }
+.p3h-title{ margin:0; font-family:var(--font-display); font-stretch:64%; font-weight:900; font-size:clamp(34px, 4vw, 46px);
+  line-height:.98; letter-spacing:-.01em; text-transform:uppercase; color:#fff;
+  animation:rk2Rise .45s .12s cubic-bezier(.2,.85,.3,1) both; }
+.p3h-title span{ background:linear-gradient(100deg, #ff61c3, #a48bff); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.p3h-sub{ margin:10px 0 0; font-size:13px; color:var(--text-dim); line-height:1.5; animation:rk2Rise .45s .19s cubic-bezier(.2,.85,.3,1) both; }
+/* floating R·P·S art */
+.p3h-art{ position:relative; flex:0 0 240px; height:150px; pointer-events:none; }
+.p3h-item{ position:absolute; display:grid; place-items:center; border-radius:26%;
+  background:linear-gradient(145deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+  border:1px solid rgba(255,255,255,.1); backdrop-filter:blur(3px);
+  box-shadow:0 18px 40px -16px rgba(0,0,0,.8), 0 0 26px -10px var(--pc, #a48bff);
+  animation:p3hFloat 5.4s ease-in-out infinite; }
+.p3h-item svg{ width:62%; height:62%; color:var(--pc, #a48bff); filter:drop-shadow(0 4px 10px color-mix(in srgb, var(--pc) 60%, transparent)); }
+.p3h-rock{ --pc:#a48bff; width:92px; height:92px; left:0; top:8px; transform:rotate(-9deg); animation-delay:0s; }
+.p3h-paper{ --pc:#dfe7ff; width:84px; height:84px; left:84px; top:44px; transform:rotate(6deg); animation-delay:.9s; z-index:1; }
+.p3h-scissors{ --pc:#ff61c3; width:96px; height:96px; right:0; top:0; transform:rotate(14deg); animation-delay:1.7s; }
+@keyframes p3hFloat{ 0%,100%{ translate:0 0; } 50%{ translate:0 -9px; } }
+/* sidebar rail */
+.play3-side{ display:flex; flex-direction:column; gap:14px; min-width:0; }
+.p3s-card{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:15px 16px;
+  animation:rk2Rise .5s cubic-bezier(.2,.85,.3,1) both; }
+.play3-side .p3s-card:nth-child(1){ animation-delay:.06s; } .play3-side .p3s-card:nth-child(2){ animation-delay:.13s; }
+.play3-side .p3s-card:nth-child(3){ animation-delay:.2s; } .play3-side .p3s-card:nth-child(4){ animation-delay:.27s; }
+.p3s-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:11px; }
+.p3s-title{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.14em; color:var(--text-dim); }
+.p3s-title.violet{ color:#c9b7ff; }
+.p3s-title.gold{ color:#ffd45e; }
+.p3s-chip{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.08em; padding:5px 10px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text-dim); transition:color .15s, border-color .15s; }
+button.p3s-chip:hover{ color:var(--text); border-color:var(--line-bright, #3a3850); }
+.p3s-chip.mint{ color:var(--mint); border-color:rgba(34,211,163,.35); background:rgba(34,211,163,.07); cursor:default; }
+/* YOUR RANK card */
+.p3s-rank{ text-align:center; cursor:pointer; transition:border-color .18s, transform .16s, box-shadow .2s; }
+.p3s-rank:hover{ border-color:var(--line-bright, #3a3850); transform:translateY(-2px); box-shadow:0 16px 36px -22px rgba(0,0,0,.85); }
+.p3s-crest{ position:relative; width:96px; height:96px; margin:2px auto 8px; display:grid; place-items:center; }
+.p3s-crest .phr-icon-glow{ inset:-16%; }
+.p3s-crest .phr-icon{ width:86px; height:86px; animation:rk2Float 5s ease-in-out infinite; }
+.p3s-tier{ font-family:var(--font-display); font-stretch:68%; font-weight:900; font-size:23px; letter-spacing:.01em; text-transform:uppercase; }
+.p3s-pct{ display:inline-block; margin-top:4px; font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.1em;
+  padding:3px 10px; border-radius:999px; background:rgba(255,255,255,.05); border:1px solid var(--line); }
+.p3s-elo{ font-family:var(--font-mono); font-size:11.5px; color:var(--text-dim); letter-spacing:.04em; margin:7px 0 9px; }
+.p3s-elo b{ color:var(--text); }
+.p3s-bar{ height:7px; }
+.p3s-next{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:7px; }
+.p3s-track{ justify-content:center; margin-top:6px; }
+.p3s-rank .phr-nudge{ align-self:center; margin:8px auto 0; }
+/* XP BOOSTS — compact vertical variant of the boost panel */
+.p3s-boosts .xpb2{ display:flex; flex-direction:column; align-items:stretch; gap:10px; padding:0; }
+.p3s-boosts .xpb2-emblem{ display:none; }
+.p3s-boosts .xpb2-main{ flex:0 0 auto; }
+.p3s-boosts .xpb2-title{ font-size:15px; }
+.p3s-boosts .xpb2-sub{ font-size:11px; }
+.p3s-boosts .xpb2-timer{ margin:0; }
+.p3s-boosts .xpb2-tokens{ display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:8px; margin-left:0; flex:none; }
+.p3s-boosts .xpb2-token{ width:auto; min-width:0; padding:10px 4px 7px; }
+.p3s-boosts .xpb2-token-time{ font-size:8px; letter-spacing:.08em; }
+.p3s-boosts .xpboost-panel{ margin:0; padding:0; border:none; background:none; box-shadow:none; overflow:visible; }
+/* THE GAUNTLET */
+.p3s-gauntlet{ border-color:rgba(255,179,54,.3);
+  background:radial-gradient(120% 140% at 100% 0%, rgba(255,179,54,.1), transparent 55%), var(--surface); }
+.p3s-gauntlet-body{ display:flex; align-items:center; gap:12px; }
+.p3s-gauntlet-txt{ flex:1; min-width:0; }
+.p3s-gauntlet-sub{ margin:9px 0 12px; font-size:12px; color:var(--text-dim); line-height:1.45; }
+.p3s-vault-btn{ display:inline-flex; align-items:center; gap:7px; padding:9px 16px; border-radius:11px; cursor:pointer;
+  font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:12px; letter-spacing:.06em;
+  color:#1c1402; background:linear-gradient(180deg, #ffe27a, #f0a622); border:1px solid #ffdf8a;
+  box-shadow:0 8px 22px -10px rgba(255,190,40,.7);
+  transition:transform .15s, filter .15s; }
+.p3s-vault-btn:hover{ transform:translateY(-1px); filter:brightness(1.06); }
+.p3s-vault-btn:active{ transform:scale(.96); }
+/* The real Triumph Vault case (caseGraphicHTML) rendered mini in the rail */
+.p3s-vaultcase{ flex:0 0 auto; display:grid; place-items:center; padding-right:2px;
+  animation:p3sVaultBob 4.2s ease-in-out infinite; }
+.p3s-vaultcase .roshcase.sm{ width:92px; height:69px; }
+@keyframes p3sVaultBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-5px); } }
+body.reduced-motion .p3s-vaultcase, body.low-power .p3s-vaultcase{ animation:none; }
+/* ONLINE FRIENDS */
+.p3s-avrow{ display:flex; align-items:center; gap:9px; cursor:pointer; }
+.p3s-av{ position:relative; width:42px; height:42px; border-radius:50%; display:grid; place-items:center; overflow:hidden;
+  font-weight:800; font-size:15px; color:#fff; border:2px solid var(--line);
+  animation:rrwRowIn .4s var(--d, 0ms) cubic-bezier(.2,.9,.3,1) both; transition:transform .15s; }
+.p3s-avrow:hover .p3s-av{ transform:translateY(-2px); }
+.p3s-av.on{ border-color:var(--mint); box-shadow:0 0 12px -3px var(--mint); }
+.p3s-av .av-photo{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+.p3s-av-more{ background:rgba(255,255,255,.06); color:var(--text-dim); font-family:var(--font-mono); font-size:11px; font-weight:800; border-style:dashed; }
+/* responsive */
+@media (max-width:1120px){
+  .play3-wrap{ grid-template-columns:1fr; }
+  .play3-side{ display:grid; grid-template-columns:1fr 1fr; align-items:start; }
+}
+@media (max-width:640px){
+  .play3-side{ grid-template-columns:1fr; }
+  .play3-hero{ flex-direction:column; align-items:flex-start; padding:24px 20px; }
+  .p3h-art{ align-self:center; flex:none; width:240px; }
+}
+body.reduced-motion :is(.play3-hero, .p3s-card, .p3h-eyebrow, .p3h-title, .p3h-sub, .p3h-item, .p3s-chest-lid, .p3s-chest-gem, .p3s-crest .phr-icon, .p3s-av, .p3h-glow),
+body.low-power :is(.play3-hero, .p3s-card, .p3h-eyebrow, .p3h-title, .p3h-sub, .p3h-item, .p3s-chest-lid, .p3s-chest-gem, .p3s-crest .phr-icon, .p3s-av, .p3h-glow){
+  animation:none !important; opacity:1 !important; }
+
 /* ═══════════ RANK REWARDS POPUP — season-pass reward browser ═══════════ */
 .modal.rrw-modal{ --rrw:#ffd33d;
   display:grid; grid-template-columns:264px 1fr; gap:0; padding:0; max-width:1060px; width:min(1060px, 96vw);
@@ -16456,6 +16576,144 @@ body.reduced-motion .sbm-buy.holding .sbm-hold-ring, body.low-power .sbm-buy.hol
 }
 body.reduced-motion .sbm-hero-rays, body.low-power .sbm-hero-rays{ animation:none; }
 
+/* ═══════════ COSMETIC PREVIEW v3 (sbm3) — spotlight stage + detail column ═══════════ */
+.shop-buy-modal.sbm3{ max-width:720px; padding:0; }
+.sbm3-top{ display:flex; align-items:center; justify-content:space-between; padding:16px 18px 12px 22px; }
+.sbm3-eyebrow{ display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.18em; color:var(--text-faint); }
+.sbm3 .modal-close{ position:static; }
+.sbm3-body{ display:grid; grid-template-columns:1.02fr 1fr; gap:18px; padding:0 18px; align-items:stretch; }
+/* left: the stage */
+.sbm3 .sbm-hero{
+  border:1px solid color-mix(in srgb, var(--rc) 30%, var(--line));
+  border-radius:18px; border-bottom-width:1px; min-height:470px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding:44px 22px 120px;
+  background:
+    radial-gradient(120% 60% at 50% 0%, color-mix(in srgb, var(--rc) 26%, transparent), transparent 55%),
+    linear-gradient(180deg, #171020, #0b0810);
+}
+/* falling spotlight cone from the top */
+.sbm3-beam{ position:absolute; left:50%; top:-4%; transform:translateX(-50%); width:70%; height:78%; pointer-events:none;
+  background:linear-gradient(180deg, color-mix(in srgb, var(--rc) 55%, #fff 10%), transparent 82%);
+  clip-path:polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  opacity:.24; filter:blur(6px);
+  animation:sbm3Beam 4.5s ease-in-out infinite; }
+@keyframes sbm3Beam{ 0%,100%{ opacity:.18; } 50%{ opacity:.3; } }
+.sbm3 .sbm-hero-rays{ opacity:.28; }
+.sbm3 .sbm-stage{ animation:sbm3StageIn .55s cubic-bezier(.2,1.3,.35,1) both; }
+@keyframes sbm3StageIn{ from{ opacity:0; transform:translateY(16px) scale(.92); } to{ opacity:1; transform:none; } }
+/* podium */
+.sbm3-podium{ position:absolute; left:50%; bottom:26px; transform:translateX(-50%); width:72%; max-width:300px; height:64px; pointer-events:none; }
+.sbm3-podium-top{ position:absolute; left:0; right:0; top:0; height:34px; border-radius:50%;
+  background:linear-gradient(180deg, #241b2e, #120d18);
+  border:1.5px solid color-mix(in srgb, var(--rc) 55%, transparent);
+  box-shadow:0 0 24px -6px var(--rc), inset 0 3px 10px rgba(0,0,0,.6); }
+.sbm3-podium-side{ position:absolute; left:4%; right:4%; top:18px; height:30px; border-radius:0 0 22px 22px;
+  background:linear-gradient(180deg, #171019, #0c080f);
+  border:1px solid color-mix(in srgb, var(--rc) 25%, transparent); border-top:none; }
+.sbm3-podium-glow{ position:absolute; left:50%; bottom:-14px; transform:translateX(-50%); width:120%; height:34px; border-radius:50%;
+  background:radial-gradient(closest-side, color-mix(in srgb, var(--rc) 70%, transparent), transparent);
+  filter:blur(12px); animation:sbm3Beam 4.5s ease-in-out infinite; }
+/* right: detail column */
+.sbm3-side{ display:flex; flex-direction:column; min-width:0; padding:6px 4px 0 0; }
+.sbm3 .sbm-name{ font-size:34px; }
+.sbm3-star{ font-size:10px; color:color-mix(in srgb, var(--rc) 75%, #fff); }
+.sbm3 .sbm-desc{ font-size:13px; margin-bottom:12px; }
+/* feature rows */
+.sbm3-features{ display:flex; flex-direction:column; gap:9px; margin-bottom:14px; }
+.sbm3-feat{ display:flex; align-items:center; gap:12px; padding:10px 13px; border-radius:13px;
+  background:rgba(255,255,255,.03); border:1px solid var(--line);
+  animation:sbm3RowIn .4s var(--d, 0ms) cubic-bezier(.2,.9,.3,1) both; }
+@keyframes sbm3RowIn{ from{ opacity:0; transform:translateX(10px); } to{ opacity:1; transform:none; } }
+.sbm3-feat-ic{ flex:0 0 auto; width:34px; height:34px; border-radius:10px; display:grid; place-items:center; font-size:16px;
+  background:color-mix(in srgb, var(--rc) 12%, transparent); border:1px solid color-mix(in srgb, var(--rc) 26%, transparent); }
+.sbm3-feat-txt{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+.sbm3-feat-txt b{ font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.1em; color:color-mix(in srgb, var(--rc) 70%, #fff); }
+.sbm3-feat-txt small{ font-size:11px; color:var(--text-dim); }
+/* wallet + actions card */
+.sbm3-wallet{ margin-top:auto; padding:14px 15px 13px; border-radius:16px; background:rgba(255,255,255,.025); border:1px solid var(--line); }
+.sbm3-wallet-lbl{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.16em; color:var(--text-faint); margin-bottom:7px; }
+.sbm3-wallet-row{ display:flex; align-items:center; gap:9px; margin-bottom:12px; }
+.sbm3-wallet-coin{ width:34px; height:34px; border-radius:50%; display:grid; place-items:center; color:#ffd45e;
+  background:radial-gradient(circle at 35% 30%, rgba(255,224,138,.25), rgba(255,180,54,.08)); border:1px solid rgba(255,212,94,.4); }
+.sbm3-wallet-row b{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:24px; font-variant-numeric:tabular-nums; }
+.sbm3-wallet-unit{ font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.12em; color:var(--text-faint); }
+.sbm3-wallet-add{ margin-left:auto; width:34px; height:34px; border-radius:10px; cursor:pointer;
+  border:1px solid var(--line-bright, var(--line)); background:rgba(255,255,255,.05); color:var(--text);
+  font-size:19px; font-weight:700; line-height:1; display:grid; place-items:center;
+  transition:background .15s, border-color .15s, transform .12s; }
+.sbm3-wallet-add:hover{ background:rgba(255,255,255,.1); border-color:#ffd45e; color:#ffd45e; transform:scale(1.06); }
+/* THE BUY BUTTON — always gold, never rarity-tinted. Hold-to-buy kept + more:
+   idle glow breathing, a travelling sheen, price pop on hover, dark ink hold ring. */
+.sbm3 .sbm-buy.sbm3-buy{
+  width:100%; min-height:60px; border-radius:14px; padding:0 58px 0 18px; display:flex; align-items:center;
+  color:#221302;
+  background:linear-gradient(180deg, #ffe27a 0%, #ffc93d 55%, #f0a622 100%);
+  border:1px solid #ffdf8a;
+  box-shadow:0 10px 30px -10px rgba(255,190,40,.65), inset 0 1px 0 rgba(255,255,255,.55);
+  animation:sbm3BuyBreath 2.8s ease-in-out infinite;
+}
+@keyframes sbm3BuyBreath{ 0%,100%{ box-shadow:0 10px 30px -10px rgba(255,190,40,.55), inset 0 1px 0 rgba(255,255,255,.55); }
+  50%{ box-shadow:0 12px 38px -8px rgba(255,190,40,.85), inset 0 1px 0 rgba(255,255,255,.55); } }
+.sbm3 .sbm-buy.sbm3-buy:hover:not(:disabled){ filter:brightness(1.06); }
+.sbm3 .sbm-buy.sbm3-buy:hover:not(:disabled) .sbm-buy-price{ transform:scale(1.04); }
+.sbm3 .sbm-buy-price{ color:#221302; transition:transform .18s cubic-bezier(.2,1.5,.4,1); }
+.sbm3 .sbm-buy-price svg{ color:#8a5a00; }
+.sbm3 .sbm-buy-sub{ color:#5c3a05; opacity:1; }
+/* travelling sheen */
+.sbm3-buy-sheen{ position:absolute; top:0; bottom:0; width:56px; z-index:1; pointer-events:none;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.55) 50%, transparent);
+  transform:skewX(-18deg); left:-70px; animation:sbm3Sheen 3.4s ease-in-out infinite; }
+@keyframes sbm3Sheen{ 0%, 55%, 100%{ left:-70px; } 30%{ left:calc(100% + 20px); } }
+/* hold visuals on gold: white charge fill + dark ink ring */
+.sbm3 .sbm-hold-fill{ background:linear-gradient(90deg, rgba(255,255,255,.35), rgba(255,255,255,.75)); box-shadow:0 0 18px 2px rgba(255,255,255,.4); }
+.sbm3 .sbm-ring-bg{ stroke:rgba(34,19,2,.25); }
+.sbm3 .sbm-ring-fg{ stroke:#221302; }
+.sbm3 .sbm-ring-ic{ color:#221302; opacity:.85; }
+.sbm3 .sbm-buy.holding{ transform:scale(.98); animation:none; }
+.sbm3 .sbm-buy.is-loading{ color:#221302 !important; }
+.sbm3 .sbm-buy:disabled{ animation:none; }
+/* refund — replaces the buy button on a fresh purchase, live countdown */
+.sbm3-refund{ width:100%; min-height:52px; border-radius:13px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 16px;
+  background:rgba(255,138,61,.08); border:1.5px solid rgba(255,154,61,.5); color:#ffc9a0; cursor:pointer;
+  transition:background .16s, border-color .16s, transform .13s; }
+.sbm3-refund:hover{ background:rgba(255,138,61,.15); border-color:#ff9a3d; }
+.sbm3-refund:active{ transform:scale(.985); }
+.sbm3-refund-t{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:14px; letter-spacing:.03em; }
+.sbm3-refund-t b{ color:#ffd45e; }
+.sbm3-refund-timer{ font-family:var(--font-mono); font-size:11px; font-weight:800; color:var(--text-dim); font-variant-numeric:tabular-nums; }
+.sbm3-refund-timer.urgent{ color:#ff8a5e; animation:refundUrgent 1s ease-in-out infinite; }
+@keyframes refundUrgent{ 0%,100%{ opacity:1; } 50%{ opacity:.55; } }
+body.reduced-motion .sbm3-refund-timer.urgent, body.low-power .sbm3-refund-timer.urgent{ animation:none; }
+/* gift / locker below the buy */
+.sbm3-alt-actions{ display:flex; gap:9px; margin-top:9px; }
+.sbm3-alt-actions .btn{ flex:1; min-height:44px; border-radius:12px; justify-content:center; }
+.sbm3-alt-actions .sbm-gift{ flex-direction:row; align-items:center; gap:9px; padding:0 12px; border-color:rgba(155,123,255,.4); }
+.sbm3-alt-actions .sbm-gift .sbm-gift-ic{ font-size:16px; }
+.sbm3-alt-actions .sbm-gift-txt b{ font-size:13px; }
+.sbm3-balhint{ margin-top:9px; text-align:center; }
+.sbm3-balhint .sbm-bal-hint{ font-size:10.5px; }
+/* footer tiles */
+.sbm3 .sbm-foot{ display:grid; grid-template-columns:repeat(3, 1fr); gap:0; padding:14px 18px 18px; margin-top:16px; border-top:1px solid var(--line-soft); }
+.sbm3-foot-tile{ display:flex; align-items:center; gap:11px; padding:4px 16px; border-right:1px solid var(--line);
+  animation:sbm3RowIn .4s var(--d, 0ms) cubic-bezier(.2,.9,.3,1) both; }
+.sbm3-foot-tile:last-child{ border-right:none; }
+.sbm3-foot-ic{ font-size:17px; flex:0 0 auto; }
+.sbm3-foot-txt{ display:flex; flex-direction:column; gap:1px; min-width:0; }
+.sbm3-foot-txt b{ font-family:var(--font-mono); font-size:9px; font-weight:800; letter-spacing:.1em; color:var(--text-dim); }
+.sbm3-foot-txt small{ font-size:10px; color:var(--text-faint); }
+/* mobile: stack panes */
+@media (max-width:680px){
+  .sbm3-body{ grid-template-columns:1fr; }
+  .sbm3 .sbm-hero{ min-height:340px; padding:30px 18px 96px; }
+  .sbm3 .sbm-name{ font-size:29px; }
+  .sbm3 .sbm-foot{ grid-template-columns:1fr; gap:9px; }
+  .sbm3-foot-tile{ border-right:none; padding:2px 4px; }
+}
+body.reduced-motion :is(.sbm3-beam, .sbm3-buy-sheen, .sbm3 .sbm-buy.sbm3-buy, .sbm3 .sbm-stage, .sbm3-feat, .sbm3-foot-tile, .sbm3-podium-glow),
+body.low-power :is(.sbm3-beam, .sbm3-buy-sheen, .sbm3 .sbm-buy.sbm3-buy, .sbm3 .sbm-stage, .sbm3-feat, .sbm3-foot-tile, .sbm3-podium-glow){ animation:none !important; opacity:1; }
+body.reduced-motion .sbm3-buy-sheen, body.low-power .sbm3-buy-sheen{ display:none; }
+
 /* ═══════════ FORTNITE-STYLE GIFT FLOW ═══════════ */
 .gift-flow-modal{ max-width:440px; }
 .gf-head{ display:flex; align-items:baseline; gap:10px; margin-bottom:14px; }
@@ -23321,46 +23579,28 @@ const FIREBASE_CONFIG = {
           <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
           <div class="dxp-mult">2×</div>
         </div>
-        <!-- ARENA HERO — mode headline on the left, YOUR RANK panel on the right -->
-        <section class="hx-hero play-hero">
-          <div class="hx-hero-glow"></div>
-          <div class="hx-hero-grid"></div>
-          <div class="hx-hero-inner play-hero-split">
-            <div class="play-hero-main">
-              <div class="hx-hero-top">
-                <span class="hx-badge"><span class="live-dot"></span> <b id="playHeroOnline">—</b> playing now</span>
-                <span class="hx-badge ghost">Best of 3 · winner takes ELO</span>
-              </div>
-              <h1 class="hx-wordmark play-hero-title">CHOOSE YOUR <span class="hx-cam">MODE</span></h1>
-              <p class="hx-tag">Webcam rock · paper · scissors against real people. Pick a mode and throw hands.</p>
-            </div>
-            <div class="play-hero-rank" id="playRankCard" title="Open the Rank page">
-              <div class="phr-icon-wrap">
-                <div class="phr-icon-glow" id="playRankGlow"></div>
-                <svg id="playRankIcon" class="phr-icon"></svg>
-              </div>
-              <div class="phr-info">
-                <div class="phr-tier">
-                  <span id="playRankTier">Bronze I</span>
-                  <span class="phr-pct" id="playRankPct" style="display:none;"></span>
-                </div>
-                <div class="phr-elo"><span id="playRankRating">1000</span> ELO · <b id="playRankWR">—</b> WR</div>
-                <div class="ui-bar phr-bar"><div class="ui-bar-fill" id="playRankFill" style="width:0%;"></div></div>
-                <div class="phr-next" id="playRankNext">—</div>
-                <div class="phr-track" id="playRankTrack">
-                  <span class="phr-track-item" id="playRankTrackRank"></span>
-                  <span class="phr-track-sep">·</span>
-                  <span class="phr-track-item" id="playRankTrackLvl"></span>
-                </div>
-                <div class="phr-nudge" id="playRankNudge" style="display:none;"></div>
-                <span class="phr-view">View rank progress <svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-arrow-right"/></svg></span>
-              </div>
-            </div>
+        <!-- ═══ PLAY v3 — main column + sidebar rail ═══ -->
+        <div class="play3-wrap">
+        <div class="play3-main">
+
+        <!-- HERO — PLAY NOW headline with floating R·P·S art -->
+        <section class="play3-hero">
+          <div class="p3h-glow"></div>
+          <div class="p3h-stars" aria-hidden="true"></div>
+          <div class="p3h-left">
+            <div class="p3h-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-zap"/></svg> PLAY NOW · <b id="playHeroOnline">—</b> ONLINE</div>
+            <h1 class="p3h-title">CHOOSE<br>YOUR <span>MODE</span></h1>
+            <p class="p3h-sub">Webcam rock · paper · scissors<br>against real people.</p>
+          </div>
+          <div class="p3h-art" aria-hidden="true">
+            <span class="p3h-item p3h-rock"><svg viewBox="0 0 64 64"><use href="#i-rock"/></svg></span>
+            <span class="p3h-item p3h-paper"><svg viewBox="0 0 64 64"><use href="#i-paper"/></svg></span>
+            <span class="p3h-item p3h-scissors"><svg viewBox="0 0 64 64"><use href="#i-scissors"/></svg></span>
           </div>
         </section>
 
         <!-- GAME MODES -->
-        <div class="mode-grid">
+        <div class="mode-grid play3-modes">
           <!-- 1v1 Ranked -->
           <button class="mode-card mode-ranked" id="playPageFindBtn" style="--mc:var(--mint);">
             <div class="mode-card-glow"></div>
@@ -23407,9 +23647,8 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
 
-        <!-- BOOSTER CONSOLE — full-width 2× XP strip, then challenges side by side -->
-        <div class="psection"><h3>Boosts &amp; challenges</h3></div>
-        <div class="xpboost-panel" id="xpBoostPanel" style="display:none;"></div>
+        <!-- CHALLENGES — daily + weekly + gauntlet live here, under the modes -->
+        <div class="psection"><h3>Challenges</h3></div>
         <div class="challenge-stack play-challenges" id="playChallengeSlot"></div>
 
         <!-- The throws -->
@@ -23428,6 +23667,61 @@ const FIREBASE_CONFIG = {
             <b>Scissors</b><span>cuts paper</span>
           </div>
         </div>
+
+        </div><!-- /play3-main -->
+
+        <!-- ═══ SIDEBAR RAIL — rank · boosts · gauntlet · friends ═══ -->
+        <aside class="play3-side">
+          <!-- YOUR RANK -->
+          <div class="p3s-card p3s-rank" id="playRankCard" title="Open the Rank page">
+            <div class="p3s-head">
+              <span class="p3s-title violet"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-trophy"/></svg> YOUR RANK</span>
+              <button type="button" class="p3s-chip" id="playViewStats">VIEW STATS</button>
+            </div>
+            <div class="p3s-crest">
+              <div class="phr-icon-glow" id="playRankGlow"></div>
+              <svg id="playRankIcon" class="phr-icon"></svg>
+            </div>
+            <div class="p3s-tier" id="playRankTier">Bronze I</div>
+            <div class="p3s-pct" id="playRankPct" style="display:none;"></div>
+            <div class="p3s-elo"><span id="playRankRating">1000</span> ELO · <b id="playRankWR">—</b> WR</div>
+            <div class="ui-bar phr-bar p3s-bar"><div class="ui-bar-fill" id="playRankFill" style="width:0%;"></div></div>
+            <div class="p3s-next" id="playRankNext">—</div>
+            <div class="phr-track p3s-track" id="playRankTrack">
+              <span class="phr-track-item" id="playRankTrackRank"></span>
+              <span class="phr-track-sep">·</span>
+              <span class="phr-track-item" id="playRankTrackLvl"></span>
+            </div>
+            <div class="phr-nudge" id="playRankNudge" style="display:none;"></div>
+          </div>
+          <!-- XP BOOSTS -->
+          <div class="p3s-card p3s-boosts">
+            <div class="p3s-head">
+              <span class="p3s-title gold"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-zap"/></svg> XP BOOSTS</span>
+            </div>
+            <div class="xpboost-panel" id="xpBoostPanel" style="display:none;"></div>
+          </div>
+          <!-- THE GAUNTLET -->
+          <div class="p3s-card p3s-gauntlet">
+            <div class="p3s-gauntlet-body">
+              <div class="p3s-gauntlet-txt">
+                <span class="p3s-title gold"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-trophy"/></svg> THE GAUNTLET</span>
+                <p class="p3s-gauntlet-sub">Complete all 3 weekly challenges to unlock the Triumph Vault.</p>
+                <button type="button" class="p3s-vault-btn" id="playViewVault">VIEW VAULT</button>
+              </div>
+              <div class="p3s-vaultcase" id="playVaultCase" aria-hidden="true"></div>
+            </div>
+          </div>
+          <!-- ONLINE FRIENDS -->
+          <div class="p3s-card p3s-friends" id="playFriendsCard" style="display:none;">
+            <div class="p3s-head">
+              <span class="p3s-title"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-people"/></svg> ONLINE FRIENDS</span>
+              <span class="p3s-chip mint" id="playFriendsCount">0 ONLINE</span>
+            </div>
+            <div class="p3s-avrow" id="playFriendsRow"></div>
+          </div>
+        </aside>
+        </div><!-- /play3-wrap -->
       </div><!-- /page play -->
 
       <!-- ============ PAGE: ITEM SHOP (OG two-panel layout) ============ -->
@@ -25556,58 +25850,71 @@ const FIREBASE_CONFIG = {
 
 <!-- SHOP PURCHASE MODAL -->
 <div class="modal-bg" id="shopBuyModal">
-  <div class="modal shop-buy-modal sbm2" id="shopBuyCard">
-    <button class="modal-close" data-close="shopBuyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
-    <!-- HERO — the cosmetic dramatically shown on your profile -->
-    <div class="sbm-hero" id="sbmHero">
-      <i class="sbm-hero-rays" aria-hidden="true"></i>
-      <i class="sbm-hero-glow" aria-hidden="true"></i>
-      <div class="sbm-stage" id="sbmStage"></div>
-      <i class="sbm-hero-floor" aria-hidden="true"></i>
+  <div class="modal shop-buy-modal sbm2 sbm3" id="shopBuyCard">
+    <!-- top bar: eyebrow + close -->
+    <div class="sbm3-top">
+      <span class="sbm3-eyebrow"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-eye"/></svg> COSMETIC PREVIEW</span>
+      <button class="modal-close" data-close="shopBuyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
     </div>
-    <!-- DETAIL — rarity/name/description + thumbnails -->
-    <div class="sbm-detail">
-      <div class="sbm-info">
+    <div class="sbm3-body">
+      <!-- LEFT — spotlight stage with podium -->
+      <div class="sbm-hero" id="sbmHero">
+        <i class="sbm3-beam" aria-hidden="true"></i>
+        <i class="sbm-hero-rays" aria-hidden="true"></i>
+        <div class="sbm-stage" id="sbmStage"></div>
+        <div class="sbm3-podium" aria-hidden="true">
+          <i class="sbm3-podium-glow"></i>
+          <i class="sbm3-podium-top"></i>
+          <i class="sbm3-podium-side"></i>
+        </div>
+      </div>
+      <!-- RIGHT — details column -->
+      <div class="sbm3-side">
         <div class="sbm-rarity" id="sbmRarity">EPIC · PROFILE TAG</div>
         <h3 class="sbm-name" id="sbmName">Galaxy</h3>
-        <div class="sbm-underline"><i></i><svg viewBox="0 0 24 24" width="10" height="10"><use href="#i-close"/></svg><i></i></div>
+        <div class="sbm-underline"><i></i><span class="sbm3-star">✦</span><i></i></div>
         <p class="sbm-desc" id="sbmDesc">—</p>
-        <div class="sbm-meta" id="sbmMeta"></div>
+        <div class="sbm3-features" id="sbmMeta"></div>
+        <!-- wallet + actions card -->
+        <div class="sbm3-wallet">
+          <div class="sbm3-wallet-lbl">YOUR BALANCE</div>
+          <div class="sbm3-wallet-row">
+            <span class="sbm3-wallet-coin"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-coin"/></svg></span>
+            <b id="sbmBalNum">0</b><span class="sbm3-wallet-unit">COINS</span>
+            <button type="button" class="sbm3-wallet-add" id="sbmAddCoins" title="Get more coins" aria-label="Get more coins">+</button>
+          </div>
+          <button class="btn sbm-buy sbm3-buy" id="sbmBuyBtn">
+            <span class="sbm-hold-fill" aria-hidden="true"></span>
+            <i class="sbm3-buy-sheen" aria-hidden="true"></i>
+            <span class="sbm-buy-inner">
+              <span class="sbm-buy-price"><svg viewBox="0 0 24 24" width="19" height="19"><use href="#i-coin"/></svg> <span id="sbmBuyLabel">900</span></span>
+              <span class="sbm-buy-sub" id="sbmBuySub">HOLD TO BUY</span>
+            </span>
+            <span class="sbm-hold-ring2" aria-hidden="true">
+              <svg class="sbm-ring-svg" viewBox="0 0 44 44"><circle class="sbm-ring-bg" cx="22" cy="22" r="19"/><circle class="sbm-ring-fg" cx="22" cy="22" r="19"/></svg>
+              <svg class="sbm-ring-ic" viewBox="0 0 24 24" width="17" height="17"><use href="#i-crown"/></svg>
+            </span>
+          </button>
+          <!-- Refund — appears on a fresh purchase, counts down the window -->
+          <button type="button" class="btn sbm3-refund" id="sbmRefundBtn" style="display:none;">
+            <span class="sbm3-refund-t">↩ REFUND <b id="sbmRefundPrice">400</b></span>
+            <span class="sbm3-refund-timer" id="sbmRefundTimer">10:00 left</span>
+          </button>
+          <div class="sbm3-alt-actions">
+            <button class="btn sbm-gift" id="sbmGiftBtn" title="Gift this to a friend">
+              <span class="sbm-gift-ic">🎁</span>
+              <span class="sbm-gift-txt"><b>GIFT</b><i>Send to a friend</i></span>
+            </button>
+            <button class="btn sbm-locker" id="sbmLockerBtn" title="Open this in your Locker" style="display:none;">
+              <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-locker"/></svg>
+              Open in Locker
+            </button>
+          </div>
+          <div class="sbm3-balhint" id="sbmBalance"></div>
+        </div>
       </div>
-      <div class="sbm-thumbs" id="sbmThumbs"></div>
     </div>
-    <div class="sbm-sep"></div>
-    <!-- BALANCE -->
-    <div class="sbm-balrow">
-      <div class="sbm-bal-left">
-        <span class="sbm-bal-coin"><svg viewBox="0 0 24 24" width="26" height="26"><use href="#i-coin"/></svg></span>
-        <div class="sbm-bal-txt"><span class="sbm-bal-lbl">YOUR BALANCE</span><span class="sbm-bal-num"><b id="sbmBalNum">0</b> Coins</span></div>
-      </div>
-      <div class="sbm-bal-right" id="sbmBalance"></div>
-    </div>
-    <!-- ACTIONS -->
-    <div class="sbm-actions">
-      <button class="btn sbm-gift" id="sbmGiftBtn" title="Gift this to a friend">
-        <span class="sbm-gift-ic">🎁</span>
-        <span class="sbm-gift-txt"><b>GIFT</b><i>Send to a friend</i></span>
-      </button>
-      <button class="btn sbm-locker" id="sbmLockerBtn" title="Open this in your Locker" style="display:none;">
-        <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-locker"/></svg>
-        Open in Locker
-      </button>
-      <button class="btn btn-primary sbm-buy" id="sbmBuyBtn">
-        <span class="sbm-hold-fill" aria-hidden="true"></span>
-        <span class="sbm-buy-inner">
-          <span class="sbm-buy-price"><svg viewBox="0 0 24 24" width="19" height="19"><use href="#i-coin"/></svg> <span id="sbmBuyLabel">900</span></span>
-          <span class="sbm-buy-sub" id="sbmBuySub">HOLD TO BUY</span>
-        </span>
-        <span class="sbm-hold-ring2" aria-hidden="true">
-          <svg class="sbm-ring-svg" viewBox="0 0 44 44"><circle class="sbm-ring-bg" cx="22" cy="22" r="19"/><circle class="sbm-ring-fg" cx="22" cy="22" r="19"/></svg>
-          <svg class="sbm-ring-ic" viewBox="0 0 24 24" width="17" height="17"><use href="#i-crown"/></svg>
-        </span>
-      </button>
-    </div>
-    <!-- FOOTER META CHIPS -->
+    <!-- FOOTER — three info tiles -->
     <div class="sbm-foot" id="sbmFoot"></div>
   </div>
 </div>
@@ -29778,6 +30085,7 @@ function renderNotifications(){
     if(type === 'message') return 'i-message';
     if(type === 'levelup') return 'i-medal';
     if(type === 'rankup') return 'i-trophy';
+    if(type === 'gift' || type === 'cosmetic') return 'i-locker';
     return 'i-bell';
   };
   list.innerHTML = '';
@@ -29792,11 +30100,39 @@ function renderNotifications(){
       </div>
     `;
     item.addEventListener('click', () => {
+      if(n.type === 'gift'){ openPendingGift(); return; }
       if(n.actionUid && n.type !== 'message') openProfile(n.actionUid);
       else if(n.type === 'message' && n.actionUid) openChatThread(n.actionUid, n.actionName);
     });
     list.appendChild(item);
   });
+}
+// Tapping a gift notification opens your newest unopened gift.
+async function openPendingGift(){
+  if(!state.user || !state.db) return;
+  try { closeAllFlyouts(); } catch(e){}
+  try {
+    const snap = await getDocs(query(collection(state.db, 'gifts'), where('to', '==', state.user.uid), where('status', '==', 'pending')));
+    const gifts = [];
+    snap.forEach(d => gifts.push({ id: d.id, ...d.data() }));
+    if(!gifts.length){
+      toast('No unopened gifts right now — anything you accepted is in your Locker', 'info', {
+        duration: 5000,
+        action: { label: 'Locker', onClick: () => showNavPage('locker') },
+      });
+      return;
+    }
+    gifts.sort((a, b) => {
+      const ta = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const tb = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return tb - ta;
+    });
+    state._giftHandlingId = null;   // allow the overlay to open for this gift
+    showGiftOverlay(gifts[0]);
+  } catch(e){
+    console.warn('[gift] open pending', e);
+    toast('Couldn\'t load your gift — try again in a moment', 'error');
+  }
 }
 async function markNotificationsRead(){
   const unread = state._notifications.filter(n => !n.read);
@@ -31851,6 +32187,9 @@ async function buyCosmetic(id){
     const out = await callFn('purchaseCosmetic', { itemId: id });
     state.profile.coins = out.coins;
     state.profile.cosmetics = { ...getCosmetics(), owned: out.owned };
+    // Mirror the server's lastPurchase so the in-shop Refund button works
+    // immediately (equipping it, or the 10-minute window, ends refundability).
+    state.profile.lastPurchase = { itemId: id, price: item.price, at: Date.now() };
     try { updateLockerBadge(); } catch(e){}
   } catch(e){
     fnErrorToast(e, 'Purchase failed');
@@ -31861,13 +32200,8 @@ async function buyCosmetic(id){
   try { haptic([15, 40, 25]); } catch(e){}
   try { launchConfetti(); } catch(e){}
   try { bigBurst(CX_RARITY[item.rarity].color, 90); } catch(e){}
-  // Unlocked! Offer a one-tap undo for a fat-finger buy (server enforces the
-  // 60s window); the locker badge already guides them to equip it.
   try {
-    toast(`✨ Unlocked ${item.name}!`, 'success', {
-      duration: 12000,
-      action: { label: '↩ Undo', onClick: () => refundLastPurchase(item.id) },
-    });
+    toast(`✨ Unlocked ${item.name}! Changed your mind? Reopen it in the shop to refund within 10 min.`, 'success', { duration: 9000 });
   } catch(e){}
   return true;
 }
@@ -31877,14 +32211,69 @@ async function refundLastPurchase(itemId){
     const out = await callFn('refundCosmetic', { itemId });
     state.profile.coins = out.coins;
     const c = { ...getCosmetics(), owned: out.owned };
-    CX_SLOTS.forEach(s => { if(c[s] === itemId) c[s] = ''; });  // server unequipped it too
     state.profile.cosmetics = c;
+    state.profile.lastPurchase = null;
     updateCoinPill(true);
     try { updateLockerBadge(); renderShopWallet(); renderShopItems(); } catch(e){}
     try { if($('#lockerHost')){ lkUpdateEquipped(); lkRenderStage(); } } catch(e){}
-    try { haptic([10, 20]); } catch(e){}
-    try { toast('↩️ Purchase undone — coins refunded.', 'info'); } catch(e){}
-  } catch(e){ fnErrorToast(e, "Couldn't undo — the 60-second window may have passed"); }
+    try { hapticSuccess(); } catch(e){}
+    const item = COSMETIC_BY_ID[itemId];
+    try { toast(`↩️ ${item ? item.name : 'Purchase'} refunded — 🪙 ${fmtCoins(item?.price || 0)} back in your wallet.`, 'success'); } catch(e){}
+    return true;
+  } catch(e){ fnErrorToast(e, "Couldn't refund — the window may have passed or the item was equipped"); return false; }
+}
+// ===== REFUND SYSTEM — reopen a fresh purchase in the shop to refund it =====
+// Rules (server-enforced): only your most recent purchase, within 10 minutes,
+// and never once you've equipped it. The preview modal shows a live countdown.
+const CX_REFUND_WINDOW_MS = 600000;
+function refundStateFor(item){
+  const lp = state.profile?.lastPurchase;
+  if(!lp || lp.itemId !== item.id) return { ok:false, inWindow:false, equipped:false, msLeft:0 };
+  const msLeft = CX_REFUND_WINDOW_MS - (Date.now() - (Number(lp.at) || 0));
+  const inWindow = msLeft > 0;
+  const c = getCosmetics();
+  const equipped = ['name','tag','avatar','frame'].some(s => c[s] === item.id);
+  return { ok: inWindow && !equipped, inWindow, equipped, msLeft };
+}
+function _fmtRefundLeft(ms){
+  const s = Math.max(0, Math.ceil(ms / 1000));
+  return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+}
+function stopRefundCountdown(){
+  clearInterval(state._refundTimer); state._refundTimer = null;
+  const b = $('#sbmRefundBtn'); if(b){ b.style.display = 'none'; b.disabled = false; }
+}
+function startRefundCountdown(item){
+  const b = $('#sbmRefundBtn'); if(!b) return;
+  setText('#sbmRefundPrice', '🪙 ' + fmtCoins(state.profile?.lastPurchase?.price ?? item.price));
+  b.style.display = '';
+  b.onclick = async () => {
+    const rs = refundStateFor(item);
+    if(!rs.ok){ stopRefundCountdown(); return; }
+    hapticConfirm();
+    const yes = await uiConfirm({
+      title: `Refund ${item.name}?`,
+      sub: `You'll get 🪙 ${fmtCoins(state.profile?.lastPurchase?.price ?? item.price)} back and the item leaves your Locker. This can't be re-undone.`,
+      okLabel: 'Refund it', cancelLabel: 'Keep it', icon: '↩️', danger: true,
+    });
+    if(!yes) return;
+    b.disabled = true; b.classList.add('is-loading');
+    const ok = await refundLastPurchase(item.id);
+    b.classList.remove('is-loading'); b.disabled = false;
+    if(ok){
+      stopRefundCountdown();
+      $('#shopBuyModal')?.classList.remove('show');
+    }
+  };
+  const tick = () => {
+    const rs = refundStateFor(item);
+    if(!rs.ok){ stopRefundCountdown(); return; }
+    setText('#sbmRefundTimer', _fmtRefundLeft(rs.msLeft) + ' left');
+    const t = $('#sbmRefundTimer'); if(t) t.classList.toggle('urgent', rs.msLeft < 60000);
+  };
+  tick();
+  clearInterval(state._refundTimer);
+  state._refundTimer = setInterval(tick, 1000);
 }
 
 // ---------- RENDER HELPERS (used everywhere cosmetics show) ----------
@@ -32431,24 +32820,42 @@ function openShopBuyModal(item, opts={}){
   const stage = $('#sbmStage');
   if(stage) stage.innerHTML = buildProfilePreviewHTML(item);
   const hero = $('#sbmHero'); if(hero) hero.className = 'sbm-hero rar-' + item.rarity;
-  // side-by-side thumbnails: with the item / without it
-  const thumbs = $('#sbmThumbs');
-  if(thumbs) thumbs.innerHTML = `<div class="sbm-thumb active">${buildProfilePreviewHTML(item)}</div><div class="sbm-thumb plain">${buildProfilePreviewHTML({ type: '_none' })}</div>`;
   // rarity · type, name, description
   const rarEl = $('#sbmRarity');
   if(rarEl){ rarEl.innerHTML = `<b style="color:${r.color}">${r.label}</b> · ${CX_TYPE_LABEL[item.type]}`; rarEl.style.setProperty('--rc', r.color); }
   setText('#sbmName', item.name);
   setText('#sbmDesc', item.desc || '');
-  // meta chips
-  const meta = [{ ic: '✨', t: 'ANIMATED' }, { ic: '👁', t: 'VISIBLE IN MATCH' }];
-  if(previewOnly) meta.push({ ic: '🏆', t: 'EARNED ONLY' });
-  const metaEl = $('#sbmMeta'); if(metaEl) metaEl.innerHTML = meta.map(m => `<span class="sbm-meta-chip"><span class="smc-ic">${m.ic}</span>${m.t}</span>`).join('');
-  // footer chips
+  // Feature rows — only claims that are TRUE for this item.
+  // Lower rarities aren't animated; frames live on the profile, not the nameplate.
+  const animated = ['epic', 'legendary', 'mythic', 'ascended'].includes(item.rarity);
+  const features = [];
+  if(animated) features.push({ ic: '✨', t: 'ANIMATED', s: 'Living, eye-catching effects' });
+  else features.push({ ic: '🎨', t: 'CLEAN STYLE', s: 'Sharp and subtle — no distractions' });
+  if(item.type === 'frame') features.push({ ic: '🖼️', t: 'PROFILE SHOWPIECE', s: 'Wraps your entire profile card' });
+  else features.push({ ic: '👁️', t: 'VISIBLE IN MATCH', s: 'Opponents see it on your nameplate' });
+  if(previewOnly){
+    const earnedHow = item.rankOnly ? `Reach ${RANKS.find(rk => rk.id === item.rankOnly)?.name || item.rankOnly} to earn it`
+      : item.prestigeOnly ? `Prestige ${item.prestigeOnly} unlock`
+      : 'Win it from a case';
+    features.push({ ic: '🏆', t: 'EARNED ONLY', s: earnedHow });
+  }
+  const metaEl = $('#sbmMeta');
+  if(metaEl) metaEl.innerHTML = features.map((m, i) =>
+    `<div class="sbm3-feat" style="--d:${i * 70}ms"><span class="sbm3-feat-ic">${m.ic}</span><div class="sbm3-feat-txt"><b>${m.t}</b><small>${m.s}</small></div></div>`).join('');
+  // Footer tiles — rarity copy that actually fits the tier.
+  const RAR_BLURB = {
+    common: 'Everyday style', rare: 'A solid find', epic: 'A standout piece',
+    legendary: 'Truly rare cosmetic', mythic: 'Ultra rare cosmetic', ascended: 'The rarest class there is',
+  };
   const foot = [];
-  foot.push(previewOnly ? '🔒 Earned, not sold' : '🎁 Can be gifted');
-  foot.push(`<span style="color:${r.color}">★</span> ${r.label}`);
-  foot.push('👤 Works on your profile');
-  const footEl = $('#sbmFoot'); if(footEl) footEl.innerHTML = foot.map(f => `<span class="sbm-foot-chip">${f}</span>`).join('');
+  foot.push(previewOnly
+    ? { ic: '🔒', t: 'EARNED, NOT SOLD', s: 'Prove it in the arena', c: '' }
+    : { ic: '🎁', t: 'CAN BE GIFTED', s: 'Send to friends', c: '' });
+  foot.push({ ic: '★', t: `${r.label.toUpperCase()} RARITY`, s: RAR_BLURB[item.rarity] || 'Cosmetic', c: r.color });
+  foot.push({ ic: '👤', t: 'WORKS ON YOUR PROFILE', s: 'Show off everywhere', c: '' });
+  const footEl = $('#sbmFoot');
+  if(footEl) footEl.innerHTML = foot.map((f, i) =>
+    `<div class="sbm3-foot-tile" style="--d:${i * 80}ms"><span class="sbm3-foot-ic"${f.c ? ` style="color:${f.c}"` : ''}>${f.ic}</span><div class="sbm3-foot-txt"><b${f.c ? ` style="color:${f.c}"` : ''}>${f.t}</b><small>${f.s}</small></div></div>`).join('');
   // balance
   setText('#sbmBalNum', fmtCoins(getCoins()));
   const btn = $('#sbmBuyBtn');
@@ -32457,11 +32864,12 @@ function openShopBuyModal(item, opts={}){
   const balEl = $('#sbmBalance');
   if(btn){ btn.classList.remove('holding', 'charged', 'is-loading'); }
   if(lockerBtn) lockerBtn.style.display = 'none';
+  stopRefundCountdown();   // reset any previous item's refund UI
   if(previewOnly){
     const rankName = item.rankOnly ? (RANKS.find(rk => rk.id === item.rankOnly)?.name || item.rankOnly) : '';
     if(balEl){
       balEl.innerHTML = owned
-        ? `<b class="sbm-short" style="color:var(--mint)">✓ You own this</b>`
+        ? `<b style="color:var(--mint)">✓ You own this</b>`
         : (item.rankOnly
           ? `<b class="sbm-short" style="color:#ffd45e">Rank-exclusive</b><br><span class="sbm-bal-hint">Reach ${escapeHTML(rankName)} to earn it</span>`
           : (item.prestigeOnly
@@ -32472,10 +32880,19 @@ function openShopBuyModal(item, opts={}){
     if(giftBtn) giftBtn.style.display = 'none';
     if(lockerBtn) lockerBtn.style.display = owned ? '' : 'none';
   } else if(owned){
-    if(balEl) balEl.innerHTML = `<b class="sbm-short" style="color:var(--mint)">✓ You already own this</b><br><span class="sbm-bal-hint">Gift a copy or open it in your Locker</span>`;
     if(btn) btn.style.display = 'none';
     if(lockerBtn) lockerBtn.style.display = '';
     if(giftBtn) giftBtn.style.display = guest ? 'none' : '';
+    // Fresh purchase? Offer the refund right where the buy button was.
+    const rs = refundStateFor(item);
+    if(rs.ok){
+      if(balEl) balEl.innerHTML = `<b style="color:var(--mint)">✓ Yours — just purchased</b><br><span class="sbm-bal-hint">Changed your mind? Full refund until the timer runs out. Equipping it keeps it for good.</span>`;
+      startRefundCountdown(item);
+    } else {
+      if(balEl) balEl.innerHTML = rs.equipped && rs.inWindow
+        ? `<b style="color:var(--mint)">✓ You own this</b><br><span class="sbm-bal-hint">Equipped items can't be refunded — it's yours for good</span>`
+        : `<b style="color:var(--mint)">✓ You already own this</b><br><span class="sbm-bal-hint">Gift a copy or open it in your Locker</span>`;
+    }
   } else {
     const price = welcome ? WELCOME_OFFER.price : item.price;
     const after = getCoins() - price;
@@ -32493,16 +32910,21 @@ function openShopBuyModal(item, opts={}){
     // the welcome offer is a personal first-buy deal — not giftable at that price
     if(giftBtn) giftBtn.style.display = (guest || welcome) ? 'none' : '';
   }
-  const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal sbm2 rar-' + item.rarity + (welcome ? ' sbm-welcome' : '');
+  const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal sbm2 sbm3 rar-' + item.rarity + (welcome ? ' sbm-welcome' : '');
   $('#shopBuyModal')?.classList.add('show');
-  // Shared-element morph: the clicked tile flies into the preview hero.
-  try {
-    const from = window._lastCxTile;
-    if(from && from.isConnected && Date.now() - (window._lastCxTileAt || 0) < 1200){
-      flyElement(from, $('#sbmHero') || $('#sbmStage'), { delay: 60 });
-    }
-  } catch(e){}
+  // (The tile→preview fly morph was removed — it fought the modal's own
+  // entrance and read as visual noise. The stage entrance carries the moment.)
 }
+// "+" on the balance card → the coin packs in the shop
+on('#sbmAddCoins', 'click', () => {
+  hapticTick();
+  $('#shopBuyModal')?.classList.remove('show');
+  showNavPage('shop');
+  setTimeout(() => {
+    const packs = $('#shopCoinPacks');
+    if(packs){ packs.scrollIntoView({ behavior: 'smooth', block: 'center' }); packs.classList.remove('rk2-flash'); void packs.offsetWidth; packs.classList.add('rk2-flash'); }
+  }, 260);
+});
 // HOLD-TO-BUY: the Buy button must be held for a beat before it fires, so a
 // fat-finger tap can't drain your coins. A charge bar fills while pressed;
 // releasing early cancels; a full charge runs the purchase (loader below).
@@ -33797,6 +34219,14 @@ async function sendCosmeticGift(toUid, item, rowEl){
     try { haptic([12, 30, 20]); } catch(e){}
     try { bigBurst(CX_RARITY[item.rarity].color, 70); } catch(e){}
     try { toast(`${giftWrapEmoji(wrap)} Gift on its way to @${toName}! If they decline, your ${fmtCoins(item.price)} coins come back.`, 'success', { duration: 6000 }); } catch(e){}
+    // Bell notification for the recipient — tapping it opens the gift.
+    try {
+      pushNotification(toUid, {
+        type: 'gift',
+        text: `🎁 <b>@${escapeHTML(state.profile.username)}</b> sent you a gift — tap to open it!`,
+        actionUid: state.user.uid,
+      });
+    } catch(e){}
   } catch(e){
     console.warn('[gift] send failed', e);
     if(rowEl){ rowEl.disabled = false; rowEl.classList.remove('sending'); if(rowEl.id === 'gfSendBtn') rowEl.textContent = 'Send gift'; }
@@ -33831,20 +34261,32 @@ function attachGiftListeners(){
   if(state._unsubGiftsOut) state._unsubGiftsOut();
   try {
     // The server refunds on decline — this listener only surfaces the news.
+    // Seen-keys are PERSISTED per account so the toast fires exactly once,
+    // not on every page load (the old in-memory Set re-toasted old refunds).
+    const seenKey = 'rosham_gift_refunds_seen_' + state.user.uid;
+    const firstRun = localStorage.getItem(seenKey) === null;   // pre-fix installs: swallow the backlog silently
+    let seenRefunds = [];
+    try { seenRefunds = JSON.parse(localStorage.getItem(seenKey) || '[]'); } catch(e){}
+    const seenSet = new Set(Array.isArray(seenRefunds) ? seenRefunds : []);
+    let firstSnap = true;
     state._unsubGiftsOut = onSnapshot(
       query(collection(state.db, 'gifts'), where('from', '==', state.user.uid), where('status', '==', 'refunded')),
       (snap) => {
-        let any = false;
+        const silent = firstRun && firstSnap;
+        firstSnap = false;
+        let any = false, changed = false;
         snap.forEach((d) => {
-          const key = 'r_' + d.id;
-          if(state._giftSeen.has(key)) return;
-          state._giftSeen.add(key);
+          if(seenSet.has(d.id)) return;
+          seenSet.add(d.id);
+          changed = true;
+          if(silent) return;   // historical backlog — record, never re-announce
           any = true;
           const g = d.data();
           const item = COSMETIC_BY_ID[g.itemId];
           try { toast(`Your gift${item ? ` (${item.name})` : ''} was declined — 🪙 ${fmtCoins(g.price || 0)} refunded`, 'info', { duration: 6000 }); } catch(e){}
         });
         if(any) refreshWallet();
+        if(changed){ try { localStorage.setItem(seenKey, JSON.stringify([...seenSet].slice(-200))); } catch(e){} }
       },
       (err) => console.warn('[gift] refund listener', err)
     );
@@ -42856,6 +43298,13 @@ function renderPlayPage(){
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games>0 ? Math.round(((p.wins||0)/games)*100) : 0;
   setText('#playRankWR', wr+'%');
+  // Sidebar rail: boosts + online friends + the real Triumph Vault case art
+  try { renderXpBoostPanel(); } catch(e){}
+  try { renderPlayFriendsCard(); } catch(e){}
+  try {
+    const vc = $('#playVaultCase');
+    if(vc && !vc.childElementCount) vc.innerHTML = caseGraphicHTML(true, 'case_triumph');
+  } catch(e){}
   // ---- Next-reward tracker: ELO/wins to next rank + XP to next level ----
   const trackRank = $('#playRankTrackRank');
   const trackLvl = $('#playRankTrackLvl');
@@ -42910,6 +43359,41 @@ function renderPlayPage(){
   try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
 }
+
+// ===== PLAY SIDEBAR — online friends strip =====
+function renderPlayFriendsCard(){
+  const card = $('#playFriendsCard'), row = $('#playFriendsRow');
+  if(!card || !row) return;
+  const friendUids = state.profile?.friends || [];
+  const all = friendUids.map(uid => state._friendDocs?.[uid]).filter(Boolean);
+  if(!all.length){ card.style.display = 'none'; return; }
+  const online = all.filter(f => { try { return friendPresence(f).online; } catch(e){ return false; } });
+  card.style.display = '';
+  setText('#playFriendsCount', online.length + ' ONLINE');
+  const shown = (online.length ? online : all).slice(0, 5);
+  row.innerHTML = '';
+  shown.forEach((f, i) => {
+    const av = document.createElement('div');
+    av.className = 'p3s-av av-photo-host' + (online.includes(f) ? ' on' : '');
+    av.style.setProperty('--d', (i * 60) + 'ms');
+    av.title = f.username || '';
+    av.textContent = initialOf(f.username || '?');
+    av.style.background = AVATAR_COLORS[f.colorIdx || 0];
+    try { renderAvatar(av, f); } catch(e){}
+    row.appendChild(av);
+  });
+  const rest = (online.length ? online : all).length - shown.length;
+  if(rest > 0){
+    const more = document.createElement('div');
+    more.className = 'p3s-av p3s-av-more';
+    more.textContent = '+' + rest;
+    row.appendChild(more);
+  }
+}
+// Sidebar buttons: stats popup + the Triumph Vault case detail
+on('#playViewStats', 'click', (e) => { e.stopPropagation(); hapticTick(); try { openStatsModal(); } catch(err){} });
+on('#playViewVault', 'click', () => { hapticTick(); try { openCaseDetail('case_triumph'); } catch(err){ console.warn('[vault]', err); } });
+on('#playFriendsRow', 'click', () => { hapticTick(); showNavPage('friends'); });
 
 // ===== CAMERA CALIBRATION WIZARD =====
 const CALIB_KEY = 'rosham_calibrated_v1';
@@ -45808,11 +46292,7 @@ function flyElement(fromEl, toEl, opts = {}){
     }, opts.delay || 40);
   } catch(e){}
 }
-// Remember the last clicked cosmetic tile so the preview modal can morph from it.
-document.addEventListener('click', (e) => {
-  const tile = e.target.closest && e.target.closest('.shop-tile, .lk2-tile, .cxg-tile, .case-item, .locker-tile');
-  if(tile){ window._lastCxTile = tile; window._lastCxTileAt = Date.now(); }
-}, true);
+// (Cosmetic tiles no longer morph into the preview — the effect was cut.)
 
 /* ---- UNIFIED MODAL SYSTEM ----
    One rule set for every `.modal-bg` popup, so none behave differently:
