@@ -46,6 +46,7 @@
 <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
+<link rel="preload" as="image" href="logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -125,6 +126,15 @@
   --font-body:"Geist", ui-sans-serif, system-ui;
   --font-mono:"Geist Mono", ui-monospace, monospace;
 
+  /* ===== MOTION TOKENS — one source of truth for durations + easings ===== */
+  --d-fast: .13s;    /* taps, toggles, hovers */
+  --d-med:  .22s;    /* cards, panels, chips */
+  --d-slow: .42s;    /* page/section entrances */
+  --e-spring: cubic-bezier(.34, 1.56, .64, 1);   /* lively overshoot */
+  --e-spring-soft: cubic-bezier(.2, .85, .3, 1); /* gentle settle (house easing) */
+  --e-out: cubic-bezier(.22, 1, .36, 1);         /* decelerate */
+  --press: .97;       /* press-state scale */
+
   /* Rank palette */
   --rank-bronze:#d18a3c;
   --rank-silver:#c8c8d4;
@@ -137,6 +147,20 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%; overflow-x:hidden; max-width:100%;}
 html{ overscroll-behavior-x:none; }
+/* ===== UNIFORM PRESS-STATE DEPTH — every tappable springs down on press =====
+   Components with their own :active transform (shop tiles, etc.) still win via
+   specificity/!important; this is the baseline for the rest of the app. */
+:is(.btn, .btn-cta, .btn-primary, .nav-item, .hg-chip, .ht-card, .hb-tile, .coin-pill, .shop-wallet,
+    .mode-card, .case-card, .friend-card, .ms-tile, .arena-ctrl-btn, .btn-icon-action, .prediction-btn){
+  transition: transform var(--d-fast) var(--e-spring), box-shadow var(--d-med) ease, border-color var(--d-med) ease, background var(--d-med) ease;
+}
+:is(.btn, .btn-cta, .btn-primary, .nav-item, .hg-chip, .coin-pill, .shop-wallet, .btn-icon-action, .arena-ctrl-btn, .prediction-btn):active:not(:disabled){
+  transform: scale(var(--press));
+}
+body.reduced-motion :is(.btn, .btn-cta, .btn-primary, .nav-item, .hg-chip, .coin-pill, .shop-wallet, .btn-icon-action, .arena-ctrl-btn, .prediction-btn):active{ transform:none; }
+/* View Transitions API — a quick, soft cross-fade between nav pages. */
+::view-transition-old(root), ::view-transition-new(root){ animation-duration:.26s; animation-timing-function:var(--e-out); }
+@media (prefers-reduced-motion: reduce){ ::view-transition-old(root), ::view-transition-new(root){ animation:none !important; mix-blend-mode:normal; } }
 body{
   font-family:var(--font-body);
   background:var(--bg);
@@ -6236,6 +6260,14 @@ body.reduced-motion .mm2-card, body.low-power .mm2-card{ animation:none; }
 .gc-meter i{ display:block; height:100%; width:0; border-radius:999px; background:var(--gcc); transition:width .12s linear; }
 .gest-conf.locked{ border-color:var(--gcc); box-shadow:0 0 12px -4px var(--gcc); }
 .gest-conf.locked .gc-meter i{ box-shadow:0 0 8px var(--gcc); }
+/* Throw-lock snap — a one-shot ring pulse the instant a clean gesture registers,
+   so you KNOW it caught your throw before the shoot. Fired on the rising edge. */
+.gest-conf.gc-snap{ animation:gcLockSnap .34s var(--e-spring); }
+@keyframes gcLockSnap{ 0%{ transform:scale(1); } 42%{ transform:scale(1.09); } 100%{ transform:scale(1); } }
+.gest-conf.gc-snap::after{ content:""; position:absolute; inset:-3px; border-radius:inherit; border:2px solid var(--gcc); opacity:0; animation:gcLockRing .5s var(--e-out) forwards; pointer-events:none; }
+@keyframes gcLockRing{ 0%{ opacity:.9; transform:scale(1); } 100%{ opacity:0; transform:scale(1.35); } }
+body.reduced-motion .gest-conf.gc-snap, body.low-power .gest-conf.gc-snap{ animation:none; }
+body.reduced-motion .gest-conf.gc-snap::after, body.low-power .gest-conf.gc-snap::after{ animation:none; opacity:0; }
 /* Hand guard — "show one hand" / "hand not visible" nudge over the local cam */
 .hand-guard{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:16;
   display:flex; align-items:center; gap:9px; padding:9px 15px; border-radius:12px; pointer-events:none;
@@ -28536,6 +28568,24 @@ function animateCount(elOrSel, from, to, opts){
   };
   requestAnimationFrame(step);
 }
+// Roll a number element from its last shown value to a new one, formatted each
+// frame. Stores the value on the element so repeated calls animate the delta.
+function rollNumber(el, to, fmt){
+  if(!el) return;
+  fmt = fmt || (n => Math.round(n).toLocaleString());
+  const from = (typeof el._num === 'number') ? el._num : to;
+  el._num = to;
+  if(from === to || document.body.classList.contains('reduced-motion') || document.body.classList.contains('low-power')){ el.textContent = fmt(to); return; }
+  clearTimeout(el._rollT); cancelAnimationFrame(el._rollRaf || 0);
+  const start = performance.now(), dur = 700;
+  const step = (now) => {
+    const t = Math.min(1, (now - start) / dur);
+    const e = 1 - Math.pow(1 - t, 3);
+    el.textContent = fmt(from + (to - from) * e);
+    if(t < 1) el._rollRaf = requestAnimationFrame(step); else el.textContent = fmt(to);
+  };
+  el._rollRaf = requestAnimationFrame(step);
+}
 // Reusable list skeleton: n shimmer rows shown while a list is still loading.
 function skeletonRows(n=4){
   let h = '';
@@ -29406,7 +29456,15 @@ function updateGestureConf(){
   const gc = $('#gcEmoji'); if(gc) gc.textContent = emoji;
   const ratio = state._gcRatio || 0;
   const bar = $('#gcBar'); if(bar) bar.style.width = Math.round(ratio * 100) + '%';
-  el.classList.toggle('locked', ratio >= 0.75);
+  const wasLocked = el.classList.contains('locked');
+  const nowLocked = ratio >= 0.75;
+  el.classList.toggle('locked', nowLocked);
+  // Rising-edge "throw locked" cue — a crisp ring-snap + light haptic the moment
+  // a clean gesture registers, so you're sure it caught your throw.
+  if(nowLocked && !wasLocked){
+    el.classList.remove('gc-snap'); void el.offsetWidth; el.classList.add('gc-snap');
+    try { hapticTick(); } catch(e){}
+  }
   try { el.style.setProperty('--gcc', gestureColor(g)); } catch(e){}
 }
 // Floating "read" callout after a round (you predicted them / got predicted).
@@ -32655,9 +32713,10 @@ function updateCoinPill(pop){
   if(!state.profile) return;
   const numEl = $('#coinPillNum');
   const val = getCoins();
-  if(numEl && numEl.textContent !== fmtCoins(val)){
-    numEl.textContent = fmtCoins(val);
-    if(pop){ pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop'); }
+  if(numEl && numEl._num !== val){
+    const changed = typeof numEl._num === 'number' && numEl._num !== val;
+    rollNumber(numEl, val, n => fmtCoins(Math.round(n)));
+    if(pop && changed){ pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop'); }
   }
 }
 on('#coinPill', 'click', () => { try { showNavPage('shop'); } catch(e){} });
@@ -33202,7 +33261,7 @@ function shopRotation(){
 // ---------- SHOP PAGE (OG two-panel layout) ----------
 function _shopPageActive(){ return !!document.querySelector('.nav-page[data-page="shop"].active'); }
 function renderShopWallet(){
-  setText('#shopWalletNum', fmtCoins(getCoins()));
+  rollNumber($('#shopWalletNum'), getCoins(), n => fmtCoins(Math.round(n)));
   const t = fmtCountdown(msUntilMidnight());
   document.querySelectorAll('.js-shop-timer').forEach(el => { el.textContent = t; });
   const owned = getCosmetics().owned.filter(id => COSMETIC_BY_ID[id]).length;
@@ -42679,44 +42738,52 @@ function showNavPage(page){
       _pageScroll[cur.dataset.page] = window.scrollY || document.documentElement.scrollTop || 0;
     }
   } catch(e){}
-  // During a swipe the pager already slides the page in — suppress the app's
-  // built-in page/stagger entrance so it doesn't replay on top (the "PC" load anim).
-  const _tgt = document.querySelector('.nav-page[data-page="' + page + '"]');
-  if(window._swipeNav && _tgt){ _tgt.classList.add('no-enter'); setTimeout(() => _tgt.classList.remove('no-enter'), 500); }
-  setActiveNav(page);
-  document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
-  try { syncMobileNav(page); } catch(e){}
-  try { closeSidebarMobile(); } catch(e){}
-  try { updateTopbarContext(page); } catch(e){}
-  try { applyProgressiveDisclosure(); } catch(e){}
-  // populate the page being shown
-  try {
-    if(page === 'home'){ state._homeAnimated = false; renderHomePage(); }
-    else if(page === 'play') renderPlayPage();
-    else if(page === 'shop') renderShopPage();
-    else if(page === 'rank') renderRankPage();
-    else if(page === 'achievements') renderAchievementsPage();
-    else if(page === 'activity') renderActivityPage();
-    else if(page === 'friends') renderFriendsPage();
-    else if(page === 'chat') renderChatPage();
-    else if(page === 'settings') renderSettingsPage();
-    else if(page === 'locker') renderLockerPage();
-  } catch(e){ console.warn('[nav] page render', e); }
-  // Restore this page's remembered scroll position (or top on first visit)
-  const sc = document.querySelector('.screens'); if(sc) sc.scrollTop = 0;
-  const savedY = _pageScroll[page] || 0;
-  window.scrollTo({ top: savedY });
-  // Animated content entrance — content rises in on every navigation. Skipped
-  // during a swipe (the pager runs its own slide so we don't double-animate).
-  // Restart the CSS animation WITHOUT a blocking `void offsetWidth` synchronous
-  // reflow: remove the class now, re-add on the next frame. Keeps navigation off
-  // the critical path (the forced layout was the one sync stall left per nav).
-  if(!window._swipeNav){
+  // A cross-fade page change via the View Transitions API when supported —
+  // skipped during a swipe (the pager owns that motion) and on reduced-motion /
+  // low-power (the whole-viewport snapshot isn't worth it there).
+  const useVT = typeof document.startViewTransition === 'function' && !window._swipeNav
+    && !document.body.classList.contains('reduced-motion')
+    && !document.body.classList.contains('low-power');
+  const swap = () => {
+    // During a swipe the pager already slides the page in — suppress the app's
+    // built-in page/stagger entrance so it doesn't replay on top.
+    const _tgt = document.querySelector('.nav-page[data-page="' + page + '"]');
+    if(window._swipeNav && _tgt){ _tgt.classList.add('no-enter'); setTimeout(() => _tgt.classList.remove('no-enter'), 500); }
+    setActiveNav(page);
+    document.querySelectorAll('.nav-page').forEach(p => p.classList.toggle('active', p.dataset.page === page));
+    try { syncMobileNav(page); } catch(e){}
+    try { closeSidebarMobile(); } catch(e){}
+    try { updateTopbarContext(page); } catch(e){}
+    try { applyProgressiveDisclosure(); } catch(e){}
+    // populate the page being shown
     try {
-      const ap = document.querySelector('.nav-page[data-page="' + page + '"]');
-      if(ap){ ap.classList.remove('page-enter'); requestAnimationFrame(() => requestAnimationFrame(() => ap.classList.add('page-enter'))); }
-    } catch(e){}
-  }
+      if(page === 'home'){ state._homeAnimated = false; renderHomePage(); }
+      else if(page === 'play') renderPlayPage();
+      else if(page === 'shop') renderShopPage();
+      else if(page === 'rank') renderRankPage();
+      else if(page === 'achievements') renderAchievementsPage();
+      else if(page === 'activity') renderActivityPage();
+      else if(page === 'friends') renderFriendsPage();
+      else if(page === 'chat') renderChatPage();
+      else if(page === 'settings') renderSettingsPage();
+      else if(page === 'locker') renderLockerPage();
+    } catch(e){ console.warn('[nav] page render', e); }
+    // Restore this page's remembered scroll position (or top on first visit)
+    const sc = document.querySelector('.screens'); if(sc) sc.scrollTop = 0;
+    const savedY = _pageScroll[page] || 0;
+    window.scrollTo({ top: savedY });
+    // Content rise-in — skipped during a swipe AND when a View Transition is
+    // cross-fading the swap (so the two don't stack). rAF re-add avoids a
+    // blocking synchronous reflow.
+    if(!window._swipeNav && !useVT){
+      try {
+        const ap = document.querySelector('.nav-page[data-page="' + page + '"]');
+        if(ap){ ap.classList.remove('page-enter'); requestAnimationFrame(() => requestAnimationFrame(() => ap.classList.add('page-enter'))); }
+      } catch(e){}
+    }
+  };
+  if(useVT){ try { document.startViewTransition(swap); } catch(e){ swap(); } }
+  else swap();
 }
 // ===== PROGRESSIVE DISCLOSURE =====
 // Brand-new players see a focused app: advanced meta-systems (XP boosters,
@@ -42800,9 +42867,23 @@ on('#navPrefChips', 'click', (e) => {
 });
 // Apply saved prefs on boot
 try { applyNavPrefs(); } catch(e){}
+// PREFETCH ON INTENT — warm a page's async data the moment you hover/touch its
+// nav item, so it's ready by the time the click lands. Runs once per page.
+const _prefetched = new Set();
+function prefetchPage(nav){
+  if(!nav || _prefetched.has(nav) || !state.user) return;
+  _prefetched.add(nav);
+  try {
+    if(nav === 'rank') loadFullLeaderboard();
+    else if(nav === 'friends') { refreshStatsSummary?.(); }
+    else if(nav === 'shop') shopRotation?.();   // seeds the daily deck cache
+  } catch(e){}
+}
 document.querySelectorAll('.nav-item').forEach(btn => {
+  const nav = btn.dataset.nav;
+  btn.addEventListener('pointerenter', () => prefetchPage(nav), { passive: true });
+  btn.addEventListener('touchstart', () => prefetchPage(nav), { passive: true });
   btn.addEventListener('click', () => {
-    const nav = btn.dataset.nav;
     if(!nav) return; // e.g. Messages button manages its own flyout
     closeSidebarMobile();
     if(nav === 'admin'){
