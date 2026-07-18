@@ -2,20 +2,31 @@
    Strategy:
    - the app shell (index.html / navigations): network-first, so a deploy is
      picked up immediately; cache is only the offline fallback
-   - static assets (images / audio): stale-while-revalidate — served from
-     cache instantly, refreshed in the background */
-const VERSION = 'rosham-v1.8.1';
+   - images (webp/png/svg): stale-while-revalidate — served from cache
+     instantly, refreshed in the background so art changes still roll out
+   - audio (mp3) + fonts: cache-first — these are big, immutable per release,
+     and re-downloading them every visit wastes data on slow devices. Ship a
+     changed sound by bumping VERSION (the old cache is purged on activate). */
+const VERSION = 'rosham-v2.0.0';
 const ASSET_CACHE = VERSION + '-assets';
 const PAGE_CACHE = VERSION + '-pages';
 
 const PRECACHE = [
-  'logo.png', 'unranked.png',
-  'rock.png', 'paper.png', 'scissors.png',
-  'bronze.png', 'silver.png', 'gold.png', 'platinum.png', 'diamond.png',
-  'master.png', 'grandmaster.png', 'champion.png', 'legend.png',
+  'logo.webp', 'logo.png', 'unranked.webp',
+  'rock.webp', 'paper.webp', 'scissors.webp', 'xptoken.webp',
+  'bronze.webp', 'silver.webp', 'gold.webp', 'platinum.webp', 'diamond.webp',
+  'master.webp', 'grandmaster.webp', 'champion.webp', 'legend.webp',
   // installable-app icons (home screen / task switcher / splash)
   'icon-192.png', 'icon-512.png', 'icon-maskable-192.png', 'icon-maskable-512.png',
   'apple-touch-icon-180.png',
+];
+
+// Warmed after activation WITHOUT blocking install/claim — a slow connection
+// should never delay the SW taking control just because match SFX are still
+// downloading.
+const WARM = [
+  'sfxmatchfound.mp3', 'sfxcountdown.mp3', 'sfxrankup.mp3',
+  'menumusic.mp3', 'prestige.mp3', 'sfxlegend.mp3',
 ];
 
 self.addEventListener('install', (e) => {
@@ -31,6 +42,12 @@ self.addEventListener('activate', (e) => {
     caches.keys()
       .then((keys) => Promise.all(keys.filter((k) => !k.startsWith(VERSION)).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
+      .then(() => caches.open(ASSET_CACHE).then(async (c) => {
+        // Best-effort audio warm-up — one at a time, never fatal.
+        for(const url of WARM){
+          try { if(!(await c.match(url))) await c.add(url); } catch(err){}
+        }
+      }))
   );
 });
 
@@ -54,8 +71,22 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Static assets: stale-while-revalidate
-  if(/\.(png|jpg|jpeg|webp|gif|svg|mp3|woff2?)$/.test(url.pathname)){
+  // Audio + fonts: cache-first (immutable per VERSION)
+  if(/\.(mp3|woff2?)$/.test(url.pathname)){
+    e.respondWith(
+      caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+        if(res && res.ok){
+          const copy = res.clone();
+          caches.open(ASSET_CACHE).then((c) => c.put(req, copy)).catch(() => {});
+        }
+        return res;
+      }))
+    );
+    return;
+  }
+
+  // Images: stale-while-revalidate
+  if(/\.(png|jpg|jpeg|webp|gif|svg)$/.test(url.pathname)){
     e.respondWith(
       caches.match(req).then((hit) => {
         const refresh = fetch(req)
