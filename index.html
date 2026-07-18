@@ -674,7 +674,7 @@ body.low-power .hx-hero-glyphs, body.low-power .hx-hero-pulse{ display:none; }
 .hx-you .wb-av{ flex:0 0 auto; }
 .hx-you-text{ flex:1; min-width:0; }
 .hx-you-hi{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:16px; }
-.hx-you-sub{ color:var(--text-dim); font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.hx-you-sub{ color:var(--text-dim); font-size:13px; overflow:hidden; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:2; line-clamp:2; }
 .hx-you-streak{ display:flex; align-items:center; gap:6px; font-weight:800; font-family:var(--font-display); font-stretch:78%; font-size:18px; }
 .hx-you-streak-lbl{ font-size:11px; color:var(--text-dim); font-weight:600; }
 .hx-ribbon{ margin-bottom:16px; }
@@ -990,6 +990,9 @@ body.reduced-motion :is(.home-recap, .home-statband, .hb-tile, .hrc-item), body.
 
 /* ═══════════ RESULT SCREEN v3 — rebuilt from scratch ═══════════ */
 /* Result-keyed accent drives every layer: aurora, rays, headline, particles. */
+/* Freeze all animation work while the tab is backgrounded — saves CPU/battery
+   with zero visual impact (it only applies when the page isn't being looked at). */
+body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after{ animation-play-state:paused !important; }
 .mrv3{ --mr:#a48bff; }
 .mrv3.win{ --mr:#22d3a3; } .mrv3.lose{ --mr:#ff3358; } .mrv3.draw{ --mr:#a48bff; }
 /* drifting aurora blobs behind everything */
@@ -28489,6 +28492,11 @@ window.addEventListener('error', e => {
 window.addEventListener('unhandledrejection', e => {
   console.error('[unhandled promise]', e.reason);
 });
+// Backgrounded tab → freeze CSS animations (see body.tab-hidden). The browser
+// already throttles rAF; this stops decorative compositing too.
+document.addEventListener('visibilitychange', () => {
+  try { document.body.classList.toggle('tab-hidden', document.hidden); } catch(e){}
+});
 function setText(sel, text){ const el = $(sel); if(el) el.textContent = text; }
 // Animate a number counting from → to (e.g. ELO ticking up after a match).
 function animateCount(elOrSel, from, to, opts){
@@ -28632,12 +28640,30 @@ function _ensureToastContainer(){
 }
 const TOAST_ICONS = { success:'i-check', error:'i-close', info:'i-zap', '':'i-zap' };
 function toast(text, kind='', opts={}){
+  // DE-DUPE: if an identical toast is already on screen (same text + kind),
+  // don't stack a second copy — just refresh its timer. This is the single
+  // biggest source of the "same popup appears 2-3 times" clutter, since many
+  // events fire from more than one code path within the same tick.
+  try {
+    if(!opts.allowDup){
+      const c0 = _ensureToastContainer();
+      const dup = [...c0.children].find(k => k._toastText === text && k._toastKind === (kind||'') && !k.classList.contains('t-progress'));
+      if(dup){
+        clearTimeout(dup._timer);
+        dup.classList.remove('t-collapsed');
+        const dur0 = opts.duration || (opts.action ? 6000 : 2800);
+        dup._timer = setTimeout(() => { dup.classList.remove('show'); setTimeout(() => dup.remove(), 280); }, dur0);
+        return;
+      }
+    }
+  } catch(e){}
   // Haptic vocabulary: success = double-tap pattern, error = firm double-buzz.
   try { if(isCoarse()){ if(kind === 'error') hapticError(); else if(kind === 'success') hapticSuccess(); } } catch(e){}
   try {
     const c = _ensureToastContainer();
     const el = document.createElement('div');
     el.className = 'toast2 ' + (kind||'') + (opts.action ? ' has-action' : '');
+    el._toastText = text; el._toastKind = kind || '';
     const icon = TOAST_ICONS[kind] || 'i-zap';
     el.innerHTML = `<svg class="toast2-ic" viewBox="0 0 24 24" width="16" height="16"><use href="#${icon}"/></svg><span class="toast2-text">${text}</span>`;
     const close = () => { clearTimeout(el._timer); el.classList.remove('show'); setTimeout(() => el.remove(), 280); };
@@ -29351,7 +29377,9 @@ function stabilizeGesture(g){
 function updateGestureConf(){
   const el = $('#gestConf'); if(!el) return;
   const g = state._gcBest;
-  const active = (state.phase === 'idle' || state.phase === 'done') && !state._prematch && !state._privacyPaused && state.screen === 'game';
+  // Only while you're actually lining up a throw (idle). Hidden during the
+  // reveal/result beat so it doesn't clutter the tile over the round card.
+  const active = state.phase === 'idle' && !state._prematch && !state._privacyPaused && state.screen === 'game';
   if(!active || !g){ el.classList.remove('show'); return; }
   el.classList.add('show');
   const emoji = g === 'rock' ? '✊' : g === 'paper' ? '✋' : g === 'scissors' ? '✌️' : '✊';
@@ -29700,14 +29728,20 @@ function updateHandGuard(){
     if(ic) ic.textContent = '✋'; if(tx) tx.textContent = 'Show only one hand';
   } else if(!state.currentGesture){
     el.style.display = 'flex'; el.className = 'hand-guard';
-    if(ic) ic.textContent = '🤟'; if(tx) tx.textContent = 'Make a clear rock / paper / scissors';
+    if(ic) ic.textContent = '🤟'; if(tx) tx.textContent = 'Show a clear shape';
   } else {
     el.style.display = 'none';
   }
 }
 function updateHandConfMeter(c){
   const el = $('#handConf'); if(!el) return;
-  const show = state.cameraReady && (state.screen === 'game' || state.screen === 'matching');
+  // Don't stack two meters on the same tile: once the richer gesture chip
+  // (#gestConf — emoji + confidence + lock state) is showing during idle, this
+  // plain TRACKING bar steps aside so only one read-out is ever on screen.
+  const gcActive = $('#gestConf')?.classList.contains('show');
+  // Not during the reveal/result beat — the round card owns the stage then.
+  const quietPhase = state.phase === 'reveal' || state.phase === 'done';
+  const show = state.cameraReady && (state.screen === 'matching' || (state.screen === 'game' && !quietPhase)) && !gcActive;
   el.style.display = show ? 'flex' : 'none';
   if(!show) return;
   const fill = $('#handConfFill'); if(fill) fill.style.width = Math.round(c * 100) + '%';
@@ -31501,7 +31535,12 @@ function getPopupStack(){
 function showAchievementUnlocks(list){
   if(!list || !list.length) return;
   const stack = getPopupStack();
+  // Never re-announce an achievement whose card is already queued/on screen
+  // (a double reconcile would otherwise show every unlock twice).
+  state._achAnnounced = state._achAnnounced || new Set();
   list.forEach((a, i) => {
+    if(state._achAnnounced.has(a.id)) return;
+    state._achAnnounced.add(a.id);
     setTimeout(() => {
       const card = document.createElement('div');
       card.className = 'ach-unlock-toast';
@@ -37831,6 +37870,8 @@ async function findMatch(){
   state.oppProfile = null;
   state.isCaller = false;
   state._matchListenerSkipLogged = false;
+  state._revealedMatch = null;   // allow the next match to run its reveal once
+  state._enteredMatchId = null;
   showScreen('matching');
   // Warm the hand-tracking model during the queue wait so the first round never
   // stalls on WASM compile. Idempotent + best-effort (no-op once loaded).
@@ -38332,6 +38373,13 @@ on('#qpCancel', 'click', (e) => {
 });
 
 async function showMatchFound(){
+  // IDEMPOTENT PER MATCH — several signal paths (the matchmaking snapshot, the
+  // challenge-accept flow, a re-fired listener) can race to announce the SAME
+  // match. Without this guard the VS reveal + sfx + the scheduled enterMatch all
+  // run twice, so the cards and the in-match intro visibly animate two times.
+  const revealKey = state.matchId || state.oppUid || null;
+  if(revealKey && state._revealedMatch === revealKey) return;
+  state._revealedMatch = revealKey;
   // If they were browsing the shop/locker mid-queue, yank them back in.
   if(state.screen !== 'matching'){ hideQueuePill(); showScreen('matching'); }
   // Locker: optional per-match random look, then log wear for what's equipped.
@@ -38515,6 +38563,11 @@ const RTC_CONFIG = {
 };
 
 async function enterMatch(matchData){
+  // Guard against a double entry for the same match (see showMatchFound) — a
+  // second enterMatch would re-run showScreen('game') + showMatchIntro and
+  // replay the whole in-match intro on top of the first.
+  if(state.matchId && state._enteredMatchId === state.matchId) return;
+  state._enteredMatchId = state.matchId || null;
   cancelMatchmakingResources();
   // Friend challenges are CASUAL — just for fun, no ELO / XP / W-L (anti-exploit:
   // you can't farm rating off a friend). This is made clear on the VS + result UI.
@@ -39604,6 +39657,12 @@ function showAnnouncer(text, ms=1800){
 }
 
 async function runCountdown(){
+  // RE-ENTRANCY GUARD — several paths can call this (caller's maybeStartRound,
+  // the callee's start_round handler, rematch), and during network lag a
+  // duplicate start_round can arrive. Without this, two countdown loops overlap
+  // and the 3·2·1 / SHOOT visibly animate twice on top of each other.
+  if(state.phase === 'countdown' || state.phase === 'shoot' || state.phase === 'reveal') return;
+  state.countdownRunning = true;
   state.phase = 'countdown';
   lockPredictionPicker();
   $('#handPrompt').classList.remove('show');
@@ -39624,14 +39683,16 @@ async function runCountdown(){
   ];
   const roundNum = state.scoreYou + state.scoreOpp + 1;
   const isFinal = roundNum >= state.matchRoundsToWin && (state.scoreYou === state.matchRoundsToWin - 1 || state.scoreOpp === state.matchRoundsToWin - 1);
+  // Only announce the dramatic moments (sudden death / final round). The generic
+  // per-round "ROUND N — HANDS UP!" banner was big text in the way every single
+  // round; the 3·2·1 countdown already signals the round starting.
   if(state._suddenDeath){
     cd.classList.add('golden');
     showAnnouncer('⚡ SUDDEN DEATH — GOLDEN ROUND ⚡');
   } else if(isFinal){
     showAnnouncer('FINAL ROUND — WINNER TAKES ALL!');
-  } else {
-    showAnnouncer(`ROUND ${roundNum} OF 3 — ${announceLines[Math.floor(Math.random()*announceLines.length)]}`);
   }
+  void announceLines;
   setText('#roundState', 'GET READY…');
   $('#oppDetectedText').textContent = 'thinking…';
 
@@ -39943,12 +40004,13 @@ function applyRoundResult(result, yourMove, oppMove){
     state.matchOver = true;
     setTimeout(() => {
       if(state.screen === 'game') endMatch();
-    }, 3200);
+    }, 2200);
   } else {
-    // Replay/advance — for draws, the round number doesn't increment in score but UI does replay
+    // Replay/advance — snappier so the between-round result card clears quickly
+    // instead of holding the whole stage. (Draws replay even faster.)
     setTimeout(() => {
       if(state.phase === 'done' && state.screen === 'game' && !state.matchOver) resetRound();
-    }, isDraw ? 2400 : 3400);
+    }, isDraw ? 1900 : 2600);
   }
 
   // Commentator quote
@@ -40061,6 +40123,13 @@ function showCommentatorQuote(result, yourMove, oppMove, predicted){
   const box = $('#commentatorBox');
   const text = $('#commentatorText');
   if(!box || !text) return;
+  // Keep the commentator for moments that actually matter — predictions, hot/cold
+  // streaks, and match point — instead of a big line of text every single round.
+  const streakN = state.streak || 0;
+  const onStreak = streakN >= 3;
+  const matchPoint = (state.scoreYou === (state.matchRoundsToWin - 1)) || (state.scoreOpp === (state.matchRoundsToWin - 1));
+  const notable = predicted || onStreak || matchPoint;
+  if(!notable && Math.random() > 0.33) return;
 
   const quotes = {
     win: [
@@ -41106,6 +41175,9 @@ function eloLossBase(rating){
 function showRankUp(oldRank, newRank, opts){
   opts = opts || {};
   const overlay = $('#rankupOverlay');
+  // Re-entrancy guard — one promotion cinematic at a time. A second call while
+  // it's already on screen would restart the whole sequence on top of itself.
+  if(overlay && overlay.classList.contains('show')) return;
   // REVEAL mode — first rank out of placements (no "old rank" to shatter).
   const reveal = !!opts.reveal || !oldRank;
   if(!oldRank) oldRank = newRank;
@@ -41511,6 +41583,12 @@ function showLevelUp(info){
   if(!info) return;
   const stack = getPopupStack();
   if(!stack){ try { sfxLevelUp(); } catch(e){} return; }
+  // De-dupe: if a level-up card for this exact level is already on screen, don't
+  // stack a second identical one (guards against a double grantXp/reconcile).
+  try {
+    const lvl = info.to?.level;
+    if(lvl != null && stack.querySelector(`.levelup-card[data-lu="${lvl}"]`)) return;
+  } catch(e){}
   const titlesHTML = (info.newTitles && info.newTitles.length)
     ? `<div class="ach-unlock-desc">New title: ${info.newTitles.map(t => `<b style="color:${t.color || 'var(--mint)'}">${escapeHTML(t.name)}</b>`).join(', ')}</div>`
     : '';
@@ -41518,6 +41596,7 @@ function showLevelUp(info){
   // Hitting the cap turns the card into a gold "Prestige available" prompt.
   const hitCap = !!info.hitCap || info.to.level >= MAX_LEVEL;
   card.className = 'ach-unlock-toast levelup-card' + (hitCap ? ' maxlevel-card' : '');
+  try { if(info.to?.level != null) card.dataset.lu = info.to.level; } catch(e){}
   const body = hitCap
     ? `<div class="ach-unlock-kicker lu-kicker" style="color:#ffd33d">★ Max level reached</div>
        <div class="ach-unlock-title">Level ${MAX_LEVEL} · Prestige unlocked</div>
@@ -41540,6 +41619,8 @@ function showLevelUp(info){
 function showPrestigeUp(info){
   const overlay = $('#prestigeOverlay');
   if(!overlay || !info){ try { sfxPrestige(); } catch(e){} return; }
+  // Re-entrancy guard — never stack a second prestige cinematic on top.
+  if(overlay.classList.contains('show')) return;
   const p = info.to;
   const tier = prestigeTier(p);
   const isMaster = isPrestigeMaster(p);
@@ -42607,8 +42688,14 @@ function showNavPage(page){
   window.scrollTo({ top: savedY });
   // Animated content entrance — content rises in on every navigation. Skipped
   // during a swipe (the pager runs its own slide so we don't double-animate).
+  // Restart the CSS animation WITHOUT a blocking `void offsetWidth` synchronous
+  // reflow: remove the class now, re-add on the next frame. Keeps navigation off
+  // the critical path (the forced layout was the one sync stall left per nav).
   if(!window._swipeNav){
-    try { const ap = document.querySelector('.nav-page[data-page="' + page + '"]'); if(ap){ ap.classList.remove('page-enter'); void ap.offsetWidth; ap.classList.add('page-enter'); } } catch(e){}
+    try {
+      const ap = document.querySelector('.nav-page[data-page="' + page + '"]');
+      if(ap){ ap.classList.remove('page-enter'); requestAnimationFrame(() => requestAnimationFrame(() => ap.classList.add('page-enter'))); }
+    } catch(e){}
   }
 }
 // ===== PROGRESSIVE DISCLOSURE =====
