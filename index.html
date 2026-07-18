@@ -819,6 +819,220 @@ body.streamer-mode .pm-av{ color: transparent !important; text-shadow: none !imp
 body.reduced-motion .t-spin{ animation-duration:1.4s; }
 @media (max-width:600px){ .toast-stack{ bottom:calc(80px + env(safe-area-inset-bottom,0px)); } }
 
+/* ═══ HOME v3 — next-goal chips + TODAY strip ═══ */
+.home-goals{ display:flex; flex-wrap:wrap; gap:9px; margin-top:14px; }
+.hg-chip{ display:inline-flex; align-items:center; gap:8px; padding:9px 14px; border-radius:999px; cursor:pointer;
+  font-family:var(--font-body); font-size:12.5px; color:var(--text-dim);
+  background:rgba(255,255,255,.05); border:1px solid var(--line-bright, var(--line));
+  animation:rk2Rise .45s var(--d, 0ms) cubic-bezier(.2,.85,.3,1) both;
+  transition:border-color .16s, background .16s, transform .14s; }
+.hg-chip b{ color:var(--text); }
+.hg-chip:hover{ border-color:var(--mint); background:rgba(34,211,163,.07); transform:translateY(-1px); }
+.hg-chip svg{ color:var(--text-faint); }
+.hg-ic{ font-size:14px; }
+.home-today{ display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin:14px 0; }
+.ht-card{ --tc:var(--mint); display:flex; align-items:center; gap:12px; text-align:left; padding:14px 15px; border-radius:16px; cursor:pointer;
+  background:var(--surface); border:1px solid var(--line);
+  animation:rk2Rise .5s var(--d, 0ms) cubic-bezier(.2,.85,.3,1) both;
+  transition:transform .16s, border-color .18s, box-shadow .2s; }
+.ht-card:hover{ transform:translateY(-2px); border-color:color-mix(in srgb, var(--tc) 45%, var(--line)); box-shadow:0 14px 30px -18px color-mix(in srgb, var(--tc) 60%, transparent); }
+.ht-ic{ flex:0 0 auto; width:42px; height:42px; border-radius:12px; display:grid; place-items:center; font-size:18px;
+  background:color-mix(in srgb, var(--tc) 12%, transparent); border:1px solid color-mix(in srgb, var(--tc) 28%, transparent); }
+.ht-txt{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.ht-txt b{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:13.5px; color:var(--text); }
+.ht-txt small{ font-size:10.5px; color:var(--text-faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ht-bar{ height:5px; border-radius:999px; background:rgba(255,255,255,.08); overflow:hidden; margin-top:4px; }
+.ht-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg, color-mix(in srgb, var(--tc) 60%, #fff), var(--tc)); }
+.ht-v{ flex:0 0 auto; font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:19px; color:var(--tc); font-variant-numeric:tabular-nums; }
+.ht-v.ht-timer{ font-size:14px; font-family:var(--font-mono); font-weight:800; }
+/* daily case shard card */
+.home-today{ grid-template-columns:repeat(4, 1fr); }
+.hs-orbs{ display:flex; gap:5px; margin-top:5px; }
+.hs-orb{ width:11px; height:11px; border-radius:50%; background:rgba(255,255,255,.08); border:1px solid var(--line);
+  animation:rk2Rise .4s var(--d, 0ms) both; }
+.hs-orb.lit{ background:radial-gradient(circle at 35% 30%, #d6c4ff, #a48bff); border-color:#a48bff;
+  box-shadow:0 0 8px -1px #a48bff; }
+.hs-claim{ flex:0 0 auto; padding:8px 13px; border-radius:10px; cursor:pointer;
+  font-family:var(--font-mono); font-size:10px; font-weight:900; letter-spacing:.08em;
+  color:#0c0820; background:linear-gradient(180deg, #d6c4ff, #a48bff); border:1px solid #c4adff;
+  box-shadow:0 6px 18px -6px rgba(164,139,255,.8); animation:a2ClaimPulse 2s ease-in-out infinite; transition:transform .13s; }
+.hs-claim:active{ transform:scale(.94); }
+.ht-shard.claimable{ border-color:rgba(164,139,255,.5); box-shadow:0 0 22px -12px #a48bff; }
+@media (max-width:1100px){ .home-today{ grid-template-columns:repeat(2, 1fr); } }
+@media (max-width:760px){ .home-today{ grid-template-columns:1fr; } }
+body.reduced-motion :is(.hg-chip, .ht-card), body.low-power :is(.hg-chip, .ht-card){ animation:none !important; opacity:1 !important; }
+
+/* ═══════════ RESULT SCREEN v3 — rebuilt from scratch ═══════════ */
+/* Result-keyed accent drives every layer: aurora, rays, headline, particles. */
+.mrv3{ --mr:#a48bff; }
+.mrv3.win{ --mr:#22d3a3; } .mrv3.lose{ --mr:#ff3358; } .mrv3.draw{ --mr:#a48bff; }
+/* drifting aurora blobs behind everything */
+.mrv3-aurora{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+.mrv3-aurora i{ position:absolute; width:56vmax; height:56vmax; border-radius:50%; filter:blur(90px); opacity:.16;
+  background:radial-gradient(circle, var(--mr), transparent 65%); animation:mrv3Drift 16s ease-in-out infinite alternate; }
+.mrv3-aurora i:nth-child(1){ left:-18vmax; top:-22vmax; }
+.mrv3-aurora i:nth-child(2){ right:-20vmax; top:8vmax; animation-delay:-6s; opacity:.1; }
+.mrv3-aurora i:nth-child(3){ left:16vmax; bottom:-26vmax; animation-delay:-11s; opacity:.12; }
+@keyframes mrv3Drift{ from{ transform:translate(0,0) scale(1); } to{ transform:translate(6vmax,4vmax) scale(1.15); } }
+/* god rays spinning slowly behind the card */
+.mrv3-rays{ position:absolute; left:50%; top:12%; width:130vmax; height:130vmax; transform:translateX(-50%); pointer-events:none; z-index:0; opacity:.1;
+  background:repeating-conic-gradient(from 0deg, transparent 0 9deg, var(--mr) 9deg 10deg);
+  -webkit-mask:radial-gradient(closest-side, #000, transparent 70%); mask:radial-gradient(closest-side, #000, transparent 70%);
+  animation:mrv3Spin 70s linear infinite; }
+@keyframes mrv3Spin{ to{ transform:translateX(-50%) rotate(360deg); } }
+/* rising ember particles in the result colour */
+.mrv3-particles{ position:absolute; inset:0; overflow:hidden; pointer-events:none; z-index:0; }
+.mrv3-particles i{ position:absolute; bottom:-10px; border-radius:50%; background:rgba(var(--pc,164,139,255), .8);
+  box-shadow:0 0 8px rgba(var(--pc,164,139,255), .8); animation:mrv3Rise linear infinite; opacity:0; }
+@keyframes mrv3Rise{ 0%{ opacity:0; transform:translateY(0); } 12%{ opacity:.9; } 100%{ opacity:0; transform:translateY(-105vh); } }
+/* the card itself: glass slab with a living accent border */
+.mrv3 .match-result-card-v2{ position:relative; z-index:2; border-radius:26px !important;
+  background:linear-gradient(180deg, rgba(20,16,30,.94), rgba(11,9,17,.96)) !important;
+  border:1px solid color-mix(in srgb, var(--mr) 45%, var(--line)) !important;
+  box-shadow:0 40px 110px -40px rgba(0,0,0,.95), 0 0 60px -22px var(--mr) !important;
+  overflow:hidden; }
+.mrv3 .match-result-card-v2::before{ content:""; position:absolute; inset:-1px; border-radius:inherit; padding:1px; pointer-events:none;
+  background:linear-gradient(120deg, transparent 20%, color-mix(in srgb, var(--mr) 80%, #fff) 50%, transparent 80%);
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+  background-size:250% 100%; animation:mrv3Border 4.5s ease-in-out infinite; opacity:.6; }
+@keyframes mrv3Border{ 0%,100%{ background-position:0% 0; } 50%{ background-position:120% 0; } }
+/* headline: gigantic, italic, punches in with a flash */
+.mrv3 .match-result-headline{ font-stretch:62% !important; font-style:italic; font-size:clamp(46px, 7vw, 74px) !important; line-height:.9 !important;
+  background:linear-gradient(180deg, #fff 18%, var(--mr) 90%); -webkit-background-clip:text; background-clip:text; color:transparent !important;
+  filter:drop-shadow(0 8px 26px color-mix(in srgb, var(--mr) 55%, transparent));
+  animation:mrv3Headline .65s cubic-bezier(.15,1.4,.3,1) both !important; }
+@keyframes mrv3Headline{ 0%{ opacity:0; transform:scale(1.9) rotate(-3deg); filter:brightness(3) blur(6px); } 60%{ opacity:1; }
+  100%{ opacity:1; transform:none; filter:drop-shadow(0 8px 26px color-mix(in srgb, var(--mr) 55%, transparent)); } }
+.mrv3 .mr-headline-strip{ border-bottom:1px solid color-mix(in srgb, var(--mr) 25%, transparent); }
+.mrv3 .mrc-score{ font-variant-numeric:tabular-nums; }
+.mrv3 .mrc-score .you{ color:var(--mint); text-shadow:0 0 18px rgba(34,211,163,.6); }
+.mrv3 .mrc-score .opp{ color:var(--coral); text-shadow:0 0 18px rgba(255,51,88,.5); }
+/* progress tiles become glass chips with accent top-light */
+.mrv3 .mrc-rank, .mrv3 .mrc-level{ border-radius:16px; background:rgba(255,255,255,.035); border:1px solid var(--line);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06); }
+/* ═══ THE MOMENT — freeze-frame strip ═══ */
+.moment-strip{ position:relative; margin:10px auto 2px; text-align:center; animation:mrRise .5s .25s cubic-bezier(.2,1.2,.35,1) both; }
+.mom-label{ display:inline-block; margin-bottom:7px; font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.22em; color:var(--text-faint); }
+.mom-row{ display:flex; align-items:center; justify-content:center; gap:12px; }
+.mom-shot{ position:relative; width:150px; border-radius:14px; overflow:hidden; border:1.5px solid var(--line-bright, var(--line));
+  box-shadow:0 14px 34px -16px rgba(0,0,0,.9); transform:rotate(-2.2deg); animation:momPop .5s cubic-bezier(.2,1.5,.4,1) both; }
+.mom-shot.opp{ transform:rotate(2.2deg); animation-delay:.12s; }
+.mom-shot img{ display:block; width:100%; height:auto; }
+.mom-shot.you{ border-color:rgba(34,211,163,.55); }
+.mom-shot.opp{ border-color:rgba(255,51,88,.5); }
+.mom-tag{ position:absolute; left:6px; bottom:6px; padding:3px 8px; border-radius:7px; font-style:normal;
+  font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.08em; color:#fff; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); }
+.mom-vs{ font-family:var(--font-display); font-stretch:64%; font-style:italic; font-weight:900; font-size:19px; color:var(--text-faint); }
+@keyframes momPop{ from{ opacity:0; transform:rotate(-2.2deg) scale(.7) translateY(12px); } to{ opacity:1; } }
+/* in the round-result card the strip sits tighter */
+#momentHost .moment-strip{ margin-top:14px; }
+#momentHost .mom-shot{ width:120px; }
+#mrMomentHost{ padding:4px 18px 0; }
+body.reduced-motion :is(.mrv3-aurora i, .mrv3-rays, .mrv3-particles i, .mrv3 .match-result-card-v2::before, .mom-shot, .moment-strip),
+body.low-power :is(.mrv3-aurora i, .mrv3-rays, .mrv3-particles i, .mrv3 .match-result-card-v2::before, .mom-shot, .moment-strip){ animation:none !important; opacity:1; }
+body.reduced-motion :is(.mrv3-rays, .mrv3-particles), body.low-power :is(.mrv3-rays, .mrv3-particles){ display:none; }
+
+/* ═══ RESULT SCREEN v2 — one choreographed timeline ═══ */
+.match-result-overlay.show .mr-headline-strip{ animation:mrRise .5s .05s cubic-bezier(.2,1.2,.35,1) both; }
+.match-result-overlay.show .mrc-progress-row{ animation:mrRise .55s .4s cubic-bezier(.2,1.2,.35,1) both; }
+.match-result-overlay.show .mxp-breakdown{ animation:mrRise .5s .75s cubic-bezier(.2,1.2,.35,1) both; }
+.match-result-overlay.show .mrc-toggle{ animation:mrRise .45s .95s cubic-bezier(.2,1.2,.35,1) both; }
+.match-result-overlay.show .match-result-extra{ animation:mrRise .45s 1.15s cubic-bezier(.2,1.2,.35,1) both; }
+body.reduced-motion .match-result-overlay.show :is(.mr-headline-strip, .mrc-progress-row, .mxp-breakdown, .mrc-toggle, .match-result-extra),
+body.low-power .match-result-overlay.show :is(.mr-headline-strip, .mrc-progress-row, .mxp-breakdown, .mrc-toggle, .match-result-extra){ animation:none !important; opacity:1 !important; }
+.aq-count{ display:inline-grid; place-items:center; min-width:30px; height:22px; margin-left:7px; padding:0 7px; border-radius:999px;
+  background:rgba(0,0,0,.25); font-family:var(--font-mono); font-size:11px; font-weight:800; font-variant-numeric:tabular-nums;
+  animation:aqPulse 1s ease-in-out infinite; }
+@keyframes aqPulse{ 0%,100%{ opacity:1; } 50%{ opacity:.6; } }
+
+/* ═══ OBS / STREAMER OVERLAY — broadcast-clean arena capture ═══ */
+body.obs-mode.in-game :is(.toast-stack, #toast, .queue-pill, .net-ribbon, .duel-dock, #gestConf, #handConf,
+  #camStatus, #inMatchSettings, #fairplayWarn, .read-callout, #commentatorBox, #predictionBadge,
+  .arena-ctrls, .duel-emote-flash, #matchDebug, .scroll-top-btn, .ptr-ind){
+  display:none !important; visibility:hidden !important; }
+body.obs-mode.in-game #screen-game{ background:#000; }
+
+/* locker wear pill */
+.lk2-wear-pill{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.04em; padding:3px 8px; border-radius:999px;
+  color:var(--text-dim); background:rgba(255,255,255,.05); border:1px solid var(--line); }
+
+/* ═══ SOCIAL HUB — rival badge, h2h, activity feed ═══ */
+.fc-rival{ display:inline-flex; align-items:center; margin-left:7px; padding:2px 8px; border-radius:999px; vertical-align:1px;
+  font-family:var(--font-mono); font-size:8px; font-weight:900; letter-spacing:.08em;
+  color:#ffb3c0; background:rgba(255,51,88,.12); border:1px solid rgba(255,51,88,.45);
+  animation:fcRival 2.4s ease-in-out infinite; }
+@keyframes fcRival{ 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 10px -3px rgba(255,51,88,.8); } }
+.friend-card.is-rival{ border-color:rgba(255,51,88,.35); }
+.fc-h2h{ font-family:var(--font-mono); font-size:10px; font-weight:800; color:var(--text-dim); }
+.fa-row{ display:flex; align-items:center; gap:10px; padding:9px 6px; border-bottom:1px solid var(--line-soft);
+  animation:rk2Rise .4s var(--d, 0ms) cubic-bezier(.2,.85,.3,1) both; }
+.fa-row:last-child{ border-bottom:none; }
+.fa-dot{ flex:0 0 auto; width:8px; height:8px; border-radius:50%; background:var(--text-faint); }
+.fa-row.win .fa-dot{ background:var(--mint); box-shadow:0 0 8px -2px var(--mint); }
+.fa-row.loss .fa-dot{ background:var(--coral); }
+.fa-txt{ flex:1; min-width:0; font-size:12.5px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.fa-txt b{ color:var(--text); font-weight:700; }
+.fa-delta.win{ color:var(--mint); } .fa-delta.loss{ color:var(--coral); }
+.fa-time{ flex:0 0 auto; font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint); }
+body.reduced-motion :is(.fc-rival, .fa-row), body.low-power :is(.fc-rival, .fa-row){ animation:none !important; opacity:1 !important; }
+
+/* ═══ ACHIEVEMENTS v2 — tiered lines ═══ */
+.ach2-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.ach2-tab{ padding:8px 15px; border-radius:999px; cursor:pointer; font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.05em;
+  border:1px solid var(--line); background:rgba(255,255,255,.04); color:var(--text-dim); transition:color .15s, border-color .15s, background .15s; }
+.ach2-tab:hover{ color:var(--text); border-color:var(--line-bright, #3a3850); }
+.ach2-tab.active{ color:var(--mint); border-color:rgba(34,211,163,.5); background:rgba(34,211,163,.08); }
+.ach2-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:12px; }
+.a2-card{ --ac:#cd7f32; padding:14px 15px 12px; border-radius:16px; background:var(--surface); border:1px solid var(--line);
+  animation:rk2Rise .45s var(--d, 0ms) cubic-bezier(.2,.85,.3,1) both; transition:border-color .2s, transform .16s; }
+.a2-card:hover{ transform:translateY(-2px); border-color:color-mix(in srgb, var(--ac) 40%, var(--line)); }
+.a2-card.mastered{ border-color:rgba(255,211,61,.4); background:linear-gradient(135deg, rgba(255,211,61,.06), transparent 60%), var(--surface); }
+.a2-card.has-claim{ border-color:rgba(34,211,163,.5); box-shadow:0 0 22px -12px var(--mint); }
+.a2-top{ display:flex; align-items:center; gap:11px; margin-bottom:10px; }
+.a2-ic{ flex:0 0 auto; width:40px; height:40px; border-radius:12px; display:grid; place-items:center; font-size:19px;
+  background:color-mix(in srgb, var(--ac) 12%, transparent); border:1px solid color-mix(in srgb, var(--ac) 30%, transparent); }
+.a2-txt{ flex:1; min-width:0; }
+.a2-name{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:15px; }
+.a2-sub{ font-size:11px; color:var(--text-dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.a2-count{ font-family:var(--font-mono); font-size:11px; font-weight:800; color:var(--text-faint); }
+.a2-claim{ flex:0 0 auto; padding:7px 12px; border-radius:9px; cursor:pointer; font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.06em;
+  color:#04140f; background:linear-gradient(180deg, #5dffba, #22d3a3); border:1px solid #7dffd0;
+  box-shadow:0 6px 16px -6px rgba(34,211,163,.7); animation:a2ClaimPulse 2s ease-in-out infinite; transition:transform .13s; }
+.a2-claim:active{ transform:scale(.94); }
+@keyframes a2ClaimPulse{ 0%,100%{ box-shadow:0 6px 16px -6px rgba(34,211,163,.5); } 50%{ box-shadow:0 6px 22px -4px rgba(34,211,163,.9); } }
+.a2-bar{ height:7px; border-radius:999px; background:rgba(255,255,255,.07); overflow:hidden; margin-bottom:9px; }
+.a2-bar i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg, color-mix(in srgb, var(--ac) 60%, #fff), var(--ac));
+  box-shadow:0 0 10px -2px var(--ac); transition:width .7s cubic-bezier(.2,.8,.2,1); }
+.a2-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.a2-pips{ display:flex; gap:6px; }
+.a2-pip{ width:12px; height:12px; border-radius:50%; background:rgba(255,255,255,.08); border:1px solid var(--line); }
+.a2-pip.done{ background:var(--pc); border-color:var(--pc); box-shadow:0 0 8px -2px var(--pc); }
+.a2-pip.cur{ border-color:var(--pc); animation:a2CurPip 1.8s ease-in-out infinite; }
+@keyframes a2CurPip{ 0%,100%{ box-shadow:0 0 0 0 transparent; } 50%{ box-shadow:0 0 8px -1px var(--pc); } }
+.a2-prog{ font-family:var(--font-mono); font-size:10px; font-weight:800; color:var(--text-dim); font-variant-numeric:tabular-nums; }
+.a2-card.mastered .a2-prog{ color:#ffd33d; }
+body.reduced-motion :is(.a2-card, .a2-claim, .a2-pip.cur), body.low-power :is(.a2-card, .a2-claim, .a2-pip.cur){ animation:none !important; opacity:1 !important; }
+
+/* ===== FLOATING QUEUE PILL — search keeps running while you browse ===== */
+.queue-pill{ position:fixed; top:calc(10px + env(safe-area-inset-top, 0px)); left:50%; transform:translateX(-50%); z-index:9400;
+  display:flex; align-items:center; gap:10px; padding:9px 10px 9px 14px; border-radius:999px; cursor:pointer;
+  background:rgba(16,13,24,.96); border:1px solid rgba(34,211,163,.45);
+  box-shadow:0 14px 40px -14px rgba(0,0,0,.9), 0 0 22px -8px rgba(34,211,163,.5);
+  animation:queuePillIn .35s cubic-bezier(.2,1.3,.4,1); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); }
+@keyframes queuePillIn{ from{ opacity:0; transform:translateX(-50%) translateY(-16px); } to{ opacity:1; transform:translateX(-50%) translateY(0); } }
+.qp-radar{ position:relative; width:20px; height:20px; border-radius:50%; border:1.5px solid rgba(34,211,163,.5); flex:0 0 auto; }
+.qp-radar i{ position:absolute; inset:3px; border-radius:50%; background:var(--mint); animation:qpPing 1.6s ease-out infinite; }
+@keyframes qpPing{ 0%{ transform:scale(.5); opacity:1; } 100%{ transform:scale(1.4); opacity:0; } }
+.qp-txt{ font-family:var(--font-mono); font-size:11.5px; font-weight:700; letter-spacing:.03em; color:var(--text-dim); white-space:nowrap; }
+.qp-txt b{ color:var(--mint); font-variant-numeric:tabular-nums; }
+.qp-pos{ color:var(--text-faint); }
+.qp-cancel{ width:26px; height:26px; border-radius:50%; display:grid; place-items:center; cursor:pointer;
+  border:1px solid var(--line); background:rgba(255,255,255,.05); color:var(--text-dim); transition:color .15s, border-color .15s; }
+.qp-cancel:hover{ color:var(--coral); border-color:rgba(255,51,88,.5); }
+body.reduced-motion .qp-radar i, body.low-power .qp-radar i{ animation:none; opacity:.8; }
+body.in-game .queue-pill{ display:none !important; }
+.mm-browse{ font-size:12.5px; }
+
 /* ===== PULL-TO-REFRESH INDICATOR ===== */
 .ptr-ind{ position:fixed; top:calc(8px + env(safe-area-inset-top, 0px)); left:50%; transform:translate(-50%, 0); z-index:9550;
   width:40px; height:40px; border-radius:50%; display:grid; place-items:center;
@@ -1680,6 +1894,28 @@ body.low-power :is(.rrw-rank, .rrw-card, .rrw-head-crest.pop .rrw-head-ic){ anim
 .rk2-match.loss .rk2-match-delta{ color:var(--coral); }
 .rk2-match.draw .rk2-match-delta{ color:var(--text-dim); }
 .rk2-match-score{ font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint); }
+/* expandable match details */
+.rk2-match.expandable{ cursor:pointer; }
+.rk2-match-chev{ flex:0 0 auto; color:var(--text-faint); transition:transform .2s; }
+.rk2-match.open .rk2-match-chev{ transform:rotate(180deg); }
+.rk2-match-detail{ border:1px solid var(--line); border-top:none; border-radius:0 0 13px 13px; margin:-8px 0 0; padding:12px 13px 11px;
+  background:rgba(0,0,0,.25); animation:rkdIn .25s ease both; }
+@keyframes rkdIn{ from{ opacity:0; transform:translateY(-6px); } to{ opacity:1; transform:none; } }
+.rkd-rounds{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:10px; }
+.rkd-round{ display:flex; flex-direction:column; align-items:center; gap:2px; padding:7px 9px; border-radius:10px; min-width:52px;
+  background:rgba(255,255,255,.03); border:1px solid var(--line); }
+.rkd-round.w{ border-color:rgba(34,211,163,.45); background:rgba(34,211,163,.07); }
+.rkd-round.l{ border-color:rgba(255,51,88,.4); background:rgba(255,51,88,.06); }
+.rkd-n{ font-family:var(--font-mono); font-size:8px; font-weight:800; color:var(--text-faint); }
+.rkd-throws{ font-size:14px; display:inline-flex; align-items:center; gap:4px; }
+.rkd-throws i{ font-style:normal; font-family:var(--font-mono); font-size:7.5px; color:var(--text-faint); }
+.rkd-res{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; }
+.rkd-round.w .rkd-res{ color:var(--mint); } .rkd-round.l .rkd-res{ color:var(--coral); } .rkd-round.d .rkd-res{ color:var(--text-dim); }
+.rkd-foot{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+.rkd-rating{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); display:inline-flex; align-items:center; gap:6px; }
+.rkd-rating b{ color:var(--text); }
+.rkd-rematch{ min-height:36px; padding:0 14px; font-size:12px; border-radius:10px; }
+.rkd-hint{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); }
 /* responsive */
 @media (max-width:1240px){
   .rk2-grid{ grid-template-columns:1fr 1fr; }
@@ -14067,6 +14303,22 @@ input:focus, select:focus, textarea:focus{
 .cgt.done{ animation:cgtPop .4s cubic-bezier(.2,1.6,.4,1); box-shadow:0 0 20px -10px var(--mint-glow); }
 @keyframes cgtPop{ 0%{ transform:scale(.92); } 60%{ transform:scale(1.06); } 100%{ transform:scale(1); } }
 .calib-step .btn{ min-height:46px; }
+.cgt-row{ display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; width:100%; max-width:360px; margin-bottom:16px; }
+.cgt{ position:relative; display:flex; flex-direction:column; align-items:center; gap:6px;
+  border:1px solid var(--line); background:rgba(255,255,255,.03); color:var(--text-dim);
+  transition:border-color .2s, background .2s, color .2s, transform .2s; }
+.cgt svg{ opacity:.55; transition:opacity .2s; }
+.cgt span{ font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.cgt-check{ position:absolute; top:7px; right:7px; width:16px; height:16px; border-radius:50%; border:1.5px solid var(--line); }
+.calib-ready-pop{ animation:cgtPop .45s cubic-bezier(.2,1.6,.4,1); }
+.calib-first-challenge{ width:100%; max-width:360px; margin-bottom:14px; padding:14px 16px; border-radius:14px; text-align:left;
+  background:linear-gradient(135deg, rgba(255,61,104,.1), rgba(164,139,255,.07)); border:1px solid rgba(255,61,104,.35);
+  animation:rk2Rise .5s .15s cubic-bezier(.2,.85,.3,1) both; }
+.cfc-eyebrow{ font-family:var(--font-mono); font-size:9px; font-weight:900; letter-spacing:.16em; color:var(--coral); margin-bottom:6px; }
+.cfc-name{ font-family:var(--font-display); font-stretch:76%; font-weight:800; font-size:16px; color:var(--text); }
+.cfc-reward{ margin-top:5px; font-size:11.5px; color:var(--text-dim); }
+.cfc-reward b{ color:#ffd45e; }
+body.reduced-motion :is(.calib-first-challenge, .calib-ready-pop){ animation:none !important; opacity:1 !important; }
 .calib-tip{ font-family:var(--font-body); font-size:12px; line-height:1.5; color:var(--text-dim);
   background:rgba(95,201,255,.06); border:1px solid rgba(95,201,255,.22); border-radius:12px;
   padding:10px 13px; max-width:360px; margin-bottom:14px; text-align:left; }
@@ -16673,6 +16925,101 @@ body.reduced-motion .sbm-hero-rays, body.low-power .sbm-hero-rays{ animation:non
 .sbm3 .sbm-buy.holding{ transform:scale(.98); animation:none; }
 .sbm3 .sbm-buy.is-loading{ color:#221302 !important; }
 .sbm3 .sbm-buy:disabled{ animation:none; }
+/* ═══ TROPHY SHELF — tier-tinted profile pins + page pin buttons ═══ */
+.pm-sc-badge.pm-sc-trophy{ border-color:color-mix(in srgb, var(--rc) 55%, transparent);
+  background:linear-gradient(180deg, color-mix(in srgb, var(--rc) 12%, transparent), rgba(255,255,255,.02));
+  box-shadow:0 0 16px -8px var(--rc); position:relative; }
+.pm-sc-trophy .pm-sc-tier{ position:absolute; left:10%; right:10%; bottom:-1px; height:2px; border-radius:999px;
+  background:linear-gradient(90deg, transparent, var(--rc), transparent); }
+.a2-pin{ flex:0 0 auto; width:30px; height:30px; border-radius:9px; display:grid; place-items:center; cursor:pointer; font-size:13px;
+  border:1px solid var(--line); background:rgba(255,255,255,.04); filter:grayscale(1) opacity(.6);
+  transition:filter .18s, border-color .18s, transform .15s, box-shadow .2s; }
+.a2-pin:hover{ filter:none; transform:scale(1.08); }
+.a2-pin.on{ filter:none; border-color:rgba(255,211,61,.55); background:rgba(255,211,61,.1); box-shadow:0 0 12px -5px #ffd33d; }
+
+/* ═══ SEASON RECAP CEREMONY ═══ */
+.modal.srx-card{ --srx:#c0c0c0; max-width:420px; text-align:center; padding:30px 26px 24px; overflow:hidden;
+  border-color:color-mix(in srgb, var(--srx) 45%, var(--line)); }
+.srx-glow{ position:absolute; left:50%; top:-40%; width:150%; aspect-ratio:1; transform:translateX(-50%); pointer-events:none; opacity:.35;
+  background:radial-gradient(circle, color-mix(in srgb, var(--srx) 50%, transparent), transparent 60%); filter:blur(24px);
+  animation:rk2GlowPulse 4.5s ease-in-out infinite; }
+.srx-rays{ position:absolute; left:50%; top:16%; width:150%; aspect-ratio:1; transform:translateX(-50%); pointer-events:none; opacity:.1;
+  background:repeating-conic-gradient(from 0deg, transparent 0 12deg, var(--srx) 12deg 13deg);
+  -webkit-mask:radial-gradient(closest-side, #000, transparent 70%); mask:radial-gradient(closest-side, #000, transparent 70%);
+  animation:mrv3Spin 55s linear infinite; }
+.srx-eyebrow{ position:relative; font-family:var(--font-mono); font-size:9.5px; font-weight:900; letter-spacing:.22em;
+  color:color-mix(in srgb, var(--srx) 75%, #fff); animation:rk2Rise .45s .05s both; }
+.srx-season{ position:relative; margin-top:4px; font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:30px;
+  text-transform:uppercase; animation:rk2Rise .45s .12s both; }
+.srx-crest{ position:relative; width:104px; height:104px; margin:10px auto 4px; display:grid; place-items:center; }
+.srx-crest-glow{ position:absolute; inset:-16%; border-radius:50%; filter:blur(18px); opacity:.55; animation:rk2GlowPulse 3.5s ease-in-out infinite; }
+.srx-crest-ic{ position:relative; width:92px; height:92px; filter:drop-shadow(0 10px 24px rgba(0,0,0,.6));
+  animation:rrwCrestPop .6s .2s cubic-bezier(.15,1.6,.3,1) both; }
+.srx-finish{ position:relative; font-size:14px; color:var(--text-dim); animation:rk2Rise .45s .3s both; }
+.srx-finish b{ font-family:var(--font-display); font-stretch:74%; font-weight:900; }
+.srx-stats{ position:relative; display:grid; grid-template-columns:repeat(3, 1fr); gap:9px; margin:16px 0 14px; }
+.srx-stat{ padding:12px 6px; border-radius:13px; background:rgba(255,255,255,.035); border:1px solid var(--line);
+  animation:rk2Rise .5s var(--d, .4s) cubic-bezier(.2,.85,.3,1) both; }
+.srx-stat b{ display:block; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:22px; font-variant-numeric:tabular-nums; }
+.srx-stat span{ font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.12em; color:var(--text-faint); }
+.srx-reset{ animation:rk2Rise .5s var(--d, .8s) both; }
+.srx-reward{ animation:rk2Rise .5s .95s both; }
+.srx-actions{ position:relative; display:flex; gap:9px; margin-top:16px; animation:rk2Rise .5s 1.05s both; }
+.srx-actions .btn{ flex:1; min-height:44px; }
+body.reduced-motion :is(.srx-eyebrow, .srx-season, .srx-crest-ic, .srx-finish, .srx-stat, .srx-reset, .srx-reward, .srx-actions, .srx-glow, .srx-rays),
+body.low-power :is(.srx-eyebrow, .srx-season, .srx-crest-ic, .srx-finish, .srx-stat, .srx-reset, .srx-reward, .srx-actions, .srx-glow, .srx-rays){ animation:none !important; opacity:1 !important; }
+
+/* ═══ WISHLIST — animated hearts ═══ */
+.wish-btn{ display:grid; place-items:center; width:32px; height:32px; border-radius:50%; cursor:pointer;
+  border:1px solid var(--line); background:rgba(10,8,16,.55); color:var(--text-faint);
+  transition:color .18s, border-color .18s, transform .15s; backdrop-filter:blur(4px); }
+.wish-btn svg{ width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; transition:fill .18s, stroke .18s; }
+.wish-btn:hover{ color:#ff7ab0; border-color:rgba(255,97,195,.5); transform:scale(1.1); }
+.wish-btn.on{ color:#ff61c3; border-color:rgba(255,97,195,.65); box-shadow:0 0 14px -4px rgba(255,97,195,.7); }
+.wish-btn.on svg{ fill:#ff61c3; stroke:#ff61c3; }
+.wish-btn.pop{ animation:wishPop .5s cubic-bezier(.2,1.8,.4,1); }
+@keyframes wishPop{ 0%{ transform:scale(.6); } 55%{ transform:scale(1.35); } 100%{ transform:scale(1); } }
+.wish-btn.pop::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:2px solid rgba(255,97,195,.7);
+  animation:wishRing .5s ease-out forwards; pointer-events:none; }
+@keyframes wishRing{ from{ opacity:1; transform:scale(.7); } to{ opacity:0; transform:scale(1.6); } }
+.wish-tile{ position:absolute; top:8px; right:8px; z-index:5; }
+.sbm3-top-actions{ display:inline-flex; align-items:center; gap:9px; }
+body.reduced-motion .wish-btn.pop, body.low-power .wish-btn.pop{ animation:none; }
+
+/* ═══ PREVIEW v4 — realistic profile-card try-on ═══ */
+.sbm3-try{ position:relative; z-index:3; display:flex; gap:6px; padding:5px; border-radius:12px; margin-bottom:18px;
+  background:rgba(0,0,0,.4); border:1px solid var(--line); backdrop-filter:blur(6px); }
+.sbm3-try button{ padding:8px 14px; border-radius:9px; cursor:pointer; border:none; background:transparent;
+  font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.07em; text-transform:uppercase; color:var(--text-faint);
+  transition:background .16s, color .16s; }
+.sbm3-try button.on{ background:color-mix(in srgb, var(--rc) 22%, transparent); color:#fff;
+  box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--rc) 50%, transparent); }
+.sbmp-card{ position:relative; width:100%; max-width:290px; border-radius:18px; overflow:hidden; text-align:center;
+  background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid var(--line-bright, var(--line));
+  box-shadow:0 24px 60px -24px rgba(0,0,0,.9);
+  padding-bottom:16px; animation:sbmpIn .4s cubic-bezier(.2,1.2,.35,1); }
+@keyframes sbmpIn{ from{ opacity:0; transform:translateY(10px) scale(.96); } to{ opacity:1; transform:none; } }
+.sbmp-banner{ height:64px; }
+.sbmp-idrow{ position:relative; height:40px; }
+.sbmp-av-wrap{ position:absolute; left:50%; top:-34px; transform:translateX(-50%); width:74px; height:74px; display:grid; place-items:center; }
+.sbmp-av{ position:relative; z-index:1; width:64px; height:64px; border-radius:20px; display:grid; place-items:center;
+  font-weight:900; font-size:26px; color:#fff; border:3px solid var(--bg-2); box-shadow:0 8px 22px -8px rgba(0,0,0,.8); }
+.sbmp-av-wrap .cx-avfx{ position:absolute; inset:-6px; z-index:2; pointer-events:none; }
+.sbmp-lvl{ position:absolute; right:14px; top:-14px; min-width:26px; height:26px; padding:0 7px; border-radius:9px;
+  display:grid; place-items:center; font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:13px;
+  box-shadow:0 6px 14px -6px rgba(0,0,0,.7); }
+.sbmp-name{ margin-top:2px; font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:21px; line-height:1.1; padding:0 14px;
+  overflow:hidden; text-overflow:ellipsis; }
+.sbmp-name .cx-tag{ vertical-align:3px; }
+.sbmp-title{ margin-top:3px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.sbmp-rankrow{ display:flex; justify-content:center; gap:7px; flex-wrap:wrap; margin-top:10px; padding:0 12px; }
+.sbmp-chip{ display:inline-flex; align-items:center; gap:5px; padding:4px 10px; border-radius:999px;
+  font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.04em; color:var(--text-dim);
+  background:rgba(255,255,255,.05); border:1px solid var(--line); }
+/* the frame overlay hugs the whole card, exactly like the real profile */
+.sbmp-card .cx-frame-overlay{ position:absolute; inset:0; z-index:4; pointer-events:none; border-radius:inherit; }
+body.reduced-motion .sbmp-card, body.low-power .sbmp-card{ animation:none; }
+
 /* refund — replaces the buy button on a fresh purchase, live countdown */
 .sbm3-refund{ width:100%; min-height:52px; border-radius:13px; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:0 16px;
   background:rgba(255,138,61,.08); border:1.5px solid rgba(255,154,61,.5); color:#ffc9a0; cursor:pointer;
@@ -22497,6 +22844,13 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
 <canvas id="particles"></canvas>
 <div class="toast" id="toast"></div>
 
+<!-- Floating queue pill — matchmaking keeps running while you browse -->
+<div class="queue-pill" id="queuePill" style="display:none;" role="status">
+  <span class="qp-radar"><i></i></span>
+  <span class="qp-txt">In queue · <b id="qpElapsed">0s</b><span class="qp-pos" id="qpPos"></span></span>
+  <button type="button" class="qp-cancel" id="qpCancel" title="Cancel search" aria-label="Cancel search"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-close"/></svg></button>
+</div>
+
 <!-- ═══ RANK REWARDS — season-pass style reward browser ═══ -->
 <div class="modal-bg keep-dialog" id="rankRewardsModal">
   <div class="modal rrw-modal">
@@ -23303,8 +23657,13 @@ const FIREBASE_CONFIG = {
               </div>
             </div>
             <div class="hx-tip" id="hxTip" style="display:none;"><span class="hx-tip-ic">💡</span><span id="hxTipText"></span></div>
+            <!-- v3: your next goals, right in the hero -->
+            <div class="home-goals" id="homeGoals"></div>
           </div>
         </section>
+
+        <!-- v3: TODAY strip — daily challenge · login streak · shop rotation -->
+        <div class="home-today" id="homeToday"></div>
 
         <!-- Weekend 2× XP banner (home) — shown only during the weekend window -->
         <div class="dxp-banner dxp-home" id="dxpBannerHome" style="display:none;">
@@ -24031,6 +24390,12 @@ const FIREBASE_CONFIG = {
             </div>
             <div class="card">
               <div class="card-hd">
+                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Friend activity</div>
+              </div>
+              <div id="friendsActivityFeed"><div class="side-empty">Add friends to see their recent matches</div></div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
                 <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg> Tip</div>
               </div>
               <p style="font-size:13px; color:var(--text-dim); line-height:1.5; margin:0;">Add friends by username to challenge them directly, chat, and see who's online. Climb the friend leaderboard by winning ranked matches.</p>
@@ -24087,7 +24452,14 @@ const FIREBASE_CONFIG = {
           </div>
         </div>
         <div class="psection"><h3>Badges</h3><span class="psection-sub" id="achPageCount">0 / 0</span></div>
-        <div class="achievements-grid" id="achPageGrid"></div>
+        <div class="ach2-tabs" id="ach2Tabs">
+          <button type="button" class="ach2-tab active" data-acat="all">All</button>
+          <button type="button" class="ach2-tab" data-acat="combat">⚔️ Combat</button>
+          <button type="button" class="ach2-tab" data-acat="climb">📈 The Climb</button>
+          <button type="button" class="ach2-tab" data-acat="dedication">🗓️ Dedication</button>
+          <button type="button" class="ach2-tab" data-acat="social">🫂 Social</button>
+        </div>
+        <div class="ach2-grid" id="achPageGrid"></div>
         <div class="psection"><h3>Titles</h3></div>
         <div class="titles-grid" id="achTitlesGrid"></div>
         <div class="psection"><h3>Milestones</h3></div>
@@ -24270,6 +24642,11 @@ const FIREBASE_CONFIG = {
             <div class="set-text"><div class="set-title">Auto-mute in background</div><div class="set-sub" id="setAutoMuteState">Mute audio when the app isn't focused</div></div>
             <div class="set-toggle off" id="setAutoMuteToggle"></div>
           </button>
+          <button class="settings-row" id="setObsMode">
+            <div class="set-ico"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-camera"/></svg></div>
+            <div class="set-text"><div class="set-title">Streamer overlay (OBS)</div><div class="set-sub" id="setObsState">Clean capture: hides toasts, docks &amp; overlays during matches (or add ?obs=1 to the URL)</div></div>
+            <div class="set-toggle off" id="setObsToggle"></div>
+          </button>
         </div>
         </div><!-- /group -->
 <div class="settings-group sg-nav">
@@ -24437,6 +24814,7 @@ const FIREBASE_CONFIG = {
           <span class="mm-elapsed"><svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-clock"/></svg> searching <b id="searchElapsed">0s</b></span>
           <div class="mm-actions">
             <button class="btn btn-ghost mm-cancel" id="cancelMatchBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-close"/></svg> Cancel search</button>
+            <button class="btn btn-ghost mm-browse" id="mmBrowseBtn"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-shop"/></svg> Browse while you wait</button>
           </div>
         </div>
       </div>
@@ -24751,6 +25129,7 @@ const FIREBASE_CONFIG = {
                   <div class="duel-result-detail" id="resultDetail">—</div>
                 </div>
               </div>
+              <div id="momentHost"></div>
               <div class="duel-result-prediction" id="predictionBadge">
                 <svg viewBox="0 0 24 24"><use href="#i-star"/></svg>
                 <span>PREDICTED!</span>
@@ -25101,7 +25480,10 @@ const FIREBASE_CONFIG = {
 </div>
 
 <!-- MATCH RESULT (best-of-3 end) — REDESIGNED v9 -->
-<div class="match-result-overlay" id="matchResultOverlay">
+<div class="match-result-overlay mrv3" id="matchResultOverlay">
+  <div class="mrv3-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="mrv3-rays" aria-hidden="true"></div>
+  <div class="mrv3-particles" id="mrv3Particles" aria-hidden="true"></div>
   <!-- Ambient result glow -->
   <div class="mr-bg"></div>
 
@@ -25134,6 +25516,7 @@ const FIREBASE_CONFIG = {
     </div>
 
     <!-- BODY: scrollable content -->
+    <div id="mrMomentHost"></div>
     <div class="mrc-body">
 
       <!-- RATING + XP COMBINED ROW -->
@@ -25259,6 +25642,9 @@ const FIREBASE_CONFIG = {
       </button>
     </div>
     <div class="match-result-extra" id="matchResultExtra">
+      <button class="extra-action" id="mrShareBtn" title="Download a shareable result card">
+        <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg> Share card
+      </button>
       <button class="extra-action" id="matchEndAddFriend" title="Add friend">
         <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-user-plus"/></svg> Add friend
       </button>
@@ -25854,13 +26240,18 @@ const FIREBASE_CONFIG = {
     <!-- top bar: eyebrow + close -->
     <div class="sbm3-top">
       <span class="sbm3-eyebrow"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-eye"/></svg> COSMETIC PREVIEW</span>
-      <button class="modal-close" data-close="shopBuyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+      <span class="sbm3-top-actions"><span id="sbmWishHost"></span>
+      <button class="modal-close" data-close="shopBuyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button></span>
     </div>
     <div class="sbm3-body">
       <!-- LEFT — spotlight stage with podium -->
       <div class="sbm-hero" id="sbmHero">
         <i class="sbm3-beam" aria-hidden="true"></i>
         <i class="sbm-hero-rays" aria-hidden="true"></i>
+        <div class="sbm3-try" id="sbmTryToggle">
+          <button type="button" data-wear="1" class="on">✨ Wearing it</button>
+          <button type="button" data-wear="0">Current look</button>
+        </div>
         <div class="sbm-stage" id="sbmStage"></div>
         <div class="sbm3-podium" aria-hidden="true">
           <i class="sbm3-podium-glow"></i>
@@ -26648,18 +27039,29 @@ const FIREBASE_CONFIG = {
 </div>
 
 <!-- NEW SEASON / SOFT RESET -->
-<div class="modal-bg" id="seasonModal">
-  <div class="modal login-reward-card" style="max-width:380px; text-align:center;">
-    <div class="lr-eyebrow" id="seasonEyebrow">NEW SEASON</div>
-    <div class="lr-amount" id="seasonName" style="font-size:34px;">Season 2</div>
-    <p style="color:var(--text-dim); font-size:13px; line-height:1.5; margin:6px 0 14px;">A fresh season has begun. Ratings were softly reset — climb again to prove it wasn't a fluke.</p>
-    <div class="season-reset-row">
+<div class="modal-bg keep-dialog" id="seasonModal">
+  <div class="modal srx-card">
+    <div class="srx-glow" aria-hidden="true"></div>
+    <div class="srx-rays" aria-hidden="true"></div>
+    <div class="srx-eyebrow" id="seasonEyebrow">SEASON COMPLETE</div>
+    <div class="srx-season" id="srxSeasonName">Season 2</div>
+    <div class="srx-crest"><div class="srx-crest-glow" id="srxCrestGlow"></div><svg class="srx-crest-ic" id="srxCrest"></svg></div>
+    <div class="srx-finish" id="srxFinish">You finished <b>Silver I</b></div>
+    <div class="srx-stats">
+      <div class="srx-stat" style="--d:.35s"><b id="srxPeak">—</b><span>Peak rating</span></div>
+      <div class="srx-stat" style="--d:.5s"><b id="srxStreak">—</b><span>Best streak</span></div>
+      <div class="srx-stat" style="--d:.65s"><b id="srxGames">—</b><span>Matches</span></div>
+    </div>
+    <div class="season-reset-row srx-reset" style="--d:.8s">
       <div class="srr-col"><div class="srr-label">Last season</div><div class="srr-val" id="seasonOldRating">—</div></div>
       <div class="srr-arrow">→</div>
       <div class="srr-col"><div class="srr-label">Starting now</div><div class="srr-val mint" id="seasonNewRating">—</div></div>
     </div>
-    <div class="season-reward" id="seasonReward" style="display:none;"></div>
-    <button class="btn btn-primary" data-close="seasonModal" style="width:100%; margin-top:16px;">Let's go</button>
+    <div class="season-reward srx-reward" id="seasonReward" style="display:none;"></div>
+    <div class="srx-actions">
+      <button type="button" class="btn btn-ghost" id="srxShareBtn">📸 Share recap</button>
+      <button type="button" class="btn btn-primary" data-close="seasonModal">Begin the climb →</button>
+    </div>
   </div>
 </div>
 
@@ -26823,11 +27225,29 @@ const FIREBASE_CONFIG = {
       <button class="btn btn-primary" id="calibStep2Next" style="width:100%;" disabled>Measuring…</button>
     </div>
 
-    <!-- 4: Done -->
+    <!-- 3: Throw practice — live gesture detection -->
     <div class="calib-step" data-calib-step="3">
+      <div class="calib-preview">
+        <video id="calibVideoGest" autoplay playsinline muted></video>
+        <div class="calib-preview-overlay" id="calibGestState"><span class="dot"></span> Show me a hand…</div>
+      </div>
+      <h3 class="calib-title">Throw practice</h3>
+      <p class="calib-sub">Make each shape and hold it for a beat — this is exactly how you'll throw in a real match.</p>
+      <div class="cgt-row">
+        <div class="cgt" data-cgt="rock"><svg viewBox="0 0 64 64"><use href="#i-rock"/></svg><span>Rock</span><i class="cgt-check"></i></div>
+        <div class="cgt" data-cgt="paper"><svg viewBox="0 0 64 64"><use href="#i-paper"/></svg><span>Paper</span><i class="cgt-check"></i></div>
+        <div class="cgt" data-cgt="scissors"><svg viewBox="0 0 64 64"><use href="#i-scissors"/></svg><span>Scissors</span><i class="cgt-check"></i></div>
+      </div>
+      <button class="btn btn-primary" id="calibStep3Next" style="width:100%;" disabled>Make all three shapes…</button>
+      <button class="btn btn-ghost" id="calibStep3Skip" style="width:100%; margin-top:8px;">Skip practice</button>
+    </div>
+
+    <!-- 4: Done — first daily challenge send-off -->
+    <div class="calib-step" data-calib-step="4">
       <div class="calib-icon success"><svg viewBox="0 0 24 24" width="40" height="40"><use href="#i-check"/></svg></div>
-      <h3 class="calib-title">Calibration complete!</h3>
-      <p class="calib-sub" id="calibDoneSummary">Camera and lighting verified. You're ready to throw hands.</p>
+      <h3 class="calib-title">You're ready!</h3>
+      <p class="calib-sub" id="calibDoneSummary">Camera, lighting and throws verified. One last thing…</p>
+      <div class="calib-first-challenge" id="calibChallengeCard" style="display:none;"></div>
       <div class="calib-tip">🪞 Your camera is <b>mirrored</b>, like a selfie — move your hand right, it goes right on screen. Either hand works; just show <b>one</b> clear shape.</div>
       <button class="btn btn-primary" id="calibFinish" style="width:100%;">Let's play</button>
     </div>
@@ -27597,15 +28017,63 @@ async function applySeasonSoftReset(){
   state._seasonProcessing = false;
 }
 function showSeasonResetPopup(season, oldRating, newRating, prevRankName, rewardXp){
-  setText('#seasonName', `Season ${season.number} · ${season.name}`);
-  setText('#seasonOldRating', `${oldRating}${prevRankName ? ' · ' + prevRankName : ''}`);
+  const p = state.profile || {};
+  const finRank = rankFromRating(oldRating || 1000);
+  setText('#srxSeasonName', `Season ${Math.max(1, (season.number || 1) - 1)} · complete`);
+  setText('#seasonEyebrow', `WELCOME TO ${String(season.name || 'the new season').toUpperCase()}`);
+  const fin = $('#srxFinish'); if(fin) fin.innerHTML = `You finished <b style="color:${finRank.color}">${escapeHTML(prevRankName || finRank.tierName)}</b>`;
+  setRankIconEl($('#srxCrest'), finRank.id);
+  const cr = $('#srxCrest'); if(cr) cr.style.color = finRank.color;
+  const cg = $('#srxCrestGlow'); if(cg) cg.style.background = `radial-gradient(circle, ${finRank.color}, transparent 70%)`;
+  const m = $('#seasonModal'); if(m) m.style.setProperty('--srx', finRank.color);
+  try { countUp('#srxPeak', p.peakRating || oldRating || 1000, 900, 400); } catch(e){ setText('#srxPeak', p.peakRating || oldRating || 1000); }
+  try { countUp('#srxStreak', p.bestStreak || 0, 700, 550); } catch(e){ setText('#srxStreak', p.bestStreak || 0); }
+  try { countUp('#srxGames', p.games || 0, 700, 700); } catch(e){ setText('#srxGames', p.games || 0); }
+  setText('#seasonOldRating', oldRating);
   setText('#seasonNewRating', newRating);
   const rw = $('#seasonReward');
   if(rw){
     if(rewardXp){ rw.style.display = ''; rw.innerHTML = `🏅 Season reward: <b>+${rewardXp} XP</b>`; }
     else rw.style.display = 'none';
   }
-  $('#seasonModal')?.classList.add('show');
+  // Shareable recap card
+  const share = $('#srxShareBtn');
+  if(share) share.onclick = () => {
+    try {
+      hapticConfirm();
+      const W = 1000, H = 560;
+      const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+      const x = cv.getContext('2d');
+      const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#171020'); g.addColorStop(1, '#0b0812');
+      x.fillStyle = g; x.fillRect(0, 0, W, H);
+      const glow = x.createRadialGradient(W/2, -60, 40, W/2, -60, 480);
+      glow.addColorStop(0, finRank.color + '55'); glow.addColorStop(1, 'transparent');
+      x.fillStyle = glow; x.fillRect(0, 0, W, H);
+      x.textAlign = 'center';
+      x.fillStyle = 'rgba(255,255,255,.5)'; x.font = '700 20px monospace';
+      x.fillText(`R O S H C A M · SEASON ${Math.max(1, (season.number || 1) - 1)} RECAP`, W/2, 62);
+      x.fillStyle = finRank.color; x.font = '900 74px sans-serif';
+      x.fillText((prevRankName || finRank.tierName).toUpperCase(), W/2, 168);
+      x.fillStyle = '#fff'; x.font = '600 26px sans-serif';
+      x.fillText(`@${p.username || 'player'} · finished at ${oldRating} ELO`, W/2, 222);
+      const stats = [[`${p.peakRating || oldRating}`, 'PEAK RATING'], [`${p.bestStreak || 0}`, 'BEST STREAK'], [`${p.games || 0}`, 'MATCHES']];
+      stats.forEach((st, i) => {
+        const cx = W/2 + (i - 1) * 250;
+        x.fillStyle = '#fff'; x.font = '900 52px sans-serif'; x.fillText(st[0], cx, 340);
+        x.fillStyle = 'rgba(255,255,255,.45)'; x.font = '700 16px monospace'; x.fillText(st[1], cx, 372);
+      });
+      x.fillStyle = 'rgba(255,255,255,.35)'; x.font = '600 18px monospace';
+      x.fillText('webcam rock · paper · scissors', W/2, 500);
+      cv.toBlob(b => {
+        if(!b) return;
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(b); a.download = 'roshcam-season-recap.png'; a.click();
+        setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+        toast('📸 Season recap saved!', 'success');
+      }, 'image/png');
+    } catch(e){}
+  };
+  m?.classList.add('show');
 }
 // ===== WEEKEND 2× XP — Friday 6 pm through Sunday 11:59 pm (player's local time) =====
 function isDoubleXP(){
@@ -29015,6 +29483,9 @@ async function setupHands(){
   requestAnimationFrame(loop);
 }
 function onHandsResults(results){
+  // Calibration throw-practice borrows the shared Hands instance — route
+  // its frames to the wizard and skip all in-match work.
+  if(state._calibGestureMode){ try { handleCalibGesture(results); } catch(e){} return; }
   overlayCtx.clearRect(0,0,overlayCanvas.width, overlayCanvas.height);
   let conf = 0;
   const nHands = (results.multiHandLandmarks && results.multiHandLandmarks.length) || 0;
@@ -29339,6 +29810,8 @@ async function onAuthChanged(user){
   attachNotificationListener();
   attachChatListener();
   try { attachGiftListeners(); } catch(e){ console.warn('[gift] attach', e); }
+  try { applyCloudPrefs(); } catch(e){}
+  try { checkWishlistRotation(); } catch(e){}
   try { handleCheckoutReturn(); } catch(e){}
   try { lkMaybeDailyShuffle(); } catch(e){}
   updateSidebarProfile();
@@ -30779,6 +31252,39 @@ const ACHIEVEMENTS = [
   { id: 'win_rate_70', icon: '🎓', title: 'Sharp', desc: '70%+ win rate (50+ games)', check: p => (p.games||0) >= 50 && (p.wins||0)/(p.games||1) >= 0.7, prog: p => [Math.min(p.games||0,50), 50] },
 ];
 
+// ===== ACHIEVEMENT LINES — tiered groupings of the flat list above =====
+// Each line climbs bronze → silver → gold → platinum → legend; every completed
+// tier pays an XP reward, claimable from the Achievements page.
+const ACH_LINES = [
+  { name:'Victories',      icon:'🏆', cat:'combat',     ids:['first_win','win_10','win_50','win_100','win_250'] },
+  { name:'Win streaks',    icon:'🔥', cat:'combat',     ids:['streak_3','streak_5','streak_10','streak_15'] },
+  { name:'Sharp',          icon:'🎓', cat:'combat',     ids:['win_rate_70'] },
+  { name:'The climb',      icon:'🎯', cat:'climb',      ids:['ranked','silver','gold','platinum','diamond','master','gm','champion','legend'] },
+  { name:'Progression',    icon:'📈', cat:'climb',      ids:['level_25','level_50','prestige'] },
+  { name:'Matches played', icon:'🎮', cat:'dedication', ids:['games_100','games_500'] },
+  { name:'Daily streak',   icon:'📅', cat:'dedication', ids:['daily_3','daily_7'] },
+  { name:'Mind meld',      icon:'🤝', cat:'dedication', ids:['draws_10'] },
+  { name:'Social',         icon:'🫂', cat:'social',     ids:['social'] },
+];
+const ACH_TIER_COLORS = ['#cd7f32', '#c0c0c0', '#ffd33d', '#5dffba', '#ff61c3', '#a48bff', '#5fc9ff', '#ff8c42', '#ff3d68'];
+const ACH_TIER_XP = (i) => [100, 150, 250, 400, 600, 750, 900, 1100, 1400][Math.min(i, 8)];
+const ACH_BY_ID = {}; ACHIEVEMENTS.forEach(a => { ACH_BY_ID[a.id] = a; });
+function achClaimedSet(){ return new Set(state.profile?.achClaimed || []); }
+async function claimAchTier(achId){
+  const a = ACH_BY_ID[achId]; if(!a || !state.profile) return;
+  try { if(!a.check(state.profile)) return; } catch(e){ return; }
+  const claimed = achClaimedSet();
+  if(claimed.has(achId)) return;
+  const line = ACH_LINES.find(l => l.ids.includes(achId));
+  const xp = ACH_TIER_XP(line ? line.ids.indexOf(achId) : 0);
+  claimed.add(achId);
+  state.profile.achClaimed = [...claimed];
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { achClaimed: arrayUnion(achId) }); } catch(e){}
+  try { grantXp(xp, `Achievement: ${a.title}`); } catch(e){}
+  try { hapticSuccess(); } catch(e){}
+  try { toast(`${a.icon} ${a.title} claimed — +${xp} XP`, 'success'); } catch(e){}
+  try { renderAchievementsPage(); } catch(e){}
+}
 // Set of achievement ids currently satisfied by a given profile (used for the
 // end-of-round "newly unlocked" diff).
 function achievementUnlockedIds(p){
@@ -30867,7 +31373,70 @@ function getSettings(){
 }
 function saveSettings(s){
   try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch(e){}
+  try { schedulePrefsSync(); } catch(e){}
 }
+// ===== SETTINGS CLOUD SYNC — your preferences follow your account =====
+// A curated set of device-independent localStorage keys mirrors into the user
+// doc (prefs + prefsAt). Newest stamp wins: a fresh device pulls the cloud copy;
+// local changes push up (debounced) and a 30s diff check catches everything.
+const CLOUD_PREF_KEYS = [
+  SETTINGS_KEY, 'rosham_vol_master', 'rosham_vol_music', 'rosham_vol_sfx', 'rosham_vol_rank', 'rosham_vol_voice',
+  'rosham_reduced_motion', 'rosham_haptics', 'rosham_streamer', 'rosham_lowpower', 'rosham_datasaver',
+  'rosham_obs', 'rosham_nav_hidden', 'rosham_camflip', 'rosham_skeleton',
+];
+function _prefsSnapshot(){
+  const out = {};
+  for(const k of CLOUD_PREF_KEYS){
+    try { const v = localStorage.getItem(k); if(v !== null) out[k] = v; } catch(e){}
+  }
+  return out;
+}
+function schedulePrefsSync(){
+  try { localStorage.setItem('rosham_prefs_at', String(Date.now())); } catch(e){}
+  clearTimeout(state._prefsSyncT);
+  state._prefsSyncT = setTimeout(async () => {
+    if(!state.user || !state.db || isGuest()) return;
+    const snap = _prefsSnapshot();
+    const json = JSON.stringify(snap);
+    if(json === state._prefsLastSynced) return;
+    try {
+      await updateDoc(doc(state.db, 'users', state.user.uid), { prefs: snap, prefsAt: Date.now() });
+      state._prefsLastSynced = json;
+    } catch(e){}
+  }, 2000);
+}
+// On login: adopt the cloud copy when it's newer than anything this device set.
+function applyCloudPrefs(){
+  const p = state.profile;
+  if(!p || !p.prefs || typeof p.prefs !== 'object') return;
+  const localAt = parseInt(localStorage.getItem('rosham_prefs_at') || '0', 10) || 0;
+  const cloudAt = Number(p.prefsAt) || 0;
+  if(cloudAt <= localAt){ state._prefsLastSynced = JSON.stringify(_prefsSnapshot()); return; }
+  let changed = 0;
+  for(const k of CLOUD_PREF_KEYS){
+    const v = p.prefs[k];
+    try {
+      if(typeof v === 'string' && localStorage.getItem(k) !== v){ localStorage.setItem(k, v); changed++; }
+    } catch(e){}
+  }
+  try { localStorage.setItem('rosham_prefs_at', String(cloudAt)); } catch(e){}
+  state._prefsLastSynced = JSON.stringify(_prefsSnapshot());
+  if(changed){
+    try { applySettings(); } catch(e){}
+    try { loadClientPrefs(); } catch(e){}
+    try { applyObsMode(); } catch(e){}
+    try { applyNavPrefs(); } catch(e){}
+    try { toast('☁️ Your settings synced from your account', 'info', { duration: 3500 }); } catch(e){}
+  }
+}
+// Safety net: catch pref writes that don't route through saveSettings.
+setInterval(() => {
+  try {
+    if(!state.user || isGuest()) return;
+    const json = JSON.stringify(_prefsSnapshot());
+    if(state._prefsLastSynced && json !== state._prefsLastSynced) schedulePrefsSync();
+  } catch(e){}
+}, 30000);
 function applySettings(){
   const s = getSettings();
   // sound (use mute state)
@@ -32426,6 +32995,53 @@ function renderShopWallet(){
   setText('#shopCollectNum', `${owned}/${COSMETICS.length}`);
   setText('#shopCoinsBal', fmtCoins(getCoins()));
 }
+// ===== WISHLIST — heart items, get pinged when they hit the rotation =====
+function _wishKey(){ return 'rosham_wishlist_' + (state.user?.uid || 'anon'); }
+function getWishlist(){ try { const a = JSON.parse(localStorage.getItem(_wishKey()) || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
+function isWished(id){ return getWishlist().includes(id); }
+function toggleWish(id){
+  let w = getWishlist();
+  const adding = !w.includes(id);
+  if(adding) w.push(id); else w = w.filter(x => x !== id);
+  try { localStorage.setItem(_wishKey(), JSON.stringify(w.slice(-60))); } catch(e){}
+  const item = COSMETIC_BY_ID[id];
+  if(adding){ hapticSuccess(); toast(`💖 ${item ? item.name : 'Item'} wishlisted — we'll ping you when it hits the shop rotation`, 'success'); }
+  else { hapticTick(); }
+  // repaint hearts everywhere they appear
+  document.querySelectorAll(`[data-wish="${id}"]`).forEach(b => {
+    b.classList.toggle('on', adding);
+    if(adding){ b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop'); }
+  });
+  return adding;
+}
+// Once per day: if any wishlisted item is in today's rotation, ring the bell.
+function checkWishlistRotation(){
+  if(!state.profile) return;
+  const w = getWishlist(); if(!w.length) return;
+  const dayKey = 'rosham_wish_alert_' + (state.user?.uid || 'anon');
+  const today = (typeof getTodayKey === 'function') ? getTodayKey() : new Date().toDateString();
+  try { if(localStorage.getItem(dayKey) === today) return; } catch(e){}
+  let rot;
+  try { rot = shopRotation(); } catch(e){ return; }
+  const inShop = [...(rot.featured || []), ...(rot.daily || [])].filter(i => w.includes(i.id) && !ownsCosmetic(i.id));
+  if(!inShop.length) return;
+  try { localStorage.setItem(dayKey, today); } catch(e){}
+  const names = inShop.slice(0, 2).map(i => i.name).join(' & ');
+  toast(`💖 Wishlist alert: ${names}${inShop.length > 2 ? ` +${inShop.length - 2} more` : ''} in today's shop!`, 'success', {
+    duration: 9000,
+    action: { label: 'View', onClick: () => { showNavPage('shop'); setTimeout(() => openShopBuyModal(inShop[0]), 400); } },
+  });
+  try { pushNotification(state.user.uid, { type:'gift', text:`💖 Wishlist alert — <b>${escapeHTML(names)}</b> ${inShop.length > 1 ? 'are' : 'is'} in today's shop rotation!`, actionUid: null }); } catch(e){}
+}
+function wishBtnHTML(id, cls){
+  return `<button type="button" class="wish-btn ${cls || ''}${isWished(id) ? ' on' : ''}" data-wish="${id}" title="Wishlist — get alerted when it's in the shop" aria-label="Wishlist">
+    <svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-10-9.2C.4 8.6 2.3 5 5.8 5c2 0 3.4 1.1 4.2 2.3h4C14.8 6.1 16.2 5 18.2 5c3.5 0 5.4 3.6 3.8 6.8C21.5 16.4 12 21 12 21z" transform="scale(.92) translate(1,1)"/></svg>
+  </button>`;
+}
+document.addEventListener('click', (e) => {
+  const b = e.target.closest('.wish-btn[data-wish]');
+  if(b){ e.stopPropagation(); e.preventDefault(); toggleWish(b.dataset.wish); }
+}, true);
 function shopTileHTML(item, featured){
   const owned = ownsCosmetic(item.id);
   const equipped = cosmeticEquipped(state.profile, item.type)?.id === item.id;
@@ -32435,6 +33051,7 @@ function shopTileHTML(item, featured){
   return `<button type="button" class="shop-tile rar-${item.rarity}${featured ? ' featured' : ''}${owned ? ' owned' : ''}" data-shop-item="${item.id}">
     <i class="st-sheen" aria-hidden="true"></i>
     <span class="st-rarity-tag">${CX_RARITY[item.rarity].label}</span>
+    ${owned ? '' : wishBtnHTML(item.id, 'wish-tile')}
     <span class="st-preview">${buildCosmeticPreview(item, featured)}</span>
     <span class="st-band">
       <b class="st-name">${escapeHTML(item.name)}</b>
@@ -32734,7 +33351,8 @@ function lkRenderTools(){
     <button type="button" class="lk2-chip${lk.fav ? ' on' : ''}" data-lk-fav-filter title="Show only your favorites"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg> Favorites</button>
     <button type="button" class="lk2-chip" data-lk-surprise title="Equip a random look">🎲 Surprise me</button>
     <button type="button" class="lk2-chip${lk.presetsOpen ? ' on' : ''}" data-lk-presets title="Saved loadouts"><svg viewBox="0 0 24 24"><use href="#i-locker"/></svg> Loadouts${n ? ` <b>${n}</b>` : ''}</button>
-    <button type="button" class="lk2-chip${lkShuffleOn() ? ' on' : ''}" data-lk-shuffle title="Roll a new look automatically each day">🔁 Daily shuffle</button>`;
+    <button type="button" class="lk2-chip${lkShuffleOn() ? ' on' : ''}" data-lk-shuffle title="Roll a new look automatically each day">🔁 Daily shuffle</button>
+    <button type="button" class="lk2-chip${lkMatchShuffleOn() ? ' on' : ''}" data-lk-shuffle-match title="Roll a random look before every match">🎲 Shuffle each match</button>`;
 }
 function lkRenderPresetPanel(){
   const presets = lkPresets();
@@ -32756,6 +33374,7 @@ function lkRenderPresetPanel(){
 }
 try { updateLockerBadge(); } catch(e){}
 function renderShopPage(){
+  try { checkWishlistRotation(); } catch(e){}
   state._shopRenderedDay = getTodayKey();
   renderShopWallet();
   try { renderWelcomeOffer(); } catch(e){}
@@ -32806,6 +33425,61 @@ function buildProfilePreviewHTML(item){
     <div class="spp-rank">${showRank ? `<svg viewBox="0 0 24 24" width="13" height="13"><use href="#${rk.icon}"/></svg> ${escapeHTML(rk.tierName || rk.name || '')} · ${p.rating || 1000}` : 'Unranked'}</div>
   </div>`;
 }
+// ===== PREVIEW v4 — a realistic miniature of YOUR profile wearing the item =====
+// Mirrors the real profile modal: banner, frame, photo, styled name, tag,
+// title, level badge, rank crest and a stats row. `wearing:false` shows your
+// current look for a true before/after.
+function buildProfileCardPreviewHTML(item, wearing){
+  const p = state.profile || {};
+  const ov = {
+    name: cosmeticEquipped(p, 'name'), tag: cosmeticEquipped(p, 'tag'),
+    avatar: cosmeticEquipped(p, 'avatar'), frame: cosmeticEquipped(p, 'frame'),
+  };
+  if(wearing && item) ov[item.type] = item;
+  const init = escapeHTML(initialOf(p.username || 'R'));
+  const bg = AVATAR_COLORS[p.colorIdx || 0] || AVATAR_COLORS[0];
+  const avStyle = p.photoURL
+    ? `background-image:url('${p.photoURL}');background-size:cover;background-position:center;`
+    : `background:${bg};`;
+  const rk = rankFromRating(p.rating || 1000);
+  const ranked = !inPlacements(p);
+  let title = null; try { title = titleById(p.equippedTitle || 'rookie', p); } catch(e){}
+  const lvl = (typeof levelOf === 'function') ? levelOf(p).level : 1;
+  const games = p.games || 0;
+  const wr = games > 0 ? Math.round(((p.wins || 0) / games) * 100) : 0;
+  return `<div class="sbmp-card ${ov.frame ? ov.frame.cls : ''}">
+    <i class="cx-frame-overlay" aria-hidden="true"${ov.frame ? '' : ' style="display:none;"'}></i>
+    <div class="sbmp-banner" data-sbmp-banner></div>
+    <div class="sbmp-idrow">
+      <span class="sbmp-av-wrap"><span class="sbmp-av" style="${avStyle}">${p.photoURL ? '' : init}</span>${ov.avatar ? `<i class="cx-avfx ${ov.avatar.cls}" aria-hidden="true"></i>` : ''}</span>
+      <span class="sbmp-lvl" data-sbmp-lvl>${lvl}</span>
+    </div>
+    <div class="sbmp-name"><span class="cx-name${ov.name ? ' ' + ov.name.cls : ''}">${escapeHTML(p.username || 'YourName')}</span>${ov.tag ? ` <span class="cx-tag ${ov.tag.cls}">${escapeHTML(ov.tag.text)}</span>` : ''}</div>
+    ${title ? `<div class="sbmp-title" style="color:${title.color}">${escapeHTML(title.name)}</div>` : ''}
+    <div class="sbmp-rankrow">
+      ${ranked ? `<span class="sbmp-chip"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#${rk.icon}"/></svg> ${escapeHTML(rk.tierName)}</span><span class="sbmp-chip">${p.rating || 1000} ELO</span>` : '<span class="sbmp-chip">Unranked</span>'}
+      ${games ? `<span class="sbmp-chip">${wr}% WR</span>` : ''}
+    </div>
+  </div>`;
+}
+function renderSbmPreview(item, wearing){
+  const stage = $('#sbmStage'); if(!stage) return;
+  state._sbmWearing = wearing;
+  stage.innerHTML = buildProfileCardPreviewHTML(item, wearing);
+  // Real banner painter (needs the live element) + level badge colours.
+  try {
+    const b = stage.querySelector('[data-sbmp-banner]');
+    if(b) applyProfileBanner(b, null, state.profile || {});
+  } catch(e){}
+  try { paintLevelBadge(stage.querySelector('[data-sbmp-lvl]'), (typeof levelOf === 'function') ? levelOf(state.profile || {}).level : 1, prestigeOf(state.profile || {})); } catch(e){}
+  // Toggle state
+  document.querySelectorAll('#sbmTryToggle button').forEach(btn => btn.classList.toggle('on', (btn.dataset.wear === '1') === wearing));
+}
+on('#sbmTryToggle', 'click', (e) => {
+  const b = e.target.closest('button[data-wear]'); if(!b) return;
+  hapticTick();
+  renderSbmPreview(state._shopBuyItem, b.dataset.wear === '1');
+});
 function openShopBuyModal(item, opts={}){
   state._shopBuyItem = item;
   const r = CX_RARITY[item.rarity];
@@ -32816,9 +33490,10 @@ function openShopBuyModal(item, opts={}){
   state._shopBuyWelcome = welcome;
   const guest = isGuest();
   const owned = ownsCosmetic(item.id);
-  // HERO — the cosmetic shown live on your profile.
-  const stage = $('#sbmStage');
-  if(stage) stage.innerHTML = buildProfilePreviewHTML(item);
+  // HERO — a realistic miniature of YOUR profile, wearing the item.
+  renderSbmPreview(item, true);
+  // Wishlist heart (buyable, unowned items only)
+  try { const wh = $('#sbmWishHost'); if(wh) wh.innerHTML = (!owned && !previewOnly) ? wishBtnHTML(item.id, 'wish-modal') : ''; } catch(e){}
   const hero = $('#sbmHero'); if(hero) hero.className = 'sbm-hero rar-' + item.rarity;
   // rarity · type, name, description
   const rarEl = $('#sbmRarity');
@@ -33957,15 +34632,48 @@ function lkRenderStage(){
   const action = equipped
     ? `<button type="button" class="btn lk2-btn lk2-unequip" data-lk-unequip><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-close"/></svg> Unequip</button>`
     : `<button type="button" class="btn btn-primary lk2-btn" data-lk-equip="${item.id}"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Equip</button>`;
+  const worn = wearCountFor(item.id);
   el.innerHTML = `
     ${buildProfilePreviewHTML(item)}
     <div class="lk2-meta">
-      <div class="lk2-item-rar"><span class="lk2-rar-pill" style="--rc:${r.color}">${r.label}</span><span class="lk2-item-type">${CX_TYPE_LABEL[item.type]}</span>${equipped ? '<span class="lk2-eq-pill">EQUIPPED</span>' : ''}</div>
+      <div class="lk2-item-rar"><span class="lk2-rar-pill" style="--rc:${r.color}">${r.label}</span><span class="lk2-item-type">${CX_TYPE_LABEL[item.type]}</span>${equipped ? '<span class="lk2-eq-pill">EQUIPPED</span>' : ''}${worn ? `<span class="lk2-wear-pill" title="Matches played wearing this">⚔ worn in ${worn} ${worn === 1 ? 'match' : 'matches'}</span>` : ''}</div>
       <div class="lk2-item-name">${escapeHTML(item.name)}</div>
       <div class="lk2-item-desc">${escapeHTML(item.desc || '')}</div>
       <div class="lk2-actions">${action}</div>
     </div>`;
 }
+// ===== WEAR STATS — per-cosmetic "worn in N matches" (local, per account) =====
+function _wearKey(){ return 'rosham_wear_' + (state.user?.uid || 'anon'); }
+function wearCountFor(id){
+  try { return (JSON.parse(localStorage.getItem(_wearKey()) || '{}'))[id] || 0; } catch(e){ return 0; }
+}
+function recordWearForMatch(){
+  try {
+    const c = getCosmetics();
+    const map = JSON.parse(localStorage.getItem(_wearKey()) || '{}');
+    ['name', 'tag', 'avatar', 'frame'].forEach(s => { if(c[s]) map[c[s]] = (map[c[s]] || 0) + 1; });
+    localStorage.setItem(_wearKey(), JSON.stringify(map));
+  } catch(e){}
+}
+// ===== OBS / STREAMER OVERLAY MODE — clean capture during matches =====
+// Toggle in Settings, or add ?obs=1 to the URL. Hides toasts, docks, meters
+// and other chrome inside the arena so a capture looks broadcast-clean.
+function obsModeOn(){ try { return localStorage.getItem('rosham_obs') === '1' || /[?&]obs=1/.test(location.search); } catch(e){ return /[?&]obs=1/.test(location.search); } }
+function applyObsMode(){
+  document.body.classList.toggle('obs-mode', obsModeOn());
+  const t = $('#setObsToggle'); if(t) t.classList.toggle('off', !obsModeOn());
+}
+on('#setObsMode', 'click', () => {
+  try { localStorage.setItem('rosham_obs', obsModeOn() ? '0' : '1'); } catch(e){}
+  applyObsMode();
+  hapticConfirm();
+  toast(obsModeOn() ? '🎥 Streamer overlay ON — the arena captures clean.' : 'Streamer overlay off.', 'info');
+});
+try { applyObsMode(); } catch(e){}
+// ===== SHUFFLE EACH MATCH — roll a random look on every match found =====
+function lkMatchShuffleKey(){ return 'rosham_lk_shufmatch_' + (state.user?.uid || 'anon'); }
+function lkMatchShuffleOn(){ try { return localStorage.getItem(lkMatchShuffleKey()) === '1'; } catch(e){ return false; } }
+function lkSetMatchShuffle(on){ try { localStorage.setItem(lkMatchShuffleKey(), on ? '1' : '0'); } catch(e){} }
 function lkSortLabel(){ return (LK_SORTS.find(s => s.id === lkState().sort) || LK_SORTS[0]).label; }
 function lkRenderSort(){
   const lk = lkState();
@@ -34050,6 +34758,14 @@ document.addEventListener('click', (e) => {
     const t = $('#lkTools'); if(t) t.innerHTML = lkRenderTools();
     try { haptic(8); } catch(err){}
     try { toast(on ? '🔁 Daily shuffle ON — a fresh random look each day.' : 'Daily shuffle off.', on ? 'success' : 'info'); } catch(err){}
+    return;
+  }
+  if(e.target.closest('[data-lk-shuffle-match]')){
+    const on = !lkMatchShuffleOn();
+    lkSetMatchShuffle(on);
+    const t = $('#lkTools'); if(t) t.innerHTML = lkRenderTools();
+    try { haptic(8); } catch(err){}
+    try { toast(on ? '🎲 Match shuffle ON — a surprise look every match.' : 'Match shuffle off.', on ? 'success' : 'info'); } catch(err){}
     return;
   }
   // loadout presets -----------------------------------------------------
@@ -36011,7 +36727,13 @@ function renderProfileBadges(p){
     }
     const a = ACHIEVEMENTS.find(x => x.id === id);
     if(!a || !unlockedIds.has(a.id)) return '';
-    return `<div class="pm-sc-badge" title="${escapeHTML(a.title)} — ${escapeHTML(a.desc)}"><span class="pm-sc-ic">${a.icon}</span><span class="pm-sc-name">${escapeHTML(a.title)}</span></div>`;
+    // Trophy-shelf treatment: tint the pin to its achievement TIER colour.
+    let tc = '#ffd33d';
+    try {
+      const line = ACH_LINES.find(l => l.ids.includes(a.id));
+      if(line) tc = ACH_TIER_COLORS[Math.min(line.ids.indexOf(a.id), ACH_TIER_COLORS.length - 1)];
+    } catch(e){}
+    return `<div class="pm-sc-badge pm-sc-trophy" style="--rc:${tc}" title="${escapeHTML(a.title)} — ${escapeHTML(a.desc)}"><span class="pm-sc-ic">${a.icon}</span><span class="pm-sc-name">${escapeHTML(a.title)}</span><i class="pm-sc-tier" aria-hidden="true"></i></div>`;
   };
   const scEl = $('#pmShowcase');
   if(scEl){
@@ -37403,7 +38125,55 @@ function cancelMatchmakingResources(){
   }
 }
 
+// ===== QUEUE WHILE BROWSING — the search keeps running behind a floating pill =====
+function showQueuePill(){
+  const p = $('#queuePill'); if(!p) return;
+  p.style.display = '';
+  clearInterval(state._qpTimer);
+  const tick = () => {
+    if(!state._searchStartedAt){ hideQueuePill(); return; }
+    // Back on the search or in a match → the pill has done its job.
+    if(state.screen === 'matching' || state.screen === 'game'){ hideQueuePill(); return; }
+    const el = Math.floor((Date.now() - state._searchStartedAt) / 1000);
+    const m = Math.floor(el / 60), s = el % 60;
+    setText('#qpElapsed', m > 0 ? `${m}m ${s}s` : `${s}s`);
+    // Mirror the live queue position from the matching screen when known.
+    const pos = $('#mmPos')?.textContent || '';
+    setText('#qpPos', /\d/.test(pos) ? ` · ${pos.trim()}` : '');
+  };
+  tick();
+  state._qpTimer = setInterval(tick, 500);
+}
+function hideQueuePill(){
+  clearInterval(state._qpTimer); state._qpTimer = null;
+  const p = $('#queuePill'); if(p) p.style.display = 'none';
+}
+on('#mmBrowseBtn', 'click', () => {
+  hapticTick();
+  state._queueBrowsing = true;
+  showScreen('landing');
+  showQueuePill();
+  toast('Still searching — we\'ll pull you in the moment a match is found', 'info', { duration: 3500 });
+});
+on('#queuePill', 'click', (e) => {
+  if(e.target.closest('#qpCancel')) return;
+  hapticTick();
+  hideQueuePill();
+  showScreen('matching');
+});
+on('#qpCancel', 'click', (e) => {
+  e.stopPropagation();
+  hapticConfirm();
+  hideQueuePill();
+  cancelMatchmaking();   // ends on the landing screen
+});
+
 async function showMatchFound(){
+  // If they were browsing the shop/locker mid-queue, yank them back in.
+  if(state.screen !== 'matching'){ hideQueuePill(); showScreen('matching'); }
+  // Locker: optional per-match random look, then log wear for what's equipped.
+  try { if(lkMatchShuffleOn() && !isGuest()) await lkApplyLook(lkRandomLook()); } catch(e){}
+  try { recordWearForMatch(); } catch(e){}
   $('#matchSearchView').style.display = 'none';
   $('#matchFoundView').style.display = '';
   try { haptic([40, 30, 70]); } catch(e){}
@@ -38724,6 +39494,9 @@ async function runCountdown(){
   // the opponent's cam is revealed. If you were holding a clear shape, that's
   // what you're committed to — a swap after seeing their throw can't override it.
   state._shootSnapshot = state.currentGesture || null;
+  // THE MOMENT: freeze your webcam frame at the exact SHOOT instant (the
+  // opponent's frame is grabbed at reveal, once their cam is live).
+  try { state._momentYou = captureMomentFrame(videoEl, true); } catch(e){ state._momentYou = null; }
   cd.textContent = 'SHOOT!';
   cd.classList.add('shoot');
   // Reveal the opponent's cam AT the shoot moment — you should see their throw
@@ -38783,8 +39556,32 @@ function revealIfBothIn(){
   if(!state.myThrowIn || !state.oppThrowIn) return;
   doReveal();
 }
+// ===== THE MOMENT — freeze-frames of both webcams at the throw =====
+function captureMomentFrame(video, mirror){
+  if(!video || !video.videoWidth) return null;
+  const w = 320, h = Math.round(320 * (video.videoHeight / video.videoWidth)) || 240;
+  const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+  const x = cv.getContext('2d');
+  if(mirror){ x.translate(w, 0); x.scale(-1, 1); }
+  x.drawImage(video, 0, 0, w, h);
+  return cv.toDataURL('image/jpeg', 0.75);
+}
+// Render the side-by-side strip into a host element (round result + match end).
+function momentStripHTML(){
+  if(!state._momentYou && !state._momentOpp) return '';
+  const img = (src, who) => src
+    ? `<span class="mom-shot ${who}"><img src="${src}" alt=""><i class="mom-tag">${who === 'you' ? 'YOU' : '@' + escapeHTML(state.oppProfile?.username || 'THEM')}</i></span>`
+    : '';
+  return `<div class="moment-strip"><span class="mom-label">📸 THE MOMENT</span><div class="mom-row">${img(state._momentYou, 'you')}<span class="mom-vs">VS</span>${img(state._momentOpp, 'opp')}</div></div>`;
+}
 function doReveal(){
   state.phase = 'reveal';
+  // Grab the opponent's half of The Moment now that their cam is revealed.
+  try { state._momentOpp = captureMomentFrame($('#oppVideo'), false) || state._momentOpp; } catch(e){}
+  // Keep the last round's pair for the match-end screen.
+  try { if(state._momentYou || state._momentOpp) state._momentLast = { you: state._momentYou, opp: state._momentOpp }; } catch(e){}
+  // Slot the freeze-frames into the round result card.
+  try { const host = $('#momentHost'); if(host) host.innerHTML = momentStripHTML(); } catch(e){}
   $('#countdown').classList.remove('show');
   $('#countdown').classList.remove('shoot','flash');
   // REVEAL: show opponent's video stream now that the round is decided
@@ -39782,6 +40579,30 @@ function showMatchResultScreen(result){
   if(strip) strip.classList.remove('win','lose','draw');
   overlay.classList.remove('win','lose','draw');
   overlay.classList.add(result === 'win' ? 'win' : result === 'lose' ? 'lose' : 'draw');
+  // v2 choreography: auto-queue countdown for ranked stranger matches
+  try { startResultAutoQueue(); } catch(e){}
+  // v3: The Moment (last round's freeze-frames) + drifting result particles
+  try {
+    state._momentYou = state._momentLast?.you || state._momentYou;
+    state._momentOpp = state._momentLast?.opp || state._momentOpp;
+    const mh = $('#mrMomentHost'); if(mh) mh.innerHTML = momentStripHTML();
+  } catch(e){}
+  try {
+    const host = $('#mrv3Particles');
+    if(host && !document.body.classList.contains('reduced-motion') && !document.body.classList.contains('low-power')){
+      host.innerHTML = '';
+      const col = result === 'win' ? '34,211,163' : result === 'lose' ? '255,51,88' : '164,139,255';
+      for(let i = 0; i < 26; i++){
+        const d = document.createElement('i');
+        d.style.left = (Math.random() * 100) + '%';
+        d.style.setProperty('--pc', col);
+        d.style.animationDelay = (Math.random() * 5) + 's';
+        d.style.animationDuration = (5 + Math.random() * 6) + 's';
+        d.style.width = d.style.height = (2 + Math.random() * 4) + 'px';
+        host.appendChild(d);
+      }
+    } else if(host){ host.innerHTML = ''; }
+  } catch(e){}
 
   const perf2 = (typeof fxPerf === 'function') ? fxPerf() : { lite: false };
   const starsHost = $('#mrStars');
@@ -40645,6 +41466,86 @@ function showPrestigeUp(info){
 // Fire the next queued match-end celebration: prestige overlay (blocking) first,
 // then the level-up stack card. Called after the result settles and after each
 // blocking overlay (rank-up / prestige) is dismissed.
+// ===== RESULT v2 — auto-queue-again countdown (ranked strangers only) =====
+// Starts after the celebrations breathe; any interaction with the overlay
+// cancels it. Fires the same action as "Play again".
+function stopResultAutoQueue(){
+  clearInterval(state._aqTimer); state._aqTimer = null;
+  const b = $('#matchEndAgainBtn');
+  if(b && b.dataset.baseLabel){ b.innerHTML = b.dataset.baseLabel; }
+}
+function startResultAutoQueue(){
+  stopResultAutoQueue();
+  if(state.isCasual || state.isBotMatch) return;               // strangers only
+  const b = $('#matchEndAgainBtn'); if(!b) return;
+  if(!b.dataset.baseLabel) b.dataset.baseLabel = b.innerHTML;
+  let left = 15;
+  const tick = () => {
+    const overlay = $('#matchResultOverlay');
+    if(!overlay || !overlay.classList.contains('show')){ stopResultAutoQueue(); return; }
+    // Pause while a blocking celebration (rank-up / prestige) is on screen
+    if(document.querySelector('#rankupOverlay.show, #prestigeOverlay.show, #levelupOverlay.show')) return;
+    left--;
+    if(left <= 0){ stopResultAutoQueue(); b.click(); return; }
+    b.innerHTML = b.dataset.baseLabel + ` <span class="aq-count">${left}s</span>`;
+  };
+  state._aqTimer = setInterval(tick, 1000);
+  // Any tap/click on the overlay (other than Play again itself) cancels it
+  const overlay = $('#matchResultOverlay');
+  if(overlay && !overlay._aqBound){
+    overlay._aqBound = true;
+    overlay.addEventListener('pointerdown', (e) => {
+      if(!e.target.closest('#matchEndAgainBtn')) stopResultAutoQueue();
+    }, true);
+  }
+}
+// ===== RESULT v2 — shareable result card (canvas → PNG download) =====
+on('#mrShareBtn', 'click', () => {
+  try {
+    hapticConfirm();
+    const won = $('#matchResultOverlay')?.classList.contains('win');
+    const draw = $('#matchResultOverlay')?.classList.contains('draw');
+    const me = state.profile || {};
+    const rating = me.rating || 1000;
+    const rk = rankFromRating(rating);
+    const W = 1000, H = 560;
+    const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const x = cv.getContext('2d');
+    // backdrop
+    const g = x.createLinearGradient(0, 0, 0, H);
+    g.addColorStop(0, '#171020'); g.addColorStop(1, '#0b0812');
+    x.fillStyle = g; x.fillRect(0, 0, W, H);
+    const glow = x.createRadialGradient(W/2, -80, 60, W/2, -80, 520);
+    const gc = won ? 'rgba(34,211,163,.28)' : draw ? 'rgba(164,139,255,.25)' : 'rgba(255,51,88,.22)';
+    glow.addColorStop(0, gc); glow.addColorStop(1, 'transparent');
+    x.fillStyle = glow; x.fillRect(0, 0, W, H);
+    x.fillStyle = 'rgba(255,255,255,.5)'; x.font = '700 22px monospace'; x.textAlign = 'center';
+    x.fillText('R O S H C A M', W/2, 64);
+    x.fillStyle = won ? '#22d3a3' : draw ? '#a48bff' : '#ff3358';
+    x.font = '900 96px sans-serif';
+    x.fillText(won ? 'VICTORY' : draw ? 'DRAW' : 'DEFEAT', W/2, 190);
+    x.fillStyle = '#fff'; x.font = '800 54px sans-serif';
+    x.fillText(`${state.scoreYou ?? 0}  –  ${state.scoreOpp ?? 0}`, W/2, 268);
+    x.fillStyle = 'rgba(255,255,255,.75)'; x.font = '600 26px sans-serif';
+    x.fillText(`@${me.username || 'player'}  vs  @${state.oppProfile?.username || 'stranger'}`, W/2, 320);
+    const delta = state._lastMatchDelta || 0;
+    x.fillStyle = delta >= 0 ? '#22d3a3' : '#ff3358'; x.font = '800 34px monospace';
+    x.fillText(`${delta >= 0 ? '+' : ''}${delta} ELO`, W/2, 386);
+    x.fillStyle = rk.color; x.font = '800 28px sans-serif';
+    x.fillText(`${rk.tierName} · ${rating} ELO`, W/2, 436);
+    x.fillStyle = 'rgba(255,255,255,.35)'; x.font = '600 18px monospace';
+    x.fillText('webcam rock · paper · scissors', W/2, 505);
+    cv.toBlob((blob) => {
+      if(!blob) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `roshcam-${won ? 'victory' : draw ? 'draw' : 'match'}.png`;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      toast('📸 Result card saved — share it anywhere!', 'success');
+    }, 'image/png');
+  } catch(e){ console.warn('[share]', e); toast('Couldn\'t build the share card', 'error'); }
+});
 function flushMatchCelebrations(){
   if(state._pendingPrestige){ const pr = state._pendingPrestige; state._pendingPrestige = null; showPrestigeUp(pr); return; }
   if(state._pendingLevelUp){ const lu = state._pendingLevelUp; state._pendingLevelUp = null; showLevelUp(lu); }
@@ -41497,6 +42398,14 @@ function setActiveNav(nav){
 // (within this session), instead of always dumping you at the top.
 const _pageScroll = {};
 function showNavPage(page){
+  // Leaving an ACTIVE matchmaking search via any nav button? Keep the queue
+  // running in the background and drop the floating pill in — no dedicated
+  // "browse" click required.
+  try {
+    if(state.screen === 'matching' && state._searchStartedAt && !state.matchId){
+      setTimeout(() => { try { showQueuePill(); } catch(e){} }, 80);
+    }
+  } catch(e){}
   // Make sure we're on the landing screen first
   if(state.screen !== 'landing') showScreen('landing');
   // Remember where we were on the page we're leaving
@@ -41735,6 +42644,8 @@ function renderHomePage(){
   setText('#wbSub', games > 0 ? `You've played ${games} matches. Keep climbing!` : 'Ready to throw hands?');
   const loginStreak = getLoginStreak();
   setText('#wbStreakNum', loginStreak);
+  try { renderHomeGoals(); } catch(e){}
+  try { renderHomeToday(); } catch(e){}
   try { refreshDailyChallenge(); } catch(e){}
   try { refreshWeeklyChallenges(); } catch(e){}
   try { paintMnavAvatar(); } catch(e){}
@@ -41977,7 +42888,8 @@ function renderRankHistoryPanels(items){
         const d = typeof m.delta === 'number' ? m.delta : 0;
         const delta = d > 0 ? `+${d}` : `${d}`;
         const opp = m.oppUsername ? ` · vs ${escapeHTML(m.oppUsername)}` : '';
-        return `<div class="rk2-match ${res}" style="--d:${i * 55}ms">
+        const hasDetail = Array.isArray(m.rounds) && m.rounds.length;
+        return `<div class="rk2-match ${res}${hasDetail ? ' expandable' : ''}" data-mi="${i}" style="--d:${i * 55}ms">
           <span class="rk2-match-ic"><svg viewBox="0 0 24 24"><use href="#${res === 'win' ? 'i-trophy' : res === 'draw' ? 'i-swords' : 'i-shield'}"/></svg></span>
           <div class="rk2-match-main">
             <div class="rk2-match-t">${label}</div>
@@ -41987,6 +42899,7 @@ function renderRankHistoryPanels(items){
             <div class="rk2-match-delta">${d === 0 ? '—' : delta + ' ELO'}</div>
             ${m.score ? `<div class="rk2-match-score">Score: ${escapeHTML(String(m.score)).replace('-', ' – ')}</div>` : ''}
           </div>
+          ${hasDetail ? '<svg class="rk2-match-chev" viewBox="0 0 24 24" width="13" height="13"><use href="#i-chevron-down"/></svg>' : ''}
         </div>`;
       }).join('');
     }
@@ -42052,6 +42965,47 @@ function renderRankHistoryPanels(items){
     </svg>
     <div class="rk2-chart-now" style="left:calc(${(parseFloat(ex) / W * 100).toFixed(1)}% ); top:calc(${(parseFloat(ey) / H * 100).toFixed(1)}% - 34px); --rk:${rk.color}">${current}</div>`;
 }
+// ---- Match details: tap a recent match to expand its round-by-round timeline ----
+const MOVE_EMOJI = { rock:'✊', paper:'✋', scissors:'✌️' };
+function matchDetailHTML(m){
+  const rounds = (m.rounds || []).slice(0, 20).map((r, i) => {
+    const cls = r.r === 'win' ? 'w' : r.r === 'lose' ? 'l' : 'd';
+    return `<div class="rkd-round ${cls}" title="Round ${i + 1}">
+      <span class="rkd-n">${i + 1}</span>
+      <span class="rkd-throws">${MOVE_EMOJI[r.y] || '—'}<i>vs</i>${MOVE_EMOJI[r.o] || '—'}</span>
+      <span class="rkd-res">${cls === 'w' ? 'won' : cls === 'l' ? 'lost' : 'draw'}</span>
+    </div>`;
+  }).join('');
+  const rating = (typeof m.ratingBefore === 'number' && typeof m.ratingAfter === 'number')
+    ? `<span class="rkd-rating">${m.ratingBefore} <svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-arrow-right"/></svg> <b>${m.ratingAfter}</b> ELO</span>` : '';
+  const isFriend = m.oppUid && (state.profile?.friends || []).includes(m.oppUid);
+  const online = isFriend && (() => { try { return friendPresence(state._friendDocs?.[m.oppUid] || {}).online; } catch(e){ return false; } })();
+  const rematch = m.oppUid
+    ? (online
+        ? `<button type="button" class="btn btn-primary rkd-rematch" data-rematch="${m.oppUid}">⚔ Rematch @${escapeHTML(m.oppUsername || 'them')}</button>`
+        : `<span class="rkd-hint">${isFriend ? `@${escapeHTML(m.oppUsername || 'They')} is offline — rematch when they're back` : 'Add them as a friend to rematch'}</span>`)
+    : '';
+  return `<div class="rk2-match-detail">
+    <div class="rkd-rounds">${rounds || '<span class="rkd-hint">No round data for this match</span>'}</div>
+    <div class="rkd-foot">${rating}${rematch}</div>
+  </div>`;
+}
+on('#rk2MatchList', 'click', (e) => {
+  const rb = e.target.closest('[data-rematch]');
+  if(rb){ hapticConfirm(); try { sendChallenge(rb.dataset.rematch); } catch(err){} return; }
+  const row = e.target.closest('.rk2-match.expandable');
+  if(!row) return;
+  hapticTick();
+  const open = row.classList.contains('open');
+  // one open at a time
+  row.parentElement.querySelectorAll('.rk2-match.open').forEach(r => { r.classList.remove('open'); r.nextElementSibling?.classList.contains('rk2-match-detail') && r.nextElementSibling.remove(); });
+  if(!open){
+    const m = (state._rankHist || [])[+row.dataset.mi];
+    if(!m) return;
+    row.classList.add('open');
+    row.insertAdjacentHTML('afterend', matchDetailHTML(m));
+  }
+});
 // View all → the existing match-history modal
 on('#rk2ViewAll', 'click', () => { hapticTick(); openMatchHistory(); });
 on('#rk2SeasonRewards', 'click', () => { hapticTick(); openRankRewards(); });
@@ -42158,6 +43112,92 @@ on('#rrwRanks', 'click', (e) => {
   if(b) rrwSelect(b.dataset.rrw);
 });
 
+// ===== ACHIEVEMENTS v2 — tiered lines with tabs, rewards, closest-first =====
+let _achCat = 'all';
+function renderAchievementLines(){
+  const grid = $('#achPageGrid');
+  const p = state.profile || {};
+  if(!grid) return 0;
+  const claimed = achClaimedSet();
+  let unlockedTotal = 0;
+  // Build a view model per line
+  const lines = ACH_LINES.map(line => {
+    const tiers = line.ids.map(id => ACH_BY_ID[id]).filter(Boolean);
+    let done = 0;
+    tiers.forEach(a => { try { if(a.check(p)) done++; } catch(e){} });
+    unlockedTotal += done;
+    const cur = tiers[Math.min(done, tiers.length - 1)];       // next target (or last)
+    const mastered = done >= tiers.length;
+    let prog = [0, 1];
+    try { prog = cur.prog ? cur.prog(p) : [0, 1]; } catch(e){}
+    const frac = mastered ? 1 : Math.max(0, Math.min(1, (prog[0] || 0) / (prog[1] || 1)));
+    const claimable = tiers.filter((a, i) => { try { return a.check(p) && !claimed.has(a.id); } catch(e){ return false; } });
+    return { line, tiers, done, cur, mastered, prog, frac, claimable };
+  }).filter(v => _achCat === 'all' || v.line.cat === _achCat);
+  // Sort: claimable first, then closest-to-next-tier, mastered last
+  lines.sort((a, b) => (b.claimable.length - a.claimable.length) || (a.mastered - b.mastered) || (b.frac - a.frac));
+  grid.innerHTML = lines.map((v, li) => {
+    const { line, tiers, done, cur, mastered, prog, claimable } = v;
+    const tierColor = ACH_TIER_COLORS[Math.min(mastered ? tiers.length - 1 : done, ACH_TIER_COLORS.length - 1)];
+    const pips = tiers.map((a, i) => {
+      const c = ACH_TIER_COLORS[Math.min(i, ACH_TIER_COLORS.length - 1)];
+      const st = i < done ? 'done' : i === done ? 'cur' : '';
+      return `<span class="a2-pip ${st}" style="--pc:${c}" title="${escapeHTML(a.title)} — ${escapeHTML(a.desc)}"></span>`;
+    }).join('');
+    const claimBtns = claimable.slice(0, 1).map(a => {
+      const xp = ACH_TIER_XP(line.ids.indexOf(a.id));
+      return `<button type="button" class="a2-claim" data-ach-claim="${a.id}">CLAIM +${xp} XP${claimable.length > 1 ? ` (+${claimable.length - 1})` : ''}</button>`;
+    }).join('');
+    const progTxt = mastered ? 'MASTERED' : `${Math.min(prog[0], prog[1]).toLocaleString()} / ${prog[1].toLocaleString()}`;
+    return `<div class="a2-card${mastered ? ' mastered' : ''}${claimable.length ? ' has-claim' : ''}" style="--ac:${tierColor}; --d:${li * 45}ms">
+      <div class="a2-top">
+        <span class="a2-ic">${line.icon}</span>
+        <div class="a2-txt">
+          <div class="a2-name">${line.name}</div>
+          <div class="a2-sub">${mastered ? `All ${tiers.length} tiers complete` : `${escapeHTML(cur.title)} · ${escapeHTML(cur.desc)}`}</div>
+        </div>
+        ${claimBtns || `<span class="a2-count">${done}/${tiers.length}</span>`}
+        ${done > 0 ? (() => {
+          const topDone = tiers[done - 1];
+          const pinned = (state.profile?.showcase || []).includes(topDone.id);
+          return `<button type="button" class="a2-pin${pinned ? ' on' : ''}" data-ach-pin="${topDone.id}" title="${pinned ? 'Unpin from your profile' : 'Pin to your profile showcase'}">📌</button>`;
+        })() : ''}
+      </div>
+      <div class="a2-bar"><i style="width:${Math.round(v.frac * 100)}%"></i></div>
+      <div class="a2-foot"><div class="a2-pips">${pips}</div><span class="a2-prog">${progTxt}</span></div>
+    </div>`;
+  }).join('') || '<div class="empty-state"><div class="es-text">Nothing in this category yet.</div></div>';
+  return unlockedTotal;
+}
+on('#ach2Tabs', 'click', (e) => {
+  const t = e.target.closest('[data-acat]'); if(!t) return;
+  hapticTick();
+  _achCat = t.dataset.acat;
+  document.querySelectorAll('#ach2Tabs .ach2-tab').forEach(b => b.classList.toggle('active', b === t));
+  renderAchievementLines();
+});
+on('#achPageGrid', 'click', (e) => {
+  const c = e.target.closest('[data-ach-claim]');
+  if(c){ c.disabled = true; claimAchTier(c.dataset.achClaim); return; }
+  const pin = e.target.closest('[data-ach-pin]');
+  if(pin) toggleAchPin(pin.dataset.achPin);
+});
+// Pin/unpin an achievement on the profile trophy shelf (max 3 showcase slots).
+async function toggleAchPin(achId){
+  if(!state.profile || !state.user) return;
+  let sc = Array.isArray(state.profile.showcase) ? [...state.profile.showcase] : [];
+  const has = sc.includes(achId);
+  if(has){ sc = sc.filter(x => x !== achId); }
+  else {
+    if(sc.length >= 3){ hapticError(); toast('Showcase is full (3 pins) — unpin something first', 'info'); return; }
+    sc.push(achId);
+  }
+  state.profile.showcase = sc;
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { showcase: sc }); } catch(e){}
+  if(!has){ hapticSuccess(); toast('📌 Pinned to your profile showcase', 'success'); } else hapticTick();
+  try { renderAchievementLines(); } catch(e){}
+}
+
 function renderAchievementsPage(){
   if(!state.profile) return;
   const p = state.profile;
@@ -42184,8 +43224,8 @@ function renderAchievementsPage(){
   const unlockedTitles = titlesUnlockedAt(lvl.level).length;
   setText('#ascTitles', unlockedTitles + '/' + TITLES.length);
   setText('#ascTotalXp', (p.totalXp||0).toLocaleString());
-  // Badge grid (shared with the achievements modal)
-  const badgeCount = renderAchievementCards('#achPageGrid');
+  // Tiered achievement lines (tabs + closest-first sort + claimable rewards)
+  const badgeCount = renderAchievementLines();
   setText('#achPageCount', `${badgeCount} / ${ACHIEVEMENTS.length}`);
   const grid = $('#achTitlesGrid');
   if(grid){
@@ -42545,6 +43585,9 @@ function renderFriendsPage(){
   setText('#friendCountPage', $('#friendCount')?.textContent || '0/0');
   try { renderRequests(); } catch(e){}   // keep the page's request card in sync
   renderFriendsInto('#friendsBodyPage');
+  // Social hub extras: activity feed + make sure the H2H cache exists
+  try { loadFriendsActivity(); } catch(e){}
+  try { loadRankHistoryPanels(); } catch(e){}   // fills state._rankHist for h2h/rival
   // friend leaderboard (you + friends sorted by ELO)
   const lbEl = $('#friendLeaderboard');
   if(lbEl){
@@ -43124,20 +44167,74 @@ function friendPresence(f){
   return { online, inGame, label, cls };
 }
 // Build one rich friend card (used by both the sidebar list and the Friends page).
+// ===== SOCIAL HUB — friend activity feed (their recent match results) =====
+async function loadFriendsActivity(){
+  const host = $('#friendsActivityFeed'); if(!host || !state.user) return;
+  const now = Date.now();
+  if(state._faAt && now - state._faAt < 90000) return;   // 90s cache
+  const friendUids = (state.profile?.friends || []).slice(0, 8);
+  if(!friendUids.length) return;
+  state._faAt = now;
+  host.innerHTML = skelRowsHTML(3);
+  try {
+    const all = [];
+    await Promise.all(friendUids.map(async (uid) => {
+      try {
+        const snap = await getDocs(query(collection(state.db, 'matchHistory'), where('uid', '==', uid), limit(6)));
+        snap.forEach(d => all.push(d.data()));
+      } catch(e){}
+    }));
+    all.sort((a, b) => ((b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)));
+    const rows = all.slice(0, 10);
+    if(!rows.length){ renderEmptyState(host, { icon:'i-activity', text:'No friend matches yet — challenge someone to get things moving!' }); return; }
+    host.innerHTML = rows.map((m, i) => {
+      const res = m.result === 'win' ? 'win' : m.result === 'draw' ? 'draw' : 'loss';
+      const verb = res === 'win' ? 'won' : res === 'draw' ? 'drew' : 'lost';
+      const d = typeof m.delta === 'number' && m.delta !== 0 ? ` <b class="fa-delta ${res}">${m.delta > 0 ? '+' + m.delta : m.delta}</b>` : '';
+      return `<div class="fa-row ${res}" style="--d:${i * 45}ms">
+        <span class="fa-dot"></span>
+        <span class="fa-txt"><b>@${escapeHTML(m.username || 'friend')}</b> ${verb}${m.oppUsername ? ` vs ${escapeHTML(m.oppUsername)}` : ''}${d}</span>
+        <span class="fa-time">${timeAgo(m.createdAt)}</span>
+      </div>`;
+    }).join('');
+  } catch(e){
+    console.warn('[friends] activity', e);
+    renderEmptyState(host, { icon:'i-activity', text:'Couldn\'t load friend activity right now.' });
+  }
+}
+// ===== SOCIAL HUB — head-to-head records + auto-detected rival =====
+// Both computed from YOUR cached match history (last ~60 games) — zero extra reads.
+function h2hFor(uid){
+  let w = 0, l = 0, d = 0;
+  (state._rankHist || []).forEach(m => {
+    if(m.oppUid !== uid) return;
+    if(m.result === 'win') w++; else if(m.result === 'draw') d++; else l++;
+  });
+  return { w, l, d, n: w + l + d };
+}
+function rivalUid(){
+  const counts = {};
+  (state._rankHist || []).forEach(m => { if(m.oppUid) counts[m.oppUid] = (counts[m.oppUid] || 0) + 1; });
+  let best = null, n = 0;
+  Object.entries(counts).forEach(([u, c]) => { if(c > n){ n = c; best = u; } });
+  return n >= 3 ? best : null;   // needs a real history to call someone a rival
+}
 function buildFriendCard(f){
   const pres = friendPresence(f);
   const rank = rankFromRating(f.rating || 1000);
   const pinned = isPinned(f.uid);
+  const h2h = h2hFor(f.uid);
+  const isRival = rivalUid() === f.uid;
   const row = document.createElement('div');
-  row.className = 'friend-card' + (pres.online ? ' is-online' : '') + (pinned ? ' is-pinned' : '');
+  row.className = 'friend-card' + (pres.online ? ' is-online' : '') + (pinned ? ' is-pinned' : '') + (isRival ? ' is-rival' : '');
   row.innerHTML = `
     <div class="fc-av-wrap">
       <div class="av av-photo-host" style="background:${AVATAR_COLORS[f.colorIdx||0]};"><span class="av-init">${escapeHTML(initialOf(f.username))}</span></div>
       <span class="fc-status-dot ${pres.cls}" title="${escapeHTML(pres.label)}"></span>
     </div>
     <div class="fc-meta">
-      <div class="nm">${pinned ? '<svg viewBox="0 0 24 24" class="fc-pin-mark"><use href="#i-pin"/></svg>' : ''}${styledNameHTML(f, f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg></div>
-      <div class="fc-status-line ${pres.cls}">${flagOf(f.country)} ${pres.label} · <b>${f.rating||1000}</b></div>
+      <div class="nm">${pinned ? '<svg viewBox="0 0 24 24" class="fc-pin-mark"><use href="#i-pin"/></svg>' : ''}${styledNameHTML(f, f.username)} <svg viewBox="0 0 24 24" class="rank-mini ${rank.cls}"><use href="#${rank.icon}"/></svg>${isRival ? '<span class="fc-rival" title="Your most-played opponent">⚔ RIVAL</span>' : ''}</div>
+      <div class="fc-status-line ${pres.cls}">${flagOf(f.country)} ${pres.label} · <b>${f.rating||1000}</b>${h2h.n ? ` · <span class="fc-h2h" title="Your record vs @${escapeHTML(f.username || '')}: ${h2h.w} wins, ${h2h.l} losses${h2h.d ? ', ' + h2h.d + ' draws' : ''}">you ${h2h.w}–${h2h.l}</span>` : ''}</div>
     </div>
     <div class="friend-actions">
       <button class="icon-btn pin-btn${pinned ? ' active' : ''}" data-action="pin" data-uid="${f.uid}" title="${pinned ? 'Unpin' : 'Pin to top'}"><svg viewBox="0 0 24 24"><use href="#i-pin"/></svg></button>
@@ -43233,6 +44330,122 @@ function openChallengePicker(){
     list.appendChild(row);
   });
 }
+
+// ===== HOME v3 — next-goal chips + TODAY strip =====
+function renderHomeGoals(){
+  const host = $('#homeGoals'); if(!host || !state.profile) return;
+  const p = state.profile;
+  const chips = [];
+  try {
+    if(!inPlacements(p)){
+      const rating = p.rating || 1000;
+      const prog = rankProgressToNext(rating);
+      if(prog.toNext > 0){
+        const wins = Math.max(1, Math.ceil(prog.toNext / 18));
+        chips.push({ ic:'🏆', txt:`<b>${wins} ${wins === 1 ? 'win' : 'wins'}</b> to ${rankFromRating(rating + prog.toNext + 1).tierName}`, go:'rank' });
+      }
+    } else {
+      chips.push({ ic:'🎯', txt:`<b>${PLACEMENT_TOTAL - placementsDone(p)}</b> placements to your rank`, go:'play' });
+    }
+  } catch(e){}
+  try {
+    const lv = levelOf(p);
+    if(lv.level < MAX_LEVEL) chips.push({ ic:'📈', txt:`<b>${(lv.xpForThis - lv.xpInLevel).toLocaleString()} XP</b> to Level ${lv.level + 1}`, go:'achievements' });
+  } catch(e){}
+  try {
+    const d = getDailyChallenge();
+    if(d?.challenge && !d.claimed){
+      const cur = d.progress || 0, tgt = d.challenge.target || 1;
+      chips.push({ ic:'⚡', txt: cur >= tgt ? `<b>Daily reward ready</b> — claim it!` : `Daily: <b>${cur}/${tgt}</b> ${escapeHTML(d.challenge.label || d.challenge.desc || '')}`, go:'play' });
+    }
+  } catch(e){}
+  host.innerHTML = chips.slice(0, 3).map((c, i) =>
+    `<button type="button" class="hg-chip" data-goal-go="${c.go}" style="--d:${i * 80}ms"><span class="hg-ic">${c.ic}</span>${c.txt}<svg viewBox="0 0 24 24" width="11" height="11"><use href="#i-arrow-right"/></svg></button>`).join('');
+}
+// ===== DAILY CASE SHARD — one shard a day, seven shards = a ROSHCAM case =====
+function _shardKey(){ return 'rosham_shards_' + (state.user?.uid || 'anon'); }
+function getShardState(){
+  try { return JSON.parse(localStorage.getItem(_shardKey()) || '{"count":0,"last":""}'); }
+  catch(e){ return { count: 0, last: '' }; }
+}
+function shardClaimableToday(){
+  const t = (typeof getTodayKey === 'function') ? getTodayKey() : new Date().toDateString();
+  return getShardState().last !== t;
+}
+async function claimDailyShard(btn){
+  if(!shardClaimableToday() || isGuest()) return;
+  const t = (typeof getTodayKey === 'function') ? getTodayKey() : new Date().toDateString();
+  const st = getShardState();
+  st.count = Math.min(7, (st.count || 0) + 1);
+  st.last = t;
+  try { localStorage.setItem(_shardKey(), JSON.stringify(st)); } catch(e){}
+  hapticSuccess();
+  if(st.count >= 7){
+    st.count = 0;
+    try { localStorage.setItem(_shardKey(), JSON.stringify(st)); } catch(e){}
+    try { await grantCase('case_roshcam', 1, 'Seven daily shards'); } catch(e){}
+    try { bigBurst('#a48bff', 80); } catch(e){}
+    toast('🧩 Seventh shard! A ROSHCAM CASE is yours — open it in the shop.', 'success', {
+      duration: 8000, action: { label: 'Open shop', onClick: () => showNavPage('shop') },
+    });
+  } else {
+    toast(`🧩 Shard claimed — ${st.count}/7 toward your free case`, 'success');
+  }
+  try { renderHomeToday(); } catch(e){}
+}
+on('#homeToday', 'click', (e) => {
+  const b = e.target.closest('[data-claim-shard]');
+  if(b){ e.stopPropagation(); b.disabled = true; claimDailyShard(b); }
+});
+function renderHomeToday(){
+  const host = $('#homeToday'); if(!host || !state.profile) return;
+  let daily = '';
+  try {
+    const d = getDailyChallenge();
+    if(d?.challenge){
+      const cur = Math.min(d.progress || 0, d.challenge.target || 1), tgt = d.challenge.target || 1;
+      daily = `<button type="button" class="ht-card" data-goal-go="play" style="--tc:var(--coral); --d:0ms">
+        <span class="ht-ic">⚡</span><div class="ht-txt"><b>Daily challenge</b><small>${escapeHTML(d.challenge.label || d.challenge.desc || 'Play today')}</small>
+        <span class="ht-bar"><i style="width:${Math.round(cur / tgt * 100)}%"></i></span></div><span class="ht-v">${cur}/${tgt}</span></button>`;
+    }
+  } catch(e){}
+  let streak = '';
+  try {
+    const st = getLoginStreak();
+    streak = `<div class="ht-card" style="--tc:#ff9a3d; --d:80ms"><span class="ht-ic">🔥</span>
+      <div class="ht-txt"><b>Login streak</b><small>${st >= 7 ? 'Cycle complete — keep it rolling!' : `Day ${st || 1} of 7 — don't break the chain`}</small></div>
+      <span class="ht-v">${st || 0}</span></div>`;
+  } catch(e){}
+  let shop = '';
+  try {
+    const mid = new Date(); mid.setHours(24, 0, 0, 0);
+    const ms = mid - Date.now();
+    const h = Math.floor(ms / 3600000), m = Math.floor((ms % 3600000) / 60000);
+    shop = `<button type="button" class="ht-card" data-goal-go="shop" style="--tc:#ffd33d; --d:160ms"><span class="ht-ic">🛍️</span>
+      <div class="ht-txt"><b>Shop rotation</b><small>Fresh cosmetics landing soon</small></div>
+      <span class="ht-v ht-timer">${h}h ${m}m</span></button>`;
+  } catch(e){}
+  let shard = '';
+  try {
+    if(!isGuest()){
+      const st = getShardState();
+      const claimable = shardClaimableToday();
+      const orbs = Array.from({ length: 7 }, (_, i) =>
+        `<i class="hs-orb${i < st.count ? ' lit' : ''}" style="--d:${i * 55}ms"></i>`).join('');
+      shard = `<div class="ht-card ht-shard${claimable ? ' claimable' : ''}" style="--tc:#a48bff; --d:240ms">
+        <span class="ht-ic">🧩</span>
+        <div class="ht-txt"><b>Case shards</b><small>${st.count}/7 — a free ROSHCAM case at seven</small>
+          <span class="hs-orbs">${orbs}</span></div>
+        ${claimable
+          ? '<button type="button" class="hs-claim" data-claim-shard>CLAIM</button>'
+          : '<span class="ht-v" style="font-size:12px; font-family:var(--font-mono);">✓ today</span>'}
+      </div>`;
+    }
+  } catch(e){}
+  host.innerHTML = daily + streak + shop + shard;
+}
+on('#homeGoals', 'click', (e) => { const b = e.target.closest('[data-goal-go]'); if(b){ hapticTick(); showNavPage(b.dataset.goalGo); } });
+on('#homeToday', 'click', (e) => { const b = e.target.closest('[data-goal-go]'); if(b){ hapticTick(); showNavPage(b.dataset.goalGo); } });
 
 // ===== Milestone notifications — one-time nudges for promotions/levels =====
 // Fires a toast at most once per (uid, milestone-key). localStorage-guarded so
@@ -43402,7 +44615,7 @@ let calibHands = null;
 let calibStepIdx = 0;
 let calibHandSeen = false;
 
-const CALIB_STEPS = 4;
+const CALIB_STEPS = 5;
 function setCalibStep(idx){
   calibStepIdx = idx;
   document.querySelectorAll('.calib-step').forEach(s => s.classList.toggle('active', +s.dataset.calibStep === idx));
@@ -43477,24 +44690,88 @@ async function calibStep2(){
     if(nextBtn){ nextBtn.disabled = false; nextBtn.textContent = 'Continue →'; }
   }
 }
-// ---- Step 3: GESTURE TEST — must form rock, paper AND scissors ----
+// ---- Step 3: THROW PRACTICE — form rock, paper AND scissors live ----
 let calibGesturesDone = { rock:false, paper:false, scissors:false };
-function calibComplete(){
+const CALIB_GEST_EMOJI = { rock:'✊', paper:'✋', scissors:'✌️' };
+function handleCalibGesture(results){
+  const lm = results.multiHandLandmarks && results.multiHandLandmarks[0];
+  const g = lm ? classifyGesture(lm) : null;
+  const st = $('#calibGestState');
+  if(st){
+    if(g){ st.classList.add('ok'); st.innerHTML = `<span class="dot"></span> ${CALIB_GEST_EMOJI[g]} ${g.toUpperCase()}!`; }
+    else { st.classList.remove('ok'); st.innerHTML = '<span class="dot"></span> Show me a hand…'; }
+  }
+  if(g && !calibGesturesDone[g]){
+    calibGesturesDone[g] = true;
+    const tile = document.querySelector(`.cgt[data-cgt="${g}"]`);
+    if(tile){ tile.classList.add('done'); }
+    try { hapticSuccess(); sfxReady?.(); } catch(e){}
+    if(calibGesturesDone.rock && calibGesturesDone.paper && calibGesturesDone.scissors){
+      const nb = $('#calibStep3Next');
+      if(nb){ nb.disabled = false; nb.textContent = 'Perfect — all three! →'; nb.classList.add('calib-ready-pop'); }
+    }
+  }
+}
+async function calibStep3Gesture(){
   setCalibStep(3);
+  clearInterval(calibLightTimer);
+  calibGesturesDone = { rock:false, paper:false, scissors:false };
+  document.querySelectorAll('.cgt').forEach(t => t.classList.remove('done'));
+  const nb = $('#calibStep3Next'); if(nb){ nb.disabled = true; nb.textContent = 'Make all three shapes…'; }
+  try {
+    const stream = await calibGetStream();
+    const v = $('#calibVideoGest'); if(v) v.srcObject = stream;
+    await setupHands();
+    state._calibGestureMode = true;
+    // Pump wizard-cam frames through the shared Hands instance (~14 fps).
+    const loop = async () => {
+      if(!state._calibGestureMode || calibStepIdx !== 3 || !$('#calibrationModal')?.classList.contains('show')) return;
+      try { const vv = $('#calibVideoGest'); if(vv && vv.videoWidth) await state.hands.send({ image: vv }); } catch(e){}
+      setTimeout(() => requestAnimationFrame(loop), 70);
+    };
+    loop();
+  } catch(e){
+    console.warn('[calib] gesture step', e);
+    if(nb){ nb.disabled = false; nb.textContent = 'Continue →'; }
+  }
+}
+function calibComplete(){
+  state._calibGestureMode = false;
+  setCalibStep(4);
   clearInterval(calibLightTimer);
   calibStopStream();
   try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){}
+  // Send-off: present today's daily challenge as their first quest.
+  try {
+    const d = getDailyChallenge();
+    const card = $('#calibChallengeCard');
+    if(card && d?.challenge){
+      card.style.display = '';
+      card.innerHTML = `
+        <div class="cfc-eyebrow">⚡ YOUR FIRST DAILY CHALLENGE</div>
+        <div class="cfc-name">${escapeHTML(d.challenge.label || d.challenge.desc || 'Play a match')}</div>
+        <div class="cfc-reward">Reward: <b>+${d.challenge.xp || 250} XP</b> · resets at midnight</div>`;
+      const fin = $('#calibFinish'); if(fin) fin.textContent = 'Take on the challenge →';
+    }
+  } catch(e){}
 }
 function closeCalibration(){
+  state._calibGestureMode = false;
   calibStopStream();
   $('#calibrationModal')?.classList.remove('show');
 }
-// Wizard button wiring (5 steps: intro → framing → lighting → gesture test → done)
+// Wizard button wiring (5 steps: intro → framing → lighting → throw practice → done)
 on('#calibStart', 'click', calibStep1);
-on('#calibSkip', 'click', () => { try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){} closeCalibration(); });
+on('#calibSkip', 'click', () => { state._calibGestureMode = false; try { localStorage.setItem(CALIB_KEY, '1'); } catch(e){} closeCalibration(); });
 on('#calibStep1Next', 'click', calibStep2);
-on('#calibStep2Next', 'click', calibComplete);
-on('#calibFinish', 'click', closeCalibration);
+on('#calibStep2Next', 'click', calibStep3Gesture);
+on('#calibStep3Next', 'click', calibComplete);
+on('#calibStep3Skip', 'click', calibComplete);
+on('#calibFinish', 'click', () => {
+  const hadChallenge = $('#calibChallengeCard')?.style.display !== 'none';
+  closeCalibration();
+  if(hadChallenge){ try { showNavPage('play'); } catch(e){} }
+});
 // Re-runnable from settings
 on('#setCalibrate', 'click', () => { try { localStorage.removeItem(CALIB_KEY); } catch(e){} openCalibration(); });
 on('#setMatchHistory', 'click', openMatchHistory);
@@ -46305,7 +47582,7 @@ function flyElement(fromEl, toEl, opts = {}){
 // are registered mid-module at evaluation time — a const here would be a TDZ crash.
 function _modalCleanup(m){
   // Modal-specific teardown that must run however the modal was dismissed.
-  if(m.id === 'calibrationModal'){ try { calibStopStream(); } catch(e){} }
+  if(m.id === 'calibrationModal'){ try { state._calibGestureMode = false; calibStopStream(); } catch(e){} }
 }
 function topOpenModal(){
   // Top-most = highest z-index; ties resolve to the later one in the DOM.
