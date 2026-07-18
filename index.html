@@ -660,6 +660,15 @@ body.reduced-motion .hxg, body.low-power .hxg,
 body.reduced-motion .hx-hero-pulse, body.low-power .hx-hero-pulse{ animation:none !important; }
 body.low-power .hx-hero-glyphs, body.low-power .hx-hero-pulse{ display:none; }
 .hx-hero-inner{ position:relative; z-index:1; }
+/* Compact hero for returning players — smaller wordmark, no marketing tagline,
+   tighter greeting, so the dashboard rises above the fold. */
+.hx-hero.hero-compact{ padding:22px 30px 18px; }
+.hx-hero.hero-compact .hx-wordmark{ font-size:clamp(34px, 4.6vw, 54px); }
+.hx-hero.hero-compact .hx-tag{ display:none; }
+.hx-hero.hero-compact .hx-brandrow{ margin-bottom:2px; }
+.hx-hero.hero-compact .hx-play{ margin-top:14px; }
+.hx-hero.hero-compact .hx-you{ margin-top:16px; padding-top:14px; }
+@media (max-width:560px){ .hx-hero.hero-compact .hx-wordmark{ font-size:clamp(30px, 11vw, 44px); } }
 .hx-hero-top{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
 .hx-badge{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:5px 11px; border-radius:999px; background:rgba(34,211,163,.12); color:var(--mint); border:1px solid rgba(34,211,163,.25); }
 .hx-badge.ghost{ background:var(--surface-3); color:var(--text-dim); border-color:var(--line); }
@@ -937,6 +946,12 @@ body.reduced-motion :is(.hg-chip, .ht-card), body.low-power :is(.hg-chip, .ht-ca
 
 /* --- Bento dashboard --- */
 .home-bento{ display:grid; grid-template-columns:1.5fr 1fr; gap:12px; margin:0 0 14px; }
+/* Command deck — rank identity (left) beside quick-play + next-unlock (right) */
+.home-deck{ display:grid; grid-template-columns:minmax(280px, .92fr) minmax(0, 1.35fr); gap:14px; margin:0 0 14px; align-items:stretch; }
+.home-deck:empty{ display:none; }
+.home-deck > .home-statband{ margin:0; height:100%; }
+.home-deck > .home-bento{ margin:0; }
+@media (max-width:980px){ .home-deck{ grid-template-columns:1fr; } }
 .hb-tile{ position:relative; overflow:hidden; border-radius:18px; padding:18px; border:1px solid var(--line);
   background:var(--surface); animation:rk2Rise .5s var(--d,0ms) cubic-bezier(.2,.85,.3,1) both; }
 /* Quick Play */
@@ -987,6 +1002,9 @@ body.reduced-motion :is(.hg-chip, .ht-card), body.low-power :is(.hg-chip, .ht-ca
 .home-learn-toggle.open .hlt-chev{ transform:rotate(180deg); }
 .home-learn-body.collapsed{ display:none; }
 body.reduced-motion :is(.home-recap, .home-statband, .hb-tile, .hrc-item), body.low-power :is(.home-recap, .home-statband, .hb-tile, .hrc-item){ animation:none !important; opacity:1 !important; }
+/* Entrance animations only on a fresh home view — data re-renders (grantXp,
+   snapshots) rebuild these cards but must NOT replay the load-in animation. */
+.nav-page[data-page="home"]:not(.he-anim) :is(.home-recap, .home-statband, .hb-tile, .ht-card, .hg-chip){ animation:none !important; }
 
 /* ═══════════ RESULT SCREEN v3 — rebuilt from scratch ═══════════ */
 /* Result-keyed accent drives every layer: aurora, rays, headline, particles. */
@@ -23801,8 +23819,19 @@ const FIREBASE_CONFIG = {
           </div>
         </section>
 
-        <!-- v3: TODAY strip — daily challenge · login streak · shop rotation -->
+        <!-- ===== RETURNING-PLAYER COMMAND DECK — rank identity + quick play, side by side ===== -->
+        <div class="home-deck">
+          <!-- Hero stat band — rank crest · ELO · win-rate ring · level -->
+          <div class="home-statband" id="homeStatBand" style="display:none"></div>
+          <!-- Bento — Quick Play + Next unlock -->
+          <div class="home-bento" id="homeBento" style="display:none"></div>
+        </div>
+
+        <!-- TODAY strip — daily challenge · login streak · shop rotation · shards -->
         <div class="home-today" id="homeToday"></div>
+
+        <!-- Since-you-were-gone recap — only shown after time away / rating change -->
+        <div class="home-recap" id="homeRecap" style="display:none"></div>
 
         <!-- Weekend 2× XP banner (home) — shown only during the weekend window -->
         <div class="dxp-banner dxp-home" id="dxpBannerHome" style="display:none;">
@@ -23810,16 +23839,6 @@ const FIREBASE_CONFIG = {
           <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND IS LIVE</div><div class="dxp-sub">Every match earns double XP — climb levels twice as fast!</div></div>
           <div class="dxp-mult">2×</div>
         </div>
-
-        <!-- ===== RETURNING-PLAYER COMMAND CENTER (populated by JS; hidden for brand-new players) ===== -->
-        <!-- Since-you-were-gone recap — only shown after time away / rating change -->
-        <div class="home-recap" id="homeRecap" style="display:none"></div>
-
-        <!-- Hero stat band — rank crest · ELO · win-rate ring · level -->
-        <div class="home-statband" id="homeStatBand" style="display:none"></div>
-
-        <!-- Bento dashboard — Quick Play + Next unlock -->
-        <div class="home-bento" id="homeBento" style="display:none"></div>
 
         <!-- ===== ABOUT ROSHCAM — the "learn" block (collapsible for returning players) ===== -->
         <div id="homeLearn">
@@ -28466,6 +28485,7 @@ function showScreen(name){
       document.querySelectorAll('.nav-page').forEach(pg => pg.classList.toggle('active', pg.dataset.page === 'home'));
       document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === 'home'));
       try { syncMobileNav('home'); } catch(e){}
+      state._homeAnimated = false;   // fresh view → let the entrance animation play once
       try { renderHomePage(); } catch(e){}
     }
     // Camera lifecycle: release the webcam after idling on the menu; anything
@@ -42671,7 +42691,7 @@ function showNavPage(page){
   try { applyProgressiveDisclosure(); } catch(e){}
   // populate the page being shown
   try {
-    if(page === 'home') renderHomePage();
+    if(page === 'home'){ state._homeAnimated = false; renderHomePage(); }
     else if(page === 'play') renderPlayPage();
     else if(page === 'shop') renderShopPage();
     else if(page === 'rank') renderRankPage();
@@ -42870,6 +42890,31 @@ const HOME_TIPS = [
 ];
 function renderHomePage(){
   if(!state.profile) return;
+  // RE-ENTRANCY GUARD: renderHomePage calls claimDailyLoginReward() which can
+  // grantXp() → renderHomePage() again, synchronously, mid-render. That second
+  // pass rebuilt the content and REPLAYED every entrance animation — the "load
+  // animation happens twice" on first open. Bail on any nested/rapid re-entry.
+  if(state._homeRendering) return;
+  state._homeRendering = true;
+  try { _renderHomePageInner(); }
+  finally { state._homeRendering = false; }
+}
+function _renderHomePageInner(){
+  // Entrance animations only fire on a FRESH home view (he-anim class, reset when
+  // home is shown). Data-refresh re-renders (grantXp, snapshots) don't replay them.
+  try {
+    const hp = document.querySelector('.nav-page[data-page="home"]');
+    if(hp){
+      if(!state._homeAnimated){
+        // Fresh view: enable the entrance animation for this one render.
+        hp.classList.add('he-anim'); state._homeAnimated = true;
+        clearTimeout(hp._heT); hp._heT = setTimeout(() => hp.classList.remove('he-anim'), 950);
+      } else {
+        // A data-refresh re-render: strip the flag so the load-in doesn't replay.
+        hp.classList.remove('he-anim'); clearTimeout(hp._heT);
+      }
+    }
+  } catch(e){}
   try { claimDailyLoginReward(); } catch(e){}
   try { maybeShowUpdateToast(); } catch(e){}
   try {
@@ -44936,6 +44981,9 @@ function renderHomeCommandCenter(){
   const returning = homeIsReturning();
   const band = $('#homeStatBand'), bento = $('#homeBento'), recap = $('#homeRecap');
   const toggle = $('#homeLearnToggle'), body = $('#homeLearnBody');
+  // Returning players know the brand — compact the hero so the live dashboard
+  // (rank + quick play + today) sits higher and reads as a command center.
+  try { $('.hx-hero')?.classList.toggle('hero-compact', returning); } catch(e){}
   if(returning){
     if(band){ band.style.display = ''; renderHomeStatBand(); }
     if(bento){ bento.style.display = ''; renderHomeBento(); }
