@@ -1493,6 +1493,16 @@ body.in-game .main-col{ min-height: 100vh; }
   color: var(--mint);
   box-shadow: inset 2px 0 0 var(--mint);
 }
+/* Live "in queue / in match" indicator on the Play nav entry */
+.nav-live{ margin-left:auto; display:inline-flex; align-items:center; gap:5px; padding:2px 7px 2px 6px; border-radius:999px;
+  background:rgba(255,61,104,.14); border:1px solid rgba(255,61,104,.4);
+  font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.1em; color:#ff6b8a; }
+.nav-live-dot{ width:6px; height:6px; border-radius:50%; background:#ff3d68; box-shadow:0 0 0 0 rgba(255,61,104,.6); animation:navLivePulse 1.4s ease-in-out infinite; }
+@keyframes navLivePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,61,104,.55); } 50%{ box-shadow:0 0 0 5px rgba(255,61,104,0); } }
+.nav-item.nav-searching .nav-live{ background:rgba(34,211,163,.14); border-color:rgba(34,211,163,.4); color:#5dffba; }
+.nav-item.nav-searching .nav-live-dot{ background:var(--mint); animation:navLivePulseMint 1.4s ease-in-out infinite; }
+@keyframes navLivePulseMint{ 0%,100%{ box-shadow:0 0 0 0 rgba(34,211,163,.5); } 50%{ box-shadow:0 0 0 5px rgba(34,211,163,0); } }
+body.reduced-motion .nav-live-dot, body.low-power .nav-live-dot{ animation:none; }
 /* "Prestige available" nudge on the Achievements nav entry */
 .nav-item .nav-badge.nav-prestige{ flex:0 0 auto; width:20px; min-width:20px; height:20px; padding:0; border-radius:50%; font-size:11px; background:linear-gradient(135deg,#ffd33d,#ff9a3d); color:#1c1402; font-weight:800; animation:navPrestigePulse 1.8s ease-in-out infinite; }
 @keyframes navPrestigePulse{ 0%,100%{ box-shadow:0 0 0 0 rgba(255,211,61,.5); } 50%{ box-shadow:0 0 0 4px rgba(255,211,61,0); } }
@@ -1526,7 +1536,17 @@ body.reduced-motion .nav-item .nav-badge.nav-prestige, body.low-power .nav-item 
   color: #fff;
   flex-shrink: 0;
   background-color: var(--coral);
+  position: relative;
 }
+/* Level-progress ring around the avatar — conic fill driven by --xpf (0-1). */
+.sp-av::after{
+  content: ""; position: absolute; inset: -4px; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(var(--xpc, var(--mint)) calc(var(--xpf, 0) * 360deg), rgba(255,255,255,.1) 0);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+  transition: background .5s ease;
+}
+.sp-av.xp-max::after{ background: conic-gradient(var(--xpc, #ffd33d) 0 360deg); }
 .sp-info{ flex: 1; min-width: 0; }
 .sp-name{
   font-family: var(--font-display);
@@ -2181,6 +2201,9 @@ body.low-power :is(.rk2-crest-glow, .rk2-crest-ring, .rk2-bar-spark, .rk2-hero-s
 .mobile-nav-item.mni-play:active .mni-play-btn{ transform: scale(.9); }
 .mobile-nav-item.mni-play.active .mni-play-btn{ box-shadow: 0 10px 26px -4px var(--mint-glow, rgba(34,211,163,.7)), 0 0 0 5px var(--bg), 0 0 0 7px rgba(34,211,163,.35); }
 /* "You" avatar tab */
+.mobile-nav-item.mni-live .mni-play-btn{ position: relative; }
+.mobile-nav-item.mni-live .mni-play-btn::after{ content:''; position:absolute; top:-2px; right:-2px; width:11px; height:11px; border-radius:50%; background:#ff3d68; border:2px solid var(--bg); box-shadow:0 0 0 0 rgba(255,61,104,.6); animation:navLivePulse 1.4s ease-in-out infinite; }
+body.reduced-motion .mobile-nav-item.mni-live .mni-play-btn::after, body.low-power .mobile-nav-item.mni-live .mni-play-btn::after{ animation:none; }
 .mni-you .mni-av{ box-shadow: 0 0 0 2px var(--line-bright, rgba(255,255,255,.18)); }
 .mni-you.active .mni-av, .mni-you .mni-icon .mni-av{ transition: box-shadow .2s; }
 .mni-you.active .mni-av{ box-shadow: 0 0 0 2px var(--mint); }
@@ -5143,6 +5166,46 @@ body.low-power .ach-unlock-toast, body.low-power .ach-unlock-toast::before{ anim
   padding:2px 8px; border-radius:999px; background:color-mix(in srgb, var(--rc,#5dffba) 14%, transparent);
   border:1px solid color-mix(in srgb, var(--rc,#5dffba) 42%, transparent); }
 .lunr-at{ font-family:var(--font-mono); font-size:9px; color:var(--text-dim); letter-spacing:.03em; }
+
+/* ===== Level-up card v2 — premium, rank/level-colored, tap-to-dismiss ===== */
+.levelup-card.lu-v2{ cursor:pointer; align-items:center; gap:13px;
+  background:
+    radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--lu-accent,#5dffba) 22%, transparent), transparent 58%),
+    linear-gradient(135deg, color-mix(in srgb, var(--lu-accent,#5dffba) 8%, transparent), transparent), var(--surface);
+  border-color:color-mix(in srgb, var(--lu-accent,#5dffba) 45%, transparent);
+  box-shadow:0 14px 36px rgba(0,0,0,.52), 0 0 26px color-mix(in srgb, var(--lu-accent,#5dffba) 22%, transparent);
+}
+.levelup-card.lu-v2 .lu-card-badge{ position:relative; align-self:center; animation:luCrestIn .55s cubic-bezier(.34,1.6,.5,1) both; }
+@keyframes luCrestIn{ 0%{ transform:scale(.3) rotate(-14deg); opacity:0; } 60%{ transform:scale(1.12) rotate(3deg); } 100%{ transform:scale(1) rotate(0); opacity:1; } }
+.lu-badge-num{ font-variant-numeric:tabular-nums; }
+/* the moving light sweep on the whole card */
+.levelup-card.lu-v2::after{ content:''; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.22) 50%, transparent 70%);
+  transform:translateX(-130%); animation:luSweep 1.5s ease .25s; }
+@keyframes luSweep{ to{ transform:translateX(130%); } }
+.lu-unlocks{ display:flex; flex-wrap:wrap; gap:6px; margin-top:7px; }
+.lu-unlock-chip{ display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:9.5px; font-weight:700; letter-spacing:.02em;
+  padding:3px 8px; border-radius:999px; color:var(--uc,#5dffba);
+  background:color-mix(in srgb, var(--uc,#5dffba) 13%, transparent);
+  border:1px solid color-mix(in srgb, var(--uc,#5dffba) 40%, transparent); }
+.lu-unlock-chip svg{ width:11px; height:11px; }
+.lu-prog{ height:4px; margin-top:9px; border-radius:999px; background:rgba(255,255,255,.09); overflow:hidden; }
+.lu-prog-fill{ height:100%; border-radius:999px; width:0;
+  background:linear-gradient(90deg, var(--lu-accent,#5dffba), color-mix(in srgb, var(--lu-accent,#5dffba) 40%, #fff));
+  transition:width .9s cubic-bezier(.22,1,.36,1); }
+.lu-prog-txt{ font-family:var(--font-mono); font-size:8.5px; color:var(--text-faint); letter-spacing:.04em; margin-top:4px; }
+/* Milestone escalation — tier boundaries & round levels get the deluxe treatment */
+.levelup-card.lu-milestone{ padding:15px 16px;
+  border-color:color-mix(in srgb, var(--lu-accent,#5dffba) 60%, transparent);
+  box-shadow:0 18px 44px rgba(0,0,0,.58), 0 0 40px color-mix(in srgb, var(--lu-accent,#5dffba) 34%, transparent); }
+.levelup-card.lu-milestone .lu-card-badge{ box-shadow:0 0 0 3px color-mix(in srgb, var(--lu-accent,#5dffba) 32%, transparent), 0 8px 20px rgba(0,0,0,.45); animation:luCrestIn .55s cubic-bezier(.34,1.6,.5,1) both, luBadgePulse 1.9s ease .6s infinite; }
+.levelup-card.lu-milestone .ach-unlock-title{ font-size:18px; }
+@keyframes luBadgePulse{ 0%,100%{ box-shadow:0 0 0 3px color-mix(in srgb, var(--lu-accent,#5dffba) 32%, transparent), 0 8px 20px rgba(0,0,0,.45);} 50%{ box-shadow:0 0 0 6px color-mix(in srgb, var(--lu-accent,#5dffba) 10%, transparent), 0 8px 22px rgba(0,0,0,.5);} }
+.lu-kicker.ach-unlock-kicker{ color:var(--lu-accent,#5dffba); }
+.levelup-card.maxlevel-card .lu-kicker.ach-unlock-kicker{ color:#ffd33d; }
+body.reduced-motion .levelup-card.lu-v2::after, body.low-power .levelup-card.lu-v2::after{ animation:none; opacity:0; }
+body.reduced-motion .levelup-card.lu-v2 .lu-card-badge, body.low-power .levelup-card.lu-v2 .lu-card-badge{ animation:none; }
+body.reduced-motion .levelup-card.lu-milestone .lu-card-badge, body.low-power .levelup-card.lu-milestone .lu-card-badge{ animation:none; }
 
 @media (max-width: 600px){
   .stats-grid{ grid-template-columns: repeat(2, 1fr); }
@@ -14232,6 +14295,10 @@ input:focus, select:focus, textarea:focus{
 
 /* ---------- modals ---------- */
 .modal-bg{ backdrop-filter:blur(14px) saturate(130%); -webkit-backdrop-filter:blur(14px) saturate(130%); }
+/* Stacked-modal depth — a modal beneath a newly-opened one recedes + dims.
+   The class sits on the dialog child (not the observed .modal-bg — see sync()). */
+.modal-bg > .modal-recede{ transform:scale(.93); filter:brightness(.6) saturate(.9); transition:transform var(--d-med) var(--e-spring), filter var(--d-med) ease; pointer-events:none; }
+body.reduced-motion .modal-bg > .modal-recede{ transform:none; }
 .modal{ border-radius:22px; border-color:var(--line-bright, var(--line)); }
 .modal-close{ transition:transform .3s cubic-bezier(.3,1.4,.4,1), color .2s, background .2s; }
 .modal-close:hover{ transform:rotate(90deg); }
@@ -14269,6 +14336,90 @@ input:focus, select:focus, textarea:focus{
   transition:background .15s, transform .15s;
 }
 .toast2-action:hover{ background:rgba(255,255,255,.12); transform:translateY(-1px); }
+/* Rich toasts — emoji / avatar lead + optional two-line body */
+.toast2-emoji{ flex:0 0 auto; width:26px; height:26px; display:grid; place-items:center; font-size:18px; }
+.toast2-av{ flex:0 0 auto; width:28px; height:28px; border-radius:50%; object-fit:cover; border:1px solid rgba(255,255,255,.15); }
+.toast2-body{ display:flex; flex-direction:column; gap:1px; flex:1; min-width:0; }
+.toast2-body .toast2-text{ flex:none; }
+.toast2-sub{ font-size:11.5px; font-weight:400; color:var(--text-faint); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.toast2.t-rich{ padding-top:11px; padding-bottom:11px; }
+/* Priority weighting — critical/high read stronger; low is quieter */
+.toast2.t-critical{ border-color:rgba(255,51,88,.6); box-shadow:0 18px 48px rgba(255,51,88,.28), 0 1px 0 rgba(255,255,255,.05) inset; }
+.toast2.t-critical::before{ background:linear-gradient(180deg, var(--coral), color-mix(in srgb, var(--coral) 40%, transparent)); width:4px; }
+.toast2.t-high::before{ width:4px; }
+.toast2.t-low{ opacity:.94; }
+/* Hover/press pause — freeze the countdown bar while you read */
+.toast2.t-paused::after{ animation-play-state:paused; }
+.toast2.t-paused{ box-shadow:0 18px 50px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.08) inset; }
+/* Coalesce bump — a quick pop when a grouped toast accumulates */
+.toast2.t-bump{ animation:tBump .34s var(--e-spring); }
+@keyframes tBump{ 0%{ transform:scale(1); } 45%{ transform:scale(1.05); } 100%{ transform:scale(1); } }
+/* Position awareness — lift the stack above the predict dock during a match */
+body.in-game .toast-stack{ bottom:calc(148px + env(safe-area-inset-bottom,0px)); }
+body.reduced-motion .toast2.t-bump{ animation:none; }
+
+/* ═══════════ CATEGORIZED TOASTS — one distinct treatment per category ═══════════ */
+/* Shared: the category accent (--tcat) drives the left bar, icon tint + glow. */
+.toast2.t-cat::before{ background:linear-gradient(180deg, var(--tcat, var(--violet)), color-mix(in srgb, var(--tcat, var(--violet)) 35%, transparent)); width:4px; }
+.toast2.t-cat{ border-color:color-mix(in srgb, var(--tcat, var(--line)) 34%, var(--line)); }
+.toast2.t-cat .toast2-emoji{ background:color-mix(in srgb, var(--tcat) 15%, transparent); border-radius:9px; box-shadow:0 0 0 1px color-mix(in srgb, var(--tcat) 26%, transparent) inset; }
+.toast2.t-cat .toast2-ic{ color:var(--tcat); background:color-mix(in srgb, var(--tcat) 13%, transparent); }
+.toast2.t-cat .toast2-action{ border-color:color-mix(in srgb, var(--tcat) 55%, var(--line)); color:color-mix(in srgb, var(--tcat) 85%, #fff); background:color-mix(in srgb, var(--tcat) 12%, transparent); }
+.toast2.t-cat .toast2-action:hover{ background:color-mix(in srgb, var(--tcat) 22%, transparent); }
+.toast2.t-cat::after{ background:color-mix(in srgb, var(--tcat) 30%, rgba(255,255,255,.16)); }
+
+/* REWARD — gold, a shimmer sweep + a warm glow. Celebratory. */
+.toast2.t-cat-reward{ background:linear-gradient(180deg, rgba(44,36,22,.97), rgba(30,26,20,.97)); box-shadow:0 16px 44px rgba(0,0,0,.55), 0 0 26px -12px var(--tcat); }
+.toast2.t-cat-reward .toast2-text{ color:#ffe9a6; font-weight:700; }
+.toast2.t-cat-reward::before{ box-shadow:0 0 12px var(--tcat); }
+.toast2.t-cat-reward .toast2-emoji{ animation:tRewardPop .5s var(--e-spring) both; }
+@keyframes tRewardPop{ 0%{ transform:scale(.4) rotate(-12deg); } 60%{ transform:scale(1.18); } 100%{ transform:scale(1); } }
+.toast2.t-cat-reward > i.t-sheen, .toast2.t-cat-reward::after{ /* reserved */ }
+.toast2.t-cat-reward{ position:relative; overflow:hidden; }
+.toast2.t-cat-reward .toast2-text::after{ content:""; }
+.toast2.t-cat-reward{ background-image:linear-gradient(180deg, rgba(44,36,22,.97), rgba(30,26,20,.97)), linear-gradient(115deg, transparent 40%, rgba(255,224,140,.18) 50%, transparent 60%); background-size:100% 100%, 250% 100%; background-repeat:no-repeat; animation:tRewardSheen 1.1s ease .05s 1; }
+@keyframes tRewardSheen{ from{ background-position:0 0, 180% 0; } to{ background-position:0 0, -60% 0; } }
+
+/* MILESTONE — violet, rises in from below with a little extra travel. */
+.toast2.t-cat-milestone{ box-shadow:0 16px 44px rgba(0,0,0,.55), 0 0 24px -14px var(--tcat); }
+.toast2.t-cat-milestone .toast2-text{ color:#e6ddff; font-weight:600; }
+
+/* SOCIAL — blue, the avatar is the hero (bigger, ringed). Reads like a message. */
+.toast2.t-cat-social .toast2-av{ width:34px; height:34px; border:2px solid color-mix(in srgb, var(--tcat) 60%, transparent); box-shadow:0 0 12px -4px var(--tcat); }
+.toast2.t-cat-social .toast2-emoji{ font-size:16px; }
+
+/* COSMETIC — rarity-tinted; a real cosmetic thumbnail sits on the stage. */
+.toast2-thumb{ flex:0 0 auto; width:40px; height:32px; border-radius:8px; display:grid; place-items:center; overflow:hidden;
+  background:color-mix(in srgb, var(--tcat) 14%, #17141f); border:1px solid color-mix(in srgb, var(--tcat) 34%, transparent); }
+.toast2-thumb > *{ max-width:100%; max-height:100%; transform:scale(.6); }
+.toast2.t-thumb{ padding-left:12px; }
+.toast2.t-cat-cosmetic{ box-shadow:0 16px 44px rgba(0,0,0,.55), 0 0 24px -12px var(--tcat); }
+
+/* MATCH — coral, urgent + compact, a firm left bar. */
+.toast2.t-cat-match{ padding-top:11px; padding-bottom:11px; }
+.toast2.t-cat-match .toast2-text{ font-weight:700; }
+.toast2.t-cat-match::before{ box-shadow:0 0 12px var(--tcat); }
+
+/* SYSTEM — muted slate, a pulsing status dot instead of a loud icon. */
+.toast2.t-cat-system{ opacity:.96; }
+.toast2.t-cat-system .toast2-emoji{ font-size:14px; opacity:.8; }
+.toast2.t-cat-system .toast2-text{ color:var(--text-dim); font-weight:500; }
+
+/* UNDO — neutral, the Undo action + countdown bar are the point. */
+.toast2.t-cat-undo .toast2-action{ font-weight:800; }
+.toast2.t-cat-undo::after{ height:3px; background:color-mix(in srgb, var(--tcat) 50%, rgba(255,255,255,.2)); }
+
+/* ERROR — red, a short shake on entry so a failure is felt. */
+.toast2.t-cat-error.show{ animation:tErrShake .42s ease .05s 1; }
+@keyframes tErrShake{ 0%,100%{ transform:translateX(0); } 20%{ transform:translateX(-5px); } 40%{ transform:translateX(4px); } 60%{ transform:translateX(-3px); } 80%{ transform:translateX(2px); } }
+.toast2.t-cat-error .toast2-text{ color:#ffc4cf; font-weight:600; }
+
+/* TIP — mint ghost, quiet + friendly. */
+.toast2.t-cat-tip{ background:linear-gradient(180deg, rgba(20,30,27,.96), rgba(16,24,22,.96)); }
+.toast2.t-cat-tip .toast2-text{ color:var(--text-dim); font-weight:500; }
+
+body.reduced-motion :is(.toast2.t-cat-reward, .toast2.t-cat-reward .toast2-emoji, .toast2.t-cat-error){ animation:none !important; background-image:none !important; }
+body.low-power .toast2.t-cat-reward{ animation:none; background-image:none; }
 
 /* ---------- SETTINGS v2 — grouped cards in a responsive grid ---------- */
 .settings-grid{
@@ -16519,6 +16670,24 @@ body.reduced-motion .xpboost-panel.is-active, body.low-power .xpboost-panel.is-a
   color:#ffd33d; text-shadow:0 0 12px rgba(255,211,61,.5);
 }
 .dr2-claim{ border-radius:14px; }
+/* ===== Daily case shard row inside the daily-reward popup ===== */
+.dr2-shards{
+  margin-top:14px; padding:13px 14px; border-radius:16px; text-align:left;
+  background:radial-gradient(120% 140% at 0% 0%, rgba(164,139,255,.14), transparent 62%), rgba(255,255,255,.03);
+  border:1px solid rgba(164,139,255,.28);
+}
+.dr2-shards.shard-complete{ border-color:rgba(164,139,255,.6); box-shadow:0 0 26px -10px #a48bff; }
+.dr2-shards-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.dr2-shards-title{ display:inline-flex; align-items:center; gap:7px; font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:13.5px; color:var(--text); }
+.dr2-shards-ic{ font-size:16px; }
+.dr2-shards-count{ font-family:var(--font-mono); font-size:11px; font-weight:800; color:#c9bcff; letter-spacing:.04em; }
+.dr2-shards-orbs{ display:flex; gap:7px; margin:11px 0 8px; }
+.dr2-shard-orb{ flex:1; height:9px; border-radius:999px; background:rgba(255,255,255,.08); position:relative; overflow:hidden; transition:background .3s; }
+.dr2-shard-orb.lit{ background:linear-gradient(90deg,#a48bff,#c9bcff); box-shadow:0 0 10px -2px rgba(164,139,255,.8); }
+.dr2-shard-orb.just-lit{ animation:drShardPop .55s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes drShardPop{ 0%{ transform:scaleX(.2); opacity:.3; } 60%{ transform:scaleX(1.08); } 100%{ transform:scaleX(1); opacity:1; } }
+.dr2-shards-sub{ font-family:var(--font-mono); font-size:9.5px; color:var(--text-dim); letter-spacing:.02em; }
+body.reduced-motion .dr2-shard-orb.just-lit, body.low-power .dr2-shard-orb.just-lit{ animation:none; }
 @media (max-width:430px){
   .dr2-board{ grid-template-columns:repeat(3, 1fr); grid-template-rows:none; }
   .dr2-day.jackpot{ grid-column:1 / -1; grid-row:auto; flex-direction:row; padding:10px 14px; gap:12px; }
@@ -23255,13 +23424,11 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
     </div>
 
     <nav class="sidebar-nav">
-      <button class="nav-item active" data-nav="home"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg><span>Home</span></button>
-      <button class="nav-item" data-nav="play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg><span>Play</span></button>
+      <button class="nav-item active" data-nav="play"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg><span>Play</span><span class="nav-live" id="navPlayLive" style="display:none;"><i class="nav-live-dot"></i><span class="nav-live-txt">LIVE</span></span></button>
+      <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
       <button class="nav-item" data-nav="shop"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg><span>Shop</span><span class="nav-badge nav-shop-new" id="navShopBadge" style="display:none;">NEW</span></button>
       <button class="nav-item" data-nav="locker"><svg viewBox="0 0 24 24"><use href="#i-locker"/></svg><span>Locker</span><span class="nav-badge nav-locker-new" id="navLockerBadge" style="display:none;">0</span></button>
-      <button class="nav-item" data-nav="activity"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg><span>Activity</span></button>
-      <button class="nav-item" data-nav="rank"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg><span>Rank</span></button>
-      <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span></button>
+      <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span><span class="nav-badge" id="navFriendsBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span><span class="nav-badge nav-prestige" id="navPrestigeBadge" title="Prestige available" style="display:none;">✦</span></button>
       <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span>Settings</span></button>
       <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none; color:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Moderation</span></button>
@@ -23350,8 +23517,8 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
 
   <!-- ===== MOBILE BOTTOM NAV ===== -->
   <nav class="mobile-nav" id="mobileNav">
-    <button class="mobile-nav-item active" data-mnav="home"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-home"/></svg></span><span>Home</span></button>
-    <button class="mobile-nav-item" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
+    <button class="mobile-nav-item" data-mnav="shop"><span class="mni-badge ms-new" id="mnavShopBadge" style="display:none;">•</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg></span><span>Shop</span></button>
+    <button class="mobile-nav-item active" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
     <button class="mobile-nav-item mni-play" data-mnav="play" aria-label="Play"><span class="mni-play-btn"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
     <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
     <button class="mobile-nav-item mni-more" data-mnav="settings" aria-label="More"><span class="mni-badge mni-prestige" id="mnavPrestigeDot" style="display:none;">✦</span><span class="mni-badge mni-more-dot" id="mnavMoreDot" style="display:none;"></span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg></span><span>More</span></button>
@@ -23386,11 +23553,8 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
         <!-- Explore — destinations that AREN'T already on the bottom bar -->
         <div class="ms-section-label">Explore</div>
         <div class="ms-grid">
-          <button class="ms-tile" data-act="shop"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg></span><span>Shop</span><span class="ms-tile-badge ms-new" id="msShopBadge" style="display:none;">NEW</span></button>
           <button class="ms-tile" data-act="locker"><span class="ms-tile-badge" id="msLockerBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-locker"/></svg></span><span>Locker</span></button>
-          <button class="ms-tile" data-act="rank"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
           <button class="ms-tile" data-act="achievements"><span class="ms-tile-badge ms-prestige" id="msAchBadge" style="display:none;">✦</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
-          <button class="ms-tile" data-act="activity"><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg></span><span>Activity</span></button>
           <button class="ms-tile" data-act="chat"><span class="ms-tile-badge" id="msChatBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span>Messages</span></button>
         </div>
 
@@ -23796,352 +23960,9 @@ const FIREBASE_CONFIG = {
     <section class="screen" id="screen-landing">
       <div class="dashboard">
 
-      <!-- ============ PAGE: HOME ============ -->
-      <div class="nav-page active" data-page="home">
-
-        <!-- ===== LAUNCH COMMAND DECK ===== -->
-        <section class="hx-hero">
-          <div class="hx-hero-glow"></div>
-          <div class="hx-hero-grid"></div>
-          <!-- Living hero background — drifting rock/paper/scissors glyphs + a slow rank-themed pulse -->
-          <div class="hx-hero-glyphs" aria-hidden="true">
-            <svg class="hxg g1" viewBox="0 0 64 64"><use href="#i-rock"/></svg>
-            <svg class="hxg g2" viewBox="0 0 64 64"><use href="#i-paper"/></svg>
-            <svg class="hxg g3" viewBox="0 0 64 64"><use href="#i-scissors"/></svg>
-            <svg class="hxg g4" viewBox="0 0 64 64"><use href="#i-rock"/></svg>
-            <svg class="hxg g5" viewBox="0 0 64 64"><use href="#i-scissors"/></svg>
-            <svg class="hxg g6" viewBox="0 0 64 64"><use href="#i-paper"/></svg>
-          </div>
-          <div class="hx-hero-pulse" aria-hidden="true"></div>
-          <div class="hx-hero-inner">
-            <div class="hx-hero-top">
-              <span class="hx-badge"><span class="live-dot"></span> Live worldwide</span>
-              <span class="hx-badge ghost"><b id="heroOnlineCount">—</b> playing now</span>
-            </div>
-            <div class="hx-brandrow">
-              <img class="hx-logo" src="logo.png" alt="" aria-hidden="true" />
-              <h1 class="hx-wordmark">ROSH<span class="hx-cam">CAM</span></h1>
-            </div>
-            <p class="hx-tag">Webcam rock · paper · scissors against real strangers. Read their eyes, throw first, and climb from Bronze to Grandmaster.</p>
-            <div class="hx-play">
-              <button class="btn-cta hx-cta" id="homePlayBtn" data-goto-play>
-                <svg viewBox="0 0 24 24"><use href="#i-play"/></svg>
-                <span>Play</span>
-              </button>
-              <button class="btn-icon-action hx-cam-btn" id="cameraSetupBtn" title="Adjust your camera">
-                <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-camera"/></svg>
-                <span>Camera setup</span>
-              </button>
-            </div>
-            <div class="hx-you">
-              <div class="wb-av" id="wbAv">?</div>
-              <div class="hx-you-text">
-                <div class="hx-you-hi" id="wbHi">Welcome back</div>
-                <div class="hx-you-sub" id="wbSub">Ready to throw hands?</div>
-              </div>
-              <div class="hx-you-streak" title="Daily login streak">
-                <span class="flame">🔥</span>
-                <span class="wb-streak-num" id="wbStreakNum">0</span>
-                <span class="hx-you-streak-lbl">day streak</span>
-              </div>
-            </div>
-            <div class="hx-tip" id="hxTip" style="display:none;"><span class="hx-tip-ic">💡</span><span id="hxTipText"></span></div>
-            <!-- v3: your next goals, right in the hero -->
-            <div class="home-goals" id="homeGoals"></div>
-          </div>
-        </section>
-
-        <!-- ===== RETURNING-PLAYER COMMAND DECK — rank identity + quick play, side by side ===== -->
-        <div class="home-deck">
-          <!-- Hero stat band — rank crest · ELO · win-rate ring · level -->
-          <div class="home-statband" id="homeStatBand" style="display:none"></div>
-          <!-- Bento — Quick Play + Next unlock -->
-          <div class="home-bento" id="homeBento" style="display:none"></div>
-        </div>
-
-        <!-- TODAY strip — daily challenge · login streak · shop rotation · shards -->
-        <div class="home-today" id="homeToday"></div>
-
-        <!-- Since-you-were-gone recap — only shown after time away / rating change -->
-        <div class="home-recap" id="homeRecap" style="display:none"></div>
-
-        <!-- Weekend 2× XP banner (home) — shown only during the weekend window -->
-        <div class="dxp-banner dxp-home" id="dxpBannerHome" style="display:none;">
-          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
-          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND IS LIVE</div><div class="dxp-sub">Every match earns double XP — climb levels twice as fast!</div></div>
-          <div class="dxp-mult">2×</div>
-        </div>
-
-        <!-- ===== ABOUT ROSHCAM — the "learn" block (collapsible for returning players) ===== -->
-        <div id="homeLearn">
-        <button type="button" class="home-learn-toggle" id="homeLearnToggle" style="display:none">
-          <span class="hlt-eye"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-target"/></svg> New here?</span>
-          <span class="hlt-txt">See how ROSHCAM works</span>
-          <svg class="hlt-chev" viewBox="0 0 24 24" width="16" height="16"><use href="#i-chevron-down"/></svg>
-        </button>
-        <div class="home-learn-body" id="homeLearnBody">
-        <!-- live worldwide strip -->
-        <div class="home-live home-reveal">
-          <span class="hl-dot"></span>
-          <span class="hl-text"><b id="homeLiveOnline">—</b> playing now</span>
-          <span class="hl-sep">·</span>
-          <span class="hl-text"><b id="homeLiveMatches">—</b> live matches</span>
-          <span class="hl-sep">·</span>
-          <span class="hl-text">real people, worldwide 🌍</span>
-        </div>
-
-        <!-- WHAT IS ROSHCAM -->
-        <section class="home-about home-reveal">
-          <div class="ha-copy">
-            <div class="ha-eyebrow"><span class="hae-dot"></span> WHAT IS ROSHCAM</div>
-            <h2 class="ha-title">Rock, paper, scissors — <span>face&nbsp;to&nbsp;face</span> with the world.</h2>
-            <p class="ha-lead">ROSHCAM is real-time webcam rock·paper·scissors against actual strangers. Your camera reads your hand, you read their eyes, and you both throw on the count of three. Win rounds, climb the ranked ladder, and level up — no download, right in your browser.</p>
-            <div class="ha-cta">
-              <span class="ha-cta-note"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-check"/></svg> Free · no download · works in any browser</span>
-            </div>
-          </div>
-          <div class="ha-visual" aria-hidden="true">
-            <div class="rps-orbit">
-              <span class="rps-ring"></span><span class="rps-ring r2"></span>
-              <div class="rps-core">VS</div>
-              <div class="rps-ic rock"><svg viewBox="0 0 64 64"><use href="#i-rock"/></svg></div>
-              <div class="rps-ic paper"><svg viewBox="0 0 64 64"><use href="#i-paper"/></svg></div>
-              <div class="rps-ic scissors"><svg viewBox="0 0 64 64"><use href="#i-scissors"/></svg></div>
-            </div>
-          </div>
-        </section>
-
-        <!-- HOW IT WORKS -->
-        <section class="home-section home-reveal">
-          <div class="hsec-head">
-            <div class="hsec-kicker"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-target"/></svg> HOW IT WORKS</div>
-            <h3 class="hsec-h">Four steps to your first win</h3>
-          </div>
-          <div class="how-steps">
-            <div class="how-step"><div class="how-num">1</div><div class="how-ic"><svg viewBox="0 0 24 24"><use href="#i-camera"/></svg></div><div class="how-t">Turn on your camera</div><div class="how-d">We detect your hand gesture live, on your device — no clicks, just throw.</div></div>
-            <div class="how-step"><div class="how-num">2</div><div class="how-ic"><svg viewBox="0 0 24 24"><use href="#i-globe"/></svg></div><div class="how-t">Meet a stranger</div><div class="how-d">Get matched face-to-face with a real player somewhere in the world.</div></div>
-            <div class="how-step"><div class="how-num">3</div><div class="how-ic"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></div><div class="how-t">Throw on three</div><div class="how-d">Rock, paper or scissors — hold it steady as the countdown hits zero.</div></div>
-            <div class="how-step"><div class="how-num">4</div><div class="how-ic"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></div><div class="how-t">Win &amp; climb</div><div class="how-d">Take the match, gain ELO, and rise from Bronze all the way to Legend.</div></div>
-          </div>
-        </section>
-
-        <!-- UNDER THE HOOD / HOW IT'S MADE -->
-        <section class="home-section home-reveal">
-          <div class="hsec-head">
-            <div class="hsec-kicker"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-bolt"/></svg> UNDER THE HOOD</div>
-            <h3 class="hsec-h">How it's built</h3>
-          </div>
-          <div class="tech-grid">
-            <div class="tech-card" style="--tc:var(--mint)"><div class="tech-ic"><svg viewBox="0 0 24 24"><use href="#i-eye"/></svg></div><div class="tech-t">Live hand detection</div><div class="tech-d">In-browser computer vision reads your gesture in real time — the camera <i>is</i> the controller.</div></div>
-            <div class="tech-card" style="--tc:#5fc9ff"><div class="tech-ic"><svg viewBox="0 0 24 24"><use href="#i-bolt"/></svg></div><div class="tech-t">Peer-to-peer video</div><div class="tech-d">WebRTC connects you straight to your opponent for low-latency, face-to-face duels.</div></div>
-            <div class="tech-card" style="--tc:#ffd33d"><div class="tech-ic"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></div><div class="tech-t">Ranked ELO ladder</div><div class="tech-d">Every match shifts your rating. Nine tiers, seasonal resets, real stakes.</div></div>
-            <div class="tech-card" style="--tc:#a48bff"><div class="tech-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></div><div class="tech-t">Levels &amp; prestige</div><div class="tech-d">Earn XP, unlock titles, and prestige all the way to Prestige Master.</div></div>
-          </div>
-        </section>
-
-        <!-- WHY ROSHCAM -->
-        <section class="home-section home-reveal">
-          <div class="hsec-head">
-            <div class="hsec-kicker"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-sparkles"/></svg> WHY ROSHCAM</div>
-            <h3 class="hsec-h">More than a hand game</h3>
-          </div>
-          <div class="feat-grid">
-            <div class="feat-tile"><div class="feat-ic" style="--fc:var(--violet)"><svg viewBox="0 0 24 24"><use href="#i-target"/></svg></div><div class="feat-t">Predict their throw</div><div class="feat-d">Call their move before they throw it for bonus XP and bragging rights.</div></div>
-            <div class="feat-tile"><div class="feat-ic" style="--fc:var(--mint)"><svg viewBox="0 0 24 24"><use href="#i-chat"/></svg></div><div class="feat-t">Emotes &amp; banter</div><div class="feat-d">React with emotes and trade chat between rounds.</div></div>
-            <div class="feat-tile"><div class="feat-ic" style="--fc:#5fc9ff"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></div><div class="feat-t">Friends &amp; challenges</div><div class="feat-d">Add rivals, challenge friends, and chase daily &amp; weekly goals.</div></div>
-            <div class="feat-tile"><div class="feat-ic" style="--fc:#ff8c42"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg></div><div class="feat-t">Fair play built in</div><div class="feat-d">No peeking, suspicious-timing detection and reporting keep it honest.</div></div>
-            <div class="feat-tile"><div class="feat-ic" style="--fc:#ffd33d"><svg viewBox="0 0 24 24"><use href="#i-globe"/></svg></div><div class="feat-t">Truly worldwide</div><div class="feat-d">Match real people across the globe, any hour of the day.</div></div>
-            <div class="feat-tile"><div class="feat-ic" style="--fc:var(--coral)"><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg></div><div class="feat-t">Instant, anywhere</div><div class="feat-d">Runs in any modern browser on desktop or phone — nothing to install.</div></div>
-          </div>
-        </section>
-
-        <!-- CLOSING CTA -->
-        <section class="home-cta home-reveal">
-          <div class="hc-glow"></div>
-          <div class="hc-rps"><svg viewBox="0 0 64 64"><use href="#i-rock"/></svg><svg viewBox="0 0 64 64"><use href="#i-paper"/></svg><svg viewBox="0 0 64 64"><use href="#i-scissors"/></svg></div>
-          <h3 class="hc-h">Ready to throw hands?</h3>
-          <p class="hc-sub">Hit <b>Play</b> up top to find your first opponent in seconds.</p>
-          <button class="btn hc-btn" id="homeBackTopBtn" type="button"><svg viewBox="0 0 24 24" width="14" height="14" style="transform:rotate(-90deg)"><use href="#i-arrow-right"/></svg><span>Back to the top</span></button>
-        </section>
-        </div><!-- /#homeLearnBody -->
-        </div><!-- /#homeLearn -->
-
-        <!-- Old personal dashboard kept hidden so the rest of the app (Activity /
-             Friends / challenges pages mirror these) keeps working untouched. -->
-        <div id="homeLegacy" style="display:none" aria-hidden="true">
-        <!-- World ribbon -->
-        <div class="stat-grid-4 hx-ribbon">
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-people"/></svg>
-            <div class="stat-tile-v" id="wsOnline">—</div>
-            <div class="stat-tile-l">Players online</div>
-          </div>
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-swords"/></svg>
-            <div class="stat-tile-v" id="wsMatches">—</div>
-            <div class="stat-tile-l">Live matches</div>
-          </div>
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-trophy"/></svg>
-            <div class="stat-tile-v gold" id="wsRank">#—</div>
-            <div class="stat-tile-l">Your global rank</div>
-          </div>
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-flame"/></svg>
-            <div class="stat-tile-v" id="wsStreak">0</div>
-            <div class="stat-tile-l">Current streak</div>
-          </div>
-        </div>
-
-        <!-- Spotlight row — throw style (rank/next-rank live in the rank card) -->
-        <div class="home-spotlight-single" style="margin-top:14px;">
-          <div class="card hs-card" id="hsThrowCard">
-            <div class="card-hd"><div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Your throw style</div></div>
-            <div class="hs-throws" id="hsThrows">
-              <div class="hs-throw"><div class="hs-throw-bar coral"><span id="hsRockBar" style="height:0%"></span></div><svg viewBox="0 0 64 64" width="22" height="22" style="color:var(--coral)"><use href="#i-rock"/></svg><b id="hsRockPct">0%</b></div>
-              <div class="hs-throw"><div class="hs-throw-bar mint"><span id="hsPaperBar" style="height:0%"></span></div><svg viewBox="0 0 64 64" width="22" height="22" style="color:var(--mint)"><use href="#i-paper"/></svg><b id="hsPaperPct">0%</b></div>
-              <div class="hs-throw"><div class="hs-throw-bar violet"><span id="hsScissorsBar" style="height:0%"></span></div><svg viewBox="0 0 64 64" width="22" height="22" style="color:#a48bff"><use href="#i-scissors"/></svg><b id="hsScissorsPct">0%</b></div>
-            </div>
-            <div class="hs-throw-note" id="hsThrowNote">Play matches to reveal your favourite throw.</div>
-          </div>
-        </div>
-
-        <!-- TWO-COLUMN DASHBOARD: left = rank+stats+activity, right = daily+friends -->
-        <div class="home-grid" style="margin-top:14px;">
-
-          <!-- LEFT COLUMN -->
-          <div class="home-col">
-
-            <!-- Rank card (current rank BIG + next-rank marker on the bar) -->
-            <div class="card clickable rankcard2" id="homeRankCard">
-              <div class="card-hd">
-                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Your rank</div>
-                <span class="card-hd-action" id="rankViewMoreBtn">Details →</span>
-              </div>
-              <!-- Hero: big current rank -->
-              <div class="rc2-hero">
-                <div class="rc2-icon-wrap">
-                  <div class="rc2-icon-glow" id="rc2IconGlow"></div>
-                  <div class="rank-card-icon rc2-icon"><svg id="rankIconCurrent"></svg></div>
-                </div>
-                <div class="rc2-info">
-                  <div class="rank-card-tier rc2-tier" id="rankNameCurrent">Bronze I</div>
-                  <div class="rc2-rating"><span id="heroRating">1000</span><span class="elo-unit">ELO</span> · <b id="heroWinrate">—</b> win rate</div>
-                </div>
-              </div>
-              <!-- Progress to next rank, with the NEXT rank shown as a marker at the bar end -->
-              <div class="rc2-progress">
-                <div class="rc2-bar-row">
-                  <div class="ui-bar rc2-bar"><div class="ui-bar-fill" id="rankBarFill" style="width:0%;"></div></div>
-                  <div class="rc2-next" id="rc2Next" title="Next rank">
-                    <svg id="rc2NextIcon" class="rc2-next-icon"></svg>
-                  </div>
-                </div>
-                <div class="rc2-next-label" id="rankNextLabel">—</div>
-              </div>
-              <div class="level-strip" id="levelStrip" title="Open achievements to see titles">
-                <div class="level-badge" id="heroLevelBadge">1</div>
-                <div class="level-strip-info">
-                  <div class="level-strip-top">
-                    <span class="level-strip-title" id="heroTitle">Rookie</span>
-                    <span class="level-strip-xp" id="heroXpText">0 / 200 XP</span>
-                  </div>
-                  <div class="ui-bar"><div class="ui-bar-fill" id="levelBarFill" style="width:0%;"></div></div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Your stats -->
-            <div class="card">
-              <div class="card-hd">
-                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Your stats</div>
-                <span class="card-hd-action" id="viewFullStatsBtn">View all →</span>
-              </div>
-              <div class="stat-grid-4">
-                <div class="stat-tile"><div class="stat-tile-v mint" id="statWins">0</div><div class="stat-tile-l">Wins</div></div>
-                <div class="stat-tile"><div class="stat-tile-v coral" id="statLosses">0</div><div class="stat-tile-l">Losses</div></div>
-                <div class="stat-tile"><div class="stat-tile-v purple" id="statDraws">0</div><div class="stat-tile-l">Draws</div></div>
-                <div class="stat-tile"><div class="stat-tile-v gold" id="statBestStreak">0</div><div class="stat-tile-l">Best streak</div></div>
-              </div>
-            </div>
-
-            <!-- Live activity -->
-            <div class="card" id="liveActivityCard">
-              <div class="card-hd">
-                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Live activity</div>
-                <div class="card-hd-sub" id="globalActiveStats">— in progress</div>
-              </div>
-              <div class="activity-tabs">
-                <button class="active" data-act-tab="all">All</button>
-                <button data-act-tab="friends">Friends</button>
-                <button data-act-tab="leaderboard">Top players</button>
-                <button data-act-tab="recent">Recent vs you</button>
-              </div>
-              <div class="activity-pane" data-act-pane="all">
-                <div class="side-body" id="globalActivityBody"><div class="side-empty">no recent matches · be the first!</div></div>
-              </div>
-              <div class="activity-pane" data-act-pane="friends" style="display:none;">
-                <div class="side-body" id="activityBody"></div>
-              </div>
-              <div class="activity-pane" data-act-pane="leaderboard" style="display:none;">
-                <div class="side-body" id="leaderboardBody"></div>
-              </div>
-              <div class="activity-pane" data-act-pane="recent" style="display:none;">
-                <div class="side-body" id="recentBody"><div class="side-empty">no matches yet · play to fill this list</div></div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- RIGHT COLUMN -->
-          <div class="home-col">
-
-            <!-- Daily + Weekly challenges (mounted by JS) -->
-            <div class="challenge-stack" id="homeChallengeSlot"></div>
-
-            <!-- Friends -->
-            <div class="card" id="friendsCard">
-              <div class="card-hd">
-                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg> Friends</div>
-                <div class="card-hd-sub"><span class="live-dot"></span><span id="friendCount">0/0</span> online</div>
-              </div>
-              <div class="add-friend-input">
-                <input id="addFriendInput" type="text" placeholder="Add friend by username…" maxlength="20" />
-                <button id="addFriendBtn">Add</button>
-              </div>
-              <div class="side-body" id="friendsBody"></div>
-              <div id="requestsArea" style="display:none; border-top:1px solid var(--line-soft); margin-top:10px; padding-top:6px;">
-                <div class="card-hd-title" style="margin:6px 0 4px;"><svg viewBox="0 0 24 24"><use href="#i-plus"/></svg> Pending requests</div>
-                <div class="side-body" id="requestsBody"></div>
-              </div>
-            </div>
-
-            <!-- Quick links -->
-            <div class="card">
-              <div class="card-hd">
-                <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-zap"/></svg> Quick links</div>
-              </div>
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                <button class="play-mode-card" data-quicklink="rank">
-                  <div class="pmc-icon"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-trophy"/></svg></div>
-                  <div class="pmc-mode-text"><div class="pmc-mode-title">Rank &amp; ladder</div><div class="pmc-mode-sub">See your climb</div></div>
-                  <svg viewBox="0 0 24 24" width="15" height="15" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
-                </button>
-                <button class="play-mode-card" data-quicklink="achievements">
-                  <div class="pmc-icon"><svg viewBox="0 0 24 24" width="18" height="18"><use href="#i-medal"/></svg></div>
-                  <div class="pmc-mode-text"><div class="pmc-mode-title">Achievements</div><div class="pmc-mode-sub">Titles &amp; milestones</div></div>
-                  <svg viewBox="0 0 24 24" width="15" height="15" class="pmc-arrow"><use href="#i-arrow-right"/></svg>
-                </button>
-              </div>
-            </div>
-
-          </div>
-        </div>
-        </div><!-- /#homeLegacy -->
-      </div><!-- /page home -->
 
       <!-- ============ PAGE: PLAY ============ -->
-      <div class="nav-page" data-page="play">
+      <div class="nav-page active" data-page="play">
         <div class="dxp-banner" style="display:none; margin:0 0 14px;">
           <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
           <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
@@ -24404,54 +24225,6 @@ const FIREBASE_CONFIG = {
       </div>
 
       <!-- ============ PAGE: ACTIVITY ============ -->
-      <div class="nav-page" data-page="activity">
-        <div class="page-header">
-          <h2 class="page-title">ACTIVITY</h2>
-          <p class="page-subtitle">Live matches and recent results from around the world.</p>
-        </div>
-        <div class="dxp-banner" style="display:none;">
-          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
-          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
-          <div class="dxp-mult">2×</div>
-        </div>
-        <div class="stat-grid-4" style="margin-bottom:14px;">
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-swords"/></svg>
-            <div class="stat-tile-v" id="actLiveCount">—</div>
-            <div class="stat-tile-l">Live now</div>
-          </div>
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-people"/></svg>
-            <div class="stat-tile-v mint" id="actOnlineCount">—</div>
-            <div class="stat-tile-l">Online</div>
-          </div>
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-activity"/></svg>
-            <div class="stat-tile-v purple" id="actRecentCount">—</div>
-            <div class="stat-tile-l">Recent results</div>
-          </div>
-          <div class="stat-tile">
-            <svg viewBox="0 0 24 24" class="stat-tile-ic"><use href="#i-trophy"/></svg>
-            <div class="stat-tile-v gold" id="actTopElo">—</div>
-            <div class="stat-tile-l">Top ELO</div>
-          </div>
-        </div>
-        <div class="activity-page-grid">
-          <div class="card">
-            <div class="card-hd">
-              <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-activity"/></svg> Global feed</div>
-              <div class="card-hd-sub" id="activityPageStats">— in progress</div>
-            </div>
-            <div class="side-body" id="activityPageBody"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
-          </div>
-          <div class="card">
-            <div class="card-hd">
-              <div class="card-hd-title"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg> Top players</div>
-            </div>
-            <div class="side-body" id="activityPageLeaderboard"><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div><div class="skel-row"><div class="sk-av skeleton"></div><div class="sk-lines"><div class="sk-l1 skeleton"></div><div class="sk-l2 skeleton"></div></div></div></div>
-          </div>
-        </div>
-      </div><!-- /page activity -->
 
       <!-- ============ PAGE: RANK ============ -->
       <div class="nav-page" data-page="rank">
@@ -24543,7 +24316,7 @@ const FIREBASE_CONFIG = {
           </section>
         </div>
 
-        <div class="psection" style="margin-top:18px;"><h3>Global leaderboard</h3></div>
+        <div class="psection" style="margin-top:18px;"><h3>Top players</h3><span class="psection-sub">The global leaderboard — every ranked climber worldwide</span></div>
         <div class="card lb-full-card">
           <div class="lb-controls">
             <div class="lb-search">
@@ -27288,6 +27061,15 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="lr-comeback dr2-comeback" id="lrComeback" style="display:none;"></div>
     <div class="dr2-board" id="lrCalendar"></div>
+    <!-- Daily case shard — collected here every day; seven = a free ROSHCAM case -->
+    <div class="dr2-shards" id="lrShards" style="display:none;">
+      <div class="dr2-shards-head">
+        <span class="dr2-shards-title"><span class="dr2-shards-ic">🧩</span> Case shards</span>
+        <span class="dr2-shards-count" id="lrShardCount">0/7</span>
+      </div>
+      <div class="dr2-shards-orbs" id="lrShardOrbs"></div>
+      <div class="dr2-shards-sub" id="lrShardSub">Collect one every day — seven earns a free ROSHCAM case</div>
+    </div>
     <button class="btn btn-primary lr-claim dr2-claim" id="lrClaimBtn" data-close="loginRewardModal" style="width:100%; margin-top:16px;">Claim reward</button>
   </div>
 </div>
@@ -28480,6 +28262,8 @@ function showScreen(name){
     }
     // Toggle in-game flag (hides mobile bottom nav during a match)
     document.body.classList.toggle('in-game', name === 'game');
+    // Refresh the nav "live" (in-match / searching) indicator on every screen change.
+    try { updateNavLive(); } catch(e){}
     // On-device nudity detection runs only during a live match.
     try { if(name === 'game') startNsfwGuard(); else stopNsfwGuard(); } catch(e){}
     // One-time-ever kindness + safety reminder before the first match on a device.
@@ -28512,13 +28296,26 @@ function showScreen(name){
       }
       else { stopMenuMusic(); }
     } catch(e){}
-    // When (re)entering the landing screen, default to the Home page
+    // When (re)entering the landing screen, default to the Play page (Home removed).
+    // Preserve the page you were on if you're already inside the app.
     if(name === 'landing'){
-      document.querySelectorAll('.nav-page').forEach(pg => pg.classList.toggle('active', pg.dataset.page === 'home'));
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === 'home'));
-      try { syncMobileNav('home'); } catch(e){}
-      state._homeAnimated = false;   // fresh view → let the entrance animation play once
-      try { renderHomePage(); } catch(e){}
+      let landing = 'play';
+      try { const cur = document.querySelector('.nav-page.active'); if(cur && cur.dataset.page) landing = cur.dataset.page; } catch(e){}
+      document.querySelectorAll('.nav-page').forEach(pg => pg.classList.toggle('active', pg.dataset.page === landing));
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === landing));
+      try { syncMobileNav(landing); } catch(e){}
+      // Daily housekeeping (login reward, boosters, season, challenges) — was folded
+      // into the old Home render; now runs on every app entry regardless of page.
+      try { runDailyHousekeeping(); } catch(e){}
+      // Play any level-ups that were deferred during a match (they never interrupt play).
+      try { setTimeout(() => { try { flushDeferredLevelUps(); } catch(e){} }, 700); } catch(e){}
+      try {
+        if(landing === 'play') renderPlayPage();
+        else if(landing === 'rank') renderRankPage();
+        else if(landing === 'shop') renderShopPage();
+        else if(landing === 'locker') renderLockerPage();
+        else if(landing === 'friends') renderFriendsPage();
+      } catch(e){}
     }
     // Camera lifecycle: release the webcam after idling on the menu; anything
     // that needs it again re-acquires behind the start loader.
@@ -28709,35 +28506,141 @@ function _ensureToastContainer(){
   return _toastContainer;
 }
 const TOAST_ICONS = { success:'i-check', error:'i-close', info:'i-zap', '':'i-zap' };
-function toast(text, kind='', opts={}){
-  // DE-DUPE: if an identical toast is already on screen (same text + kind),
-  // don't stack a second copy — just refresh its timer. This is the single
-  // biggest source of the "same popup appears 2-3 times" clutter, since many
-  // events fire from more than one code path within the same tick.
+// Priority → default lifetime. Critical/high linger; low is fleeting.
+const TOAST_DUR = { low:2000, normal:2800, high:4200, critical:6500 };
+// ===== TOAST CATEGORIES — one source of truth for each type's look + behaviour.
+// A caller passes {category:'reward'} and the toast picks up the accent, default
+// icon, sound, lifetime and priority for that category (any opt still overrides).
+const TOAST_CATS = {
+  reward:    { accent:'#ffd45e', emoji:'✨', kind:'success', dur:3400, sound:'reward'  },
+  milestone: { accent:'#a48bff', emoji:'📈', kind:'success', dur:3600, sound:'success' },
+  social:    { accent:'#5fc9ff', emoji:'👥', kind:'info',    dur:5200, sound:'social'  },
+  cosmetic:  { accent:'#ff5ec8', emoji:'🎨', kind:'success', dur:3800, sound:'success' },
+  match:     { accent:'#ff3d68', emoji:'⚔️', kind:'info',    dur:3200, sound:'none',    priority:'high' },
+  system:    { accent:'#8a94a6', emoji:'🛰️', kind:'info',    dur:3000, sound:'none',    priority:'low'  },
+  undo:      { accent:'#c9c9d6', emoji:'↩️', kind:'info',    dur:5400, sound:'none'    },
+  error:     { accent:'#ff3358', emoji:'⚠️', kind:'error',   dur:4600, sound:'error',   priority:'high' },
+  tip:       { accent:'#22d3a3', emoji:'💡', kind:'info',    dur:4200, sound:'none',    priority:'low'  },
+};
+// A distinct chime per category/kind — respects mute + the volume mixer via tone().
+function _toastSound(kind, catSound){
   try {
+    if(state.muted || document.body.classList.contains('in-game')) return;
+    const s = catSound || (kind === 'error' ? 'error' : kind === 'success' ? 'success' : 'none');
+    if(s === 'none') return;
+    if(s === 'reward'){ tone(784, 0.06, 'triangle', 0.055); setTimeout(() => tone(1046, 0.06, 'triangle', 0.05), 60); setTimeout(() => tone(1568, 0.11, 'sine', 0.05), 130); }
+    else if(s === 'success'){ tone(880, 0.06, 'sine', 0.05); setTimeout(() => tone(1245, 0.08, 'sine', 0.045), 70); }
+    else if(s === 'social'){ tone(620, 0.06, 'sine', 0.05); setTimeout(() => tone(932, 0.08, 'sine', 0.045), 78); }
+    else if(s === 'error'){ tone(300, 0.10, 'sine', 0.06); setTimeout(() => tone(226, 0.12, 'sine', 0.05), 85); }
+  } catch(e){}
+}
+// Hover-to-pause + swipe/drag-to-dismiss on a toast.
+function _attachToastGestures(el, close, dur){
+  el._endAt = Date.now() + dur;
+  el.addEventListener('pointerenter', () => {
+    if(el._dragging) return;
+    clearTimeout(el._timer); el._remaining = Math.max(700, el._endAt - Date.now()); el.classList.add('t-paused');
+  });
+  el.addEventListener('pointerleave', () => {
+    if(!el.classList.contains('t-paused')) return;
+    el.classList.remove('t-paused'); const r = el._remaining || 1200; el._endAt = Date.now() + r; el._timer = setTimeout(close, r);
+  });
+  let sx = 0, moved = false;
+  el.addEventListener('pointerdown', (e) => {
+    if(e.target.closest('.toast2-action')) return;
+    sx = e.clientX; el._dragging = true; moved = false; el.style.transition = 'none'; try { el.setPointerCapture(e.pointerId); } catch(_){}
+  });
+  el.addEventListener('pointermove', (e) => {
+    if(!el._dragging) return; const dx = e.clientX - sx; if(Math.abs(dx) > 4) moved = true;
+    el.style.transform = `translateX(${dx}px)`; el.style.opacity = String(Math.max(.2, 1 - Math.abs(dx) / 200));
+  });
+  const endDrag = (e) => {
+    if(!el._dragging) return; el._dragging = false; el.style.transition = '';
+    const dx = (e.clientX || sx) - sx;
+    if(Math.abs(dx) > 88){ el.style.transform = `translateX(${dx > 0 ? 460 : -460}px)`; el.style.opacity = '0'; clearTimeout(el._timer); setTimeout(() => el.remove(), 200); try { hapticTick(); } catch(_){} }
+    else { el.style.transform = ''; el.style.opacity = ''; }
+    el._swiping = moved;
+  };
+  el.addEventListener('pointerup', endDrag);
+  el.addEventListener('pointercancel', () => { el._dragging = false; el.style.transition = ''; el.style.transform = ''; el.style.opacity = ''; });
+}
+function toast(text, kind='', opts={}){
+  // CATEGORY RESOLUTION — explicit opts.category wins; otherwise infer one from
+  // kind + keywords so EVERY toast in the app gets a consistent categorized
+  // design without touching 250+ call sites. Callers can still override.
+  if(!opts.category){
+    const lc = String(text || '').toLowerCase();
+    opts.category =
+      kind === 'error' ? 'error'
+      : /reconnect|offline|back online|connection|no internet|network|synced|sync/.test(lc) ? 'system'
+      : /\bxp\b|coins|roshcoin|reward|shard|2× xp|2x xp|token|\+\s?\d/.test(lc) ? 'reward'
+      : /friend|challenge|request|sent you|rival|invite|is online/.test(lc) ? 'social'
+      : /equipped|unequip|cosmetic|refund|gift|profile frame|name style|player tag|avatar (ring|effect)|in your locker/.test(lc) ? 'cosmetic'
+      : /promoted|level up|leveled|prestige|rank up|new season|placement/.test(lc) ? 'milestone'
+      : /match|opponent|queue|rematch|stranger|dodge|forfeit|throw/.test(lc) ? 'match'
+      : null;
+  }
+  const catCfg = (opts.category && TOAST_CATS[opts.category]) || null;
+  if(catCfg){
+    if(!kind) kind = catCfg.kind || kind;
+    if(!opts.priority && catCfg.priority) opts.priority = catCfg.priority;
+    if(opts.duration == null && catCfg.dur) opts.duration = catCfg.dur;
+    // Don't add a category lead emoji if the text already opens with one.
+    let startsEmoji = false; try { startsEmoji = /^\s*\p{Extended_Pictographic}/u.test(String(text || '')); } catch(e){}
+    if(!opts.icon && !opts.avatar && !opts.thumbHTML && catCfg.emoji && !startsEmoji) opts.icon = catCfg.emoji;
+  }
+  try {
+    const c0 = _ensureToastContainer();
+    // COALESCE: same group merges into the live toast (e.g. "+10 XP" from three
+    // separate gains) instead of stacking. Optional numeric accumulation.
+    if(opts.group){
+      const g = [...c0.children].find(k => k._toastGroup === opts.group);
+      if(g){
+        clearTimeout(g._timer); g.classList.remove('t-collapsed', 't-paused');
+        if(typeof opts.groupInc === 'number'){ g._groupSum = (g._groupSum || 0) + opts.groupInc; text = (opts.groupFmt ? opts.groupFmt(g._groupSum) : ('+' + g._groupSum)); }
+        const tx = g.querySelector('.toast2-text'); if(tx) tx.textContent = text; g._toastText = text;
+        g.classList.remove('t-bump'); void g.offsetWidth; g.classList.add('t-bump');
+        const dur0 = TOAST_DUR[opts.priority] || TOAST_DUR.normal;
+        g.style.setProperty('--toast-dur', dur0 + 'ms'); g._endAt = Date.now() + dur0;
+        g._timer = setTimeout(() => { g.classList.remove('show'); setTimeout(() => g.remove(), 280); }, dur0);
+        return;
+      }
+    }
+    // DE-DUPE: identical text+kind already up → just refresh its timer.
     if(!opts.allowDup){
-      const c0 = _ensureToastContainer();
       const dup = [...c0.children].find(k => k._toastText === text && k._toastKind === (kind||'') && !k.classList.contains('t-progress'));
       if(dup){
-        clearTimeout(dup._timer);
-        dup.classList.remove('t-collapsed');
-        const dur0 = opts.duration || (opts.action ? 6000 : 2800);
+        clearTimeout(dup._timer); dup.classList.remove('t-collapsed', 't-paused');
+        const dur0 = opts.duration || TOAST_DUR[opts.priority] || (opts.action ? 6000 : 2800);
+        dup.style.setProperty('--toast-dur', dur0 + 'ms'); dup._endAt = Date.now() + dur0;
         dup._timer = setTimeout(() => { dup.classList.remove('show'); setTimeout(() => dup.remove(), 280); }, dur0);
         return;
       }
     }
   } catch(e){}
-  // Haptic vocabulary: success = double-tap pattern, error = firm double-buzz.
+  // Haptic + soft per-category chime.
   try { if(isCoarse()){ if(kind === 'error') hapticError(); else if(kind === 'success') hapticSuccess(); } } catch(e){}
+  try { if(opts.sound !== false) _toastSound(kind, catCfg && catCfg.sound); } catch(e){}
   try {
     const c = _ensureToastContainer();
+    const prio = opts.priority || 'normal';
     const el = document.createElement('div');
-    el.className = 'toast2 ' + (kind||'') + (opts.action ? ' has-action' : '');
+    el.className = 'toast2 ' + (kind||'') + (opts.action ? ' has-action' : '') + (prio !== 'normal' ? ' t-' + prio : '') + (opts.sub ? ' t-rich' : '') + (opts.category ? ' t-cat t-cat-' + opts.category : '') + (opts.thumbHTML ? ' t-thumb' : '');
+    if(catCfg) el.style.setProperty('--tcat', opts.accent || catCfg.accent);
+    else if(opts.accent) el.style.setProperty('--tcat', opts.accent);
     el._toastText = text; el._toastKind = kind || '';
-    const icon = TOAST_ICONS[kind] || 'i-zap';
-    el.innerHTML = `<svg class="toast2-ic" viewBox="0 0 24 24" width="16" height="16"><use href="#${icon}"/></svg><span class="toast2-text">${text}</span>`;
-    const close = () => { clearTimeout(el._timer); el.classList.remove('show'); setTimeout(() => el.remove(), 280); };
-    // Optional action button (e.g. "Accept", "Undo", "View")
+    if(opts.group){ el._toastGroup = opts.group; if(typeof opts.groupInc === 'number') el._groupSum = opts.groupInc; }
+    // Rich leading visual: a cosmetic thumbnail, an avatar, a custom emoji, or icon.
+    let lead;
+    if(opts.thumbHTML){ lead = `<span class="toast2-thumb">${opts.thumbHTML}</span>`; }
+    else if(opts.avatar){ lead = `<img class="toast2-av" src="${opts.avatar}" alt="" onerror="this.remove()">`; }
+    else if(opts.icon){ lead = `<span class="toast2-emoji">${opts.icon}</span>`; }
+    else { lead = `<svg class="toast2-ic" viewBox="0 0 24 24" width="16" height="16"><use href="#${TOAST_ICONS[kind] || 'i-zap'}"/></svg>`; }
+    const body = opts.sub
+      ? `<span class="toast2-body"><span class="toast2-text">${text}</span><span class="toast2-sub">${opts.sub}</span></span>`
+      : `<span class="toast2-text">${text}</span>`;
+    el.innerHTML = lead + body;
+    const close = () => { clearTimeout(el._timer); el.classList.remove('show'); setTimeout(() => el.remove(), 280); if(opts.inbox){ try { pushLocalNotice(opts.inbox, text, kind, opts); } catch(e){} } };
     if(opts.action && opts.action.label){
       const btn = document.createElement('button');
       btn.className = 'toast2-action';
@@ -28745,20 +28648,49 @@ function toast(text, kind='', opts={}){
       btn.addEventListener('click', (e) => { e.stopPropagation(); try { opts.action.onClick && opts.action.onClick(); } catch(err){} close(); });
       el.appendChild(btn);
     }
-    c.appendChild(el);
+    // CRITICAL toasts jump to the front (top of the stack, seen first).
+    if(prio === 'critical' && c.firstChild) c.insertBefore(el, c.firstChild); else c.appendChild(el);
     requestAnimationFrame(() => el.classList.add('show'));
-    const dur = opts.duration || (opts.action ? 6000 : 2800);
+    const dur = opts.duration || TOAST_DUR[prio] || (opts.action ? 6000 : 2800);
     el.style.setProperty('--toast-dur', dur + 'ms');
     el._timer = setTimeout(close, dur);
-    el.addEventListener('click', close);
-    // Cap the stack
-    while(c.children.length > 4){ c.firstChild.remove(); }
+    el.addEventListener('click', () => { if(el._swiping){ el._swiping = false; return; } close(); });
+    _attachToastGestures(el, close, dur);
+    // Cap the stack — but never evict a critical toast.
+    while(c.children.length > 4){ const first = c.firstChild; if(first.classList.contains('t-critical') && c.children.length <= 5) break; first.remove(); }
     _collapseToastStack(c);
   } catch(e){
-    // Fallback to the legacy single toast
     const t = $('#toast'); if(t){ t.textContent = text; t.className = 'toast ' + kind + ' show'; clearTimeout(t._timer); t._timer = setTimeout(() => t.classList.remove('show'), 2800); }
   }
 }
+// ===== SEMANTIC TOAST WRAPPERS — call sites read intention, not styling. Each
+// routes to its category design; any opt (icon/sub/action/avatar/thumb) still works.
+function toastReward(text, opts){ return toast(text, 'success', { category:'reward', ...opts }); }
+function toastMilestone(text, opts){ return toast(text, 'success', { category:'milestone', ...opts }); }
+function toastSocial(text, opts){ return toast(text, 'info', { category:'social', ...opts }); }
+function toastCosmetic(text, opts){ return toast(text, 'success', { category:'cosmetic', ...opts }); }
+function toastMatch(text, opts){ return toast(text, 'info', { category:'match', ...opts }); }
+function toastSystem(text, opts){ return toast(text, 'info', { category:'system', ...opts }); }
+function toastTip(text, opts){ return toast(text, 'info', { category:'tip', ...opts }); }
+function toastError(text, opts){ return toast(text, 'error', { category:'error', ...opts }); }
+function toastUndo(text, onUndo, opts){ return toast(text, 'info', { category:'undo', action:{ label:'Undo', onClick:onUndo }, ...opts }); }
+// ESCALATION LADDER — one router that picks the right surface for a message.
+// transient feedback → toast; important → high-priority toast; critical → a
+// front-jumping critical toast. (Blocking decisions still use a modal directly.)
+function notifyMsg(msg, opts = {}){
+  const sev = opts.severity || 'info';
+  const map = { info:['info','normal'], success:['success','normal'], warn:['info','high'], error:['error','high'], critical:['error','critical'] };
+  const [kind, prio] = map[sev] || map.info;
+  return toast(msg, kind, { ...opts, priority: opts.priority || prio });
+}
+// "DON'T SHOW AGAIN" — run a one-time popup/hint at most once per key (per uid).
+function showOnce(key, fn){
+  const k = 'rosham_once_' + key + '_' + (state.user?.uid || 'anon');
+  try { if(localStorage.getItem(k)) return false; localStorage.setItem(k, '1'); } catch(e){}
+  try { fn && fn(); } catch(e){}
+  return true;
+}
+function resetShowOnce(key){ try { localStorage.removeItem('rosham_once_' + key + '_' + (state.user?.uid || 'anon')); } catch(e){} }
 // When the stack piles up, older toasts compress so the newest stays readable.
 function _collapseToastStack(c){
   const kids = [...c.children];
@@ -30177,11 +30109,19 @@ function updateSidebarProfile(){
   { const rw = $('#sidebarRating')?.parentElement;
     if(rw){ rw.innerHTML = inPlacements(p) ? '<span class="sp-unranked">Unranked</span>' : `<span id="sidebarRating">${p.rating || 1000}</span> ELO`; } }
   const av = $('#sidebarAv');
+  const lvl = levelOf(p);
   if(av){
     if(p.photoURL){ av.style.backgroundImage = `url('${p.photoURL}')`; av.textContent = ''; }
     else { av.style.backgroundImage = 'none'; av.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; av.textContent = initialOf(p.username||'?'); }
+    // Level-progress ring: fraction into the current level, tinted to the level tier.
+    try {
+      const atMax = lvl.level >= MAX_LEVEL;
+      av.style.setProperty('--xpf', atMax ? 1 : Math.max(0, Math.min(1, lvl.progress || 0)));
+      av.style.setProperty('--xpc', (levelTier(lvl.level).a) || 'var(--mint)');
+      av.classList.toggle('xp-max', atMax);
+      av.title = atMax ? `Level ${lvl.level} · MAX` : `Level ${lvl.level} · ${Math.round((lvl.progress||0)*100)}% to ${lvl.level+1}`;
+    } catch(e){}
   }
-  const lvl = levelOf(p);
   setText('#sidebarLevel', lvl.level); paintLevelBadge('#sidebarLevel', lvl.level);
   let title = p.equippedTitle ? titleById(p.equippedTitle) : null;
   if(!title || lvl.level < title.level){ const u = titlesUnlockedAt(lvl.level); title = u[u.length-1] || TITLES[0]; }
@@ -30194,6 +30134,30 @@ function updatePrestigeIndicator(){
   const can = !!(state.profile && canPrestige(state.profile));
   const nb = $('#navPrestigeBadge'); if(nb) nb.style.display = can ? '' : 'none';
   const md = $('#mnavPrestigeDot'); if(md) md.style.display = can ? 'flex' : 'none';
+}
+// Live "in a match / searching" indicator on the Play nav entry, plus a matching
+// live dot on the mobile Play tab. Reflects real matchmaking/match state.
+function updateNavLive(){
+  try {
+    const inMatch = state.screen === 'game' || !!state.matchId;
+    // "searching" covers both the matching screen AND browsing-while-queued.
+    const searching = !inMatch && !!state._searchStartedAt;
+    const playItem = document.querySelector('.nav-item[data-nav="play"]');
+    const live = $('#navPlayLive');
+    if(playItem && live){
+      if(inMatch || searching){
+        live.style.display = '';
+        playItem.classList.toggle('nav-searching', searching);
+        const txt = live.querySelector('.nav-live-txt'); if(txt) txt.textContent = searching ? 'QUEUE' : 'LIVE';
+      } else {
+        live.style.display = 'none';
+        playItem.classList.remove('nav-searching');
+      }
+    }
+    // Mobile Play tab gets a small live dot too.
+    const mplay = document.querySelector('.mobile-nav-item[data-mnav="play"]');
+    if(mplay) mplay.classList.toggle('mni-live', inMatch || searching);
+  } catch(e){}
 }
 function refreshStatsUI(){
   if(!state.profile) return;
@@ -30840,12 +30804,30 @@ function renderNotifications(){
       </div>
     `;
     item.addEventListener('click', () => {
+      n.read = true;
+      if(n.actionPage){ try { closeAllFlyouts(); } catch(e){} try { showNavPage(n.actionPage); } catch(e){} return; }
       if(n.type === 'gift'){ openPendingGift(); return; }
       if(n.actionUid && n.type !== 'message') openProfile(n.actionUid);
       else if(n.type === 'message' && n.actionUid) openChatThread(n.actionUid, n.actionName);
     });
     list.appendChild(item);
   });
+}
+// TOAST → INBOX SPILLOVER — an important toast that auto-dismisses also lands in
+// the notifications bell for this session, so nothing valuable is ever missed.
+function pushLocalNotice(inbox, text, kind, opts){
+  try {
+    if(!Array.isArray(state._notifications)) state._notifications = [];
+    if(state._notifications.some(n => n.local && n.text === text)) return;   // no dup
+    state._notifications.unshift({
+      id: 'local_' + Date.now(), local: true, read: false,
+      type: (inbox && inbox.type) || 'bell', text,
+      actionPage: (inbox && inbox.page) || null,
+      createdAt: { toMillis: () => Date.now() },
+    });
+    if(state._notifications.length > 40) state._notifications.length = 40;
+    renderNotifications();
+  } catch(e){}
 }
 // Tapping a gift notification opens your newest unopened gift.
 async function openPendingGift(){
@@ -32461,13 +32443,15 @@ async function grantXp(amount, reason, opts={}){
   const oldL = levelFromXp(before - base), newL = levelFromXp(after - base);
   state.profile.totalXp = after;
   try { await updateDoc(doc(state.db, 'users', state.user.uid), { totalXp: increment(amount) }); } catch(e){ console.warn('[xp] grant', e); }
-  if(!opts.silent){ try { toast(`+${amount} XP · ${reason}`, 'success'); } catch(e){} }
+  if(!opts.silent){ try { toast(`+${amount} XP`, 'success', { icon:'✨', priority:'low', group:'xp', groupInc:amount, groupFmt:(n)=>`+${n.toLocaleString()} XP`, sub:reason }); } catch(e){} }
   if(newL.level > oldL.level){
     let newTitles = [];
     try { const had = titlesUnlockedAt(oldL.level).map(t => t.id); newTitles = titlesUnlockedAt(newL.level).filter(t => !had.includes(t.id)); } catch(e){}
     try { showLevelUp({ from: oldL, to: newL, newTitles }); } catch(e){}
   }
-  try { renderHomePage(); } catch(e){}
+  // Refresh the lightweight profile chrome (sidebar level/ring, mnav avatar).
+  try { updateSidebarProfile(); } catch(e){}
+  try { paintMnavAvatar(); } catch(e){}
 }
 function updateWeeklyChallengeProgress(matchResult, roundDetails){
   if(state.isBotMatch) return;
@@ -33532,15 +33516,14 @@ function updateShopBadge(){
     const b = $('#navShopBadge');
     if(!b) return;
     const cases = totalCaseCount();
-    if(cases > 0){
-      b.textContent = `${cases} 📦`;
-      b.style.display = '';
-    } else if(!localStorage.getItem('rosham_shop_seen')){
-      b.textContent = 'NEW';
-      b.style.display = '';
-    } else {
-      b.style.display = 'none';
-    }
+    let show = true, txt = '';
+    if(cases > 0){ txt = `${cases} 📦`; }
+    else if(!localStorage.getItem('rosham_shop_seen')){ txt = 'NEW'; }
+    else { show = false; }
+    b.textContent = txt;
+    b.style.display = show ? '' : 'none';
+    // Mirror onto the mobile Shop tab as a small dot.
+    const m = $('#mnavShopBadge'); if(m) m.style.display = show ? 'flex' : 'none';
   } catch(e){}
 }
 // ── Locker "NEW items" badge — Fortnite-style unseen-cosmetics counter ──
@@ -35383,7 +35366,7 @@ function showGiftOverlay(gift){
     $('#giftEquipBtn').onclick = async () => {
       await equipCosmetic(item.type, item.id);
       close();
-      try { toast(`Equipped ${item.name}!`, 'success'); } catch(e){}
+      try { toastCosmetic(`Equipped ${item.name}`, { accent: CX_RARITY[item.rarity]?.color, sub: `${CX_RARITY[item.rarity]?.label} · ${CX_TYPE_LABEL[item.type]}`, thumbHTML: buildCosmeticPreview(item) }); } catch(e){}
     };
   };
 }
@@ -35529,6 +35512,12 @@ async function renderRequests(){
   if(mnavBadge){
     if(visible.length > 0){ mnavBadge.textContent = visible.length; mnavBadge.style.display = 'flex'; }
     else { mnavBadge.style.display = 'none'; }
+  }
+  // Desktop sidebar friends badge
+  const navFB = $('#navFriendsBadge');
+  if(navFB){
+    if(visible.length > 0){ navFB.textContent = visible.length; navFB.style.display = ''; }
+    else { navFB.style.display = 'none'; }
   }
   setText('#friendReqCountPage', visible.length);
   const badge = $('#reqBadge');
@@ -38406,12 +38395,14 @@ function cancelMatchmakingResources(){
     state._safetyCleanups.forEach(t => clearTimeout(t));
     state._safetyCleanups = [];
   }
+  try { updateNavLive(); } catch(e){}
 }
 
 // ===== QUEUE WHILE BROWSING — the search keeps running behind a floating pill =====
 function showQueuePill(){
   const p = $('#queuePill'); if(!p) return;
   p.style.display = '';
+  try { updateNavLive(); } catch(e){}
   clearInterval(state._qpTimer);
   const tick = () => {
     if(!state._searchStartedAt){ hideQueuePill(); return; }
@@ -38430,6 +38421,7 @@ function showQueuePill(){
 function hideQueuePill(){
   clearInterval(state._qpTimer); state._qpTimer = null;
   const p = $('#queuePill'); if(p) p.style.display = 'none';
+  try { updateNavLive(); } catch(e){}
 }
 on('#mmBrowseBtn', 'click', () => {
   hapticTick();
@@ -41650,7 +41642,6 @@ function levelUpRewardPreview(curLevel){
     const nt = nextTitleAfterLevel(curLevel);
     if(!nt) return '';
     const away = nt.level - curLevel;
-    const rar = titleRarity(nt);
     return `<div class="lu-next-reward">
       <span class="lunr-label">NEXT REWARD</span>
       <span class="lunr-chip" style="--rc:${nt.color}">${escapeHTML(nt.name)}</span>
@@ -41658,40 +41649,113 @@ function levelUpRewardPreview(curLevel){
     </div>`;
   } catch(e){ return ''; }
 }
+// A level counts as a MILESTONE when it lands on a badge-tier boundary
+// (5,10,15,20,30,40,50,55) or a round tens level — those get the deluxe card.
+function isLevelMilestone(level){
+  try { return levelTier(level).min === level || level % 10 === 0 || level >= MAX_LEVEL; } catch(e){ return false; }
+}
+// ===== Level-up celebration — queued, one at a time, deferred during a match =====
+// showLevelUp enqueues; the queue drains one card at a time so back-to-back
+// level-ups don't slam the stack, and it never fires mid-match (deferred to the
+// menu so it can't interrupt play).
 function showLevelUp(info){
+  if(!info || info.to == null) return;
+  const lvl = info.to.level;
+  // Don't interrupt LIVE play — stash and flush when the player returns to a menu.
+  // The result overlay is a legit place for level-ups (flushMatchCelebrations runs
+  // there), so only defer while actually mid-match with no result overlay up.
+  const resultUp = !!document.querySelector('#matchResultOverlay.show');
+  if(state.screen === 'game' && !resultUp){
+    state._luDeferred = state._luDeferred || [];
+    if(!state._luDeferred.some(q => q.to?.level === lvl)) state._luDeferred.push(info);
+    return;
+  }
+  state._luQueue = state._luQueue || [];
+  if(lvl != null){
+    if(state._luQueue.some(q => q.to?.level === lvl)) return;   // already queued
+    try { const stk = getPopupStack(); if(stk && stk.querySelector(`.levelup-card[data-lu="${lvl}"]`)) return; } catch(e){}
+  }
+  state._luQueue.push(info);
+  _drainLuQueue();
+}
+// Move any level-ups deferred during a match into the live queue (call on menu entry).
+function flushDeferredLevelUps(){
+  const d = state._luDeferred || [];
+  state._luDeferred = [];
+  d.forEach(info => showLevelUp(info));
+}
+function _drainLuQueue(){
+  if(state._luActive) return;
+  const info = (state._luQueue || []).shift();
   if(!info) return;
+  state._luActive = true;
+  const done = () => { state._luActive = false; setTimeout(_drainLuQueue, 240); };
+  try { _renderLevelUpCard(info, done); } catch(e){ done(); }
+}
+function _renderLevelUpCard(info, onDone){
   const stack = getPopupStack();
-  if(!stack){ try { sfxLevelUp(); } catch(e){} return; }
-  // De-dupe: if a level-up card for this exact level is already on screen, don't
-  // stack a second identical one (guards against a double grantXp/reconcile).
-  try {
-    const lvl = info.to?.level;
-    if(lvl != null && stack.querySelector(`.levelup-card[data-lu="${lvl}"]`)) return;
-  } catch(e){}
-  const titlesHTML = (info.newTitles && info.newTitles.length)
-    ? `<div class="ach-unlock-desc">New title: ${info.newTitles.map(t => `<b style="color:${t.color || 'var(--mint)'}">${escapeHTML(t.name)}</b>`).join(', ')}</div>`
-    : '';
+  const to = info.to, from = info.from || to;
+  const hitCap = !!info.hitCap || to.level >= MAX_LEVEL;
+  const milestone = hitCap || isLevelMilestone(to.level);
+  if(!stack){ try { sfxLevelUp(); } catch(e){} onDone && onDone(); return; }
+  const tier = levelTier(to.level);
+  // "What you unlocked" chips — new titles + the free case granted every 7 levels.
+  const chips = [];
+  (info.newTitles || []).forEach(t => {
+    chips.push(`<span class="lu-unlock-chip" style="--uc:${t.color || '#5dffba'}"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg>${escapeHTML(t.name)}</span>`);
+  });
+  if(!hitCap && to.level % 7 === 0){
+    chips.push(`<span class="lu-unlock-chip" style="--uc:#ffd33d"><svg viewBox="0 0 24 24"><use href="#i-gem"/></svg>Free case</span>`);
+  }
+  const unlocksHTML = chips.length ? `<div class="lu-unlocks">${chips.join('')}</div>` : '';
+  // Progress context — how far into the next level this leaves you.
+  const progHTML = hitCap ? '' :
+    `<div class="lu-prog"><div class="lu-prog-fill"></div></div>
+     <div class="lu-prog-txt">${(to.xpInLevel||0).toLocaleString()} / ${(to.xpForThis||0).toLocaleString()} XP to Lv ${to.level + 1}</div>`;
   const card = document.createElement('div');
-  // Hitting the cap turns the card into a gold "Prestige available" prompt.
-  const hitCap = !!info.hitCap || info.to.level >= MAX_LEVEL;
-  card.className = 'ach-unlock-toast levelup-card' + (hitCap ? ' maxlevel-card' : '');
-  try { if(info.to?.level != null) card.dataset.lu = info.to.level; } catch(e){}
+  card.className = 'ach-unlock-toast levelup-card lu-v2' + (hitCap ? ' maxlevel-card' : '') + (milestone ? ' lu-milestone' : '');
+  try { card.dataset.lu = to.level; } catch(e){}
+  card.style.setProperty('--lu-accent', hitCap ? '#ffd33d' : tier.a);
+  const kicker = hitCap
+    ? `<div class="lu-kicker ach-unlock-kicker">★ Max level reached</div>`
+    : milestone
+      ? `<div class="lu-kicker ach-unlock-kicker">✦ Milestone reached</div>`
+      : `<div class="lu-kicker ach-unlock-kicker">▲ Level up</div>`;
   const body = hitCap
-    ? `<div class="ach-unlock-kicker lu-kicker" style="color:#ffd33d">★ Max level reached</div>
+    ? `${kicker}
        <div class="ach-unlock-title">Level ${MAX_LEVEL} · Prestige unlocked</div>
-       <div class="ach-unlock-desc">Open your profile to prestige &amp; earn a prestige title</div>`
-    : `<div class="ach-unlock-kicker lu-kicker">▲ Level up</div>
-       <div class="ach-unlock-title">Level ${info.to.level}</div>
-       ${titlesHTML || `<div class="ach-unlock-desc">You reached level ${info.to.level}</div>`}
-       ${levelUpRewardPreview(info.to.level)}`;
+       <div class="ach-unlock-desc">Open your profile to prestige &amp; earn a prestige title</div>
+       ${unlocksHTML}`
+    : `${kicker}
+       <div class="ach-unlock-title">Level ${to.level}</div>
+       ${unlocksHTML || `<div class="ach-unlock-desc">You reached level ${to.level}</div>`}
+       ${progHTML}
+       ${levelUpRewardPreview(to.level)}`;
   card.innerHTML = `
-    <div class="lut-badge lu-card-badge">${info.to.level}</div>
+    <div class="lut-badge lu-card-badge"><span class="lu-badge-num">${from.level}</span></div>
     <div class="ach-unlock-body">${body}</div>`;
   stack.appendChild(card);
-  try { paintLevelBadge(card.querySelector('.lu-card-badge'), info.to.level); } catch(e){}
+  const numEl = card.querySelector('.lu-badge-num');
+  try { paintLevelBadge(card.querySelector('.lu-card-badge'), to.level); } catch(e){}
+  // Count the badge up from the old level to the new one.
+  try { if(numEl){ numEl._num = from.level; rollNumber(numEl, to.level, n => String(Math.round(n))); } } catch(e){}
+  // Fill the progress bar after paint.
+  const pct = hitCap ? 100 : Math.round((to.progress || 0) * 100);
+  try { requestAnimationFrame(() => { const f = card.querySelector('.lu-prog-fill'); if(f) f.style.width = pct + '%'; }); } catch(e){}
   try { sfxLevelUp(); } catch(e){}
-  try { haptic(18); } catch(e){}
-  setTimeout(() => { card.classList.add('out'); setTimeout(() => card.remove(), 450); }, hitCap ? 6000 : 4600);
+  try { haptic(milestone ? 30 : 18); } catch(e){}
+  const dur = hitCap ? 6000 : (milestone ? 5200 : 4400);
+  let closed = false;
+  const close = () => {
+    if(closed) return; closed = true;
+    clearTimeout(t);
+    card.classList.add('out');
+    setTimeout(() => { card.remove(); onDone && onDone(); }, 450);
+  };
+  // Tap-through / dismiss.
+  card.style.pointerEvents = 'auto';
+  card.addEventListener('click', close);
+  const t = setTimeout(close, dur);
 }
 
 // ============= PRESTIGE UP =============
@@ -42757,12 +42821,10 @@ function showNavPage(page){
     try { applyProgressiveDisclosure(); } catch(e){}
     // populate the page being shown
     try {
-      if(page === 'home'){ state._homeAnimated = false; renderHomePage(); }
-      else if(page === 'play') renderPlayPage();
+      if(page === 'play') renderPlayPage();
       else if(page === 'shop') renderShopPage();
       else if(page === 'rank') renderRankPage();
       else if(page === 'achievements') renderAchievementsPage();
-      else if(page === 'activity') renderActivityPage();
       else if(page === 'friends') renderFriendsPage();
       else if(page === 'chat') renderChatPage();
       else if(page === 'settings') renderSettingsPage();
@@ -42826,12 +42888,11 @@ function updateTopbarContext(page){
   }
 }
 // ===== NAV CUSTOMIZATION — pin / hide sidebar pages =====
-// Heavy users can hide pages they never open. Home, Play and Settings are
-// always pinned; everything hidden stays reachable via Settings + More sheet.
+// Heavy users can hide pages they never open. Play and Settings are always
+// pinned; everything hidden stays reachable via Settings + More sheet.
 const NAV_HIDEABLE = [
   { id:'shop',         label:'Shop' },
   { id:'locker',       label:'Locker' },
-  { id:'activity',     label:'Activity' },
   { id:'rank',         label:'Rank' },
   { id:'friends',      label:'Friends' },
   { id:'achievements', label:'Achievements' },
@@ -42969,84 +43030,30 @@ const HOME_TIPS = [
   'Challenge friends from their profile — casual matches never risk ELO.',
   'Hold your gesture steady through “SHOOT!” — flickering hands read late.',
 ];
-function renderHomePage(){
+// ===== DAILY HOUSEKEEPING =====
+// The Home page was removed; the once-per-entry side-effects it used to trigger
+// (daily login reward, update toast, XP boosters, season sync, challenge refresh)
+// now run here on every app entry, independent of any page render.
+function runDailyHousekeeping(){
   if(!state.profile) return;
-  // RE-ENTRANCY GUARD: renderHomePage calls claimDailyLoginReward() which can
-  // grantXp() → renderHomePage() again, synchronously, mid-render. That second
-  // pass rebuilt the content and REPLAYED every entrance animation — the "load
-  // animation happens twice" on first open. Bail on any nested/rapid re-entry.
-  if(state._homeRendering) return;
-  state._homeRendering = true;
-  try { _renderHomePageInner(); }
-  finally { state._homeRendering = false; }
+  // RE-ENTRANCY GUARD: claimDailyLoginReward → grantXp → (legacy) renderHomePage →
+  // back here. The localStorage day-key stops a real loop, but guard anyway.
+  if(state._housekeeping) return;
+  state._housekeeping = true;
+  try {
+    try { claimDailyLoginReward(); } catch(e){}
+    try { maybeShowUpdateToast(); } catch(e){}
+    try { renderXpBoostPanel(); updateBoostPill(); } catch(e){}
+    try { applySeasonSoftReset(); } catch(e){}
+    try { refreshSeasonUI(); } catch(e){}
+    try { refreshDailyChallenge(); } catch(e){}
+    try { refreshWeeklyChallenges(); } catch(e){}
+    try { paintMnavAvatar(); } catch(e){}
+  } finally { state._housekeeping = false; }
 }
-function _renderHomePageInner(){
-  // Entrance animations only fire on a FRESH home view (he-anim class, reset when
-  // home is shown). Data-refresh re-renders (grantXp, snapshots) don't replay them.
-  try {
-    const hp = document.querySelector('.nav-page[data-page="home"]');
-    if(hp){
-      if(!state._homeAnimated){
-        // Fresh view: enable the entrance animation for this one render.
-        hp.classList.add('he-anim'); state._homeAnimated = true;
-        clearTimeout(hp._heT); hp._heT = setTimeout(() => hp.classList.remove('he-anim'), 950);
-      } else {
-        // A data-refresh re-render: strip the flag so the load-in doesn't replay.
-        hp.classList.remove('he-anim'); clearTimeout(hp._heT);
-      }
-    }
-  } catch(e){}
-  try { claimDailyLoginReward(); } catch(e){}
-  try { maybeShowUpdateToast(); } catch(e){}
-  try {
-    const day = Math.floor(Date.now() / 86400000);
-    setText('#hxTipText', HOME_TIPS[day % HOME_TIPS.length]);
-    const tipEl = $('#hxTip'); if(tipEl) tipEl.style.display = '';
-  } catch(e){}
-  try { renderXpBoostPanel(); updateBoostPill(); } catch(e){}
-  try { applySeasonSoftReset(); } catch(e){}
-  try { refreshSeasonUI(); } catch(e){}
-  const p = state.profile;
-  // welcome banner
-  const av = $('#wbAv');
-  if(av){
-    if(p.photoURL){ av.style.backgroundImage = `url('${p.photoURL}')`; av.textContent=''; }
-    else { av.style.backgroundImage='none'; av.style.backgroundColor = AVATAR_COLORS[p.colorIdx||0]; av.textContent = initialOf(p.username||'?'); }
-  }
-  const hour = new Date().getHours();
-  const greet = hour < 5 ? 'Up late' : hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
-  setText('#wbHi', `${greet}, ${p.username || 'player'}`);
-  const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
-  setText('#wbSub', smartGreetingSub(p));
-  // Theme the living hero glow to the player's rank colour (returning players).
-  try {
-    const hero = $('.hx-hero');
-    if(hero){
-      const accent = (games > 0 && !inPlacements(p)) ? rankFromRating(p.rating||1000).color : 'var(--mint)';
-      hero.style.setProperty('--hx-accent', accent);
-    }
-  } catch(e){}
-  const loginStreak = getLoginStreak();
-  setText('#wbStreakNum', loginStreak);
-  try { renderHomeCommandCenter(); } catch(e){ console.warn('[home] command center', e); }
-  try { renderHomeGoals(); } catch(e){}
-  try { renderHomeToday(); } catch(e){}
-  try { refreshDailyChallenge(); } catch(e){}
-  try { refreshWeeklyChallenges(); } catch(e){}
-  try { paintMnavAvatar(); } catch(e){}
-  try { renderHomeSpotlight(p); } catch(e){ console.warn('[home] spotlight', e); }
-  // world strip
-  const rating = p.rating || 1000;
-  const gr = computeGlobalRank(rating);
-  setText('#wsRank', gr.rank ? '#' + gr.rank : '#—');
-  setText('#wsStreak', p.currentStreak || 0);
-  // online + matches filled by watchGlobalStats into #onlineCount/#matchCount; mirror them
-  setText('#wsOnline', $('#onlineCount')?.textContent || '—');
-  setText('#wsMatches', $('#matchCount')?.textContent || '—');
-  // Mirror the live worldwide counts into the new home "about" strip.
-  setText('#homeLiveOnline', $('#onlineCount')?.textContent || '—');
-  setText('#homeLiveMatches', $('#matchCount')?.textContent || '—');
-}
+// Back-compat alias — many callers still invoke renderHomePage() after XP grants
+// and snapshots; route them to the housekeeping pass (there is no Home DOM now).
+function renderHomePage(){ try { runDailyHousekeeping(); } catch(e){} }
 
 // Keep the challenge reset countdowns ticking (once a minute, only the labels).
 setInterval(() => {
@@ -44491,6 +44498,8 @@ function showLoginReward(reward, amount, streak, dayInWeek, comebackBonus){
     if(comebackBonus > 0){ cb.style.display = ''; cb.innerHTML = `👋 Welcome back! <b>+${comebackBonus} XP</b> comeback bonus`; }
     else cb.style.display = 'none';
   }
+  // Daily case shard now lives in this popup — auto-collect + reveal it.
+  try { renderLoginRewardShards(); } catch(e){}
   const m = $('#loginRewardModal');
   if(m) m.classList.add('show');
 }
@@ -44757,31 +44766,57 @@ function shardClaimableToday(){
   const t = (typeof getTodayKey === 'function') ? getTodayKey() : new Date().toDateString();
   return getShardState().last !== t;
 }
-async function claimDailyShard(btn){
-  if(!shardClaimableToday() || isGuest()) return;
+// Collect today's shard (idempotent per day). Returns render info for the popup.
+// The daily-reward popup is now the single daily entry point, so shards are
+// auto-collected there instead of via a manual button on the (removed) home page.
+async function awardDailyShard(){
+  if(isGuest() || !shardClaimableToday()) return { changed: false };
   const t = (typeof getTodayKey === 'function') ? getTodayKey() : new Date().toDateString();
   const st = getShardState();
-  st.count = Math.min(7, (st.count || 0) + 1);
-  st.last = t;
+  const oldCount = st.count || 0;
+  const newCount = Math.min(7, oldCount + 1);
+  st.count = newCount; st.last = t;
   try { localStorage.setItem(_shardKey(), JSON.stringify(st)); } catch(e){}
-  hapticSuccess();
-  if(st.count >= 7){
+  try { hapticSuccess(); } catch(e){}
+  const completed = newCount >= 7;
+  if(completed){
     st.count = 0;
     try { localStorage.setItem(_shardKey(), JSON.stringify(st)); } catch(e){}
     try { await grantCase('case_roshcam', 1, 'Seven daily shards'); } catch(e){}
-    try { bigBurst('#a48bff', 80); } catch(e){}
-    toast('🧩 Seventh shard! A ROSHCAM CASE is yours — open it in the shop.', 'success', {
+    toast('🧩 Seventh shard! A free ROSHCAM CASE is yours — open it in the shop.', 'success', {
       duration: 8000, action: { label: 'Open shop', onClick: () => showNavPage('shop') },
     });
-  } else {
-    toast(`🧩 Shard claimed — ${st.count}/7 toward your free case`, 'success');
   }
-  try { renderHomeToday(); } catch(e){}
+  return { changed: true, displayCount: completed ? 7 : newCount, completed, litIndex: oldCount };
 }
-on('#homeToday', 'click', (e) => {
-  const b = e.target.closest('[data-claim-shard]');
-  if(b){ e.stopPropagation(); b.disabled = true; claimDailyShard(b); }
-});
+// Render (and auto-collect) the case-shard row inside the daily-reward popup.
+async function renderLoginRewardShards(){
+  const wrap = $('#lrShards'); if(!wrap) return;
+  if(isGuest()){ wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  let res = { changed: false };
+  try { res = await awardDailyShard(); } catch(e){}
+  const st = getShardState();
+  const shown = res.changed ? res.displayCount : (st.count || 0);
+  const completed = !!res.completed;
+  wrap.classList.toggle('shard-complete', completed || shown >= 7);
+  setText('#lrShardCount', `${completed ? 7 : shown}/7`);
+  const sub = $('#lrShardSub');
+  if(sub){
+    sub.textContent = completed ? 'Seven shards! A free ROSHCAM case landed in your shop.'
+      : res.changed ? `+1 today — ${shown} of 7 toward a free ROSHCAM case`
+      : shardClaimableToday() ? 'Collect one every day — seven earns a free ROSHCAM case'
+      : `Collected today — ${shown} of 7 · come back tomorrow`;
+  }
+  const orbs = $('#lrShardOrbs');
+  if(orbs){
+    orbs.innerHTML = Array.from({ length: 7 }, (_, i) => {
+      const lit = i < shown;
+      const just = res.changed && i === res.litIndex;
+      return `<span class="dr2-shard-orb${lit ? ' lit' : ''}${just ? ' just-lit' : ''}" style="animation-delay:${just ? '.15s' : '0s'}"></span>`;
+    }).join('');
+  }
+}
 function renderHomeToday(){
   const host = $('#homeToday'); if(!host || !state.profile) return;
   let daily = '';
@@ -45830,11 +45865,9 @@ on('#moreSheet', 'click', (e) => {
     switch(act){
       case 'profile': if(state.user) openProfile(state.user.uid); break;
       case 'edit': openEditProfile(); break;
-      case 'home': showNavPage('home'); break;
       case 'play': showNavPage('play'); break;
       case 'rank': showNavPage('rank'); break;
       case 'friends': showNavPage('friends'); break;
-      case 'activity': showNavPage('activity'); break;
       case 'shop': showNavPage('shop'); break;
       case 'locker': showNavPage('locker'); break;
       case 'chat': closeAllFlyouts(); $('#chatPanel')?.classList.add('show'); renderChatConvList(); break;
@@ -47661,7 +47694,7 @@ function icoSprite(id){ return '<svg viewBox="0 0 24 24"><use href="#'+id+'"/></
 function icoPhone(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6.5" y="2" width="11" height="20" rx="2.6"/><line x1="10.4" y1="18.4" x2="13.6" y2="18.4"/></svg>'; }
 async function cameraPermissionState(){ try { if(navigator.permissions && navigator.permissions.query){ const r = await navigator.permissions.query({ name: 'camera' }); return r.state; } } catch(e){} return 'unknown'; }
 function scrollChatBottom(sel){ try { const el = document.querySelector(sel); if(el) el.scrollTop = el.scrollHeight; } catch(e){} }
-function currentNavPage(){ const el = document.querySelector('.nav-page.active'); return (el && el.dataset.page) ? el.dataset.page : 'home'; }
+function currentNavPage(){ const el = document.querySelector('.nav-page.active'); return (el && el.dataset.page) ? el.dataset.page : 'play'; }
 
 /* ---- Generic on-brand bottom sheet (promise-resolving) ---- */
 function buildSheet(opts){
@@ -47980,13 +48013,13 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
    fixed overlay alongside it, releasing into the next/previous tab. Rubber-bands
    at the ends; falls back to a plain slide in reduced-motion / low-power. */
 (function(){
-  const ORDER = ['home', 'rank', 'play', 'friends'];
+  const ORDER = ['shop', 'rank', 'play', 'friends'];
   const SKIP = 'input,textarea,button,a,.duel-video,.lp-stage,.ladder,.lb-table,.h-scroll,.scroll-x,.chips,.seg,.volume-slider,.swiper,[data-no-swipe]';
   const host = document.querySelector('.screens') || document.body;
   const blocked = () => document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
   function renderFor(p){
     try { const y = window.scrollY;
-      if(p === 'home') renderHomePage(); else if(p === 'rank') renderRankPage();
+      if(p === 'shop') renderShopPage(); else if(p === 'rank') renderRankPage();
       else if(p === 'play') renderPlayPage(); else if(p === 'friends') renderFriendsPage();
       window.scrollTo(0, y);
     } catch(e){}
@@ -48098,9 +48131,9 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
 (function(){
   if(!(window.matchMedia && window.matchMedia('(hover: none) and (pointer: coarse)').matches)) return;
   const REFRESH = {
-    activity: () => { try { renderActivityPage(); } catch(e){} },
     rank:     () => { try { renderRankPage(); } catch(e){} },
     friends:  () => { try { renderFriendsPage(); } catch(e){} },
+    shop:     () => { try { renderShopPage(); } catch(e){} },
   };
   const THRESHOLD = 74;
   let el = null, sy = 0, pulling = false, armed = false, busy = false;
@@ -48245,8 +48278,17 @@ function requestModalClose(m){
   });
   // --- scroll-lock + focus hand-off, driven by class mutations ---
   const sync = () => {
-    const anyOpen = !!document.querySelector('.modal-bg.show, .more-sheet.show');
-    document.body.classList.toggle('modal-open', anyOpen);
+    const open = [...document.querySelectorAll('.modal-bg.show')];
+    document.body.classList.toggle('modal-open', open.length > 0 || !!document.querySelector('.more-sheet.show'));
+    // Stacked-modal depth — the modal(s) beneath the top-most recede. IMPORTANT:
+    // toggle the class on the DIALOG CHILD, never on the .modal-bg itself — this
+    // observer watches .modal-bg class changes, so mutating it here would feed
+    // back into the observer and hang the page (that was the popup-freeze bug).
+    const top = open.length > 1 ? topOpenModal() : null;
+    open.forEach(m => {
+      const dlg = m.firstElementChild;
+      if(dlg && dlg.classList) dlg.classList.toggle('modal-recede', open.length > 1 && m !== top);
+    });
   };
   const obs = new MutationObserver((muts) => {
     sync();
@@ -48402,7 +48444,7 @@ function requestModalClose(m){
 (function(){
   let go = null;
   try { go = new URLSearchParams(location.search).get('go'); } catch(e){}
-  if(!go || !['home', 'rank', 'play', 'friends'].includes(go)) return;
+  if(!go || !['shop', 'rank', 'play', 'friends'].includes(go)) return;
   let tries = 0;
   const t = setInterval(() => {
     if(++tries > 40){ clearInterval(t); return; }
@@ -48474,7 +48516,7 @@ if(isCoarse() && isInAppBrowser()) setTimeout(showInAppBanner, 1600);
 // iOS has no native install prompt, so a one-time A2HS tip is genuinely useful.
 // Android keeps the quiet Settings › Install row (+ Chrome's own prompt) instead.
 if(isCoarse() && isIOS() && !isStandalone()){
-  setTimeout(() => { if(state.screen === 'landing' && currentNavPage() === 'home' && _noSheetOpen()) showInstallCoaching(); }, 20000);
+  setTimeout(() => { if(state.screen === 'landing' && currentNavPage() === 'play' && _noSheetOpen()) showInstallCoaching(); }, 20000);
   // iOS gets no beforeinstallprompt, so expose the Settings › Install row and let
   // it re-open the Add-to-Home-Screen steps on demand.
   const _ir = document.getElementById('setInstall');
