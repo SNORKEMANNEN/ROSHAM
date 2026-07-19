@@ -1075,8 +1075,13 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after{ animatio
 /* Low-power / reduced-motion → cosmetics are fully static everywhere (grids AND
    the equipped frame/avatar effects that render on the sidebar, match + result). */
 body.low-power :is(.cx-avfx, .cx-frame-overlay, .cx-frame-edge, .cx-frame-top, .cx-frame-corners,
-  .lk2-tile-shine, .st-sheen, .cx-prev-frame, .cx-name, .cx-tag) ,
-body.low-power [class*="cxf-"], body.low-power [class*="cxf-"] *{ animation:none !important; }
+  .lk2-tile-shine, .st-sheen, .cx-prev-frame, .cx-name, .cx-tag):not(.sbmp-card *) ,
+body.low-power [class*="cxf-"]:not(.sbmp-card):not(.sbmp-card *),
+body.low-power [class*="cxf-"] *:not(.sbmp-card *){ animation:none !important; }
+/* The focused cosmetic preview is a SINGLE card the user is actively studying to
+   decide a purchase — it must render the item at full fidelity even in low-power
+   (the many grid tiles + equipped effects across the app stay optimised; this one
+   card is cheap). The :not(.sbmp-card *) guards above keep its animations alive. */
 /* ═══════════ GLOBAL LOW-POWER BLANKET — the single biggest fps levers, applied
    app-wide instead of one selector at a time. On a struggling device these three
    rules do more than the whole per-component list below:
@@ -1771,6 +1776,24 @@ button.p3s-chip:hover{ color:var(--text); border-color:var(--line-bright, #3a385
 .p3s-next{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-top:7px; }
 .p3s-track{ justify-content:center; margin-top:6px; }
 .p3s-rank .phr-nudge{ align-self:center; margin:8px auto 0; }
+/* YOUR LEVEL card — a big tier-coloured hex crest with the level number */
+.p3s-level{ text-align:center; }
+.p3l-prestige{ background:linear-gradient(135deg, var(--lvl-a,#ffd33d), var(--lvl-b,#ff9a3d)); color:#1c1402; border:none; font-weight:900; }
+.p3l-crest{ position:relative; width:100px; height:108px; margin:4px auto 10px; display:grid; place-items:center; }
+.p3l-crest-glow{ position:absolute; inset:-14%; border-radius:50%; background:var(--lvl-glow,#ffd33d); opacity:.42; filter:blur(16px); z-index:0; pointer-events:none;
+  animation:p3lGlowPulse 4.5s ease-in-out infinite; }
+@keyframes p3lGlowPulse{ 0%,100%{ opacity:.32; } 50%{ opacity:.5; } }
+.p3l-hexwrap{ position:absolute; inset:0; display:grid; place-items:center; z-index:1; animation:rk2Float 5s ease-in-out infinite; }
+.p3l-hex, .p3l-hex-in{ position:absolute; clip-path:polygon(50% 1%, 95% 26%, 95% 74%, 50% 99%, 5% 74%, 5% 26%); }
+.p3l-hex{ inset:0; background:linear-gradient(180deg, rgba(255,255,255,.55), rgba(0,0,0,.35)); }
+.p3l-hex-in{ inset:5px; background:var(--lvl-grad, linear-gradient(135deg,#9aa0aa,#7f868f));
+  box-shadow:inset 0 3px 9px rgba(255,255,255,.45), inset 0 -9px 18px rgba(0,0,0,.4); }
+.p3l-num{ position:relative; z-index:2; font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:42px; line-height:1;
+  color:var(--lvl-text,#0a0a0f); text-shadow:0 2px 3px rgba(0,0,0,.28); }
+.p3l-xprow{ font-family:var(--font-mono); font-size:12px; font-weight:800; color:var(--text); letter-spacing:.03em; margin:8px 0 8px; font-variant-numeric:tabular-nums; }
+.p3l-xprow b{ color:var(--lvl-b,#ffd33d); } .p3l-xpsep{ color:var(--text-faint); margin:0 2px; }
+.p3l-bar{ height:7px; }
+body.reduced-motion :is(.p3l-hexwrap, .p3l-crest-glow), body.low-power :is(.p3l-hexwrap, .p3l-crest-glow){ animation:none !important; }
 /* XP BOOSTS — compact vertical variant of the boost panel */
 .p3s-boosts .xpb2{ display:flex; flex-direction:column; align-items:stretch; gap:10px; padding:0; }
 .p3s-boosts .xpb2-emblem{ display:none; }
@@ -13629,6 +13652,45 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
 .is-guest-locked input:disabled, .is-guest-locked textarea:disabled, .is-guest-locked select:disabled{ cursor:not-allowed; }
 @media (max-width:480px){ .guest-note{ flex-wrap:wrap; } .guest-note-btn{ width:100%; } }
 
+/* ═══════════ GUEST SYSTEM v2 — upgrade modal · progress strip ═══════════ */
+.gu-modal{ max-width:440px; text-align:center; padding:24px 22px 20px; }
+.gu-hero{ margin-bottom:16px; }
+.gu-eyebrow{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.16em; color:var(--violet); }
+.gu-eyebrow svg{ fill:currentColor; }
+.gu-title{ font-family:var(--font-display); font-stretch:66%; font-weight:900; font-size:26px; line-height:1.05; margin:8px 0 7px; }
+.gu-sub{ font-size:13px; line-height:1.5; color:var(--text-dim); margin:0; }
+.gu-carry{ display:grid; grid-template-columns:repeat(3,1fr); gap:9px; margin-bottom:12px; }
+.gu-carry-item{ display:flex; flex-direction:column; align-items:center; gap:2px; padding:11px 6px; border-radius:13px;
+  background:rgba(255,255,255,.04); border:1px solid var(--line); }
+.gu-carry-ic{ font-size:17px; }
+.gu-carry-item b{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:18px; font-variant-numeric:tabular-nums; }
+.gu-carry-item small{ font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:.1em; color:var(--text-faint); text-transform:uppercase; }
+.gu-bonus{ display:flex; align-items:center; justify-content:center; gap:8px; margin-bottom:14px; padding:9px 12px; border-radius:12px;
+  background:linear-gradient(135deg, rgba(255,211,61,.14), rgba(255,154,61,.08)); border:1px solid rgba(255,211,61,.4);
+  font-size:12.5px; color:#ffe1a0; }
+.gu-bonus b{ color:#ffd45e; }
+.gu-form{ text-align:left; gap:11px; }
+.gu-form .field label{ font-family:var(--font-mono); font-size:9.5px; font-weight:800; letter-spacing:.1em; color:var(--text-faint); text-transform:uppercase; }
+.gu-submit{ width:100%; min-height:46px; margin-top:4px; font-weight:800; }
+.gu-or{ display:flex; align-items:center; gap:10px; margin:14px 0 12px; color:var(--text-faint); font-family:var(--font-mono); font-size:10px; letter-spacing:.1em; }
+.gu-or::before, .gu-or::after{ content:''; flex:1; height:1px; background:var(--line); }
+.gu-google{ width:100%; min-height:46px; justify-content:center; gap:9px; }
+.gu-fineprint{ font-size:10.5px; color:var(--text-faint); margin:12px 0 0; }
+#guAvail{ min-height:0; }
+/* the play-page guest progress strip */
+.guest-strip{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:0 0 16px; padding:11px 15px; border-radius:15px;
+  background:linear-gradient(135deg, rgba(176,140,255,.16), rgba(34,211,163,.08)); border:1px solid color-mix(in srgb, var(--violet) 40%, transparent); }
+.guest-strip .gs-left{ display:flex; align-items:center; gap:11px; min-width:0; }
+.guest-strip .gs-badge{ flex:0 0 auto; font-family:var(--font-mono); font-size:9.5px; font-weight:900; letter-spacing:.14em; color:#fff;
+  padding:4px 9px; border-radius:999px; background:linear-gradient(135deg, var(--violet), #7a5fdc); }
+.guest-strip .gs-stats{ font-size:12.5px; color:var(--text-dim); letter-spacing:.01em; }
+.guest-strip .gs-stats b{ color:var(--text); font-variant-numeric:tabular-nums; }
+.guest-strip .gs-cta{ flex:0 0 auto; padding:8px 15px; border-radius:11px; cursor:pointer; border:none; white-space:nowrap;
+  font-family:var(--font-display); font-stretch:82%; font-weight:800; font-size:12.5px; letter-spacing:.01em; color:#fff;
+  background:linear-gradient(135deg, var(--violet), #7a5fdc); box-shadow:0 8px 22px -10px rgba(124,77,255,.8); transition:transform .14s, box-shadow .2s; }
+.guest-strip .gs-cta:hover{ transform:translateY(-1px); box-shadow:0 12px 28px -10px rgba(124,77,255,.95); }
+@media (max-width:560px){ .guest-strip .gs-cta{ width:100%; } }
+
 /* Photo upload + cropper */
 .photo-section{display:flex; flex-direction:column; gap:12px;}
 .photo-preview{
@@ -19204,6 +19266,17 @@ body.reduced-motion .mrr, body.low-power .mrr{ opacity:.08; }
 .lk2-preset-apply:hover{ background:rgba(34,211,163,.1); border-color:rgba(34,211,163,.4); transform:translateX(2px); }
 .lk2-preset-name{ font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:13.5px; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
 .lk2-preset-sub{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.05em; color:var(--text-faint); }
+.lk2-preset-apply.editing{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; padding:7px 10px; border-radius:10px;
+  background:rgba(34,211,163,.08); border:1px solid rgba(34,211,163,.45); }
+.lk2-preset-name-input{ width:100%; background:transparent; border:none; outline:none; color:var(--text);
+  font-family:var(--font-display); font-stretch:78%; font-weight:800; font-size:14px; letter-spacing:.01em; padding:0; }
+.lk2-preset-name-input::placeholder{ color:var(--text-faint); font-weight:700; }
+.lk2-preset-edit{
+  flex:0 0 auto; width:34px; display:grid; place-items:center; border-radius:10px; font-size:14px; line-height:1;
+  background:rgba(255,255,255,.04); border:1px solid var(--line); color:var(--text-dim); cursor:pointer; transition:background .18s, border-color .18s, color .18s;
+}
+.lk2-preset-edit:hover{ background:rgba(34,211,163,.12); border-color:rgba(34,211,163,.4); color:#5dffba; }
+.lk2-preset-row.editing .lk2-preset-edit{ background:rgba(34,211,163,.16); border-color:rgba(34,211,163,.5); color:#5dffba; }
 .lk2-preset-del{
   flex:0 0 auto; width:38px; display:grid; place-items:center; border-radius:10px;
   background:rgba(255,90,120,.08); border:1px solid rgba(255,90,120,.3); color:#ff8095; cursor:pointer; transition:background .18s;
@@ -20497,7 +20570,7 @@ body.reduced-motion .eps-pane-title::after{ animation:none; transform:scaleX(1);
 
 /* ---------- UPGRADED COSMETIC EFFECTS ---------- */
 /* Nebula frame v2 — layered gas clouds that slowly drift + breathe */
-.profile-modal.cxf-galaxy, .cx-prev-frame.cxf-galaxy, .locker-look.cxf-galaxy, .sbm-profile-prev.cxf-galaxy, .mfc.cxf-galaxy{
+.profile-modal.cxf-galaxy, .cx-prev-frame.cxf-galaxy, .locker-look.cxf-galaxy, .sbm-profile-prev.cxf-galaxy, .mfc.cxf-galaxy, .sbmp-card.cxf-galaxy{
   background:
     radial-gradient(1.5px 1.5px at 12% 18%, rgba(255,255,255,.85) 45%, transparent 55%),
     radial-gradient(2px 2px at 78% 9%, rgba(255,255,255,.7) 45%, transparent 55%),
@@ -21357,7 +21430,7 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
 /* NORTHERN LIGHTS over the ENTIRE profile: two aurora curtains flow (opposite
    directions, seamless) across the whole card, over a static starfield, ambient
    glow pools and deep space — all screen-blended so they glow. */
-.profile-modal.cxf-aurora, .cx-prev-frame.cxf-aurora, .locker-look.cxf-aurora, .sbm-profile-prev.cxf-aurora, .mfc.cxf-aurora{
+.profile-modal.cxf-aurora, .cx-prev-frame.cxf-aurora, .locker-look.cxf-aurora, .sbm-profile-prev.cxf-aurora, .mfc.cxf-aurora, .sbmp-card.cxf-aurora{
   background:
     /* flowing aurora curtains */
     linear-gradient(96deg, transparent 3%, rgba(60,240,190,.5) 11%, transparent 21%, transparent 39%, rgba(130,240,205,.4) 47%, transparent 57%, transparent 71%, rgba(60,240,190,.46) 79%, transparent 89%),
@@ -21392,7 +21465,7 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
   background:linear-gradient(115deg, rgba(95,201,255,.14), rgba(94,255,186,.1) 30%, rgba(255,214,110,.1) 52%, rgba(255,94,140,.12) 74%, rgba(95,201,255,.14));
   background-size:220% 100%; animation:cxSweep 4s linear infinite; mix-blend-mode:screen;
 }
-.profile-modal.cxf-hologram, .cx-prev-frame.cxf-hologram, .locker-look.cxf-hologram, .sbm-profile-prev.cxf-hologram, .mfc.cxf-hologram{
+.profile-modal.cxf-hologram, .cx-prev-frame.cxf-hologram, .locker-look.cxf-hologram, .sbm-profile-prev.cxf-hologram, .mfc.cxf-hologram, .sbmp-card.cxf-hologram{
   background:
     /* chromatic ridge striping — three fold systems, rainbow topography */
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 280'%3E%3Cg transform='translate(220,70) rotate(-16)' fill='none' stroke-linecap='round'%3E%3Cpath d='M-360,-43.4 L-342,-33.4 L-324,-22.6 L-306,-12.4 L-288,-4.1 L-270,1.1 L-252,2.7 L-234,0.3 L-216,-5.6 L-198,-14.4 L-180,-24.8 L-162,-35.6 L-144,-45.3 L-126,-52.6 L-108,-56.7 L-90,-56.9 L-72,-53.3 L-54,-46.3 L-36,-36.9 L-18,-26.2 L0,-15.6 L18,-6.6 L36,-0.2 L54,2.6 L72,1.5 L90,-3.3 L108,-11.2 L126,-21.2 L144,-32.0 L162,-42.2 L180,-50.5 L198,-55.7 L216,-57.3 L234,-54.9 L252,-49.0 L270,-40.2 L288,-29.8 L306,-19.0 L324,-9.3 L342,-2.0 L360,2.1' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-43.4 L-342,-33.4 L-324,-22.6 L-306,-12.4 L-288,-4.1 L-270,1.1 L-252,2.7 L-234,0.3 L-216,-5.6 L-198,-14.4 L-180,-24.8 L-162,-35.6 L-144,-45.3 L-126,-52.6 L-108,-56.7 L-90,-56.9 L-72,-53.3 L-54,-46.3 L-36,-36.9 L-18,-26.2 L0,-15.6 L18,-6.6 L36,-0.2 L54,2.6 L72,1.5 L90,-3.3 L108,-11.2 L126,-21.2 L144,-32.0 L162,-42.2 L180,-50.5 L198,-55.7 L216,-57.3 L234,-54.9 L252,-49.0 L270,-40.2 L288,-29.8 L306,-19.0 L324,-9.3 L342,-2.0 L360,2.1' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-37.7 L-342,-27.4 L-324,-16.6 L-306,-6.6 L-288,1.2 L-270,5.9 L-252,6.8 L-234,3.8 L-216,-2.7 L-198,-11.8 L-180,-22.4 L-162,-33.1 L-144,-42.5 L-126,-49.3 L-108,-52.8 L-90,-52.4 L-72,-48.2 L-54,-40.7 L-36,-31.0 L-18,-20.2 L0,-9.8 L18,-1.1 L36,4.7 L54,6.9 L72,5.2 L90,-0.2 L108,-8.5 L126,-18.8 L144,-29.6 L162,-39.6 L180,-47.4 L198,-52.1 L216,-53.0 L234,-50.0 L252,-43.5 L270,-34.4 L288,-23.8 L306,-13.1 L324,-3.7 L342,3.1 L360,6.6' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-37.7 L-342,-27.4 L-324,-16.6 L-306,-6.6 L-288,1.2 L-270,5.9 L-252,6.8 L-234,3.8 L-216,-2.7 L-198,-11.8 L-180,-22.4 L-162,-33.1 L-144,-42.5 L-126,-49.3 L-108,-52.8 L-90,-52.4 L-72,-48.2 L-54,-40.7 L-36,-31.0 L-18,-20.2 L0,-9.8 L18,-1.1 L36,4.7 L54,6.9 L72,5.2 L90,-0.2 L108,-8.5 L126,-18.8 L144,-29.6 L162,-39.6 L180,-47.4 L198,-52.1 L216,-53.0 L234,-50.0 L252,-43.5 L270,-34.4 L288,-23.8 L306,-13.1 L324,-3.7 L342,3.1 L360,6.6' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-31.9 L-342,-21.4 L-324,-10.7 L-306,-1.0 L-288,6.4 L-270,10.5 L-252,10.7 L-234,7.1 L-216,0.2 L-198,-9.3 L-180,-20.0 L-162,-30.6 L-144,-39.6 L-126,-46.0 L-108,-48.8 L-90,-47.7 L-72,-42.9 L-54,-35.0 L-36,-25.0 L-18,-14.2 L0,-4.0 L18,4.3 L36,9.5 L54,11.1 L72,8.7 L90,2.8 L108,-5.9 L126,-16.4 L144,-27.1 L162,-36.8 L180,-44.2 L198,-48.3 L216,-48.5 L234,-44.9 L252,-38.0 L270,-28.5 L288,-17.8 L306,-7.2 L324,1.8 L342,8.2 L360,11.0' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-31.9 L-342,-21.4 L-324,-10.7 L-306,-1.0 L-288,6.4 L-270,10.5 L-252,10.7 L-234,7.1 L-216,0.2 L-198,-9.3 L-180,-20.0 L-162,-30.6 L-144,-39.6 L-126,-46.0 L-108,-48.8 L-90,-47.7 L-72,-42.9 L-54,-35.0 L-36,-25.0 L-18,-14.2 L0,-4.0 L18,4.3 L36,9.5 L54,11.1 L72,8.7 L90,2.8 L108,-5.9 L126,-16.4 L144,-27.1 L162,-36.8 L180,-44.2 L198,-48.3 L216,-48.5 L234,-44.9 L252,-38.0 L270,-28.5 L288,-17.8 L306,-7.2 L324,1.8 L342,8.2 L360,11.0' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-26.0 L-342,-15.4 L-324,-4.7 L-306,4.6 L-288,11.5 L-270,15.0 L-252,14.6 L-234,10.4 L-216,2.9 L-198,-6.8 L-180,-17.6 L-162,-28.0 L-144,-36.7 L-126,-42.5 L-108,-44.7 L-90,-43.0 L-72,-37.6 L-54,-29.3 L-36,-19.0 L-18,-8.2 L0,1.7 L18,9.6 L36,14.2 L54,15.2 L72,12.2 L90,5.7 L108,-3.4 L126,-14.0 L144,-24.7 L162,-34.0 L180,-40.9 L198,-44.4 L216,-44.0 L234,-39.8 L252,-32.3 L270,-22.6 L288,-11.8 L306,-1.4 L324,7.3 L342,13.1 L360,15.3' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-26.0 L-342,-15.4 L-324,-4.7 L-306,4.6 L-288,11.5 L-270,15.0 L-252,14.6 L-234,10.4 L-216,2.9 L-198,-6.8 L-180,-17.6 L-162,-28.0 L-144,-36.7 L-126,-42.5 L-108,-44.7 L-90,-43.0 L-72,-37.6 L-54,-29.3 L-36,-19.0 L-18,-8.2 L0,1.7 L18,9.6 L36,14.2 L54,15.2 L72,12.2 L90,5.7 L108,-3.4 L126,-14.0 L144,-24.7 L162,-34.0 L180,-40.9 L198,-44.4 L216,-44.0 L234,-39.8 L252,-32.3 L270,-22.6 L288,-11.8 L306,-1.4 L324,7.3 L342,13.1 L360,15.3' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-20.1 L-342,-9.4 L-324,1.1 L-306,10.2 L-288,16.5 L-270,19.4 L-252,18.4 L-234,13.6 L-216,5.6 L-198,-4.4 L-180,-15.2 L-162,-25.4 L-144,-33.7 L-126,-38.9 L-108,-40.5 L-90,-38.2 L-72,-32.2 L-54,-23.5 L-36,-13.0 L-18,-2.3 L0,7.4 L18,14.8 L36,18.9 L54,19.1 L72,15.5 L90,8.6 L108,-0.9 L126,-11.6 L144,-22.1 L162,-31.2 L180,-37.5 L198,-40.4 L216,-39.4 L234,-34.6 L252,-26.6 L270,-16.6 L288,-5.8 L306,4.4 L324,12.7 L342,17.9 L360,19.5' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-20.1 L-342,-9.4 L-324,1.1 L-306,10.2 L-288,16.5 L-270,19.4 L-252,18.4 L-234,13.6 L-216,5.6 L-198,-4.4 L-180,-15.2 L-162,-25.4 L-144,-33.7 L-126,-38.9 L-108,-40.5 L-90,-38.2 L-72,-32.2 L-54,-23.5 L-36,-13.0 L-18,-2.3 L0,7.4 L18,14.8 L36,18.9 L54,19.1 L72,15.5 L90,8.6 L108,-0.9 L126,-11.6 L144,-22.1 L162,-31.2 L180,-37.5 L198,-40.4 L216,-39.4 L234,-34.6 L252,-26.6 L270,-16.6 L288,-5.8 L306,4.4 L324,12.7 L342,17.9 L360,19.5' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-14.2 L-342,-3.4 L-324,7.0 L-306,15.7 L-288,21.5 L-270,23.7 L-252,22.0 L-234,16.6 L-216,8.3 L-198,-1.9 L-180,-12.7 L-162,-22.7 L-144,-30.6 L-126,-35.2 L-108,-36.2 L-90,-33.2 L-72,-26.7 L-54,-17.6 L-36,-7.0 L-18,3.6 L0,13.0 L18,19.9 L36,23.4 L54,23.0 L72,18.8 L90,11.4 L108,1.6 L126,-9.2 L144,-19.6 L162,-28.3 L180,-34.1 L198,-36.3 L216,-34.6 L234,-29.2 L252,-20.9 L270,-10.7 L288,0.1 L306,10.1 L324,18.0 L342,22.6 L360,23.6' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-14.2 L-342,-3.4 L-324,7.0 L-306,15.7 L-288,21.5 L-270,23.7 L-252,22.0 L-234,16.6 L-216,8.3 L-198,-1.9 L-180,-12.7 L-162,-22.7 L-144,-30.6 L-126,-35.2 L-108,-36.2 L-90,-33.2 L-72,-26.7 L-54,-17.6 L-36,-7.0 L-18,3.6 L0,13.0 L18,19.9 L36,23.4 L54,23.0 L72,18.8 L90,11.4 L108,1.6 L126,-9.2 L144,-19.6 L162,-28.3 L180,-34.1 L198,-36.3 L216,-34.6 L234,-29.2 L252,-20.9 L270,-10.7 L288,0.1 L306,10.1 L324,18.0 L342,22.6 L360,23.6' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-8.3 L-342,2.6 L-324,12.8 L-306,21.0 L-288,26.3 L-270,27.9 L-252,25.6 L-234,19.6 L-216,10.9 L-198,0.5 L-180,-10.3 L-162,-20.0 L-144,-27.4 L-126,-31.5 L-108,-31.7 L-90,-28.2 L-72,-21.2 L-54,-11.7 L-36,-1.0 L-18,9.5 L0,18.6 L18,24.9 L36,27.8 L54,26.8 L72,22.0 L90,14.1 L108,4.1 L126,-6.8 L144,-17.0 L162,-25.2 L180,-30.5 L198,-32.1 L216,-29.8 L234,-23.8 L252,-15.1 L270,-4.7 L288,6.1 L306,15.8 L324,23.2 L342,27.3 L360,27.5' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-8.3 L-342,2.6 L-324,12.8 L-306,21.0 L-288,26.3 L-270,27.9 L-252,25.6 L-234,19.6 L-216,10.9 L-198,0.5 L-180,-10.3 L-162,-20.0 L-144,-27.4 L-126,-31.5 L-108,-31.7 L-90,-28.2 L-72,-21.2 L-54,-11.7 L-36,-1.0 L-18,9.5 L0,18.6 L18,24.9 L36,27.8 L54,26.8 L72,22.0 L90,14.1 L108,4.1 L126,-6.8 L144,-17.0 L162,-25.2 L180,-30.5 L198,-32.1 L216,-29.8 L234,-23.8 L252,-15.1 L270,-4.7 L288,6.1 L306,15.8 L324,23.2 L342,27.3 L360,27.5' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-2.3 L-342,8.5 L-324,18.5 L-306,26.3 L-288,31.0 L-270,32.0 L-252,29.0 L-234,22.6 L-216,13.5 L-198,2.9 L-180,-7.8 L-162,-17.2 L-144,-24.1 L-126,-27.6 L-108,-27.2 L-90,-23.0 L-72,-15.6 L-54,-5.8 L-36,4.9 L-18,15.4 L0,24.0 L18,29.9 L36,32.1 L54,30.4 L72,25.1 L90,16.7 L108,6.5 L126,-4.3 L144,-14.3 L162,-22.1 L180,-26.8 L198,-27.8 L216,-24.8 L234,-18.4 L252,-9.3 L270,1.3 L288,12.0 L306,21.4 L324,28.3 L342,31.8 L360,31.4' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-2.3 L-342,8.5 L-324,18.5 L-306,26.3 L-288,31.0 L-270,32.0 L-252,29.0 L-234,22.6 L-216,13.5 L-198,2.9 L-180,-7.8 L-162,-17.2 L-144,-24.1 L-126,-27.6 L-108,-27.2 L-90,-23.0 L-72,-15.6 L-54,-5.8 L-36,4.9 L-18,15.4 L0,24.0 L18,29.9 L36,32.1 L54,30.4 L72,25.1 L90,16.7 L108,6.5 L126,-4.3 L144,-14.3 L162,-22.1 L180,-26.8 L198,-27.8 L216,-24.8 L234,-18.4 L252,-9.3 L270,1.3 L288,12.0 L306,21.4 L324,28.3 L342,31.8 L360,31.4' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,3.7 L-342,14.5 L-324,24.2 L-306,31.6 L-288,35.7 L-270,35.9 L-252,32.4 L-234,25.4 L-216,16.0 L-198,5.3 L-180,-5.3 L-162,-14.3 L-144,-20.7 L-126,-23.6 L-108,-22.6 L-90,-17.8 L-72,-9.9 L-54,0.1 L-36,10.9 L-18,21.1 L0,29.4 L18,34.7 L36,36.3 L54,34.0 L72,28.1 L90,19.3 L108,8.9 L126,-1.9 L144,-11.6 L162,-19.0 L180,-23.1 L198,-23.3 L216,-19.8 L234,-12.8 L252,-3.4 L270,7.3 L288,17.9 L306,26.9 L324,33.3 L342,36.2 L360,35.2' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,3.7 L-342,14.5 L-324,24.2 L-306,31.6 L-288,35.7 L-270,35.9 L-252,32.4 L-234,25.4 L-216,16.0 L-198,5.3 L-180,-5.3 L-162,-14.3 L-144,-20.7 L-126,-23.6 L-108,-22.6 L-90,-17.8 L-72,-9.9 L-54,0.1 L-36,10.9 L-18,21.1 L0,29.4 L18,34.7 L36,36.3 L54,34.0 L72,28.1 L90,19.3 L108,8.9 L126,-1.9 L144,-11.6 L162,-19.0 L180,-23.1 L198,-23.3 L216,-19.8 L234,-12.8 L252,-3.4 L270,7.3 L288,17.9 L306,26.9 L324,33.3 L342,36.2 L360,35.2' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,9.7 L-342,20.4 L-324,29.8 L-306,36.7 L-288,40.2 L-270,39.8 L-252,35.6 L-234,28.2 L-216,18.5 L-198,7.7 L-180,-2.7 L-162,-11.4 L-144,-17.3 L-126,-19.5 L-108,-17.8 L-90,-12.5 L-72,-4.1 L-54,6.1 L-36,16.9 L-18,26.9 L0,34.7 L18,39.4 L36,40.4 L54,37.4 L72,31.0 L90,21.9 L108,11.3 L126,0.6 L144,-8.8 L162,-15.7 L180,-19.2 L198,-18.8 L216,-14.6 L234,-7.2 L252,2.5 L270,13.3 L288,23.7 L306,32.4 L324,38.3 L342,40.5 L360,38.8' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,9.7 L-342,20.4 L-324,29.8 L-306,36.7 L-288,40.2 L-270,39.8 L-252,35.6 L-234,28.2 L-216,18.5 L-198,7.7 L-180,-2.7 L-162,-11.4 L-144,-17.3 L-126,-19.5 L-108,-17.8 L-90,-12.5 L-72,-4.1 L-54,6.1 L-36,16.9 L-18,26.9 L0,34.7 L18,39.4 L36,40.4 L54,37.4 L72,31.0 L90,21.9 L108,11.3 L126,0.6 L144,-8.8 L162,-15.7 L180,-19.2 L198,-18.8 L216,-14.6 L234,-7.2 L252,2.5 L270,13.3 L288,23.7 L306,32.4 L324,38.3 L342,40.5 L360,38.8' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,15.7 L-342,26.3 L-324,35.3 L-306,41.7 L-288,44.6 L-270,43.6 L-252,38.8 L-234,30.9 L-216,20.9 L-198,10.1 L-180,-0.1 L-162,-8.4 L-144,-13.7 L-126,-15.3 L-108,-13.0 L-90,-7.1 L-72,1.7 L-54,12.1 L-36,22.8 L-18,32.6 L0,39.9 L18,44.1 L36,44.3 L54,40.8 L72,33.8 L90,24.4 L108,13.7 L126,3.1 L144,-5.9 L162,-12.3 L180,-15.2 L198,-14.2 L216,-9.4 L234,-1.5 L252,8.5 L270,19.3 L288,29.5 L306,37.8 L324,43.1 L342,44.7 L360,42.4' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,15.7 L-342,26.3 L-324,35.3 L-306,41.7 L-288,44.6 L-270,43.6 L-252,38.8 L-234,30.9 L-216,20.9 L-198,10.1 L-180,-0.1 L-162,-8.4 L-144,-13.7 L-126,-15.3 L-108,-13.0 L-90,-7.1 L-72,1.7 L-54,12.1 L-36,22.8 L-18,32.6 L0,39.9 L18,44.1 L36,44.3 L54,40.8 L72,33.8 L90,24.4 L108,13.7 L126,3.1 L144,-5.9 L162,-12.3 L180,-15.2 L198,-14.2 L216,-9.4 L234,-1.5 L252,8.5 L270,19.3 L288,29.5 L306,37.8 L324,43.1 L342,44.7 L360,42.4' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,21.7 L-342,32.1 L-324,40.8 L-306,46.6 L-288,48.9 L-270,47.2 L-252,41.9 L-234,33.6 L-216,23.3 L-198,12.5 L-180,2.5 L-162,-5.3 L-144,-10.0 L-126,-11.0 L-108,-8.0 L-90,-1.6 L-72,7.5 L-54,18.1 L-36,28.8 L-18,38.2 L0,45.1 L18,48.6 L36,48.2 L54,44.0 L72,36.6 L90,26.9 L108,16.1 L126,5.7 L144,-3.0 L162,-8.8 L180,-11.1 L198,-9.4 L216,-4.1 L234,4.2 L252,14.5 L270,25.3 L288,35.3 L306,43.1 L324,47.8 L342,48.8 L360,45.8' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,21.7 L-342,32.1 L-324,40.8 L-306,46.6 L-288,48.9 L-270,47.2 L-252,41.9 L-234,33.6 L-216,23.3 L-198,12.5 L-180,2.5 L-162,-5.3 L-144,-10.0 L-126,-11.0 L-108,-8.0 L-90,-1.6 L-72,7.5 L-54,18.1 L-36,28.8 L-18,38.2 L0,45.1 L18,48.6 L36,48.2 L54,44.0 L72,36.6 L90,26.9 L108,16.1 L126,5.7 L144,-3.0 L162,-8.8 L180,-11.1 L198,-9.4 L216,-4.1 L234,4.2 L252,14.5 L270,25.3 L288,35.3 L306,43.1 L324,47.8 L342,48.8 L360,45.8' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,27.7 L-342,37.9 L-324,46.2 L-306,51.5 L-288,53.1 L-270,50.8 L-252,44.9 L-234,36.2 L-216,25.7 L-198,15.0 L-180,5.3 L-162,-2.1 L-144,-6.2 L-126,-6.5 L-108,-3.0 L-90,3.9 L-72,13.4 L-54,24.1 L-36,34.6 L-18,43.7 L0,50.1 L18,53.0 L36,52.0 L54,47.2 L72,39.3 L90,29.3 L108,18.5 L126,8.3 L144,0.0 L162,-5.3 L180,-6.9 L198,-4.6 L216,1.3 L234,10.0 L252,20.5 L270,31.2 L288,40.9 L306,48.3 L324,52.4 L342,52.7 L360,49.2' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,27.7 L-342,37.9 L-324,46.2 L-306,51.5 L-288,53.1 L-270,50.8 L-252,44.9 L-234,36.2 L-216,25.7 L-198,15.0 L-180,5.3 L-162,-2.1 L-144,-6.2 L-126,-6.5 L-108,-3.0 L-90,3.9 L-72,13.4 L-54,24.1 L-36,34.6 L-18,43.7 L0,50.1 L18,53.0 L36,52.0 L54,47.2 L72,39.3 L90,29.3 L108,18.5 L126,8.3 L144,0.0 L162,-5.3 L180,-6.9 L198,-4.6 L216,1.3 L234,10.0 L252,20.5 L270,31.2 L288,40.9 L306,48.3 L324,52.4 L342,52.7 L360,49.2' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3C/g%3E%3Cg transform='translate(300,210) rotate(10)' fill='none' stroke-linecap='round'%3E%3Cpath d='M-360,-23.5 L-342,-34.5 L-324,-45.3 L-306,-55.0 L-288,-63.0 L-270,-68.5 L-252,-71.3 L-234,-70.9 L-216,-67.6 L-198,-61.5 L-180,-53.2 L-162,-43.1 L-144,-32.2 L-126,-21.2 L-108,-11.0 L-90,-2.4 L-72,4.0 L-54,7.7 L-36,8.4 L-18,6.0 L0,0.8 L18,-6.8 L36,-16.4 L54,-27.1 L72,-38.2 L90,-48.7 L108,-57.9 L126,-65.1 L144,-69.8 L162,-71.5 L180,-70.2 L198,-65.9 L216,-59.0 L234,-50.0 L252,-39.5 L270,-28.5 L288,-17.7 L306,-8.0 L324,-0.0 L342,5.5 L360,8.3' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-23.5 L-342,-34.5 L-324,-45.3 L-306,-55.0 L-288,-63.0 L-270,-68.5 L-252,-71.3 L-234,-70.9 L-216,-67.6 L-198,-61.5 L-180,-53.2 L-162,-43.1 L-144,-32.2 L-126,-21.2 L-108,-11.0 L-90,-2.4 L-72,4.0 L-54,7.7 L-36,8.4 L-18,6.0 L0,0.8 L18,-6.8 L36,-16.4 L54,-27.1 L72,-38.2 L90,-48.7 L108,-57.9 L126,-65.1 L144,-69.8 L162,-71.5 L180,-70.2 L198,-65.9 L216,-59.0 L234,-50.0 L252,-39.5 L270,-28.5 L288,-17.7 L306,-8.0 L324,-0.0 L342,5.5 L360,8.3' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-21.6 L-342,-32.7 L-324,-43.3 L-306,-52.7 L-288,-60.2 L-270,-65.2 L-252,-67.3 L-234,-66.3 L-216,-62.3 L-198,-55.7 L-180,-46.9 L-162,-36.6 L-144,-25.6 L-126,-14.7 L-108,-4.8 L-90,3.4 L-72,9.2 L-54,12.3 L-36,12.3 L-18,9.4 L0,3.6 L18,-4.6 L36,-14.4 L54,-25.3 L72,-36.3 L90,-46.6 L108,-55.5 L126,-62.2 L144,-66.2 L162,-67.3 L180,-65.3 L198,-60.4 L216,-53.0 L234,-43.6 L252,-33.0 L270,-21.9 L288,-11.3 L306,-1.9 L324,5.6 L342,10.6 L360,12.7' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-21.6 L-342,-32.7 L-324,-43.3 L-306,-52.7 L-288,-60.2 L-270,-65.2 L-252,-67.3 L-234,-66.3 L-216,-62.3 L-198,-55.7 L-180,-46.9 L-162,-36.6 L-144,-25.6 L-126,-14.7 L-108,-4.8 L-90,3.4 L-72,9.2 L-54,12.3 L-36,12.3 L-18,9.4 L0,3.6 L18,-4.6 L36,-14.4 L54,-25.3 L72,-36.3 L90,-46.6 L108,-55.5 L126,-62.2 L144,-66.2 L162,-67.3 L180,-65.3 L198,-60.4 L216,-53.0 L234,-43.6 L252,-33.0 L270,-21.9 L288,-11.3 L306,-1.9 L324,5.6 L342,10.6 L360,12.7' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-19.8 L-342,-30.8 L-324,-41.3 L-306,-50.3 L-288,-57.3 L-270,-61.7 L-252,-63.1 L-234,-61.5 L-216,-56.9 L-198,-49.8 L-180,-40.6 L-162,-30.1 L-144,-19.0 L-126,-8.3 L-108,1.3 L-90,9.1 L-72,14.3 L-54,16.8 L-36,16.1 L-18,12.5 L0,6.2 L18,-2.4 L36,-12.5 L54,-23.5 L72,-34.4 L90,-44.5 L108,-52.9 L126,-59.1 L144,-62.5 L162,-62.9 L180,-60.3 L198,-54.8 L216,-46.9 L234,-37.2 L252,-26.4 L270,-15.4 L288,-4.9 L306,4.1 L324,11.1 L342,15.5 L360,16.9' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-19.8 L-342,-30.8 L-324,-41.3 L-306,-50.3 L-288,-57.3 L-270,-61.7 L-252,-63.1 L-234,-61.5 L-216,-56.9 L-198,-49.8 L-180,-40.6 L-162,-30.1 L-144,-19.0 L-126,-8.3 L-108,1.3 L-90,9.1 L-72,14.3 L-54,16.8 L-36,16.1 L-18,12.5 L0,6.2 L18,-2.4 L36,-12.5 L54,-23.5 L72,-34.4 L90,-44.5 L108,-52.9 L126,-59.1 L144,-62.5 L162,-62.9 L180,-60.3 L198,-54.8 L216,-46.9 L234,-37.2 L252,-26.4 L270,-15.4 L288,-4.9 L306,4.1 L324,11.1 L342,15.5 L360,16.9' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-18.0 L-342,-29.0 L-324,-39.2 L-306,-47.8 L-288,-54.3 L-270,-58.0 L-252,-58.8 L-234,-56.5 L-216,-51.4 L-198,-43.7 L-180,-34.2 L-162,-23.5 L-144,-12.4 L-126,-1.9 L-108,7.4 L-90,14.6 L-72,19.3 L-54,21.1 L-36,19.8 L-18,15.6 L0,8.7 L18,-0.3 L36,-10.7 L54,-21.7 L72,-32.5 L90,-42.3 L108,-50.3 L126,-55.9 L144,-58.6 L162,-58.4 L180,-55.1 L198,-49.1 L216,-40.7 L234,-30.7 L252,-19.8 L270,-8.8 L288,1.4 L306,10.0 L324,16.5 L342,20.2 L360,21.0' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-18.0 L-342,-29.0 L-324,-39.2 L-306,-47.8 L-288,-54.3 L-270,-58.0 L-252,-58.8 L-234,-56.5 L-216,-51.4 L-198,-43.7 L-180,-34.2 L-162,-23.5 L-144,-12.4 L-126,-1.9 L-108,7.4 L-90,14.6 L-72,19.3 L-54,21.1 L-36,19.8 L-18,15.6 L0,8.7 L18,-0.3 L36,-10.7 L54,-21.7 L72,-32.5 L90,-42.3 L108,-50.3 L126,-55.9 L144,-58.6 L162,-58.4 L180,-55.1 L198,-49.1 L216,-40.7 L234,-30.7 L252,-19.8 L270,-8.8 L288,1.4 L306,10.0 L324,16.5 L342,20.2 L360,21.0' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-16.2 L-342,-27.1 L-324,-37.0 L-306,-45.3 L-288,-51.2 L-270,-54.3 L-252,-54.4 L-234,-51.4 L-216,-45.7 L-198,-37.6 L-180,-27.7 L-162,-16.9 L-144,-5.9 L-126,4.5 L-108,13.3 L-90,20.1 L-72,24.2 L-54,25.3 L-36,23.3 L-18,18.5 L0,11.1 L18,1.8 L36,-8.8 L54,-19.9 L72,-30.5 L90,-40.0 L108,-47.5 L126,-52.5 L144,-54.6 L162,-53.7 L180,-49.8 L198,-43.2 L216,-34.5 L234,-24.2 L252,-13.2 L270,-2.3 L288,7.6 L306,15.9 L324,21.8 L342,24.9 L360,25.0' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-16.2 L-342,-27.1 L-324,-37.0 L-306,-45.3 L-288,-51.2 L-270,-54.3 L-252,-54.4 L-234,-51.4 L-216,-45.7 L-198,-37.6 L-180,-27.7 L-162,-16.9 L-144,-5.9 L-126,4.5 L-108,13.3 L-90,20.1 L-72,24.2 L-54,25.3 L-36,23.3 L-18,18.5 L0,11.1 L18,1.8 L36,-8.8 L54,-19.9 L72,-30.5 L90,-40.0 L108,-47.5 L126,-52.5 L144,-54.6 L162,-53.7 L180,-49.8 L198,-43.2 L216,-34.5 L234,-24.2 L252,-13.2 L270,-2.3 L288,7.6 L306,15.9 L324,21.8 L342,24.9 L360,25.0' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-14.4 L-342,-25.1 L-324,-34.8 L-306,-42.5 L-288,-47.9 L-270,-50.3 L-252,-49.8 L-234,-46.2 L-216,-39.9 L-198,-31.4 L-180,-21.2 L-162,-10.3 L-144,0.6 L-126,10.7 L-108,19.2 L-90,25.4 L-72,28.9 L-54,29.3 L-36,26.7 L-18,21.3 L0,13.4 L18,3.8 L36,-7.0 L54,-18.1 L72,-28.5 L90,-37.6 L108,-44.6 L126,-49.0 L144,-50.5 L162,-48.9 L180,-44.4 L198,-37.3 L216,-28.1 L234,-17.6 L252,-6.6 L270,4.1 L288,13.8 L306,21.5 L324,26.9 L342,29.3 L360,28.8' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-14.4 L-342,-25.1 L-324,-34.8 L-306,-42.5 L-288,-47.9 L-270,-50.3 L-252,-49.8 L-234,-46.2 L-216,-39.9 L-198,-31.4 L-180,-21.2 L-162,-10.3 L-144,0.6 L-126,10.7 L-108,19.2 L-90,25.4 L-72,28.9 L-54,29.3 L-36,26.7 L-18,21.3 L0,13.4 L18,3.8 L36,-7.0 L54,-18.1 L72,-28.5 L90,-37.6 L108,-44.6 L126,-49.0 L144,-50.5 L162,-48.9 L180,-44.4 L198,-37.3 L216,-28.1 L234,-17.6 L252,-6.6 L270,4.1 L288,13.8 L306,21.5 L324,26.9 L342,29.3 L360,28.8' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-12.6 L-342,-23.1 L-324,-32.4 L-306,-39.7 L-288,-44.5 L-270,-46.3 L-252,-45.1 L-234,-40.9 L-216,-34.0 L-198,-25.1 L-180,-14.7 L-162,-3.7 L-144,7.1 L-126,16.9 L-108,25.0 L-90,30.6 L-72,33.4 L-54,33.2 L-36,30.0 L-18,24.0 L0,15.7 L18,5.7 L36,-5.2 L54,-16.2 L72,-26.4 L90,-35.1 L108,-41.6 L126,-45.4 L144,-46.2 L162,-44.0 L180,-38.9 L198,-31.3 L216,-21.8 L234,-11.1 L252,-0.0 L270,10.5 L288,19.8 L306,27.1 L324,31.9 L342,33.7 L360,32.5' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-12.6 L-342,-23.1 L-324,-32.4 L-306,-39.7 L-288,-44.5 L-270,-46.3 L-252,-45.1 L-234,-40.9 L-216,-34.0 L-198,-25.1 L-180,-14.7 L-162,-3.7 L-144,7.1 L-126,16.9 L-108,25.0 L-90,30.6 L-72,33.4 L-54,33.2 L-36,30.0 L-18,24.0 L0,15.7 L18,5.7 L36,-5.2 L54,-16.2 L72,-26.4 L90,-35.1 L108,-41.6 L126,-45.4 L144,-46.2 L162,-44.0 L180,-38.9 L198,-31.3 L216,-21.8 L234,-11.1 L252,-0.0 L270,10.5 L288,19.8 L306,27.1 L324,31.9 L342,33.7 L360,32.5' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-10.7 L-342,-21.1 L-324,-30.0 L-306,-36.8 L-288,-40.9 L-270,-42.1 L-252,-40.2 L-234,-35.4 L-216,-28.1 L-198,-18.7 L-180,-8.2 L-162,2.9 L-144,13.6 L-126,23.0 L-108,30.6 L-90,35.7 L-72,37.8 L-54,37.0 L-36,33.1 L-18,26.6 L0,17.8 L18,7.6 L36,-3.4 L54,-14.3 L72,-24.3 L90,-32.5 L108,-38.5 L126,-41.6 L144,-41.8 L162,-38.9 L180,-33.2 L198,-25.1 L216,-15.3 L234,-4.5 L252,6.5 L270,16.9 L288,25.8 L306,32.6 L324,36.7 L342,37.9 L360,36.0' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-10.7 L-342,-21.1 L-324,-30.0 L-306,-36.8 L-288,-40.9 L-270,-42.1 L-252,-40.2 L-234,-35.4 L-216,-28.1 L-198,-18.7 L-180,-8.2 L-162,2.9 L-144,13.6 L-126,23.0 L-108,30.6 L-90,35.7 L-72,37.8 L-54,37.0 L-36,33.1 L-18,26.6 L0,17.8 L18,7.6 L36,-3.4 L54,-14.3 L72,-24.3 L90,-32.5 L108,-38.5 L126,-41.6 L144,-41.8 L162,-38.9 L180,-33.2 L198,-25.1 L216,-15.3 L234,-4.5 L252,6.5 L270,16.9 L288,25.8 L306,32.6 L324,36.7 L342,37.9 L360,36.0' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-8.9 L-342,-19.0 L-324,-27.5 L-306,-33.7 L-288,-37.2 L-270,-37.7 L-252,-35.2 L-234,-29.8 L-216,-22.0 L-198,-12.3 L-180,-1.6 L-162,9.5 L-144,19.9 L-126,29.1 L-108,36.1 L-90,40.6 L-72,42.1 L-54,40.6 L-36,36.1 L-18,29.0 L0,19.9 L18,9.4 L36,-1.6 L54,-12.4 L72,-22.0 L90,-29.8 L108,-35.2 L126,-37.7 L144,-37.2 L162,-33.7 L180,-27.4 L198,-18.9 L216,-8.8 L234,2.1 L252,13.1 L270,23.2 L288,31.7 L306,37.9 L324,41.4 L342,41.9 L360,39.4' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-8.9 L-342,-19.0 L-324,-27.5 L-306,-33.7 L-288,-37.2 L-270,-37.7 L-252,-35.2 L-234,-29.8 L-216,-22.0 L-198,-12.3 L-180,-1.6 L-162,9.5 L-144,19.9 L-126,29.1 L-108,36.1 L-90,40.6 L-72,42.1 L-54,40.6 L-36,36.1 L-18,29.0 L0,19.9 L18,9.4 L36,-1.6 L54,-12.4 L72,-22.0 L90,-29.8 L108,-35.2 L126,-37.7 L144,-37.2 L162,-33.7 L180,-27.4 L198,-18.9 L216,-8.8 L234,2.1 L252,13.1 L270,23.2 L288,31.7 L306,37.9 L324,41.4 L342,41.9 L360,39.4' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-6.9 L-342,-16.8 L-324,-24.8 L-306,-30.5 L-288,-33.4 L-270,-33.2 L-252,-30.1 L-234,-24.1 L-216,-15.8 L-198,-5.9 L-180,5.0 L-162,16.0 L-144,26.3 L-126,35.0 L-108,41.5 L-90,45.4 L-72,46.2 L-54,44.0 L-36,39.0 L-18,31.4 L0,21.9 L18,11.3 L36,0.2 L54,-10.4 L72,-19.7 L90,-27.0 L108,-31.8 L126,-33.7 L144,-32.5 L162,-28.4 L180,-21.6 L198,-12.7 L216,-2.3 L234,8.7 L252,19.5 L270,29.4 L288,37.4 L306,43.1 L324,46.0 L342,45.8 L360,42.7' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-6.9 L-342,-16.8 L-324,-24.8 L-306,-30.5 L-288,-33.4 L-270,-33.2 L-252,-30.1 L-234,-24.1 L-216,-15.8 L-198,-5.9 L-180,5.0 L-162,16.0 L-144,26.3 L-126,35.0 L-108,41.5 L-90,45.4 L-72,46.2 L-54,44.0 L-36,39.0 L-18,31.4 L0,21.9 L18,11.3 L36,0.2 L54,-10.4 L72,-19.7 L90,-27.0 L108,-31.8 L126,-33.7 L144,-32.5 L162,-28.4 L180,-21.6 L198,-12.7 L216,-2.3 L234,8.7 L252,19.5 L270,29.4 L288,37.4 L306,43.1 L324,46.0 L342,45.8 L360,42.7' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-5.0 L-342,-14.5 L-324,-22.1 L-306,-27.2 L-288,-29.4 L-270,-28.6 L-252,-24.8 L-234,-18.3 L-216,-9.6 L-198,0.6 L-180,11.6 L-162,22.5 L-144,32.5 L-126,40.8 L-108,46.8 L-90,50.0 L-72,50.2 L-54,47.4 L-36,41.7 L-18,33.7 L0,23.9 L18,13.1 L36,2.1 L54,-8.3 L72,-17.3 L90,-24.1 L108,-28.3 L126,-29.5 L144,-27.7 L162,-22.9 L180,-15.6 L198,-6.3 L216,4.3 L234,15.3 L252,26.0 L270,35.5 L288,43.1 L306,48.2 L324,50.4 L342,49.6 L360,45.8' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-5.0 L-342,-14.5 L-324,-22.1 L-306,-27.2 L-288,-29.4 L-270,-28.6 L-252,-24.8 L-234,-18.3 L-216,-9.6 L-198,0.6 L-180,11.6 L-162,22.5 L-144,32.5 L-126,40.8 L-108,46.8 L-90,50.0 L-72,50.2 L-54,47.4 L-36,41.7 L-18,33.7 L0,23.9 L18,13.1 L36,2.1 L54,-8.3 L72,-17.3 L90,-24.1 L108,-28.3 L126,-29.5 L144,-27.7 L162,-22.9 L180,-15.6 L198,-6.3 L216,4.3 L234,15.3 L252,26.0 L270,35.5 L288,43.1 L306,48.2 L324,50.4 L342,49.6 L360,45.8' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-3.0 L-342,-12.1 L-324,-19.2 L-306,-23.7 L-288,-25.3 L-270,-23.8 L-252,-19.4 L-234,-12.4 L-216,-3.3 L-198,7.2 L-180,18.2 L-162,29.0 L-144,38.7 L-126,46.5 L-108,51.9 L-90,54.5 L-72,54.1 L-54,50.6 L-36,44.4 L-18,35.9 L0,25.8 L18,14.9 L36,3.9 L54,-6.2 L72,-14.7 L90,-21.0 L108,-24.6 L126,-25.1 L144,-22.7 L162,-17.3 L180,-9.5 L198,0.1 L216,10.8 L234,21.9 L252,32.4 L270,41.5 L288,48.6 L306,53.1 L324,54.7 L342,53.2 L360,48.8' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-3.0 L-342,-12.1 L-324,-19.2 L-306,-23.7 L-288,-25.3 L-270,-23.8 L-252,-19.4 L-234,-12.4 L-216,-3.3 L-198,7.2 L-180,18.2 L-162,29.0 L-144,38.7 L-126,46.5 L-108,51.9 L-90,54.5 L-72,54.1 L-54,50.6 L-36,44.4 L-18,35.9 L0,25.8 L18,14.9 L36,3.9 L54,-6.2 L72,-14.7 L90,-21.0 L108,-24.6 L126,-25.1 L144,-22.7 L162,-17.3 L180,-9.5 L198,0.1 L216,10.8 L234,21.9 L252,32.4 L270,41.5 L288,48.6 L306,53.1 L324,54.7 L342,53.2 L360,48.8' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-0.9 L-342,-9.6 L-324,-16.2 L-306,-20.1 L-288,-21.0 L-270,-18.9 L-252,-13.9 L-234,-6.4 L-216,3.1 L-198,13.7 L-180,24.8 L-162,35.4 L-144,44.7 L-126,52.1 L-108,56.9 L-90,58.9 L-72,57.7 L-54,53.7 L-36,46.9 L-18,38.0 L0,27.7 L18,16.7 L36,5.8 L54,-4.0 L72,-12.1 L90,-17.8 L108,-20.8 L126,-20.7 L144,-17.5 L162,-11.6 L180,-3.4 L198,6.5 L216,17.4 L234,28.4 L252,38.7 L270,47.4 L288,54.0 L306,57.9 L324,58.8 L342,56.7 L360,51.7' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-0.9 L-342,-9.6 L-324,-16.2 L-306,-20.1 L-288,-21.0 L-270,-18.9 L-252,-13.9 L-234,-6.4 L-216,3.1 L-198,13.7 L-180,24.8 L-162,35.4 L-144,44.7 L-126,52.1 L-108,56.9 L-90,58.9 L-72,57.7 L-54,53.7 L-36,46.9 L-18,38.0 L0,27.7 L18,16.7 L36,5.8 L54,-4.0 L72,-12.1 L90,-17.8 L108,-20.8 L126,-20.7 L144,-17.5 L162,-11.6 L180,-3.4 L198,6.5 L216,17.4 L234,28.4 L252,38.7 L270,47.4 L288,54.0 L306,57.9 L324,58.8 L342,56.7 L360,51.7' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,1.3 L-342,-7.1 L-324,-13.1 L-306,-16.4 L-288,-16.6 L-270,-13.9 L-252,-8.3 L-234,-0.3 L-216,9.5 L-198,20.3 L-180,31.4 L-162,41.8 L-144,50.7 L-126,57.6 L-108,61.8 L-90,63.1 L-72,61.3 L-54,56.6 L-36,49.4 L-18,40.1 L0,29.5 L18,18.5 L36,7.8 L54,-1.7 L72,-9.4 L90,-14.5 L108,-16.8 L126,-16.0 L144,-12.3 L162,-5.8 L180,2.8 L198,13.0 L216,24.0 L234,34.9 L252,44.9 L270,53.3 L288,59.3 L306,62.6 L324,62.8 L342,60.1 L360,54.5' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,1.3 L-342,-7.1 L-324,-13.1 L-306,-16.4 L-288,-16.6 L-270,-13.9 L-252,-8.3 L-234,-0.3 L-216,9.5 L-198,20.3 L-180,31.4 L-162,41.8 L-144,50.7 L-126,57.6 L-108,61.8 L-90,63.1 L-72,61.3 L-54,56.6 L-36,49.4 L-18,40.1 L0,29.5 L18,18.5 L36,7.8 L54,-1.7 L72,-9.4 L90,-14.5 L108,-16.8 L126,-16.0 L144,-12.3 L162,-5.8 L180,2.8 L198,13.0 L216,24.0 L234,34.9 L252,44.9 L270,53.3 L288,59.3 L306,62.6 L324,62.8 L342,60.1 L360,54.5' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,3.5 L-342,-4.4 L-324,-9.9 L-306,-12.5 L-288,-12.1 L-270,-8.7 L-252,-2.5 L-234,5.9 L-216,16.0 L-198,26.9 L-180,37.9 L-162,48.0 L-144,56.6 L-126,62.9 L-108,66.5 L-90,67.2 L-72,64.7 L-54,59.4 L-36,51.7 L-18,42.1 L0,31.4 L18,20.3 L36,9.8 L54,0.6 L72,-6.5 L90,-11.1 L108,-12.7 L126,-11.3 L144,-6.9 L162,0.1 L180,9.1 L198,19.6 L216,30.6 L234,41.4 L252,51.1 L270,59.0 L288,64.5 L306,67.1 L324,66.7 L342,63.3 L360,57.1' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,3.5 L-342,-4.4 L-324,-9.9 L-306,-12.5 L-288,-12.1 L-270,-8.7 L-252,-2.5 L-234,5.9 L-216,16.0 L-198,26.9 L-180,37.9 L-162,48.0 L-144,56.6 L-126,62.9 L-108,66.5 L-90,67.2 L-72,64.7 L-54,59.4 L-36,51.7 L-18,42.1 L0,31.4 L18,20.3 L36,9.8 L54,0.6 L72,-6.5 L90,-11.1 L108,-12.7 L126,-11.3 L144,-6.9 L162,0.1 L180,9.1 L198,19.6 L216,30.6 L234,41.4 L252,51.1 L270,59.0 L288,64.5 L306,67.1 L324,66.7 L342,63.3 L360,57.1' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3C/g%3E%3Cg transform='translate(60,170) rotate(-55)' fill='none' stroke-linecap='round'%3E%3Cpath d='M-360,-38.5 L-342,-40.9 L-324,-38.5 L-306,-31.8 L-288,-22.3 L-270,-12.1 L-252,-3.3 L-234,2.0 L-216,2.8 L-198,-1.1 L-180,-8.9 L-162,-18.9 L-144,-28.9 L-126,-36.7 L-108,-40.6 L-90,-39.8 L-72,-34.4 L-54,-25.7 L-36,-15.4 L-18,-6.0 L0,0.7 L18,3.1 L36,0.7 L54,-6.0 L72,-15.5 L90,-25.7 L108,-34.5 L126,-39.8 L144,-40.6 L162,-36.7 L180,-28.9 L198,-18.9 L216,-8.9 L234,-1.1 L252,2.8 L270,2.0 L288,-3.4 L306,-12.1 L324,-22.4 L342,-31.8 L360,-38.5' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-38.5 L-342,-40.9 L-324,-38.5 L-306,-31.8 L-288,-22.3 L-270,-12.1 L-252,-3.3 L-234,2.0 L-216,2.8 L-198,-1.1 L-180,-8.9 L-162,-18.9 L-144,-28.9 L-126,-36.7 L-108,-40.6 L-90,-39.8 L-72,-34.4 L-54,-25.7 L-36,-15.4 L-18,-6.0 L0,0.7 L18,3.1 L36,0.7 L54,-6.0 L72,-15.5 L90,-25.7 L108,-34.5 L126,-39.8 L144,-40.6 L162,-36.7 L180,-28.9 L198,-18.9 L216,-8.9 L234,-1.1 L252,2.8 L270,2.0 L288,-3.4 L306,-12.1 L324,-22.4 L342,-31.8 L360,-38.5' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-34.9 L-342,-36.7 L-324,-33.7 L-306,-26.5 L-288,-16.8 L-270,-6.7 L-252,1.8 L-234,6.6 L-216,6.8 L-198,2.3 L-180,-5.9 L-162,-16.0 L-144,-25.9 L-126,-33.2 L-108,-36.6 L-90,-35.2 L-72,-29.3 L-54,-20.2 L-36,-10.0 L-18,-0.7 L0,5.5 L18,7.3 L36,4.3 L54,-2.9 L72,-12.6 L90,-22.7 L108,-31.2 L126,-36.0 L144,-36.2 L162,-31.7 L180,-23.5 L198,-13.4 L216,-3.5 L234,3.8 L252,7.2 L270,5.8 L288,-0.1 L306,-9.2 L324,-19.4 L342,-28.7 L360,-34.9' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-34.9 L-342,-36.7 L-324,-33.7 L-306,-26.5 L-288,-16.8 L-270,-6.7 L-252,1.8 L-234,6.6 L-216,6.8 L-198,2.3 L-180,-5.9 L-162,-16.0 L-144,-25.9 L-126,-33.2 L-108,-36.6 L-90,-35.2 L-72,-29.3 L-54,-20.2 L-36,-10.0 L-18,-0.7 L0,5.5 L18,7.3 L36,4.3 L54,-2.9 L72,-12.6 L90,-22.7 L108,-31.2 L126,-36.0 L144,-36.2 L162,-31.7 L180,-23.5 L198,-13.4 L216,-3.5 L234,3.8 L252,7.2 L270,5.8 L288,-0.1 L306,-9.2 L324,-19.4 L342,-28.7 L360,-34.9' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-31.2 L-342,-32.3 L-324,-28.8 L-306,-21.2 L-288,-11.3 L-270,-1.2 L-252,6.8 L-234,11.1 L-216,10.7 L-198,5.6 L-180,-2.9 L-162,-13.1 L-144,-22.8 L-126,-29.7 L-108,-32.5 L-90,-30.5 L-72,-24.1 L-54,-14.7 L-36,-4.5 L-18,4.5 L0,10.2 L18,11.3 L36,7.8 L54,0.2 L72,-9.7 L90,-19.8 L108,-27.8 L126,-32.1 L144,-31.7 L162,-26.6 L180,-18.1 L198,-7.9 L216,1.8 L234,8.7 L252,11.5 L270,9.5 L288,3.1 L306,-6.3 L324,-16.5 L342,-25.5 L360,-31.2' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-31.2 L-342,-32.3 L-324,-28.8 L-306,-21.2 L-288,-11.3 L-270,-1.2 L-252,6.8 L-234,11.1 L-216,10.7 L-198,5.6 L-180,-2.9 L-162,-13.1 L-144,-22.8 L-126,-29.7 L-108,-32.5 L-90,-30.5 L-72,-24.1 L-54,-14.7 L-36,-4.5 L-18,4.5 L0,10.2 L18,11.3 L36,7.8 L54,0.2 L72,-9.7 L90,-19.8 L108,-27.8 L126,-32.1 L144,-31.7 L162,-26.6 L180,-18.1 L198,-7.9 L216,1.8 L234,8.7 L252,11.5 L270,9.5 L288,3.1 L306,-6.3 L324,-16.5 L342,-25.5 L360,-31.2' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-27.4 L-342,-27.9 L-324,-23.8 L-306,-15.8 L-288,-5.8 L-270,4.1 L-252,11.8 L-234,15.5 L-216,14.5 L-198,8.9 L-180,0.0 L-162,-10.2 L-144,-19.6 L-126,-26.1 L-108,-28.3 L-90,-25.7 L-72,-18.8 L-54,-9.2 L-36,1.0 L-18,9.6 L0,14.8 L18,15.3 L36,11.2 L54,3.2 L72,-6.8 L90,-16.7 L108,-24.4 L126,-28.1 L144,-27.1 L162,-21.5 L180,-12.6 L198,-2.4 L216,7.0 L234,13.5 L252,15.7 L270,13.1 L288,6.2 L306,-3.4 L324,-13.6 L342,-22.2 L360,-27.4' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-27.4 L-342,-27.9 L-324,-23.8 L-306,-15.8 L-288,-5.8 L-270,4.1 L-252,11.8 L-234,15.5 L-216,14.5 L-198,8.9 L-180,0.0 L-162,-10.2 L-144,-19.6 L-126,-26.1 L-108,-28.3 L-90,-25.7 L-72,-18.8 L-54,-9.2 L-36,1.0 L-18,9.6 L0,14.8 L18,15.3 L36,11.2 L54,3.2 L72,-6.8 L90,-16.7 L108,-24.4 L126,-28.1 L144,-27.1 L162,-21.5 L180,-12.6 L198,-2.4 L216,7.0 L234,13.5 L252,15.7 L270,13.1 L288,6.2 L306,-3.4 L324,-13.6 L342,-22.2 L360,-27.4' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-23.5 L-342,-23.5 L-324,-18.8 L-306,-10.4 L-288,-0.3 L-270,9.5 L-252,16.7 L-234,19.8 L-216,18.2 L-198,12.1 L-180,2.9 L-162,-7.3 L-144,-16.5 L-126,-22.5 L-108,-24.0 L-90,-20.8 L-72,-13.5 L-54,-3.7 L-36,6.4 L-18,14.7 L0,19.3 L18,19.3 L36,14.6 L54,6.2 L72,-3.9 L90,-13.7 L108,-20.9 L126,-24.0 L144,-22.4 L162,-16.3 L180,-7.1 L198,3.1 L216,12.3 L234,18.3 L252,19.8 L270,16.6 L288,9.3 L306,-0.5 L324,-10.6 L342,-18.9 L360,-23.5' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-23.5 L-342,-23.5 L-324,-18.8 L-306,-10.4 L-288,-0.3 L-270,9.5 L-252,16.7 L-234,19.8 L-216,18.2 L-198,12.1 L-180,2.9 L-162,-7.3 L-144,-16.5 L-126,-22.5 L-108,-24.0 L-90,-20.8 L-72,-13.5 L-54,-3.7 L-36,6.4 L-18,14.7 L0,19.3 L18,19.3 L36,14.6 L54,6.2 L72,-3.9 L90,-13.7 L108,-20.9 L126,-24.0 L144,-22.4 L162,-16.3 L180,-7.1 L198,3.1 L216,12.3 L234,18.3 L252,19.8 L270,16.6 L288,9.3 L306,-0.5 L324,-10.6 L342,-18.9 L360,-23.5' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-19.6 L-342,-18.9 L-324,-13.7 L-306,-5.0 L-288,5.2 L-270,14.8 L-252,21.6 L-234,24.1 L-216,21.8 L-198,15.3 L-180,5.8 L-162,-4.4 L-144,-13.2 L-126,-18.7 L-108,-19.7 L-90,-15.9 L-72,-8.2 L-54,1.8 L-36,11.8 L-18,19.7 L0,23.8 L18,23.1 L36,17.9 L54,9.2 L72,-1.0 L90,-10.6 L108,-17.4 L126,-19.9 L144,-17.6 L162,-11.1 L180,-1.6 L198,8.6 L216,17.4 L234,22.9 L252,23.9 L270,20.1 L288,12.4 L306,2.4 L324,-7.6 L342,-15.5 L360,-19.6' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-19.6 L-342,-18.9 L-324,-13.7 L-306,-5.0 L-288,5.2 L-270,14.8 L-252,21.6 L-234,24.1 L-216,21.8 L-198,15.3 L-180,5.8 L-162,-4.4 L-144,-13.2 L-126,-18.7 L-108,-19.7 L-90,-15.9 L-72,-8.2 L-54,1.8 L-36,11.8 L-18,19.7 L0,23.8 L18,23.1 L36,17.9 L54,9.2 L72,-1.0 L90,-10.6 L108,-17.4 L126,-19.9 L144,-17.6 L162,-11.1 L180,-1.6 L198,8.6 L216,17.4 L234,22.9 L252,23.9 L270,20.1 L288,12.4 L306,2.4 L324,-7.6 L342,-15.5 L360,-19.6' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-15.6 L-342,-14.3 L-324,-8.5 L-306,0.5 L-288,10.7 L-270,20.0 L-252,26.3 L-234,28.3 L-216,25.4 L-198,18.4 L-180,8.7 L-162,-1.5 L-144,-10.0 L-126,-14.9 L-108,-15.2 L-90,-10.9 L-72,-2.8 L-54,7.3 L-36,17.2 L-18,24.7 L0,28.2 L18,26.9 L36,21.1 L54,12.1 L72,1.9 L90,-7.4 L108,-13.7 L126,-15.7 L144,-12.8 L162,-5.8 L180,3.9 L198,14.1 L216,22.6 L234,27.5 L252,27.8 L270,23.5 L288,15.4 L306,5.3 L324,-4.6 L342,-12.1 L360,-15.6' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-15.6 L-342,-14.3 L-324,-8.5 L-306,0.5 L-288,10.7 L-270,20.0 L-252,26.3 L-234,28.3 L-216,25.4 L-198,18.4 L-180,8.7 L-162,-1.5 L-144,-10.0 L-126,-14.9 L-108,-15.2 L-90,-10.9 L-72,-2.8 L-54,7.3 L-36,17.2 L-18,24.7 L0,28.2 L18,26.9 L36,21.1 L54,12.1 L72,1.9 L90,-7.4 L108,-13.7 L126,-15.7 L144,-12.8 L162,-5.8 L180,3.9 L198,14.1 L216,22.6 L234,27.5 L252,27.8 L270,23.5 L288,15.4 L306,5.3 L324,-4.6 L342,-12.1 L360,-15.6' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-11.5 L-342,-9.6 L-324,-3.3 L-306,6.0 L-288,16.2 L-270,25.2 L-252,31.1 L-234,32.4 L-216,28.9 L-198,21.5 L-180,11.6 L-162,1.5 L-144,-6.6 L-126,-11.0 L-108,-10.7 L-90,-5.8 L-72,2.6 L-54,12.8 L-36,22.5 L-18,29.6 L0,32.5 L18,30.6 L36,24.3 L54,15.0 L72,4.8 L90,-4.2 L108,-10.1 L126,-11.4 L144,-7.9 L162,-0.5 L180,9.4 L198,19.5 L216,27.6 L234,32.0 L252,31.7 L270,26.8 L288,18.4 L306,8.2 L324,-1.5 L342,-8.6 L360,-11.5' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-11.5 L-342,-9.6 L-324,-3.3 L-306,6.0 L-288,16.2 L-270,25.2 L-252,31.1 L-234,32.4 L-216,28.9 L-198,21.5 L-180,11.6 L-162,1.5 L-144,-6.6 L-126,-11.0 L-108,-10.7 L-90,-5.8 L-72,2.6 L-54,12.8 L-36,22.5 L-18,29.6 L0,32.5 L18,30.6 L36,24.3 L54,15.0 L72,4.8 L90,-4.2 L108,-10.1 L126,-11.4 L144,-7.9 L162,-0.5 L180,9.4 L198,19.5 L216,27.6 L234,32.0 L252,31.7 L270,26.8 L288,18.4 L306,8.2 L324,-1.5 L342,-8.6 L360,-11.5' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-7.3 L-342,-4.8 L-324,1.9 L-306,11.5 L-288,21.7 L-270,30.4 L-252,35.7 L-234,36.4 L-216,32.4 L-198,24.5 L-180,14.5 L-162,4.5 L-144,-3.2 L-126,-7.1 L-108,-6.2 L-90,-0.7 L-72,8.1 L-54,18.3 L-36,27.8 L-18,34.4 L0,36.7 L18,34.2 L36,27.5 L54,17.9 L72,7.7 L90,-1.0 L108,-6.3 L126,-7.0 L144,-3.0 L162,4.9 L180,14.9 L198,24.9 L216,32.6 L234,36.5 L252,35.6 L270,30.1 L288,21.3 L306,11.1 L324,1.6 L342,-5.0 L360,-7.3' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-7.3 L-342,-4.8 L-324,1.9 L-306,11.5 L-288,21.7 L-270,30.4 L-252,35.7 L-234,36.4 L-216,32.4 L-198,24.5 L-180,14.5 L-162,4.5 L-144,-3.2 L-126,-7.1 L-108,-6.2 L-90,-0.7 L-72,8.1 L-54,18.3 L-36,27.8 L-18,34.4 L0,36.7 L18,34.2 L36,27.5 L54,17.9 L72,7.7 L90,-1.0 L108,-6.3 L126,-7.0 L144,-3.0 L162,4.9 L180,14.9 L198,24.9 L216,32.6 L234,36.5 L252,35.6 L270,30.1 L288,21.3 L306,11.1 L324,1.6 L342,-5.0 L360,-7.3' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3C/g%3E%3C/svg%3E") 50% 50% / 100% 100% no-repeat,
@@ -21417,7 +21490,7 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
   background:radial-gradient(46% 42% at 50% 44%, rgba(255,255,255,.075), transparent 72%);
   animation:cxfBob 7s ease-in-out infinite;
 }
-.profile-modal.cxf-carbon, .cx-prev-frame.cxf-carbon, .locker-look.cxf-carbon, .sbm-profile-prev.cxf-carbon, .mfc.cxf-carbon{
+.profile-modal.cxf-carbon, .cx-prev-frame.cxf-carbon, .locker-look.cxf-carbon, .sbm-profile-prev.cxf-carbon, .mfc.cxf-carbon, .sbmp-card.cxf-carbon{
   background:
     /* centre spotlight so the mesh catches the light like the real thing */
     radial-gradient(60% 48% at 50% 42%, rgba(255,255,255,.06), transparent 72%),
@@ -21490,6 +21563,48 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
   box-shadow:0 0 9px 2px #fff, 0 0 18px 5px rgba(164,139,255,.8);
 }
 @keyframes cxaMasterPulse{ 0%,100%{ filter:drop-shadow(0 0 9px rgba(164,139,255,.75)); } 50%{ filter:drop-shadow(0 0 19px rgba(190,170,255,1)); } }
+
+/* ═══════════ RANK REWARD CRESTS — one animated avatar aura per rank, coloured
+   to the rank and crowned with that rank's emblem at the base. Structure:
+   element = pulsing outer glow · ::before = a THIN spinning double-tone ring
+   with a white sweep · ::after = the rank emblem itself (transparent — no
+   disc — and large, so the ring reads as the emblem's own halo).
+   cls carries "cxa-rk cxa-rk-<rank>". */
+.cxa-rk{
+  border:0 !important; -webkit-mask:none !important; mask:none !important; overflow:visible;
+  animation:cxaRkGlow 3.2s ease-in-out infinite;
+}
+@keyframes cxaRkGlow{
+  0%,100%{ filter:drop-shadow(0 0 7px color-mix(in srgb, var(--rc) 55%, transparent)); }
+  50%{ filter:drop-shadow(0 0 17px color-mix(in srgb, var(--rc) 95%, transparent)); }
+}
+.cxa-rk::before{
+  content:''; position:absolute; inset:-3%; border-radius:50%; pointer-events:none;
+  background:conic-gradient(from 0deg, var(--rc2), var(--rc), #ffffff, var(--rc), var(--rc2), var(--rc), #ffffff 80%, var(--rc2));
+  -webkit-mask:radial-gradient(closest-side, transparent 84%, #000 90%, #000 96%, transparent 100%);
+  mask:radial-gradient(closest-side, transparent 84%, #000 90%, #000 96%, transparent 100%);
+  animation:cxaSpin 5s linear infinite;
+}
+.cxa-rk::after{
+  content:''; position:absolute; left:50%; bottom:-16%; transform:translateX(-50%); z-index:4;
+  width:60%; height:60%; pointer-events:none;
+  background:var(--rk-emblem, none) center/contain no-repeat;
+  filter:drop-shadow(0 2px 4px rgba(0,0,0,.55)) drop-shadow(0 0 7px color-mix(in srgb, var(--rc) 85%, transparent));
+  animation:cxaRkBadge 3s ease-in-out infinite;
+}
+@keyframes cxaRkBadge{ 0%,100%{ transform:translateX(-50%) translateY(0) scale(1); } 50%{ transform:translateX(-50%) translateY(-6%) scale(1.05); } }
+.cxa-rk-gold{        --rc:#ffd33d; --rc2:#a9761a; --rk-emblem:url('gold.png'); }
+.cxa-rk-platinum{    --rc:#5dffba; --rc2:#1f9e77; --rk-emblem:url('platinum.png'); }
+.cxa-rk-diamond{     --rc:#5fc9ff; --rc2:#2c7fb8; --rk-emblem:url('diamond.png'); }
+.cxa-rk-master{      --rc:#a48bff; --rc2:#5a3fb0; --rk-emblem:url('master.png'); }
+.cxa-rk-grandmaster{ --rc:#ff3d68; --rc2:#a01636; --rk-emblem:url('grandmaster.png'); }
+.cxa-rk-champion{    --rc:#ff8c42; --rc2:#b0500f; --rk-emblem:url('champion.png'); }
+.cxa-rk-legend{      --rc:#ff61c3; --rc2:#8f2e78; --rk-emblem:url('legend.png'); }
+/* Legend — the apex — gets a dual gold+pink shimmer ring. */
+.cxa-rk-legend::before{ background:conic-gradient(from 0deg, #ff61c3, #ffd36e, #ffffff, #ff61c3, #ffd36e, #ffffff 80%, #ff61c3); }
+body.reduced-motion .cxa-rk, body.low-power .cxa-rk,
+body.reduced-motion .cxa-rk::before, body.low-power .cxa-rk::before,
+body.reduced-motion .cxa-rk::after, body.low-power .cxa-rk::after{ animation:none !important; }
 /* GRANDMASTER — Ruthless: bleeding crimson edge with red/white aberration */
 .cxn-ruthless{
   background:linear-gradient(100deg, #7e0f24, #ff3d68 26%, #ffe1e8 46%, #ff3d68 62%, #7e0f24 84%, #ff5c7e);
@@ -21515,7 +21630,7 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
   animation:cxfEmberRise 3.2s linear infinite; mix-blend-mode:screen;
 }
 @keyframes cxfEmberRise{ from{ background-position:0 120%, 0 160%, 0 140%, 0 180%, 0 0; } to{ background-position:0 -80%, 0 -40%, 0 -60%, 0 -20%, 0 0; } }
-.profile-modal.cxf-champion, .cx-prev-frame.cxf-champion, .locker-look.cxf-champion, .sbm-profile-prev.cxf-champion, .mfc.cxf-champion{
+.profile-modal.cxf-champion, .cx-prev-frame.cxf-champion, .locker-look.cxf-champion, .sbm-profile-prev.cxf-champion, .mfc.cxf-champion, .sbmp-card.cxf-champion{
   background:
     radial-gradient(130% 55% at 50% 116%, rgba(255,110,30,.3), transparent 64%),
     radial-gradient(120% 45% at 50% 0%, rgba(255,140,66,.16), transparent 60%),
@@ -21536,7 +21651,7 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
     radial-gradient(115% 110% at 50% 50%, transparent 62%, rgba(255,60,170,.16) 88%, rgba(255,80,190,.3) 100%);
   animation:cxfTwinkle 3.4s ease-in-out infinite; mix-blend-mode:screen;
 }
-.profile-modal.cxf-legend, .cx-prev-frame.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend, .mfc.cxf-legend{
+.profile-modal.cxf-legend, .cx-prev-frame.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend, .mfc.cxf-legend, .sbmp-card.cxf-legend{
   background:
     radial-gradient(1.4px 1.4px at 14% 14%, rgba(255,255,255,.85) 45%, transparent 55%),
     radial-gradient(1.2px 1.2px at 74% 10%, rgba(255,255,255,.7) 45%, transparent 55%),
@@ -22052,7 +22167,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
    colour wash. Applied to every surface a frame can appear on.
    ════════════════════════════════════════════════════════════════════ */
 /* ═══ ROYAL GILD — engraved gold plate: brushed metal, filigree lattice, facets ═══ */
-.profile-modal.cxf-gold, .locker-look.cxf-gold, .sbm-profile-prev.cxf-gold, .cx-prev-frame.cxf-gold, .mfc.cxf-gold{
+.profile-modal.cxf-gold, .locker-look.cxf-gold, .sbm-profile-prev.cxf-gold, .cx-prev-frame.cxf-gold, .mfc.cxf-gold, .sbmp-card.cxf-gold{
   background:
     /* engraved diamond filigree */
     repeating-linear-gradient(45deg, rgba(255,214,110,.16) 0 1px, transparent 1px 14px),
@@ -22072,7 +22187,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 }
 /* ═══ NEBULA — a Hubble deep field: structured clouds, a blazing hero star,
    layered star depth and fine cosmic dust — no hard edges anywhere ═══ */
-.profile-modal.cxf-galaxy, .locker-look.cxf-galaxy, .sbm-profile-prev.cxf-galaxy, .cx-prev-frame.cxf-galaxy, .mfc.cxf-galaxy{
+.profile-modal.cxf-galaxy, .locker-look.cxf-galaxy, .sbm-profile-prev.cxf-galaxy, .cx-prev-frame.cxf-galaxy, .mfc.cxf-galaxy, .sbmp-card.cxf-galaxy{
   background:
     /* the hero star: blazing core inside a glow halo */
     radial-gradient(3px 3px at 26% 22%, #fff 40%, rgba(255,255,255,.9) 60%, transparent 75%),
@@ -22103,7 +22218,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 }
 /* ═══ NEON GRID — the Tron floor: perspective grid, horizon sun, scanlines ═══ */
 /* ═══ NEON GRID — void above, an endless glowing purple grid floor below ═══ */
-.profile-modal.cxf-neon, .locker-look.cxf-neon, .sbm-profile-prev.cxf-neon, .cx-prev-frame.cxf-neon, .mfc.cxf-neon{
+.profile-modal.cxf-neon, .locker-look.cxf-neon, .sbm-profile-prev.cxf-neon, .cx-prev-frame.cxf-neon, .mfc.cxf-neon, .sbmp-card.cxf-neon{
   background:
     /* pure black sky swallowing the top half */
     linear-gradient(180deg, #030208 0%, #040310 36%, rgba(4,3,14,.6) 48%, transparent 62%),
@@ -22117,7 +22232,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 }
 /* ═══ LIQUID — holographic fluid: vivid royal blue with molten chrome blobs
    flowing in from the corners, each one cycling cyan → violet → magenta. ═══ */
-.profile-modal.cxf-liquid, .locker-look.cxf-liquid, .sbm-profile-prev.cxf-liquid, .cx-prev-frame.cxf-liquid, .mfc.cxf-liquid{
+.profile-modal.cxf-liquid, .locker-look.cxf-liquid, .sbm-profile-prev.cxf-liquid, .cx-prev-frame.cxf-liquid, .mfc.cxf-liquid, .sbmp-card.cxf-liquid{
   background:
     /* molten chrome blobs — bright holographic cores with soft falloff */
     radial-gradient(30% 24% at 10% 6%, rgba(120,240,255,.85), rgba(150,110,255,.5) 55%, transparent 74%),
@@ -22135,7 +22250,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #1e2cc8, #101876) !important;
 }
 /* ═══ CRIMSON COURT — black marble with living blood veins ═══ */
-.profile-modal.cxf-blood, .locker-look.cxf-blood, .sbm-profile-prev.cxf-blood, .cx-prev-frame.cxf-blood, .mfc.cxf-blood{
+.profile-modal.cxf-blood, .locker-look.cxf-blood, .sbm-profile-prev.cxf-blood, .cx-prev-frame.cxf-blood, .mfc.cxf-blood, .sbmp-card.cxf-blood{
   background:
     /* glowing vein web — three crossing fracture systems (self-tiling) */
     repeating-linear-gradient(107deg, transparent 0 78px, rgba(255,51,88,.5) 78px 79.5px, transparent 79.5px 158px),
@@ -22150,7 +22265,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #16090e, #0c0507) !important;
 }
 /* ═══ CIRCUIT — a dense motherboard: traces, solder pads, via dots ═══ */
-.profile-modal.cxf-circuit, .locker-look.cxf-circuit, .sbm-profile-prev.cxf-circuit, .cx-prev-frame.cxf-circuit, .mfc.cxf-circuit{
+.profile-modal.cxf-circuit, .locker-look.cxf-circuit, .sbm-profile-prev.cxf-circuit, .cx-prev-frame.cxf-circuit, .mfc.cxf-circuit, .sbmp-card.cxf-circuit{
   background:
     /* solder pad glints */
     radial-gradient(2.6px 2.6px at 18% 28%, rgba(120,255,220,.7) 45%, transparent 65%),
@@ -22169,7 +22284,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 /* ═══ GOLDEN HOUR — a real sunset: violet dusk overhead melting through
    orange to a blazing sun half-hidden by clouds, god rays fanning up,
    and jagged mountain silhouettes along the bottom. ═══ */
-.profile-modal.cxf-sunset, .locker-look.cxf-sunset, .sbm-profile-prev.cxf-sunset, .cx-prev-frame.cxf-sunset, .mfc.cxf-sunset{
+.profile-modal.cxf-sunset, .locker-look.cxf-sunset, .sbm-profile-prev.cxf-sunset, .cx-prev-frame.cxf-sunset, .mfc.cxf-sunset, .sbmp-card.cxf-sunset{
   background:
     /* mountain silhouettes — overlapping dark ridges along the base */
     radial-gradient(34% 18% at 8% 100%, #170b10 55%, transparent 74%),
@@ -22192,7 +22307,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #37224e 0%, #6b2c48 24%, #b04a30 44%, #e0702e 58%, #7e3423 74%, #2c141b 90%, #140a0f 100%) !important;
 }
 /* ═══ JADE COURT — carved jade: fish-scale relief with a polished gloss ═══ */
-.profile-modal.cxf-emerald, .locker-look.cxf-emerald, .sbm-profile-prev.cxf-emerald, .cx-prev-frame.cxf-emerald, .mfc.cxf-emerald{
+.profile-modal.cxf-emerald, .locker-look.cxf-emerald, .sbm-profile-prev.cxf-emerald, .cx-prev-frame.cxf-emerald, .mfc.cxf-emerald, .sbmp-card.cxf-emerald{
   background:
     /* carved concentric ripples — jade turned on the lathe */
     repeating-radial-gradient(circle at 50% -30%, rgba(56,230,160,.16) 0 2px, transparent 5px 22px),
@@ -22205,7 +22320,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #0c221a, #071510) !important;
 }
 /* ═══ AURORA — the full arctic scene: curtains over a mountain ridge + moon ═══ */
-.profile-modal.cxf-aurora, .locker-look.cxf-aurora, .sbm-profile-prev.cxf-aurora, .cx-prev-frame.cxf-aurora, .mfc.cxf-aurora{
+.profile-modal.cxf-aurora, .locker-look.cxf-aurora, .sbm-profile-prev.cxf-aurora, .cx-prev-frame.cxf-aurora, .mfc.cxf-aurora, .sbmp-card.cxf-aurora{
   background:
     /* snow-capped ridge line across the base */
     radial-gradient(34% 20% at 12% 106%, #0a1226 46%, transparent 62%),
@@ -22239,7 +22354,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 /* ═══ HOLOGRAPHIC — diffraction foil: dense rainbow grating + facet quadrants ═══ */
 /* ═══ HOLOGRAPHIC — crumpled holo foil: chromatic ridge topography over
    dark folds with glossy spectral pools ═══ */
-.profile-modal.cxf-hologram, .locker-look.cxf-hologram, .sbm-profile-prev.cxf-hologram, .cx-prev-frame.cxf-hologram, .mfc.cxf-hologram{
+.profile-modal.cxf-hologram, .locker-look.cxf-hologram, .sbm-profile-prev.cxf-hologram, .cx-prev-frame.cxf-hologram, .mfc.cxf-hologram, .sbmp-card.cxf-hologram{
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 280'%3E%3Cg transform='translate(220,70) rotate(-16)' fill='none' stroke-linecap='round'%3E%3Cpath d='M-360,-43.4 L-342,-33.4 L-324,-22.6 L-306,-12.4 L-288,-4.1 L-270,1.1 L-252,2.7 L-234,0.3 L-216,-5.6 L-198,-14.4 L-180,-24.8 L-162,-35.6 L-144,-45.3 L-126,-52.6 L-108,-56.7 L-90,-56.9 L-72,-53.3 L-54,-46.3 L-36,-36.9 L-18,-26.2 L0,-15.6 L18,-6.6 L36,-0.2 L54,2.6 L72,1.5 L90,-3.3 L108,-11.2 L126,-21.2 L144,-32.0 L162,-42.2 L180,-50.5 L198,-55.7 L216,-57.3 L234,-54.9 L252,-49.0 L270,-40.2 L288,-29.8 L306,-19.0 L324,-9.3 L342,-2.0 L360,2.1' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-43.4 L-342,-33.4 L-324,-22.6 L-306,-12.4 L-288,-4.1 L-270,1.1 L-252,2.7 L-234,0.3 L-216,-5.6 L-198,-14.4 L-180,-24.8 L-162,-35.6 L-144,-45.3 L-126,-52.6 L-108,-56.7 L-90,-56.9 L-72,-53.3 L-54,-46.3 L-36,-36.9 L-18,-26.2 L0,-15.6 L18,-6.6 L36,-0.2 L54,2.6 L72,1.5 L90,-3.3 L108,-11.2 L126,-21.2 L144,-32.0 L162,-42.2 L180,-50.5 L198,-55.7 L216,-57.3 L234,-54.9 L252,-49.0 L270,-40.2 L288,-29.8 L306,-19.0 L324,-9.3 L342,-2.0 L360,2.1' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-37.7 L-342,-27.4 L-324,-16.6 L-306,-6.6 L-288,1.2 L-270,5.9 L-252,6.8 L-234,3.8 L-216,-2.7 L-198,-11.8 L-180,-22.4 L-162,-33.1 L-144,-42.5 L-126,-49.3 L-108,-52.8 L-90,-52.4 L-72,-48.2 L-54,-40.7 L-36,-31.0 L-18,-20.2 L0,-9.8 L18,-1.1 L36,4.7 L54,6.9 L72,5.2 L90,-0.2 L108,-8.5 L126,-18.8 L144,-29.6 L162,-39.6 L180,-47.4 L198,-52.1 L216,-53.0 L234,-50.0 L252,-43.5 L270,-34.4 L288,-23.8 L306,-13.1 L324,-3.7 L342,3.1 L360,6.6' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-37.7 L-342,-27.4 L-324,-16.6 L-306,-6.6 L-288,1.2 L-270,5.9 L-252,6.8 L-234,3.8 L-216,-2.7 L-198,-11.8 L-180,-22.4 L-162,-33.1 L-144,-42.5 L-126,-49.3 L-108,-52.8 L-90,-52.4 L-72,-48.2 L-54,-40.7 L-36,-31.0 L-18,-20.2 L0,-9.8 L18,-1.1 L36,4.7 L54,6.9 L72,5.2 L90,-0.2 L108,-8.5 L126,-18.8 L144,-29.6 L162,-39.6 L180,-47.4 L198,-52.1 L216,-53.0 L234,-50.0 L252,-43.5 L270,-34.4 L288,-23.8 L306,-13.1 L324,-3.7 L342,3.1 L360,6.6' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-31.9 L-342,-21.4 L-324,-10.7 L-306,-1.0 L-288,6.4 L-270,10.5 L-252,10.7 L-234,7.1 L-216,0.2 L-198,-9.3 L-180,-20.0 L-162,-30.6 L-144,-39.6 L-126,-46.0 L-108,-48.8 L-90,-47.7 L-72,-42.9 L-54,-35.0 L-36,-25.0 L-18,-14.2 L0,-4.0 L18,4.3 L36,9.5 L54,11.1 L72,8.7 L90,2.8 L108,-5.9 L126,-16.4 L144,-27.1 L162,-36.8 L180,-44.2 L198,-48.3 L216,-48.5 L234,-44.9 L252,-38.0 L270,-28.5 L288,-17.8 L306,-7.2 L324,1.8 L342,8.2 L360,11.0' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-31.9 L-342,-21.4 L-324,-10.7 L-306,-1.0 L-288,6.4 L-270,10.5 L-252,10.7 L-234,7.1 L-216,0.2 L-198,-9.3 L-180,-20.0 L-162,-30.6 L-144,-39.6 L-126,-46.0 L-108,-48.8 L-90,-47.7 L-72,-42.9 L-54,-35.0 L-36,-25.0 L-18,-14.2 L0,-4.0 L18,4.3 L36,9.5 L54,11.1 L72,8.7 L90,2.8 L108,-5.9 L126,-16.4 L144,-27.1 L162,-36.8 L180,-44.2 L198,-48.3 L216,-48.5 L234,-44.9 L252,-38.0 L270,-28.5 L288,-17.8 L306,-7.2 L324,1.8 L342,8.2 L360,11.0' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-26.0 L-342,-15.4 L-324,-4.7 L-306,4.6 L-288,11.5 L-270,15.0 L-252,14.6 L-234,10.4 L-216,2.9 L-198,-6.8 L-180,-17.6 L-162,-28.0 L-144,-36.7 L-126,-42.5 L-108,-44.7 L-90,-43.0 L-72,-37.6 L-54,-29.3 L-36,-19.0 L-18,-8.2 L0,1.7 L18,9.6 L36,14.2 L54,15.2 L72,12.2 L90,5.7 L108,-3.4 L126,-14.0 L144,-24.7 L162,-34.0 L180,-40.9 L198,-44.4 L216,-44.0 L234,-39.8 L252,-32.3 L270,-22.6 L288,-11.8 L306,-1.4 L324,7.3 L342,13.1 L360,15.3' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-26.0 L-342,-15.4 L-324,-4.7 L-306,4.6 L-288,11.5 L-270,15.0 L-252,14.6 L-234,10.4 L-216,2.9 L-198,-6.8 L-180,-17.6 L-162,-28.0 L-144,-36.7 L-126,-42.5 L-108,-44.7 L-90,-43.0 L-72,-37.6 L-54,-29.3 L-36,-19.0 L-18,-8.2 L0,1.7 L18,9.6 L36,14.2 L54,15.2 L72,12.2 L90,5.7 L108,-3.4 L126,-14.0 L144,-24.7 L162,-34.0 L180,-40.9 L198,-44.4 L216,-44.0 L234,-39.8 L252,-32.3 L270,-22.6 L288,-11.8 L306,-1.4 L324,7.3 L342,13.1 L360,15.3' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-20.1 L-342,-9.4 L-324,1.1 L-306,10.2 L-288,16.5 L-270,19.4 L-252,18.4 L-234,13.6 L-216,5.6 L-198,-4.4 L-180,-15.2 L-162,-25.4 L-144,-33.7 L-126,-38.9 L-108,-40.5 L-90,-38.2 L-72,-32.2 L-54,-23.5 L-36,-13.0 L-18,-2.3 L0,7.4 L18,14.8 L36,18.9 L54,19.1 L72,15.5 L90,8.6 L108,-0.9 L126,-11.6 L144,-22.1 L162,-31.2 L180,-37.5 L198,-40.4 L216,-39.4 L234,-34.6 L252,-26.6 L270,-16.6 L288,-5.8 L306,4.4 L324,12.7 L342,17.9 L360,19.5' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-20.1 L-342,-9.4 L-324,1.1 L-306,10.2 L-288,16.5 L-270,19.4 L-252,18.4 L-234,13.6 L-216,5.6 L-198,-4.4 L-180,-15.2 L-162,-25.4 L-144,-33.7 L-126,-38.9 L-108,-40.5 L-90,-38.2 L-72,-32.2 L-54,-23.5 L-36,-13.0 L-18,-2.3 L0,7.4 L18,14.8 L36,18.9 L54,19.1 L72,15.5 L90,8.6 L108,-0.9 L126,-11.6 L144,-22.1 L162,-31.2 L180,-37.5 L198,-40.4 L216,-39.4 L234,-34.6 L252,-26.6 L270,-16.6 L288,-5.8 L306,4.4 L324,12.7 L342,17.9 L360,19.5' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-14.2 L-342,-3.4 L-324,7.0 L-306,15.7 L-288,21.5 L-270,23.7 L-252,22.0 L-234,16.6 L-216,8.3 L-198,-1.9 L-180,-12.7 L-162,-22.7 L-144,-30.6 L-126,-35.2 L-108,-36.2 L-90,-33.2 L-72,-26.7 L-54,-17.6 L-36,-7.0 L-18,3.6 L0,13.0 L18,19.9 L36,23.4 L54,23.0 L72,18.8 L90,11.4 L108,1.6 L126,-9.2 L144,-19.6 L162,-28.3 L180,-34.1 L198,-36.3 L216,-34.6 L234,-29.2 L252,-20.9 L270,-10.7 L288,0.1 L306,10.1 L324,18.0 L342,22.6 L360,23.6' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-14.2 L-342,-3.4 L-324,7.0 L-306,15.7 L-288,21.5 L-270,23.7 L-252,22.0 L-234,16.6 L-216,8.3 L-198,-1.9 L-180,-12.7 L-162,-22.7 L-144,-30.6 L-126,-35.2 L-108,-36.2 L-90,-33.2 L-72,-26.7 L-54,-17.6 L-36,-7.0 L-18,3.6 L0,13.0 L18,19.9 L36,23.4 L54,23.0 L72,18.8 L90,11.4 L108,1.6 L126,-9.2 L144,-19.6 L162,-28.3 L180,-34.1 L198,-36.3 L216,-34.6 L234,-29.2 L252,-20.9 L270,-10.7 L288,0.1 L306,10.1 L324,18.0 L342,22.6 L360,23.6' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-8.3 L-342,2.6 L-324,12.8 L-306,21.0 L-288,26.3 L-270,27.9 L-252,25.6 L-234,19.6 L-216,10.9 L-198,0.5 L-180,-10.3 L-162,-20.0 L-144,-27.4 L-126,-31.5 L-108,-31.7 L-90,-28.2 L-72,-21.2 L-54,-11.7 L-36,-1.0 L-18,9.5 L0,18.6 L18,24.9 L36,27.8 L54,26.8 L72,22.0 L90,14.1 L108,4.1 L126,-6.8 L144,-17.0 L162,-25.2 L180,-30.5 L198,-32.1 L216,-29.8 L234,-23.8 L252,-15.1 L270,-4.7 L288,6.1 L306,15.8 L324,23.2 L342,27.3 L360,27.5' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-8.3 L-342,2.6 L-324,12.8 L-306,21.0 L-288,26.3 L-270,27.9 L-252,25.6 L-234,19.6 L-216,10.9 L-198,0.5 L-180,-10.3 L-162,-20.0 L-144,-27.4 L-126,-31.5 L-108,-31.7 L-90,-28.2 L-72,-21.2 L-54,-11.7 L-36,-1.0 L-18,9.5 L0,18.6 L18,24.9 L36,27.8 L54,26.8 L72,22.0 L90,14.1 L108,4.1 L126,-6.8 L144,-17.0 L162,-25.2 L180,-30.5 L198,-32.1 L216,-29.8 L234,-23.8 L252,-15.1 L270,-4.7 L288,6.1 L306,15.8 L324,23.2 L342,27.3 L360,27.5' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-2.3 L-342,8.5 L-324,18.5 L-306,26.3 L-288,31.0 L-270,32.0 L-252,29.0 L-234,22.6 L-216,13.5 L-198,2.9 L-180,-7.8 L-162,-17.2 L-144,-24.1 L-126,-27.6 L-108,-27.2 L-90,-23.0 L-72,-15.6 L-54,-5.8 L-36,4.9 L-18,15.4 L0,24.0 L18,29.9 L36,32.1 L54,30.4 L72,25.1 L90,16.7 L108,6.5 L126,-4.3 L144,-14.3 L162,-22.1 L180,-26.8 L198,-27.8 L216,-24.8 L234,-18.4 L252,-9.3 L270,1.3 L288,12.0 L306,21.4 L324,28.3 L342,31.8 L360,31.4' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-2.3 L-342,8.5 L-324,18.5 L-306,26.3 L-288,31.0 L-270,32.0 L-252,29.0 L-234,22.6 L-216,13.5 L-198,2.9 L-180,-7.8 L-162,-17.2 L-144,-24.1 L-126,-27.6 L-108,-27.2 L-90,-23.0 L-72,-15.6 L-54,-5.8 L-36,4.9 L-18,15.4 L0,24.0 L18,29.9 L36,32.1 L54,30.4 L72,25.1 L90,16.7 L108,6.5 L126,-4.3 L144,-14.3 L162,-22.1 L180,-26.8 L198,-27.8 L216,-24.8 L234,-18.4 L252,-9.3 L270,1.3 L288,12.0 L306,21.4 L324,28.3 L342,31.8 L360,31.4' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,3.7 L-342,14.5 L-324,24.2 L-306,31.6 L-288,35.7 L-270,35.9 L-252,32.4 L-234,25.4 L-216,16.0 L-198,5.3 L-180,-5.3 L-162,-14.3 L-144,-20.7 L-126,-23.6 L-108,-22.6 L-90,-17.8 L-72,-9.9 L-54,0.1 L-36,10.9 L-18,21.1 L0,29.4 L18,34.7 L36,36.3 L54,34.0 L72,28.1 L90,19.3 L108,8.9 L126,-1.9 L144,-11.6 L162,-19.0 L180,-23.1 L198,-23.3 L216,-19.8 L234,-12.8 L252,-3.4 L270,7.3 L288,17.9 L306,26.9 L324,33.3 L342,36.2 L360,35.2' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,3.7 L-342,14.5 L-324,24.2 L-306,31.6 L-288,35.7 L-270,35.9 L-252,32.4 L-234,25.4 L-216,16.0 L-198,5.3 L-180,-5.3 L-162,-14.3 L-144,-20.7 L-126,-23.6 L-108,-22.6 L-90,-17.8 L-72,-9.9 L-54,0.1 L-36,10.9 L-18,21.1 L0,29.4 L18,34.7 L36,36.3 L54,34.0 L72,28.1 L90,19.3 L108,8.9 L126,-1.9 L144,-11.6 L162,-19.0 L180,-23.1 L198,-23.3 L216,-19.8 L234,-12.8 L252,-3.4 L270,7.3 L288,17.9 L306,26.9 L324,33.3 L342,36.2 L360,35.2' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,9.7 L-342,20.4 L-324,29.8 L-306,36.7 L-288,40.2 L-270,39.8 L-252,35.6 L-234,28.2 L-216,18.5 L-198,7.7 L-180,-2.7 L-162,-11.4 L-144,-17.3 L-126,-19.5 L-108,-17.8 L-90,-12.5 L-72,-4.1 L-54,6.1 L-36,16.9 L-18,26.9 L0,34.7 L18,39.4 L36,40.4 L54,37.4 L72,31.0 L90,21.9 L108,11.3 L126,0.6 L144,-8.8 L162,-15.7 L180,-19.2 L198,-18.8 L216,-14.6 L234,-7.2 L252,2.5 L270,13.3 L288,23.7 L306,32.4 L324,38.3 L342,40.5 L360,38.8' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,9.7 L-342,20.4 L-324,29.8 L-306,36.7 L-288,40.2 L-270,39.8 L-252,35.6 L-234,28.2 L-216,18.5 L-198,7.7 L-180,-2.7 L-162,-11.4 L-144,-17.3 L-126,-19.5 L-108,-17.8 L-90,-12.5 L-72,-4.1 L-54,6.1 L-36,16.9 L-18,26.9 L0,34.7 L18,39.4 L36,40.4 L54,37.4 L72,31.0 L90,21.9 L108,11.3 L126,0.6 L144,-8.8 L162,-15.7 L180,-19.2 L198,-18.8 L216,-14.6 L234,-7.2 L252,2.5 L270,13.3 L288,23.7 L306,32.4 L324,38.3 L342,40.5 L360,38.8' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,15.7 L-342,26.3 L-324,35.3 L-306,41.7 L-288,44.6 L-270,43.6 L-252,38.8 L-234,30.9 L-216,20.9 L-198,10.1 L-180,-0.1 L-162,-8.4 L-144,-13.7 L-126,-15.3 L-108,-13.0 L-90,-7.1 L-72,1.7 L-54,12.1 L-36,22.8 L-18,32.6 L0,39.9 L18,44.1 L36,44.3 L54,40.8 L72,33.8 L90,24.4 L108,13.7 L126,3.1 L144,-5.9 L162,-12.3 L180,-15.2 L198,-14.2 L216,-9.4 L234,-1.5 L252,8.5 L270,19.3 L288,29.5 L306,37.8 L324,43.1 L342,44.7 L360,42.4' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,15.7 L-342,26.3 L-324,35.3 L-306,41.7 L-288,44.6 L-270,43.6 L-252,38.8 L-234,30.9 L-216,20.9 L-198,10.1 L-180,-0.1 L-162,-8.4 L-144,-13.7 L-126,-15.3 L-108,-13.0 L-90,-7.1 L-72,1.7 L-54,12.1 L-36,22.8 L-18,32.6 L0,39.9 L18,44.1 L36,44.3 L54,40.8 L72,33.8 L90,24.4 L108,13.7 L126,3.1 L144,-5.9 L162,-12.3 L180,-15.2 L198,-14.2 L216,-9.4 L234,-1.5 L252,8.5 L270,19.3 L288,29.5 L306,37.8 L324,43.1 L342,44.7 L360,42.4' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,21.7 L-342,32.1 L-324,40.8 L-306,46.6 L-288,48.9 L-270,47.2 L-252,41.9 L-234,33.6 L-216,23.3 L-198,12.5 L-180,2.5 L-162,-5.3 L-144,-10.0 L-126,-11.0 L-108,-8.0 L-90,-1.6 L-72,7.5 L-54,18.1 L-36,28.8 L-18,38.2 L0,45.1 L18,48.6 L36,48.2 L54,44.0 L72,36.6 L90,26.9 L108,16.1 L126,5.7 L144,-3.0 L162,-8.8 L180,-11.1 L198,-9.4 L216,-4.1 L234,4.2 L252,14.5 L270,25.3 L288,35.3 L306,43.1 L324,47.8 L342,48.8 L360,45.8' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,21.7 L-342,32.1 L-324,40.8 L-306,46.6 L-288,48.9 L-270,47.2 L-252,41.9 L-234,33.6 L-216,23.3 L-198,12.5 L-180,2.5 L-162,-5.3 L-144,-10.0 L-126,-11.0 L-108,-8.0 L-90,-1.6 L-72,7.5 L-54,18.1 L-36,28.8 L-18,38.2 L0,45.1 L18,48.6 L36,48.2 L54,44.0 L72,36.6 L90,26.9 L108,16.1 L126,5.7 L144,-3.0 L162,-8.8 L180,-11.1 L198,-9.4 L216,-4.1 L234,4.2 L252,14.5 L270,25.3 L288,35.3 L306,43.1 L324,47.8 L342,48.8 L360,45.8' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,27.7 L-342,37.9 L-324,46.2 L-306,51.5 L-288,53.1 L-270,50.8 L-252,44.9 L-234,36.2 L-216,25.7 L-198,15.0 L-180,5.3 L-162,-2.1 L-144,-6.2 L-126,-6.5 L-108,-3.0 L-90,3.9 L-72,13.4 L-54,24.1 L-36,34.6 L-18,43.7 L0,50.1 L18,53.0 L36,52.0 L54,47.2 L72,39.3 L90,29.3 L108,18.5 L126,8.3 L144,0.0 L162,-5.3 L180,-6.9 L198,-4.6 L216,1.3 L234,10.0 L252,20.5 L270,31.2 L288,40.9 L306,48.3 L324,52.4 L342,52.7 L360,49.2' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,27.7 L-342,37.9 L-324,46.2 L-306,51.5 L-288,53.1 L-270,50.8 L-252,44.9 L-234,36.2 L-216,25.7 L-198,15.0 L-180,5.3 L-162,-2.1 L-144,-6.2 L-126,-6.5 L-108,-3.0 L-90,3.9 L-72,13.4 L-54,24.1 L-36,34.6 L-18,43.7 L0,50.1 L18,53.0 L36,52.0 L54,47.2 L72,39.3 L90,29.3 L108,18.5 L126,8.3 L144,0.0 L162,-5.3 L180,-6.9 L198,-4.6 L216,1.3 L234,10.0 L252,20.5 L270,31.2 L288,40.9 L306,48.3 L324,52.4 L342,52.7 L360,49.2' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3C/g%3E%3Cg transform='translate(300,210) rotate(10)' fill='none' stroke-linecap='round'%3E%3Cpath d='M-360,-23.5 L-342,-34.5 L-324,-45.3 L-306,-55.0 L-288,-63.0 L-270,-68.5 L-252,-71.3 L-234,-70.9 L-216,-67.6 L-198,-61.5 L-180,-53.2 L-162,-43.1 L-144,-32.2 L-126,-21.2 L-108,-11.0 L-90,-2.4 L-72,4.0 L-54,7.7 L-36,8.4 L-18,6.0 L0,0.8 L18,-6.8 L36,-16.4 L54,-27.1 L72,-38.2 L90,-48.7 L108,-57.9 L126,-65.1 L144,-69.8 L162,-71.5 L180,-70.2 L198,-65.9 L216,-59.0 L234,-50.0 L252,-39.5 L270,-28.5 L288,-17.7 L306,-8.0 L324,-0.0 L342,5.5 L360,8.3' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-23.5 L-342,-34.5 L-324,-45.3 L-306,-55.0 L-288,-63.0 L-270,-68.5 L-252,-71.3 L-234,-70.9 L-216,-67.6 L-198,-61.5 L-180,-53.2 L-162,-43.1 L-144,-32.2 L-126,-21.2 L-108,-11.0 L-90,-2.4 L-72,4.0 L-54,7.7 L-36,8.4 L-18,6.0 L0,0.8 L18,-6.8 L36,-16.4 L54,-27.1 L72,-38.2 L90,-48.7 L108,-57.9 L126,-65.1 L144,-69.8 L162,-71.5 L180,-70.2 L198,-65.9 L216,-59.0 L234,-50.0 L252,-39.5 L270,-28.5 L288,-17.7 L306,-8.0 L324,-0.0 L342,5.5 L360,8.3' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-21.6 L-342,-32.7 L-324,-43.3 L-306,-52.7 L-288,-60.2 L-270,-65.2 L-252,-67.3 L-234,-66.3 L-216,-62.3 L-198,-55.7 L-180,-46.9 L-162,-36.6 L-144,-25.6 L-126,-14.7 L-108,-4.8 L-90,3.4 L-72,9.2 L-54,12.3 L-36,12.3 L-18,9.4 L0,3.6 L18,-4.6 L36,-14.4 L54,-25.3 L72,-36.3 L90,-46.6 L108,-55.5 L126,-62.2 L144,-66.2 L162,-67.3 L180,-65.3 L198,-60.4 L216,-53.0 L234,-43.6 L252,-33.0 L270,-21.9 L288,-11.3 L306,-1.9 L324,5.6 L342,10.6 L360,12.7' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-21.6 L-342,-32.7 L-324,-43.3 L-306,-52.7 L-288,-60.2 L-270,-65.2 L-252,-67.3 L-234,-66.3 L-216,-62.3 L-198,-55.7 L-180,-46.9 L-162,-36.6 L-144,-25.6 L-126,-14.7 L-108,-4.8 L-90,3.4 L-72,9.2 L-54,12.3 L-36,12.3 L-18,9.4 L0,3.6 L18,-4.6 L36,-14.4 L54,-25.3 L72,-36.3 L90,-46.6 L108,-55.5 L126,-62.2 L144,-66.2 L162,-67.3 L180,-65.3 L198,-60.4 L216,-53.0 L234,-43.6 L252,-33.0 L270,-21.9 L288,-11.3 L306,-1.9 L324,5.6 L342,10.6 L360,12.7' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-19.8 L-342,-30.8 L-324,-41.3 L-306,-50.3 L-288,-57.3 L-270,-61.7 L-252,-63.1 L-234,-61.5 L-216,-56.9 L-198,-49.8 L-180,-40.6 L-162,-30.1 L-144,-19.0 L-126,-8.3 L-108,1.3 L-90,9.1 L-72,14.3 L-54,16.8 L-36,16.1 L-18,12.5 L0,6.2 L18,-2.4 L36,-12.5 L54,-23.5 L72,-34.4 L90,-44.5 L108,-52.9 L126,-59.1 L144,-62.5 L162,-62.9 L180,-60.3 L198,-54.8 L216,-46.9 L234,-37.2 L252,-26.4 L270,-15.4 L288,-4.9 L306,4.1 L324,11.1 L342,15.5 L360,16.9' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-19.8 L-342,-30.8 L-324,-41.3 L-306,-50.3 L-288,-57.3 L-270,-61.7 L-252,-63.1 L-234,-61.5 L-216,-56.9 L-198,-49.8 L-180,-40.6 L-162,-30.1 L-144,-19.0 L-126,-8.3 L-108,1.3 L-90,9.1 L-72,14.3 L-54,16.8 L-36,16.1 L-18,12.5 L0,6.2 L18,-2.4 L36,-12.5 L54,-23.5 L72,-34.4 L90,-44.5 L108,-52.9 L126,-59.1 L144,-62.5 L162,-62.9 L180,-60.3 L198,-54.8 L216,-46.9 L234,-37.2 L252,-26.4 L270,-15.4 L288,-4.9 L306,4.1 L324,11.1 L342,15.5 L360,16.9' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-18.0 L-342,-29.0 L-324,-39.2 L-306,-47.8 L-288,-54.3 L-270,-58.0 L-252,-58.8 L-234,-56.5 L-216,-51.4 L-198,-43.7 L-180,-34.2 L-162,-23.5 L-144,-12.4 L-126,-1.9 L-108,7.4 L-90,14.6 L-72,19.3 L-54,21.1 L-36,19.8 L-18,15.6 L0,8.7 L18,-0.3 L36,-10.7 L54,-21.7 L72,-32.5 L90,-42.3 L108,-50.3 L126,-55.9 L144,-58.6 L162,-58.4 L180,-55.1 L198,-49.1 L216,-40.7 L234,-30.7 L252,-19.8 L270,-8.8 L288,1.4 L306,10.0 L324,16.5 L342,20.2 L360,21.0' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-18.0 L-342,-29.0 L-324,-39.2 L-306,-47.8 L-288,-54.3 L-270,-58.0 L-252,-58.8 L-234,-56.5 L-216,-51.4 L-198,-43.7 L-180,-34.2 L-162,-23.5 L-144,-12.4 L-126,-1.9 L-108,7.4 L-90,14.6 L-72,19.3 L-54,21.1 L-36,19.8 L-18,15.6 L0,8.7 L18,-0.3 L36,-10.7 L54,-21.7 L72,-32.5 L90,-42.3 L108,-50.3 L126,-55.9 L144,-58.6 L162,-58.4 L180,-55.1 L198,-49.1 L216,-40.7 L234,-30.7 L252,-19.8 L270,-8.8 L288,1.4 L306,10.0 L324,16.5 L342,20.2 L360,21.0' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-16.2 L-342,-27.1 L-324,-37.0 L-306,-45.3 L-288,-51.2 L-270,-54.3 L-252,-54.4 L-234,-51.4 L-216,-45.7 L-198,-37.6 L-180,-27.7 L-162,-16.9 L-144,-5.9 L-126,4.5 L-108,13.3 L-90,20.1 L-72,24.2 L-54,25.3 L-36,23.3 L-18,18.5 L0,11.1 L18,1.8 L36,-8.8 L54,-19.9 L72,-30.5 L90,-40.0 L108,-47.5 L126,-52.5 L144,-54.6 L162,-53.7 L180,-49.8 L198,-43.2 L216,-34.5 L234,-24.2 L252,-13.2 L270,-2.3 L288,7.6 L306,15.9 L324,21.8 L342,24.9 L360,25.0' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-16.2 L-342,-27.1 L-324,-37.0 L-306,-45.3 L-288,-51.2 L-270,-54.3 L-252,-54.4 L-234,-51.4 L-216,-45.7 L-198,-37.6 L-180,-27.7 L-162,-16.9 L-144,-5.9 L-126,4.5 L-108,13.3 L-90,20.1 L-72,24.2 L-54,25.3 L-36,23.3 L-18,18.5 L0,11.1 L18,1.8 L36,-8.8 L54,-19.9 L72,-30.5 L90,-40.0 L108,-47.5 L126,-52.5 L144,-54.6 L162,-53.7 L180,-49.8 L198,-43.2 L216,-34.5 L234,-24.2 L252,-13.2 L270,-2.3 L288,7.6 L306,15.9 L324,21.8 L342,24.9 L360,25.0' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-14.4 L-342,-25.1 L-324,-34.8 L-306,-42.5 L-288,-47.9 L-270,-50.3 L-252,-49.8 L-234,-46.2 L-216,-39.9 L-198,-31.4 L-180,-21.2 L-162,-10.3 L-144,0.6 L-126,10.7 L-108,19.2 L-90,25.4 L-72,28.9 L-54,29.3 L-36,26.7 L-18,21.3 L0,13.4 L18,3.8 L36,-7.0 L54,-18.1 L72,-28.5 L90,-37.6 L108,-44.6 L126,-49.0 L144,-50.5 L162,-48.9 L180,-44.4 L198,-37.3 L216,-28.1 L234,-17.6 L252,-6.6 L270,4.1 L288,13.8 L306,21.5 L324,26.9 L342,29.3 L360,28.8' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-14.4 L-342,-25.1 L-324,-34.8 L-306,-42.5 L-288,-47.9 L-270,-50.3 L-252,-49.8 L-234,-46.2 L-216,-39.9 L-198,-31.4 L-180,-21.2 L-162,-10.3 L-144,0.6 L-126,10.7 L-108,19.2 L-90,25.4 L-72,28.9 L-54,29.3 L-36,26.7 L-18,21.3 L0,13.4 L18,3.8 L36,-7.0 L54,-18.1 L72,-28.5 L90,-37.6 L108,-44.6 L126,-49.0 L144,-50.5 L162,-48.9 L180,-44.4 L198,-37.3 L216,-28.1 L234,-17.6 L252,-6.6 L270,4.1 L288,13.8 L306,21.5 L324,26.9 L342,29.3 L360,28.8' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-12.6 L-342,-23.1 L-324,-32.4 L-306,-39.7 L-288,-44.5 L-270,-46.3 L-252,-45.1 L-234,-40.9 L-216,-34.0 L-198,-25.1 L-180,-14.7 L-162,-3.7 L-144,7.1 L-126,16.9 L-108,25.0 L-90,30.6 L-72,33.4 L-54,33.2 L-36,30.0 L-18,24.0 L0,15.7 L18,5.7 L36,-5.2 L54,-16.2 L72,-26.4 L90,-35.1 L108,-41.6 L126,-45.4 L144,-46.2 L162,-44.0 L180,-38.9 L198,-31.3 L216,-21.8 L234,-11.1 L252,-0.0 L270,10.5 L288,19.8 L306,27.1 L324,31.9 L342,33.7 L360,32.5' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-12.6 L-342,-23.1 L-324,-32.4 L-306,-39.7 L-288,-44.5 L-270,-46.3 L-252,-45.1 L-234,-40.9 L-216,-34.0 L-198,-25.1 L-180,-14.7 L-162,-3.7 L-144,7.1 L-126,16.9 L-108,25.0 L-90,30.6 L-72,33.4 L-54,33.2 L-36,30.0 L-18,24.0 L0,15.7 L18,5.7 L36,-5.2 L54,-16.2 L72,-26.4 L90,-35.1 L108,-41.6 L126,-45.4 L144,-46.2 L162,-44.0 L180,-38.9 L198,-31.3 L216,-21.8 L234,-11.1 L252,-0.0 L270,10.5 L288,19.8 L306,27.1 L324,31.9 L342,33.7 L360,32.5' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-10.7 L-342,-21.1 L-324,-30.0 L-306,-36.8 L-288,-40.9 L-270,-42.1 L-252,-40.2 L-234,-35.4 L-216,-28.1 L-198,-18.7 L-180,-8.2 L-162,2.9 L-144,13.6 L-126,23.0 L-108,30.6 L-90,35.7 L-72,37.8 L-54,37.0 L-36,33.1 L-18,26.6 L0,17.8 L18,7.6 L36,-3.4 L54,-14.3 L72,-24.3 L90,-32.5 L108,-38.5 L126,-41.6 L144,-41.8 L162,-38.9 L180,-33.2 L198,-25.1 L216,-15.3 L234,-4.5 L252,6.5 L270,16.9 L288,25.8 L306,32.6 L324,36.7 L342,37.9 L360,36.0' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-10.7 L-342,-21.1 L-324,-30.0 L-306,-36.8 L-288,-40.9 L-270,-42.1 L-252,-40.2 L-234,-35.4 L-216,-28.1 L-198,-18.7 L-180,-8.2 L-162,2.9 L-144,13.6 L-126,23.0 L-108,30.6 L-90,35.7 L-72,37.8 L-54,37.0 L-36,33.1 L-18,26.6 L0,17.8 L18,7.6 L36,-3.4 L54,-14.3 L72,-24.3 L90,-32.5 L108,-38.5 L126,-41.6 L144,-41.8 L162,-38.9 L180,-33.2 L198,-25.1 L216,-15.3 L234,-4.5 L252,6.5 L270,16.9 L288,25.8 L306,32.6 L324,36.7 L342,37.9 L360,36.0' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-8.9 L-342,-19.0 L-324,-27.5 L-306,-33.7 L-288,-37.2 L-270,-37.7 L-252,-35.2 L-234,-29.8 L-216,-22.0 L-198,-12.3 L-180,-1.6 L-162,9.5 L-144,19.9 L-126,29.1 L-108,36.1 L-90,40.6 L-72,42.1 L-54,40.6 L-36,36.1 L-18,29.0 L0,19.9 L18,9.4 L36,-1.6 L54,-12.4 L72,-22.0 L90,-29.8 L108,-35.2 L126,-37.7 L144,-37.2 L162,-33.7 L180,-27.4 L198,-18.9 L216,-8.8 L234,2.1 L252,13.1 L270,23.2 L288,31.7 L306,37.9 L324,41.4 L342,41.9 L360,39.4' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-8.9 L-342,-19.0 L-324,-27.5 L-306,-33.7 L-288,-37.2 L-270,-37.7 L-252,-35.2 L-234,-29.8 L-216,-22.0 L-198,-12.3 L-180,-1.6 L-162,9.5 L-144,19.9 L-126,29.1 L-108,36.1 L-90,40.6 L-72,42.1 L-54,40.6 L-36,36.1 L-18,29.0 L0,19.9 L18,9.4 L36,-1.6 L54,-12.4 L72,-22.0 L90,-29.8 L108,-35.2 L126,-37.7 L144,-37.2 L162,-33.7 L180,-27.4 L198,-18.9 L216,-8.8 L234,2.1 L252,13.1 L270,23.2 L288,31.7 L306,37.9 L324,41.4 L342,41.9 L360,39.4' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-6.9 L-342,-16.8 L-324,-24.8 L-306,-30.5 L-288,-33.4 L-270,-33.2 L-252,-30.1 L-234,-24.1 L-216,-15.8 L-198,-5.9 L-180,5.0 L-162,16.0 L-144,26.3 L-126,35.0 L-108,41.5 L-90,45.4 L-72,46.2 L-54,44.0 L-36,39.0 L-18,31.4 L0,21.9 L18,11.3 L36,0.2 L54,-10.4 L72,-19.7 L90,-27.0 L108,-31.8 L126,-33.7 L144,-32.5 L162,-28.4 L180,-21.6 L198,-12.7 L216,-2.3 L234,8.7 L252,19.5 L270,29.4 L288,37.4 L306,43.1 L324,46.0 L342,45.8 L360,42.7' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-6.9 L-342,-16.8 L-324,-24.8 L-306,-30.5 L-288,-33.4 L-270,-33.2 L-252,-30.1 L-234,-24.1 L-216,-15.8 L-198,-5.9 L-180,5.0 L-162,16.0 L-144,26.3 L-126,35.0 L-108,41.5 L-90,45.4 L-72,46.2 L-54,44.0 L-36,39.0 L-18,31.4 L0,21.9 L18,11.3 L36,0.2 L54,-10.4 L72,-19.7 L90,-27.0 L108,-31.8 L126,-33.7 L144,-32.5 L162,-28.4 L180,-21.6 L198,-12.7 L216,-2.3 L234,8.7 L252,19.5 L270,29.4 L288,37.4 L306,43.1 L324,46.0 L342,45.8 L360,42.7' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-5.0 L-342,-14.5 L-324,-22.1 L-306,-27.2 L-288,-29.4 L-270,-28.6 L-252,-24.8 L-234,-18.3 L-216,-9.6 L-198,0.6 L-180,11.6 L-162,22.5 L-144,32.5 L-126,40.8 L-108,46.8 L-90,50.0 L-72,50.2 L-54,47.4 L-36,41.7 L-18,33.7 L0,23.9 L18,13.1 L36,2.1 L54,-8.3 L72,-17.3 L90,-24.1 L108,-28.3 L126,-29.5 L144,-27.7 L162,-22.9 L180,-15.6 L198,-6.3 L216,4.3 L234,15.3 L252,26.0 L270,35.5 L288,43.1 L306,48.2 L324,50.4 L342,49.6 L360,45.8' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-5.0 L-342,-14.5 L-324,-22.1 L-306,-27.2 L-288,-29.4 L-270,-28.6 L-252,-24.8 L-234,-18.3 L-216,-9.6 L-198,0.6 L-180,11.6 L-162,22.5 L-144,32.5 L-126,40.8 L-108,46.8 L-90,50.0 L-72,50.2 L-54,47.4 L-36,41.7 L-18,33.7 L0,23.9 L18,13.1 L36,2.1 L54,-8.3 L72,-17.3 L90,-24.1 L108,-28.3 L126,-29.5 L144,-27.7 L162,-22.9 L180,-15.6 L198,-6.3 L216,4.3 L234,15.3 L252,26.0 L270,35.5 L288,43.1 L306,48.2 L324,50.4 L342,49.6 L360,45.8' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-3.0 L-342,-12.1 L-324,-19.2 L-306,-23.7 L-288,-25.3 L-270,-23.8 L-252,-19.4 L-234,-12.4 L-216,-3.3 L-198,7.2 L-180,18.2 L-162,29.0 L-144,38.7 L-126,46.5 L-108,51.9 L-90,54.5 L-72,54.1 L-54,50.6 L-36,44.4 L-18,35.9 L0,25.8 L18,14.9 L36,3.9 L54,-6.2 L72,-14.7 L90,-21.0 L108,-24.6 L126,-25.1 L144,-22.7 L162,-17.3 L180,-9.5 L198,0.1 L216,10.8 L234,21.9 L252,32.4 L270,41.5 L288,48.6 L306,53.1 L324,54.7 L342,53.2 L360,48.8' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-3.0 L-342,-12.1 L-324,-19.2 L-306,-23.7 L-288,-25.3 L-270,-23.8 L-252,-19.4 L-234,-12.4 L-216,-3.3 L-198,7.2 L-180,18.2 L-162,29.0 L-144,38.7 L-126,46.5 L-108,51.9 L-90,54.5 L-72,54.1 L-54,50.6 L-36,44.4 L-18,35.9 L0,25.8 L18,14.9 L36,3.9 L54,-6.2 L72,-14.7 L90,-21.0 L108,-24.6 L126,-25.1 L144,-22.7 L162,-17.3 L180,-9.5 L198,0.1 L216,10.8 L234,21.9 L252,32.4 L270,41.5 L288,48.6 L306,53.1 L324,54.7 L342,53.2 L360,48.8' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-0.9 L-342,-9.6 L-324,-16.2 L-306,-20.1 L-288,-21.0 L-270,-18.9 L-252,-13.9 L-234,-6.4 L-216,3.1 L-198,13.7 L-180,24.8 L-162,35.4 L-144,44.7 L-126,52.1 L-108,56.9 L-90,58.9 L-72,57.7 L-54,53.7 L-36,46.9 L-18,38.0 L0,27.7 L18,16.7 L36,5.8 L54,-4.0 L72,-12.1 L90,-17.8 L108,-20.8 L126,-20.7 L144,-17.5 L162,-11.6 L180,-3.4 L198,6.5 L216,17.4 L234,28.4 L252,38.7 L270,47.4 L288,54.0 L306,57.9 L324,58.8 L342,56.7 L360,51.7' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-0.9 L-342,-9.6 L-324,-16.2 L-306,-20.1 L-288,-21.0 L-270,-18.9 L-252,-13.9 L-234,-6.4 L-216,3.1 L-198,13.7 L-180,24.8 L-162,35.4 L-144,44.7 L-126,52.1 L-108,56.9 L-90,58.9 L-72,57.7 L-54,53.7 L-36,46.9 L-18,38.0 L0,27.7 L18,16.7 L36,5.8 L54,-4.0 L72,-12.1 L90,-17.8 L108,-20.8 L126,-20.7 L144,-17.5 L162,-11.6 L180,-3.4 L198,6.5 L216,17.4 L234,28.4 L252,38.7 L270,47.4 L288,54.0 L306,57.9 L324,58.8 L342,56.7 L360,51.7' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,1.3 L-342,-7.1 L-324,-13.1 L-306,-16.4 L-288,-16.6 L-270,-13.9 L-252,-8.3 L-234,-0.3 L-216,9.5 L-198,20.3 L-180,31.4 L-162,41.8 L-144,50.7 L-126,57.6 L-108,61.8 L-90,63.1 L-72,61.3 L-54,56.6 L-36,49.4 L-18,40.1 L0,29.5 L18,18.5 L36,7.8 L54,-1.7 L72,-9.4 L90,-14.5 L108,-16.8 L126,-16.0 L144,-12.3 L162,-5.8 L180,2.8 L198,13.0 L216,24.0 L234,34.9 L252,44.9 L270,53.3 L288,59.3 L306,62.6 L324,62.8 L342,60.1 L360,54.5' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,1.3 L-342,-7.1 L-324,-13.1 L-306,-16.4 L-288,-16.6 L-270,-13.9 L-252,-8.3 L-234,-0.3 L-216,9.5 L-198,20.3 L-180,31.4 L-162,41.8 L-144,50.7 L-126,57.6 L-108,61.8 L-90,63.1 L-72,61.3 L-54,56.6 L-36,49.4 L-18,40.1 L0,29.5 L18,18.5 L36,7.8 L54,-1.7 L72,-9.4 L90,-14.5 L108,-16.8 L126,-16.0 L144,-12.3 L162,-5.8 L180,2.8 L198,13.0 L216,24.0 L234,34.9 L252,44.9 L270,53.3 L288,59.3 L306,62.6 L324,62.8 L342,60.1 L360,54.5' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,3.5 L-342,-4.4 L-324,-9.9 L-306,-12.5 L-288,-12.1 L-270,-8.7 L-252,-2.5 L-234,5.9 L-216,16.0 L-198,26.9 L-180,37.9 L-162,48.0 L-144,56.6 L-126,62.9 L-108,66.5 L-90,67.2 L-72,64.7 L-54,59.4 L-36,51.7 L-18,42.1 L0,31.4 L18,20.3 L36,9.8 L54,0.6 L72,-6.5 L90,-11.1 L108,-12.7 L126,-11.3 L144,-6.9 L162,0.1 L180,9.1 L198,19.6 L216,30.6 L234,41.4 L252,51.1 L270,59.0 L288,64.5 L306,67.1 L324,66.7 L342,63.3 L360,57.1' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,3.5 L-342,-4.4 L-324,-9.9 L-306,-12.5 L-288,-12.1 L-270,-8.7 L-252,-2.5 L-234,5.9 L-216,16.0 L-198,26.9 L-180,37.9 L-162,48.0 L-144,56.6 L-126,62.9 L-108,66.5 L-90,67.2 L-72,64.7 L-54,59.4 L-36,51.7 L-18,42.1 L0,31.4 L18,20.3 L36,9.8 L54,0.6 L72,-6.5 L90,-11.1 L108,-12.7 L126,-11.3 L144,-6.9 L162,0.1 L180,9.1 L198,19.6 L216,30.6 L234,41.4 L252,51.1 L270,59.0 L288,64.5 L306,67.1 L324,66.7 L342,63.3 L360,57.1' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3C/g%3E%3Cg transform='translate(60,170) rotate(-55)' fill='none' stroke-linecap='round'%3E%3Cpath d='M-360,-38.5 L-342,-40.9 L-324,-38.5 L-306,-31.8 L-288,-22.3 L-270,-12.1 L-252,-3.3 L-234,2.0 L-216,2.8 L-198,-1.1 L-180,-8.9 L-162,-18.9 L-144,-28.9 L-126,-36.7 L-108,-40.6 L-90,-39.8 L-72,-34.4 L-54,-25.7 L-36,-15.4 L-18,-6.0 L0,0.7 L18,3.1 L36,0.7 L54,-6.0 L72,-15.5 L90,-25.7 L108,-34.5 L126,-39.8 L144,-40.6 L162,-36.7 L180,-28.9 L198,-18.9 L216,-8.9 L234,-1.1 L252,2.8 L270,2.0 L288,-3.4 L306,-12.1 L324,-22.4 L342,-31.8 L360,-38.5' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-38.5 L-342,-40.9 L-324,-38.5 L-306,-31.8 L-288,-22.3 L-270,-12.1 L-252,-3.3 L-234,2.0 L-216,2.8 L-198,-1.1 L-180,-8.9 L-162,-18.9 L-144,-28.9 L-126,-36.7 L-108,-40.6 L-90,-39.8 L-72,-34.4 L-54,-25.7 L-36,-15.4 L-18,-6.0 L0,0.7 L18,3.1 L36,0.7 L54,-6.0 L72,-15.5 L90,-25.7 L108,-34.5 L126,-39.8 L144,-40.6 L162,-36.7 L180,-28.9 L198,-18.9 L216,-8.9 L234,-1.1 L252,2.8 L270,2.0 L288,-3.4 L306,-12.1 L324,-22.4 L342,-31.8 L360,-38.5' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-34.9 L-342,-36.7 L-324,-33.7 L-306,-26.5 L-288,-16.8 L-270,-6.7 L-252,1.8 L-234,6.6 L-216,6.8 L-198,2.3 L-180,-5.9 L-162,-16.0 L-144,-25.9 L-126,-33.2 L-108,-36.6 L-90,-35.2 L-72,-29.3 L-54,-20.2 L-36,-10.0 L-18,-0.7 L0,5.5 L18,7.3 L36,4.3 L54,-2.9 L72,-12.6 L90,-22.7 L108,-31.2 L126,-36.0 L144,-36.2 L162,-31.7 L180,-23.5 L198,-13.4 L216,-3.5 L234,3.8 L252,7.2 L270,5.8 L288,-0.1 L306,-9.2 L324,-19.4 L342,-28.7 L360,-34.9' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-34.9 L-342,-36.7 L-324,-33.7 L-306,-26.5 L-288,-16.8 L-270,-6.7 L-252,1.8 L-234,6.6 L-216,6.8 L-198,2.3 L-180,-5.9 L-162,-16.0 L-144,-25.9 L-126,-33.2 L-108,-36.6 L-90,-35.2 L-72,-29.3 L-54,-20.2 L-36,-10.0 L-18,-0.7 L0,5.5 L18,7.3 L36,4.3 L54,-2.9 L72,-12.6 L90,-22.7 L108,-31.2 L126,-36.0 L144,-36.2 L162,-31.7 L180,-23.5 L198,-13.4 L216,-3.5 L234,3.8 L252,7.2 L270,5.8 L288,-0.1 L306,-9.2 L324,-19.4 L342,-28.7 L360,-34.9' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-31.2 L-342,-32.3 L-324,-28.8 L-306,-21.2 L-288,-11.3 L-270,-1.2 L-252,6.8 L-234,11.1 L-216,10.7 L-198,5.6 L-180,-2.9 L-162,-13.1 L-144,-22.8 L-126,-29.7 L-108,-32.5 L-90,-30.5 L-72,-24.1 L-54,-14.7 L-36,-4.5 L-18,4.5 L0,10.2 L18,11.3 L36,7.8 L54,0.2 L72,-9.7 L90,-19.8 L108,-27.8 L126,-32.1 L144,-31.7 L162,-26.6 L180,-18.1 L198,-7.9 L216,1.8 L234,8.7 L252,11.5 L270,9.5 L288,3.1 L306,-6.3 L324,-16.5 L342,-25.5 L360,-31.2' stroke='%2335f2a0' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-31.2 L-342,-32.3 L-324,-28.8 L-306,-21.2 L-288,-11.3 L-270,-1.2 L-252,6.8 L-234,11.1 L-216,10.7 L-198,5.6 L-180,-2.9 L-162,-13.1 L-144,-22.8 L-126,-29.7 L-108,-32.5 L-90,-30.5 L-72,-24.1 L-54,-14.7 L-36,-4.5 L-18,4.5 L0,10.2 L18,11.3 L36,7.8 L54,0.2 L72,-9.7 L90,-19.8 L108,-27.8 L126,-32.1 L144,-31.7 L162,-26.6 L180,-18.1 L198,-7.9 L216,1.8 L234,8.7 L252,11.5 L270,9.5 L288,3.1 L306,-6.3 L324,-16.5 L342,-25.5 L360,-31.2' stroke='%2335f2a0' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-27.4 L-342,-27.9 L-324,-23.8 L-306,-15.8 L-288,-5.8 L-270,4.1 L-252,11.8 L-234,15.5 L-216,14.5 L-198,8.9 L-180,0.0 L-162,-10.2 L-144,-19.6 L-126,-26.1 L-108,-28.3 L-90,-25.7 L-72,-18.8 L-54,-9.2 L-36,1.0 L-18,9.6 L0,14.8 L18,15.3 L36,11.2 L54,3.2 L72,-6.8 L90,-16.7 L108,-24.4 L126,-28.1 L144,-27.1 L162,-21.5 L180,-12.6 L198,-2.4 L216,7.0 L234,13.5 L252,15.7 L270,13.1 L288,6.2 L306,-3.4 L324,-13.6 L342,-22.2 L360,-27.4' stroke='%23f2e04a' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-27.4 L-342,-27.9 L-324,-23.8 L-306,-15.8 L-288,-5.8 L-270,4.1 L-252,11.8 L-234,15.5 L-216,14.5 L-198,8.9 L-180,0.0 L-162,-10.2 L-144,-19.6 L-126,-26.1 L-108,-28.3 L-90,-25.7 L-72,-18.8 L-54,-9.2 L-36,1.0 L-18,9.6 L0,14.8 L18,15.3 L36,11.2 L54,3.2 L72,-6.8 L90,-16.7 L108,-24.4 L126,-28.1 L144,-27.1 L162,-21.5 L180,-12.6 L198,-2.4 L216,7.0 L234,13.5 L252,15.7 L270,13.1 L288,6.2 L306,-3.4 L324,-13.6 L342,-22.2 L360,-27.4' stroke='%23f2e04a' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-23.5 L-342,-23.5 L-324,-18.8 L-306,-10.4 L-288,-0.3 L-270,9.5 L-252,16.7 L-234,19.8 L-216,18.2 L-198,12.1 L-180,2.9 L-162,-7.3 L-144,-16.5 L-126,-22.5 L-108,-24.0 L-90,-20.8 L-72,-13.5 L-54,-3.7 L-36,6.4 L-18,14.7 L0,19.3 L18,19.3 L36,14.6 L54,6.2 L72,-3.9 L90,-13.7 L108,-20.9 L126,-24.0 L144,-22.4 L162,-16.3 L180,-7.1 L198,3.1 L216,12.3 L234,18.3 L252,19.8 L270,16.6 L288,9.3 L306,-0.5 L324,-10.6 L342,-18.9 L360,-23.5' stroke='%23ff7a45' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-23.5 L-342,-23.5 L-324,-18.8 L-306,-10.4 L-288,-0.3 L-270,9.5 L-252,16.7 L-234,19.8 L-216,18.2 L-198,12.1 L-180,2.9 L-162,-7.3 L-144,-16.5 L-126,-22.5 L-108,-24.0 L-90,-20.8 L-72,-13.5 L-54,-3.7 L-36,6.4 L-18,14.7 L0,19.3 L18,19.3 L36,14.6 L54,6.2 L72,-3.9 L90,-13.7 L108,-20.9 L126,-24.0 L144,-22.4 L162,-16.3 L180,-7.1 L198,3.1 L216,12.3 L234,18.3 L252,19.8 L270,16.6 L288,9.3 L306,-0.5 L324,-10.6 L342,-18.9 L360,-23.5' stroke='%23ff7a45' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-19.6 L-342,-18.9 L-324,-13.7 L-306,-5.0 L-288,5.2 L-270,14.8 L-252,21.6 L-234,24.1 L-216,21.8 L-198,15.3 L-180,5.8 L-162,-4.4 L-144,-13.2 L-126,-18.7 L-108,-19.7 L-90,-15.9 L-72,-8.2 L-54,1.8 L-36,11.8 L-18,19.7 L0,23.8 L18,23.1 L36,17.9 L54,9.2 L72,-1.0 L90,-10.6 L108,-17.4 L126,-19.9 L144,-17.6 L162,-11.1 L180,-1.6 L198,8.6 L216,17.4 L234,22.9 L252,23.9 L270,20.1 L288,12.4 L306,2.4 L324,-7.6 L342,-15.5 L360,-19.6' stroke='%23ff45c8' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-19.6 L-342,-18.9 L-324,-13.7 L-306,-5.0 L-288,5.2 L-270,14.8 L-252,21.6 L-234,24.1 L-216,21.8 L-198,15.3 L-180,5.8 L-162,-4.4 L-144,-13.2 L-126,-18.7 L-108,-19.7 L-90,-15.9 L-72,-8.2 L-54,1.8 L-36,11.8 L-18,19.7 L0,23.8 L18,23.1 L36,17.9 L54,9.2 L72,-1.0 L90,-10.6 L108,-17.4 L126,-19.9 L144,-17.6 L162,-11.1 L180,-1.6 L198,8.6 L216,17.4 L234,22.9 L252,23.9 L270,20.1 L288,12.4 L306,2.4 L324,-7.6 L342,-15.5 L360,-19.6' stroke='%23ff45c8' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-15.6 L-342,-14.3 L-324,-8.5 L-306,0.5 L-288,10.7 L-270,20.0 L-252,26.3 L-234,28.3 L-216,25.4 L-198,18.4 L-180,8.7 L-162,-1.5 L-144,-10.0 L-126,-14.9 L-108,-15.2 L-90,-10.9 L-72,-2.8 L-54,7.3 L-36,17.2 L-18,24.7 L0,28.2 L18,26.9 L36,21.1 L54,12.1 L72,1.9 L90,-7.4 L108,-13.7 L126,-15.7 L144,-12.8 L162,-5.8 L180,3.9 L198,14.1 L216,22.6 L234,27.5 L252,27.8 L270,23.5 L288,15.4 L306,5.3 L324,-4.6 L342,-12.1 L360,-15.6' stroke='%239a45ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-15.6 L-342,-14.3 L-324,-8.5 L-306,0.5 L-288,10.7 L-270,20.0 L-252,26.3 L-234,28.3 L-216,25.4 L-198,18.4 L-180,8.7 L-162,-1.5 L-144,-10.0 L-126,-14.9 L-108,-15.2 L-90,-10.9 L-72,-2.8 L-54,7.3 L-36,17.2 L-18,24.7 L0,28.2 L18,26.9 L36,21.1 L54,12.1 L72,1.9 L90,-7.4 L108,-13.7 L126,-15.7 L144,-12.8 L162,-5.8 L180,3.9 L198,14.1 L216,22.6 L234,27.5 L252,27.8 L270,23.5 L288,15.4 L306,5.3 L324,-4.6 L342,-12.1 L360,-15.6' stroke='%239a45ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-11.5 L-342,-9.6 L-324,-3.3 L-306,6.0 L-288,16.2 L-270,25.2 L-252,31.1 L-234,32.4 L-216,28.9 L-198,21.5 L-180,11.6 L-162,1.5 L-144,-6.6 L-126,-11.0 L-108,-10.7 L-90,-5.8 L-72,2.6 L-54,12.8 L-36,22.5 L-18,29.6 L0,32.5 L18,30.6 L36,24.3 L54,15.0 L72,4.8 L90,-4.2 L108,-10.1 L126,-11.4 L144,-7.9 L162,-0.5 L180,9.4 L198,19.5 L216,27.6 L234,32.0 L252,31.7 L270,26.8 L288,18.4 L306,8.2 L324,-1.5 L342,-8.6 L360,-11.5' stroke='%233b5bff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-11.5 L-342,-9.6 L-324,-3.3 L-306,6.0 L-288,16.2 L-270,25.2 L-252,31.1 L-234,32.4 L-216,28.9 L-198,21.5 L-180,11.6 L-162,1.5 L-144,-6.6 L-126,-11.0 L-108,-10.7 L-90,-5.8 L-72,2.6 L-54,12.8 L-36,22.5 L-18,29.6 L0,32.5 L18,30.6 L36,24.3 L54,15.0 L72,4.8 L90,-4.2 L108,-10.1 L126,-11.4 L144,-7.9 L162,-0.5 L180,9.4 L198,19.5 L216,27.6 L234,32.0 L252,31.7 L270,26.8 L288,18.4 L306,8.2 L324,-1.5 L342,-8.6 L360,-11.5' stroke='%233b5bff' stroke-opacity='.85' stroke-width='1.3'/%3E%3Cpath d='M-360,-7.3 L-342,-4.8 L-324,1.9 L-306,11.5 L-288,21.7 L-270,30.4 L-252,35.7 L-234,36.4 L-216,32.4 L-198,24.5 L-180,14.5 L-162,4.5 L-144,-3.2 L-126,-7.1 L-108,-6.2 L-90,-0.7 L-72,8.1 L-54,18.3 L-36,27.8 L-18,34.4 L0,36.7 L18,34.2 L36,27.5 L54,17.9 L72,7.7 L90,-1.0 L108,-6.3 L126,-7.0 L144,-3.0 L162,4.9 L180,14.9 L198,24.9 L216,32.6 L234,36.5 L252,35.6 L270,30.1 L288,21.3 L306,11.1 L324,1.6 L342,-5.0 L360,-7.3' stroke='%232fd4ff' stroke-opacity='.3' stroke-width='4'/%3E%3Cpath d='M-360,-7.3 L-342,-4.8 L-324,1.9 L-306,11.5 L-288,21.7 L-270,30.4 L-252,35.7 L-234,36.4 L-216,32.4 L-198,24.5 L-180,14.5 L-162,4.5 L-144,-3.2 L-126,-7.1 L-108,-6.2 L-90,-0.7 L-72,8.1 L-54,18.3 L-36,27.8 L-18,34.4 L0,36.7 L18,34.2 L36,27.5 L54,17.9 L72,7.7 L90,-1.0 L108,-6.3 L126,-7.0 L144,-3.0 L162,4.9 L180,14.9 L198,24.9 L216,32.6 L234,36.5 L252,35.6 L270,30.1 L288,21.3 L306,11.1 L324,1.6 L342,-5.0 L360,-7.3' stroke='%232fd4ff' stroke-opacity='.85' stroke-width='1.3'/%3E%3C/g%3E%3C/svg%3E") 50% 50% / 100% 100% no-repeat,
     radial-gradient(38% 52% at 16% 28%, rgba(40,90,255,.5), transparent 70%),
@@ -22250,7 +22365,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 }
 /* ═══ CARBON FIBER — hex-perforated black mesh under a soft spotlight:
    two offset bevelled-dot lattices pack into a honeycomb grille ═══ */
-.profile-modal.cxf-carbon, .locker-look.cxf-carbon, .sbm-profile-prev.cxf-carbon, .cx-prev-frame.cxf-carbon, .mfc.cxf-carbon{
+.profile-modal.cxf-carbon, .locker-look.cxf-carbon, .sbm-profile-prev.cxf-carbon, .cx-prev-frame.cxf-carbon, .mfc.cxf-carbon, .sbmp-card.cxf-carbon{
   background:
     radial-gradient(60% 48% at 50% 42%, rgba(255,255,255,.06), transparent 72%),
     radial-gradient(circle at 50% 50%, #060709 4.4px, #23262e 5px, rgba(255,255,255,.05) 5.6px, transparent 6.4px),
@@ -22260,7 +22375,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
   background-position:0 0, 0 0, 8px 7px, 0 0 !important;
 }
 /* ═══ TOTAL ECLIPSE — the dark sky: star scatter + double corona ring + scorched ground ═══ */
-.profile-modal.cxf-eclipse, .locker-look.cxf-eclipse, .sbm-profile-prev.cxf-eclipse, .cx-prev-frame.cxf-eclipse, .mfc.cxf-eclipse{
+.profile-modal.cxf-eclipse, .locker-look.cxf-eclipse, .sbm-profile-prev.cxf-eclipse, .cx-prev-frame.cxf-eclipse, .mfc.cxf-eclipse, .sbmp-card.cxf-eclipse{
   background:
     /* the eclipse disc: black core, twin corona rings */
     radial-gradient(46px 46px at 50% 26%, #050308 0 38%, rgba(255,150,60,.9) 42% 45%, rgba(255,220,150,.55) 46% 48%, rgba(255,120,40,.28) 52% 58%, transparent 66%),
@@ -22276,7 +22391,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #120806, #080404) !important;
 }
 /* ═══ STORMFRONT — the supercell: boiling clouds, sheet rain, drowned city lights ═══ */
-.profile-modal.cxf-stormfront, .locker-look.cxf-stormfront, .sbm-profile-prev.cxf-stormfront, .cx-prev-frame.cxf-stormfront, .mfc.cxf-stormfront{
+.profile-modal.cxf-stormfront, .locker-look.cxf-stormfront, .sbm-profile-prev.cxf-stormfront, .cx-prev-frame.cxf-stormfront, .mfc.cxf-stormfront, .sbmp-card.cxf-stormfront{
   background:
     /* driving rain, two sheets */
     repeating-linear-gradient(100deg, transparent 0 13px, rgba(190,220,255,.1) 13px 14px, transparent 14px 27px),
@@ -22295,7 +22410,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #0e1c40 0%, #163061 42%, #0a1633 78%, #050b1c 100%) !important;
 }
 /* ═══ CHAMPION'S BLAZE — ember-cracked obsidian: charred stone, glowing fissures ═══ */
-.profile-modal.cxf-champion, .locker-look.cxf-champion, .sbm-profile-prev.cxf-champion, .cx-prev-frame.cxf-champion, .mfc.cxf-champion{
+.profile-modal.cxf-champion, .locker-look.cxf-champion, .sbm-profile-prev.cxf-champion, .cx-prev-frame.cxf-champion, .mfc.cxf-champion, .sbmp-card.cxf-champion{
   background:
     /* glowing fissure web — three crossing crack systems (self-tiling) */
     repeating-linear-gradient(99deg, transparent 0 68px, rgba(255,140,66,.65) 68px 69.5px, transparent 69.5px 141px),
@@ -22314,7 +22429,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
    crystalline pink-and-gold jewelled border (the Legend crest, made a frame).
    The centre stays dark so the PLAYER is the artwork; all the drama lives
    on the edges: faceted magenta crystal, gold trim, ember dust. ═══ */
-.profile-modal.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend, .cx-prev-frame.cxf-legend, .mfc.cxf-legend{
+.profile-modal.cxf-legend, .locker-look.cxf-legend, .sbm-profile-prev.cxf-legend, .cx-prev-frame.cxf-legend, .mfc.cxf-legend, .sbmp-card.cxf-legend{
   background:
     /* faceted crystal shards leaning in from every edge (bright rims) */
     linear-gradient(90deg,  rgba(255,60,170,.34) 0%, rgba(255,60,170,.1) 2.5%, transparent 7%),
@@ -22338,7 +22453,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 /* the conic sparkle ring must never wash the centre — mask it to the rim */
 .profile-modal.cxf-legend{ box-shadow:inset 0 0 90px 18px rgba(255,60,170,.14), inset 0 0 0 1px rgba(255,205,120,.3); }
 /* ═══ CRIMSON REGALIA — royal damask: gold-thread lattice on crushed velvet ═══ */
-.profile-modal.cxf-regalia, .locker-look.cxf-regalia, .sbm-profile-prev.cxf-regalia, .cx-prev-frame.cxf-regalia, .mfc.cxf-regalia{
+.profile-modal.cxf-regalia, .locker-look.cxf-regalia, .sbm-profile-prev.cxf-regalia, .cx-prev-frame.cxf-regalia, .mfc.cxf-regalia, .sbmp-card.cxf-regalia{
   background:
     /* gold-thread damask lattice */
     repeating-linear-gradient(45deg, rgba(255,214,110,.14) 0 1px, transparent 1px 22px),
@@ -22354,7 +22469,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #1e0a12, #100609) !important;
 }
 /* ═══ MASTER'S DOMINION — the galactic wheel: spiral arms, facets, star dust ═══ */
-.profile-modal.cxf-dominion, .locker-look.cxf-dominion, .sbm-profile-prev.cxf-dominion, .cx-prev-frame.cxf-dominion, .mfc.cxf-dominion{
+.profile-modal.cxf-dominion, .locker-look.cxf-dominion, .sbm-profile-prev.cxf-dominion, .cx-prev-frame.cxf-dominion, .mfc.cxf-dominion, .sbmp-card.cxf-dominion{
   background:
     /* the spiral galaxy, seen from above */
     conic-gradient(from 40deg at 50% 30%, transparent 0deg, rgba(255,211,110,.22) 40deg, transparent 90deg, rgba(255,122,217,.2) 140deg, transparent 190deg, rgba(164,139,255,.22) 240deg, transparent 290deg, rgba(95,201,255,.18) 330deg, transparent 360deg),
@@ -22369,7 +22484,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
     linear-gradient(180deg, #191128, #0d0916) !important;
 }
 /* ═══ THE HOARD — dragon-scale hide over a mountain of coins ═══ */
-.profile-modal.cxf-hoard, .locker-look.cxf-hoard, .sbm-profile-prev.cxf-hoard, .cx-prev-frame.cxf-hoard, .mfc.cxf-hoard{
+.profile-modal.cxf-hoard, .locker-look.cxf-hoard, .sbm-profile-prev.cxf-hoard, .cx-prev-frame.cxf-hoard, .mfc.cxf-hoard, .sbmp-card.cxf-hoard{
   background:
     /* coin glints scattered across the pile */
     radial-gradient(3px 3px at 14% 90%, #fff6d8 30%, rgba(255,214,110,.85) 55%, transparent 74%),
@@ -22391,7 +22506,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 }
 /* ═══ NIGHT CITY — neon-soaked night: rain, tower glow pockets, wet street
    mirror (the lit skyline itself lives on the banner overlay) ═══ */
-.profile-modal.cxf-nightcity, .locker-look.cxf-nightcity, .sbm-profile-prev.cxf-nightcity, .cx-prev-frame.cxf-nightcity, .mfc.cxf-nightcity{
+.profile-modal.cxf-nightcity, .locker-look.cxf-nightcity, .sbm-profile-prev.cxf-nightcity, .cx-prev-frame.cxf-nightcity, .mfc.cxf-nightcity, .sbmp-card.cxf-nightcity{
   background:
     /* the skyline: towers, lit windows, harbour reflections */
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 240'%3E%3Cdefs%3E%3Cpattern id='pc' width='7' height='9' patternUnits='userSpaceOnUse'%3E%3Crect x='1.6' y='2' width='2.2' height='3' fill='%238ff4ff' opacity='.8'/%3E%3C/pattern%3E%3Cpattern id='pp' width='8' height='10' patternUnits='userSpaceOnUse'%3E%3Crect x='2' y='2.4' width='2.3' height='3.2' fill='%23ffb2ea' opacity='.65'/%3E%3C/pattern%3E%3Cpattern id='pf' width='6' height='8' patternUnits='userSpaceOnUse'%3E%3Crect x='1.4' y='1.8' width='1.8' height='2.4' fill='%239fd8ff' opacity='.32'/%3E%3C/pattern%3E%3C/defs%3E%3Cg fill='%230e1c33'%3E%3Crect x='-6' y='124' width='40' height='66'/%3E%3Crect x='36' y='107' width='28' height='83'/%3E%3Crect x='67' y='125' width='24' height='65'/%3E%3Crect x='98' y='127' width='37' height='63'/%3E%3Crect x='141' y='134' width='33' height='56'/%3E%3Crect x='176' y='111' width='22' height='79'/%3E%3Crect x='201' y='135' width='36' height='55'/%3E%3Crect x='243' y='85' width='26' height='105'/%3E%3Crect x='272' y='103' width='34' height='87'/%3E%3Crect x='314' y='118' width='20' height='72'/%3E%3Crect x='341' y='95' width='33' height='95'/%3E%3Crect x='378' y='111' width='24' height='79'/%3E%3Crect x='410' y='125' width='30' height='65'/%3E%3Crect x='442' y='126' width='32' height='64'/%3E%3Crect x='478' y='105' width='31' height='85'/%3E%3C/g%3E%3Crect x='-6' y='124' width='40' height='66' fill='url(%23pf)'/%3E%3Crect x='36' y='107' width='28' height='83' fill='url(%23pf)'/%3E%3Crect x='67' y='125' width='24' height='65' fill='url(%23pf)'/%3E%3Crect x='98' y='127' width='37' height='63' fill='url(%23pf)'/%3E%3Crect x='141' y='134' width='33' height='56' fill='url(%23pf)'/%3E%3Crect x='176' y='111' width='22' height='79' fill='url(%23pf)'/%3E%3Crect x='201' y='135' width='36' height='55' fill='url(%23pf)'/%3E%3Crect x='243' y='85' width='26' height='105' fill='url(%23pf)'/%3E%3Crect x='272' y='103' width='34' height='87' fill='url(%23pf)'/%3E%3Crect x='314' y='118' width='20' height='72' fill='url(%23pf)'/%3E%3Crect x='341' y='95' width='33' height='95' fill='url(%23pf)'/%3E%3Crect x='378' y='111' width='24' height='79' fill='url(%23pf)'/%3E%3Crect x='410' y='125' width='30' height='65' fill='url(%23pf)'/%3E%3Crect x='442' y='126' width='32' height='64' fill='url(%23pf)'/%3E%3Crect x='478' y='105' width='31' height='85' fill='url(%23pf)'/%3E%3Cg fill='%23081222'%3E%3Crect x='-10' y='94' width='27' height='96'/%3E%3Crect x='21' y='142' width='38' height='48'/%3E%3Crect x='66' y='106' width='52' height='84'/%3E%3Crect x='124' y='144' width='48' height='46'/%3E%3Crect x='175' y='123' width='47' height='67'/%3E%3Crect x='229' y='42' width='28' height='148'/%3E%3Crect x='242' y='26' width='2' height='16'/%3E%3Crect x='263' y='104' width='29' height='86'/%3E%3Crect x='299' y='106' width='40' height='84'/%3E%3Crect x='344' y='107' width='37' height='83'/%3E%3Crect x='387' y='118' width='47' height='72'/%3E%3Crect x='438' y='131' width='45' height='59'/%3E%3Crect x='489' y='93' width='31' height='97'/%3E%3C/g%3E%3Crect x='-10' y='94' width='27' height='96' fill='url(%23pc)'/%3E%3Crect x='21' y='142' width='38' height='48' fill='url(%23pp)'/%3E%3Crect x='66' y='106' width='52' height='84' fill='url(%23pc)'/%3E%3Crect x='124' y='144' width='48' height='46' fill='url(%23pp)'/%3E%3Crect x='175' y='123' width='47' height='67' fill='url(%23pc)'/%3E%3Crect x='229' y='42' width='28' height='148' fill='url(%23pp)'/%3E%3Crect x='263' y='104' width='29' height='86' fill='url(%23pc)'/%3E%3Crect x='299' y='106' width='40' height='84' fill='url(%23pp)'/%3E%3Crect x='344' y='107' width='37' height='83' fill='url(%23pc)'/%3E%3Crect x='387' y='118' width='47' height='72' fill='url(%23pp)'/%3E%3Crect x='438' y='131' width='45' height='59' fill='url(%23pc)'/%3E%3Crect x='489' y='93' width='31' height='97' fill='url(%23pp)'/%3E%3Crect x='70' y='114' width='9' height='3.5' fill='%2300e5ff' opacity='.9'/%3E%3Crect x='179' y='131' width='9' height='3.5' fill='%2300e5ff' opacity='.9'/%3E%3Ccircle cx='243' cy='26' r='2.2' fill='%23aef6ff' opacity='.95'/%3E%3Crect x='303' y='114' width='9' height='3.5' fill='%23ff5ad6' opacity='.9'/%3E%3Crect x='391' y='126' width='9' height='3.5' fill='%23ff5ad6' opacity='.9'/%3E%3Crect x='0' y='190' width='480' height='50' fill='%23040b16'/%3E%3Crect x='-8' y='191' width='23' height='34' fill='%2338e8ff' opacity='.09'/%3E%3Crect x='23' y='191' width='34' height='17' fill='%23ff5ad6' opacity='.09'/%3E%3Crect x='68' y='191' width='48' height='30' fill='%2338e8ff' opacity='.09'/%3E%3Crect x='126' y='191' width='44' height='16' fill='%23ff5ad6' opacity='.09'/%3E%3Crect x='146' y='191' width='4' height='34' fill='%23ff5ad6' opacity='.28'/%3E%3Crect x='177' y='191' width='43' height='24' fill='%2338e8ff' opacity='.09'/%3E%3Crect x='231' y='191' width='24' height='40' fill='%23ff5ad6' opacity='.09'/%3E%3Crect x='241' y='191' width='4' height='34' fill='%23ff5ad6' opacity='.28'/%3E%3Crect x='265' y='191' width='25' height='30' fill='%2338e8ff' opacity='.09'/%3E%3Crect x='301' y='191' width='36' height='30' fill='%23ff5ad6' opacity='.09'/%3E%3Crect x='346' y='191' width='33' height='29' fill='%2338e8ff' opacity='.09'/%3E%3Crect x='360' y='191' width='4' height='34' fill='%2338e8ff' opacity='.28'/%3E%3Crect x='389' y='191' width='43' height='25' fill='%23ff5ad6' opacity='.09'/%3E%3Crect x='440' y='191' width='41' height='21' fill='%2338e8ff' opacity='.09'/%3E%3Crect x='491' y='191' width='27' height='34' fill='%23ff5ad6' opacity='.09'/%3E%3C/svg%3E") 50% 100% / 100% auto no-repeat,
@@ -22404,7 +22519,7 @@ body.low-power :is(.cx-frame-overlay::before, .cx-frame-overlay::after, .cx-fram
 }
 /* ═══ THE STARFORGE — a lone blazing star in deep blue space: white-hot core,
    six light rays, a soft blue halo and a dense starfield all around. ═══ */
-.profile-modal.cxf-starforge, .locker-look.cxf-starforge, .sbm-profile-prev.cxf-starforge, .cx-prev-frame.cxf-starforge, .mfc.cxf-starforge{
+.profile-modal.cxf-starforge, .locker-look.cxf-starforge, .sbm-profile-prev.cxf-starforge, .cx-prev-frame.cxf-starforge, .mfc.cxf-starforge, .sbmp-card.cxf-starforge{
   background:
     /* the hero star: white-hot core */
     radial-gradient(4.5px 4.5px at 50% 40%, #fff 40%, rgba(235,245,255,.95) 62%, transparent 78%),
@@ -24404,6 +24519,8 @@ const FIREBASE_CONFIG = {
 
       <!-- ============ PAGE: PLAY ============ -->
       <div class="nav-page active" data-page="play">
+        <!-- Guest progress strip — shows what a guest is building toward + a Save CTA -->
+        <div class="guest-strip" id="guestStrip" style="display:none;"></div>
         <div class="dxp-banner" style="display:none; margin:0 0 14px;">
           <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
           <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
@@ -24524,6 +24641,25 @@ const FIREBASE_CONFIG = {
             </div>
             <div class="phr-nudge" id="playRankNudge" style="display:none;"></div>
           </div>
+          <!-- YOUR LEVEL -->
+          <div class="p3s-card p3s-level" id="playLevelCard" title="Your account level">
+            <div class="p3s-head">
+              <span class="p3s-title mint"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-star"/></svg> YOUR LEVEL</span>
+              <span class="p3s-chip p3l-prestige" id="playLevelPrestige" style="display:none;"></span>
+            </div>
+            <div class="p3l-crest">
+              <i class="p3l-crest-glow" id="playLevelGlow" aria-hidden="true"></i>
+              <div class="p3l-hexwrap">
+                <i class="p3l-hex" aria-hidden="true"></i>
+                <i class="p3l-hex-in" aria-hidden="true"></i>
+                <span class="p3l-num" id="playLevelNum">1</span>
+              </div>
+            </div>
+            <div class="p3s-tier" id="playLevelName">Level 1</div>
+            <div class="p3l-xprow"><b id="playLevelXpCur">0</b> <span class="p3l-xpsep">/</span> <span id="playLevelXpNeed">0</span> XP</div>
+            <div class="ui-bar phr-bar p3s-bar p3l-bar"><div class="ui-bar-fill" id="playLevelFill" style="width:0%;"></div></div>
+            <div class="p3s-next" id="playLevelNext">— XP to next level</div>
+          </div>
           <!-- XP BOOSTS -->
           <div class="p3s-card p3s-boosts">
             <div class="p3s-head">
@@ -24536,8 +24672,8 @@ const FIREBASE_CONFIG = {
             <div class="p3s-gauntlet-body">
               <div class="p3s-gauntlet-txt">
                 <span class="p3s-title gold"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-trophy"/></svg> THE GAUNTLET</span>
-                <p class="p3s-gauntlet-sub">Complete all 3 weekly challenges to unlock the Triumph Vault.</p>
-                <button type="button" class="p3s-vault-btn" id="playViewVault">VIEW VAULT</button>
+                <p class="p3s-gauntlet-sub">Sweep all 3 weekly challenges for a <b style="color:#ffd33d">3,000 RoshCoin</b> Triumph bonus.</p>
+                <button type="button" class="p3s-vault-btn" id="playViewVault">OPEN SHOP</button>
               </div>
               <div class="p3s-vaultcase" id="playVaultCase" aria-hidden="true"></div>
             </div>
@@ -24601,15 +24737,6 @@ const FIREBASE_CONFIG = {
             <div class="shop-grid shop-grid-daily" id="shopDaily"></div>
           </section>
 
-          <section class="shop-sec shop-sec-cases" id="shopSecCases" data-sec="cases" data-sec-label="Cases">
-            <div class="shop-slab">
-              <span class="shop-slab-title">CASES</span>
-              <span class="shop-slab-timer"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-star"/></svg> <b id="shopCaseCount">0</b> IN INVENTORY</span>
-            </div>
-            <p class="shop-coins-sub">Earn a ROSHCAM Case every 7th level, and win the <b style="color:#ffb336">Triumph Vault</b> by sweeping all 3 weekly challenges. Cases contain exclusive cosmetics you can't buy — including the ultra-rare <b style="color:#ff2d6b">Singularity</b> and <b style="color:#ff2d6b">Ascendant</b>.</p>
-            <div class="case-inv-grid" id="caseInventoryGrid"></div>
-          </section>
-
           <section class="shop-sec shop-sec-coins" id="shopSecCoins" data-sec="coins" data-sec-label="RoshCoins">
             <div class="shop-slab">
               <span class="shop-slab-title">ROSHCOINS</span>
@@ -24626,11 +24753,50 @@ const FIREBASE_CONFIG = {
         <nav class="shop-rail" id="shopRail" aria-label="Shop sections">
           <button type="button" class="shop-rail-item active" data-rail="featured"><i class="sri-dot"></i><span class="sri-label">Featured</span></button>
           <button type="button" class="shop-rail-item" data-rail="daily"><i class="sri-dot"></i><span class="sri-label">Daily items</span></button>
-          <button type="button" class="shop-rail-item" data-rail="cases"><i class="sri-dot"></i><span class="sri-label">Cases</span></button>
           <button type="button" class="shop-rail-item sri-coins" data-rail="coins"><i class="sri-dot"></i><span class="sri-label">RoshCoins</span></button>
         </nav>
 
       </div><!-- /page shop -->
+
+      <!-- GUEST → ACCOUNT UPGRADE (links the anonymous session in place, so all
+           progress — rating, level, coins, cosmetics — carries over untouched) -->
+      <div class="modal-bg" id="guestUpgradeModal">
+        <div class="modal gu-modal" id="guestUpgradeCard">
+          <button class="modal-close" data-close="guestUpgradeModal" aria-label="Close"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button>
+          <div class="gu-hero">
+            <span class="gu-eyebrow"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-lock"/></svg> SAVE YOUR PROGRESS</span>
+            <h3 class="gu-title">Keep everything you've earned</h3>
+            <p class="gu-sub" id="guReason">Create a free account and your guest run carries over — same rating, level, coins and unlocks.</p>
+          </div>
+          <!-- what carries over -->
+          <div class="gu-carry" id="guCarry">
+            <div class="gu-carry-item"><span class="gu-carry-ic">⭐</span><b id="guLevel">Lv 1</b><small>Level</small></div>
+            <div class="gu-carry-item"><span class="gu-carry-ic">🏆</span><b id="guElo">1000</b><small>ELO</small></div>
+            <div class="gu-carry-item"><span class="gu-carry-ic">🪙</span><b id="guCoins">0</b><small>Coins</small></div>
+          </div>
+          <div class="gu-bonus" id="guBonus" style="display:none;"><span class="gu-bonus-ic">🎁</span><span id="guBonusTxt">Signup bonus</span></div>
+          <form class="auth-form gu-form" id="guestUpgradeForm">
+            <div class="field">
+              <label>Username</label>
+              <div class="nu-input-row">
+                <input type="text" name="username" required minlength="2" maxlength="20" placeholder="neonFox" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" />
+                <button type="button" class="nu-dice" id="guDice" title="Roll a random username">🎲</button>
+              </div>
+              <div class="nu-avail" id="guAvail"></div>
+            </div>
+            <div class="field"><label>Email</label><input type="email" name="email" required placeholder="you@email.com" autocomplete="email" /></div>
+            <div class="field"><label>Password</label><input type="password" name="password" required minlength="6" placeholder="At least 6 characters" autocomplete="new-password" /></div>
+            <div class="auth-error" id="guError"></div>
+            <button type="submit" class="btn btn-primary gu-submit" id="guSubmitBtn">Create account &amp; keep progress</button>
+          </form>
+          <div class="gu-or"><span>or</span></div>
+          <button type="button" class="btn btn-google gu-google" id="guGoogleBtn">
+            <svg viewBox="0 0 24 24" width="18" height="18"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1a11 11 0 0 0-9.82 6.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z"/></svg>
+            Continue with Google
+          </button>
+          <p class="gu-fineprint">Your guest progress lives only on this browser until you do this.</p>
+        </div>
+      </div>
 
       <!-- ROSHCOIN CHECKOUT -->
       <div class="modal-bg" id="coinCheckoutModal">
@@ -27417,14 +27583,14 @@ const FIREBASE_CONFIG = {
     </div>
     <div class="lr-comeback dr2-comeback" id="lrComeback" style="display:none;"></div>
     <div class="dr2-board" id="lrCalendar"></div>
-    <!-- Daily case shard — collected here every day; seven = a free ROSHCAM case -->
+    <!-- Daily shard — collected here every day; seven = a 1,000-coin bonus -->
     <div class="dr2-shards" id="lrShards" style="display:none;">
       <div class="dr2-shards-head">
-        <span class="dr2-shards-title"><span class="dr2-shards-ic">🧩</span> Case shards</span>
+        <span class="dr2-shards-title"><span class="dr2-shards-ic">🧩</span> Daily shards</span>
         <span class="dr2-shards-count" id="lrShardCount">0/7</span>
       </div>
       <div class="dr2-shards-orbs" id="lrShardOrbs"></div>
-      <div class="dr2-shards-sub" id="lrShardSub">Collect one every day — seven earns a free ROSHCAM case</div>
+      <div class="dr2-shards-sub" id="lrShardSub">Collect one every day — seven earns a 1,000-coin bonus</div>
     </div>
     <button class="btn btn-primary lr-claim dr2-claim" id="lrClaimBtn" data-close="loginRewardModal" style="width:100%; margin-top:16px;">Claim reward</button>
   </div>
@@ -27774,6 +27940,7 @@ import {
   signInAnonymously, signOut, updateProfile, deleteUser,
   GoogleAuthProvider, signInWithPopup, sendPasswordResetEmail,
   EmailAuthProvider, reauthenticateWithCredential, reauthenticateWithPopup,
+  linkWithCredential, linkWithPopup,
 } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-auth.js";
 import {
   getFirestore, doc, setDoc, getDoc, updateDoc, deleteDoc, addDoc,
@@ -30267,6 +30434,15 @@ async function onAuthChanged(user){
     $('#userChip').style.display = 'none';
     $('#signOutBtn').style.display = 'none';
     showScreen('auth');
+    // Graceful recovery: if a guest session just ended (signed out / lost), the
+    // guest's progress lived only on this browser — explain it kindly and nudge
+    // toward a real account next time.
+    try {
+      if(localStorage.getItem('rosham_guest_active') === '1'){
+        localStorage.removeItem('rosham_guest_active');
+        setTimeout(() => { try { toast('Your guest session ended — guest progress only lives on this device. Create a free account next time to keep it safe.', 'info', { duration: 7000 }); } catch(e){} }, 900);
+      }
+    } catch(e){}
     return;
   }
   // CRITICAL: Force-refresh the auth token. For brand-new sessions
@@ -30798,6 +30974,16 @@ function setupAuthUI(){
   });
   $('#guestBtn').addEventListener('click', async () => {
     showErr('#authError', '');
+    // Best-effort anonymous-abuse guard (client-side only — true enforcement
+    // belongs in Firebase security rules / App Check). Throttle a device that
+    // churns many guest sessions per hour toward creating a real account.
+    try {
+      const k = 'rosham_guest_churn', now = Date.now();
+      let arr = JSON.parse(localStorage.getItem(k) || '[]'); if(!Array.isArray(arr)) arr = [];
+      arr = arr.filter(t => now - t < 3600e3);
+      if(arr.length >= 6){ showErr('#authError', 'Too many guest sessions from this device this hour — create a free account to keep playing.'); return; }
+      arr.push(now); localStorage.setItem(k, JSON.stringify(arr));
+    } catch(e){}
     try { await signInAnonymously(state.auth); }
     catch(err){ showErr('#authError', friendlyError(err)); }
   });
@@ -30907,8 +31093,165 @@ function friendlyError(err){
   if(code.includes('popup-closed-by-user') || code.includes('cancelled-popup-request')) return 'Sign-in cancelled.';
   if(code.includes('popup-blocked')) return 'Pop-up blocked — allow pop-ups.';
   if(code.includes('unauthorized-domain')) return 'Domain not authorized in Firebase Auth settings.';
+  if(code.includes('credential-already-in-use') || code.includes('email-already-in-use')) return 'That email already has an account — sign in to it instead.';
+  if(code.includes('provider-already-linked') || code.includes('already-linked')) return 'This account is already upgraded.';
   return err.message || 'Something went wrong.';
 }
+
+// ═══════════════════════ GUEST SYSTEM v2 ═══════════════════════
+// Guests are anonymous sessions. Upgrading LINKS the anonymous account in place
+// (linkWithCredential / linkWithPopup) so the uid — and thus ALL progress:
+// rating, level, coins, cosmetics, history — carries over untouched. We also
+// track a local guest play-streak that pays a signup bonus, surface what's at
+// stake, cap guest rating, and best-effort guard against anonymous abuse.
+const GUEST_RATING_CAP = 1649;   // top of Silver — guests climb no higher until they create an account
+const GU_ADJ = ['Swift','Neon','Iron','Lunar','Solar','Vivid','Rapid','Prime','Turbo','Astro','Volt','Nova','Pixel','Rogue','Cyber'];
+const GU_NOUN = ['Fox','Wolf','Hawk','Viper','Comet','Tiger','Raven','Shark','Falcon','Panther','Dragon','Phoenix','Cobra','Lynx','Orca'];
+function guRandomName(){ return GU_ADJ[(Math.random()*GU_ADJ.length)|0] + GU_NOUN[(Math.random()*GU_NOUN.length)|0] + ((Math.random()*99)|0); }
+// ---- guest daily play-streak (local; converts to a signup bonus) ----
+function _guStreakKey(){ return 'rosham_guest_streak_' + (state.user?.uid || 'anon'); }
+function getGuestStreak(){ try { return JSON.parse(localStorage.getItem(_guStreakKey()) || '{"days":0,"last":"","plays":0}'); } catch(e){ return { days:0, last:'', plays:0 }; } }
+function bumpGuestPlay(){
+  if(!isGuest()) return;
+  try {
+    const t = (typeof getTodayKey==='function') ? getTodayKey() : new Date().toDateString();
+    const s = getGuestStreak();
+    s.plays = (s.plays||0) + 1;
+    if(s.last !== t){ s.days = (s.days||0) + 1; s.last = t; }
+    localStorage.setItem(_guStreakKey(), JSON.stringify(s));
+  } catch(e){}
+}
+// Signup bonus scales with the guest's investment (streak days + level), capped
+// so it stays a nudge, not an exploit.
+function guestBonusCoins(){
+  const s = getGuestStreak();
+  const lvl = state.profile ? (levelOf(state.profile).level || 1) : 1;
+  return Math.round(500 + Math.min(2000, (s.days||0)*250 + (lvl-1)*60));
+}
+// ---- the upgrade modal ----
+function _guNudgeKey(){ return 'rosham_gu_nudge_' + (state.user?.uid || 'anon'); }
+const GU_REASONS = {
+  'post-win':'Nice win! Lock it in — create a free account and your climb is saved for good.',
+  'rank-up':'You ranked up! Create a free account to keep your rank and keep climbing.',
+  'cap':'Guests are capped at Silver. Create a free account to climb Gold and beyond.',
+  'locked':'That\'s an account feature. Creating a free account takes seconds — and every bit of your progress carries over.',
+};
+function openGuestUpgrade(reason){
+  if(!isGuest()) return;
+  const p = state.profile || {};
+  setText('#guLevel', 'Lv ' + (levelOf(p).level || 1));
+  setText('#guElo', inPlacements(p) ? '—' : (p.rating || 1000));
+  setText('#guCoins', fmtCoins(getCoins()));
+  const bonus = guestBonusCoins();
+  const bonusEl = $('#guBonus'), bonusTxt = $('#guBonusTxt');
+  if(bonusEl){ bonusEl.style.display = ''; if(bonusTxt) bonusTxt.innerHTML = `Sign up now for a <b>+${fmtCoins(bonus)}</b> RoshCoin welcome bonus`; }
+  setText('#guReason', GU_REASONS[reason] || 'Create a free account and your guest run carries over — same rating, level, coins and unlocks.');
+  try { showErr('#guError',''); } catch(e){}
+  const un = $('#guestUpgradeForm input[name=username]');
+  if(un && !un.value){ const cur = (p.username||''); un.value = (cur && !/^guest_/i.test(cur)) ? cur : guRandomName(); }
+  $('#guestUpgradeModal')?.classList.add('show');
+  try { localStorage.setItem(_guNudgeKey(), String(Date.now())); } catch(e){}
+}
+async function guestUpgradeEmail(username, email, password){
+  if(!state.user) throw new Error('no session');
+  await reserveUsername(username, state.user.uid);
+  await linkWithCredential(state.user, EmailAuthProvider.credential(email, password));
+  try { await updateProfile(state.user, { displayName: username }); } catch(e){}
+  await _finishGuestUpgrade(username);
+}
+async function guestUpgradeGoogle(){
+  if(!state.user) throw new Error('no session');
+  await linkWithPopup(state.user, new GoogleAuthProvider());
+  let username = state.profile?.username || '';
+  if(!username || /^guest_/i.test(username)){
+    const base = (state.user.displayName || state.user.email?.split('@')[0] || guRandomName()).replace(/[^a-zA-Z0-9_]/g,'').slice(0,20) || guRandomName();
+    username = base;
+    try { await reserveUsername(username, state.user.uid); }
+    catch(e){ username = base.slice(0,16) + ((Math.random()*999)|0); try { await reserveUsername(username, state.user.uid); } catch(_){} }
+  }
+  await _finishGuestUpgrade(username);
+}
+async function _finishGuestUpgrade(username){
+  const bonus = guestBonusCoins();
+  try { await updateDoc(doc(state.db, 'users', state.user.uid), { isAnon:false, username, coins: increment(bonus) }); } catch(e){}
+  state.profile.isAnon = false;
+  state.profile.username = username;
+  state.profile.coins = (state.profile.coins || 0) + bonus;
+  try { localStorage.removeItem(_guStreakKey()); } catch(e){}
+  try { localStorage.removeItem('rosham_guest_active'); } catch(e){}
+  $('#guestUpgradeModal')?.classList.remove('show');
+  try { updateSidebarProfile(); } catch(e){}
+  try { updateCoinPill(true); } catch(e){}
+  try { renderGuestStrip(); } catch(e){}
+  try { if(typeof renderPlayPage==='function' && document.querySelector('.nav-page[data-page="play"].active')) renderPlayPage(); } catch(e){}
+  try { if(_shopPageActive()) renderShopWallet(); } catch(e){}
+  try { hapticConfirm(); } catch(e){}
+  try { toast(`🎉 Welcome, @${username}! Progress saved + ${fmtCoins(bonus)} bonus coins.`, 'success', { duration: 6500 }); } catch(e){}
+}
+// ---- unified, non-nagging lock: full modal at most ~every 90s, else a light toast ----
+let _guGateAt = 0;
+function guestGate(action){
+  if(!isGuest()) return true;
+  const now = Date.now();
+  if(now - _guGateAt > 90000){ _guGateAt = now; openGuestUpgrade('locked'); }
+  else { try { toast(`🔒 ${action || 'That'} needs a free account`, 'info', { duration: 3500, action:{ label:'Save progress', onClick:()=>openGuestUpgrade('locked') } }); } catch(e){} }
+  return false;
+}
+// ---- play-page progress strip ----
+function renderGuestStrip(){
+  const host = $('#guestStrip'); if(!host) return;
+  if(!isGuest()){ host.style.display = 'none'; host.innerHTML = ''; return; }
+  try { localStorage.setItem('rosham_guest_active', '1'); } catch(e){}   // for expired-session recovery
+  const p = state.profile || {};
+  const s = getGuestStreak();
+  host.style.display = '';
+  host.innerHTML = `
+    <div class="gs-left">
+      <span class="gs-badge">GUEST</span>
+      <div class="gs-stats"><b>Lv ${levelOf(p).level || 1}</b> · <b>${inPlacements(p)?'—':(p.rating||1000)} ELO</b> · <b>${fmtCoins(getCoins())}</b> coins${(s.days||0)>1?` · <b>${s.days}-day</b> streak`:''}</div>
+    </div>
+    <button type="button" class="gs-cta" data-guest-upgrade>Save your progress →</button>`;
+}
+// ---- one-time fragility warning ----
+function guestFragilityWarn(){
+  if(!isGuest()) return;
+  try {
+    if(localStorage.getItem('rosham_guest_warned') === '1') return;
+    localStorage.setItem('rosham_guest_warned', '1');
+    setTimeout(() => { try { toast('👋 Playing as a guest — your progress lives only on this browser. Create a free account any time to keep it safe.', 'info', { duration: 7000, action:{ label:'Save it', onClick:()=>openGuestUpgrade('locked') } }); } catch(e){} }, 2600);
+  } catch(e){}
+}
+// ---- conversion moment after a peak (frequency-capped) ----
+function maybeGuestNudge(reason){
+  if(!isGuest()) return;
+  try {
+    const last = parseInt(localStorage.getItem(_guNudgeKey()) || '0', 10);
+    if(Date.now() - last < 6*60000) return;
+    setTimeout(() => openGuestUpgrade(reason || 'post-win'), 1200);
+  } catch(e){}
+}
+// ---- wiring ----
+document.addEventListener('click', (e) => { if(e.target.closest?.('[data-guest-upgrade]')){ e.preventDefault(); openGuestUpgrade('locked'); } });
+on('#guDice', 'click', () => { const inp = $('#guestUpgradeForm input[name=username]'); if(inp){ inp.value = guRandomName(); try { haptic(8); } catch(e){} } });
+on('#guGoogleBtn', 'click', async () => {
+  try { showErr('#guError',''); } catch(e){}
+  const btn = $('#guGoogleBtn'); if(btn) btn.disabled = true;
+  try { await guestUpgradeGoogle(); } catch(err){ try { showErr('#guError', friendlyError(err)); } catch(e){} }
+  finally { if(btn) btn.disabled = false; }
+});
+(function bindGuestUpgradeForm(){
+  const f = $('#guestUpgradeForm'); if(!f) return;
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault(); try { showErr('#guError',''); } catch(err){}
+    const fd = new FormData(e.target);
+    const username = (fd.get('username')||'').trim();
+    if(!/^[a-zA-Z0-9_]{2,20}$/.test(username)){ try { showErr('#guError','Username must be 2-20 chars (letters, numbers, underscore)'); } catch(err){} return; }
+    const btn = $('#guSubmitBtn'); if(btn){ btn.disabled = true; btn.textContent = 'Saving…'; }
+    try { await guestUpgradeEmail(username, fd.get('email'), fd.get('password')); }
+    catch(err){ try { showErr('#guError', friendlyError(err)); } catch(e){} }
+    finally { if(btn){ btn.disabled = false; btn.textContent = 'Create account & keep progress'; } }
+  });
+})();
 
 // ============= SOCIAL: FRIENDS / REQUESTS / INVITES =============
 function attachSocialListeners(){
@@ -31787,7 +32130,7 @@ function renderLevelPanel(){
 
 async function equipTitle(titleId){
   if(!state.user || !state.profile) return;
-  if(isGuest()){ toast('Create a free account to equip titles', 'info'); return; }
+  if(!guestGate('Equipping titles')) return;
   const t = titleById(titleId);
   if(t.special){
     if(!ownsSpecialTitle(state.profile, titleId)){ toast('Title not available', 'error'); return; }
@@ -33182,7 +33525,10 @@ const CASE_COSMETICS = [
   { id:'av_cherry',      type:'avatar', name:'Cherry Blossom',    rarity:'rare',      cls:'cxa-cherry',      desc:'Soft pink petals drift around your avatar.', caseOnly:true },
   { id:'fr_carbon',      type:'frame',  name:'Carbon Fiber',      rarity:'rare',      cls:'cxf-carbon',      desc:'Hex-perforated black mesh under a moving spotlight. Quiet, heavy, expensive.', caseOnly:true },
 ];
-CASE_COSMETICS.forEach(c => { c.price = 0; });
+// Cases are retired — these cosmetics now sell directly in the shop rotation.
+// Dropping caseOnly lets shopRotation() pick them up; the price pass below
+// (COSMETICS.forEach … CX_PRICE) gives each one a rarity-scaled coin price.
+CASE_COSMETICS.forEach(c => { delete c.caseOnly; });
 COSMETICS.push(...CASE_COSMETICS);
 // ── TRIUMPH VAULT EXCLUSIVES — only drop from the Triumph Vault case, which is
 // earned by sweeping all 3 weekly challenges (The Gauntlet). ──
@@ -33200,21 +33546,37 @@ const VAULT_COSMETICS = [
   { id:'tg_grinder',     type:'tag',    name:'Grinder',        rarity:'rare',      cls:'cxt-grinder',     text:'GRINDER ⚙️', desc:'Every challenge. Every week. No days off.', caseOnly:true },
   { id:'av_comet',       type:'avatar', name:'Comet Trail',    rarity:'rare',      cls:'cxa-comet',       desc:'An icy comet tail glitters in a ring around your avatar.', caseOnly:true },
 ];
-VAULT_COSMETICS.forEach(c => { c.price = 0; });
+VAULT_COSMETICS.forEach(c => { delete c.caseOnly; });
 COSMETICS.push(...VAULT_COSMETICS);
-// ── RANK-EXCLUSIVE COSMETICS — earned by reaching each rank (Gold and up).
-// Can't be bought or unboxed; the only way to get them is to climb.
+// ── These were once rank-locked; they now sell directly in the shop rotation
+// (renamed so they read as regular cosmetics, not rank rewards). The new
+// rank rewards are the avatar crests below. Dropping rankOnly + leaving price
+// unset lets shopRotation() list them at a rarity-scaled price.
 const RANK_COSMETICS = [
-  { id:'ns_goldrush',   type:'name',   name:'Gold Rush',        rarity:'epic',      cls:'cxn-goldrush',   rankOnly:'gold',        desc:'Molten gold pours through your name. Awarded for reaching Gold.' },
-  { id:'av_platinum',   type:'avatar', name:'Platinum Pulse',   rarity:'epic',      cls:'cxa-platinum',   rankOnly:'platinum',    desc:'A polished platinum ring with a living mint heartbeat. Awarded for reaching Platinum.' },
-  { id:'ns_diamondcut', type:'name',   name:'Diamond Cut',      rarity:'legendary', cls:'cxn-diamondcut', rankOnly:'diamond',     desc:'Ice-white facets glint through your name like a cut gem. Awarded for reaching Diamond.' },
-  { id:'av_master',     type:'avatar', name:"Master's Orbit",   rarity:'legendary', cls:'cxa-master',     rankOnly:'master',      desc:'A violet gravity ring with a star locked in orbit. Awarded for reaching Master.' },
-  { id:'ns_ruthless',   type:'name',   name:'Ruthless',         rarity:'mythic',    cls:'cxn-ruthless',   rankOnly:'grandmaster', desc:'A crimson edge that never stops bleeding light. Awarded for reaching Grandmaster.' },
-  { id:'fr_champion',   type:'frame',  name:"Champion's Blaze", rarity:'mythic',    cls:'cxf-champion',   rankOnly:'champion',    desc:'Embers rise around your entire profile. Awarded for reaching Champion.' },
-  { id:'fr_legend',     type:'frame',  name:"Legend's Halo",    rarity:'ascended',  cls:'cxf-legend',     rankOnly:'legend',      desc:'The apex: a jewelled crystal border of pink and gold around a pitch-black stage — you are the artwork. Awarded for reaching Legend.' },
+  { id:'ns_goldrush',   type:'name',   name:'Gold Rush',   rarity:'epic',      cls:'cxn-goldrush',   desc:'Molten gold pours endlessly through every letter of your name.' },
+  { id:'av_platinum',   type:'avatar', name:'Aurora Pulse',rarity:'epic',      cls:'cxa-platinum',   desc:'A polished ring of mint light with a living, breathing heartbeat.' },
+  { id:'ns_diamondcut', type:'name',   name:'Frostcut',    rarity:'legendary', cls:'cxn-diamondcut', desc:'Ice-white facets glint through your name like cut crystal.' },
+  { id:'av_master',     type:'avatar', name:'Nebula Orbit',rarity:'legendary', cls:'cxa-master',     desc:'A violet gravity ring with a single star locked in eternal orbit.' },
+  { id:'ns_ruthless',   type:'name',   name:'Ruthless',    rarity:'mythic',    cls:'cxn-ruthless',   desc:'A crimson edge that never stops bleeding light.' },
+  { id:'fr_champion',   type:'frame',  name:'Wildfire',    rarity:'mythic',    cls:'cxf-champion',   desc:'Embers rise and drift around your entire profile.' },
+  { id:'fr_legend',     type:'frame',  name:'Crown Jewel', rarity:'ascended',  cls:'cxf-legend',     desc:'A jewelled crystal border of pink and gold around a pitch-black stage — you are the artwork.' },
 ];
-RANK_COSMETICS.forEach(c => { c.price = 0; });
+RANK_COSMETICS.forEach(c => { delete c.rankOnly; });
 COSMETICS.push(...RANK_COSMETICS);
+// ── RANK REWARD CRESTS — the ONLY way to earn these is to climb. One animated
+// avatar aura per rank (Gold → Legend), coloured to the rank and crowned with
+// that rank's emblem at the base, so it reads unmistakably as a rank reward.
+const RANK_REWARD_COSMETICS = [
+  { id:'av_rk_gold',        type:'avatar', name:'Gold Crest',        rarity:'epic',      cls:'cxa-rk cxa-rk-gold',        rankOnly:'gold',        desc:'A molten-gold avatar aura crowned with the Gold emblem. Earned by reaching Gold.' },
+  { id:'av_rk_platinum',    type:'avatar', name:'Platinum Crest',    rarity:'epic',      cls:'cxa-rk cxa-rk-platinum',    rankOnly:'platinum',    desc:'A gleaming mint-platinum aura crowned with the Platinum emblem. Earned by reaching Platinum.' },
+  { id:'av_rk_diamond',     type:'avatar', name:'Diamond Crest',     rarity:'legendary', cls:'cxa-rk cxa-rk-diamond',     rankOnly:'diamond',     desc:'A brilliant ice-blue aura crowned with the Diamond emblem. Earned by reaching Diamond.' },
+  { id:'av_rk_master',      type:'avatar', name:'Master Crest',      rarity:'legendary', cls:'cxa-rk cxa-rk-master',      rankOnly:'master',      desc:'A violet gravity aura crowned with the Master emblem. Earned by reaching Master.' },
+  { id:'av_rk_grandmaster', type:'avatar', name:'Grandmaster Crest', rarity:'mythic',    cls:'cxa-rk cxa-rk-grandmaster', rankOnly:'grandmaster', desc:'A blazing crimson aura crowned with the Grandmaster emblem. Earned by reaching Grandmaster.' },
+  { id:'av_rk_champion',    type:'avatar', name:'Champion Crest',    rarity:'mythic',    cls:'cxa-rk cxa-rk-champion',    rankOnly:'champion',    desc:'A searing ember-orange aura crowned with the Champion emblem. Earned by reaching Champion.' },
+  { id:'av_rk_legend',      type:'avatar', name:'Legend Crest',      rarity:'ascended',  cls:'cxa-rk cxa-rk-legend',      rankOnly:'legend',      desc:'A radiant pink-gold aura crowned with the Legend emblem — the apex avatar reward. Earned by reaching Legend.' },
+];
+RANK_REWARD_COSMETICS.forEach(c => { c.price = 0; });
+COSMETICS.push(...RANK_REWARD_COSMETICS);
 // ── PRESTIGE-EXCLUSIVE COSMETICS — one per prestige tier. Can't be bought or
 // unboxed; the only way to wear them is to prestige that many times. ──
 const PRESTIGE_COSMETICS = [
@@ -33996,11 +34358,21 @@ function lkRenderPresetPanel(){
   const rows = presets.length
     ? presets.map(p => {
         const pieces = CX_SLOTS.filter(s => p.set?.[s] && COSMETIC_BY_ID[p.set[s]]).length;
-        return `<div class="lk2-preset-row">
-          <button type="button" class="lk2-preset-apply" data-lk-preset-apply="${escapeHTML(p.id)}">
-            <span class="lk2-preset-name">${escapeHTML(p.name)}</span>
-            <span class="lk2-preset-sub">${pieces} piece${pieces === 1 ? '' : 's'} · tap to equip</span>
-          </button>
+        const editing = state._lkRenameId === p.id;
+        // When renaming, the name becomes a focused text field (not nested in the
+        // equip <button> — that'd be invalid HTML); Enter / blur commits, Esc cancels.
+        const body = editing
+          ? `<div class="lk2-preset-apply editing">
+               <input class="lk2-preset-name-input" data-lk-preset-name-input="${escapeHTML(p.id)}" value="${escapeHTML(p.name)}" maxlength="24" aria-label="Loadout name" placeholder="Name this loadout" />
+               <span class="lk2-preset-sub">Type a name · press ↵</span>
+             </div>`
+          : `<button type="button" class="lk2-preset-apply" data-lk-preset-apply="${escapeHTML(p.id)}">
+               <span class="lk2-preset-name">${escapeHTML(p.name)}</span>
+               <span class="lk2-preset-sub">${pieces} piece${pieces === 1 ? '' : 's'} · tap to equip</span>
+             </button>`;
+        return `<div class="lk2-preset-row${editing ? ' editing' : ''}">
+          ${body}
+          <button type="button" class="lk2-preset-edit" data-lk-preset-rename="${escapeHTML(p.id)}" title="Rename loadout" aria-label="Rename loadout">✎</button>
           <button type="button" class="lk2-preset-del" data-lk-preset-del="${escapeHTML(p.id)}" title="Delete loadout"><svg viewBox="0 0 24 24" width="13" height="13"><use href="#i-trash"/></svg></button>
         </div>`;
       }).join('')
@@ -34009,6 +34381,27 @@ function lkRenderPresetPanel(){
     <div class="lk2-preset-list">${rows}</div>
     <button type="button" class="btn btn-primary lk2-preset-save" data-lk-preset-save${presets.length >= 8 ? ' disabled' : ''}>+ Save current look</button>`;
 }
+// Commit a loadout rename (empty falls back to the existing name), then re-render.
+function lkCommitRename(id, value){
+  const presets = lkPresets();
+  const p = presets.find(x => x.id === id);
+  state._lkRenameId = null;
+  if(p){
+    const name = (value || '').trim().slice(0, 24);
+    if(name && name !== p.name){ p.name = name; lkSavePresets(presets); try { haptic(8); } catch(e){} }
+  }
+  const panel = $('#lkPresets'); if(panel) panel.innerHTML = lkRenderPresetPanel();
+}
+// Enter commits, Escape cancels, and clicking away (focusout) commits too.
+document.addEventListener('keydown', (e) => {
+  const inp = e.target.closest?.('.lk2-preset-name-input'); if(!inp) return;
+  if(e.key === 'Enter'){ e.preventDefault(); lkCommitRename(inp.dataset.lkPresetNameInput, inp.value); }
+  else if(e.key === 'Escape'){ e.preventDefault(); state._lkRenameId = null; const panel = $('#lkPresets'); if(panel) panel.innerHTML = lkRenderPresetPanel(); }
+});
+document.addEventListener('focusout', (e) => {
+  const inp = e.target.closest?.('.lk2-preset-name-input'); if(!inp) return;
+  if(state._lkRenameId === inp.dataset.lkPresetNameInput) lkCommitRename(inp.dataset.lkPresetNameInput, inp.value);
+});
 try { updateLockerBadge(); } catch(e){}
 function renderShopPage(){
   try { checkWishlistRotation(); } catch(e){}
@@ -34104,9 +34497,14 @@ function renderSbmPreview(item, wearing){
   state._sbmWearing = wearing;
   stage.innerHTML = buildProfileCardPreviewHTML(item, wearing);
   // Real banner painter (needs the live element) + level badge colours.
+  // A frame paints the WHOLE card as its scene (sky/sun/etc), exactly like the
+  // real profile — so when a frame is on, the banner steps aside (stays clear)
+  // and the scene shows through the top instead of the user's flat banner.
   try {
     const b = stage.querySelector('[data-sbmp-banner]');
-    if(b) applyProfileBanner(b, null, state.profile || {});
+    const card = stage.querySelector('.sbmp-card');
+    const hasFrame = card && /\bcxf-/.test(card.className || '');
+    if(b && !hasFrame) applyProfileBanner(b, null, state.profile || {});
   } catch(e){}
   try { paintLevelBadge(stage.querySelector('[data-sbmp-lvl]'), (typeof levelOf === 'function') ? levelOf(state.profile || {}).level : 1, prestigeOf(state.profile || {})); } catch(e){}
   // Toggle state
@@ -34279,7 +34677,7 @@ on('#sbmGiftBtn', 'click', () => {
 // ── FORTNITE-STYLE GIFT FLOW: dedicated modal, pick a friend → message → send ──
 function openGiftFlow(item){
   if(!item) return;
-  if(isGuest()){ try { toast('Create a free account to send gifts', 'info'); } catch(e){} return; }
+  if(!guestGate('Sending gifts')) return;
   state._gfItem = item; state._gfSelected = null; state._giftWrap = state._giftWrap || 'gift';
   const r = CX_RARITY[item.rarity];
   setText('#gfTitle', `Gift ${item.name}`);
@@ -35001,41 +35399,41 @@ function sfxCaseUnlock(){
   } catch(e){}
 }
 // A big unmissable banner (with its own sound) that pops under the toast
-// whenever a case is earned — tap it to jump straight to your cases.
-function showCaseUnlockPop(count, reason){
+// whenever a coin reward is earned — tap it to jump to the shop rotation.
+function showCaseUnlockPop(coins, reason){
   try {
     document.querySelectorAll('.case-unlock-pop').forEach(n => n.remove());
     const pop = document.createElement('button');
     pop.type = 'button';
-    pop.className = 'case-unlock-pop';
+    pop.className = 'case-unlock-pop cup-coins';
     pop.innerHTML = `
-      <span class="cup-icon">📦</span>
+      <span class="cup-icon"><svg viewBox="0 0 24 24" width="26" height="26"><use href="#i-coin"/></svg></span>
       <span class="cup-text">
-        <b>CASE UNLOCKED${count > 1 ? ' ×' + count : ''}!</b>
-        <i>${escapeHTML(reason || 'ROSHCAM Case earned')} · tap to open</i>
+        <b>+${fmtCoins(coins)} ROSHCOINS!</b>
+        <i>${escapeHTML(reason || 'Reward earned')} · tap to shop</i>
       </span>
       <span class="cup-glow" aria-hidden="true"></span>`;
     pop.addEventListener('click', () => {
       pop.remove();
-      try { showNavPage('shop'); setTimeout(() => $('#shopSecCases')?.scrollIntoView({ behavior:'smooth', block:'start' }), 350); } catch(e){}
+      try { showNavPage('shop'); setTimeout(() => $('#shopSecFeatured')?.scrollIntoView({ behavior:'smooth', block:'start' }), 350); } catch(e){}
     });
     document.body.appendChild(pop);
     requestAnimationFrame(() => pop.classList.add('show'));
     setTimeout(() => { pop.classList.remove('show'); setTimeout(() => pop.remove(), 400); }, 6500);
   } catch(e){}
 }
+// Cases are retired: what used to grant a case now pays RoshCoins to spend in
+// the shop on the (formerly case-exclusive) cosmetics. A standard case ≈ 1000,
+// the Triumph Vault ≈ 3000. Signature kept so existing callers don't change.
+const CASE_COIN_VALUE = { case_roshcam: 1000, case_triumph: 3000 };
 async function grantCase(caseId, count, reason){
   if(!state.profile || !state.user) return;
-  const inv = getCaseInventory();
-  inv[caseId] = (inv[caseId] || 0) + count;
-  state.profile.cases = inv;
-  try { await updateDoc(doc(state.db, 'users', state.user.uid), { cases: inv }); } catch(e){}
-  try { toast(`📦 +${count} ${CASE_BY_ID[caseId]?.name || 'Case'}! ${reason}`, 'success', { duration: 5000 }); } catch(e){}
-  try { showCaseUnlockPop(count, reason); } catch(e){}
+  const coins = (CASE_COIN_VALUE[caseId] || 1000) * (count || 1);
+  try { await grantCoins(coins, reason || 'Reward', { silent: true }); } catch(e){}
+  try { toast(`🪙 +${fmtCoins(coins)} RoshCoins · ${reason || 'Reward'}`, 'success', { duration: 5000 }); } catch(e){}
+  try { showCaseUnlockPop(coins, reason); } catch(e){}
   try { sfxCaseUnlock(); } catch(e){}
   try { haptic([20, 40, 20, 40, 60]); } catch(e){}
-  try { renderCaseInventory(); } catch(e){}
-  try { updateShopBadge(); } catch(e){}
 }
 
 // ── RANK-EXCLUSIVE COSMETIC GRANTS — based on your PEAK rating, so a demotion
@@ -35050,7 +35448,7 @@ function syncRankCosmetics(){
     const c = getCosmetics();
     const have = new Set(c.owned);
     const newly = [];
-    RANK_COSMETICS.forEach(rc => {
+    RANK_REWARD_COSMETICS.forEach(rc => {
       const need = RANKS.findIndex(rk => rk.id === rc.rankOnly);
       if(need >= 0 && curIdx >= need && !have.has(rc.id)){ have.add(rc.id); newly.push(rc); }
     });
@@ -35430,12 +35828,25 @@ document.addEventListener('click', (e) => {
     // Auto-name after the flashiest equipped piece, else a numbered fallback.
     const lead = COSMETIC_BY_ID[set.frame] || COSMETIC_BY_ID[set.name] || COSMETIC_BY_ID[set.avatar] || COSMETIC_BY_ID[set.tag];
     const name = (lead?.name || `Loadout ${presets.length + 1}`).slice(0, 24);
-    presets.push({ id: 'p' + Date.now().toString(36), name, set });
+    const newId = 'p' + Date.now().toString(36);
+    presets.push({ id: newId, name, set });
     lkSavePresets(presets);
+    // Drop the fresh loadout straight into rename mode so you can name it now.
+    state._lkRenameId = newId;
     const panel = $('#lkPresets'); if(panel) panel.innerHTML = lkRenderPresetPanel();
     const t = $('#lkTools'); if(t) t.innerHTML = lkRenderTools();
+    setTimeout(() => { const inp = $('.lk2-preset-name-input'); if(inp){ inp.focus(); inp.select(); } }, 30);
     try { haptic([10, 20]); } catch(err){}
-    try { toast(`💾 Saved loadout “${name}”`, 'success'); } catch(err){}
+    try { toast(`💾 Loadout saved — name it`, 'success'); } catch(err){}
+    return;
+  }
+  // Rename an existing loadout → swap its name for a focused input.
+  if(e.target.closest('[data-lk-preset-rename]')){
+    const id = e.target.closest('[data-lk-preset-rename]').dataset.lkPresetRename;
+    state._lkRenameId = (state._lkRenameId === id) ? null : id;
+    const panel = $('#lkPresets'); if(panel) panel.innerHTML = lkRenderPresetPanel();
+    setTimeout(() => { const inp = $('.lk2-preset-name-input'); if(inp){ inp.focus(); inp.select(); } }, 30);
+    try { haptic(6); } catch(err){}
     return;
   }
   // custom SORT dropdown ------------------------------------------------
@@ -37817,15 +38228,16 @@ function applyGuestProfileLock(){
       note.id = 'editGuestNote';
       note.className = 'guest-note';
       note.innerHTML = `<svg viewBox="0 0 24 24" width="17" height="17"><use href="#i-lock"/></svg>
-        <div><b>You're playing as a guest.</b> Create a free account to claim a username, set a photo and customize your profile.</div>
-        <button type="button" class="btn btn-primary guest-note-btn" id="editGuestCreateBtn">Create account</button>`;
+        <div><b>You're playing as a guest.</b> Create a free account to claim a username, set a photo and customize your profile — <b>your progress carries over.</b></div>
+        <button type="button" class="btn btn-primary guest-note-btn" id="editGuestCreateBtn">Save my progress</button>`;
       const card = modal.querySelector('.modal');
       const title = card && card.querySelector('h3');
       if(card){ card.insertBefore(note, title ? title.nextSibling : card.firstChild); }
-      // "Create account" → leave the temporary guest session for the auth screen.
+      // "Save my progress" → the in-place upgrade (LINK the session, never sign
+      // out — signing out would throw away the guest's rating / level / coins).
       note.querySelector('#editGuestCreateBtn')?.addEventListener('click', () => {
         $('#editProfileModal')?.classList.remove('show');
-        $('#signOutBtn')?.click();
+        openGuestUpgrade('locked');
       });
     }
     note.style.display = '';
@@ -38084,7 +38496,7 @@ function epsSaveState(s){
 }
 async function saveProfileEdits(opts = {}){
   // Guests can't save profile changes — they must create an account first.
-  if(isGuest()){ if(!opts.auto) toast('Create a free account to customize your profile', 'info'); return false; }
+  if(isGuest()){ if(!opts.auto) guestGate('Customizing your profile'); return false; }
   if(!state.profile || !state.user) return false;
   showErr('#editError', '');
   const form = $('#editProfileForm');
@@ -38188,7 +38600,7 @@ on('#epRequestsRow', 'click', async () => {
 document.addEventListener('click', async (e) => {
   const row = e.target.closest && e.target.closest('[data-priv-toggle]');
   if(!row || !row.closest('#editProfileModal')) return;
-  if(isGuest()){ toast('Create a free account to use privacy controls', 'info'); return; }
+  if(!guestGate('Privacy controls')) return;
   const key = row.dataset.privToggle;
   const next = !state.profile?.[key];
   if(state.profile) state.profile[key] = next;
@@ -40993,7 +41405,17 @@ let updateMatchStats = async function(matchResult){
     if(swing !== 0) breakdown.push({ label: (swing > 0 ? '↑' : '↓') + ' Calibrating rank', amount: swing });
   }
   // (Daily challenges pay level-scaled XP + tokens — they never touch ELO.)
-  const newRating = Math.max(0, myRating + delta);
+  let newRating = Math.max(0, myRating + delta);
+  // GUEST SOFT-CAP: guests climb no higher than Silver until they create an
+  // account — curbs throwaway ladder-farming and drives conversion. Never pulls
+  // them down; just stops upward movement past the cap (and keeps delta honest).
+  let guestCapped = false;
+  if(isGuest() && newRating > GUEST_RATING_CAP && newRating > myRating){
+    newRating = Math.max(myRating, GUEST_RATING_CAP);
+    delta = newRating - myRating;
+    guestCapped = true;
+    if(delta === 0) breakdown.push({ label: '🔒 Guest cap · Silver', amount: 0 });
+  }
   state._lastMatchDelta = delta;
   state._lastEloBreakdown = breakdown;
   state._lastRatingBefore = myRating;
@@ -41002,6 +41424,15 @@ let updateMatchStats = async function(matchResult){
   const oldRank = rankFromRating(myRating);
   const newRank = rankFromRating(newRating);
   const rankedUp = newRank.index > oldRank.index;
+
+  // GUEST: count the play toward the streak, and queue a contextual "save your
+  // progress" nudge (fired once back on the menu, so it never covers the result).
+  try {
+    if(isGuest()){
+      bumpGuestPlay();
+      state._guestNudgePending = guestCapped ? 'cap' : (matchResult === 'win' ? (rankedUp ? 'rank-up' : 'post-win') : (state._guestNudgePending || null));
+    }
+  } catch(e){}
 
   // Placement matches: rank stays hidden until PLACEMENT_TOTAL ranked games are done.
   const placedBefore = state.profile.placementsDone || 0;
@@ -42261,13 +42692,13 @@ function _renderLevelUpCard(info, onDone){
   const milestone = hitCap || isLevelMilestone(to.level);
   if(!stack){ try { sfxLevelUp(); } catch(e){} onDone && onDone(); return; }
   const tier = levelTier(to.level);
-  // "What you unlocked" chips — new titles + the free case granted every 7 levels.
+  // "What you unlocked" chips — new titles + the coin bonus granted every 7 levels.
   const chips = [];
   (info.newTitles || []).forEach(t => {
     chips.push(`<span class="lu-unlock-chip" style="--uc:${t.color || '#5dffba'}"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg>${escapeHTML(t.name)}</span>`);
   });
   if(!hitCap && to.level % 7 === 0){
-    chips.push(`<span class="lu-unlock-chip" style="--uc:#ffd33d"><svg viewBox="0 0 24 24"><use href="#i-gem"/></svg>Free case</span>`);
+    chips.push(`<span class="lu-unlock-chip" style="--uc:#ffd33d"><svg viewBox="0 0 24 24"><use href="#i-coin"/></svg>+1,000 coins</span>`);
   }
   const unlocksHTML = chips.length ? `<div class="lu-unlocks">${chips.join('')}</div>` : '';
   // Progress context — how far into the next level this leaves you.
@@ -43612,6 +44043,13 @@ function runDailyHousekeeping(){
     try { refreshDailyChallenge(); } catch(e){}
     try { refreshWeeklyChallenges(); } catch(e){}
     try { paintMnavAvatar(); } catch(e){}
+    // GUEST: one-time fragility warning + any pending post-match conversion nudge.
+    try {
+      if(isGuest()){
+        guestFragilityWarn();
+        if(state._guestNudgePending){ const r = state._guestNudgePending; state._guestNudgePending = null; maybeGuestNudge(r); }
+      }
+    } catch(e){}
   } finally { state._housekeeping = false; }
 }
 // Back-compat alias — many callers still invoke renderHomePage() after XP grants
@@ -43980,7 +44418,7 @@ function openRankRewards(selectId){
   const rating = state.profile?.rating || 1000;
   const unranked = state.profile ? inPlacements(state.profile) : true;
   if(!selectId){
-    const nextReward = RANKS.find(r => RANK_COSMETICS.some(c => c.rankOnly === r.id) && (unranked || rating < r.base));
+    const nextReward = RANKS.find(r => RANK_REWARD_COSMETICS.some(c => c.rankOnly === r.id) && (unranked || rating < r.base));
     selectId = nextReward ? nextReward.id : (unranked ? 'gold' : rankFromRating(rating).id);
   }
   renderRrwSidebar();
@@ -44014,7 +44452,7 @@ function rrwSelect(rankId){
   const hic = $('#rrwHeadIcon'); if(hic) hic.style.color = r.color;
   const hglow = $('#rrwHeadGlow'); if(hglow) hglow.style.background = `radial-gradient(circle, ${r.color}, transparent 70%)`;
   setText('#rrwHeadTitle', r.name.toUpperCase() + ' REWARDS');
-  const rewards = RANK_COSMETICS.filter(c => c.rankOnly === r.id);
+  const rewards = RANK_REWARD_COSMETICS.filter(c => c.rankOnly === r.id);
   setText('#rrwHeadSub', rewards.length
     ? `Reach ${r.name} rank and unlock these rewards.`
     : `No exclusive reward at this tier — rank rewards begin at Gold.`);
@@ -44309,8 +44747,8 @@ function renderLevelLadder(p, lvl, prestige){
     levelTiers.push({
       n: L, type: 'level', cap, milestone: !!title || cap || caseReward, caseReward,
       name: cap ? 'Prestige' : (title ? title.name : 'Level ' + L),
-      sub: cap ? 'Summit unlocked' : (title ? (titleRarity(title).label + ' title') : (caseReward ? 'ROSHCAM Case' : '+ XP')),
-      color: cap ? '#ffd33d' : (title ? title.color : (caseReward ? '#b56cff' : 'var(--mint)')),
+      sub: cap ? 'Summit unlocked' : (title ? (titleRarity(title).label + ' title') : (caseReward ? '+1,000 RoshCoins' : '+ XP')),
+      color: cap ? '#ffd33d' : (title ? title.color : (caseReward ? '#ffd33d' : 'var(--mint)')),
       icon: cap ? 'i-star' : (title ? 'i-medal' : 'i-zap'),
       reached: lvl.level >= L, current: lvl.level === L,
     });
@@ -44343,8 +44781,8 @@ function renderLevelLadder(p, lvl, prestige){
 
   const nextCaseLvl = (Math.floor(lvl.level / 7) + 1) * 7;
   const caseHint = atCap
-    ? `<span class="lp-reward-ic">📦</span> Every case milestone earned — max level reached`
-    : `<span class="lp-reward-ic">📦</span> Earn a <b>ROSHCAM Case</b> every 7 levels · next at <b>level ${nextCaseLvl}</b>`;
+    ? `<span class="lp-reward-ic">🪙</span> Every coin milestone earned — max level reached`
+    : `<span class="lp-reward-ic">🪙</span> Earn <b>1,000 RoshCoins</b> every 7 levels · next at <b>level ${nextCaseLvl}</b>`;
 
   host.innerHTML = `
     <div class="lp-card">
@@ -44394,8 +44832,8 @@ function lpTierCardHTML(tr, i){
     : `<div class="lp-emblem"><svg viewBox="0 0 24 24"><use href="#${tr.icon}"/></svg></div>`;
   // Node chip that sits ON the rail — the classic pass "tier number" marker.
   const node = `<div class="lp-node">${current ? '<span class="lp-here">YOU</span>' : ''}<span class="lp-node-n">${tr.type === 'prestige' && tr.master ? '★' : tr.n}</span></div>`;
-  // Case-reward badge on every 7th level so it's clear you earn a case there.
-  const caseBadge = tr.caseReward ? `<div class="lp-case-badge" title="Earn a ROSHCAM Case at level ${tr.n}">📦</div>` : '';
+  // Coin-reward badge on every 7th level so it's clear you earn coins there.
+  const caseBadge = tr.caseReward ? `<div class="lp-case-badge" title="Earn 1,000 RoshCoins at level ${tr.n}">🪙</div>` : '';
   // Prestige tiers carry an exclusive cosmetic — badge it and make the tile
   // clickable to inspect the reward full-size.
   const cxBadge = tr.reward ? `<div class="lp-case-badge lp-cx-badge" title="Prestige-exclusive: ${escapeHTML(tr.reward.name)}">💎</div>` : '';
@@ -45378,8 +45816,9 @@ async function awardDailyShard(){
   if(completed){
     st.count = 0;
     try { localStorage.setItem(_shardKey(), JSON.stringify(st)); } catch(e){}
-    try { await grantCase('case_roshcam', 1, 'Seven daily shards'); } catch(e){}
-    toast('🧩 Seventh shard! A free ROSHCAM CASE is yours — open it in the shop.', 'success', {
+    // Seven daily shards = a RoshCoin bonus to spend in the shop.
+    try { await grantCoins(1000, 'Seven daily shards', { silent: true }); } catch(e){}
+    toast('🧩 Seventh shard! +1,000 RoshCoins — spend them in the shop.', 'success', {
       duration: 8000, action: { label: 'Open shop', onClick: () => showNavPage('shop') },
     });
   }
@@ -45399,9 +45838,9 @@ async function renderLoginRewardShards(){
   setText('#lrShardCount', `${completed ? 7 : shown}/7`);
   const sub = $('#lrShardSub');
   if(sub){
-    sub.textContent = completed ? 'Seven shards! A free ROSHCAM case landed in your shop.'
-      : res.changed ? `+1 today — ${shown} of 7 toward a free ROSHCAM case`
-      : shardClaimableToday() ? 'Collect one every day — seven earns a free ROSHCAM case'
+    sub.textContent = completed ? 'Seven shards! +1,000 RoshCoins landed in your wallet.'
+      : res.changed ? `+1 today — ${shown} of 7 toward a 1,000-coin bonus`
+      : shardClaimableToday() ? 'Collect one every day — seven earns a 1,000-coin bonus'
       : `Collected today — ${shown} of 7 · come back tomorrow`;
   }
   const orbs = $('#lrShardOrbs');
@@ -45745,6 +46184,7 @@ function maybeMilestoneToast(p, rating){
 // ===== PLAY PAGE render (rank + daily) =====
 function renderPlayPage(){
   if(!state.profile) return;
+  try { renderGuestStrip(); } catch(e){}
   const p = state.profile;
   const rating = p.rating||1000;
   const rank = rankFromRating(rating);
@@ -45773,6 +46213,34 @@ function renderPlayPage(){
   const games = p.games || ((p.wins||0)+(p.losses||0)+(p.draws||0));
   const wr = games>0 ? Math.round(((p.wins||0)/games)*100) : 0;
   setText('#playRankWR', wr+'%');
+  // ---- YOUR LEVEL card: tier-coloured hex crest + XP progress ----
+  try {
+    const lv = levelOf(p);
+    const prest = prestigeOf(p);
+    const tier = prest ? prestigeTier(prest) : levelTier(lv.level);
+    const card = $('#playLevelCard');
+    if(card){
+      card.style.setProperty('--lvl-grad', `linear-gradient(135deg, ${tier.a}, ${tier.b})`);
+      card.style.setProperty('--lvl-glow', tier.glow || tier.b);
+      card.style.setProperty('--lvl-text', tier.t);
+      card.style.setProperty('--lvl-a', tier.a);
+      card.style.setProperty('--lvl-b', tier.b);
+    }
+    setText('#playLevelNum', lv.level);
+    setText('#playLevelName', prest ? `${tier.name} · Lv ${lv.level}` : `Level ${lv.level}`);
+    const cur = lv.xpInLevel, need = lv.xpForThis;
+    setText('#playLevelXpCur', cur.toLocaleString());
+    setText('#playLevelXpNeed', need.toLocaleString());
+    const lfill = $('#playLevelFill');
+    if(lfill){ lfill.style.width = (lv.progress*100)+'%'; lfill.style.setProperty('--rank-color', tier.a); lfill.style.setProperty('--rank-color-2', tier.b); }
+    if(lv.level >= MAX_LEVEL){
+      setText('#playLevelNext', canPrestige(p) ? '✦ Prestige ready' : 'Max level reached');
+    } else {
+      setText('#playLevelNext', `${Math.max(0, need - cur).toLocaleString()} XP to Level ${lv.level + 1}`);
+    }
+    const pc = $('#playLevelPrestige');
+    if(pc){ if(prest){ pc.textContent = 'P' + prest; pc.style.display = ''; } else pc.style.display = 'none'; }
+  } catch(e){}
   // Sidebar rail: boosts + online friends + the real Triumph Vault case art
   try { renderXpBoostPanel(); } catch(e){}
   try { renderPlayFriendsCard(); } catch(e){}
@@ -45867,7 +46335,7 @@ function renderPlayFriendsCard(){
 }
 // Sidebar buttons: stats popup + the Triumph Vault case detail
 on('#playViewStats', 'click', (e) => { e.stopPropagation(); hapticTick(); try { openStatsModal(); } catch(err){} });
-on('#playViewVault', 'click', () => { hapticTick(); try { openCaseDetail('case_triumph'); } catch(err){ console.warn('[vault]', err); } });
+on('#playViewVault', 'click', () => { hapticTick(); try { showNavPage('shop'); } catch(err){ console.warn('[vault]', err); } });
 on('#playFriendsRow', 'click', () => { hapticTick(); showNavPage('friends'); });
 
 // ===== CAMERA CALIBRATION WIZARD =====
