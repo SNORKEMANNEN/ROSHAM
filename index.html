@@ -9832,6 +9832,63 @@ body.low-power .match-result-card-v2.mrfn *{ animation:none !important; }
 body.reduced-motion .mrfn-ring-orbit, body.low-power .mrfn-ring-orbit{ display:none; }
 body.reduced-motion .mrfn-ring-spark, body.low-power .mrfn-ring-spark{ display:none; }
 body.low-power .mrfn-btn.primary::after, body.low-power .mrfn-head::after{ display:none; }
+/* Headline held hidden while the cinematic stinger text flies into its slot */
+.match-result-overlay.mrfn-stinger-in .match-result-headline{ opacity:0 !important; animation:none !important; }
+.match-result-overlay.mrfn-stinger-in.mrfn-head-show .match-result-headline{ opacity:1 !important; }
+
+/* ═══════════ CINEMATIC PRE-RESULT STINGER ═══════════ */
+.mrs-stinger{ position:fixed; inset:0; z-index:260; display:none; overflow:hidden;
+  --mrs-a:#22d3a3; --mrs-rgb:34,211,163; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 50% 46%, rgba(var(--mrs-rgb),.12), transparent 55%), rgba(6,6,10,0); }
+.mrs-stinger.win{ --mrs-a:#22d3a3; --mrs-rgb:34,211,163; }
+.mrs-stinger.lose{ --mrs-a:#ff3d68; --mrs-rgb:255,61,104; }
+.mrs-stinger.draw{ --mrs-a:#a48bff; --mrs-rgb:164,139,255; }
+.mrs-stinger.play{ display:flex; animation:mrsBg .28s ease both; }
+.mrs-stinger.out{ animation:mrsOut .42s ease forwards; }
+@keyframes mrsBg{ from{ background-color:rgba(6,6,10,0); } to{ background-color:rgba(6,6,10,.985); } }
+@keyframes mrsOut{ to{ background-color:rgba(6,6,10,0); } }
+.mrs-stinger.out .mrs-flash, .mrs-stinger.out .mrs-ring, .mrs-stinger.out .mrs-rays, .mrs-stinger.out .mrs-particles{ opacity:0; transition:opacity .3s ease; }
+
+.mrs-flash{ position:absolute; left:50%; top:46%; width:42vmax; height:42vmax; border-radius:50%; transform:translate(-50%,-50%) scale(.15); opacity:0;
+  background:radial-gradient(circle, rgba(255,255,255,.92), color-mix(in srgb, var(--mrs-a) 70%, transparent) 32%, transparent 62%); filter:blur(6px); }
+.mrs-stinger.play .mrs-flash{ animation:mrsFlash .6s cubic-bezier(.15,.8,.3,1) both; }
+@keyframes mrsFlash{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.12); } 16%{ opacity:1; } 100%{ opacity:0; transform:translate(-50%,-50%) scale(1.5); } }
+
+.mrs-ring{ position:absolute; left:50%; top:46%; width:24vmax; height:24vmax; border-radius:50%; transform:translate(-50%,-50%) scale(0); opacity:0;
+  border:3px solid color-mix(in srgb, var(--mrs-a) 85%, #fff);
+  box-shadow:0 0 46px -6px var(--mrs-a), inset 0 0 34px -8px var(--mrs-a); }
+.mrs-stinger.play .mrs-ring{ animation:mrsRing 1s cubic-bezier(.12,.7,.25,1) both; }
+.mrs-stinger.play .mrs-ring.r2{ animation-delay:.09s; border-width:2px; }
+.mrs-stinger.play .mrs-ring.r3{ animation-delay:.18s; border-width:1px; opacity:.7; }
+@keyframes mrsRing{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(0);} 12%{ opacity:1;} 100%{ opacity:0; transform:translate(-50%,-50%) scale(3.6);} }
+
+.mrs-rays{ position:absolute; left:50%; top:46%; width:72vmax; height:72vmax; transform:translate(-50%,-50%) scale(.4); opacity:0;
+  background:repeating-conic-gradient(from 0deg, color-mix(in srgb, var(--mrs-a) 24%, transparent) 0deg 3.5deg, transparent 3.5deg 12deg);
+  -webkit-mask:radial-gradient(circle, #000 6%, rgba(0,0,0,.35) 28%, transparent 60%); mask:radial-gradient(circle, #000 6%, rgba(0,0,0,.35) 28%, transparent 60%); }
+.mrs-stinger.play .mrs-rays{ animation:mrsRays 1.1s ease-out both; }
+@keyframes mrsRays{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(.4) rotate(-14deg);} 22%{ opacity:.85;} 100%{ opacity:0; transform:translate(-50%,-50%) scale(1.18) rotate(10deg);} }
+
+.mrs-particles{ position:absolute; inset:0; pointer-events:none; }
+.mrs-particles i{ position:absolute; left:50%; top:46%; width:9px; height:9px; border-radius:50%; background:var(--mrs-a);
+  box-shadow:0 0 12px 2px var(--mrs-a); transform:translate(-50%,-50%); opacity:0; }
+.mrs-stinger.play .mrs-particles i{ animation:mrsPart 1.05s cubic-bezier(.1,.7,.3,1) both; animation-delay:var(--d,0s); }
+@keyframes mrsPart{ 0%{ opacity:0; transform:translate(-50%,-50%) scale(1);} 12%{ opacity:1;} 100%{ opacity:0; transform:translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(.25);} }
+
+.mrs-textwrap{ position:absolute; left:0; right:0; top:46%; transform:translateY(-50%); display:flex; justify-content:center; pointer-events:none; }
+.mrs-text{ font-family:var(--font-display); font-stretch:58%; font-style:italic; font-weight:900; line-height:.86;
+  font-size:clamp(64px, 13vw, 190px); letter-spacing:-.01em; color:#fff; transform-origin:center center; will-change:transform;
+  text-shadow:0 8px 46px rgba(var(--mrs-rgb),.6), 0 3px 0 rgba(0,0,0,.4);
+  background:linear-gradient(180deg,#fff 20%, var(--mrs-a) 96%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.mrs-stinger.play .mrs-text{ animation:mrsTextPop .62s cubic-bezier(.16,1.7,.3,1) both; }
+@keyframes mrsTextPop{ 0%{ opacity:0; transform:scale(2.1); filter:blur(14px) brightness(2.4);} 45%{ opacity:1; filter:blur(0) brightness(1.3);} 100%{ opacity:1; transform:scale(1); filter:blur(0) brightness(1);} }
+.mrs-text.handoff{ animation:none !important; transition:transform .58s cubic-bezier(.5,0,.2,1); }
+
+/* Impact screen shake on the app shell */
+.mrs-shaking{ animation:mrsShake .5s cubic-bezier(.36,.07,.19,.97) both; }
+@keyframes mrsShake{ 0%,100%{ transform:translate(0,0);} 14%{ transform:translate(-8px,5px);} 28%{ transform:translate(7px,-6px);} 42%{ transform:translate(-6px,4px);} 58%{ transform:translate(5px,-3px);} 74%{ transform:translate(-3px,2px);} 88%{ transform:translate(2px,-1px);} }
+
+body.reduced-motion .mrs-stinger, body.reduced-motion .mrs-shaking{ animation:none !important; }
+body.low-power .mrs-rays, body.low-power .mrs-particles{ display:none; }
 
 /* MATCH RESULT OVERLAY */
 .match-result-overlay{
@@ -25718,6 +25775,17 @@ const FIREBASE_CONFIG = {
   </div>
 </div>
 
+<!-- MATCH RESULT — cinematic pre-result STINGER (big VICTORY/DEFEAT + energy burst) -->
+<div class="mrs-stinger" id="mrStinger" aria-hidden="true">
+  <div class="mrs-flash"></div>
+  <div class="mrs-ring r1"></div>
+  <div class="mrs-ring r2"></div>
+  <div class="mrs-ring r3"></div>
+  <div class="mrs-rays"></div>
+  <div class="mrs-particles" id="mrsParticles"></div>
+  <div class="mrs-textwrap"><div class="mrs-text" id="mrsText">VICTORY</div></div>
+</div>
+
 <!-- MATCH RESULT (best-of-3 end) — REDESIGNED v9 -->
 <div class="match-result-overlay mrv3" id="matchResultOverlay">
   <div class="mrv3-aurora" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -40581,8 +40649,8 @@ async function endMatch(){
   // Refresh the stats summary card
   try { refreshStatsSummary(); } catch(e){}
 
-  // Show the match result overlay with rank progression
-  showMatchResultScreen(result);
+  // Cinematic stinger → then the match result overlay with rank progression
+  playMatchResultSequence(result);
 }
 
 // NEW: Leave match voluntarily — counts as forfeit with -25 ELO penalty
@@ -40606,7 +40674,7 @@ on('#surrenderConfirmBtn', 'click', async () => {
   if(state.screen !== 'game' || state.matchOver) return;
   await applyForfeitPenalty(false);
   toast('You forfeited the match (-25 ELO penalty)', 'error');
-  showMatchResultScreen('lose');
+  playMatchResultSequence('lose');
 });
 
 // NEW: Silent forfeit — used by beforeunload/refresh handler.
@@ -41117,13 +41185,94 @@ function mrfnAfterRankCeleb(rankAfter, ratingAfter){
     if(wrap){ wrap.classList.remove('mrfn-rankpop'); void wrap.offsetWidth; wrap.classList.add('mrfn-rankpop'); }
   } catch(e){}
 }
-function showMatchResultScreen(result){
+// ===== CINEMATIC PRE-RESULT STINGER =====
+// Plays a big VICTORY/DEFEAT/DRAW with a ring-explosion + shake + particles,
+// holds, then flies the text down into the results card's headline slot (FLIP)
+// while the rest of the results UI reveals underneath.
+function playMatchResultSequence(result){
+  const st = document.getElementById('mrStinger');
+  const reduce = document.body.classList.contains('reduced-motion');
+  if(reduce || !st){ showMatchResultScreen(result); return; }
+  const label = result === 'win' ? 'VICTORY' : result === 'lose' ? 'DEFEAT' : 'DRAW';
+  const txt = document.getElementById('mrsText');
+  st.classList.remove('out','play','win','lose','draw');
+  st.classList.add(result === 'win' ? 'win' : result === 'lose' ? 'lose' : 'draw');
+  st.style.display = '';
+  if(txt){ txt.textContent = label; txt.classList.remove('handoff'); txt.style.transition=''; txt.style.transform=''; }
+  // Radial particle spray.
+  const ph = document.getElementById('mrsParticles');
+  if(ph){
+    ph.innerHTML = '';
+    if(!document.body.classList.contains('low-power')){
+      const n = 22;
+      for(let i=0;i<n;i++){
+        const p = document.createElement('i');
+        const ang = (Math.PI*2*i)/n + Math.random()*0.35;
+        const dist = 190 + Math.random()*280;
+        p.style.setProperty('--x', (Math.cos(ang)*dist).toFixed(0)+'px');
+        p.style.setProperty('--y', (Math.sin(ang)*dist).toFixed(0)+'px');
+        p.style.setProperty('--d', (Math.random()*0.12).toFixed(2)+'s');
+        ph.appendChild(p);
+      }
+    }
+  }
+  void st.offsetWidth;
+  st.classList.add('play');
+  // Impact beat: outcome sound + haptic + screen shake (+ confetti on a win).
+  try { if(result==='win') sfxWin(); else if(result==='lose') sfxLose(); else sfxDraw(); } catch(e){}
+  try { haptic(result==='win'?[50,40,110]:result==='lose'?[140]:[30,30,30]); } catch(e){}
+  const shell = document.querySelector('.app') || document.body;
+  shell.classList.remove('mrs-shaking'); void shell.offsetWidth; shell.classList.add('mrs-shaking');
+  setTimeout(() => shell.classList.remove('mrs-shaking'), 540);
+  if(result==='win'){ setTimeout(() => { try { launchConfetti(); } catch(e){} }, 280); }
+  // Hold on the big text, then hand it off into the results card.
+  clearTimeout(state._mrsT);
+  state._mrsT = setTimeout(() => mrsHandoffToCard(result), 850);
+}
+function mrsHandoffToCard(result){
+  const st = document.getElementById('mrStinger');
+  const txt = document.getElementById('mrsText');
+  // Reveal the results card underneath, headline held hidden (fromStinger).
+  try { showMatchResultScreen(result, { skipImpact:true, fromStinger:true }); } catch(e){}
+  if(!st || !txt){ return; }
+  requestAnimationFrame(() => {
+    const target = document.getElementById('matchResultHeadline');
+    const sRect = txt.getBoundingClientRect();
+    const tRect = target ? target.getBoundingClientRect() : null;
+    const finish = () => {
+      const ov = document.getElementById('matchResultOverlay');
+      if(ov) ov.classList.add('mrfn-head-show');           // swap in the real headline (instant, same spot)
+      requestAnimationFrame(() => {
+        st.classList.remove('play','out'); st.style.display='';
+        if(txt){ txt.classList.remove('handoff'); txt.style.transform=''; txt.style.transition=''; }
+      });
+    };
+    if(tRect && tRect.width > 4 && sRect.height > 4){
+      const sCx = sRect.left + sRect.width/2, sCy = sRect.top + sRect.height/2;
+      const tCx = tRect.left + tRect.width/2, tCy = tRect.top + tRect.height/2;
+      const scale = Math.max(.1, Math.min(1, tRect.height / sRect.height));
+      st.classList.add('out');            // fade the burst/backdrop away
+      txt.classList.add('handoff');
+      void txt.offsetWidth;
+      txt.style.transform = `translate(${(tCx - sCx).toFixed(1)}px, ${(tCy - sCy).toFixed(1)}px) scale(${scale.toFixed(3)})`;
+      setTimeout(finish, 600);
+    } else {
+      st.classList.add('out');
+      setTimeout(finish, 320);
+    }
+  });
+}
+function showMatchResultScreen(result, opts={}){
   // Make sure no menu music / countdown tail is bleeding in under the result +
   // rank-up audio. (Music resumes cleanly once the result overlay is dismissed.)
   try { stopCountdownSample(); stopMenuMusic(true); state._wantMenuMusic = true; } catch(e){}
-  // A satisfying haptic pulse keyed to the outcome.
-  try { haptic(result === 'win' ? [40,40,90] : result === 'lose' ? [120] : [30,30,30]); } catch(e){}
+  // A satisfying haptic pulse keyed to the outcome. (The cinematic stinger owns
+  // the impact beat when it precedes the card — skip the duplicate here.)
+  if(!opts.skipImpact){ try { haptic(result === 'win' ? [40,40,90] : result === 'lose' ? [120] : [30,30,30]); } catch(e){} }
   const overlay = $('#matchResultOverlay');
+  // When the card is being revealed underneath a stinger, hold the headline
+  // hidden (the flying stinger text becomes it) until the handoff completes.
+  try { overlay.classList.remove('mrfn-head-show'); overlay.classList.toggle('mrfn-stinger-in', !!opts.fromStinger); } catch(e){}
   const card = $('#matchResultCard');
   const headline = $('#matchResultHeadline');
   const sub = $('#matchResultSub');
@@ -41172,12 +41321,14 @@ function showMatchResultScreen(result){
     overlay.style.setProperty('--result-color-glow', 'rgba(34,211,163,.16)');
     card.style.setProperty('--result-color', 'var(--mint)');
     sub.textContent = `Best of 3 · won ${state.scoreYou}–${state.scoreOpp}`;
-    sfxWin();
-    try { haptic([30, 40, 80]); } catch(e){}
-    setTimeout(() => bigBurst('#22d3a3'), 360);
-    setTimeout(() => bigBurst('#ffd33d'), 600);
-    setTimeout(() => bigBurst('#9b7bff'), 860);
-    setTimeout(() => launchConfetti(), 400);
+    if(!opts.skipImpact){
+      sfxWin();
+      try { haptic([30, 40, 80]); } catch(e){}
+      setTimeout(() => bigBurst('#22d3a3'), 360);
+      setTimeout(() => bigBurst('#ffd33d'), 600);
+      setTimeout(() => bigBurst('#9b7bff'), 860);
+      setTimeout(() => launchConfetti(), 400);
+    }
   } else if(result === 'lose'){
     headline.textContent = 'DEFEAT';
     headline.classList.add('lose');
@@ -41186,7 +41337,7 @@ function showMatchResultScreen(result){
     overlay.style.setProperty('--result-color-glow', 'rgba(255,51,88,.14)');
     card.style.setProperty('--result-color', 'var(--coral)');
     sub.textContent = `Best of 3 · lost ${state.scoreYou}–${state.scoreOpp}`;
-    sfxLose();
+    if(!opts.skipImpact) sfxLose();
   } else {
     headline.textContent = 'DRAW';
     headline.classList.add('draw');
@@ -41195,7 +41346,7 @@ function showMatchResultScreen(result){
     overlay.style.setProperty('--result-color-glow', 'rgba(155,123,255,.14)');
     card.style.setProperty('--result-color', 'var(--violet)');
     sub.textContent = `Best of 3 · tied ${state.scoreYou}–${state.scoreOpp}`;
-    sfxDraw();
+    if(!opts.skipImpact) sfxDraw();
   }
   countUp('#matchResultYouScore', state.scoreYou, 600, 450);
   countUp('#matchResultOppScore', state.scoreOpp, 600, 450);
