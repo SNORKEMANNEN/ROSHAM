@@ -471,15 +471,29 @@ body.low-power .age-gate-glow, body.reduced-motion .age-gate-card{ animation:non
 
 /* ===== Ambient floating orbs (alive background) ===== */
 .ambient{ position:fixed; inset:0; z-index:-2; pointer-events:none; overflow:hidden; }
-.amb-orb{ position:absolute; border-radius:50%; filter:blur(70px); opacity:.5; will-change:transform; }
+/* CRITICAL PERF: these were four filter:blur(70px) layers up to 42vw wide, each
+   with will-change:transform (permanent full-resolution GPU promotion) animating
+   scale() — which re-rasterises the entire blurred region every single frame.
+   On weak/integrated GPUs that exhausts video memory, so the compositor EVICTS
+   the content layers and the page flickers down to just these orbs + the base
+   gradient. Fixes: no will-change (no permanent giant texture), a smaller blur,
+   and TRANSLATE-ONLY motion (a translate is a cheap compositor move; scale would
+   force the blur to re-rasterise). Together this keeps the alive feel at a tiny
+   fraction of the GPU cost. */
+.amb-orb{ position:absolute; border-radius:50%; filter:blur(52px); opacity:.5; }
 .amb-orb.o1{ width:42vw; height:42vw; left:-10vw; top:-8vh; background:radial-gradient(circle, rgba(34,211,163,.5), transparent 68%); animation:ambFloat1 26s ease-in-out infinite; }
 .amb-orb.o2{ width:38vw; height:38vw; right:-8vw; top:8vh; background:radial-gradient(circle, rgba(124,77,255,.45), transparent 68%); animation:ambFloat2 32s ease-in-out infinite; }
 .amb-orb.o3{ width:34vw; height:34vw; left:14vw; bottom:-14vh; background:radial-gradient(circle, rgba(255,61,104,.34), transparent 68%); animation:ambFloat3 30s ease-in-out infinite; }
 .amb-orb.o4{ width:26vw; height:26vw; right:10vw; bottom:-6vh; background:radial-gradient(circle, rgba(95,201,255,.3), transparent 68%); animation:ambFloat1 38s ease-in-out infinite reverse; }
-@keyframes ambFloat1{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(6vw,5vh) scale(1.12); } }
-@keyframes ambFloat2{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(-7vw,7vh) scale(1.08); } }
-@keyframes ambFloat3{ 0%,100%{ transform:translate(0,0) scale(1); } 50%{ transform:translate(5vw,-6vh) scale(1.15); } }
+@keyframes ambFloat1{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(6vw,5vh); } }
+@keyframes ambFloat2{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(-7vw,7vh); } }
+@keyframes ambFloat3{ 0%,100%{ transform:translate(0,0); } 50%{ transform:translate(5vw,-6vh); } }
 body.reduced-motion .amb-orb{ animation:none !important; }
+/* On low-power drop the orbs entirely (pure decoration; the base gradient reads
+   fine without them). In a match, HIDE them — a paused layer still pins its GPU
+   texture, so display:none is what actually frees the memory for the arena. */
+body.low-power .amb-orb{ display:none !important; }
+body.in-game .amb-orb{ display:none !important; }
 
 .grain{
   position:fixed; inset:0;
@@ -855,8 +869,8 @@ body.low-power .hx-hero-glyphs, body.low-power .hx-hero-pulse{ display:none; }
 
 /* ===== STACKED TOASTS ===== */
 .toast-stack{ position:fixed; left:50%; transform:translateX(-50%); bottom:calc(24px + env(safe-area-inset-bottom,0px)); z-index:9600; display:flex; flex-direction:column; gap:8px; align-items:center; pointer-events:none; width:max-content; max-width:92vw; }
-.toast2{ display:flex; align-items:center; gap:10px; padding:12px 18px; border-radius:13px; background:rgba(24,23,34,.97); border:1px solid var(--line); box-shadow:0 12px 36px rgba(0,0,0,.45); color:var(--text); font-size:14px; font-weight:500; opacity:0; transform:translateY(14px) scale(.96); transition:opacity .25s, transform .25s cubic-bezier(.2,.9,.3,1); pointer-events:auto; cursor:pointer; backdrop-filter:blur(12px); }
-.toast2.show{ opacity:1; transform:translateY(0) scale(1); }
+.toast2{ display:flex; align-items:center; gap:11px; padding:12px 18px; border-radius:14px; background:rgba(24,23,34,.98); border:1px solid var(--line); box-shadow:0 12px 36px rgba(0,0,0,.45); color:var(--text); font-size:14px; font-weight:500; opacity:0; transform:translateY(30px) scale(.88); filter:blur(4px); transition:opacity .3s ease, transform .52s cubic-bezier(.32,1.5,.5,1), filter .3s ease; pointer-events:auto; cursor:pointer; will-change:transform, opacity; }
+.toast2.show{ opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
 .toast2-ic{ flex-shrink:0; color:var(--text-faint); }
 .toast2.success{ border-color:rgba(34,211,163,.4); } .toast2.success .toast2-ic{ color:var(--mint); }
 .toast2.error{ border-color:rgba(255,51,88,.4); } .toast2.error .toast2-ic{ color:var(--coral); }
@@ -865,10 +879,11 @@ body.low-power .hx-hero-glyphs, body.low-power .hx-hero-pulse{ display:none; }
 .toast2-action{ flex:0 0 auto; margin-left:4px; padding:6px 12px; border-radius:9px; border:1px solid var(--mint); background:color-mix(in srgb, var(--mint) 16%, transparent); color:var(--mint); font-family:var(--font-display); font-stretch:80%; font-weight:700; font-size:12px; cursor:pointer; transition:background .15s; }
 .toast2-action:hover{ background:color-mix(in srgb, var(--mint) 28%, transparent); }
 .toast2.has-action{ cursor:default; }
-/* Older toasts compress when the stack piles up, so the newest stays readable */
-.toast2.t-collapsed{ padding:6px 14px; font-size:12px; opacity:.6; transform:scale(.92); }
+/* Older toasts recede into a clean stacked-depth as the stack piles up */
+.toast2.t-collapsed{ padding:8px 16px; font-size:12.5px; opacity:.5; transform:scale(.9) translateY(4px); filter:saturate(.85); }
 .toast2.t-collapsed .toast2-ic{ width:13px; height:13px; }
-.toast2.t-collapsed .toast2-action{ display:none; }
+.toast2.t-collapsed .toast2-action, .toast2.t-collapsed .toast2-sub{ display:none; }
+.toast2.t-collapsed::after{ opacity:0; }
 /* Progress toast — indeterminate spinner for long actions */
 .toast2.t-progress{ cursor:default; border-color:rgba(164,139,255,.35); }
 .t-spin{ flex-shrink:0; width:15px; height:15px; border-radius:50%; border:2px solid rgba(164,139,255,.25); border-top-color:var(--violet, #a48bff); animation:tSpin .7s linear infinite; }
@@ -1035,6 +1050,49 @@ body.reduced-motion :is(.home-recap, .home-statband, .hb-tile, .hrc-item), body.
 /* Freeze all animation work while the tab is backgrounded — saves CPU/battery
    with zero visual impact (it only applies when the page isn't being looked at). */
 body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after{ animation-play-state:paused !important; }
+/* Skip layout+paint for off-screen rows in long lists — the browser only renders
+   what's near the viewport, so leaderboards / friends / history / chat scroll
+   cheaply. Zero visual change; intrinsic sizes keep the scrollbar honest. */
+.lbg-row, .lb-row, .friend-row, .friend-card, .mh-row, .activity-row, .fa-row{
+  content-visibility:auto; contain-intrinsic-size:auto 60px;
+}
+.chat-msg{ content-visibility:auto; contain-intrinsic-size:auto 44px; }
+
+/* ═══════════ COSMETIC PERF — the #1 fps sink was dozens of animated cosmetic
+   previews playing at once in the shop/locker grids. Fixes: (1) off-screen tiles
+   skip paint; (2) the animated frame/avatar FX are FROZEN in the grid and only
+   play on the tile you hover / the one that's equipped; (3) on low-power devices
+   every cosmetic animation is fully static (including equipped effects shown
+   across the app), so weak hardware never chases 40 simultaneous loops. */
+/* Freeze the preview FX in the grid; resume only where the eye is. A paused
+   animation costs nothing whether the tile is on- or off-screen, which is the
+   real win here (2D grid tiles skip content-visibility to avoid track reflow). */
+.lk2-tile-prev *, .lk2-tile-shine, .st-preview *, .shop-tile .st-sheen{ animation-play-state:paused !important; }
+.lk2-tile:hover .lk2-tile-prev *, .lk2-tile:focus-visible .lk2-tile-prev *,
+.lk2-tile.sel .lk2-tile-prev *, .lk2-tile.equipped .lk2-tile-prev *,
+.shop-tile:hover .st-preview *, .shop-tile:focus-visible .st-preview *,
+.shop-tile.featured .st-preview *{ animation-play-state:running !important; }
+/* Low-power / reduced-motion → cosmetics are fully static everywhere (grids AND
+   the equipped frame/avatar effects that render on the sidebar, match + result). */
+body.low-power :is(.cx-avfx, .cx-frame-overlay, .cx-frame-edge, .cx-frame-top, .cx-frame-corners,
+  .lk2-tile-shine, .st-sheen, .cx-prev-frame, .cx-name, .cx-tag) ,
+body.low-power [class*="cxf-"], body.low-power [class*="cxf-"] *{ animation:none !important; }
+/* ═══════════ GLOBAL LOW-POWER BLANKET — the single biggest fps levers, applied
+   app-wide instead of one selector at a time. On a struggling device these three
+   rules do more than the whole per-component list below:
+   1. backdrop-filter is the most expensive per-frame GPU cost (every animated
+      pixel behind a blurred surface re-composites the whole region). Kill it
+      everywhere — surfaces fall back to their solid/translucent background.
+   2. filter:blur on decorative layers is nearly as costly — neutralise it on
+      the ambient/glow classes (spinners etc. keep their own filters). */
+body.low-power *, body.low-power *::before, body.low-power *::after{
+  backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+}
+body.low-power :is([class*="glow"],[class*="orb"],[class*="aura"],[class*="shimmer"],[class*="sheen"],[class*="haze"],[class*="rays"],[class*="particle"]),
+body.low-power :is([class*="glow"],[class*="orb"],[class*="aura"],[class*="shimmer"],[class*="sheen"],[class*="haze"],[class*="rays"],[class*="particle"])::before,
+body.low-power :is([class*="glow"],[class*="orb"],[class*="aura"],[class*="shimmer"],[class*="sheen"],[class*="haze"],[class*="rays"],[class*="particle"])::after{
+  filter:none !important; animation:none !important;
+}
 .mrv3{ --mr:#a48bff; }
 .mrv3.win{ --mr:#22d3a3; } .mrv3.lose{ --mr:#ff3358; } .mrv3.draw{ --mr:#a48bff; }
 /* drifting aurora blobs behind everything */
@@ -2212,9 +2270,11 @@ body.reduced-motion .mobile-nav-item.mni-live .mni-play-btn::after, body.low-pow
 
 /* ===== NAV PAGES ===== */
 .nav-page{ display: none; }
-/* Page transition — re-runs each time a page becomes active */
-.nav-page.active{ display: block; animation: navPageIn .38s cubic-bezier(.2,.8,.2,1); }
-@keyframes navPageIn{ from{ opacity: 0; transform: translateY(12px); } to{ opacity: 1; transform: none; } }
+/* Page transition — a plain quick fade on the container. The rise/travel is
+   owned by the per-child stagger (.page-enter → pgRise); keeping a transform
+   here too would compound with it (page moves up AND its contents move up). */
+.nav-page.active{ display: block; animation: navPageIn .3s ease-out; }
+@keyframes navPageIn{ from{ opacity: 0; } to{ opacity: 1; } }
 body.reduced-motion .nav-page.active, body.low-power .nav-page.active{ animation: none; }
 .page-header{ margin-bottom: 22px; }
 .page-title{
@@ -14513,16 +14573,12 @@ body.reduced-motion .sl-text{ animation:none; }
 .screen.active .auth-intro > *:nth-child(5){ animation-delay:.27s; }
 .screen.active .auth-card{ animation:v10Rise .6s cubic-bezier(.22,.9,.3,1) .15s both; }
 
-/* ---------- page-switch choreography (dashboard tabs) ---------- */
-.nav-page.active > *{ animation:v10Rise .5s cubic-bezier(.22,.9,.3,1) both; }
-.nav-page.active > *:nth-child(1){ animation-delay:.02s; }
-.nav-page.active > *:nth-child(2){ animation-delay:.07s; }
-.nav-page.active > *:nth-child(3){ animation-delay:.12s; }
-.nav-page.active > *:nth-child(4){ animation-delay:.17s; }
-.nav-page.active > *:nth-child(5){ animation-delay:.22s; }
-.nav-page.active > *:nth-child(6){ animation-delay:.27s; }
-.nav-page.active > *:nth-child(7){ animation-delay:.32s; }
-.nav-page.active > *:nth-child(n+8){ animation-delay:.36s; }
+/* ---------- page-switch choreography (dashboard tabs) ----------
+   The per-child stagger is owned by a SINGLE system: `.page-enter` (added by
+   showNavPage on every nav change, and by showScreen on boot). It used to ALSO
+   fire here on `.nav-page.active > *`, so every page entry ran the stagger
+   twice (v10Rise + pgRise) and boot triple-stacked it under scrIn + navPageIn.
+   That double-run is what read as "repeated load animations" — removed. */
 
 /* ---------- scroll reveal (classes applied by FX script) ---------- */
 .rv{ opacity:0; transform:translateY(12px) scale(.985);
@@ -14613,18 +14669,27 @@ body.reduced-motion .modal-bg > .modal-recede{ transform:none; }
 .modal-close:hover{ transform:rotate(90deg); }
 .modal > h3{ letter-spacing:.02em; }
 
-/* ---------- toasts v2 ---------- */
+/* ---------- toasts v2 — cleaner card, springier motion ---------- */
 .toast2{
-  position:relative; overflow:hidden; border-radius:14px; padding:13px 18px 13px 14px;
-  background:linear-gradient(180deg, rgba(30,28,42,.97), rgba(22,20,32,.97));
-  border-color:var(--line-bright, var(--line));
-  box-shadow:0 16px 44px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.05) inset;
-  transition:opacity .3s, transform .35s cubic-bezier(.2,1.4,.35,1);
+  position:relative; overflow:hidden; border-radius:15px; padding:13px 18px 13px 15px;
+  background:linear-gradient(180deg, rgba(33,31,46,.98), rgba(21,19,30,.98));
+  border-color:color-mix(in srgb, var(--line-bright, var(--line)) 88%, transparent);
+  box-shadow:0 20px 52px -14px rgba(0,0,0,.72), 0 1px 0 rgba(255,255,255,.06) inset, 0 0 0 .5px rgba(255,255,255,.04);
+  transition:opacity .3s ease, transform .52s cubic-bezier(.32,1.5,.5,1), filter .3s ease, box-shadow .25s ease;
 }
 .toast2::before{
-  content:""; position:absolute; left:0; top:0; bottom:0; width:3px;
+  content:""; position:absolute; left:0; top:8px; bottom:8px; width:3px; border-radius:0 3px 3px 0;
   background:linear-gradient(180deg, var(--violet), color-mix(in srgb, var(--violet) 40%, transparent));
 }
+/* Lead visual + text spring in a beat after the card lands */
+.toast2.show:not(.t-cat-reward) .toast2-emoji,
+.toast2.show .toast2-ic,
+.toast2.show .toast2-thumb,
+.toast2.show .toast2-av{ animation:toastLeadPop .52s cubic-bezier(.34,1.7,.5,1) both; }
+@keyframes toastLeadPop{ 0%{ transform:scale(.2); opacity:0; } 55%{ transform:scale(1.16); } 100%{ transform:scale(1); opacity:1; } }
+.toast2.show .toast2-text, .toast2.show .toast2-body{ animation:toastTextIn .42s cubic-bezier(.22,1,.36,1) .05s both; }
+@keyframes toastTextIn{ from{ opacity:0; transform:translateX(-7px); } to{ opacity:1; transform:none; } }
+body.reduced-motion .toast2.show :is(.toast2-emoji,.toast2-ic,.toast2-thumb,.toast2-av,.toast2-text,.toast2-body){ animation:none !important; }
 .toast2.success::before{ background:linear-gradient(180deg, var(--mint), color-mix(in srgb, var(--mint) 40%, transparent)); }
 .toast2.error::before{ background:linear-gradient(180deg, var(--coral), color-mix(in srgb, var(--coral) 40%, transparent)); }
 .toast2::after{
@@ -17717,6 +17782,73 @@ body.reduced-motion .sbm3-refund-timer.urgent, body.low-power .sbm3-refund-timer
 body.reduced-motion :is(.sbm3-beam, .sbm3-buy-sheen, .sbm3 .sbm-buy.sbm3-buy, .sbm3 .sbm-stage, .sbm3-feat, .sbm3-foot-tile, .sbm3-podium-glow),
 body.low-power :is(.sbm3-beam, .sbm3-buy-sheen, .sbm3 .sbm-buy.sbm3-buy, .sbm3 .sbm-stage, .sbm3-feat, .sbm3-foot-tile, .sbm3-podium-glow){ animation:none !important; opacity:1; }
 body.reduced-motion .sbm3-buy-sheen, body.low-power .sbm3-buy-sheen{ display:none; }
+
+/* ═══════════ COSMETIC PREVIEW v4 (sbm4) — clean · wide · premium ═══════════
+   A calmer, product-focused layout: the cosmetic sits front-and-centre on a
+   softly-lit pedestal stage, and the right rail carries only what matters —
+   rarity, name, one line, three at-a-glance chips, and the buy. The bulky
+   feature cards + 3-tile footer are gone. */
+.sbm4.shop-buy-modal{ max-width:860px; }
+.sbm4 .sbm3-body{ grid-template-columns:1.06fr .94fr; gap:24px; padding:2px 22px 22px; align-items:stretch; }
+/* ---------- LEFT: the stage ---------- */
+.sbm4 .sbm-hero{
+  position:relative; min-height:0; border-radius:22px; padding:34px 24px 24px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+  border:1px solid color-mix(in srgb, var(--rc) 24%, var(--line)); overflow:hidden;
+  background:
+    radial-gradient(120% 80% at 50% -6%, color-mix(in srgb, var(--rc) 20%, transparent), transparent 60%),
+    linear-gradient(180deg, #15101d 0%, #0a0710 100%);
+}
+/* soft rarity halo behind the card */
+.sbm4-glow{ position:absolute; left:50%; top:44%; transform:translate(-50%,-50%); width:86%; aspect-ratio:1/1; border-radius:50%;
+  background:radial-gradient(circle, color-mix(in srgb, var(--rc) 30%, transparent), transparent 62%);
+  filter:blur(26px); opacity:.65; pointer-events:none; animation:sbm4Glow 5.5s ease-in-out infinite; }
+@keyframes sbm4Glow{ 0%,100%{ opacity:.5; } 50%{ opacity:.78; } }
+/* faint tech-grid floor, masked so it fades toward the base */
+.sbm4-grid{ position:absolute; inset:0; pointer-events:none; opacity:.45;
+  background-image:linear-gradient(color-mix(in srgb,var(--rc) 16%,transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb,var(--rc) 16%,transparent) 1px, transparent 1px);
+  background-size:34px 34px; background-position:center;
+  -webkit-mask:radial-gradient(120% 66% at 50% 80%, #000 0%, transparent 72%);
+  mask:radial-gradient(120% 66% at 50% 80%, #000 0%, transparent 72%); }
+/* the card, front & centre, gently floating in */
+.sbm4 .sbm-stage{ position:relative; z-index:2; animation:sbm4StageIn .6s cubic-bezier(.2,1.25,.3,1) both; }
+@keyframes sbm4StageIn{ from{ opacity:0; transform:translateY(16px) scale(.92); } to{ opacity:1; transform:none; } }
+.sbm4 .sbmp-card{ max-width:306px; animation:sbmpIn .5s cubic-bezier(.2,1.2,.35,1), sbm4Float 6s ease-in-out .55s infinite; }
+@keyframes sbm4Float{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-6px); } }
+/* pedestal reflection under the card */
+.sbm4-pedestal{ position:relative; z-index:1; width:60%; max-width:220px; height:22px; margin-top:-4px; border-radius:50%; pointer-events:none;
+  background:radial-gradient(closest-side, color-mix(in srgb, var(--rc) 55%, transparent), transparent 78%);
+  filter:blur(8px); opacity:.6; animation:sbm4Glow 5.5s ease-in-out infinite; }
+/* try toggle — clean segmented pill, pinned at the base of the stage */
+.sbm4 .sbm3-try{ z-index:3; margin:2px 0 0; background:rgba(0,0,0,.32); backdrop-filter:none; -webkit-backdrop-filter:none; }
+.sbm4 .sbm3-try button{ letter-spacing:.06em; }
+/* ---------- RIGHT: the rail ---------- */
+.sbm4 .sbm3-side{ padding:8px 2px 0; }
+.sbm4 .sbm-rarity{ align-self:flex-start; display:inline-flex; align-items:center; gap:7px; padding:5px 12px; border-radius:999px; margin-bottom:13px;
+  font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.12em;
+  color:color-mix(in srgb, var(--rc) 50%, #fff); background:color-mix(in srgb, var(--rc) 13%, transparent);
+  border:1px solid color-mix(in srgb, var(--rc) 38%, transparent); animation:sbm4RailIn .5s .04s both; }
+.sbm4 .sbm-name{ font-family:var(--font-display); font-stretch:64%; font-weight:900; font-size:40px; line-height:1; letter-spacing:-.01em;
+  margin:0 0 11px; animation:sbm4RailIn .5s .1s both; }
+.sbm4 .sbm-desc{ font-size:13.5px; line-height:1.55; color:var(--text-dim); margin:0 0 17px; max-width:36ch; animation:sbm4RailIn .5s .16s both; }
+@keyframes sbm4RailIn{ from{ opacity:0; transform:translateY(9px); } to{ opacity:1; transform:none; } }
+.sbm4-traits{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.sbm4-chip{ display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border-radius:10px;
+  font-size:12px; font-weight:600; color:var(--text-dim); background:rgba(255,255,255,.04); border:1px solid var(--line);
+  animation:sbm4ChipIn .45s var(--d,0ms) cubic-bezier(.2,1.3,.35,1) both; }
+.sbm4-chip-ic{ font-size:13px; line-height:1; }
+@keyframes sbm4ChipIn{ from{ opacity:0; transform:translateY(6px) scale(.9); } to{ opacity:1; transform:none; } }
+/* buy block: no card chrome, anchored to the bottom of the rail */
+.sbm4 .sbm3-wallet{ margin-top:auto; background:transparent; border:none; padding:0; }
+.sbm4 .sbm3-wallet-row{ margin-bottom:11px; padding:9px 13px; border-radius:12px; background:rgba(255,255,255,.03); border:1px solid var(--line); }
+.sbm4 .sbm-foot{ display:none !important; }
+@media (max-width:680px){
+  .sbm4 .sbm-name{ font-size:32px; }
+  .sbm4 .sbm-hero{ padding:26px 18px 18px; }
+}
+body.reduced-motion :is(.sbm4-glow, .sbm4-pedestal, .sbm4 .sbmp-card, .sbm4 .sbm-stage, .sbm4-chip, .sbm4 .sbm-rarity, .sbm4 .sbm-name, .sbm4 .sbm-desc),
+body.low-power :is(.sbm4-glow, .sbm4-pedestal, .sbm4 .sbmp-card, .sbm4 .sbm-stage, .sbm4-chip, .sbm4 .sbm-rarity, .sbm4 .sbm-name, .sbm4 .sbm-desc){ animation:none !important; opacity:1; transform:none !important; }
 
 /* ═══════════ FORTNITE-STYLE GIFT FLOW ═══════════ */
 .gift-flow-modal{ max-width:440px; }
@@ -23086,10 +23218,10 @@ body.low-power :is(.screen.scr-in, .pre-ready.show .pre-ready-card, .pre-ready.c
 /* the cut into the arena lands with a soft engage-flash */
 #screen-game.scr-in::before{
   content:''; position:absolute; inset:0; z-index:60; pointer-events:none;
-  background:radial-gradient(60% 60% at 50% 45%, rgba(255,255,255,.2), transparent 72%);
-  animation:engageFlash .55s ease-out forwards;
+  background:radial-gradient(60% 60% at 50% 45%, rgba(255,255,255,.06), transparent 70%);
+  animation:engageFlash .4s ease-out forwards;
 }
-@keyframes engageFlash{ from{ opacity:1; } to{ opacity:0; } }
+@keyframes engageFlash{ from{ opacity:.85; } to{ opacity:0; } }
 body.reduced-motion :is(.match-found-v2 .mf-banner, .match-found-v2 .mf-player.you, .match-found-v2 .mf-player.opp, .match-found-v2 .mf-vs, #screen-game.scr-in::before),
 body.low-power :is(.match-found-v2 .mf-banner, .match-found-v2 .mf-player.you, .match-found-v2 .mf-player.opp, .match-found-v2 .mf-vs, #screen-game.scr-in::before){ animation:none !important; }
 
@@ -26449,7 +26581,7 @@ const FIREBASE_CONFIG = {
 
 <!-- SHOP PURCHASE MODAL -->
 <div class="modal-bg" id="shopBuyModal">
-  <div class="modal shop-buy-modal sbm2 sbm3" id="shopBuyCard">
+  <div class="modal shop-buy-modal sbm2 sbm3 sbm4" id="shopBuyCard">
     <!-- top bar: eyebrow + close -->
     <div class="sbm3-top">
       <span class="sbm3-eyebrow"><svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-eye"/></svg> COSMETIC PREVIEW</span>
@@ -26457,33 +26589,27 @@ const FIREBASE_CONFIG = {
       <button class="modal-close" data-close="shopBuyModal"><svg viewBox="0 0 24 24"><use href="#i-close"/></svg></button></span>
     </div>
     <div class="sbm3-body">
-      <!-- LEFT — spotlight stage with podium -->
+      <!-- LEFT — clean spotlight stage: the cosmetic, front and centre -->
       <div class="sbm-hero" id="sbmHero">
-        <i class="sbm3-beam" aria-hidden="true"></i>
-        <i class="sbm-hero-rays" aria-hidden="true"></i>
-        <div class="sbm3-try" id="sbmTryToggle">
-          <button type="button" data-wear="1" class="on">✨ Wearing it</button>
-          <button type="button" data-wear="0">Current look</button>
-        </div>
+        <i class="sbm4-glow" aria-hidden="true"></i>
+        <i class="sbm4-grid" aria-hidden="true"></i>
         <div class="sbm-stage" id="sbmStage"></div>
-        <div class="sbm3-podium" aria-hidden="true">
-          <i class="sbm3-podium-glow"></i>
-          <i class="sbm3-podium-top"></i>
-          <i class="sbm3-podium-side"></i>
+        <i class="sbm4-pedestal" aria-hidden="true"></i>
+        <div class="sbm3-try" id="sbmTryToggle">
+          <button type="button" data-wear="1" class="on">Wearing it</button>
+          <button type="button" data-wear="0">My look</button>
         </div>
       </div>
-      <!-- RIGHT — details column -->
+      <!-- RIGHT — details rail -->
       <div class="sbm3-side">
         <div class="sbm-rarity" id="sbmRarity">EPIC · PROFILE TAG</div>
         <h3 class="sbm-name" id="sbmName">Galaxy</h3>
-        <div class="sbm-underline"><i></i><span class="sbm3-star">✦</span><i></i></div>
         <p class="sbm-desc" id="sbmDesc">—</p>
-        <div class="sbm3-features" id="sbmMeta"></div>
-        <!-- wallet + actions card -->
+        <div class="sbm4-traits" id="sbmMeta"></div>
+        <!-- buy block -->
         <div class="sbm3-wallet">
-          <div class="sbm3-wallet-lbl">YOUR BALANCE</div>
           <div class="sbm3-wallet-row">
-            <span class="sbm3-wallet-coin"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-coin"/></svg></span>
+            <span class="sbm3-wallet-coin"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-coin"/></svg></span>
             <b id="sbmBalNum">0</b><span class="sbm3-wallet-unit">COINS</span>
             <button type="button" class="sbm3-wallet-add" id="sbmAddCoins" title="Get more coins" aria-label="Get more coins">+</button>
           </div>
@@ -26518,8 +26644,7 @@ const FIREBASE_CONFIG = {
         </div>
       </div>
     </div>
-    <!-- FOOTER — three info tiles -->
-    <div class="sbm-foot" id="sbmFoot"></div>
+    <div class="sbm-foot" id="sbmFoot" hidden></div>
   </div>
 </div>
 
@@ -28455,6 +28580,7 @@ function hidePreloader(){
   if(pl){ setTimeout(() => { pl.classList.add('hide'); setTimeout(() => pl.remove(), 600); }, 180); }
 }
 function showScreen(name){
+  const _prevScreen = state._lastScreen;   // captured before scr-in updates it below
   state.screen = name;
   // Keep the screen awake through matchmaking + the match (released on menus).
   try { syncWakeLock(name); } catch(e){}
@@ -28534,6 +28660,14 @@ function showScreen(name){
       try { const cur = document.querySelector('.nav-page.active'); if(cur && cur.dataset.page) landing = cur.dataset.page; } catch(e){}
       document.querySelectorAll('.nav-page').forEach(pg => pg.classList.toggle('active', pg.dataset.page === landing));
       document.querySelectorAll('.nav-item').forEach(b => b.classList.toggle('active', b.dataset.nav === landing));
+      // Drive the child stagger through the single `.page-enter` system (same one
+      // showNavPage uses) so app entry gets exactly ONE entrance, not a stack.
+      try {
+        if(_prevScreen !== 'landing' && !document.body.classList.contains('reduced-motion') && !document.body.classList.contains('low-power')){
+          const ap = document.querySelector('.nav-page[data-page="' + landing + '"]');
+          if(ap){ ap.classList.remove('page-enter'); requestAnimationFrame(() => requestAnimationFrame(() => ap.classList.add('page-enter'))); }
+        }
+      } catch(e){}
       try { syncMobileNav(landing); } catch(e){}
       // Daily housekeeping (login reward, boosters, season, challenges) — was folded
       // into the old Home render; now runs on every app entry regardless of page.
@@ -31760,9 +31894,11 @@ async function claimAchTier(achId){
   claimed.add(achId);
   state.profile.achClaimed = [...claimed];
   try { await updateDoc(doc(state.db, 'users', state.user.uid), { achClaimed: arrayUnion(achId) }); } catch(e){}
-  try { grantXp(xp, `Achievement: ${a.title}`); } catch(e){}
+  // Grant XP silently — the single achievement toast below already shows the +XP,
+  // so we don't want grantXp's own "+X XP" toast stacking a second one.
+  try { grantXp(xp, `Achievement: ${a.title}`, { silent: true }); } catch(e){}
   try { hapticSuccess(); } catch(e){}
-  try { toast(`${a.icon} ${a.title} claimed — +${xp} XP`, 'success'); } catch(e){}
+  try { toastReward(`${a.title} claimed`, { icon: a.icon, sub: `+${xp.toLocaleString()} XP` }); } catch(e){}
   try { renderAchievementsPage(); } catch(e){}
 }
 // Set of achievement ids currently satisfied by a given profile (used for the
@@ -34001,37 +34137,17 @@ function openShopBuyModal(item, opts={}){
   if(rarEl){ rarEl.innerHTML = `<b style="color:${r.color}">${r.label}</b> · ${CX_TYPE_LABEL[item.type]}`; rarEl.style.setProperty('--rc', r.color); }
   setText('#sbmName', item.name);
   setText('#sbmDesc', item.desc || '');
-  // Feature rows — only claims that are TRUE for this item.
-  // Lower rarities aren't animated; frames live on the profile, not the nameplate.
+  // Trait chips — compact, at-a-glance facts (no bulky duplicate cards / footer).
+  // Only claims that are TRUE for this item; lower rarities aren't animated,
+  // frames live on the whole profile, nameplates ride the in-match nameplate.
   const animated = ['epic', 'legendary', 'mythic', 'ascended'].includes(item.rarity);
-  const features = [];
-  if(animated) features.push({ ic: '✨', t: 'ANIMATED', s: 'Living, eye-catching effects' });
-  else features.push({ ic: '🎨', t: 'CLEAN STYLE', s: 'Sharp and subtle — no distractions' });
-  if(item.type === 'frame') features.push({ ic: '🖼️', t: 'PROFILE SHOWPIECE', s: 'Wraps your entire profile card' });
-  else features.push({ ic: '👁️', t: 'VISIBLE IN MATCH', s: 'Opponents see it on your nameplate' });
-  if(previewOnly){
-    const earnedHow = item.rankOnly ? `Reach ${RANKS.find(rk => rk.id === item.rankOnly)?.name || item.rankOnly} to earn it`
-      : item.prestigeOnly ? `Prestige ${item.prestigeOnly} unlock`
-      : 'Win it from a case';
-    features.push({ ic: '🏆', t: 'EARNED ONLY', s: earnedHow });
-  }
+  const chips = [];
+  chips.push(animated ? { ic: '✨', t: 'Animated' } : { ic: '🎨', t: 'Clean style' });
+  chips.push(item.type === 'frame' ? { ic: '🖼', t: 'Full profile' } : { ic: '👁', t: 'Seen in match' });
+  chips.push(previewOnly ? { ic: '🔒', t: 'Earned only' } : { ic: '🎁', t: 'Giftable' });
   const metaEl = $('#sbmMeta');
-  if(metaEl) metaEl.innerHTML = features.map((m, i) =>
-    `<div class="sbm3-feat" style="--d:${i * 70}ms"><span class="sbm3-feat-ic">${m.ic}</span><div class="sbm3-feat-txt"><b>${m.t}</b><small>${m.s}</small></div></div>`).join('');
-  // Footer tiles — rarity copy that actually fits the tier.
-  const RAR_BLURB = {
-    common: 'Everyday style', rare: 'A solid find', epic: 'A standout piece',
-    legendary: 'Truly rare cosmetic', mythic: 'Ultra rare cosmetic', ascended: 'The rarest class there is',
-  };
-  const foot = [];
-  foot.push(previewOnly
-    ? { ic: '🔒', t: 'EARNED, NOT SOLD', s: 'Prove it in the arena', c: '' }
-    : { ic: '🎁', t: 'CAN BE GIFTED', s: 'Send to friends', c: '' });
-  foot.push({ ic: '★', t: `${r.label.toUpperCase()} RARITY`, s: RAR_BLURB[item.rarity] || 'Cosmetic', c: r.color });
-  foot.push({ ic: '👤', t: 'WORKS ON YOUR PROFILE', s: 'Show off everywhere', c: '' });
-  const footEl = $('#sbmFoot');
-  if(footEl) footEl.innerHTML = foot.map((f, i) =>
-    `<div class="sbm3-foot-tile" style="--d:${i * 80}ms"><span class="sbm3-foot-ic"${f.c ? ` style="color:${f.c}"` : ''}>${f.ic}</span><div class="sbm3-foot-txt"><b${f.c ? ` style="color:${f.c}"` : ''}>${f.t}</b><small>${f.s}</small></div></div>`).join('');
+  if(metaEl) metaEl.innerHTML = chips.map((m, i) =>
+    `<span class="sbm4-chip" style="--d:${i * 60}ms"><span class="sbm4-chip-ic">${m.ic}</span>${m.t}</span>`).join('');
   // balance
   setText('#sbmBalNum', fmtCoins(getCoins()));
   const btn = $('#sbmBuyBtn');
@@ -34086,7 +34202,7 @@ function openShopBuyModal(item, opts={}){
     // the welcome offer is a personal first-buy deal — not giftable at that price
     if(giftBtn) giftBtn.style.display = (guest || welcome) ? 'none' : '';
   }
-  const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal sbm2 sbm3 rar-' + item.rarity + (welcome ? ' sbm-welcome' : '');
+  const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal sbm2 sbm3 sbm4 rar-' + item.rarity + (welcome ? ' sbm-welcome' : '');
   $('#shopBuyModal')?.classList.add('show');
   // (The tile→preview fly morph was removed — it fought the modal's own
   // entrance and read as visual noise. The stage entrance carries the moment.)
@@ -34941,11 +35057,26 @@ function syncRankCosmetics(){
     if(!newly.length) return;
     c.owned = [...have];
     saveCosmetics(c);
-    newly.forEach((rc, i) => setTimeout(() => {
-      try { toast(`🏆 ${RANKS.find(rk => rk.id === rc.rankOnly)?.name || 'Rank'} reward unlocked: ${rc.name}!`, 'success', { duration: 6500 }); } catch(e){}
-      try { sfxCaseUnlock(); } catch(e){}
-    }, 900 + i * 1100));
+    // Announce each reward AT MOST ONCE EVER (localStorage-guarded) — if the
+    // owned-set write doesn't stick (offline), this still won't re-toast on refresh.
+    let toastIdx = 0;
+    newly.forEach((rc) => {
+      if(_cosmeticAnnounced(rc.id)) return;
+      _markCosmeticAnnounced(rc.id);
+      const d = toastIdx++;
+      setTimeout(() => {
+        try { toastCosmetic(`${RANKS.find(rk => rk.id === rc.rankOnly)?.name || 'Rank'} reward unlocked`, { sub: rc.name, duration: 6500 }); } catch(e){}
+        try { sfxCaseUnlock(); } catch(e){}
+      }, 900 + d * 1100);
+    });
   } catch(e){ console.warn('[rank-cosmetics]', e); }
+}
+// One-time "reward announced" guard so cosmetic-unlock toasts never repeat.
+function _cosmeticAnnounced(id){
+  try { const k='rosham_cosmetic_announced_'+(state.user?.uid||'anon'); const s=JSON.parse(localStorage.getItem(k)||'{}'); return !!s[id]; } catch(e){ return false; }
+}
+function _markCosmeticAnnounced(id){
+  try { const k='rosham_cosmetic_announced_'+(state.user?.uid||'anon'); const s=JSON.parse(localStorage.getItem(k)||'{}'); s[id]=1; localStorage.setItem(k, JSON.stringify(s)); } catch(e){}
 }
 // Same idea for prestige: everything at or below your prestige is yours.
 function syncPrestigeCosmetics(){
@@ -34962,10 +35093,16 @@ function syncPrestigeCosmetics(){
     if(!newly.length) return;
     c.owned = [...have];
     saveCosmetics(c);
-    newly.forEach((pc, i) => setTimeout(() => {
-      try { toast(`✦ Prestige ${pc.prestigeOnly} reward unlocked: ${pc.name}!`, 'success', { duration: 6500 }); } catch(e){}
-      try { sfxCaseUnlock(); } catch(e){}
-    }, 900 + i * 1100));
+    let toastIdx = 0;
+    newly.forEach((pc) => {
+      if(_cosmeticAnnounced(pc.id)) return;
+      _markCosmeticAnnounced(pc.id);
+      const d = toastIdx++;
+      setTimeout(() => {
+        try { toastCosmetic(`Prestige ${pc.prestigeOnly} reward unlocked`, { sub: pc.name, duration: 6500 }); } catch(e){}
+        try { sfxCaseUnlock(); } catch(e){}
+      }, 900 + d * 1100);
+    });
   } catch(e){ console.warn('[prestige-cosmetics]', e); }
 }
 
@@ -38895,6 +39032,7 @@ async function enterMatch(matchData){
   state._prematch = true;
   state._preReadyYou = false;
   state._preReadyOpp = false;
+  state._preReadyEntered = false;   // fresh match — allow the ready-up phase to arm once
   setupOppPanel();
   { const el = $('#youName'); if(el) el.innerHTML = styledNameHTML(state.profile, state.profile.username); }
   const myRank = rankFromRating(state.profile.rating || 1000);
@@ -39189,6 +39327,11 @@ function onPeerConnected(){
 // The social opener: both cams are live and visible, nothing starts until both
 // players press READY. The per-round gesture-ready system arms afterwards.
 function enterPreReadyPhase(){
+  // Re-entrancy guard: onPeerConnected() fires from BOTH dc.onopen and the
+  // connectionstatechange handler, so without this the whole ready-up entrance
+  // (opp video reveal, .prematch class, ready bar slide-in) would replay.
+  if(state._preReadyEntered) return;
+  state._preReadyEntered = true;
   setText('#roundState', 'PRESS READY TO START');
   $('#handPrompt')?.classList.remove('show');
   showOppVideo();   // the whole point: you see each other before it gets serious
@@ -44523,6 +44666,39 @@ function loadClientPrefs(){
 }
 loadClientPrefs();
 
+// ===== ADAPTIVE LOW-POWER — auto-shed ambient animations on a struggling device.
+// A lightweight rAF frame-time sampler: if the tab sustains clearly slow frames
+// (<~20fps) while visible, flip on low-power once (session-only — it never writes
+// the setting). Respects an explicit user opt-out and reduced-motion; long gaps
+// from tab-switches / GC are ignored so a hitch never trips it.
+(function adaptiveLowPower(){
+  let pref = null; try { pref = localStorage.getItem('rosham_low_power'); } catch(e){}
+  if(pref === '0') return;                       // user explicitly turned it OFF — honour that
+  let last = 0, warm = 0, bad = 0, done = false;
+  function tick(now){
+    if(done) return;
+    if(document.body.classList.contains('low-power')){ done = true; return; }
+    if(document.hidden || last === 0){ last = now; return void requestAnimationFrame(tick); }
+    const dt = now - last; last = now;
+    if(dt > 0 && dt < 2000){                      // ignore tab-switch / GC gaps
+      if(++warm > 30){                            // skip ~0.5s of warmup jank
+        // A device stuck at ~30fps still judders every animation, but the old
+        // <20fps line (dt>50) never caught it. Trip on SUSTAINED sub-~34fps
+        // frames (dt>30) so mid-tier hardware gets the lite mode it needs.
+        if(dt > 30) bad++; else bad = Math.max(0, bad - 2);   // decay faster than it accrues
+        if(bad >= 30){                            // ~1.5s of sustained slowness
+          done = true;
+          try { document.body.classList.add('low-power'); } catch(e){}
+          return;
+        }
+      }
+    }
+    requestAnimationFrame(tick);
+  }
+  // Start once the app has settled so first-load work can't trip the detector.
+  setTimeout(() => requestAnimationFrame(tick), 3500);
+})();
+
 // Mobile dynamic viewport height (accounts for browser chrome)
 function setVH(){ document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px'); }
 setVH();
@@ -45548,11 +45724,9 @@ function maybeMilestoneToast(p, rating){
   const rank = rankFromRating(rating);
   const tierKey = uid + ':lastTier';
   const lastTier = seen[tierKey];
-  // Promotion celebration — announce once when the tier index climbs.
-  if(lastTier != null && rank.index > lastTier){
-    toast(`⬆ Promoted to ${rank.tierName}!`, 'success');
-  }
-  // Always keep the stored tier index current.
+  // (Promotion toast removed — the in-match rank-up cinematic already celebrates
+  // a real promotion; this fired again on every refresh/cosmetic sync.)
+  // Keep the stored tier index current so other logic stays accurate.
   if(lastTier !== rank.index){
     const s = seen; s[tierKey] = rank.index;
     try { localStorage.setItem(MILESTONE_KEY, JSON.stringify(s)); } catch(e){}
