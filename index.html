@@ -1210,6 +1210,140 @@ body.obs-mode.in-game #screen-game{ background:#000; }
 .fa-time{ flex:0 0 auto; font-family:var(--font-mono); font-size:9.5px; color:var(--text-faint); }
 body.reduced-motion :is(.fc-rival, .fa-row), body.low-power :is(.fc-rival, .fa-row){ animation:none !important; opacity:1 !important; }
 
+/* ═══════════════ PROGRESSION PAGE (redesigned) ═══════════════ */
+/* Guard: every text node here gets an explicit color so <button> UA defaults
+   (black) can never leak in — the old completion-ring bug. */
+.nav-page[data-page="progression"]{ color:var(--text); }
+.nav-page[data-page="progression"] button{ color:inherit; }
+.prog-hero{ position:relative; overflow:hidden; border-radius:24px; padding:24px 24px 20px; margin-bottom:20px; color:var(--text);
+  background:
+    radial-gradient(130% 150% at 8% -30%, rgba(164,139,255,.22), transparent 55%),
+    radial-gradient(120% 140% at 102% -10%, rgba(255,211,61,.14), transparent 52%),
+    linear-gradient(180deg, color-mix(in srgb, var(--surface) 88%, #1a1730), var(--bg-2));
+  border:1px solid color-mix(in srgb, var(--violet) 26%, var(--line));
+  box-shadow:0 30px 60px -34px rgba(80,50,160,.6), inset 0 1px 0 rgba(255,255,255,.05); }
+.prog-hero-glow{ position:absolute; left:46%; top:-70%; width:78%; aspect-ratio:1; transform:translateX(-50%); pointer-events:none;
+  background:radial-gradient(circle, rgba(164,139,255,.26), transparent 62%); filter:blur(34px); animation:p3lGlowPulse 5s ease-in-out infinite; }
+.prog-hero-main{ position:relative; z-index:1; display:flex; align-items:center; gap:20px; }
+.prog-hero-crest{ flex:0 0 auto; }
+.prog-hero-crest .ach-level-badge{ width:78px; height:78px; font-size:32px; border-radius:24px; box-shadow:0 14px 30px -12px rgba(0,0,0,.7); }
+.prog-hero-info{ flex:1 1 auto; min-width:0; }
+.prog-hero-eyebrow{ display:inline-flex; align-items:center; gap:6px; font-family:var(--font-mono); font-size:10px; font-weight:800; letter-spacing:.18em; color:#c3b4ff; text-transform:uppercase; }
+.prog-hero-eyebrow svg{ fill:currentColor; }
+.prog-hero-name{ font-family:var(--font-display); font-stretch:64%; font-weight:900; font-size:32px; line-height:1; margin:8px 0 5px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.prog-hero-title{ font-size:12.5px; color:var(--text-dim); margin-bottom:11px; } .prog-hero-title b{ color:#fff; }
+.prog-hero-main .ach-level-bar{ height:9px; border-radius:999px; }
+.prog-hero-main .ach-level-xp{ font-family:var(--font-mono); font-size:11px; color:var(--text-dim); margin-top:6px; }
+.prog-hero-ring{ flex:0 0 auto; position:relative; width:114px; height:114px; display:grid; place-items:center; }
+.prog-ring-svg{ width:114px; height:114px; transform:rotate(-90deg); }
+.prog-ring-bg{ fill:none; stroke:rgba(255,255,255,.09); stroke-width:8; }
+.prog-ring-fg{ fill:none; stroke:url(#progRingGrad); stroke-width:8; stroke-linecap:round; transition:stroke-dashoffset 1.1s cubic-bezier(.2,.9,.3,1); filter:drop-shadow(0 0 6px rgba(164,139,255,.7)); }
+.prog-ring-inner{ position:absolute; text-align:center; }
+.prog-ring-num{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:26px; line-height:1; color:#fff; }
+.prog-ring-lbl{ font-family:var(--font-mono); font-size:8.5px; font-weight:700; letter-spacing:.14em; color:var(--text-faint); text-transform:uppercase; margin-top:2px; }
+.prog-claimall{ position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:9px; width:100%; margin-top:18px; padding:13px; border-radius:14px; cursor:pointer; border:none;
+  font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:14.5px; letter-spacing:.02em; color:#1c1402;
+  background:linear-gradient(180deg,#ffe886,#ffc93d 55%,#eea31d); box-shadow:0 12px 30px -12px rgba(255,190,40,.8); overflow:hidden; transition:filter .15s, transform .12s; }
+.prog-claimall svg{ fill:#1c1402; } .prog-claimall b{ background:rgba(28,20,2,.18); padding:1px 9px; border-radius:999px; color:#1c1402; }
+.prog-claimall:hover{ filter:brightness(1.06); transform:translateY(-1px); } .prog-claimall:active{ transform:translateY(0); }
+.pca-spark{ position:absolute; inset:0; background:linear-gradient(100deg, transparent, rgba(255,255,255,.55) 50%, transparent); transform:translateX(-120%) skewX(-18deg); animation:pcaSweep 3s ease-in-out infinite; }
+@keyframes pcaSweep{ 0%,55%,100%{ transform:translateX(-120%) skewX(-18deg); } 30%{ transform:translateX(120%) skewX(-18deg); } }
+/* tab bar */
+.prog-tabbar{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+.prog-tabs{ position:relative; display:flex; gap:4px; padding:5px; border-radius:15px; background:rgba(0,0,0,.3); border:1px solid var(--line); flex-wrap:wrap; }
+.prog-tab{ position:relative; z-index:1; display:inline-flex; align-items:center; gap:7px; padding:10px 16px; border-radius:11px; cursor:pointer; border:none; background:transparent;
+  font-family:var(--font-display); font-stretch:84%; font-weight:800; font-size:13px; letter-spacing:.01em; color:var(--text-dim); transition:color .18s; white-space:nowrap; }
+.prog-tab:hover{ color:var(--text); }
+.prog-tab.active{ color:#fff; }
+.prog-tab-ink{ position:absolute; z-index:0; top:5px; bottom:5px; left:0; border-radius:11px; background:linear-gradient(135deg, var(--violet), #7a5fdc); box-shadow:0 8px 18px -8px rgba(124,77,255,.95); transition:transform .32s cubic-bezier(.3,.9,.3,1), width .32s cubic-bezier(.3,.9,.3,1); }
+.prog-tab-badge{ min-width:18px; height:18px; padding:0 5px; border-radius:999px; background:var(--coral); color:#fff; font-family:var(--font-mono); font-size:9.5px; font-weight:800; display:inline-grid; place-items:center; box-shadow:0 0 10px -3px var(--coral); }
+.prog-search{ display:flex; align-items:center; gap:8px; flex:1 1 180px; min-width:150px; padding:9px 14px; border-radius:13px; background:rgba(0,0,0,.26); border:1px solid var(--line); transition:border-color .16s; }
+.prog-search:focus-within{ border-color:color-mix(in srgb, var(--violet) 50%, var(--line)); }
+.prog-search svg{ color:var(--text-faint); flex:0 0 auto; }
+.prog-search input{ flex:1; min-width:0; background:none; border:none; outline:none; color:var(--text); font-size:13px; }
+.prog-search input::placeholder{ color:var(--text-faint); }
+/* panels */
+.prog-panel{ display:none; animation:navPageIn .3s ease-out; }
+.prog-panel.active{ display:block; }
+body.reduced-motion .prog-panel, body.low-power .prog-panel{ animation:none; }
+/* overview — stat tiles */
+.prog-stat-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:10px; }
+.prog-stat{ position:relative; overflow:hidden; text-align:center; padding:16px 10px 14px; border-radius:17px; background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid var(--line); transition:transform .16s, border-color .18s; }
+.prog-stat::before{ content:''; position:absolute; inset:0 0 auto 0; height:3px; background:var(--sc,#a48bff); opacity:.9; }
+.prog-stat:hover{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--sc) 45%, var(--line)); }
+.prog-stat.s-gold{ --sc:#ffd33d; } .prog-stat.s-mint{ --sc:#5dffba; } .prog-stat.s-purple{ --sc:#a48bff; } .prog-stat.s-blue{ --sc:#5fb0ff; }
+.prog-stat-v{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:24px; line-height:1; color:#fff; font-variant-numeric:tabular-nums; }
+.prog-stat-v.gold{ color:#ffd851; } .prog-stat-v.mint{ color:#66ffc0; } .prog-stat-v.purple{ color:#b6a2ff; }
+.prog-stat-l{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.1em; color:var(--text-faint); text-transform:uppercase; margin-top:6px; }
+/* completion meters */
+.prog-meters{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.prog-meter{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:20px 12px 16px; border-radius:18px; cursor:pointer; text-align:center; color:var(--text);
+  background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid var(--line); transition:transform .16s, border-color .18s, box-shadow .2s; animation:v10Rise .5s var(--d,0ms) both; }
+.prog-meter:hover{ transform:translateY(-4px); border-color:color-mix(in srgb, var(--mc) 50%, var(--line)); box-shadow:0 20px 40px -24px color-mix(in srgb, var(--mc) 60%, black); }
+.prog-meter-ring{ position:relative; width:86px; height:86px; display:grid; place-items:center; }
+.prog-meter-ring svg{ width:86px; height:86px; transform:rotate(-90deg); }
+.pmr-bg{ fill:none; stroke:rgba(255,255,255,.09); stroke-width:7; }
+.pmr-fg{ fill:none; stroke:var(--mc); stroke-width:7; stroke-linecap:round; transition:stroke-dashoffset 1s cubic-bezier(.2,.9,.3,1); filter:drop-shadow(0 0 5px color-mix(in srgb,var(--mc) 75%,transparent)); }
+.prog-meter-pct{ position:absolute; font-family:var(--font-display); font-stretch:72%; font-weight:900; font-size:21px; color:#fff; }
+.prog-meter-lbl{ font-family:var(--font-display); font-stretch:82%; font-weight:800; font-size:14.5px; color:var(--text); }
+.prog-meter-sub{ font-family:var(--font-mono); font-size:10px; color:var(--text-faint); }
+.prog-meter-cta{ margin-top:2px; font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.06em; color:var(--mc); text-transform:uppercase; opacity:0; transform:translateY(3px); transition:opacity .18s, transform .18s; }
+.prog-meter:hover .prog-meter-cta{ opacity:1; transform:translateY(0); }
+/* next-milestone rail */
+.prog-rail{ display:grid; grid-template-columns:repeat(auto-fill, minmax(210px,1fr)); gap:14px; }
+.prog-rail-card{ position:relative; padding:15px; border-radius:17px; background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid var(--line); animation:v10Rise .45s var(--d,0ms) both; transition:transform .16s, border-color .18s; }
+.prog-rail-card:hover{ transform:translateY(-3px); border-color:color-mix(in srgb, var(--violet) 40%, var(--line)); }
+.prog-rail-card.tracked{ border-color:rgba(34,211,163,.5); background:linear-gradient(180deg, rgba(34,211,163,.07), var(--bg-2)); }
+.prc-top{ display:flex; align-items:center; gap:9px; margin-bottom:10px; }
+.prc-ic{ flex:0 0 auto; width:38px; height:38px; border-radius:12px; display:grid; place-items:center; font-size:20px; background:rgba(255,255,255,.05); border:1px solid var(--line); }
+.prc-kind{ font-family:var(--font-mono); font-size:8.5px; font-weight:800; letter-spacing:.09em; color:var(--text-faint); text-transform:uppercase; padding:3px 7px; border-radius:6px; background:rgba(255,255,255,.05); border:1px solid var(--line); margin-right:auto; }
+.prog-rail-card.tracked .prc-kind{ color:#8ff5d2; background:rgba(34,211,163,.12); border-color:rgba(34,211,163,.3); }
+.prc-track, .a2-track, .title-chip-track, .ptr-untrack, .ch2-untrack{ flex:0 0 auto; width:28px; height:28px; border-radius:9px; display:grid; place-items:center; font-size:13px; line-height:1; cursor:pointer;
+  background:rgba(255,255,255,.05); border:1px solid var(--line); color:var(--text-dim); transition:background .16s, border-color .16s, transform .14s; filter:grayscale(.4) opacity(.75); }
+.prc-track:hover, .a2-track:hover, .title-chip-track:hover{ transform:scale(1.1); filter:none; border-color:rgba(34,211,163,.5); }
+.prc-track.on, .a2-track.on, .title-chip-track.on{ filter:none; background:rgba(34,211,163,.16); border-color:rgba(34,211,163,.55); box-shadow:0 0 12px -5px #22d3a3; }
+.ptr-untrack, .ch2-untrack{ filter:none; font-size:12px; color:var(--text-faint); } .ptr-untrack:hover, .ch2-untrack:hover{ color:#ff8095; border-color:rgba(255,90,120,.4); }
+.prc-name{ font-family:var(--font-display); font-stretch:82%; font-weight:800; font-size:14.5px; line-height:1.15; color:#fff; margin-bottom:3px; }
+.prc-sub{ font-size:11.5px; color:var(--text-dim); line-height:1.35; margin-bottom:11px; min-height:15px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+.prc-barrow{ display:flex; align-items:center; gap:8px; }
+.prc-bar{ flex:1; height:7px; border-radius:999px; background:rgba(255,255,255,.09); overflow:hidden; }
+.prc-bar i{ display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#a48bff,#5dffba); transition:width .8s cubic-bezier(.2,.9,.3,1); }
+.prc-count{ font-family:var(--font-mono); font-size:10.5px; font-weight:800; color:var(--text); font-variant-numeric:tabular-nums; }
+.prog-rail-empty, .prog-tracked-empty{ padding:22px 18px; border-radius:16px; background:var(--surface); border:1px dashed var(--line); color:var(--text-dim); font-size:12.5px; line-height:1.55; text-align:center; }
+.prog-tracked-empty b{ color:var(--mint); }
+/* tracked goals (overview) — rich mission cards with what-to-do */
+.prog-track-count{ font-family:var(--font-mono); font-size:10px; font-weight:800; color:#0c2d24; background:linear-gradient(180deg,#5dffba,#22d3a3); padding:3px 9px; border-radius:999px; margin-left:8px; box-shadow:0 0 12px -4px #22d3a3; }
+.prog-tracked{ display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:12px; }
+.prog-trk-row{ position:relative; overflow:hidden; display:flex; align-items:flex-start; gap:13px; padding:15px 16px; border-radius:17px; background:linear-gradient(180deg, var(--surface), var(--bg-2)); border:1px solid rgba(34,211,163,.28); color:var(--text); animation:v10Rise .4s var(--d,0ms) both; }
+.prog-trk-row::before{ content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:linear-gradient(180deg,#5dffba,#22d3a3); }
+.prog-trk-row.done{ border-color:rgba(34,211,163,.55); background:linear-gradient(180deg, rgba(34,211,163,.1), var(--bg-2)); }
+.ptr-ic{ flex:0 0 auto; width:42px; height:42px; border-radius:13px; display:grid; place-items:center; font-size:21px; background:rgba(34,211,163,.12); border:1px solid rgba(34,211,163,.3); }
+.ptr-body{ flex:1; min-width:0; }
+.ptr-head{ display:flex; align-items:center; gap:8px; margin-bottom:4px; padding-right:34px; }
+.ptr-name{ font-family:var(--font-display); font-stretch:82%; font-weight:800; font-size:15px; color:#fff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ptr-kind{ flex:0 0 auto; font-family:var(--font-mono); font-size:8px; font-weight:800; letter-spacing:.08em; color:#8ff5d2; background:rgba(34,211,163,.14); border:1px solid rgba(34,211,163,.32); padding:2px 6px; border-radius:6px; text-transform:uppercase; }
+.ptr-sub{ font-size:12px; color:var(--text-dim); line-height:1.4; margin-bottom:9px; }
+.ptr-sub b{ color:#8ff5d2; font-weight:700; }
+.ptr-barrow{ display:flex; align-items:center; gap:10px; }
+.ptr-bar{ flex:1; height:8px; border-radius:999px; background:rgba(255,255,255,.09); overflow:hidden; }
+.ptr-bar i{ display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#a48bff,#5dffba); transition:width .8s cubic-bezier(.2,.9,.3,1); box-shadow:0 0 8px -2px #5dffba; }
+.prog-trk-row.done .ptr-bar i{ background:linear-gradient(90deg,#22d3a3,#5dffba); }
+.ptr-count{ font-family:var(--font-mono); font-size:11px; font-weight:800; color:var(--text); font-variant-numeric:tabular-nums; }
+.prog-trk-row.done .ptr-count{ color:#5dffba; }
+.ptr-untrack{ position:absolute; top:11px; right:11px; }
+/* tracked card on the Play page + tracked kind on the result screen */
+.ch2-tracked{ border-color:rgba(34,211,163,.4) !important; background:linear-gradient(180deg, rgba(34,211,163,.05), transparent) !important; }
+.ch2-tracked .ch2-head-title{ color:#5dffba; }
+.ch2-tracked .ch2-sub{ font-size:11px; color:var(--text-dim); margin-top:2px; line-height:1.35; }
+.mrfn-ch-kind.tracked{ background:rgba(34,211,163,.16); color:#5dffba; }
+@media (max-width:620px){
+  .prog-hero-main{ flex-wrap:wrap; } .prog-hero-ring{ margin:0 auto; }
+  .prog-stat-row{ grid-template-columns:repeat(2,1fr); }
+  .prog-meters{ grid-template-columns:1fr; }
+  .prog-tracked{ grid-template-columns:1fr; }
+}
+body.reduced-motion :is(.prog-hero-glow,.pca-spark,.prog-meter,.prog-trk-row), body.low-power :is(.prog-hero-glow,.pca-spark,.prog-meter,.prog-trk-row){ animation:none !important; }
+
 /* ═══ ACHIEVEMENTS v2 — tiered lines ═══ */
 .ach2-tabs{ display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
 .ach2-tab{ padding:8px 15px; border-radius:999px; cursor:pointer; font-family:var(--font-mono); font-size:11px; font-weight:800; letter-spacing:.05em;
@@ -1846,6 +1980,90 @@ body.reduced-motion .p3s-vaultcase, body.low-power .p3s-vaultcase{ animation:non
 body.reduced-motion :is(.play3-hero, .p3s-card, .p3h-eyebrow, .p3h-title, .p3h-sub, .p3h-item, .p3s-chest-lid, .p3s-chest-gem, .p3s-crest .phr-icon, .p3s-av, .p3h-glow),
 body.low-power :is(.play3-hero, .p3s-card, .p3h-eyebrow, .p3h-title, .p3h-sub, .p3h-item, .p3s-chest-lid, .p3s-chest-gem, .p3s-crest .phr-icon, .p3s-av, .p3h-glow){
   animation:none !important; opacity:1 !important; }
+
+/* ══════════════════ PLAY PAGE — MOBILE-FIRST REDESIGN (≤540px) ══════════════════
+   Single-column, big touch targets, reordered so modes → stat cards → challenges
+   → boosts read top-to-bottom. Flattens the two-column wrap with display:contents
+   and sequences every section with flex order; rank + level sit side-by-side. */
+@media (max-width:540px){
+  .nav-page[data-page="play"]{ padding-bottom:calc(104px + env(safe-area-inset-bottom,0px)); }
+  .play3-wrap{ display:flex; flex-wrap:wrap; gap:14px; align-items:stretch; }
+  .play3-main, .play3-side{ display:contents; }
+  /* every section full-width by default … */
+  .play3-hero, .play3-modes, .play3-ch-head, #playChallengeSlot,
+  .p3s-boosts, .p3s-gauntlet, .p3s-friends, .play3-throw-head, .throw-cycle{ flex:0 0 100%; }
+  /* … except the two stat cards, which pair up */
+  .p3s-rank, .p3s-level{ flex:1 1 calc(50% - 7px); min-width:0; }
+  /* reading order */
+  .play3-hero{ order:1; margin-bottom:0; }
+  .play3-modes{ order:2; margin:0; }
+  .p3s-rank{ order:3; } .p3s-level{ order:4; }
+  .play3-ch-head{ order:5; } #playChallengeSlot{ order:6; }
+  .p3s-boosts{ order:7; } .p3s-gauntlet{ order:8; } .p3s-friends{ order:9; }
+  .play3-throw-head{ order:10; } .throw-cycle{ order:11; }
+
+  /* HERO — compact banner: headline left, small floating art right */
+  .play3-hero{ flex-direction:row; align-items:center; gap:14px; padding:18px 18px; min-height:0; border-radius:22px; }
+  .p3h-eyebrow{ font-size:9px; margin-bottom:7px; }
+  .p3h-title{ font-size:29px; }
+  .p3h-sub{ font-size:12px; margin-top:7px; line-height:1.45; }
+  .p3h-art{ flex:0 0 104px; width:104px; height:104px; }
+  .p3h-rock{ width:50px; height:50px; left:2px; top:10px; }
+  .p3h-paper{ width:45px; height:45px; left:38px; top:34px; }
+  .p3h-scissors{ width:52px; height:52px; right:0; top:2px; }
+  .p3h-item svg{ width:56%; height:56%; }
+
+  /* MODE CARDS — full-width, larger icon, prominent 54px CTA */
+  .play3-modes{ display:flex; flex-direction:column; gap:12px; }
+  .mode-card{ min-height:0; padding:16px 16px 16px; border-radius:20px;
+    border-width:1px; box-shadow:0 14px 30px -24px rgba(0,0,0,.9); }
+  .mode-top{ margin-bottom:12px; }
+  .mode-ic{ width:56px; height:56px; }
+  .mode-ic svg{ width:28px; height:28px; }
+  .mode-tag{ font-size:10px; padding:6px 12px; }
+  .mode-name{ font-size:30px; margin:2px 0 7px; }
+  .mode-name-sub{ font-size:19px; }
+  .mode-desc{ font-size:13px; line-height:1.45; margin-bottom:15px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .mode-cta{ width:100%; min-height:54px; padding:8px 8px 8px 18px; border-radius:15px; font-size:15.5px;
+    background:color-mix(in srgb, var(--mc) 15%, var(--bg-2));
+    border-color:color-mix(in srgb, var(--mc) 42%, transparent); }
+  .mode-card.mode-ranked .mode-cta{ background:linear-gradient(180deg, color-mix(in srgb,var(--mc) 26%,var(--bg-2)), color-mix(in srgb,var(--mc) 12%,var(--bg-2))); }
+  .mode-go{ width:38px; height:38px; }
+  .mode-card:active:not(.mode-locked){ transform:scale(.985); }
+
+  /* SECTION HEADINGS */
+  .play3-ch-head, .play3-throw-head{ margin:2px 0 -2px; }
+  .play3-ch-head h3, .play3-throw-head h3{ font-size:16px; }
+
+  /* STAT CARDS — compact rank + level, side by side */
+  .p3s-card{ padding:14px 12px; border-radius:18px; }
+  .p3s-head{ margin-bottom:8px; }
+  .p3s-title{ font-size:9px; letter-spacing:.1em; }
+  .p3s-chip{ font-size:8px; padding:4px 8px; }
+  .p3s-rank .p3s-crest{ width:66px; height:66px; margin:0 auto 6px; }
+  .p3s-rank .p3s-crest .phr-icon{ width:58px; height:58px; }
+  .p3s-tier{ font-size:17px; }
+  .p3s-elo{ font-size:10px; margin:5px 0 7px; }
+  .p3s-next{ font-size:9px; }
+  .p3s-track{ display:none; }               /* trim secondary text for a cleaner card */
+  .p3l-crest{ width:70px; height:76px; margin:0 auto 6px; }
+  .p3l-num{ font-size:30px; }
+  .p3l-xprow{ font-size:11px; margin:6px 0; }
+  .p3s-next, .p3l-xprow{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+  /* GAUNTLET + BOOSTS — full width, comfy */
+  .p3s-gauntlet-sub{ font-size:12px; }
+  .p3s-vault-btn{ min-height:44px; padding:11px 18px; }
+
+  /* THROWS — keep but compact */
+  .throw-cycle{ gap:8px; }
+}
+@media (max-width:380px){
+  .p3h-art{ display:none; }               /* very small screens: drop the art, all headline */
+  .play3-hero{ flex-direction:column; align-items:flex-start; }
+  .p3s-rank, .p3s-level{ flex:0 0 100%; }
+}
 
 /* ═══════════ RANK REWARDS POPUP — season-pass reward browser ═══════════ */
 .modal.rrw-modal{ --rrw:#ffd33d;
@@ -3252,6 +3470,105 @@ body.reduced-motion *{ animation-duration:.001s !important; transition-duration:
 .lut-titles{ font-size:12px; color:var(--text-dim); margin-top:2px; }
 @media(max-width:560px){ .levelup-toast.show{ top:10px; } .lut-badge{ width:40px; height:40px; font-size:19px; } }
 
+/* ═══════════════ PREMIUM LEVEL-UP CELEBRATION FX (AAA) ═══════════════ */
+.lvlfx{ position:fixed; inset:0; z-index:640; display:grid; place-items:center; pointer-events:none; opacity:0; visibility:hidden;
+  --luA:#ffd33d; --luB:#fff2b0; --luGlow:rgba(255,211,61,.55); }
+.lvlfx.show{ opacity:1; visibility:visible; }
+.lvlfx-dim{ position:absolute; inset:0; background:radial-gradient(circle at 50% 42%, transparent 24%, rgba(4,3,8,.44) 78%); opacity:0; transition:opacity .35s ease; }
+.lvlfx.show .lvlfx-dim{ opacity:1; }
+.lvlfx.out .lvlfx-dim{ opacity:0; }
+.lvlfx-stage{ position:relative; display:grid; place-items:center; transform:translateY(-5vh); }
+/* radial bloom */
+.lvlfx-bloom{ position:absolute; left:50%; top:50%; width:520px; height:520px; margin:-260px 0 0 -260px; border-radius:50%;
+  background:radial-gradient(circle, var(--luGlow), transparent 62%); opacity:0; pointer-events:none; }
+.lvlfx.play .lvlfx-bloom{ animation:luBloom 1.05s ease-out both; }
+@keyframes luBloom{ 0%{ transform:scale(.35); opacity:0; } 22%{ opacity:.95; } 100%{ transform:scale(1.55); opacity:0; } }
+/* rotating light streaks */
+.lvlfx-streaks{ position:absolute; left:50%; top:50%; width:620px; height:620px; margin:-310px 0 0 -310px; opacity:0; pointer-events:none;
+  background:repeating-conic-gradient(from 0deg, var(--luGlow) 0deg 2.4deg, transparent 2.4deg 26deg);
+  -webkit-mask:radial-gradient(circle, transparent 28%, #000 44%, transparent 72%); mask:radial-gradient(circle, transparent 28%, #000 44%, transparent 72%); }
+.lvlfx.play .lvlfx-streaks{ animation:luStreaks 1.2s ease-out both; }
+@keyframes luStreaks{ 0%{ transform:scale(.4) rotate(0deg); opacity:0; } 20%{ opacity:.55; } 100%{ transform:scale(1.4) rotate(24deg); opacity:0; } }
+/* concentric energy rings that explode outward */
+.lvlfx-ring{ position:absolute; left:50%; top:50%; width:210px; height:210px; margin:-105px 0 0 -105px; border-radius:50%;
+  border:4px solid var(--luA); box-shadow:0 0 34px var(--luGlow), inset 0 0 26px var(--luGlow); opacity:0; pointer-events:none; }
+.lvlfx-ring.r2{ border-width:2px; border-color:var(--luB); }
+.lvlfx-ring.r3{ border-width:1px; }
+.lvlfx.play .lvlfx-ring.r1{ animation:luRing .95s cubic-bezier(.12,.7,.3,1) both; }
+.lvlfx.play .lvlfx-ring.r2{ animation:luRing 1.15s .07s cubic-bezier(.12,.7,.3,1) both; }
+.lvlfx.play .lvlfx-ring.r3{ animation:luRing 1.35s .14s cubic-bezier(.12,.7,.3,1) both; }
+@keyframes luRing{ 0%{ transform:scale(.2); opacity:0; } 14%{ opacity:1; } 100%{ transform:scale(2.5); opacity:0; } }
+/* spark + ember particles (spawned in JS) */
+.lvlfx-particles{ position:absolute; left:50%; top:50%; width:0; height:0; pointer-events:none; }
+.lu-spark{ position:absolute; left:0; top:0; width:7px; height:7px; margin:-3.5px 0 0 -3.5px; border-radius:50%; background:var(--col,#fff); box-shadow:0 0 9px var(--col,#fff); opacity:0; animation:luSpark var(--dur,.9s) var(--dl,0s) cubic-bezier(.15,.6,.3,1) both; }
+.lu-spark::before{ content:''; position:absolute; right:100%; top:50%; width:24px; height:2px; transform:translateY(-50%); background:linear-gradient(90deg, transparent, var(--col,#fff)); border-radius:2px; opacity:.75; }
+@keyframes luSpark{ 0%{ transform:rotate(var(--a,0deg)) translateX(8px) scale(1); opacity:0; } 12%{ opacity:1; } 100%{ transform:rotate(var(--a,0deg)) translateX(var(--d,120px)) scale(.2); opacity:0; } }
+.lu-ember{ position:absolute; left:0; top:0; width:5px; height:5px; margin:-2.5px 0 0 -2.5px; border-radius:50%; background:var(--col,#fff); box-shadow:0 0 7px var(--col,#fff); opacity:0; animation:luEmber var(--dur,1.4s) var(--dl,0s) ease-out both; }
+@keyframes luEmber{ 0%{ transform:translate(0,0) scale(1); opacity:0; } 22%{ opacity:.9; } 100%{ transform:translate(var(--x,0),-150px) scale(.3); opacity:0; } }
+/* the banner */
+.lvlfx-banner{ position:relative; z-index:3; overflow:hidden; min-width:262px; max-width:min(440px,90vw); padding:20px 40px 18px; border-radius:24px; text-align:center;
+  background:linear-gradient(180deg, rgba(34,29,54,.94), rgba(15,13,26,.96));
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 34px 90px -34px rgba(0,0,0,.92), 0 0 66px -14px var(--luGlow), inset 0 1px 0 rgba(255,255,255,.1); }
+.lvlfx-banner::before{ content:''; position:absolute; inset:0 0 auto 0; height:46%; background:linear-gradient(180deg, rgba(255,255,255,.1), transparent); pointer-events:none; }
+.lvlfx.play .lvlfx-banner{ animation:luBannerIn .72s cubic-bezier(.18,.86,.26,1.12) both; }
+.lvlfx.out .lvlfx-banner{ animation:luBannerOut .46s cubic-bezier(.5,0,.75,0) both; }
+@keyframes luBannerIn{ 0%{ transform:translateY(-10px) scale(.42); opacity:0; filter:blur(7px); } 50%{ opacity:1; filter:blur(0); } 58%{ transform:translateY(0) scale(1.1); } 74%{ transform:scale(.965); } 88%{ transform:scale(1.02); } 100%{ transform:scale(1); } }
+@keyframes luBannerOut{ 0%{ transform:scale(1); opacity:1; filter:blur(0); } 100%{ transform:translateY(-16px) scale(.9); opacity:0; filter:blur(4px); } }
+.lvlfx-sheen{ position:absolute; inset:0; pointer-events:none; background:linear-gradient(100deg, transparent 30%, rgba(255,255,255,.28) 50%, transparent 70%); transform:translateX(-130%) skewX(-16deg); }
+.lvlfx.play .lvlfx-sheen{ animation:luSheen 1.1s .4s ease-out both; }
+@keyframes luSheen{ 0%{ transform:translateX(-130%) skewX(-16deg); } 100%{ transform:translateX(130%) skewX(-16deg); } }
+.lvlfx-eyebrow{ font-family:var(--font-display); font-stretch:78%; font-weight:900; font-size:26px; line-height:1; letter-spacing:.05em; text-transform:uppercase;
+  background:linear-gradient(180deg,#fff 10%, var(--luA)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent;
+  filter:drop-shadow(0 0 14px var(--luGlow)); }
+.lvlfx-numwrap{ position:relative; margin:6px 0 3px; }
+.lvlfx-num{ font-family:var(--font-display); font-stretch:62%; font-weight:900; font-size:72px; line-height:.9; color:#fff; font-variant-numeric:tabular-nums;
+  text-shadow:0 0 34px var(--luGlow), 0 3px 0 rgba(0,0,0,.35); }
+.lvlfx-sub{ font-family:var(--font-mono); font-size:11.5px; font-weight:700; letter-spacing:.07em; color:var(--text-dim); text-transform:uppercase; }
+.lvlfx-unlocks{ display:flex; flex-wrap:wrap; gap:7px; justify-content:center; margin-top:13px; }
+.lvlfx-unlocks:empty{ display:none; }
+.lvlfx-chip{ display:inline-flex; align-items:center; gap:6px; padding:5px 11px; border-radius:999px; font-size:11.5px; font-weight:700; color:#fff;
+  background:color-mix(in srgb, var(--uc,#5dffba) 18%, transparent); border:1px solid color-mix(in srgb, var(--uc,#5dffba) 45%, transparent); }
+.lvlfx-chip svg{ width:13px; height:13px; fill:var(--uc,#5dffba); }
+.lvlfx.play .lvlfx-eyebrow{ animation:luPeek .55s .05s both; }
+.lvlfx.play .lvlfx-numwrap{ animation:luPeek .55s .12s both; }
+.lvlfx.play .lvlfx-sub{ animation:luPeek .55s .2s both; }
+.lvlfx.play .lvlfx-unlocks{ animation:luPeek .55s .28s both; }
+@keyframes luPeek{ 0%{ opacity:0; transform:translateY(8px); } 100%{ opacity:1; transform:translateY(0); } }
+/* screen shake on impact */
+@keyframes luShake{ 0%,100%{ transform:translate(0,0); } 12%{ transform:translate(-4px,2px); } 26%{ transform:translate(5px,-3px); } 40%{ transform:translate(-4px,-1px); } 55%{ transform:translate(3px,3px); } 70%{ transform:translate(-2px,1px); } 85%{ transform:translate(1px,-1px); } }
+.app.lu-shake{ animation:luShake .55s cubic-bezier(.36,.07,.19,.97); }
+/* lite / accessibility fallbacks */
+.lvlfx.lite .lvlfx-bloom, .lvlfx.lite .lvlfx-streaks, .lvlfx.lite .lvlfx-ring, .lvlfx.lite .lvlfx-particles, .lvlfx.lite .lvlfx-sheen, .lvlfx.lite .lvlfx-dim{ display:none; }
+.lvlfx.lite.play .lvlfx-banner{ animation:luPeek .3s both; }
+.lvlfx.lite.play :is(.lvlfx-eyebrow,.lvlfx-numwrap,.lvlfx-sub,.lvlfx-unlocks){ animation:none; }
+body.reduced-motion .app.lu-shake, body.low-power .app.lu-shake{ animation:none; }
+@media(max-width:560px){ .lvlfx-num{ font-size:56px; } .lvlfx-eyebrow{ font-size:22px; } .lvlfx-banner{ padding:18px 26px 15px; } .lvlfx-ring{ width:170px; height:170px; margin:-85px 0 0 -85px; } }
+
+/* ── Inline level-up burst anchored on the result-screen XP box ── */
+.luin-host{ position:relative; overflow:visible; z-index:2; }
+.mrfn-xp.luin-host{ border-color:color-mix(in srgb, var(--luA,#ffd33d) 55%, var(--line-soft)); box-shadow:0 0 34px -6px var(--luGlow,rgba(255,211,61,.5)); transition:box-shadow .3s ease, border-color .3s ease; }
+@keyframes luinShake{ 0%,100%{ transform:translate(0,0); } 20%{ transform:translate(-3px,2px); } 40%{ transform:translate(3px,-2px); } 60%{ transform:translate(-2px,-1px); } 80%{ transform:translate(2px,1px); } }
+.mrfn-xp.luin-shake{ animation:luinShake .5s cubic-bezier(.36,.07,.19,.97); }
+.luin{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; z-index:6; --luA:#ffd33d; --luB:#fff2b0; --luGlow:rgba(255,211,61,.6); }
+.luin-bloom{ position:absolute; left:50%; top:50%; width:260px; height:260px; margin:-130px 0 0 -130px; border-radius:50%; background:radial-gradient(circle, var(--luGlow), transparent 62%); opacity:0; }
+.luin.play .luin-bloom{ animation:luBloom .95s ease-out both; }
+.luin-ring{ position:absolute; left:50%; top:50%; width:96px; height:96px; margin:-48px 0 0 -48px; border-radius:50%; border:3px solid var(--luA); box-shadow:0 0 22px var(--luGlow), inset 0 0 16px var(--luGlow); opacity:0; }
+.luin-ring.r2{ border-width:1.5px; border-color:var(--luB); }
+.luin.play .luin-ring.r1{ animation:luRing .85s cubic-bezier(.12,.7,.3,1) both; }
+.luin.play .luin-ring.r2{ animation:luRing 1.05s .08s cubic-bezier(.12,.7,.3,1) both; }
+.luin-particles{ position:absolute; left:50%; top:50%; width:0; height:0; }
+.luin-banner{ position:relative; z-index:3; text-align:center; }
+.luin.play .luin-banner{ animation:luBannerIn .62s cubic-bezier(.18,.86,.26,1.12) both; }
+.luin.out .luin-banner{ animation:luBannerOut .4s cubic-bezier(.5,0,.75,0) both; }
+.luin.out .luin-bloom, .luin.out .luin-ring{ opacity:0 !important; transition:opacity .3s; }
+.luin-eyebrow{ font-family:var(--font-display); font-stretch:78%; font-weight:900; font-size:15px; line-height:1; letter-spacing:.06em; text-transform:uppercase;
+  background:linear-gradient(180deg,#fff,var(--luA)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; filter:drop-shadow(0 0 8px var(--luGlow)); }
+.luin-num{ font-family:var(--font-display); font-stretch:64%; font-weight:900; font-size:42px; line-height:.92; color:#fff; text-shadow:0 0 20px var(--luGlow), 0 2px 0 rgba(0,0,0,.4); }
+.luin-sub{ font-family:var(--font-mono); font-size:9px; font-weight:700; letter-spacing:.08em; color:#d9f7ec; text-transform:uppercase; margin-top:3px; }
+.luin.lite .luin-bloom, .luin.lite .luin-ring, .luin.lite .luin-particles{ display:none; }
+.luin.lite.play .luin-banner{ animation:luPeek .3s both; }
+body.reduced-motion .mrfn-xp.luin-shake, body.low-power .mrfn-xp.luin-shake{ animation:none; }
 
 header{
   display:flex; align-items:center; justify-content:space-between;
@@ -21072,6 +21389,120 @@ body.low-power :is([class*="cxn-"], [class*="cxt-"], .cxf-galaxy .cx-frame-overl
   .sri-label{ display:none; }
 }
 
+/* ══════════════ MOBILE SHOP — sticky wallet + segmented tabs + ribbon ══════════════ */
+/* Mobile-only chrome is hidden by default; the desktop shop is untouched. */
+.shop-mbar, .shop-mribbon{ display:none; }
+@media (max-width:540px){
+  /* sticky glass header: compact wallet row + segmented tabs + rotation ribbon */
+  .shop-topwrap{ position:sticky; top:calc(var(--topbar-h,52px) - 1px); z-index:34;
+    margin:-4px 0 14px; padding:8px 0 0; background:rgba(9,8,14,.86);
+    backdrop-filter:blur(20px) saturate(160%); -webkit-backdrop-filter:blur(20px) saturate(160%);
+    box-shadow:0 14px 24px -18px rgba(0,0,0,.9); }
+  .shop-topbar{ margin-bottom:8px; align-items:center; gap:10px; flex-wrap:nowrap; }
+  .shop-topbar-title{ min-width:0; flex:1 1 auto; }
+  .shop-title-word{ font-size:22px; }
+  .shop-topbar-sub{ display:none; }              /* trim: the ribbon carries the rotation note */
+  .shop-topbar-side{ flex:0 0 auto; gap:8px; }
+  .shop-locker-btn span{ display:none; }          /* icon-only locker to save width */
+  .shop-locker-btn{ padding:9px 11px; }
+  .shop-wallet{ padding:9px 13px; font-size:15px; }
+  .shop-wallet b{ font-size:16px; }
+
+  .shop-mbar{ display:block; }
+  .shop-mtabs{ position:relative; display:grid; grid-template-columns:repeat(3,1fr); gap:2px;
+    padding:4px; border-radius:14px; background:rgba(255,255,255,.04); border:1px solid var(--line); }
+  .shop-mtab{ position:relative; z-index:1; padding:10px 6px; border:none; background:none; cursor:pointer;
+    font-family:var(--font-display); font-stretch:84%; font-weight:800; font-size:13px; letter-spacing:.02em;
+    color:var(--text-dim); border-radius:10px; transition:color .18s; }
+  .shop-mtab.active{ color:#06120e; }
+  .shop-mtab[data-mtab="coins"].active{ color:#221302; }
+  .shop-mtab-ink{ position:absolute; z-index:0; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/3); border-radius:10px;
+    background:linear-gradient(135deg,var(--mint),#15a079); box-shadow:0 6px 16px -8px var(--mint-glow,rgba(34,211,163,.8));
+    transform:translateX(0); transition:transform .3s cubic-bezier(.3,.9,.3,1), background .25s; }
+  .shop-mtab-ink.to-daily{ transform:translateX(100%); }
+  .shop-mtab-ink.to-coins{ transform:translateX(200%); background:linear-gradient(135deg,#ffd95e,#f0a81e); box-shadow:0 6px 16px -8px rgba(245,180,49,.85); }
+  .shop-mribbon{ display:flex; align-items:center; justify-content:center; gap:7px; padding:7px 0 8px;
+    font-family:var(--font-mono); font-size:10.5px; font-weight:700; letter-spacing:.04em; color:var(--text-dim); }
+  .shop-mribbon svg{ color:var(--mint); }
+  .shop-mribbon b{ color:#fff; font-variant-numeric:tabular-nums; }
+
+  /* sections + grids */
+  .shop-stack{ gap:20px; padding-right:0; }
+  .shop-sec{ scroll-margin-top:calc(var(--topbar-h,52px) + 118px); }
+  .shop-slab-title{ font-size:14px; }
+  .shop-grid{ display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+  .shop-grid-featured{ grid-template-columns:1fr; }   /* featured = big hero cards */
+  .shop-note, .shop-coins-sub{ font-size:11px; }
+
+  /* item tiles — bigger tap targets, stronger rarity treatment + state badges */
+  .shop-tile{ min-height:0; border-radius:16px; border-width:1.5px; }
+  .shop-tile.featured{ min-height:0; }
+  .shop-tile.rar-legendary, .shop-tile.rar-mythic, .shop-tile.rar-ascended{
+    box-shadow:0 0 0 1px color-mix(in srgb,var(--rc) 40%,transparent), 0 14px 30px -20px color-mix(in srgb,var(--rc) 60%,black); }
+  .shop-tile.owned{ opacity:.96; }
+  .st-owned{ font-size:10px; }
+  /* wishlisted corner marker on the tile */
+  .shop-tile .wish-tile.on{ box-shadow:0 0 12px -3px #ff5e9a; }
+
+  /* coin packs — clean full-width value cards (scoped to beat the desktop grid) */
+  .shop-sec-coins .shop-coins-grid{ display:flex; flex-direction:column; gap:10px; }
+  .shop-sec-coins .coin-pack{ display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:6px 12px;
+    min-height:78px; padding:12px 14px; border-radius:16px; text-align:left; }
+  .shop-sec-coins .coin-pack .cp-art{ grid-row:1/3; grid-column:1; width:52px; height:52px; min-height:0; margin:0; }
+  .shop-sec-coins .coin-pack .cp-amount{ font-size:22px; grid-column:2; align-self:end; margin:0; }
+  .shop-sec-coins .coin-pack .cp-lbl{ display:none; }
+  .shop-sec-coins .coin-pack .cp-value{ grid-column:2; align-self:start; font-size:10px; }
+  .shop-sec-coins .coin-pack .cp-price{ grid-column:3; grid-row:1/3; align-self:center; font-size:17px; padding:9px 14px; border-radius:12px; }
+  .shop-sec-coins .coin-pack .cp-bonus, .shop-sec-coins .coin-pack .cp-flag{ position:absolute; top:8px; right:10px; margin:0; }
+  .shop-sec-coins .coin-pack .cp-bonus-ghost{ display:none; }
+  /* mobile: swap hold-to-buy for slide-to-buy */
+  .sbm-slide.avail{ display:block; }
+  .sbm3-wallet .sbm-buy.has-slide{ display:none; }
+  /* buy sheet → single column, full-width, comfy touch targets */
+  .sbm4.shop-buy-modal{ max-width:100%; width:100%; }
+  .sbm4 .sbm3-body{ grid-template-columns:1fr; gap:0; padding:0 16px 10px; }
+  .sbm3 .sbm-hero{ min-height:280px; padding:22px 16px 70px; margin-bottom:14px; }
+  .sbm3-side{ padding:0; }
+  .sbm-name{ font-size:30px; }
+  .sbm3-try{ transform:scale(.94); }
+  .sbm3-alt-actions{ gap:9px; }
+  .sbm-gift{ min-height:50px; }
+}
+/* ── Slide-to-buy control ── */
+.sbm-slide{ display:none; margin-top:2px; }
+.sbm-slide-track{ position:relative; height:56px; border-radius:16px; overflow:hidden; touch-action:none; -webkit-user-select:none; user-select:none;
+  background:linear-gradient(180deg, color-mix(in srgb,var(--mint) 20%,var(--bg-2)), color-mix(in srgb,var(--mint) 8%,var(--bg-2)));
+  border:1px solid color-mix(in srgb,var(--mint) 42%,transparent); }
+.sbm-slide-fill{ position:absolute; left:0; top:0; bottom:0; width:0; background:linear-gradient(90deg, rgba(34,211,163,.3), rgba(34,211,163,.55)); }
+.sbm-slide-label{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none;
+  font-family:var(--font-display); font-stretch:80%; font-weight:800; font-size:15px; letter-spacing:.03em; color:#eafff7; }
+.sbm-slide-thumb{ position:absolute; left:4px; top:4px; width:48px; height:48px; border-radius:12px; display:grid; place-items:center; z-index:1;
+  background:linear-gradient(180deg,#5dffba,#15a079); color:#06241b; box-shadow:0 6px 16px -6px rgba(34,211,163,.85); cursor:grab; touch-action:none; transition:transform .25s cubic-bezier(.3,1.4,.5,1); }
+.sbm-slide-thumb svg{ fill:currentColor; }
+.sbm-slide.arming .sbm-slide-thumb{ cursor:grabbing; transition:none; }
+.sbm-slide.arming .sbm-slide-fill{ transition:none; }
+.sbm-slide.done .sbm-slide-track{ border-color:var(--mint); }
+.sbm-slide.done .sbm-slide-label{ color:#fff; }
+/* ── Inline top-up ── */
+.sbm-topup-host{ margin-top:9px; }
+.sbm-topup{ display:flex; align-items:center; gap:10px; padding:11px 13px; border-radius:14px;
+  background:rgba(245,180,49,.09); border:1px solid rgba(245,180,49,.32); }
+.sbm-topup-txt{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.sbm-topup-txt b{ font-size:13px; color:#ffd45e; }
+.sbm-topup-txt span{ font-size:11px; color:var(--text-dim); }
+.sbm-topup-btn{ flex:0 0 auto; display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:11px; cursor:pointer;
+  border:1px solid #ffdf8a; background:linear-gradient(180deg,#ffe27a,#f0a622); color:#221302; font-family:var(--font-display); font-stretch:82%; font-weight:800; font-size:13px;
+  box-shadow:0 8px 20px -10px rgba(255,190,40,.7); transition:transform .14s, filter .14s; }
+.sbm-topup-btn:active{ transform:scale(.96); } .sbm-topup-btn:hover{ filter:brightness(1.05); }
+.sbm-topup-btn .cp-mini{ font-family:var(--font-mono); font-size:11px; opacity:.85; }
+/* ── Shop unlock celebration ── */
+.shopfx-banner{ min-width:230px; max-width:300px; }
+.shopfx-art{ width:112px; height:112px; margin:0 auto 10px; display:grid; place-items:center; position:relative; }
+.shopfx-art > *{ max-width:100%; max-height:100%; }
+.shopfx-art .st-preview{ width:100%; height:100%; }
+.shopfx-name{ font-family:var(--font-display); font-stretch:70%; font-weight:900; font-size:25px; color:#fff; line-height:1.02; margin-top:3px; text-shadow:0 0 22px var(--luGlow); }
+.shopfx .lvlfx-eyebrow{ font-size:15px; letter-spacing:.16em; }
+
 /* ---------- ROSHCOIN PACKS (store cards) ---------- */
 .shop-sec-coins .shop-slab::before{ background:linear-gradient(180deg, #ffd45e, #ff9a3d); }
 .shop-coins-sub{ margin:-2px 2px 12px; color:var(--text-dim); font-size:13px; max-width:560px; }
@@ -21604,8 +22035,8 @@ body.reduced-motion .shop-next, body.low-power .shop-next{ animation:none !impor
   animation:cxaSpin 5s linear infinite;
 }
 .cxa-rk::after{
-  content:''; position:absolute; left:50%; bottom:-16%; transform:translateX(-50%); z-index:4;
-  width:60%; height:60%; pointer-events:none;
+  content:''; position:absolute; left:50%; bottom:-10%; transform:translateX(-50%); z-index:4;
+  width:42%; height:42%; pointer-events:none;
   background:var(--rk-emblem, none) center/contain no-repeat;
   filter:drop-shadow(0 2px 4px rgba(0,0,0,.55)) drop-shadow(0 0 7px color-mix(in srgb, var(--rc) 85%, transparent));
   animation:cxaRkBadge 3s ease-in-out infinite;
@@ -24003,7 +24434,7 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
       <button class="nav-item" data-nav="shop"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg><span>Shop</span><span class="nav-badge nav-shop-new" id="navShopBadge" style="display:none;">NEW</span></button>
       <button class="nav-item" data-nav="locker"><svg viewBox="0 0 24 24"><use href="#i-locker"/></svg><span>Locker</span><span class="nav-badge nav-locker-new" id="navLockerBadge" style="display:none;">0</span></button>
       <button class="nav-item" data-nav="friends"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg><span>Friends</span><span class="nav-badge" id="navFriendsBadge" style="display:none;">0</span></button>
-      <button class="nav-item" data-nav="achievements"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg><span>Achievements</span><span class="nav-badge nav-prestige" id="navPrestigeBadge" title="Prestige available" style="display:none;">✦</span></button>
+      <button class="nav-item" data-nav="progression"><svg viewBox="0 0 24 24"><use href="#i-trending-up"/></svg><span>Progression</span><span class="nav-unclaimed-dot" id="navProgDot" title="Rewards to claim" style="display:none;"></span><span class="nav-badge nav-prestige" id="navPrestigeBadge" title="Prestige available" style="display:none;">✦</span></button>
       <button class="nav-item" data-nav="settings"><svg viewBox="0 0 24 24"><use href="#i-settings"/></svg><span>Settings</span></button>
       <button class="nav-item" id="navAdmin" data-nav="admin" style="display:none; color:var(--mint);"><svg viewBox="0 0 24 24"><use href="#i-shield"/></svg><span>Moderation</span></button>
     </nav>
@@ -24128,7 +24559,7 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
         <div class="ms-section-label">Explore</div>
         <div class="ms-grid">
           <button class="ms-tile" data-act="locker"><span class="ms-tile-badge" id="msLockerBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-locker"/></svg></span><span>Locker</span></button>
-          <button class="ms-tile" data-act="achievements"><span class="ms-tile-badge ms-prestige" id="msAchBadge" style="display:none;">✦</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg></span><span>Achievements</span></button>
+          <button class="ms-tile" data-act="progression"><span class="ms-tile-badge ms-prestige" id="msAchBadge" style="display:none;">✦</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-trending-up"/></svg></span><span>Progression</span></button>
           <button class="ms-tile" data-act="chat"><span class="ms-tile-badge" id="msChatBadge" style="display:none;">0</span><span class="ms-tile-ic"><svg viewBox="0 0 24 24"><use href="#i-message"/></svg></span><span>Messages</span></button>
         </div>
 
@@ -24623,11 +25054,11 @@ const FIREBASE_CONFIG = {
         </div>
 
         <!-- CHALLENGES — daily + weekly + gauntlet live here, under the modes -->
-        <div class="psection"><h3>Challenges</h3></div>
+        <div class="psection play3-ch-head"><h3>Challenges</h3></div>
         <div class="challenge-stack play-challenges" id="playChallengeSlot"></div>
 
         <!-- The throws -->
-        <div class="psection"><h3>The throws</h3></div>
+        <div class="psection play3-throw-head"><h3>The throws</h3></div>
         <div class="throw-cycle">
           <div class="throw-node" style="--tn:var(--coral);">
             <svg viewBox="0 0 64 64" width="40" height="40"><use href="#i-rock"/></svg>
@@ -24720,6 +25151,8 @@ const FIREBASE_CONFIG = {
 
       <!-- ============ PAGE: ITEM SHOP (OG two-panel layout) ============ -->
       <div class="nav-page" data-page="shop">
+        <!-- Sticky header wrapper — on mobile the wallet + tabs + countdown ribbon pin to the top -->
+        <div class="shop-topwrap">
         <!-- SHOP TOP BAR — title left, wallet + collection right -->
         <div class="shop-topbar">
           <div class="shop-topbar-title">
@@ -24742,6 +25175,20 @@ const FIREBASE_CONFIG = {
             </button>
           </div>
         </div>
+        <!-- MOBILE-ONLY: segmented tab bar + a pinned rotation countdown ribbon -->
+        <div class="shop-mbar">
+          <div class="shop-mtabs" id="shopMTabs" role="tablist">
+            <button type="button" class="shop-mtab active" data-mtab="featured">Featured</button>
+            <button type="button" class="shop-mtab" data-mtab="daily">Daily</button>
+            <button type="button" class="shop-mtab" data-mtab="coins">Coins</button>
+            <i class="shop-mtab-ink" id="shopMTabInk" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="shop-mribbon">
+          <svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-clock"/></svg>
+          <span>Shop rotates in <b class="js-shop-timer">—</b></span>
+        </div>
+        </div><!-- /shop-topwrap -->
 
         <!-- STACKED SHOP SECTIONS + right-side jump rail + next-section button -->
         <div class="shop-stack" id="shopStack">
@@ -24981,73 +25428,102 @@ const FIREBASE_CONFIG = {
         </div>
       </div><!-- /page friends -->
 
-      <!-- ============ PAGE: ACHIEVEMENTS ============ -->
-      <div class="nav-page" data-page="achievements">
-        <div class="page-header">
-          <h2 class="page-title">ACHIEVEMENTS</h2>
-          <p class="page-subtitle">Titles, milestones and bragging rights.</p>
-        </div>
-        <div class="dxp-banner" style="display:none;">
-          <div class="dxp-bolt"><svg viewBox="0 0 24 24" width="22" height="22"><use href="#i-zap"/></svg></div>
-          <div class="dxp-text"><div class="dxp-title">2× XP WEEKEND</div><div class="dxp-sub">Double XP on every match · ends Sun 11:59 PM</div></div>
-          <div class="dxp-mult">2×</div>
-        </div>
-        <div class="ach-level-banner">
-          <div class="ach-level-badge" id="achLevelBadge">1</div>
-          <div class="ach-level-info">
-            <div class="ach-level-title" id="achLevelTitle">Rookie</div>
-            <div class="ach-level-xp" id="achLevelXp">0 / 200 XP</div>
-            <div class="ach-level-bar"><div class="ach-level-fill" id="achLevelFill"></div></div>
+      <!-- ============ PAGE: PROGRESSION (replaces Achievements) ============ -->
+      <div class="nav-page" data-page="progression">
+        <!-- HERO — level crest, identity, overall completion ring, claim-all -->
+        <section class="prog-hero">
+          <i class="prog-hero-glow" aria-hidden="true"></i>
+          <div class="prog-hero-main">
+            <div class="prog-hero-crest"><div class="ach-level-badge" id="achLevelBadge">1</div></div>
+            <div class="prog-hero-info">
+              <span class="prog-hero-eyebrow"><svg viewBox="0 0 24 24" width="12" height="12"><use href="#i-trending-up"/></svg> YOUR PROGRESSION</span>
+              <h2 class="prog-hero-name" id="progHeroName">Player</h2>
+              <div class="prog-hero-title"><span id="achLevelTitle">Rookie</span> · Level <b id="progHeroLvl">1</b></div>
+              <div class="ach-level-bar"><div class="ach-level-fill" id="achLevelFill"></div></div>
+              <div class="ach-level-xp" id="achLevelXp">0 / 200 XP</div>
+            </div>
+            <div class="prog-hero-ring" id="progOverallRingHost">
+              <svg viewBox="0 0 120 120" class="prog-ring-svg">
+                <defs><linearGradient id="progRingGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#a48bff"/><stop offset="55%" stop-color="#7a5fdc"/><stop offset="100%" stop-color="#5dffba"/>
+                </linearGradient></defs>
+                <circle class="prog-ring-bg" cx="60" cy="60" r="52"/>
+                <circle class="prog-ring-fg" id="progOverallRing" cx="60" cy="60" r="52" pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"/>
+              </svg>
+              <div class="prog-ring-inner"><div class="prog-ring-num" id="progOverallPct">0%</div><div class="prog-ring-lbl">complete</div></div>
+            </div>
           </div>
-          <button class="ach-ladder-btn" id="achViewLadderBtn" type="button">
-            <svg viewBox="0 0 24 24" width="14" height="14"><use href="#i-trending-up"/></svg>
-            <span>View level progress</span>
-            <svg viewBox="0 0 24 24" width="14" height="14" class="alb-chev"><use href="#i-chevron-down"/></svg>
+          <button class="prog-claimall" id="progClaimAll" type="button" style="display:none;">
+            <span class="pca-spark" aria-hidden="true"></span>
+            <svg viewBox="0 0 24 24" width="16" height="16"><use href="#i-check"/></svg>
+            Claim all rewards <b id="progClaimCount">0</b>
           </button>
-        </div>
-        <!-- Prestige panel — appears at max level (choice to prestige) -->
-        <div class="prestige-panel" id="prestigePanel" style="display:none;">
-          <div class="pp-emblem" id="ppEmblem"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg><span class="pp-num" id="ppNum">0</span></div>
-          <div class="pp-info">
-            <div class="pp-title" id="ppTitle">Prestige</div>
-            <div class="pp-sub" id="ppSub">Reach level 55 to prestige</div>
-          </div>
-          <button class="btn pp-btn" id="prestigeBtn" type="button">Prestige now</button>
-        </div>
-        <div class="ach-summary-row">
-          <div class="card" style="text-align:center;">
-            <div class="asc-v gold" id="ascTitles">0/11</div>
-            <div class="asc-l">Titles unlocked</div>
-          </div>
-          <div class="card" style="text-align:center;">
-            <div class="asc-v mint" id="ascMilestones">0/8</div>
-            <div class="asc-l">Milestones earned</div>
-          </div>
-          <div class="card" style="text-align:center;">
-            <div class="asc-v purple" id="ascTotalXp">0</div>
-            <div class="asc-l">Total XP earned</div>
-          </div>
-        </div>
-        <div class="psection"><h3>Badges</h3><span class="psection-sub" id="achPageCount">0 / 0</span></div>
-        <div class="ach2-tabs" id="ach2Tabs">
-          <button type="button" class="ach2-tab active" data-acat="all">All</button>
-          <button type="button" class="ach2-tab" data-acat="combat">⚔️ Combat</button>
-          <button type="button" class="ach2-tab" data-acat="climb">📈 The Climb</button>
-          <button type="button" class="ach2-tab" data-acat="dedication">🗓️ Dedication</button>
-          <button type="button" class="ach2-tab" data-acat="social">🫂 Social</button>
-        </div>
-        <div class="ach2-grid" id="achPageGrid"></div>
-        <div class="psection"><h3>Titles</h3></div>
-        <div class="titles-grid" id="achTitlesGrid"></div>
-        <div class="psection"><h3>Milestones</h3></div>
-        <div class="ach-milestones" id="achMilestones"></div>
+        </section>
 
-        <!-- LEVEL & PRESTIGE PASS — battle-pass-style progression (scrolled to by
-             the "View level progress" button). Lives at the bottom, under the
-             achievements. Rendered + animated by renderLevelLadder(). -->
-        <div class="psection" id="ladderSection"><h3>Level &amp; Prestige progress</h3><span class="psection-sub">your climb · every tier</span></div>
-        <div class="lp" id="achLevelLadder"></div>
-      </div><!-- /page achievements -->
+        <!-- TAB BAR + search -->
+        <div class="prog-tabbar">
+          <div class="prog-tabs" id="progTabs">
+            <button type="button" class="prog-tab active" data-ptab="overview">Overview</button>
+            <button type="button" class="prog-tab" data-ptab="levels">Levels &amp; Prestige</button>
+            <button type="button" class="prog-tab" data-ptab="achievements">Achievements <span class="prog-tab-badge" id="progAchUnclaimed" style="display:none;">0</span></button>
+            <button type="button" class="prog-tab" data-ptab="titles">Titles</button>
+            <i class="prog-tab-ink" id="progTabInk" aria-hidden="true"></i>
+          </div>
+          <label class="prog-search" id="progSearch" style="display:none;">
+            <svg viewBox="0 0 24 24" width="15" height="15"><use href="#i-search"/></svg>
+            <input type="text" id="progSearchInput" placeholder="Search…" autocomplete="off" spellcheck="false" />
+          </label>
+        </div>
+
+        <!-- OVERVIEW -->
+        <div class="prog-panel active" data-panel="overview">
+          <div class="prog-stat-row">
+            <div class="prog-stat s-gold"><div class="prog-stat-v gold" id="ascTitles">0/11</div><div class="prog-stat-l">Titles</div></div>
+            <div class="prog-stat s-mint"><div class="prog-stat-v mint" id="ascMilestones">0/8</div><div class="prog-stat-l">Milestones</div></div>
+            <div class="prog-stat s-purple"><div class="prog-stat-v purple" id="achPageCount">0 / 0</div><div class="prog-stat-l">Badges</div></div>
+            <div class="prog-stat s-blue"><div class="prog-stat-v" id="ascTotalXp">0</div><div class="prog-stat-l">Total XP</div></div>
+          </div>
+          <div class="psection"><h3>Completion</h3><span class="psection-sub">every system, at a glance</span></div>
+          <div class="prog-meters" id="progMeters"></div>
+          <div class="psection"><h3>Next milestones</h3><span class="psection-sub">closest to done</span></div>
+          <div class="prog-rail" id="progNextRail"></div>
+          <div class="psection"><h3>Tracked goals <span class="prog-track-count" id="progTrackCount">0/3</span></h3><span class="psection-sub">these show progress on the results screen</span></div>
+          <div class="prog-tracked" id="progTracked"></div>
+        </div>
+
+        <!-- LEVELS & PRESTIGE -->
+        <div class="prog-panel" data-panel="levels">
+          <div class="prestige-panel" id="prestigePanel" style="display:none;">
+            <div class="pp-emblem" id="ppEmblem"><svg viewBox="0 0 24 24"><use href="#i-star"/></svg><span class="pp-num" id="ppNum">0</span></div>
+            <div class="pp-info">
+              <div class="pp-title" id="ppTitle">Prestige</div>
+              <div class="pp-sub" id="ppSub">Reach level 55 to prestige</div>
+            </div>
+            <button class="btn pp-btn" id="prestigeBtn" type="button">Prestige now</button>
+          </div>
+          <div class="psection" id="ladderSection"><h3>Level &amp; Prestige progress</h3><span class="psection-sub">your climb · every tier</span></div>
+          <div class="lp" id="achLevelLadder"></div>
+        </div>
+
+        <!-- ACHIEVEMENTS -->
+        <div class="prog-panel" data-panel="achievements">
+          <div class="ach2-tabs" id="ach2Tabs">
+            <button type="button" class="ach2-tab active" data-acat="all">All</button>
+            <button type="button" class="ach2-tab" data-acat="combat">⚔️ Combat</button>
+            <button type="button" class="ach2-tab" data-acat="climb">📈 The Climb</button>
+            <button type="button" class="ach2-tab" data-acat="dedication">🗓️ Dedication</button>
+            <button type="button" class="ach2-tab" data-acat="social">🫂 Social</button>
+          </div>
+          <div class="ach2-grid" id="achPageGrid"></div>
+          <div class="psection"><h3>Milestones</h3></div>
+          <div class="ach-milestones" id="achMilestones"></div>
+        </div>
+
+        <!-- TITLES -->
+        <div class="prog-panel" data-panel="titles">
+          <div class="titles-grid" id="achTitlesGrid"></div>
+        </div>
+      </div><!-- /page progression -->
 
       <!-- ============ PAGE: GLOBAL CHAT ============ -->
       <!-- Global chat now lives inside the Messages flyout (top pinned conversation) -->
@@ -25969,6 +26445,43 @@ const FIREBASE_CONFIG = {
     <div class="lut-titles" id="luToastTitles" style="display:none;"></div>
   </div>
 </div>
+<!-- ===== Premium Level-Up celebration FX (AAA toast) ===== -->
+<div class="lvlfx" id="lvlFx" aria-hidden="true">
+  <div class="lvlfx-dim"></div>
+  <div class="lvlfx-stage">
+    <div class="lvlfx-bloom"></div>
+    <div class="lvlfx-streaks"></div>
+    <div class="lvlfx-ring r1"></div>
+    <div class="lvlfx-ring r2"></div>
+    <div class="lvlfx-ring r3"></div>
+    <div class="lvlfx-particles" id="lvlFxParticles"></div>
+    <div class="lvlfx-banner" id="lvlFxBanner">
+      <div class="lvlfx-sheen"></div>
+      <div class="lvlfx-eyebrow" id="lvlFxKicker">LEVEL UP!</div>
+      <div class="lvlfx-numwrap"><div class="lvlfx-num" id="lvlFxNum">2</div></div>
+      <div class="lvlfx-sub" id="lvlFxSub">You reached Level 2</div>
+      <div class="lvlfx-unlocks" id="lvlFxUnlocks"></div>
+    </div>
+  </div>
+</div>
+<!-- ===== Shop unlock celebration (circular explosion, reuses the level-up FX) ===== -->
+<div class="lvlfx shopfx" id="shopFx" aria-hidden="true">
+  <div class="lvlfx-dim"></div>
+  <div class="lvlfx-stage">
+    <div class="lvlfx-bloom"></div>
+    <div class="lvlfx-streaks"></div>
+    <div class="lvlfx-ring r1"></div>
+    <div class="lvlfx-ring r2"></div>
+    <div class="lvlfx-ring r3"></div>
+    <div class="lvlfx-particles" id="shopFxParticles"></div>
+    <div class="lvlfx-banner shopfx-banner">
+      <div class="lvlfx-sheen"></div>
+      <div class="shopfx-art" id="shopFxArt"></div>
+      <div class="lvlfx-eyebrow" id="shopFxKicker">UNLOCKED</div>
+      <div class="shopfx-name" id="shopFxName">Item</div>
+    </div>
+  </div>
+</div>
 <div class="levelup-overlay" id="levelupOverlay">
   <div class="levelup-rays"></div>
   <div class="levelup-particles" id="levelupParticles"></div>
@@ -26780,6 +27293,16 @@ const FIREBASE_CONFIG = {
               <svg class="sbm-ring-ic" viewBox="0 0 24 24" width="17" height="17"><use href="#i-crown"/></svg>
             </span>
           </button>
+          <!-- MOBILE: slide-to-buy (replaces hold-to-buy on touch) -->
+          <div class="sbm-slide" id="sbmSlide" aria-hidden="true">
+            <div class="sbm-slide-track" id="sbmSlideTrack">
+              <span class="sbm-slide-fill"></span>
+              <span class="sbm-slide-label" id="sbmSlideLabel">Slide to buy</span>
+              <span class="sbm-slide-thumb" id="sbmSlideThumb"><svg viewBox="0 0 24 24" width="20" height="20"><use href="#i-arrow-right"/></svg></span>
+            </div>
+          </div>
+          <!-- Insufficient funds → inline top-up suggestion -->
+          <div class="sbm-topup-host" id="sbmTopup" style="display:none;"></div>
           <!-- Refund — appears on a fresh purchase, counts down the window -->
           <button type="button" class="btn sbm3-refund" id="sbmRefundBtn" style="display:none;">
             <span class="sbm3-refund-t">↩ REFUND <b id="sbmRefundPrice">400</b></span>
@@ -32918,6 +33441,7 @@ function celebrateChallenge(sel){
 // ===== Reusable challenge cards (mounted on Home + Play) =====
 function challengeCardsHTML(){
   return `
+    <div class="tracked-slot" id="trackedChallengeSlot"></div>
     <div class="card challenge-card ch2 ch2-daily js-daily-card">
       <div class="ch2-head">
         <span class="ch2-head-title"><svg viewBox="0 0 24 24" data-anim="flicker"><use href="#i-zap"/></svg> Daily Challenges</span>
@@ -32950,7 +33474,7 @@ function challengeCardsHTML(){
         <div class="ch2-row gc-row">
           <div class="ch2-row-top">
             <span class="ch2-title">Complete all 3 weekly challenges</span>
-            <span class="ch2-row-side"><span class="ch2-reward gc-case">📦 TRIUMPH VAULT</span></span>
+            <span class="ch2-row-side"><span class="ch2-reward gc-case">🪙 3,000 COINS</span></span>
           </div>
           <div class="ch2-progress">
             <div class="ch2-bar"><span class="ch2-fill gc-fill" style="width:0%"></span></div>
@@ -33006,6 +33530,7 @@ function refreshDailyChallenge(){
     }
     card.classList.toggle('daily-done', !!data.completed);
   });
+  try { renderTrackedChallenges(); } catch(e){}
 }
 
 function updateDailyChallengeProgress(matchResult, roundDetails){
@@ -34246,6 +34771,10 @@ function shopSpyInit(){
 function shopSetActiveSec(sec){
   state._shopActiveSec = sec;
   document.querySelectorAll('.shop-rail-item').forEach(b => b.classList.toggle('active', b.dataset.rail === sec));
+  // Mobile segmented tab bar — mirror the active section + slide the ink.
+  document.querySelectorAll('.shop-mtab').forEach(b => b.classList.toggle('active', b.dataset.mtab === sec));
+  const ink = $('#shopMTabInk');
+  if(ink){ ink.classList.toggle('to-daily', sec === 'daily'); ink.classList.toggle('to-coins', sec === 'coins'); }
   // The floating button always points at the NEXT section; hides at the end.
   const secs = shopSections();
   const idx = secs.findIndex(s => s.dataset.sec === sec);
@@ -34256,10 +34785,24 @@ function shopSetActiveSec(sec){
     else btn.style.display = 'none';
   }
 }
+// Keep the sticky mobile header height in a CSS var so section scroll-margins
+// and the sticky offset stay accurate across devices.
+function shopSyncStickyVars(){
+  const tb = document.querySelector('header.topbar');
+  if(tb) document.documentElement.style.setProperty('--topbar-h', Math.round(tb.getBoundingClientRect().height) + 'px');
+}
 document.querySelectorAll('.shop-rail-item').forEach(b => b.addEventListener('click', () => {
   document.querySelector(`.shop-sec[data-sec="${b.dataset.rail}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   try { haptic(8); } catch(e){}
 }));
+// Mobile segmented tabs → jump to the section (scroll-margin clears the sticky header).
+on('#shopMTabs', 'click', (e) => {
+  const b = e.target.closest('.shop-mtab'); if(!b) return;
+  const sec = document.querySelector(`.shop-sec[data-sec="${b.dataset.mtab}"]`);
+  if(sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  shopSetActiveSec(b.dataset.mtab);
+  try { haptic(8); } catch(e){}
+});
 on('#shopNextBtn', 'click', () => {
   const t = $('#shopNextBtn')?.dataset.target;
   if(t) document.getElementById(t)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -34425,6 +34968,7 @@ document.addEventListener('focusout', (e) => {
 try { updateLockerBadge(); } catch(e){}
 function renderShopPage(){
   try { checkWishlistRotation(); } catch(e){}
+  try { shopSyncStickyVars(); } catch(e){}
   state._shopRenderedDay = getTodayKey();
   renderShopWallet();
   try { renderWelcomeOffer(); } catch(e){}
@@ -34622,6 +35166,14 @@ function openShopBuyModal(item, opts={}){
     if(giftBtn) giftBtn.style.display = (guest || welcome) ? 'none' : '';
   }
   const card = $('#shopBuyCard'); if(card) card.className = 'modal shop-buy-modal sbm2 sbm3 sbm4 rar-' + item.rarity + (welcome ? ' sbm-welcome' : '');
+  // Mobile slide-to-buy + inline top-up, derived from the affordability state.
+  try {
+    const price = welcome ? WELCOME_OFFER.price : item.price;
+    const canBuyType = !owned && !previewOnly && !guest;
+    const short = canBuyType && (getCoins() - price) < 0;
+    sbmConfigSlide(canBuyType && !short, price);
+    if(short) sbmSuggestTopup(price); else sbmClearTopup();
+  } catch(e){}
   $('#shopBuyModal')?.classList.add('show');
   // (The tile→preview fly morph was removed — it fought the modal's own
   // entrance and read as visual noise. The stage entrance carries the moment.)
@@ -34649,8 +35201,11 @@ async function sbmDoPurchase(btn){
   try {
     const ok = state._shopBuyWelcome ? await buyWelcomeOffer(null) : await buyCosmetic(item.id);
     if(ok !== false){
+      const bought = item;
       $('#shopBuyModal')?.classList.remove('show');
       renderShopItems();
+      try { renderShopWallet(); } catch(e){}          // roll the wallet to its new balance
+      try { playShopUnlockFx(bought); } catch(e){}      // circular unlock explosion
     }
   } finally {
     btn.classList.remove('is-loading', 'charged'); btn.disabled = false;
@@ -34684,6 +35239,86 @@ async function sbmDoPurchase(btn){
     if((e.key === 'Enter' || e.key === ' ') && !btn.disabled && !btn.classList.contains('is-loading')){
       e.preventDefault(); sbmDoPurchase(btn);
     }
+  });
+})();
+// ── Mobile slide-to-buy + inline top-up + unlock celebration ──
+function sbmConfigSlide(buyable, price){
+  const slide = $('#sbmSlide'); const btn = $('#sbmBuyBtn'); if(!slide) return;
+  slide.classList.remove('done', 'arming');
+  const fill = slide.querySelector('.sbm-slide-fill'); const thumb = slide.querySelector('.sbm-slide-thumb');
+  if(fill) fill.style.width = ''; if(thumb) thumb.style.transform = '';
+  const lbl = $('#sbmSlideLabel'); if(lbl) lbl.textContent = `Slide to buy · ${fmtCoins(price)}`;
+  slide.classList.toggle('avail', !!buyable);
+  if(btn) btn.classList.toggle('has-slide', !!buyable);
+}
+function sbmClearTopup(){ const h = $('#sbmTopup'); if(h){ h.style.display = 'none'; h.innerHTML = ''; } }
+function sbmSuggestTopup(price){
+  const host = $('#sbmTopup'); if(!host) return;
+  const have = getCoins(); const need = Math.max(0, price - have);
+  if(need <= 0){ sbmClearTopup(); return; }
+  const pack = COIN_PACKS.find(p => have + p.coins >= price) || COIN_PACKS[COIN_PACKS.length - 1];
+  host.style.display = '';
+  host.innerHTML = `<div class="sbm-topup">
+    <div class="sbm-topup-txt"><b>Need ${fmtCoins(need)} more coins</b><span>Top up and grab it now</span></div>
+    <button type="button" class="sbm-topup-btn"><span class="cp-mini">🪙 +${pack.coins.toLocaleString()}</span><b>${fmtUSD(pack.price)}</b></button>
+  </div>`;
+  host.querySelector('.sbm-topup-btn')?.addEventListener('click', () => { try { haptic(8); } catch(e){} openCoinCheckout(pack.id); });
+}
+// A satisfying centered explosion when a cosmetic is unlocked — reuses the
+// level-up FX vocabulary (rings, bloom, sparks) themed to the item's rarity.
+function playShopUnlockFx(item){
+  const root = document.getElementById('shopFx'); if(!root || !item) return;
+  const r = (typeof CX_RARITY !== 'undefined' && CX_RARITY[item.rarity]) || { color:'#5dffba' };
+  const accent = r.color || '#5dffba';
+  let glowRgb = '94,255,186'; try { glowRgb = _mrfnHexToRgb(accent) || glowRgb; } catch(e){}
+  let tint = '#ffffff'; try { tint = _mrfnMixHex(accent, 0xffffff, .45); } catch(e){}
+  const lite = document.body.classList.contains('low-power') || document.body.classList.contains('reduced-motion');
+  root.style.setProperty('--luA', accent);
+  root.style.setProperty('--luB', tint);
+  root.style.setProperty('--luGlow', `rgba(${glowRgb},.6)`);
+  setText('#shopFxKicker', 'UNLOCKED');
+  setText('#shopFxName', item.name || '');
+  const art = $('#shopFxArt'); if(art){ try { art.innerHTML = buildCosmeticPreview(item, true); } catch(e){ art.innerHTML = ''; } }
+  try { _buildLuParticles($('#shopFxParticles'), accent); } catch(e){}
+  root.classList.remove('play', 'out'); root.classList.toggle('lite', lite);
+  void root.offsetWidth;
+  root.classList.add('show', 'play');
+  try { hapticSuccess(); } catch(e){ try { haptic([10, 20, 30]); } catch(_){} }
+  clearTimeout(state._shopFxT);
+  state._shopFxT = setTimeout(() => {
+    root.classList.add('out'); root.classList.remove('play');
+    setTimeout(() => root.classList.remove('show', 'out', 'lite'), 480);
+  }, 2400);
+}
+// Drag the thumb to the end to confirm the purchase (mobile).
+(function bindSbmSlide(){
+  const slide = $('#sbmSlide'); if(!slide) return;
+  const track = $('#sbmSlideTrack'), thumb = $('#sbmSlideThumb'), fill = slide.querySelector('.sbm-slide-fill');
+  if(!track || !thumb) return;
+  let dragging = false, startX = 0, max = 0;
+  const setP = (dx) => { const p = Math.max(0, Math.min(1, dx / (max || 1))); thumb.style.transform = `translateX(${p * max}px)`; if(fill) fill.style.width = `calc(${p * 100}% )`; return p; };
+  const end = (e) => {
+    if(!dragging) return; dragging = false;
+    window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); window.removeEventListener('pointercancel', end);
+    const p = setP((e.clientX || 0) - startX);
+    slide.classList.remove('arming');
+    if(p >= 0.88){
+      slide.classList.add('done');
+      thumb.style.transform = `translateX(${max}px)`; if(fill) fill.style.width = '100%';
+      try { haptic([12, 22, 34]); } catch(err){}
+      sbmDoPurchase($('#sbmBuyBtn'));
+    } else {
+      thumb.style.transform = ''; if(fill) fill.style.width = '';
+    }
+  };
+  const move = (e) => { if(!dragging) return; setP((e.clientX || 0) - startX); };
+  thumb.addEventListener('pointerdown', (e) => {
+    if(slide.classList.contains('done')) return;
+    e.preventDefault();
+    dragging = true; startX = e.clientX; max = track.clientWidth - thumb.offsetWidth - 8;
+    slide.classList.add('arming');
+    try { haptic(6); } catch(err){}
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
   });
 })();
 on('#sbmLockerBtn', 'click', () => {
@@ -39447,6 +40082,8 @@ async function enterMatch(matchData){
   if(state.matchId && state._enteredMatchId === state.matchId) return;
   state._enteredMatchId = state.matchId || null;
   cancelMatchmakingResources();
+  // Snapshot tracked-goal progress so the results screen can show what moved.
+  try { state._trackedBefore = {}; getTracked().forEach(id => { const t = resolveTrackable(id); if(t) state._trackedBefore[id] = t.cur; }); } catch(e){}
   // Friend challenges are CASUAL — just for fun, no ELO / XP / W-L (anti-exploit:
   // you can't farm rating off a friend). This is made clear on the VS + result UI.
   state.isCasual = (matchData && (matchData.mode === 'casual' || matchData.mode === 'challenge'));
@@ -41625,6 +42262,61 @@ function countUpXpGain(total){
     if(t >= 1){ clearInterval(el._cuTimer); el.textContent = `+${total} XP`; el.classList.remove('cu-pop'); void el.offsetWidth; el.classList.add('cu-pop'); }
   }, 40);
 }
+// Play the level-up celebration ANCHORED on the result-screen XP box — fired
+// the instant the XP bar fills to the end. A compact version of the premium
+// #lvlFx burst: energy rings, sparks, bloom, a bouncing "LEVEL UP!" banner,
+// and a shake+glow on the box itself.
+function playLevelUpInline(cardEl, info){
+  if(!cardEl || !info || !info.to) return;
+  const to = info.to, from = info.from || to;
+  const hitCap = !!info.hitCap || to.level >= MAX_LEVEL;
+  let milestone = hitCap; try { milestone = hitCap || isLevelMilestone(to.level); } catch(e){}
+  let tier = { a:'#5dffba' }; try { tier = levelTier(to.level); } catch(e){}
+  const accent = hitCap ? '#ffd33d' : (tier.a || (milestone ? '#ffd33d' : '#5dffba'));
+  let tint = '#fff2b0'; try { tint = _mrfnMixHex(accent, 0xffffff, .45); } catch(e){}
+  let glowRgb = '255,211,61'; try { glowRgb = _mrfnHexToRgb(accent) || glowRgb; } catch(e){}
+  const lite = document.body.classList.contains('low-power') || document.body.classList.contains('reduced-motion');
+  cardEl.querySelector('.luin')?.remove();
+  const fx = document.createElement('div');
+  fx.className = 'luin' + (lite ? ' lite' : '');
+  fx.style.setProperty('--luA', accent);
+  fx.style.setProperty('--luB', tint);
+  fx.style.setProperty('--luGlow', `rgba(${glowRgb},.6)`);
+  fx.innerHTML = `
+    <div class="luin-bloom"></div>
+    <div class="luin-ring r1"></div><div class="luin-ring r2"></div>
+    <div class="luin-particles"></div>
+    <div class="luin-banner">
+      <div class="luin-eyebrow">${hitCap ? 'MAX LEVEL!' : (milestone ? 'MILESTONE!' : 'LEVEL UP!')}</div>
+      <div class="luin-num">${to.level}</div>
+      <div class="luin-sub">${hitCap ? 'Prestige unlocked' : 'Level ' + to.level}</div>
+    </div>`;
+  cardEl.classList.add('luin-host');
+  cardEl.style.setProperty('--luA', accent);
+  cardEl.style.setProperty('--luGlow', `rgba(${glowRgb},.5)`);
+  cardEl.appendChild(fx);
+  if(!lite){
+    const ph = fx.querySelector('.luin-particles'); const cols = [accent, '#ffffff', tint]; const N = 12;
+    for(let i = 0; i < N; i++){
+      const s = document.createElement('i'); s.className = 'lu-spark';
+      s.style.setProperty('--a', ((360 / N) * i + (Math.random() * 16 - 8)) + 'deg');
+      s.style.setProperty('--d', (58 + Math.random() * 56) + 'px');
+      s.style.setProperty('--col', cols[i % cols.length]);
+      s.style.setProperty('--dur', (0.6 + Math.random() * 0.4).toFixed(2) + 's');
+      s.style.setProperty('--dl', (Math.random() * 0.1).toFixed(2) + 's');
+      ph.appendChild(s);
+    }
+  }
+  void fx.offsetWidth;
+  fx.classList.add('play');
+  if(!lite){ cardEl.classList.remove('luin-shake'); void cardEl.offsetWidth; cardEl.classList.add('luin-shake'); }
+  try { sfxLevelUp(); } catch(e){}
+  try { haptic(milestone ? 30 : 18); } catch(e){}
+  setTimeout(() => {
+    fx.classList.add('out');
+    setTimeout(() => { fx.remove(); cardEl.classList.remove('luin-host', 'luin-shake'); cardEl.style.removeProperty('--luA'); cardEl.style.removeProperty('--luGlow'); }, 520);
+  }, milestone ? 2500 : 2000);
+}
 // Populate the XP card on the match result screen using state._lastXpAward
 function populateMatchXpCard(){
   const card = $('#matchXpCard');
@@ -41653,9 +42345,18 @@ function populateMatchXpCard(){
     titleEl.style.setProperty('--title-color', equipped.color);
   }
 
+  // A level-up on the result screen celebrates RIGHT HERE on the XP box (the
+  // bar reaches the end, then the burst fires) instead of the big centered
+  // overlay — so consume the pending level-up to keep flushMatchCelebrations
+  // from double-firing it. Keep the info to drive the inline burst.
   // Bar starts at old progress, animates to new
   const fill = $('#mxpBarFill');
   const sub = $('#mxpSub');
+  let inlineLu = null;
+  if(award.leveledUp && fill){
+    inlineLu = state._pendingLevelUp || { from: oldL, to: newL, newTitles: [], hitCap: newL.level >= MAX_LEVEL };
+    state._pendingLevelUp = null;   // suppress the centered overlay — we celebrate on the box
+  }
   if(fill){
     fill.style.transition = 'none';
     fill.style.width = (oldL.progress * 100) + '%';
@@ -41665,16 +42366,20 @@ function populateMatchXpCard(){
     setTimeout(() => {
       fill.style.transition = '';
       if(award.leveledUp){
-        // animate to 100%, then reset to new level's progress
+        // animate to 100% (bar reaches the end) …
         fill.style.width = '100%';
         setTimeout(() => {
-          setText('#mxpLevelBadge', newL.level); paintLevelBadge('#mxpLevelBadge', newL.level);
-          fill.style.transition = 'none';
-          fill.style.width = '0%';
-          void fill.offsetWidth;
-          fill.style.transition = '';
-          fill.style.width = (newL.progress * 100) + '%';
-          setText('#mxpSub', `${newL.xpInLevel} / ${newL.xpForThis} XP`);
+          // … then celebrate on the box, and roll into the new level.
+          try { playLevelUpInline(card, inlineLu); } catch(e){}
+          setTimeout(() => {
+            setText('#mxpLevelBadge', newL.level); paintLevelBadge('#mxpLevelBadge', newL.level);
+            fill.style.transition = 'none';
+            fill.style.width = '0%';
+            void fill.offsetWidth;
+            fill.style.transition = '';
+            fill.style.width = (newL.progress * 100) + '%';
+            setText('#mxpSub', `${newL.xpInLevel} / ${newL.xpForThis} XP`);
+          }, 480);
         }, 900);
       } else {
         fill.style.width = (newL.progress * 100) + '%';
@@ -41734,6 +42439,22 @@ function renderMrChallenges(){
         cur: w.progress, goal: w.goal, gained: w.gained, completed: w.completed,
         reward: '+1 LEVEL',
       }));
+    });
+  } catch(e){}
+  // Tracked goals — a row per tracked goal that advanced (or just completed) this match.
+  try {
+    const before = state._trackedBefore || {};
+    getTracked().forEach(id => {
+      const t = resolveTrackable(id); if(!t) return;
+      const was = (before[id] != null) ? before[id] : t.cur;
+      const gained = t.cur - was;
+      if(gained > 0 || (t.done && was < t.goal)){
+        rows.push(mrfnChallengeRow({
+          kind:'TRACKED', kindCls:'tracked', text: `${t.icon} ${t.label}`,
+          cur: t.cur, goal: t.goal, gained: Math.max(0, gained), completed: t.done,
+          reward: t.done ? '✓ Goal reached' : (trackRemainHint(t) || 'Tracked goal'),
+        }));
+      }
     });
   } catch(e){}
   if(!rows.length){ host.style.display = 'none'; host.innerHTML = ''; return; }
@@ -42706,70 +43427,101 @@ function _drainLuQueue(){
   const done = () => { state._luActive = false; setTimeout(_drainLuQueue, 240); };
   try { _renderLevelUpCard(info, done); } catch(e){ done(); }
 }
+// Spawn the outward spark burst + drifting embers for the premium level-up FX.
+function _buildLuParticles(host, accent){
+  if(!host) return;
+  host.innerHTML = '';
+  let tint = '#ffffff'; try { tint = _mrfnMixHex(accent, 0xffffff, .5); } catch(e){}
+  const cols = [accent, '#ffffff', tint];
+  const N = 16;
+  for(let i = 0; i < N; i++){
+    const s = document.createElement('i'); s.className = 'lu-spark';
+    s.style.setProperty('--a', ((360 / N) * i + (Math.random() * 18 - 9)) + 'deg');
+    s.style.setProperty('--d', (94 + Math.random() * 92) + 'px');
+    s.style.setProperty('--col', cols[i % cols.length]);
+    s.style.setProperty('--dur', (0.7 + Math.random() * 0.5).toFixed(2) + 's');
+    s.style.setProperty('--dl', (Math.random() * 0.12).toFixed(2) + 's');
+    host.appendChild(s);
+  }
+  for(let i = 0; i < 9; i++){
+    const f = document.createElement('i'); f.className = 'lu-ember';
+    f.style.setProperty('--x', (Math.random() * 240 - 120).toFixed(0) + 'px');
+    f.style.setProperty('--col', cols[i % cols.length]);
+    f.style.setProperty('--dur', (1.1 + Math.random() * 0.9).toFixed(2) + 's');
+    f.style.setProperty('--dl', (Math.random() * 0.45).toFixed(2) + 's');
+    host.appendChild(f);
+  }
+}
+// _renderLevelUpCard — drives the premium, centered AAA level-up celebration:
+// an energy ring explodes outward, the banner pops in with an overshoot bounce,
+// the screen shakes on impact, and sparks/embers/streaks sell the moment.
+// Keeps the queue/onDone contract of the old stack-toast so nothing else changes.
 function _renderLevelUpCard(info, onDone){
-  const stack = getPopupStack();
+  const root = document.getElementById('lvlFx');
   const to = info.to, from = info.from || to;
   const hitCap = !!info.hitCap || to.level >= MAX_LEVEL;
   const milestone = hitCap || isLevelMilestone(to.level);
-  if(!stack){ try { sfxLevelUp(); } catch(e){} onDone && onDone(); return; }
-  const tier = levelTier(to.level);
-  // "What you unlocked" chips — new titles + the coin bonus granted every 7 levels.
+  if(!root){ try { sfxLevelUp(); } catch(e){} onDone && onDone(); return; }
+  let tier = { a:'#5dffba' }; try { tier = levelTier(to.level); } catch(e){}
+  const accent = hitCap ? '#ffd33d' : (tier.a || (milestone ? '#ffd33d' : '#5dffba'));
+  let tint = '#fff2b0'; try { tint = _mrfnMixHex(accent, 0xffffff, .45); } catch(e){}
+  let glowRgb = '255,211,61'; try { glowRgb = _mrfnHexToRgb(accent) || glowRgb; } catch(e){}
+  const lite = document.body.classList.contains('low-power') || document.body.classList.contains('reduced-motion');
+  // theme the FX
+  root.style.setProperty('--luA', accent);
+  root.style.setProperty('--luB', tint);
+  root.style.setProperty('--luGlow', `rgba(${glowRgb},.55)`);
+  // copy
+  const kickerEl = document.getElementById('lvlFxKicker');
+  const subEl = document.getElementById('lvlFxSub');
+  const numEl = document.getElementById('lvlFxNum');
+  if(kickerEl) kickerEl.textContent = hitCap ? 'MAX LEVEL!' : (milestone ? 'MILESTONE!' : 'LEVEL UP!');
+  if(subEl) subEl.textContent = hitCap ? `Level ${MAX_LEVEL} · Prestige unlocked` : `You reached Level ${to.level}`;
+  if(numEl) numEl.textContent = String(from.level);
+  // unlock chips
   const chips = [];
   (info.newTitles || []).forEach(t => {
-    chips.push(`<span class="lu-unlock-chip" style="--uc:${t.color || '#5dffba'}"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg>${escapeHTML(t.name)}</span>`);
+    chips.push(`<span class="lvlfx-chip" style="--uc:${t.color || '#5dffba'}"><svg viewBox="0 0 24 24"><use href="#i-medal"/></svg>${escapeHTML(t.name)}</span>`);
   });
   if(!hitCap && to.level % 7 === 0){
-    chips.push(`<span class="lu-unlock-chip" style="--uc:#ffd33d"><svg viewBox="0 0 24 24"><use href="#i-coin"/></svg>+1,000 coins</span>`);
+    chips.push(`<span class="lvlfx-chip" style="--uc:#ffd33d"><svg viewBox="0 0 24 24"><use href="#i-coin"/></svg>+1,000 coins</span>`);
   }
-  const unlocksHTML = chips.length ? `<div class="lu-unlocks">${chips.join('')}</div>` : '';
-  // Progress context — how far into the next level this leaves you.
-  const progHTML = hitCap ? '' :
-    `<div class="lu-prog"><div class="lu-prog-fill"></div></div>
-     <div class="lu-prog-txt">${(to.xpInLevel||0).toLocaleString()} / ${(to.xpForThis||0).toLocaleString()} XP to Lv ${to.level + 1}</div>`;
-  const card = document.createElement('div');
-  card.className = 'ach-unlock-toast levelup-card lu-v2' + (hitCap ? ' maxlevel-card' : '') + (milestone ? ' lu-milestone' : '');
-  try { card.dataset.lu = to.level; } catch(e){}
-  card.style.setProperty('--lu-accent', hitCap ? '#ffd33d' : tier.a);
-  const kicker = hitCap
-    ? `<div class="lu-kicker ach-unlock-kicker">★ Max level reached</div>`
-    : milestone
-      ? `<div class="lu-kicker ach-unlock-kicker">✦ Milestone reached</div>`
-      : `<div class="lu-kicker ach-unlock-kicker">▲ Level up</div>`;
-  const body = hitCap
-    ? `${kicker}
-       <div class="ach-unlock-title">Level ${MAX_LEVEL} · Prestige unlocked</div>
-       <div class="ach-unlock-desc">Open your profile to prestige &amp; earn a prestige title</div>
-       ${unlocksHTML}`
-    : `${kicker}
-       <div class="ach-unlock-title">Level ${to.level}</div>
-       ${unlocksHTML || `<div class="ach-unlock-desc">You reached level ${to.level}</div>`}
-       ${progHTML}
-       ${levelUpRewardPreview(to.level)}`;
-  card.innerHTML = `
-    <div class="lut-badge lu-card-badge"><span class="lu-badge-num">${from.level}</span></div>
-    <div class="ach-unlock-body">${body}</div>`;
-  stack.appendChild(card);
-  const numEl = card.querySelector('.lu-badge-num');
-  try { paintLevelBadge(card.querySelector('.lu-card-badge'), to.level); } catch(e){}
-  // Count the badge up from the old level to the new one.
-  try { if(numEl){ numEl._num = from.level; rollNumber(numEl, to.level, n => String(Math.round(n))); } } catch(e){}
-  // Fill the progress bar after paint.
-  const pct = hitCap ? 100 : Math.round((to.progress || 0) * 100);
-  try { requestAnimationFrame(() => { const f = card.querySelector('.lu-prog-fill'); if(f) f.style.width = pct + '%'; }); } catch(e){}
+  const unlocksEl = document.getElementById('lvlFxUnlocks');
+  if(unlocksEl) unlocksEl.innerHTML = chips.join('');
+  // particles
+  try { _buildLuParticles(document.getElementById('lvlFxParticles'), accent); } catch(e){}
+  // restart the animation timeline
+  root.classList.remove('play', 'out');
+  root.classList.toggle('lite', lite);
+  void root.offsetWidth;
+  root.classList.add('show', 'play');
+  // count the number up from old → new level
+  try {
+    if(numEl){
+      if(!lite && typeof rollNumber === 'function'){ numEl._num = from.level; rollNumber(numEl, to.level, n => String(Math.round(n))); }
+      else numEl.textContent = String(to.level);
+    }
+  } catch(e){ if(numEl) numEl.textContent = String(to.level); }
+  // feedback
   try { sfxLevelUp(); } catch(e){}
-  try { haptic(milestone ? 30 : 18); } catch(e){}
-  const dur = hitCap ? 6000 : (milestone ? 5200 : 4400);
+  try { haptic(milestone ? 32 : 20); } catch(e){}
+  if(!lite){
+    const app = document.querySelector('.app');
+    if(app){ app.classList.remove('lu-shake'); void app.offsetWidth; app.classList.add('lu-shake'); setTimeout(() => app.classList.remove('lu-shake'), 600); }
+  }
+  // hold, then settle out
+  const hold = hitCap ? 4200 : (milestone ? 3600 : 3000);
+  const banner = document.getElementById('lvlFxBanner');
   let closed = false;
   const close = () => {
     if(closed) return; closed = true;
     clearTimeout(t);
-    card.classList.add('out');
-    setTimeout(() => { card.remove(); onDone && onDone(); }, 450);
+    if(banner){ banner.style.pointerEvents = 'none'; banner.removeEventListener('click', close); }
+    root.classList.add('out'); root.classList.remove('play');
+    setTimeout(() => { root.classList.remove('show', 'out', 'lite'); onDone && onDone(); }, 500);
   };
-  // Tap-through / dismiss.
-  card.style.pointerEvents = 'auto';
-  card.addEventListener('click', close);
-  const t = setTimeout(close, dur);
+  if(banner){ banner.style.pointerEvents = 'auto'; banner.addEventListener('click', close); }
+  const t = setTimeout(close, hold);
 }
 
 // ============= PRESTIGE UP =============
@@ -43800,6 +44552,7 @@ function setActiveNav(nav){
 // (within this session), instead of always dumping you at the top.
 const _pageScroll = {};
 function showNavPage(page){
+  if(page === 'achievements') page = 'progression';   // Achievements folded into Progression
   // Leaving an ACTIVE matchmaking search via any nav button? Keep the queue
   // running in the background and drop the floating pill in — no dedicated
   // "browse" click required.
@@ -43839,7 +44592,7 @@ function showNavPage(page){
       if(page === 'play') renderPlayPage();
       else if(page === 'shop') renderShopPage();
       else if(page === 'rank') renderRankPage();
-      else if(page === 'achievements') renderAchievementsPage();
+      else if(page === 'progression') renderProgressionPage();
       else if(page === 'friends') renderFriendsPage();
       else if(page === 'chat') renderChatPage();
       else if(page === 'settings') renderSettingsPage();
@@ -43884,7 +44637,7 @@ const TOPBAR_CTX = {
   activity:     { name:'Activity',     action:{ label:'Match history', go:() => $('#setMatchHistory')?.click() } },
   rank:         { name:'Rank',         action:{ label:'Play ranked',  go:() => showNavPage('play') } },
   friends:      { name:'Friends' },
-  achievements: { name:'Achievements' },
+  progression:  { name:'Progression' },
   settings:     { name:'Settings',     action:{ label:'Edit profile', go:() => openEditProfile() } },
 };
 function updateTopbarContext(page){
@@ -43910,7 +44663,7 @@ const NAV_HIDEABLE = [
   { id:'locker',       label:'Locker' },
   { id:'rank',         label:'Rank' },
   { id:'friends',      label:'Friends' },
-  { id:'achievements', label:'Achievements' },
+  { id:'progression',  label:'Progression' },
 ];
 const NAV_HIDDEN_KEY = 'rosham_nav_hidden';
 function getHiddenNav(){ try { const a = JSON.parse(localStorage.getItem(NAV_HIDDEN_KEY) || '[]'); return Array.isArray(a) ? a : []; } catch(e){ return []; } }
@@ -44064,6 +44817,7 @@ function runDailyHousekeeping(){
     try { refreshDailyChallenge(); } catch(e){}
     try { refreshWeeklyChallenges(); } catch(e){}
     try { paintMnavAvatar(); } catch(e){}
+    try { updateProgressionNavDot(); } catch(e){}
     // GUEST: one-time fragility warning + any pending post-match conversion nudge.
     try {
       if(isGuest()){
@@ -44571,6 +45325,7 @@ function renderAchievementLines(){
           <div class="a2-sub">${mastered ? `All ${tiers.length} tiers complete` : `${escapeHTML(cur.title)} · ${escapeHTML(cur.desc)}`}</div>
         </div>
         ${claimBtns || `<span class="a2-count">${done}/${tiers.length}</span>`}
+        ${!mastered ? `<button type="button" class="a2-track${isTracked('ach:'+cur.id) ? ' on' : ''}" data-track="ach:${cur.id}" title="${isTracked('ach:'+cur.id) ? 'Untrack' : 'Track this goal'}">🎯</button>` : ''}
         ${done > 0 ? (() => {
           const topDone = tiers[done - 1];
           const pinned = (state.profile?.showcase || []).includes(topDone.id);
@@ -44676,6 +45431,7 @@ function renderAchievementsPage(){
           <div class="title-chip-name">${t.name} <span class="title-rar">${rar.label}</span></div>
           <div class="title-chip-req">${unlocked ? 'unlocked' : 'level ' + t.level}</div>
         </div>
+        ${!unlocked ? `<button type="button" class="title-chip-track${isTracked('title:'+t.id) ? ' on' : ''}" data-track="title:${t.id}" title="Track this title">🎯</button>` : ''}
         <svg class="title-chip-check" viewBox="0 0 24 24"><use href="#i-check"/></svg>`;
       if(unlocked) chip.addEventListener('click', () => { equipTitle(t.id); renderAchievementsPage(); });
       grid.appendChild(chip);
@@ -44695,6 +45451,7 @@ function renderAchievementsPage(){
           <div class="title-chip-name">✦ ${t.name} <span class="title-rar">${rar.label}</span></div>
           <div class="title-chip-req">${unlocked ? 'unlocked' : 'prestige ' + t.prestige}</div>
         </div>
+        ${!unlocked ? `<button type="button" class="title-chip-track${isTracked('title:'+t.id) ? ' on' : ''}" data-track="title:${t.id}" title="Track this title">🎯</button>` : ''}
         <svg class="title-chip-check" viewBox="0 0 24 24"><use href="#i-check"/></svg>`;
       if(unlocked) chip.addEventListener('click', () => { equipTitle(t.id); renderAchievementsPage(); });
       grid.appendChild(chip);
@@ -44747,6 +45504,242 @@ function renderAchievementsPage(){
     });
   }
 }
+
+// ═══════════════════════ PROGRESSION PAGE ═══════════════════════
+// The Achievements page grew into a full Progression hub: an Overview dashboard
+// (completion rings + a next-milestone rail + tracked goals), Levels & Prestige,
+// the tiered Achievements, and Titles — plus claim-all, an unclaimed nav dot,
+// search, and up to 3 tracked goals that ride the challenges list + result card.
+let _progTab = 'overview';
+let _progSearch = '';
+const PROG_TABS = ['overview','levels','achievements','titles'];
+const MAX_TRACKED = 3;
+// ---- tracking model ----
+function getTracked(){ return Array.isArray(state.profile?.tracked) ? state.profile.tracked.slice(0, MAX_TRACKED) : []; }
+function isTracked(id){ return getTracked().includes(id); }
+// Resolve a track id → { id, label, icon, cur, goal, done }. Namespaced by kind.
+function resolveTrackable(id){
+  const p = state.profile || {};
+  try {
+    if(id.startsWith('ach:')){
+      const a = ACH_BY_ID[id.slice(4)]; if(!a) return null;
+      let pr=[0,1]; try{ pr = a.prog ? a.prog(p) : [0,1]; }catch(e){}
+      let done=false; try{ done = !!a.check(p); }catch(e){}
+      const cur=Math.min(pr[0]||0, pr[1]||1), goal=pr[1]||1;
+      return { id, label:a.title, icon:a.icon, cur, goal, done, kind:'Badge', sub:a.desc || `Unlock the ${a.title} badge`, unit:(a.unit||'') };
+    }
+    if(id.startsWith('title:')){
+      const key = id.slice(6);
+      const t = TITLES.find(x=>x.id===key) || PRESTIGE_TITLES.find(x=>x.id===key); if(!t) return null;
+      if(t.level != null){ const lvl=levelOf(p).level; return { id, label:t.name+' title', icon:'🎖️', cur:Math.min(lvl,t.level), goal:t.level, done:lvl>=t.level, kind:'Title', sub:`Reach level ${t.level} to unlock the ${t.name} title`, unit:'level' }; }
+      if(t.prestige != null){ const pr=prestigeOf(p); return { id, label:t.name+' title', icon:'✦', cur:Math.min(pr,t.prestige), goal:t.prestige, done:pr>=t.prestige, kind:'Title', sub:`Prestige ${t.prestige}× to unlock the ${t.name} title`, unit:'prestige' }; }
+      return null;
+    }
+    if(id.startsWith('lvl:')){ const g=+id.slice(4)||1; const lvl=levelOf(p).level; return { id, label:`Reach level ${g}`, icon:'📈', cur:Math.min(lvl,g), goal:g, done:lvl>=g, kind:'Level', sub:`Earn XP from matches to reach level ${g}`, unit:'level' }; }
+    if(id.startsWith('prestige:')){ const g=+id.slice(9)||1; const pr=prestigeOf(p); return { id, label:`Prestige ${g}`, icon:'✦', cur:Math.min(pr,g), goal:g, done:pr>=g, kind:'Prestige', sub:`Prestige ${g}× — reach the level cap and reset`, unit:'prestige' }; }
+  } catch(e){}
+  return null;
+}
+// "3 wins to go" style remaining-effort hint for a resolved trackable.
+function trackRemainHint(it){
+  if(!it || it.done) return '';
+  const left = Math.max(0, (it.goal||0) - (it.cur||0));
+  if(left <= 0) return '';
+  const u = it.unit;
+  if(u === 'level') return `${left} level${left>1?'s':''} to go`;
+  if(u === 'prestige') return `${left} prestige${left>1?'s':''} to go`;
+  if(u) return `${left.toLocaleString()} ${u}${left>1?'s':''} to go`;
+  return `${left.toLocaleString()} to go`;
+}
+async function toggleTrack(id){
+  if(!state.profile) return;
+  let tr = getTracked();
+  if(tr.includes(id)){ tr = tr.filter(x=>x!==id); try{ hapticTick(); }catch(e){} }
+  else {
+    if(tr.length >= MAX_TRACKED){ try{ hapticError(); }catch(e){} try{ toast(`You can track up to ${MAX_TRACKED} goals — untrack one first`, 'info'); }catch(e){} return; }
+    tr = [...tr, id]; try{ hapticSuccess(); }catch(e){} try{ toast('🎯 Tracked — progress shows on your results screen', 'success', { duration:3000 }); }catch(e){}
+  }
+  state.profile.tracked = tr;
+  try { if(state.user) await updateDoc(doc(state.db,'users',state.user.uid), { tracked: tr }); } catch(e){}
+  try { renderProgTracked(); renderProgRail(); } catch(e){}
+  try { renderTrackedChallenges(); } catch(e){}
+}
+// ---- completion + candidates ----
+function progComputeCompletion(){
+  const p = state.profile || {};
+  const lvl = levelOf(p).level;
+  const achUnlocked = ACHIEVEMENTS.filter(a => { try { return a.check(p); } catch(e){ return false; } }).length;
+  const achFrac = achUnlocked / Math.max(1, ACHIEVEMENTS.length);
+  const titleTotal = TITLES.length + PRESTIGE_TITLES.length;
+  const titleUnlocked = titlesUnlockedAt(lvl).length + prestigeTitlesUnlocked(prestigeOf(p)).length;
+  const titleFrac = titleUnlocked / Math.max(1, titleTotal);
+  const levelFrac = Math.min(1, lvl / MAX_LEVEL);
+  const overall = (achFrac + titleFrac + levelFrac) / 3;
+  return { achFrac, titleFrac, levelFrac, overall, achUnlocked, achTotal:ACHIEVEMENTS.length, titleUnlocked, titleTotal, lvl };
+}
+function progMilestoneCandidates(){
+  const p = state.profile || {};
+  const out = [];
+  ACHIEVEMENTS.forEach(a => {
+    let done=false; try{ done=!!a.check(p); }catch(e){}
+    if(done) return;
+    let pr=[0,1]; try{ pr = a.prog ? a.prog(p) : [0,1]; }catch(e){}
+    const frac = Math.max(0, Math.min(1, (pr[0]||0)/(pr[1]||1)));
+    out.push({ id:'ach:'+a.id, icon:a.icon, label:a.title, sub:a.desc, cur:Math.min(pr[0]||0,pr[1]||1), goal:pr[1]||1, frac });
+  });
+  const lvl = levelOf(p).level;
+  const nt = TITLES.find(t => t.level > lvl);
+  if(nt) out.push({ id:'title:'+nt.id, icon:'🎖️', label:nt.name+' title', sub:'Reach level '+nt.level, cur:lvl, goal:nt.level, frac:Math.min(1,lvl/nt.level) });
+  if(lvl < MAX_LEVEL){ const nextMs = Math.min(MAX_LEVEL, (Math.floor(lvl/5)+1)*5); out.push({ id:'lvl:'+nextMs, icon:'📈', label:'Reach level '+nextMs, sub:'Keep earning XP', cur:lvl, goal:nextMs, frac:lvl/nextMs }); }
+  out.sort((a,b)=> b.frac - a.frac);
+  return out;
+}
+// ---- renders ----
+function _progSetRing(sel, frac){
+  const el = typeof sel==='string' ? $(sel) : sel; if(!el) return;
+  const off = Math.max(0, Math.min(100, 100 - frac*100));
+  requestAnimationFrame(() => requestAnimationFrame(() => { el.style.strokeDashoffset = off; }));
+}
+function renderProgMeters(m){
+  const host = $('#progMeters'); if(!host) return;
+  const rows = [
+    { go:'levels',       label:'Levels',       frac:m.levelFrac, txt:`Lv ${m.lvl}/${MAX_LEVEL}`,           color:'#ffd33d' },
+    { go:'achievements', label:'Achievements', frac:m.achFrac,   txt:`${m.achUnlocked}/${m.achTotal}`,     color:'#a48bff' },
+    { go:'titles',       label:'Titles',       frac:m.titleFrac, txt:`${m.titleUnlocked}/${m.titleTotal}`, color:'#5dffba' },
+  ];
+  host.innerHTML = rows.map((r,i)=>`<button type="button" class="prog-meter" data-ptab-go="${r.go}" style="--mc:${r.color}; --d:${i*70}ms">
+    <div class="prog-meter-ring">
+      <svg viewBox="0 0 72 72"><circle class="pmr-bg" cx="36" cy="36" r="30"/><circle class="pmr-fg" cx="36" cy="36" r="30" pathLength="100" stroke-dasharray="100" stroke-dashoffset="${100 - r.frac*100}"/></svg>
+      <span class="prog-meter-pct">${Math.round(r.frac*100)}%</span>
+    </div>
+    <div class="prog-meter-lbl">${r.label}</div>
+    <div class="prog-meter-sub">${r.txt}</div>
+    <div class="prog-meter-cta">View →</div>
+  </button>`).join('');
+}
+function renderProgRail(){
+  const host = $('#progNextRail'); if(!host) return;
+  const items = progMilestoneCandidates().slice(0, 6);
+  if(!items.length){ host.innerHTML = `<div class="prog-rail-empty">🎉 Everything's done — you're a legend.</div>`; return; }
+  const kindOf = id => id.startsWith('ach:') ? 'Badge' : id.startsWith('title:') ? 'Title' : id.startsWith('prestige:') ? 'Prestige' : 'Level';
+  host.innerHTML = items.map((it,i)=>{
+    const pct = Math.round(it.frac*100); const tracked = isTracked(it.id);
+    return `<div class="prog-rail-card${tracked?' tracked':''}" style="--d:${i*55}ms">
+      <div class="prc-top">
+        <span class="prc-ic">${it.icon}</span>
+        <span class="prc-kind">${kindOf(it.id)}</span>
+        <button type="button" class="prc-track${tracked?' on':''}" data-track="${it.id}" title="${tracked?'Untrack':'Track this goal'}">🎯</button>
+      </div>
+      <div class="prc-name">${escapeHTML(it.label)}</div>
+      <div class="prc-sub">${escapeHTML(it.sub||'')}</div>
+      <div class="prc-barrow"><div class="prc-bar"><i style="width:${pct}%"></i></div><span class="prc-count">${it.cur}/${it.goal}</span></div>
+    </div>`;
+  }).join('');
+}
+function renderProgTracked(){
+  const host = $('#progTracked'); const cnt = $('#progTrackCount');
+  const tr = getTracked();
+  if(cnt) cnt.textContent = tr.length + '/' + MAX_TRACKED;
+  if(!host) return;
+  if(!tr.length){ host.innerHTML = `<div class="prog-tracked-empty">Nothing tracked yet. Tap the <b>🎯</b> on any milestone, achievement or title to track it — you can follow up to ${MAX_TRACKED} goals at once, and their live progress shows on the challenges list and your match-results screen.</div>`; return; }
+  host.innerHTML = tr.map((id,i) => {
+    const it = resolveTrackable(id); if(!it) return '';
+    const pct = Math.round((it.cur/it.goal)*100);
+    const remain = trackRemainHint(it);
+    return `<div class="prog-trk-row${it.done?' done':''}" style="--d:${i*70}ms">
+      <span class="ptr-ic">${it.icon}</span>
+      <div class="ptr-body">
+        <div class="ptr-head"><span class="ptr-name">${escapeHTML(it.label)}</span><span class="ptr-kind">${it.kind||''}</span></div>
+        <div class="ptr-sub">${it.done ? '🎉 Complete — ready to claim!' : escapeHTML(it.sub||'') + (remain ? ` · <b>${remain}</b>` : '')}</div>
+        <div class="ptr-barrow"><div class="ptr-bar"><i style="width:${pct}%"></i></div><span class="ptr-count">${it.done?'✓ DONE':it.cur+' / '+it.goal}</span></div>
+      </div>
+      <button type="button" class="ptr-untrack" data-track="${id}" title="Untrack">✕</button>
+    </div>`;
+  }).join('');
+}
+// Tracked goals as a challenge card on the Play page (alongside daily/weekly).
+function renderTrackedChallenges(){
+  const slot = $('#trackedChallengeSlot'); if(!slot) return;
+  const items = getTracked().map(resolveTrackable).filter(Boolean);
+  if(!items.length){ slot.innerHTML=''; slot.style.display='none'; return; }
+  slot.style.display='';
+  slot.innerHTML = `<div class="card challenge-card ch2 ch2-tracked">
+    <div class="ch2-head"><span class="ch2-head-title">🎯 Tracked goals</span><span class="ch2-chip">${items.length}/${MAX_TRACKED}</span></div>
+    <div class="ch2-rows">${items.map(it=>{ const pct=Math.min(100,(it.cur/it.goal)*100); const remain=trackRemainHint(it);
+      return `<div class="ch2-row"><div class="ch2-row-top"><span class="ch2-title">${it.icon} ${escapeHTML(it.label)}</span><span class="ch2-row-side"><button class="ch2-untrack" data-track="${it.id}" title="Untrack goal">✕</button></span></div>
+      <div class="ch2-sub">${it.done ? '🎉 Complete — claim it on the Progression page' : escapeHTML(it.sub||'') + (remain ? ` · ${remain}` : '')}</div>
+      <div class="ch2-progress"><div class="ch2-bar"><span class="ch2-fill${it.done?' complete':''}" style="width:${pct}%"></span></div><span class="ch2-count">${it.done?'✓ DONE':it.cur+' / '+it.goal}</span></div></div>`; }).join('')}</div>
+  </div>`;
+}
+// ---- claim-all + unclaimed ----
+function progUnclaimedCount(){
+  const p = state.profile; if(!p) return 0; const claimed = achClaimedSet();
+  return ACHIEVEMENTS.filter(a => { try { return a.check(p) && !claimed.has(a.id); } catch(e){ return false; } }).length;
+}
+async function progClaimAll(){
+  const p = state.profile; if(!p || !state.user) return;
+  const claimed = achClaimedSet();
+  const toClaim = ACHIEVEMENTS.filter(a => { try { return a.check(p) && !claimed.has(a.id); } catch(e){ return false; } });
+  if(!toClaim.length) return;
+  let totalXp = 0;
+  toClaim.forEach(a => { const line = ACH_LINES.find(l => l.ids.includes(a.id)); totalXp += ACH_TIER_XP(line ? line.ids.indexOf(a.id) : 0); claimed.add(a.id); });
+  state.profile.achClaimed = [...claimed];
+  try { await updateDoc(doc(state.db,'users',state.user.uid), { achClaimed: state.profile.achClaimed }); } catch(e){}
+  try { grantXp(totalXp, 'Achievements claimed', { silent:true }); } catch(e){}
+  try { hapticSuccess(); } catch(e){}
+  try { toastReward(`${toClaim.length} reward${toClaim.length>1?'s':''} claimed`, { icon:'✨', sub:`+${totalXp.toLocaleString()} XP` }); } catch(e){}
+  try { renderProgressionPage(); } catch(e){}
+}
+function updateProgressionNavDot(){
+  const n = progUnclaimedCount();
+  const dot = $('#navProgDot'); if(dot) dot.style.display = n > 0 ? '' : 'none';
+}
+// ---- search + tabs ----
+function progApplySearch(){
+  const q = _progSearch.trim().toLowerCase();
+  document.querySelectorAll('#achPageGrid .a2-card').forEach(c => { c.style.display = (!q || c.textContent.toLowerCase().includes(q)) ? '' : 'none'; });
+  document.querySelectorAll('#achTitlesGrid .title-chip').forEach(c => { c.style.display = (!q || c.textContent.toLowerCase().includes(q)) ? '' : 'none'; });
+}
+function progMoveTabInk(){
+  const ink = $('#progTabInk'); const act = document.querySelector('#progTabs .prog-tab.active');
+  if(!ink || !act) return;
+  ink.style.width = act.offsetWidth + 'px';
+  ink.style.transform = `translateX(${act.offsetLeft}px)`;
+}
+function progSwitchTab(tab){
+  if(!PROG_TABS.includes(tab)) tab = 'overview';
+  _progTab = tab;
+  document.querySelectorAll('#progTabs .prog-tab').forEach(b => b.classList.toggle('active', b.dataset.ptab === tab));
+  document.querySelectorAll('.nav-page[data-page="progression"] .prog-panel').forEach(pn => pn.classList.toggle('active', pn.dataset.panel === tab));
+  const sw = $('#progSearch'); if(sw) sw.style.display = (tab === 'achievements' || tab === 'titles') ? '' : 'none';
+  requestAnimationFrame(progMoveTabInk);
+  try { hapticTick(); } catch(e){}
+}
+function renderProgressionPage(){
+  if(!state.profile) return;
+  try { renderAchievementsPage(); } catch(e){}   // populates the shared level/ach/title/milestone IDs
+  const p = state.profile;
+  setText('#progHeroName', p.username || 'Player');
+  setText('#progHeroLvl', levelOf(p).level);
+  const m = progComputeCompletion();
+  renderProgMeters(m);
+  _progSetRing('#progOverallRing', m.overall);
+  setText('#progOverallPct', Math.round(m.overall*100)+'%');
+  renderProgRail();
+  renderProgTracked();
+  const unclaimed = progUnclaimedCount();
+  const ca = $('#progClaimAll'); if(ca){ ca.style.display = unclaimed > 0 ? '' : 'none'; setText('#progClaimCount', unclaimed); }
+  const ab = $('#progAchUnclaimed'); if(ab){ ab.style.display = unclaimed > 0 ? '' : 'none'; ab.textContent = unclaimed; }
+  updateProgressionNavDot();
+  progApplySearch();
+  requestAnimationFrame(progMoveTabInk);
+}
+// ---- wiring ----
+on('#progTabs', 'click', (e) => { const t = e.target.closest('[data-ptab]'); if(t) progSwitchTab(t.dataset.ptab); });
+on('#progMeters', 'click', (e) => { const t = e.target.closest('[data-ptab-go]'); if(t) progSwitchTab(t.dataset.ptabGo); });
+on('#progClaimAll', 'click', () => progClaimAll());
+on('#progSearchInput', 'input', (e) => { _progSearch = e.target.value || ''; progApplySearch(); });
+document.addEventListener('click', (e) => { const t = e.target.closest?.('[data-track]'); if(t){ e.preventDefault(); e.stopPropagation(); toggleTrack(t.dataset.track); } });
 
 // ===== LEVEL & PRESTIGE LADDER (achievements page) =====
 // ===== LEVEL & PRESTIGE PROGRESS — paginated, milestone-track (NOT a pass) =====
