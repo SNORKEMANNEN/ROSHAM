@@ -21458,15 +21458,44 @@ body.low-power :is([class*="cxn-"], [class*="cxt-"], .cxf-galaxy .cx-frame-overl
   /* mobile: swap hold-to-buy for slide-to-buy */
   .sbm-slide.avail{ display:block; }
   .sbm3-wallet .sbm-buy.has-slide{ display:none; }
-  /* buy sheet → single column, full-width, comfy touch targets */
+  /* ── COSMETIC PREVIEW — compact, clean, single column ── */
   .sbm4.shop-buy-modal{ max-width:100%; width:100%; }
-  .sbm4 .sbm3-body{ grid-template-columns:1fr; gap:0; padding:0 16px 10px; }
-  .sbm3 .sbm-hero{ min-height:280px; padding:22px 16px 70px; margin-bottom:14px; }
+  .sbm3-top{ padding:11px 12px 6px 16px; }
+  .sbm3-eyebrow{ font-size:9px; }
+  .sbm4 .sbm3-body{ grid-template-columns:1fr; gap:12px; padding:0 14px 12px; }
+  /* hero → short stage, decoration stripped so the card breathes */
+  .sbm4 .sbm-hero, .sbm3 .sbm-hero{ min-height:0; padding:16px 14px 14px; gap:11px; margin:0; border-radius:18px; }
+  .sbm4-grid, .sbm4-pedestal, .sbm3-podium, .sbm3-beam, .sbm-hero-rays{ display:none !important; }
+  .sbm4-glow{ width:66%; filter:blur(20px); opacity:.4; }
+  /* smaller try-on card */
+  .sbmp-card{ max-width:214px; padding-bottom:12px; }
+  .sbmp-banner{ height:48px; }
+  .sbmp-idrow{ height:34px; }
+  .sbmp-av-wrap{ width:56px; height:56px; top:-27px; }
+  .sbmp-av{ width:48px; height:48px; font-size:20px; border-width:2.5px; }
+  .sbmp-lvl{ right:11px; top:-11px; min-width:21px; height:21px; font-size:11px; }
+  .sbmp-name{ font-size:16px; }
+  .sbmp-title{ font-size:9px; margin-top:2px; }
+  .sbmp-rankrow{ margin-top:7px; gap:5px; }
+  .sbmp-chip{ font-size:9px; padding:3px 8px; }
+  /* Wearing it / My look — compact pill row */
+  .sbm3-try{ transform:none; gap:4px; padding:3px; }
+  .sbm3-try button{ padding:6px 13px; font-size:11px; }
+  /* right column tightened */
   .sbm3-side{ padding:0; }
-  .sbm-name{ font-size:30px; }
-  .sbm3-try{ transform:scale(.94); }
-  .sbm3-alt-actions{ gap:9px; }
-  .sbm-gift{ min-height:50px; }
+  .sbm-rarity{ font-size:11px; margin-bottom:5px; }
+  .sbm4 .sbm-name, .sbm3 .sbm-name, .sbm-name{ font-size:25px; margin:0 0 6px; line-height:1; }
+  .sbm4 .sbm-desc, .sbm3 .sbm-desc, .sbm-desc{ font-size:12.5px; line-height:1.45; margin:0 0 10px; max-width:none;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .sbm4-season{ font-size:10px; padding:5px 10px; margin-bottom:10px; }
+  .sbm4-traits{ gap:6px; margin-bottom:12px; }
+  .sbm4-chip{ font-size:11px; padding:6px 10px; }
+  /* buy block — tight, thumb-reachable */
+  .sbm3-wallet-row{ margin-bottom:9px; }
+  .sbm-slide-track{ height:52px; } .sbm-slide-thumb{ width:44px; height:44px; }
+  .sbm3-alt-actions{ gap:8px; margin-top:8px; }
+  .sbm-gift{ min-height:48px; }
+  .sbm3-balhint{ margin-top:7px; }
 }
 /* ── Slide-to-buy control ── */
 .sbm-slide{ display:none; margin-top:2px; }
