@@ -2509,6 +2509,58 @@ body.reduced-motion .mobile-nav-item.mni-live .mni-play-btn::after, body.low-pow
 /* "More" grid tab — a small unread dot sits top-right of the icon */
 .mni-more .mni-more-dot{ top: 5px; right: calc(50% - 15px); min-width: 9px; height: 9px; padding: 0; background: var(--coral); border: 2px solid var(--bg); box-shadow: 0 0 0 0 transparent; }
 
+/* ═══════════════ GLASS DOCK v2 — floating pill + sliding ink + stateful FAB ═══════════════ */
+.mobile-nav{
+  left: 10px; right: 10px; bottom: calc(9px + env(safe-area-inset-bottom, 0px));
+  padding: 8px 10px; border-radius: 24px; overflow: visible; gap: 0;
+  background: linear-gradient(180deg, rgba(22,20,32,.82), rgba(10,9,16,.9));
+  border: 1px solid var(--line-bright, rgba(255,255,255,.1));
+  box-shadow: 0 20px 44px -18px rgba(0,0,0,.85), inset 0 1px 0 rgba(255,255,255,.06);
+}
+.mobile-nav-item{ position: relative; z-index: 1; gap: 4px; padding: 7px 2px 5px; }
+.mobile-nav-item svg{ width: 23px; height: 23px; }
+.mobile-nav-item .mni-icon{ background: none !important; transition: transform .2s cubic-bezier(.3,1.3,.5,1); }
+.mobile-nav-item span:last-child{ font-size: 9px; letter-spacing: .05em; opacity: .9; }
+.mobile-nav-item.active{ color: #eafff7; }
+.mobile-nav-item.active .mni-icon{ transform: translateY(-1px) scale(1.06); }
+.mobile-nav-item:active .mni-icon{ transform: scale(.9); }
+.mobile-nav-item::after{ display: none !important; }   /* the sliding ink replaces the per-item underline */
+/* sliding neon indicator */
+.mnav-ink{ position: absolute; top: 6px; height: calc(100% - 12px); left: 0; width: 56px; border-radius: 17px; opacity: 0; pointer-events: none; z-index: 0;
+  background: linear-gradient(180deg, rgba(34,211,163,.18), rgba(34,211,163,.05));
+  border: 1px solid rgba(34,211,163,.34);
+  box-shadow: 0 0 20px -6px var(--mint-glow, rgba(34,211,163,.6)), inset 0 1px 0 rgba(255,255,255,.06);
+  transition: transform .34s cubic-bezier(.3,.9,.3,1), width .34s cubic-bezier(.3,.9,.3,1), opacity .2s; }
+.mobile-nav.swiping .mnav-ink{ transition: opacity .12s; }   /* finger-tracking: no lag while dragging */
+/* raised, stateful PLAY FAB */
+.mobile-nav-item.mni-play{ justify-content: flex-end; gap: 6px; overflow: visible; }
+.mni-play-btn{ position: relative; width: 58px; height: 58px; border-radius: 50%; margin-top: -26px; display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--mint), #15a079); color: #06241b;
+  box-shadow: 0 12px 26px -6px var(--mint-glow, rgba(34,211,163,.65)), 0 0 0 5px var(--bg); transition: transform .18s, box-shadow .2s, background .25s; }
+.mni-play-ic{ width: 26px; height: 26px; position: relative; z-index: 2; transition: opacity .18s; }
+.mni-play-ring{ position: absolute; inset: -5px; width: calc(100% + 10px); height: calc(100% + 10px); transform: rotate(-90deg); opacity: 0; pointer-events: none; z-index: 1; }
+.mpr-bg{ fill: none; stroke: rgba(255,255,255,.18); stroke-width: 3; }
+.mpr-fg{ fill: none; stroke: #fff; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 138; stroke-dashoffset: 104; }
+.mni-play-time{ position: absolute; z-index: 2; font-family: var(--font-mono); font-weight: 800; font-size: 12.5px; color: #fff; display: none; font-variant-numeric: tabular-nums; }
+.mni-play-lbl{ font-family: var(--font-mono); font-size: 9px; letter-spacing: .05em; text-transform: uppercase; font-weight: 700; color: var(--mint); }
+.mobile-nav-item.mni-play:active .mni-play-btn{ transform: scale(.9); }
+/* SEARCHING — blue, spinning ring, live timer */
+.mni-play.mni-fab-search .mni-play-btn{ background: linear-gradient(135deg, #5aa0ff, #3665d8); box-shadow: 0 12px 26px -6px rgba(90,160,255,.6), 0 0 0 5px var(--bg); }
+.mni-play.mni-fab-search .mni-play-btn::after{ display: none; }
+.mni-play.mni-fab-search .mni-play-ic{ opacity: 0; }
+.mni-play.mni-fab-search .mni-play-time{ display: block; }
+.mni-play.mni-fab-search .mni-play-ring{ opacity: 1; animation: mfabSpin 1s linear infinite; }
+.mni-play.mni-fab-search .mni-play-lbl{ color: #9cc2ff; }
+@keyframes mfabSpin{ from{ transform: rotate(-90deg); } to{ transform: rotate(270deg); } }
+/* LIVE — red, pulsing; tap to jump back into the match */
+.mni-play.mni-fab-live .mni-play-btn{ background: linear-gradient(135deg, #ff5470, #df283e); box-shadow: 0 12px 26px -6px rgba(255,61,104,.6), 0 0 0 5px var(--bg); animation: mfabLive 1.3s ease-in-out infinite; }
+.mni-play.mni-fab-live .mni-play-lbl{ color: #ff9db0; }
+@keyframes mfabLive{ 0%,100%{ box-shadow: 0 12px 26px -6px rgba(255,61,104,.6), 0 0 0 5px var(--bg), 0 0 0 6px rgba(255,61,104,.35); } 50%{ box-shadow: 0 12px 26px -6px rgba(255,61,104,.75), 0 0 0 5px var(--bg), 0 0 0 13px rgba(255,61,104,0); } }
+body.reduced-motion :is(.mni-play.mni-fab-search .mni-play-ring, .mni-play.mni-fab-live .mni-play-btn),
+body.low-power :is(.mni-play.mni-fab-search .mni-play-ring, .mni-play.mni-fab-live .mni-play-btn){ animation: none !important; }
+/* badges sit a touch cleaner on the new dock */
+.mobile-nav-item .mni-badge{ top: 2px; right: calc(50% - 18px); }
+
 /* ===== NAV PAGES ===== */
 .nav-page{ display: none; }
 /* Page transition — a plain quick fade on the container. The rise/travel is
@@ -14313,18 +14365,23 @@ body.reduced-motion .ci-cd-fill.cd-low{ animation: none !important; }
   .sidebar{ width: 200px; }
 }
 @media (max-width: 900px){
-  /* Sidebar becomes a slide-in drawer */
+  /* Sidebar becomes an opaque slide-in drawer (Clash-style) */
   .sidebar{
     position: fixed;
     top: 0; left: 0;
-    height: 100vh;
+    height: 100dvh;
     transform: translateX(-100%);
     transition: transform .3s cubic-bezier(.2,.8,.2,1);
-    box-shadow: 0 0 60px rgba(0,0,0,.6);
-    width: 260px;
+    box-shadow: 0 0 70px rgba(0,0,0,.85);
+    width: min(80vw, 300px);
+    z-index: 90;
+    background: linear-gradient(180deg, #16121f 0%, #0b0812 100%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%); backdrop-filter: blur(22px) saturate(150%);
+    border-right: 1px solid var(--line-bright, rgba(255,255,255,.08));
+    padding-top: max(18px, env(safe-area-inset-top));
   }
   .sidebar.mobile-open{ transform: translateX(0); }
-  .hamburger{ display: none; }
+  .sidebar-backdrop{ z-index: 85; }
   .topbar-brand{ display: flex; }
   .topbar{ padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top)); }
   .live-stats{ display: none; }
@@ -24053,15 +24110,22 @@ body.low-power :is(.friend-card, .lbg-row, .shop-tile, .card.clickable):hover{ t
 .shop-next{ display:none !important; }
 
 @media (max-width:900px){
-  /* ── TOP BAR: declutter. Keep brand + coins + notifications + chat;
-        everything else lives in Settings / the More sheet. ── */
-  .topbar{ gap:8px; padding:10px 14px; padding-top:max(10px, env(safe-area-inset-top)); }
-  .topbar-brand{ font-size:16px; }
-  .topbar-brand .tb-logo{ width:28px; height:28px; }
+  /* ── TOP BAR (Clash-style): drop the logo, RoshCoins hard-left, action
+        buttons in the middle, and a hamburger hard-right that opens the
+        slide-out sidebar (everything secondary lives in there). ── */
+  .topbar{ gap:8px; padding:10px 12px; padding-top:max(10px, env(safe-area-inset-top)); }
+  .topbar-brand{ display:none !important; }
+  .topbar-ctx{ display:none !important; }
+  .live-stats{ display:none !important; }
+  .topbar-spacer{ display:none !important; }
   #helpBtn, .whatsnew-btn, #muteBtn, #dxpPill{ display:none !important; }
-  .header-actions{ gap:6px; }
+  .header-actions{ gap:6px; order:20; }
   .topbar-icon-btn{ width:38px; height:38px; }
-  .coin-pill{ padding:6px 11px; }
+  .coin-pill{ padding:7px 12px; order:-10; margin-right:auto; }
+  .boost-pill{ order:-9; }
+  .hamburger{ display:grid !important; place-items:center; order:100; width:38px; height:38px; border-radius:11px;
+    background:var(--surface); border:1px solid var(--line); color:var(--text); margin-left:2px; }
+  .hamburger:active{ transform:scale(.92); }
 
   /* ── BOTTOM BAR: a floating, rounded nav dock ── */
   .app.logged-in .mobile-nav{ display:grid; }
@@ -24074,6 +24138,7 @@ body.low-power :is(.friend-card, .lbg-row, .shop-tile, .card.clickable):hover{ t
     box-shadow:0 20px 44px -18px rgba(0,0,0,.95), inset 0 1px 0 rgba(255,255,255,.06);
   }
   .app.logged-in #screen-landing{ padding-bottom:104px; }
+  .app.logged-in .nav-page{ padding-bottom:calc(112px + env(safe-area-inset-bottom, 0px)); }
   .mobile-nav-item{
     min-height:56px; padding:8px 2px 6px; border-radius:16px; gap:4px;
     transition:background .18s, color .18s, transform .12s;
@@ -24551,11 +24616,19 @@ body.reduced-motion .mobile-nav, body.low-power .mobile-nav{ -webkit-backdrop-fi
 
   <!-- ===== MOBILE BOTTOM NAV ===== -->
   <nav class="mobile-nav" id="mobileNav">
+    <i class="mnav-ink" id="mnavInk" aria-hidden="true"></i>
     <button class="mobile-nav-item" data-mnav="shop"><span class="mni-badge ms-new" id="mnavShopBadge" style="display:none;">•</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-shop"/></svg></span><span>Shop</span></button>
-    <button class="mobile-nav-item active" data-mnav="rank"><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trophy"/></svg></span><span>Rank</span></button>
-    <button class="mobile-nav-item mni-play" data-mnav="play" aria-label="Play"><span class="mni-play-btn"><svg viewBox="0 0 24 24"><use href="#i-play"/></svg></span><span>Play</span></button>
-    <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
-    <button class="mobile-nav-item mni-more" data-mnav="settings" aria-label="More"><span class="mni-badge mni-prestige" id="mnavPrestigeDot" style="display:none;">✦</span><span class="mni-badge mni-more-dot" id="mnavMoreDot" style="display:none;"></span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-grid"/></svg></span><span>More</span></button>
+    <button class="mobile-nav-item" data-mnav="locker"><span class="mni-badge" id="mnavLockerBadge" style="display:none;">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-locker"/></svg></span><span>Locker</span></button>
+    <button class="mobile-nav-item mni-play" data-mnav="play" aria-label="Play">
+      <span class="mni-play-btn" id="mniPlayBtn">
+        <svg class="mni-play-ring" viewBox="0 0 48 48" aria-hidden="true"><circle class="mpr-bg" cx="24" cy="24" r="22"/><circle class="mpr-fg" cx="24" cy="24" r="22"/></svg>
+        <svg class="mni-play-ic" viewBox="0 0 24 24"><use href="#i-play"/></svg>
+        <span class="mni-play-time" id="mniPlayTime"></span>
+      </span>
+      <span class="mni-play-lbl" id="mniPlayLbl">Play</span>
+    </button>
+    <button class="mobile-nav-item" data-mnav="friends"><span class="mni-badge" id="mnavFriendsBadge" style="display:none;">0</span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-people"/></svg></span><span>Friends</span></button>
+    <button class="mobile-nav-item" data-mnav="progression"><span class="mni-badge mni-prestige" id="mnavPrestigeDot" style="display:none;">✦</span><span class="mni-badge mni-more-dot" id="mnavProgUnclaimed" style="display:none;"></span><span class="mni-icon"><svg viewBox="0 0 24 24"><use href="#i-trending-up"/></svg></span><span>Progress</span></button>
   </nav>
 
   <!-- ===== MOBILE "MORE" BOTTOM SHEET (iOS-style) ===== -->
@@ -31244,9 +31317,9 @@ function updateNavLive(){
         playItem.classList.remove('nav-searching');
       }
     }
-    // Mobile Play tab gets a small live dot too.
-    const mplay = document.querySelector('.mobile-nav-item[data-mnav="play"]');
-    if(mplay) mplay.classList.toggle('mni-live', inMatch || searching);
+    // Mobile Play FAB reflects state (idle / searching / live) + badges.
+    try { updatePlayFab(); } catch(e){}
+    try { syncMobileBadges(); } catch(e){}
   } catch(e){}
 }
 function refreshStatsUI(){
@@ -47898,23 +47971,42 @@ on('#hamburgerBtn', 'click', openSidebarMobile);
 on('#sidebarBackdrop', 'click', closeSidebarMobile);
 
 // ===== MOBILE BOTTOM NAV =====
+// Scroll the active page (window OR its inner scroll container) back to the top.
+function scrollActiveTop(){
+  try {
+    const opts = { top: 0, behavior: document.body.classList.contains('reduced-motion') ? 'auto' : 'smooth' };
+    window.scrollTo(opts);
+    let el = document.querySelector('.nav-page.active');
+    while(el && el !== document.body){ const s = getComputedStyle(el); if((s.overflowY === 'auto' || s.overflowY === 'scroll') && el.scrollHeight > el.clientHeight + 4){ el.scrollTo(opts); break; } el = el.parentElement; }
+    const m = document.getElementById('mobileNav'); if(m) m.classList.remove('nav-tucked');
+  } catch(e){}
+}
+let _mnavLastTap = { t: 0, target: '' };
 document.querySelectorAll('.mobile-nav-item').forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.dataset.mnav;
-    if(target === 'settings'){
-      // "More" opens an iOS-style bottom action sheet (not the side drawer)
-      openMoreSheet();
+    const now = Date.now();
+    // The Play FAB is stateful: searching → cancel queue; in a match → resume;
+    // otherwise → the Play page (double-tap when already there = scroll to top).
+    if(target === 'play'){
+      const inMatch = state.screen === 'game' || !!state.matchId;
+      const searching = !inMatch && !!state._searchStartedAt;
+      if(inMatch){ try { showScreen('game'); } catch(e){} return; }
+      if(searching){ try { cancelMatchmaking(); } catch(e){} return; }
+      if(state.screen === 'landing' && currentNavPage() === 'play'){
+        if(now - _mnavLastTap.t < 350 && _mnavLastTap.target === 'play'){ try { haptic(8); } catch(e){} scrollActiveTop(); }
+        _mnavLastTap = { t: now, target: 'play' }; return;
+      }
+      _mnavLastTap = { t: now, target: 'play' }; showNavPage('play'); return;
+    }
+    // Double-tap the tab you're already on → scroll to top.
+    const isActive = state.screen === 'landing' && typeof currentNavPage === 'function' && currentNavPage() === target;
+    if(isActive){
+      if(now - _mnavLastTap.t < 350 && _mnavLastTap.target === target){ try { haptic(8); } catch(e){} scrollActiveTop(); }
+      _mnavLastTap = { t: now, target };
       return;
     }
-    // Tapping the tab you're already on scrolls back to the top (app convention).
-    try {
-      if(state.screen === 'landing' && typeof currentNavPage === 'function' && currentNavPage() === target && (window.scrollY || 0) > 8){
-        try { haptic(8); } catch(e){}
-        window.scrollTo({ top: 0, behavior: document.body.classList.contains('reduced-motion') ? 'auto' : 'smooth' });
-        const m = document.getElementById('mobileNav'); if(m) m.classList.remove('nav-tucked');
-        return;
-      }
-    } catch(e){}
+    _mnavLastTap = { t: now, target };
     showNavPage(target);
   });
 });
@@ -47991,7 +48083,70 @@ function syncMobileNav(page){
   document.querySelectorAll('.mobile-nav-item').forEach(b => {
     b.classList.toggle('active', b.dataset.mnav === page);
   });
+  try { moveMnavInk(); } catch(e){}
+  try { updatePlayFab(); } catch(e){}
+  try { syncMobileBadges(); } catch(e){}
 }
+// left/width of a nav item (relative to the dock), + whether it's the raised FAB
+function _mnavItemRect(mnav){
+  const nav = document.getElementById('mobileNav'); if(!nav) return null;
+  const b = nav.querySelector(`.mobile-nav-item[data-mnav="${mnav}"]`); if(!b) return null;
+  const nr = nav.getBoundingClientRect(), r = b.getBoundingClientRect();
+  return { left: r.left - nr.left, width: r.width, isPlay: b.classList.contains('mni-play') };
+}
+// Snap the sliding ink under the active tab (hidden when Play/FAB is active).
+function moveMnavInk(){
+  const nav = document.getElementById('mobileNav'), ink = document.getElementById('mnavInk');
+  if(!nav || !ink) return;
+  const act = nav.querySelector('.mobile-nav-item.active:not(.mni-play)');
+  if(!act){ ink.style.opacity = '0'; return; }
+  const nr = nav.getBoundingClientRect(), r = act.getBoundingClientRect();
+  ink.style.opacity = '1'; ink.style.width = r.width + 'px'; ink.style.transform = `translateX(${r.left - nr.left}px)`;
+}
+// Interpolate the ink between two tabs as the finger drags (0..1).
+function mnavInkLerp(fromP, toP, p){
+  const ink = document.getElementById('mnavInk'); if(!ink) return;
+  const a = _mnavItemRect(fromP), b = _mnavItemRect(toP); if(!a || !b) return;
+  if(a.isPlay && b.isPlay){ ink.style.opacity = '0'; return; }
+  if(a.isPlay){ ink.style.opacity = p.toFixed(2); ink.style.width = b.width + 'px'; ink.style.transform = `translateX(${b.left}px)`; return; }
+  if(b.isPlay){ ink.style.opacity = (1 - p).toFixed(2); ink.style.width = a.width + 'px'; ink.style.transform = `translateX(${a.left}px)`; return; }
+  const left = a.left + (b.left - a.left) * p, width = a.width + (b.width - a.width) * p;
+  ink.style.opacity = '1'; ink.style.width = width + 'px'; ink.style.transform = `translateX(${left}px)`;
+}
+// Stateful Play FAB — idle "Play", searching ring + m:ss, live pulse.
+function updatePlayFab(){
+  const item = document.querySelector('.mobile-nav-item.mni-play'); if(!item) return;
+  const lbl = document.getElementById('mniPlayLbl'), time = document.getElementById('mniPlayTime');
+  const inMatch = state.screen === 'game' || !!state.matchId;
+  const searching = !inMatch && !!state._searchStartedAt;
+  item.classList.toggle('mni-fab-live', inMatch);
+  item.classList.toggle('mni-fab-search', searching);
+  if(inMatch){ if(lbl) lbl.textContent = 'Live'; if(time) time.textContent = ''; }
+  else if(searching){
+    if(lbl) lbl.textContent = 'Searching';
+    const secs = Math.max(0, Math.floor((Date.now() - (state._searchStartedAt || Date.now())) / 1000));
+    if(time) time.textContent = Math.floor(secs / 60) + ':' + String(secs % 60).padStart(2, '0');
+  } else { if(lbl) lbl.textContent = 'Play'; if(time) time.textContent = ''; }
+}
+// Mirror the sidebar's live badges onto the bottom dock's tabs.
+function syncMobileBadges(){
+  try {
+    const copy = (srcSel, dstSel, dot) => {
+      const s = $(srcSel), d = $(dstSel); if(!d) return;
+      const on = s && s.style.display !== 'none' && (dot || (s.textContent || '').trim());
+      if(on){ if(!dot) d.textContent = s.textContent; d.style.display = 'flex'; } else d.style.display = 'none';
+    };
+    copy('#navLockerBadge', '#mnavLockerBadge');
+    copy('#navFriendsBadge', '#mnavFriendsBadge');
+    copy('#navShopBadge', '#mnavShopBadge', true);
+    copy('#navProgDot', '#mnavProgUnclaimed', true);
+    copy('#navPrestigeBadge', '#mnavPrestigeDot', true);
+  } catch(e){}
+}
+// keep the searching timer ticking + FAB/badges fresh
+setInterval(() => { try { updatePlayFab(); } catch(e){} }, 1000);
+window.addEventListener('resize', () => { try { moveMnavInk(); } catch(e){} });
+window.addEventListener('orientationchange', () => { setTimeout(() => { try { moveMnavInk(); } catch(e){} }, 260); });
 
 // ===== FLYOUT PANELS =====
 function closeAllFlyouts(){ $('#notifPanel')?.classList.remove('show'); $('#chatPanel')?.classList.remove('show'); }
@@ -50118,14 +50273,15 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
    fixed overlay alongside it, releasing into the next/previous tab. Rubber-bands
    at the ends; falls back to a plain slide in reduced-motion / low-power. */
 (function(){
-  const ORDER = ['shop', 'rank', 'play', 'friends'];
-  const SKIP = 'input,textarea,button,a,.duel-video,.lp-stage,.ladder,.lb-table,.h-scroll,.scroll-x,.chips,.seg,.volume-slider,.swiper,[data-no-swipe]';
+  const ORDER = ['shop', 'locker', 'play', 'friends', 'progression'];
+  const SKIP = 'input,textarea,button,a,.duel-video,.lp-stage,.ladder,.lb-table,.h-scroll,.scroll-x,.chips,.seg,.volume-slider,.swiper,.prog-tabs,.ach2-tabs,.lk2-tabs,[data-no-swipe]';
   const host = document.querySelector('.screens') || document.body;
   const blocked = () => document.querySelector('.rcm-sheet.show,.modal-bg.show,.more-sheet.show,#chatPanel.show,#notifPanel.show');
   function renderFor(p){
     try { const y = window.scrollY;
-      if(p === 'shop') renderShopPage(); else if(p === 'rank') renderRankPage();
+      if(p === 'shop') renderShopPage(); else if(p === 'locker') renderLockerPage();
       else if(p === 'play') renderPlayPage(); else if(p === 'friends') renderFriendsPage();
+      else if(p === 'progression') renderProgressionPage();
       window.scrollTo(0, y);
     } catch(e){}
   }
@@ -50138,8 +50294,10 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   function restore(el){ if(el){ if(el._savedStyle != null) el.setAttribute('style', el._savedStyle); else el.removeAttribute('style'); el._savedStyle = null; } }
   // Mobile-nav underline tracks the drag: the active tab's underline shrinks as
   // the target tab's grows, proportional to how far the finger has travelled.
+  let _swpFrom = '', _swpTo = '';
   function navTrackStart(fromPage, toPage){
     const nav = document.getElementById('mobileNav'); if(!nav) return;
+    _swpFrom = fromPage; _swpTo = toPage;
     nav.classList.add('swiping');
     nav.querySelectorAll('.mobile-nav-item').forEach(b => {
       b.classList.toggle('swipe-to', b.dataset.mnav === toPage);
@@ -50148,13 +50306,16 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
   }
   function navTrackMove(p){
     const nav = document.getElementById('mobileNav'); if(!nav || !nav.classList.contains('swiping')) return;
-    nav.style.setProperty('--swp', Math.max(0, Math.min(1, p)).toFixed(3));
+    p = Math.max(0, Math.min(1, p));
+    nav.style.setProperty('--swp', p.toFixed(3));
+    try { mnavInkLerp(_swpFrom, _swpTo, p); } catch(e){}
   }
   function navTrackEnd(){
     const nav = document.getElementById('mobileNav'); if(!nav) return;
     nav.classList.remove('swiping');
     nav.style.removeProperty('--swp');
     nav.querySelectorAll('.swipe-to').forEach(b => b.classList.remove('swipe-to'));
+    try { moveMnavInk(); } catch(e){}
   }
   let sx = 0, sy = 0, mode = '', page = null, nb = null, idx = -1, ni = -1, w = 1, dirSign = 0, reduced = false;
   host.addEventListener('touchstart', (e) => {
@@ -50240,8 +50401,9 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
     friends:  () => { try { renderFriendsPage(); } catch(e){} },
     shop:     () => { try { renderShopPage(); } catch(e){} },
   };
-  const THRESHOLD = 74;
-  let el = null, sy = 0, pulling = false, armed = false, busy = false;
+  const THRESHOLD = 96;   // deliberate pull distance to trigger a refresh
+  const GATE = 16;        // ignore the first few px so a normal scroll never arms it
+  let el = null, sy = 0, sx = 0, pulling = false, armed = false, busy = false, decided = false;
   function ind(){
     if(el) return el;
     el = document.createElement('div');
@@ -50250,23 +50412,43 @@ try { navigator.serviceWorker && navigator.serviceWorker.addEventListener('messa
     document.body.appendChild(el);
     return el;
   }
+  // True only when the finger's scroll context is genuinely at the very top —
+  // walks up to the real scroll container (the page may scroll inside one, so
+  // window.scrollY alone is unreliable and used to arm P2R on every scroll-up).
+  function atTop(target){
+    let n = target;
+    while(n && n.nodeType === 1 && n !== document.body){
+      const s = getComputedStyle(n);
+      if((s.overflowY === 'auto' || s.overflowY === 'scroll') && n.scrollHeight > n.clientHeight + 4){ return n.scrollTop <= 0; }
+      n = n.parentElement;
+    }
+    return (window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0) <= 0;
+  }
   document.addEventListener('touchstart', (e) => {
-    pulling = false; armed = false;
+    pulling = false; armed = false; decided = false;
     if(busy || e.touches.length !== 1) return;
     if(state.screen !== 'landing') return;
-    if(document.querySelector('.modal-bg.show, .more-sheet.show')) return;
+    if(document.querySelector('.modal-bg.show, .more-sheet.show, .rcm-sheet.show, #chatPanel.show, #notifPanel.show')) return;
     const page = (document.querySelector('.nav-page.active') || {}).dataset?.page;
     if(!REFRESH[page]) return;
-    if((window.scrollY || document.documentElement.scrollTop || 0) > 2) return;
-    sy = e.touches[0].clientY;
+    if(!atTop(e.target)) return;             // only from a true top
+    sy = e.touches[0].clientY; sx = e.touches[0].clientX;
     armed = true;
   }, { passive: true });
   document.addEventListener('touchmove', (e) => {
     if(!armed || busy) return;
     const dy = e.touches[0].clientY - sy;
-    if(dy < 8) { if(pulling){ pulling = false; ind().classList.remove('show','ready'); } return; }
+    const dx = e.touches[0].clientX - sx;
+    // Decide intent once the finger has moved a little: a horizontal-ish or
+    // upward move disarms P2R entirely so normal scrolling/swiping is untouched.
+    if(!decided){
+      if(Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      if(dy <= 0 || Math.abs(dx) > Math.abs(dy) * 0.8){ armed = false; return; }
+      decided = true;
+    }
+    if(dy < GATE){ if(pulling){ pulling = false; ind().classList.remove('show','ready'); } return; }
     pulling = true;
-    const d = Math.min(1.4, dy / THRESHOLD);
+    const d = Math.min(1.4, (dy - GATE) / THRESHOLD);
     const i = ind();
     i.classList.add('show');
     i.classList.toggle('ready', d >= 1);
